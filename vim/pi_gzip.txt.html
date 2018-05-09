@@ -1,0 +1,57 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: pi_gzip.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="pi_gzip.txt" class="t">pi_gzip.txt</a>   For <span class="i">Vim version 8.0.</span>  Last change: 2016 Nov 06
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Bram Moolenaar</span>
+
+
+Editing compressed files with Vim               <a name="gzip" class="t">gzip</a> <a name="bzip2" class="t">bzip2</a> <a name="compress" class="t">compress</a>
+
+1. Autocommands                 <a href="#gzip-autocmd" class="l">gzip-autocmd</a>
+
+The functionality mentioned here <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> <a href="usr_05.txt.html#standard-plugin" class="l">standard-plugin</a><a href="repeat.txt.html#." class="d">.</a>
+This <a href="usr_05.txt.html#plugin" class="d">plugin</a> <a href="motion.txt.html#is" class="d">is</a> only available if <a href="options.txt.html#%27compatible%27" class="o">'compatible'</a> <a href="motion.txt.html#is" class="d">is</a> not set.
+You can avoid loading this <a href="usr_05.txt.html#plugin" class="d">plugin</a> by setting the "loaded_gzip" variable: 
+<span class="e">        :let loaded_gzip = 1</span>
+<span class="e"></span>
+<span class="s">{Vi does not have any of this}</span>
+
+<span class="h">==============================================================================</span>
+1. Autocommands                                         <a name="gzip-autocmd" class="t">gzip-autocmd</a>
+
+The <a href="usr_05.txt.html#plugin" class="d">plugin</a> installs autocommands to intercept reading and <a href="editing.txt.html#writing" class="d">writing</a> of files
+with these extensions:
+
+<span class="h">        extension       compression </span>
+        *.Z             <a href="#compress" class="d">compress</a> (Lempel-Ziv)
+        *.gz            <a href="#gzip" class="d">gzip</a>
+        *.bz2           <a href="#bzip2" class="d">bzip2</a>
+        *.lzma          lzma
+        *.xz            xz
+        *.lz            lzip
+        *.zst           zstd
+
+That's actually the only thing you need to know.  There are no options.
+
+After decompressing <a href="insert.txt.html#a" class="d">a</a> file, the <a href="filetype.txt.html#filetype" class="d">filetype</a> will be detected again.  This will
+make <a href="insert.txt.html#a" class="d">a</a> file like "foo.c.gz" get the "<a href="change.txt.html#c" class="d">c</a>" filetype.
+
+If you have <a href="options.txt.html#%27patchmode%27" class="o">'patchmode'</a> set, <a href="motion.txt.html#it" class="d">it</a> will be appended after the extension for
+compression.  Thus editing the patchmode file will not give you the automatic
+decompression.  You have to rename the file if you want this.
+
+<span class="h">==============================================================================</span>
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

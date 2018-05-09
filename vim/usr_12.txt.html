@@ -1,0 +1,372 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: usr_12.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="usr_12.txt" class="t">usr_12.txt</a>    For <span class="i">Vim version 8.0.</span>  Last change: 2017 Aug 11
+
+                     VIM USER MANUAL <a href="motion.txt.html#-" class="d">-</a> by <a href="intro.txt.html#Bram" class="d">Bram</a> <a href="intro.txt.html#Moolenaar" class="d">Moolenaar</a>
+
+                                Clever tricks
+
+
+By combining several commands you can make Vim <a href="diff.txt.html#do" class="d">do</a> nearly everything.  In this
+chapter <a href="insert.txt.html#a" class="d">a</a> number of useful combinations will be presented.  This uses the
+commands introduced in the previous chapters and <a href="insert.txt.html#a" class="d">a</a> few more.
+
+<a href="#12.1" class="l">12.1</a>  <a href="insert.txt.html#Replace" class="d">Replace</a> <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a>
+<a href="#12.2" class="l">12.2</a>  Change "Last, First" to "First Last"
+<a href="#12.3" class="l">12.3</a>  Sort <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a>
+<a href="#12.4" class="l">12.4</a>  Reverse line order
+<a href="#12.5" class="l">12.5</a>  Count words
+<a href="#12.6" class="l">12.6</a>  Find <a href="insert.txt.html#a" class="d">a</a> man page
+<a href="#12.7" class="l">12.7</a>  Trim blanks
+<a href="#12.8" class="l">12.8</a>  Find where <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> <a href="motion.txt.html#is" class="d">is</a> used
+
+     Next chapter: <a href="usr_20.txt.html#usr_20.txt" class="l">usr_20.txt</a>  Typing command-line commands quickly
+ Previous chapter: <a href="usr_11.txt.html#usr_11.txt" class="l">usr_11.txt</a>  Recovering from <a href="insert.txt.html#a" class="d">a</a> crash
+Table of contents: <a href="usr_toc.txt.html#usr_toc.txt" class="l">usr_toc.txt</a>
+
+<span class="h">==============================================================================</span>
+<a name="12.1" class="t">12.1</a>  <a href="insert.txt.html#Replace" class="d">Replace</a> <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a>
+
+The substitute command can be used to replace all occurrences of <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> with
+another word: 
+<span class="e"></span>
+<span class="e">        :%s/four/4/g</span>
+<span class="e"></span>
+The "<a href="motion.txt.html#%25" class="d">%</a>" range means to replace in all lines.  The "<a href="index.txt.html#g" class="d">g</a>" flag <a href="motion.txt.html#at" class="d">at</a> the <a href="intro.txt.html#end" class="d">end</a> causes
+all words in <a href="insert.txt.html#a" class="d">a</a> line to be replaced.
+   This will not <a href="diff.txt.html#do" class="d">do</a> the right thing if your file also contains "thirtyfour"<a href="repeat.txt.html#." class="d">.</a>
+It would be replaced with "thirty4"<a href="repeat.txt.html#." class="d">.</a>  To avoid this, use the "\&lt;" item to
+match the start of <a href="insert.txt.html#a" class="d">a</a> word: 
+<span class="e"></span>
+<span class="e">        :%s/\&lt;four/4/g</span>
+<span class="e"></span>
+Obviously, this still goes wrong on "fourteen"<a href="repeat.txt.html#." class="d">.</a>  Use "\&gt;" to match the <a href="intro.txt.html#end" class="d">end</a> of
+<a href="insert.txt.html#a" class="d">a</a> word: 
+<span class="e"></span>
+<span class="e">        :%s/\&lt;four\&gt;/4/g</span>
+<span class="e"></span>
+If you are programming, you might want to replace "four" in comments, but not
+in the code.  Since this <a href="motion.txt.html#is" class="d">is</a> difficult to specify, add the "<a href="change.txt.html#c" class="d">c</a>" flag to have the
+substitute command prompt you for each replacement: 
+<span class="e"></span>
+<span class="e"></span>
+<span class="e">        :%s/\&lt;four\&gt;/4/gc</span>
+<span class="e"></span>
+<span class="e"></span>
+REPLACING IN SEVERAL FILES
+
+Suppose you want to replace <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> in more than one file.  You could edit each
+file and type the command manually.  It's <a href="insert.txt.html#a" class="d">a</a> lot faster to use record and
+playback.
+   Let's assume you have <a href="insert.txt.html#a" class="d">a</a> directory with C++ files, all ending in ".cpp"<a href="repeat.txt.html#." class="d">.</a>
+There <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> function called "GetResp" that you want to rename to "GetAnswer"<a href="repeat.txt.html#." class="d">.</a>
+
+        vim *.cpp               Start Vim, defining the argument <a href="eval.txt.html#list" class="d">list</a> to
+                                contain all the C++ files.  You are now in the
+                                first file.
+        qq                      Start <a href="repeat.txt.html#recording" class="d">recording</a> into the <a href="repeat.txt.html#q" class="d">q</a> <a href="sponsor.txt.html#register" class="d">register</a>
+        :%s/\&lt;GetResp\&gt;/GetAnswer/g
+                                Do the replacements in the first file.
+        <a href="editing.txt.html#%3Awnext" class="d">:wnext</a>                  Write this file and move to the next one.
+        <a href="repeat.txt.html#q" class="d">q</a>                       Stop recording.
+        @q                      Execute the <a href="repeat.txt.html#q" class="d">q</a> register.  This will replay the
+                                substitution and "<a href="editing.txt.html#%3Awnext" class="d">:wnext</a>"<a href="repeat.txt.html#." class="d">.</a>  You can verify
+                                that this doesn't produce an error message.
+        999@q                   Execute the <a href="repeat.txt.html#q" class="d">q</a> <a href="sponsor.txt.html#register" class="d">register</a> on the remaining files.
+
+At the last file you will get an error message, because "<a href="editing.txt.html#%3Awnext" class="d">:wnext</a>" cannot move
+to the next file.  This stops the execution, and everything <a href="motion.txt.html#is" class="d">is</a> done.
+
+        <span class="n">Note:</span>
+        When playing back <a href="insert.txt.html#a" class="d">a</a> recorded sequence, an error stops the execution.
+        Therefore, make sure you don't get an error message when recording.
+
+There <a href="motion.txt.html#is" class="d">is</a> one catch: If one of the .cpp files does not contain the <a href="motion.txt.html#word" class="d">word</a>
+"GetResp"<a href="motion.txt.html#%2C" class="d">,</a> you will get an error and <a href="change.txt.html#replacing" class="d">replacing</a> will stop.  To avoid this, add
+the "<a href="motion.txt.html#e" class="d">e</a>" flag to the substitute command: 
+<span class="e"></span>
+<span class="e">        :%s/\&lt;GetResp\&gt;/GetAnswer/ge</span>
+<span class="e"></span>
+The "<a href="motion.txt.html#e" class="d">e</a>" flag tells "<a href="change.txt.html#%3Asubstitute" class="d">:substitute</a>" that not finding <a href="insert.txt.html#a" class="d">a</a> match <a href="motion.txt.html#is" class="d">is</a> not an error.
+
+<span class="h">==============================================================================</span>
+<a name="12.2" class="t">12.2</a>  Change "Last, First" to "First Last"
+
+You have <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of names in this form:
+
+<span class="h">        Doe, John </span>
+<span class="h">        Smith, Peter </span>
+
+You want to change that to:
+
+<span class="h">        John Doe </span>
+<span class="h">        Peter Smith </span>
+
+This can be done with just one command: 
+<span class="e"></span>
+<span class="e">        :%s/\([^,]*\), \(.*\)/\2 \1/</span>
+<span class="e"></span>
+Let's break this down in parts.  Obviously <a href="motion.txt.html#it" class="d">it</a> starts with <a href="insert.txt.html#a" class="d">a</a> substitute
+command.  The "<a href="motion.txt.html#%25" class="d">%</a>" <a href="motion.txt.html#is" class="d">is</a> the line range, which stands for the whole file.  Thus
+the substitution <a href="motion.txt.html#is" class="d">is</a> done in every line in the file.
+   The arguments for the substitute command are "/from/to/"<a href="repeat.txt.html#." class="d">.</a>  The slashes
+separate the "from" <a href="pattern.txt.html#pattern" class="d">pattern</a> and the "to" string.  This <a href="motion.txt.html#is" class="d">is</a> what the "from"
+<a href="pattern.txt.html#pattern" class="d">pattern</a> contains:
+<span class="h">                                                        \([^,]*\), \(.*\) </span>
+
+        The first part between \( \) matches "Last"     \(     \)
+            match anything but <a href="insert.txt.html#a" class="d">a</a> comma                    [^,]
+            any number of times                               *
+        matches "<a href="motion.txt.html#%2C" class="d">,</a> " literally                                   <a href="motion.txt.html#%2C" class="d">,</a>
+        The second part between \( \) matches "First"              \(  \)
+            any character                                            <a href="repeat.txt.html#." class="d">.</a>
+            any number of times                                       *
+
+In the "to" part we have "\2" and "\1"<a href="repeat.txt.html#." class="d">.</a>  These are called backreferences.
+They refer to the text matched by the "\( \)" parts in the pattern.  "\2"
+refers to the text matched by the second "\( \)"<a href="motion.txt.html#%2C" class="d">,</a> which <a href="motion.txt.html#is" class="d">is</a> the "First" name.
+"\1" refers to the first "\( \)"<a href="motion.txt.html#%2C" class="d">,</a> which <a href="motion.txt.html#is" class="d">is</a> the "Last" name.
+   You can use up to nine backreferences in the "to" part of <a href="insert.txt.html#a" class="d">a</a> substitute
+command.  "<a href="change.txt.html#%5C0" class="d">\0</a>" stands for the whole matched pattern.  There are <a href="insert.txt.html#a" class="d">a</a> few more
+special items in <a href="insert.txt.html#a" class="d">a</a> substitute command, see <a href="change.txt.html#sub-replace-special" class="l">sub-replace-special</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+<a name="12.3" class="t">12.3</a>  Sort <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a>
+
+In <a href="insert.txt.html#a" class="d">a</a> Makefile you often have <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of files.  For example:
+
+<span class="h">        OBJS = \ </span>
+<span class="h">                version.o \ </span>
+<span class="h">                pch.o \ </span>
+<span class="h">                getopt.o \ </span>
+<span class="h">                util.o \ </span>
+<span class="h">                getopt1.o \ </span>
+<span class="h">                inp.o \ </span>
+<span class="h">                patch.o \ </span>
+<span class="h">                backup.o </span>
+
+To sort this list, <a href="change.txt.html#filter" class="d">filter</a> the text through the external sort command: 
+<span class="e"></span>
+<span class="e">        /^OBJS</span>
+<span class="e">        j</span>
+<span class="e">        :.,/^$/-1!sort</span>
+<span class="e"></span>
+This goes to the first line, where "OBJS" <a href="motion.txt.html#is" class="d">is</a> the first thing in the line.
+Then <a href="motion.txt.html#it" class="d">it</a> goes one line down and filters the lines until the next empty line.
+You could also select the lines in <a href="visual.txt.html#Visual" class="d">Visual</a> mode and then use "!sort"<a href="repeat.txt.html#." class="d">.</a>  That's
+easier to type, but more work when there are many lines.
+   The result <a href="motion.txt.html#is" class="d">is</a> this:
+
+<span class="h">        OBJS = \ </span>
+<span class="h">                backup.o </span>
+<span class="h">                getopt.o \ </span>
+<span class="h">                getopt1.o \ </span>
+<span class="h">                inp.o \ </span>
+<span class="h">                patch.o \ </span>
+<span class="h">                pch.o \ </span>
+<span class="h">                util.o \ </span>
+<span class="h">                version.o \ </span>
+
+
+Notice that <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#backslash" class="d">backslash</a> <a href="motion.txt.html#at" class="d">at</a> the <a href="intro.txt.html#end" class="d">end</a> of each line <a href="motion.txt.html#is" class="d">is</a> used to indicate the line
+continues.  After sorting, this <a href="motion.txt.html#is" class="d">is</a> wrong!  The "backup.o" line that was <a href="motion.txt.html#at" class="d">at</a>
+the <a href="intro.txt.html#end" class="d">end</a> didn't have <a href="insert.txt.html#a" class="d">a</a> backslash.  Now that <a href="motion.txt.html#it" class="d">it</a> sorts to another place, <a href="motion.txt.html#it" class="d">it</a>
+<a href="vim_faq.txt.html#must" class="d">must</a> have <a href="insert.txt.html#a" class="d">a</a> backslash.
+   The simplest solution <a href="motion.txt.html#is" class="d">is</a> to add the <a href="intro.txt.html#backslash" class="d">backslash</a> with "<a href="insert.txt.html#A" class="d">A</a> \&lt;Esc&gt;"<a href="repeat.txt.html#." class="d">.</a>  You can
+keep the <a href="intro.txt.html#backslash" class="d">backslash</a> in the last line, if you make sure an empty line comes
+after it.  That way you don't have this problem again.
+
+<span class="h">==============================================================================</span>
+<a name="12.4" class="t">12.4</a>  Reverse line order
+
+The <a href="repeat.txt.html#%3Aglobal" class="l">:global</a> command can be combined with the <a href="change.txt.html#%3Amove" class="l">:move</a> command to move all the
+lines before the first line, resulting in <a href="insert.txt.html#a" class="d">a</a> reversed file.  The command is: 
+<span class="e"></span>
+<span class="e">        :global/^/m 0</span>
+<span class="e"></span>
+Abbreviated: 
+<span class="e"></span>
+<span class="e">        :g/^/m 0</span>
+<span class="e"></span>
+The "<a href="motion.txt.html#%5E" class="d">^</a>" regular <a href="eval.txt.html#expression" class="d">expression</a> matches the beginning of the line (even if the line
+<a href="motion.txt.html#is" class="d">is</a> blank).  The <a href="change.txt.html#%3Amove" class="l">:move</a> command moves the matching line to after the mythical
+zeroth line, so the current matching line becomes the first line of the file.
+As the <a href="repeat.txt.html#%3Aglobal" class="l">:global</a> command <a href="motion.txt.html#is" class="d">is</a> not confused by the <a href="change.txt.html#changing" class="d">changing</a> line numbering,
+<a href="repeat.txt.html#%3Aglobal" class="l">:global</a> proceeds to match all remaining lines of the file and puts each <a href="motion.txt.html#as" class="d">as</a>
+the first.
+
+This also works on <a href="insert.txt.html#a" class="d">a</a> range of lines.  First move to above the first line and
+<a href="motion.txt.html#mark" class="d">mark</a> <a href="motion.txt.html#it" class="d">it</a> with "mt"<a href="repeat.txt.html#." class="d">.</a>  Then move the cursor to the last line in the range and
+type: 
+<span class="e"></span>
+<span class="e">        :'t+1,.g/^/m 't</span>
+<span class="e"></span>
+<span class="h">==============================================================================</span>
+<a name="12.5" class="t">12.5</a>  Count words
+
+Sometimes you have to write <a href="insert.txt.html#a" class="d">a</a> text with <a href="insert.txt.html#a" class="d">a</a> maximum number of words.  Vim can
+<a href="intro.txt.html#count" class="d">count</a> the words for you.
+   When the whole file <a href="motion.txt.html#is" class="d">is</a> what you want to <a href="intro.txt.html#count" class="d">count</a> the words in, use this
+command: 
+<span class="e"></span>
+<span class="e">        g CTRL-G</span>
+<span class="e"></span>
+Do not type <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#space" class="d">space</a> after the <a href="motion.txt.html#g%2C" class="d">g,</a> this <a href="motion.txt.html#is" class="d">is</a> just used here to make the command
+<a href="starting.txt.html#easy" class="d">easy</a> to read.
+   The output looks like this:
+
+<span class="h">        Col 1 of 0; Line 141 of 157; Word 748 of 774; Byte 4489 of 4976 </span>
+
+You can see on which <a href="motion.txt.html#word" class="d">word</a> you are (748), and the total number of words in the
+file (774).
+
+When the text <a href="motion.txt.html#is" class="d">is</a> only part of <a href="insert.txt.html#a" class="d">a</a> file, you could move to the start of the text,
+type "<a href="index.txt.html#g" class="d">g</a> <a href="editing.txt.html#CTRL-G" class="k">CTRL-G</a>"<a href="motion.txt.html#%2C" class="d">,</a> move to the <a href="intro.txt.html#end" class="d">end</a> of the text, type "<a href="index.txt.html#g" class="d">g</a> <a href="editing.txt.html#CTRL-G" class="k">CTRL-G</a>" again, and then
+use your brain to compute the difference in the <a href="motion.txt.html#word" class="d">word</a> position.  That's <a href="insert.txt.html#a" class="d">a</a> good
+exercise, but there <a href="motion.txt.html#is" class="d">is</a> an easier way.  With <a href="visual.txt.html#Visual" class="d">Visual</a> mode, select the text you
+want to <a href="intro.txt.html#count" class="d">count</a> words in.  Then type <a href="index.txt.html#g" class="d">g</a> <a href="editing.txt.html#CTRL-G" class="k">CTRL-G</a>.  The result:
+
+<span class="h">        Selected 5 of 293 Lines; 70 of 1884 Words; 359 of 10928 Bytes </span>
+
+For other ways to <a href="intro.txt.html#count" class="d">count</a> words, lines and other items, see <a href="tips.txt.html#count-items" class="l">count-items</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+<a name="12.6" class="t">12.6</a>  Find <a href="insert.txt.html#a" class="d">a</a> man page                                 <a name="find-manpage" class="t">find-manpage</a>
+
+While editing <a href="insert.txt.html#a" class="d">a</a> shell <a href="usr_41.txt.html#script" class="d">script</a> or <a href="change.txt.html#C" class="d">C</a> program, you are using <a href="insert.txt.html#a" class="d">a</a> command or function
+that you want to find the man page for (this <a href="motion.txt.html#is" class="d">is</a> on Unix).  Let's first use <a href="insert.txt.html#a" class="d">a</a>
+simple way: Move the cursor to the <a href="motion.txt.html#word" class="d">word</a> you want to find <a href="helphelp.txt.html#help" class="d">help</a> on and press 
+<span class="e"></span>
+<span class="e">        K</span>
+<span class="e"></span>
+Vim will run the external "man" program on the word.  If the man page <a href="motion.txt.html#is" class="d">is</a>
+found, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> displayed.  This uses the normal <a href="message.txt.html#pager" class="d">pager</a> to scroll through the text
+(mostly the "more" program).  When you get to the <a href="intro.txt.html#end" class="d">end</a> pressing <a href="intro.txt.html#%3CEnter%3E" class="s">&lt;Enter&gt;</a> will
+get you back into Vim.
+
+<a href="insert.txt.html#A" class="d">A</a> disadvantage <a href="motion.txt.html#is" class="d">is</a> that you can't see the man page and the text you are working
+on <a href="motion.txt.html#at" class="d">at</a> the same time.  There <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> trick to make the man page appear in <a href="insert.txt.html#a" class="d">a</a> Vim
+window.  First, load the man <a href="filetype.txt.html#filetype" class="d">filetype</a> plugin: 
+<span class="e"></span>
+<span class="e">        :runtime! ftplugin/man.vim</span>
+<span class="e"></span>
+Put this command in your <a href="starting.txt.html#vimrc" class="d">vimrc</a> file if you intend to <a href="diff.txt.html#do" class="d">do</a> this often.  Now you
+can use the "<a href="filetype.txt.html#%3AMan" class="d">:Man</a>" command to open <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a> on <a href="insert.txt.html#a" class="d">a</a> man page: 
+<span class="e"></span>
+<span class="e">        :Man csh</span>
+<span class="e"></span>
+You can scroll around and the text <a href="motion.txt.html#is" class="d">is</a> highlighted.  This allows you to find
+the <a href="helphelp.txt.html#help" class="d">help</a> you were looking for.  Use <a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="motion.txt.html#w" class="d">w</a> to jump to the <a href="windows.txt.html#window" class="d">window</a> with the
+text you were working on.
+   To find <a href="insert.txt.html#a" class="d">a</a> man page in <a href="insert.txt.html#a" class="d">a</a> specific section, <a href="change.txt.html#put" class="d">put</a> the <a href="motion.txt.html#section" class="d">section</a> number first.
+For example, to look in <a href="motion.txt.html#section" class="d">section</a> 3 for "echo"<a href="cmdline.txt.html#%3A" class="d">:</a> 
+<span class="e"></span>
+<span class="e">        :Man 3 echo</span>
+<span class="e"></span>
+To jump to another man page, which <a href="motion.txt.html#is" class="d">is</a> in the text with the typical form
+"word(1)"<a href="motion.txt.html#%2C" class="d">,</a> press <a href="tagsrch.txt.html#CTRL-%5D" class="k">CTRL-]</a> on it.  Further "<a href="filetype.txt.html#%3AMan" class="d">:Man</a>" commands will use the same
+window.
+
+To display <a href="insert.txt.html#a" class="d">a</a> man page for the <a href="motion.txt.html#word" class="d">word</a> under the cursor, use this: 
+<span class="e"></span>
+<span class="e">        \K</span>
+<span class="e"></span>
+(If you redefined the <a href="map.txt.html#%3CLeader%3E" class="s">&lt;Leader&gt;</a>, use <a href="motion.txt.html#it" class="d">it</a> instead of the backslash).
+For example, you want to know the return value of "<a href="eval.txt.html#strstr%28%29" class="d">strstr()</a>" while editing
+this line:
+
+<span class="h">        if ( strstr (input, "aap") == ) </span>
+
+Move the cursor to somewhere on "strstr" and type "\K"<a href="repeat.txt.html#." class="d">.</a>  <a href="insert.txt.html#A" class="d">A</a> <a href="windows.txt.html#window" class="d">window</a> will open
+to display the man page for strstr().
+
+<span class="h">==============================================================================</span>
+<a name="12.7" class="t">12.7</a>  Trim blanks
+
+Some people find spaces and tabs <a href="motion.txt.html#at" class="d">at</a> the <a href="intro.txt.html#end" class="d">end</a> of <a href="insert.txt.html#a" class="d">a</a> line useless, wasteful, and
+ugly.  To remove <a href="pattern.txt.html#whitespace" class="d">whitespace</a> <a href="motion.txt.html#at" class="d">at</a> the <a href="intro.txt.html#end" class="d">end</a> of every line, execute the following
+command: 
+<span class="e"></span>
+<span class="e">        :%s/\s\+$//</span>
+<span class="e"></span>
+The line range "<a href="motion.txt.html#%25" class="d">%</a>" <a href="motion.txt.html#is" class="d">is</a> used, thus this works on the whole file.  The <a href="pattern.txt.html#pattern" class="d">pattern</a>
+that the "<a href="change.txt.html#%3Asubstitute" class="d">:substitute</a>" command matches with <a href="motion.txt.html#is" class="d">is</a> "\s\+$"<a href="repeat.txt.html#." class="d">.</a>  This finds white
+<a href="intro.txt.html#space" class="d">space</a> characters (\s), 1 or more of them (\+), before the end-of-line ($).
+Later will be explained how you write patterns like this, see <a href="usr_27.txt.html#usr_27.txt" class="l">usr_27.txt</a><a href="repeat.txt.html#." class="d">.</a>
+   The "to" part of the substitute command <a href="motion.txt.html#is" class="d">is</a> empty: "<a href="version7.txt.html#%2F%2F" class="d">//</a>"<a href="repeat.txt.html#." class="d">.</a>  Thus <a href="motion.txt.html#it" class="d">it</a> replaces
+with nothing, effectively <a href="change.txt.html#deleting" class="d">deleting</a> the matched white space.
+
+Another wasteful use of spaces <a href="motion.txt.html#is" class="d">is</a> placing them before <a href="insert.txt.html#a" class="d">a</a> tab.  Often these can
+be deleted without <a href="change.txt.html#changing" class="d">changing</a> the amount of white space.  But not always!
+Therefore, you can best <a href="diff.txt.html#do" class="d">do</a> this manually.  Use this search command: 
+<span class="e"></span>
+<span class="e">        /       </span>
+<span class="e"></span>
+You cannot see it, but there <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#space" class="d">space</a> before <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#tab" class="d">tab</a> in this command.  Thus
+it's "/&lt;Space&gt;&lt;Tab&gt;"<a href="repeat.txt.html#." class="d">.</a>   Now use "<a href="change.txt.html#x" class="d">x</a>" to delete the <a href="intro.txt.html#space" class="d">space</a> and check that the
+amount of white <a href="intro.txt.html#space" class="d">space</a> doesn't change.  You might have to <a href="insert.txt.html#insert" class="d">insert</a> <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#tab" class="d">tab</a> if <a href="motion.txt.html#it" class="d">it</a>
+does change.  Type "<a href="pattern.txt.html#n" class="d">n</a>" to find the next match.  Repeat this until no more
+matches can be found.
+
+<span class="h">==============================================================================</span>
+<a name="12.8" class="t">12.8</a>  Find where <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> <a href="motion.txt.html#is" class="d">is</a> used
+
+If you are <a href="insert.txt.html#a" class="d">a</a> UNIX user, you can use <a href="insert.txt.html#a" class="d">a</a> combination of Vim and the <a href="quickfix.txt.html#grep" class="d">grep</a> command
+to edit all the files that contain <a href="insert.txt.html#a" class="d">a</a> given word.  This <a href="motion.txt.html#is" class="d">is</a> extremely useful if
+you are working on <a href="insert.txt.html#a" class="d">a</a> program and want to <a href="starting.txt.html#view" class="d">view</a> or edit all the files that
+contain <a href="insert.txt.html#a" class="d">a</a> specific variable.
+   For example, suppose you want to edit all the <a href="change.txt.html#C" class="d">C</a> program files that contain
+the <a href="motion.txt.html#word" class="d">word</a> "frame_counter"<a href="repeat.txt.html#." class="d">.</a>  To <a href="diff.txt.html#do" class="d">do</a> this you use the command: 
+<span class="e"></span>
+<span class="e">        vim `grep -l frame_counter *.c`</span>
+<span class="e"></span>
+Let's look <a href="motion.txt.html#at" class="d">at</a> this command in detail.  The <a href="quickfix.txt.html#grep" class="d">grep</a> command searches through <a href="insert.txt.html#a" class="d">a</a> set
+of files for <a href="insert.txt.html#a" class="d">a</a> given word.  Because the <a href="starting.txt.html#-l" class="d">-l</a> argument <a href="motion.txt.html#is" class="d">is</a> specified, the command
+will only <a href="eval.txt.html#list" class="d">list</a> the files containing the <a href="motion.txt.html#word" class="d">word</a> and not print the matching lines.
+The <a href="motion.txt.html#word" class="d">word</a> <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> searching for <a href="motion.txt.html#is" class="d">is</a> "frame_counter"<a href="repeat.txt.html#." class="d">.</a>  Actually, this can be any
+regular expression.  (Note: What <a href="quickfix.txt.html#grep" class="d">grep</a> uses for regular expressions <a href="motion.txt.html#is" class="d">is</a> not
+exactly the same <a href="motion.txt.html#as" class="d">as</a> what Vim uses.)
+   The entire command <a href="motion.txt.html#is" class="d">is</a> enclosed in backticks (`).  This tells the UNIX shell
+to run this command and pretend that the results were typed on the command
+line.  So what happens <a href="motion.txt.html#is" class="d">is</a> that the <a href="quickfix.txt.html#grep" class="d">grep</a> command <a href="motion.txt.html#is" class="d">is</a> run and produces <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of
+files, these files are <a href="change.txt.html#put" class="d">put</a> on the Vim command line.  This results in Vim
+editing the file <a href="eval.txt.html#list" class="d">list</a> that <a href="motion.txt.html#is" class="d">is</a> the output of grep.  You can then use commands
+like "<a href="editing.txt.html#%3Anext" class="d">:next</a>" and "<a href="editing.txt.html#%3Afirst" class="d">:first</a>" to browse through the files.
+
+
+FINDING EACH LINE
+
+The above command only finds the files in which the <a href="motion.txt.html#word" class="d">word</a> <a href="motion.txt.html#is" class="d">is</a> found.  You still
+have to find the <a href="motion.txt.html#word" class="d">word</a> within the files.
+   Vim has <a href="insert.txt.html#a" class="d">a</a> built-in command that you can use to search <a href="insert.txt.html#a" class="d">a</a> set of files for <a href="insert.txt.html#a" class="d">a</a>
+given string.  If you want to find all occurrences of "error_string" in all <a href="change.txt.html#C" class="d">C</a>
+program files, for example, enter the following command: 
+<span class="e"></span>
+<span class="e">        :grep error_string *.c</span>
+<span class="e"></span>
+This causes Vim to search for the <a href="eval.txt.html#string" class="d">string</a> "error_string" in all the specified
+files <a href="motion.txt.html#%28" class="d">(</a>*.c).  The editor will now open the first file where <a href="insert.txt.html#a" class="d">a</a> match <a href="motion.txt.html#is" class="d">is</a> found
+and position the cursor on the first matching line.  To <a href="motion.txt.html#go" class="d">go</a> to the next
+matching line (no matter in what file <a href="motion.txt.html#it" class="d">it</a> is), use the "<a href="quickfix.txt.html#%3Acnext" class="d">:cnext</a>" command.  To <a href="motion.txt.html#go" class="d">go</a>
+to the previous match, use the ":cprev" command.  Use "<a href="quickfix.txt.html#%3Aclist" class="d">:clist</a>" to see all the
+matches and where they are.
+   The "<a href="quickfix.txt.html#%3Agrep" class="d">:grep</a>" command uses the external commands <a href="quickfix.txt.html#grep" class="d">grep</a> (on Unix) or findstr
+(on Windows).  You can change this by setting the option <a href="options.txt.html#%27grepprg%27" class="o">'grepprg'</a>.
+
+<span class="h">==============================================================================</span>
+
+Next chapter: <a href="usr_20.txt.html#usr_20.txt" class="l">usr_20.txt</a>  Typing command-line commands quickly
+
+Copyright: see <a href="usr_01.txt.html#manual-copyright" class="l">manual-copyright</a>  vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

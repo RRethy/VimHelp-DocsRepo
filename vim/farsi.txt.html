@@ -1,0 +1,283 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1"/>
+<title>Vim: farsi.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="farsi.txt" class="t">farsi.txt</a>     For <span class="i">Vim version 8.0.</span>  Last change: 2015 Aug 29
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Mortaza Ghassab Shiran</span>
+
+
+Right to Left and <a href="#Farsi" class="d">Farsi</a> Mapping for Vim         <a name="farsi" class="t">farsi</a> <a name="Farsi" class="t">Farsi</a>
+
+<span class="s">{Vi does not have any of these commands}</span>
+
+                                                <a name="E27" class="t">E27</a>
+In order to use right-to-left and <a href="#Farsi" class="d">Farsi</a> <a href="map.txt.html#mapping" class="d">mapping</a> support, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> necessary to
+compile Vim with the <a href="various.txt.html#%2Bfarsi" class="l">+farsi</a> feature.
+
+These <a href="eval.txt.html#functions" class="d">functions</a> have been made by Mortaza G. Shiran <span class="s">&lt;shiran@jps.net&gt;</span>
+
+
+Introduction
+<span class="h">------------</span>
+In right-to-left oriented files the characters appear on the screen from right
+to left.  This kind of file <a href="motion.txt.html#is" class="d">is</a> most useful when <a href="editing.txt.html#writing" class="d">writing</a> <a href="#Farsi" class="d">Farsi</a> documents,
+composing faxes or <a href="editing.txt.html#writing" class="d">writing</a> <a href="#Farsi" class="d">Farsi</a> memos.
+
+The commands, prompts and <a href="helphelp.txt.html#help" class="d">help</a> files are not in Farsi, therefore the user
+interface remains the standard <a href="intro.txt.html#Vi" class="d">Vi</a> interface.
+
+
+Highlights
+<span class="h">----------</span>
+<a href="insert.txt.html#o" class="d">o</a>  Editing left-to-right files <a href="motion.txt.html#as" class="d">as</a> in the original Vim, no change.
+
+<a href="insert.txt.html#o" class="d">o</a>  Viewing and editing files in right-to-left windows.   File orientation <a href="motion.txt.html#is" class="d">is</a>
+   per window, so <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> possible to <a href="starting.txt.html#view" class="d">view</a> the same file in right-to-left and
+   left-to-right modes, simultaneously.
+
+<a href="insert.txt.html#o" class="d">o</a>  Compatibility to the original Vim.   Almost all features work in
+   right-to-left mode (see <a href="intro.txt.html#bugs" class="d">bugs</a> below).
+
+<a href="insert.txt.html#o" class="d">o</a>  Changing keyboard <a href="map.txt.html#mapping" class="d">mapping</a> and reverse <a href="insert.txt.html#insert" class="d">insert</a> modes using <a href="insert.txt.html#a" class="d">a</a> single
+   command.
+
+<a href="insert.txt.html#o" class="d">o</a>  Backing from reverse <a href="insert.txt.html#insert" class="d">insert</a> mode to the correct place in the file
+   (if possible).
+
+<a href="insert.txt.html#o" class="d">o</a>  While in <a href="#Farsi" class="d">Farsi</a> mode, numbers are entered from left to right.  Upon entering
+   <a href="insert.txt.html#a" class="d">a</a> none number character, that character will be inserted just into the
+   left of the last number.
+
+<a href="insert.txt.html#o" class="d">o</a>  No special terminal with right-to-left capabilities <a href="motion.txt.html#is" class="d">is</a> required.  The
+   right-to-left changes are completely hardware independent.  Only
+   <a href="#Farsi" class="d">Farsi</a> font <a href="motion.txt.html#is" class="d">is</a> necessary.
+
+<a href="insert.txt.html#o" class="d">o</a>  <a href="#Farsi" class="d">Farsi</a> keymapping on the command line in reverse <a href="insert.txt.html#insert" class="d">insert</a> mode.
+
+<a href="insert.txt.html#o" class="d">o</a>  Toggling between left-to-right and right-to-left via F8 function key.
+
+<a href="insert.txt.html#o" class="d">o</a>  Toggling between <a href="#Farsi" class="d">Farsi</a> ISIR-3342 standard encoding and Vim <a href="#Farsi" class="d">Farsi</a> via F9
+   function key.  Since this makes sense only for the text written in
+   right-to-left mode, this function <a href="motion.txt.html#is" class="d">is</a> also supported only in right-to-left
+   mode.
+
+<a href="#Farsi" class="d">Farsi</a> Fonts                                     <a name="farsi-fonts" class="t">farsi-fonts</a>
+<span class="h">-----------</span>
+
+The following files are found in the subdirectories of the '$VIM/farsi/fonts'
+directory:
+
+   <a href="motion.txt.html#%2B" class="d">+</a>  far-a01.pcf    <a href="change.txt.html#X" class="d">X</a> Windows fonts for <a href="os_unix.txt.html#Unix" class="d">Unix</a> including Linux systems
+   <a href="motion.txt.html#%2B" class="d">+</a>  far-a01.bf     <a href="change.txt.html#X" class="d">X</a> Windows fonts for SunOS
+   <a href="motion.txt.html#%2B" class="d">+</a>  far-a01.f16    <a href="insert.txt.html#a" class="d">a</a> screen fonts for <a href="os_unix.txt.html#Unix" class="d">Unix</a> including Linux systems
+   <a href="motion.txt.html#%2B" class="d">+</a>  far-a01.fon    <a href="insert.txt.html#a" class="d">a</a> monospaced fonts for Windows NT/95/98
+   <a href="motion.txt.html#%2B" class="d">+</a>  far-a01.com    <a href="insert.txt.html#a" class="d">a</a> screen fonts for <a href="os_dos.txt.html#DOS" class="d">DOS</a>
+
+
+Font Installation
+<span class="h">-----------------</span>
+
+<a href="insert.txt.html#o" class="d">o</a>  Installation of fonts for MS Window systems (NT/95/98)
+
+   From 'Control Panel' folder, start the 'Fonts' program.  Then from <span class="o">'file'</span>
+   menu item select 'Install New Fonts ...'.  Browse and select the
+   'far-a01.fon', then follow the installation guide.
+   <span class="n">NOTE:</span> several people have reported that this does not work.  The solution
+   <a href="motion.txt.html#is" class="d">is</a> unknown.
+
+<a href="insert.txt.html#o" class="d">o</a>  Installation of fonts for <a href="change.txt.html#X" class="d">X</a> Window systems (Unix/Linux)
+
+   Depending on your system, copy far-a01.pcf.Z or far-a01.pcf.gz into <a href="insert.txt.html#a" class="d">a</a>
+   directory of your choice.  Change to the directory containing the <a href="#Farsi" class="d">Farsi</a>
+   fonts and execute the following commands:
+
+   <a href="change.txt.html#%3E" class="d">&gt;</a>  mkfontdir
+   <a href="change.txt.html#%3E" class="d">&gt;</a>  xset +fp path_name_of_farsi_fonts_directory
+
+<a href="insert.txt.html#o" class="d">o</a>  Installation of fonts for <a href="change.txt.html#X" class="d">X</a> Window systems (SunOS)
+
+   Copy far-a01.bf font into <a href="insert.txt.html#a" class="d">a</a> directory of your choice.
+   Change to the directory containing the far-a01.fb fonts and
+   execute the following commands:
+
+   <a href="change.txt.html#%3E" class="d">&gt;</a>  fldfamily
+   <a href="change.txt.html#%3E" class="d">&gt;</a>  xset +fp path_name_of_fonts_directory
+
+<a href="insert.txt.html#o" class="d">o</a>  Installation of ASCII screen fonts (Unix/Linux)
+
+   For Linux system, copy the far-a01.f16 fonts into /usr/lib/kbd/consolefonts
+   directory and execute the setfont program <a href="motion.txt.html#as" class="d">as</a> "setfont far-a01.f16"<a href="repeat.txt.html#." class="d">.</a>  For
+   other systems (e.g. SCO Unix), please refer to the fonts installation
+   <a href="motion.txt.html#section" class="d">section</a> of your system administration manuals.
+
+<a href="insert.txt.html#o" class="d">o</a>  Installation of ASCII screen fonts (DOS)
+
+   After system power on, prior to the first use of Vim, upload the <a href="#Farsi" class="d">Farsi</a>
+   fonts by executing the far-a01.com font uploading program.
+
+
+Usage
+-----
+Prior to <a href="starting.txt.html#starting" class="d">starting</a> Vim, the environment in which Vim can run in <a href="#Farsi" class="d">Farsi</a> mode,
+<a href="vim_faq.txt.html#must" class="d">must</a> be set.  In addition to installation of <a href="#Farsi" class="d">Farsi</a> fonts, following points
+refer to some of the system environments, which you may need to set:
+Key code mapping, loading graphic card in ASCII screen mode, setting the IO
+driver in 8 bit clean mode <a href="eval.txt.html#..." class="d">...</a> <a href="repeat.txt.html#." class="d">.</a>
+
+<a href="insert.txt.html#o" class="d">o</a>  Setting the <a href="#Farsi" class="d">Farsi</a> fonts
+
+   <a href="motion.txt.html#%2B" class="d">+</a>  For Vim <a href="gui.txt.html#GUI" class="d">GUI</a> set the <a href="options.txt.html#%27guifont%27" class="o">'guifont'</a> to far-a01.  This <a href="motion.txt.html#is" class="d">is</a> done by entering
+      ':set guifont=far-a01' in the Vim window.
+
+      You can have <a href="options.txt.html#%27guifont%27" class="o">'guifont'</a> set to far-a01 by Vim during the Vim <a href="starting.txt.html#startup" class="d">startup</a>
+      by appending the ':set guifont=far-a01' into your <a href="starting.txt.html#.vimrc" class="d">.vimrc</a> file
+      (in <a href="change.txt.html#case" class="d">case</a> of NT/95/98 platforms _vimrc).
+
+      Under the <a href="change.txt.html#X" class="d">X</a> Window environment, you can also start Vim with the
+      '-fn far-a01' option.
+
+   <a href="motion.txt.html#%2B" class="d">+</a>  For Vim within <a href="insert.txt.html#a" class="d">a</a> xterm, start <a href="insert.txt.html#a" class="d">a</a> xterm with the <a href="#Farsi" class="d">Farsi</a> fonts (e.g.
+      kterm <a href="gui_x11.txt.html#-fn" class="d">-fn</a> far-a01).  Then start Vim inside the kterm.
+
+   <a href="motion.txt.html#%2B" class="d">+</a>  For Vim under DOS, prior to the first usage of Vim, upload the <a href="#Farsi" class="d">Farsi</a>
+      fonts by executing the far-a01.com fonts uploading program.
+
+<a href="insert.txt.html#o" class="d">o</a>  <a href="#Farsi" class="d">Farsi</a> Keymapping Activation
+
+   To activate the <a href="#Farsi" class="d">Farsi</a> keymapping, set either <a href="options.txt.html#%27altkeymap%27" class="o">'altkeymap'</a> or <a href="options.txt.html#%27fkmap%27" class="o">'fkmap'</a>.
+   This <a href="motion.txt.html#is" class="d">is</a> done by entering ':set akm' or ':set fk' in the Vim window.
+   You can have <a href="options.txt.html#%27altkeymap%27" class="o">'altkeymap'</a> or <a href="options.txt.html#%27fkmap%27" class="o">'fkmap'</a> set <a href="motion.txt.html#as" class="d">as</a> default by appending ':set akm'
+   or ':set fk' in your <a href="starting.txt.html#.vimrc" class="d">.vimrc</a> file or <a href="starting.txt.html#_vimrc" class="d">_vimrc</a> in <a href="change.txt.html#case" class="d">case</a> of NT/95/98 platforms.
+
+   To turn off the <a href="#Farsi" class="d">Farsi</a> keymapping <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> default second language keymapping,
+   reset the <a href="options.txt.html#%27altkeymap%27" class="o">'altkeymap'</a> by entering ':set noakm'.
+
+<a href="insert.txt.html#o" class="d">o</a>  right-to-left <a href="#Farsi" class="d">Farsi</a> Mode
+
+   By default Vim starts in Left-to-right mode.  Following are ways to change
+   the <a href="windows.txt.html#window" class="d">window</a> orientation:
+
+   <a href="motion.txt.html#%2B" class="d">+</a> Start Vim with the <a href="starting.txt.html#-F" class="d">-F</a> option (e.g. vim <a href="starting.txt.html#-F" class="d">-F</a> ...).
+
+   <a href="motion.txt.html#%2B" class="d">+</a> Use the F8 function key to <a href="options.txt.html#toggle" class="d">toggle</a> between left-to-right and right-to-left.
+
+   <a href="motion.txt.html#%2B" class="d">+</a> While in Left-to-right mode, enter 'set rl' in the command line ('rl' <a href="motion.txt.html#is" class="d">is</a>
+     the abbreviation for rightleft).
+
+   <a href="motion.txt.html#%2B" class="d">+</a> Put the 'set rl' line in your '.vimrc' file to start Vim in
+     right-to-left mode permanently.
+
+Encoding
+<span class="h">--------</span>
+
+The <a href="print.txt.html#letter" class="d">letter</a> encoding used <a href="motion.txt.html#is" class="d">is</a> the Vim extended ISIR-3342 standard with <a href="insert.txt.html#a" class="d">a</a> built
+in function to convert between Vim extended ISIR-3342 and ISIR-3342 standard.
+
+For document portability reasons, the <a href="print.txt.html#letter" class="d">letter</a> encoding <a href="motion.txt.html#is" class="d">is</a> kept the same across
+different platforms (i.e. UNIX's, NT/95/98, MS DOS, ...).
+
+
+<a href="insert.txt.html#o" class="d">o</a>  Keyboard
+
+   <a href="motion.txt.html#%2B" class="d">+</a>  <span class="k">CTRL-_</span> in insert/replace modes toggles between Farsi(akm)/Latin
+      mode <a href="motion.txt.html#as" class="d">as</a> follows:
+
+   <a href="motion.txt.html#%2B" class="d">+</a>  <span class="k">CTRL-_</span> moves the cursor to the <a href="intro.txt.html#end" class="d">end</a> of the typed text in edit mode.
+
+   <a href="motion.txt.html#%2B" class="d">+</a>  <span class="k">CTRL-_</span> in command mode only toggles keyboard <a href="map.txt.html#mapping" class="d">mapping</a> between Farsi(akm)/
+      Latin.  The <a href="#Farsi" class="d">Farsi</a> text <a href="motion.txt.html#is" class="d">is</a> then entered in reverse <a href="insert.txt.html#insert" class="d">insert</a> mode.
+
+   <a href="motion.txt.html#%2B" class="d">+</a>  F8 <a href="motion.txt.html#-" class="d">-</a> Toggles between left-to-right and right-to-left.
+
+   <a href="motion.txt.html#%2B" class="d">+</a>  F9 <a href="motion.txt.html#-" class="d">-</a> Toggles the encoding between ISIR-3342 standard and Vim extended
+      ISIR-3342 (supported only in right-to-left mode).
+
+   <a href="motion.txt.html#%2B" class="d">+</a>  Keyboard <a href="map.txt.html#mapping" class="d">mapping</a> <a href="motion.txt.html#is" class="d">is</a> based on the Iranian ISIRI-2901 standard.
+      Following table shows the keyboard <a href="map.txt.html#mapping" class="d">mapping</a> while Farsi(akm) mode set:
+
+        -------------------------------------
+        <a href="motion.txt.html#%60" class="d">`</a>  1  2  3  4  5  6  7  8  9  <a href="motion.txt.html#0" class="d">0</a>  <a href="motion.txt.html#-" class="d">-</a>  <a href="change.txt.html#%3D" class="d">=</a>
+        ¢  ±  ²  ³  ´  µ  ¶  ·  ¸  ¹  °  ­  ½
+        -------------------------------------
+        <a href="change.txt.html#%7E" class="d">~</a>  <a href="change.txt.html#%21" class="d">!</a>  <a href="repeat.txt.html#%40" class="d">@</a>  <a href="pattern.txt.html#%23" class="d">#</a>  <a href="motion.txt.html#%24" class="d">$</a>  <a href="motion.txt.html#%25" class="d">%</a>  <a href="motion.txt.html#%5E" class="d">^</a>  <a href="change.txt.html#%26" class="d">&amp;</a>  *  <a href="motion.txt.html#%28" class="d">(</a>  <a href="motion.txt.html#%29" class="d">)</a>  <a href="motion.txt.html#_" class="d">_</a>  <a href="motion.txt.html#%2B" class="d">+</a>
+        <a href="change.txt.html#%7E" class="d">~</a>  £  §  ®  ¤  ¥  ª  ¬  è  ¨  ©  é  «
+        -------------------------------------
+        <a href="repeat.txt.html#q" class="d">q</a>  <a href="motion.txt.html#w" class="d">w</a>  <a href="motion.txt.html#e" class="d">e</a>  <a href="change.txt.html#r" class="d">r</a>  <a href="motion.txt.html#t" class="d">t</a>  <a href="index.txt.html#z" class="d">z</a>  <a href="undo.txt.html#u" class="d">u</a>  <a href="insert.txt.html#i" class="d">i</a>  <a href="insert.txt.html#o" class="d">o</a>  <a href="change.txt.html#p" class="d">p</a>  <a href="index.txt.html#%5B" class="d">[</a>  <a href="index.txt.html#%5D" class="d">]</a>
+        Ó  Ò  Æ  Ù  Ø  Õ  Ö  à  Ê  É  Ç  ˆ
+        -------------------------------------
+        <a href="intro.txt.html#Q" class="d">Q</a>  <a href="motion.txt.html#W" class="d">W</a>  <a href="motion.txt.html#E" class="d">E</a>  <a href="change.txt.html#R" class="d">R</a>  <a href="motion.txt.html#T" class="d">T</a>  Z  <a href="undo.txt.html#U" class="d">U</a>  <a href="insert.txt.html#I" class="d">I</a>  <a href="insert.txt.html#O" class="d">O</a>  <a href="change.txt.html#P" class="d">P</a>  <span class="s">{  }</span>
+        ÷  õ  ô  ó  ò  ý  ð  ö  <a href="index.txt.html#%5B" class="d">[</a>  <a href="index.txt.html#%5D" class="d">]</a>  <span class="s">{  }</span>
+        -------------------------------------
+        <a href="insert.txt.html#a" class="d">a</a>  <a href="change.txt.html#s" class="d">s</a>  <a href="change.txt.html#d" class="d">d</a>  <a href="motion.txt.html#f" class="d">f</a>  <a href="index.txt.html#g" class="d">g</a>  <a href="motion.txt.html#h" class="d">h</a>  <a href="motion.txt.html#j" class="d">j</a>  <a href="motion.txt.html#k" class="d">k</a>  <a href="motion.txt.html#l" class="d">l</a>  <a href="motion.txt.html#%3B" class="d">;</a>  <a href="motion.txt.html#%27" class="d">'</a>  \
+        Ñ  Ð  á  Ã  Ü  Á  Å  Þ  Ý  Ú  Û  ë
+        -------------------------------------
+        <a href="insert.txt.html#A" class="d">A</a>  <a href="change.txt.html#S" class="d">S</a>  <a href="change.txt.html#D" class="d">D</a>  <a href="motion.txt.html#F" class="d">F</a>  <a href="motion.txt.html#G" class="d">G</a>  <a href="motion.txt.html#H" class="d">H</a>  <a href="change.txt.html#J" class="d">J</a>  <a href="various.txt.html#K" class="d">K</a>  <a href="motion.txt.html#L" class="d">L</a>  <a href="cmdline.txt.html#%3A" class="d">:</a>  "  |
+        ù  û  þ  ú  ø  À  ü  æ  ç  º  »  ê
+        -------------------------------------
+        <a href="change.txt.html#%3C" class="d">&lt;</a>  <a href="change.txt.html#y" class="d">y</a>  <a href="change.txt.html#x" class="d">x</a>  <a href="change.txt.html#c" class="d">c</a>  <a href="visual.txt.html#v" class="d">v</a>  <a href="motion.txt.html#b" class="d">b</a>  <a href="pattern.txt.html#n" class="d">n</a>  <a href="motion.txt.html#m" class="d">m</a>  <a href="motion.txt.html#%2C" class="d">,</a>  <a href="repeat.txt.html#." class="d">.</a>  <a href="pattern.txt.html#%2F" class="d">/</a>
+        ¾  ×  Ô  Î  Í  Ì  Ë  Ä  ß  ¦  ¯
+        -------------------------------------
+        <a href="change.txt.html#%3E" class="d">&gt;</a>  <a href="change.txt.html#Y" class="d">Y</a>  <a href="change.txt.html#X" class="d">X</a>  <a href="change.txt.html#C" class="d">C</a>  <a href="visual.txt.html#V" class="d">V</a>  <a href="motion.txt.html#B" class="d">B</a>  <a href="pattern.txt.html#N" class="d">N</a>  <a href="motion.txt.html#M" class="d">M</a>  <span class="s">&lt;  &gt;</span>  <a href="pattern.txt.html#%3F" class="d">?</a>
+        ¼  ñ  Ô  Ï  Í  ¡  Ë  Â  ¾  ¼  ¿
+        -------------------------------------
+
+<span class="n">Note:</span>
+        ¡  stands for <a href="#Farsi" class="d">Farsi</a> PSP (break without space)
+
+        ¢  stands for <a href="#Farsi" class="d">Farsi</a> PCN (for HAMZE attribute)
+
+Restrictions
+<span class="h">------------</span>
+
+<a href="insert.txt.html#o" class="d">o</a>  In insert/replace mode and fkmap (Farsi mode) set, <a href="scroll.txt.html#CTRL-B" class="k">CTRL-B</a> <a href="motion.txt.html#is" class="d">is</a> not
+   supported.
+
+<a href="insert.txt.html#o" class="d">o</a>  If you change the character <a href="map.txt.html#mapping" class="d">mapping</a> between Latin/Farsi, the <a href="undo.txt.html#redo" class="d">redo</a> buffer
+   will be reset (emptied).  That is, <a href="undo.txt.html#redo" class="d">redo</a> <a href="motion.txt.html#is" class="d">is</a> valid and will function (using
+   '.') only within the mode you are in.
+
+<a href="insert.txt.html#o" class="d">o</a>  While numbers are entered in <a href="#Farsi" class="d">Farsi</a> mode, the <a href="undo.txt.html#redo" class="d">redo</a> buffer will be reset
+   (emptied).  That is, you cannot <a href="undo.txt.html#redo" class="d">redo</a> the last changes (using '.') after
+   entering numbers.
+
+<a href="insert.txt.html#o" class="d">o</a>  While in left-to-right mode and <a href="#Farsi" class="d">Farsi</a> mode set, <a href="undo.txt.html#CTRL-R" class="k">CTRL-R</a> <a href="motion.txt.html#is" class="d">is</a> not supported.
+
+<a href="insert.txt.html#o" class="d">o</a>  While in right-to-left mode, the search on 'Latin' <a href="pattern.txt.html#pattern" class="d">pattern</a> does not work,
+   except if you enter the Latin search <a href="pattern.txt.html#pattern" class="d">pattern</a> in reverse.
+
+<a href="insert.txt.html#o" class="d">o</a>  In command mode there <a href="motion.txt.html#is" class="d">is</a> no support for entering numbers from left
+   to right and also for the sake of flexibility the keymapping logic <a href="motion.txt.html#is" class="d">is</a>
+   restricted.
+
+<a href="insert.txt.html#o" class="d">o</a>  Under the <a href="change.txt.html#X" class="d">X</a> Window environment, if you want to run Vim within <a href="insert.txt.html#a" class="d">a</a> xterm
+   terminal emulator and <a href="#Farsi" class="d">Farsi</a> mode set, you need to have an ANSI compatible
+   xterm terminal emulator.  This <a href="motion.txt.html#is" class="d">is</a> because the <a href="print.txt.html#letter" class="d">letter</a> codes above 128 decimal
+   have certain meanings in the standard xterm terminal emulator.
+
+   <span class="n">Note:</span> Under <a href="change.txt.html#X" class="d">X</a> Window environment, Vim <a href="gui.txt.html#GUI" class="d">GUI</a> works fine in <a href="#Farsi" class="d">Farsi</a> mode.
+         This eliminates the need of any xterm terminal emulator.
+
+
+Bugs
+----
+While in insert/replace and <a href="#Farsi" class="d">Farsi</a> mode set, if you repeatedly change the
+cursor position (via cursor movement) and enter new text and then try to <a href="undo.txt.html#undo" class="d">undo</a>
+the last change, the <a href="undo.txt.html#undo" class="d">undo</a> will lag one change behind.  But <a href="motion.txt.html#as" class="d">as</a> you continue to
+undo, you will reach the original line of text.  You can also use <a href="undo.txt.html#U" class="d">U</a> to <a href="undo.txt.html#undo" class="d">undo</a> all
+changes made in the current line.
+
+For more information about the <a href="intro.txt.html#bugs" class="d">bugs</a> refer to rileft.txt.
+
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

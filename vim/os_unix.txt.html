@@ -1,0 +1,74 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: os_unix.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="os_unix.txt" class="t">os_unix.txt</a>   For <span class="i">Vim version 8.0.</span>  Last change: 2005 Mar 29
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Bram Moolenaar</span>
+
+
+                                                        <a name="unix" class="t">unix</a> <a name="Unix" class="t">Unix</a>
+This file contains the particularities for the <a href="#Unix" class="d">Unix</a> version of Vim.
+
+For compiling Vim on <a href="#Unix" class="d">Unix</a> see "INSTALL" and "Makefile" in the src directory.
+
+The default <a href="helphelp.txt.html#help" class="d">help</a> file name <a href="motion.txt.html#is" class="d">is</a> "/usr/local/lib/vim/help.txt"
+The files "$HOME/.vimrc" and "$HOME/.exrc" are used instead of "s:.vimrc" and
+"s:.exrc"<a href="repeat.txt.html#." class="d">.</a>  Additionally "/usr/local/etc/vimrc" <a href="motion.txt.html#is" class="d">is</a> used first.
+If "/usr/local/share" exists <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> used instead of "/usr/local/lib"<a href="repeat.txt.html#." class="d">.</a>
+
+Temporary files (for filtering) are <a href="change.txt.html#put" class="d">put</a> in "/tmp"<a href="repeat.txt.html#." class="d">.</a>  If you want to place them
+somewhere else, set the environment variable $TMPDIR to the directory you
+prefer.
+
+With <a href="editing.txt.html#wildcard" class="d">wildcard</a> expansion you can use '~' (home directory) and '$'
+(environment variable).
+
+                                                        <a name="fork" class="t">fork</a> <a name="spoon" class="t">spoon</a>
+For executing external commands fork()/exec() <a href="motion.txt.html#is" class="d">is</a> used when possible, otherwise
+<a href="eval.txt.html#system%28%29" class="d">system()</a> <a href="motion.txt.html#is" class="d">is</a> used, which <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> bit slower.  The output of "<a href="various.txt.html#%3Aversion" class="d">:version</a>" includes
+<a href="various.txt.html#%2Bfork" class="l">+fork</a> when fork()/exec() <a href="motion.txt.html#is" class="d">is</a> used, <a href="various.txt.html#%2Bsystem%28%29" class="l">+system()</a> when <a href="eval.txt.html#system%28%29" class="d">system()</a> <a href="motion.txt.html#is" class="d">is</a> used.  This
+can be changed <a href="motion.txt.html#at" class="d">at</a> compile time.
+(For forking of the <a href="gui.txt.html#GUI" class="d">GUI</a> version see <a href="gui_x11.txt.html#gui-fork" class="l">gui-fork</a>.)
+
+Because terminal updating under <a href="#Unix" class="d">Unix</a> <a href="motion.txt.html#is" class="d">is</a> often slow (e.g. serial line
+terminal, shell <a href="windows.txt.html#window" class="d">window</a> in suntools), the <a href="options.txt.html#%27showcmd%27" class="o">'showcmd'</a> and <a href="options.txt.html#%27ruler%27" class="o">'ruler'</a> <a href="options.txt.html#options" class="d">options</a>
+are default off.  If you have <a href="insert.txt.html#a" class="d">a</a> fast terminal, try setting them on.  You might
+also want to set <a href="options.txt.html#%27ttyfast%27" class="o">'ttyfast'</a>.
+
+When using Vim in an xterm the mouse clicks can be used by Vim by setting
+<a href="options.txt.html#%27mouse%27" class="o">'mouse'</a> to "<a href="insert.txt.html#a" class="d">a</a>"<a href="repeat.txt.html#." class="d">.</a>  If there <a href="motion.txt.html#is" class="d">is</a> access to an X-server <a href="gui.txt.html#gui" class="d">gui</a> style copy/paste will
+be used and visual feedback will be provided while dragging with the mouse.
+If you then still want the xterm copy/paste with the mouse, press the <a href="intro.txt.html#shift" class="d">shift</a>
+key when using the mouse.  See <a href="term.txt.html#mouse-using" class="l">mouse-using</a><a href="repeat.txt.html#." class="d">.</a>  <a href="visual.txt.html#Visual" class="d">Visual</a> feedback while dragging
+can also be achieved via the <a href="options.txt.html#%27ttymouse%27" class="o">'ttymouse'</a> option if your xterm <a href="motion.txt.html#is" class="d">is</a> new enough.
+
+                                                        <a name="terminal-colors" class="t">terminal-colors</a>
+To use colors in Vim you can use the following example (if your terminal
+supports colors, but "T_Co" <a href="motion.txt.html#is" class="d">is</a> empty or zero): 
+<span class="e">   :set t_me=^[[0;1;36m     " normal mode (undoes t_mr and t_md)</span>
+<span class="e">   :set t_mr=^[[0;1;33;44m  " reverse (invert) mode</span>
+<span class="e">   :set t_md=^[[1;33;41m    " bold mode</span>
+<span class="e">   :set t_se=^[[1;36;40m    " standout end</span>
+<span class="e">   :set t_so=^[[1;32;45m    " standout mode</span>
+<span class="e">   :set t_ue=^[[0;1;36m     " underline end</span>
+<span class="e">   :set t_us=^[[1;32m       " underline mode start</span>
+[the ^[ <a href="motion.txt.html#is" class="d">is</a> an <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a>, type <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a> to enter it]
+
+For real color terminals the "<a href="syntax.txt.html#%3Ahighlight" class="d">:highlight</a>" command can be used.
+
+The file "tools/vim132" <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> shell <a href="usr_41.txt.html#script" class="d">script</a> that can be used to <a href="change.txt.html#put" class="d">put</a> Vim in 132
+column mode on <a href="insert.txt.html#a" class="d">a</a> vt100 and lookalikes.
+
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

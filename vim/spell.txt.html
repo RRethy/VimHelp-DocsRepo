@@ -1,0 +1,1663 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: spell.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="spell.txt" class="t">spell.txt</a>     For <span class="i">Vim version 8.0.</span>  Last change: 2018 Mar 29
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Bram Moolenaar</span>
+
+
+Spell checking                                          <a name="spell" class="t">spell</a>
+
+1. Quick start                  <a href="#spell-quickstart" class="l">spell-quickstart</a>
+2. Remarks on <a href="#spell" class="d">spell</a> checking    <a href="#spell-remarks" class="l">spell-remarks</a>
+3. Generating <a href="insert.txt.html#a" class="d">a</a> <a href="#spell" class="d">spell</a> file      <a href="#spell-mkspell" class="l">spell-mkspell</a>
+4. Spell file format            <a href="#spell-file-format" class="l">spell-file-format</a>
+
+<span class="s">{Vi does not have any of these commands}</span>
+
+Spell checking <a href="motion.txt.html#is" class="d">is</a> not available when the <a href="various.txt.html#%2Bsyntax" class="l">+syntax</a> feature has been disabled
+<a href="motion.txt.html#at" class="d">at</a> compile time.
+
+<span class="n">Note:</span> There also <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> vimspell plugin.  If you have <a href="motion.txt.html#it" class="d">it</a> you can <a href="diff.txt.html#do" class="d">do</a> "<a href="helphelp.txt.html#%3Ahelp" class="d">:help</a>
+vimspell" to find about it.  But you will probably want to get rid of the
+<a href="usr_05.txt.html#plugin" class="d">plugin</a> and use the <a href="options.txt.html#%27spell%27" class="o">'spell'</a> option instead, <a href="motion.txt.html#it" class="d">it</a> works better.
+
+<span class="h">==============================================================================</span>
+1. Quick start                                  <a name="spell-quickstart" class="t">spell-quickstart</a> <a name="E756" class="t">E756</a>
+
+This command switches on <a href="#spell" class="d">spell</a> checking: 
+<span class="e"></span>
+<span class="e">        :setlocal spell spelllang=en_us</span>
+<span class="e"></span>
+This switches on the <a href="options.txt.html#%27spell%27" class="o">'spell'</a> option and specifies to check for US English.
+
+The words that are not recognized are highlighted with one of these:
+        SpellBad        <a href="motion.txt.html#word" class="d">word</a> not recognized                     <a href="syntax.txt.html#hl-SpellBad" class="l">hl-SpellBad</a>
+        SpellCap        <a href="motion.txt.html#word" class="d">word</a> not capitalised                    <a href="syntax.txt.html#hl-SpellCap" class="l">hl-SpellCap</a>
+        SpellRare       rare <a href="motion.txt.html#word" class="d">word</a>                               <a href="syntax.txt.html#hl-SpellRare" class="l">hl-SpellRare</a>
+        SpellLocal      wrong spelling for selected region      <a href="syntax.txt.html#hl-SpellLocal" class="l">hl-SpellLocal</a>
+
+Vim only checks words for spelling, there <a href="motion.txt.html#is" class="d">is</a> no grammar check.
+
+If the <a href="options.txt.html#%27mousemodel%27" class="o">'mousemodel'</a> option <a href="motion.txt.html#is" class="d">is</a> set to "popup" and the cursor <a href="motion.txt.html#is" class="d">is</a> on <a href="insert.txt.html#a" class="d">a</a> badly
+spelled <a href="motion.txt.html#word" class="d">word</a> or <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> "popup_setpos" and the mouse pointer <a href="motion.txt.html#is" class="d">is</a> on <a href="insert.txt.html#a" class="d">a</a> badly
+spelled word, then the popup menu will contain <a href="insert.txt.html#a" class="d">a</a> submenu to replace the bad
+word.  <span class="n">Note:</span> this slows down the appearance of the popup menu.  <span class="n">Note</span> for GTK:
+don't release the right mouse button until the menu appears, otherwise <a href="motion.txt.html#it" class="d">it</a>
+won't work.
+
+To search for the next misspelled word:
+
+                                                        <a name="%5Ds" class="t">]s</a>
+<a href="#%5Ds" class="d">]s</a>                      Move to next misspelled <a href="motion.txt.html#word" class="d">word</a> after the cursor.
+                        <a href="insert.txt.html#A" class="d">A</a> <a href="intro.txt.html#count" class="d">count</a> before the command can be used to repeat.
+                        <a href="options.txt.html#%27wrapscan%27" class="o">'wrapscan'</a> applies.
+
+                                                        <a name="%5Bs" class="t">[s</a>
+<a href="#%5Bs" class="d">[s</a>                      Like "<a href="#%5Ds" class="d">]s</a>" but search backwards, find the misspelled
+                        <a href="motion.txt.html#word" class="d">word</a> before the cursor.  Doesn't recognize words
+                        split over two lines, thus may stop <a href="motion.txt.html#at" class="d">at</a> words that are
+                        not highlighted <a href="motion.txt.html#as" class="d">as</a> bad.  Does not stop <a href="motion.txt.html#at" class="d">at</a> <a href="motion.txt.html#word" class="d">word</a> with
+                        missing capital <a href="motion.txt.html#at" class="d">at</a> the start of <a href="insert.txt.html#a" class="d">a</a> line.
+
+                                                        <a name="%5DS" class="t">]S</a>
+<a href="#%5DS" class="d">]S</a>                      Like "<a href="#%5Ds" class="d">]s</a>" but only stop <a href="motion.txt.html#at" class="d">at</a> bad words, not <a href="motion.txt.html#at" class="d">at</a> rare
+                        words or words for another region.
+
+                                                        <a name="%5BS" class="t">[S</a>
+<a href="#%5BS" class="d">[S</a>                      Like "<a href="#%5DS" class="d">]S</a>" but search backwards.
+
+
+To add words to your own <a href="motion.txt.html#word" class="d">word</a> list:
+
+                                                        <a name="zg" class="t">zg</a>
+<a href="#zg" class="d">zg</a>                      Add <a href="motion.txt.html#word" class="d">word</a> under the cursor <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> good <a href="motion.txt.html#word" class="d">word</a> to the first
+                        name in <a href="options.txt.html#%27spellfile%27" class="o">'spellfile'</a>.  <a href="insert.txt.html#A" class="d">A</a> <a href="intro.txt.html#count" class="d">count</a> may precede the command
+                        to indicate the entry in <a href="options.txt.html#%27spellfile%27" class="o">'spellfile'</a> to be used.  <a href="insert.txt.html#A" class="d">A</a>
+                        <a href="intro.txt.html#count" class="d">count</a> of two uses the second entry.
+
+                        In <a href="visual.txt.html#Visual" class="d">Visual</a> mode the selected characters are added <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a>
+                        <a href="motion.txt.html#word" class="d">word</a> (including white space!).
+                        When the cursor <a href="motion.txt.html#is" class="d">is</a> on text that <a href="motion.txt.html#is" class="d">is</a> marked <a href="motion.txt.html#as" class="d">as</a> badly
+                        spelled then the marked text <a href="motion.txt.html#is" class="d">is</a> used.
+                        Otherwise the <a href="motion.txt.html#word" class="d">word</a> under the cursor, separated by
+                        non-word characters, <a href="motion.txt.html#is" class="d">is</a> used.
+
+                        If the <a href="motion.txt.html#word" class="d">word</a> <a href="motion.txt.html#is" class="d">is</a> explicitly marked <a href="motion.txt.html#as" class="d">as</a> bad <a href="motion.txt.html#word" class="d">word</a> in
+                        another <a href="#spell" class="d">spell</a> file the result <a href="motion.txt.html#is" class="d">is</a> unpredictable.
+
+                                                        <a name="zG" class="t">zG</a>
+<a href="#zG" class="d">zG</a>                      Like "<a href="#zg" class="d">zg</a>" but add the <a href="motion.txt.html#word" class="d">word</a> to the internal <a href="motion.txt.html#word" class="d">word</a> <a href="eval.txt.html#list" class="d">list</a>
+                        <a href="#internal-wordlist" class="l">internal-wordlist</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="zw" class="t">zw</a>
+<a href="#zw" class="d">zw</a>                      Like "<a href="#zg" class="d">zg</a>" but <a href="motion.txt.html#mark" class="d">mark</a> the <a href="motion.txt.html#word" class="d">word</a> <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> wrong (bad) word.
+                        If the <a href="motion.txt.html#word" class="d">word</a> already appears in <a href="options.txt.html#%27spellfile%27" class="o">'spellfile'</a> <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a>
+                        turned into <a href="insert.txt.html#a" class="d">a</a> comment line.  See <a href="#spellfile-cleanup" class="l">spellfile-cleanup</a>
+                        for getting rid of those.
+
+                                                        <a name="zW" class="t">zW</a>
+<a href="#zW" class="d">zW</a>                      Like "<a href="#zw" class="d">zw</a>" but add the <a href="motion.txt.html#word" class="d">word</a> to the internal <a href="motion.txt.html#word" class="d">word</a> <a href="eval.txt.html#list" class="d">list</a>
+                        <a href="#internal-wordlist" class="l">internal-wordlist</a><a href="repeat.txt.html#." class="d">.</a>
+
+<a href="#zuw" class="d">zuw</a>                                                     <a name="zug" class="t">zug</a> <a name="zuw" class="t">zuw</a>
+<a href="#zug" class="d">zug</a>                     Undo <a href="#zw" class="l">zw</a> and <a href="#zg" class="l">zg</a><a href="motion.txt.html#%2C" class="d">,</a> remove the <a href="motion.txt.html#word" class="d">word</a> from the entry in
+                        <a href="options.txt.html#%27spellfile%27" class="o">'spellfile'</a>.  Count used <a href="motion.txt.html#as" class="d">as</a> with <a href="#zg" class="l">zg</a><a href="repeat.txt.html#." class="d">.</a>
+
+<a href="#zuW" class="d">zuW</a>                                                     <a name="zuG" class="t">zuG</a> <a name="zuW" class="t">zuW</a>
+<a href="#zuG" class="d">zuG</a>                     Undo <a href="#zW" class="l">zW</a> and <a href="#zG" class="l">zG</a><a href="motion.txt.html#%2C" class="d">,</a> remove the <a href="motion.txt.html#word" class="d">word</a> from the internal
+                        <a href="motion.txt.html#word" class="d">word</a> list.  Count used <a href="motion.txt.html#as" class="d">as</a> with <a href="#zg" class="l">zg</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="%3Aspe" class="t">:spe</a> <a name="%3Aspellgood" class="t">:spellgood</a>
+:[count]spe[llgood] <span class="s">{word}</span>
+                        Add <span class="s">{word}</span> <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> good <a href="motion.txt.html#word" class="d">word</a> to <a href="options.txt.html#%27spellfile%27" class="o">'spellfile'</a>, like with
+                        <a href="#zg" class="l">zg</a><a href="repeat.txt.html#." class="d">.</a>  Without <a href="intro.txt.html#count" class="d">count</a> the first name <a href="motion.txt.html#is" class="d">is</a> used, with <a href="insert.txt.html#a" class="d">a</a>
+                        <a href="intro.txt.html#count" class="d">count</a> of two the second entry, etc.
+
+:spe[llgood]! <span class="s">{word}</span>    Add <span class="s">{word}</span> <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> good <a href="motion.txt.html#word" class="d">word</a> to the internal <a href="motion.txt.html#word" class="d">word</a> list,
+                        like with <a href="#zG" class="l">zG</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="%3Aspellw" class="t">:spellw</a> <a name="%3Aspellwrong" class="t">:spellwrong</a>
+:[count]spellw[rong] <span class="s">{word}</span>
+                        Add <span class="s">{word}</span> <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> wrong (bad) <a href="motion.txt.html#word" class="d">word</a> to <a href="options.txt.html#%27spellfile%27" class="o">'spellfile'</a>, <a href="motion.txt.html#as" class="d">as</a>
+                        with <a href="#zw" class="l">zw</a><a href="repeat.txt.html#." class="d">.</a>  Without <a href="intro.txt.html#count" class="d">count</a> the first name <a href="motion.txt.html#is" class="d">is</a> used, with
+                        <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> of two the second entry, etc.
+
+:spellw[rong]! <span class="s">{word}</span>   Add <span class="s">{word}</span> <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> wrong (bad) <a href="motion.txt.html#word" class="d">word</a> to the internal <a href="motion.txt.html#word" class="d">word</a>
+                        list, like with <a href="#zW" class="l">zW</a><a href="repeat.txt.html#." class="d">.</a>
+
+:[count]spellu[ndo] <span class="s">{word}</span>                              <a name="%3Aspellu" class="t">:spellu</a> <a name="%3Aspellundo" class="t">:spellundo</a>
+                        Like <a href="#zuw" class="l">zuw</a><a href="repeat.txt.html#." class="d">.</a>  <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> used <a href="motion.txt.html#as" class="d">as</a> with <a href="#%3Aspellgood" class="l">:spellgood</a><a href="repeat.txt.html#." class="d">.</a>
+
+:spellu[ndo]! <span class="s">{word}</span>    Like <a href="#zuW" class="l">zuW</a><a href="repeat.txt.html#." class="d">.</a>  <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> used <a href="motion.txt.html#as" class="d">as</a> with <a href="#%3Aspellgood" class="l">:spellgood</a><a href="repeat.txt.html#." class="d">.</a>
+
+
+After adding <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> to <a href="options.txt.html#%27spellfile%27" class="o">'spellfile'</a> with the above commands its associated
+".spl" file will automatically be updated and reloaded.  If you change
+<a href="options.txt.html#%27spellfile%27" class="o">'spellfile'</a> manually you need to use the <a href="#%3Amkspell" class="l">:mkspell</a> command.  This sequence of
+commands mostly works well: 
+<span class="e">        :edit &lt;file in 'spellfile'&gt;</span>
+       (make changes to the <a href="#spell" class="d">spell</a> file) 
+<span class="e">        :mkspell! %</span>
+<span class="e"></span>
+More details about the <a href="options.txt.html#%27spellfile%27" class="o">'spellfile'</a> format below <a href="#spell-wordlist-format" class="l">spell-wordlist-format</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="internal-wordlist" class="t">internal-wordlist</a>
+The internal <a href="motion.txt.html#word" class="d">word</a> <a href="eval.txt.html#list" class="d">list</a> <a href="motion.txt.html#is" class="d">is</a> used for all <a href="windows.txt.html#buffers" class="d">buffers</a> where <a href="options.txt.html#%27spell%27" class="o">'spell'</a> <a href="motion.txt.html#is" class="d">is</a> set.  It <a href="motion.txt.html#is" class="d">is</a>
+not stored, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> lost when you exit Vim.  It <a href="motion.txt.html#is" class="d">is</a> also cleared when <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a>
+<a href="motion.txt.html#is" class="d">is</a> set.
+
+
+Finding suggestions for bad words:
+                                                        <a name="z%3D" class="t">z=</a>
+<a href="#z%3D" class="d">z=</a>                      For the <a href="motion.txt.html#word" class="d">word</a> under/after the cursor suggest correctly
+                        spelled words.  This also works to find alternatives
+                        for <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> that <a href="motion.txt.html#is" class="d">is</a> not highlighted <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> bad word,
+                        e.g., when the <a href="motion.txt.html#word" class="d">word</a> after <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> bad.
+                        In <a href="visual.txt.html#Visual" class="d">Visual</a> mode the highlighted text <a href="motion.txt.html#is" class="d">is</a> taken <a href="motion.txt.html#as" class="d">as</a> the
+                        <a href="motion.txt.html#word" class="d">word</a> to be replaced.
+                        The results are sorted on similarity to the <a href="motion.txt.html#word" class="d">word</a> being
+                        replaced.
+                        This may take <a href="insert.txt.html#a" class="d">a</a> long time.  Hit <a href="pattern.txt.html#CTRL-C" class="k">CTRL-C</a> when you get
+                        bored.
+
+                        If the command <a href="motion.txt.html#is" class="d">is</a> used without <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> the
+                        alternatives are listed and you can enter the number
+                        of your choice or press <a href="intro.txt.html#%3CEnter%3E" class="s">&lt;Enter&gt;</a> if you don't want to
+                        replace.  You can also use the mouse to click on your
+                        choice (only works if the mouse can be used in <a href="intro.txt.html#Normal" class="d">Normal</a>
+                        mode and when there are no line wraps).  Click on the
+                        first line (the header) to cancel.
+
+                        The suggestions listed normally replace <a href="insert.txt.html#a" class="d">a</a> highlighted
+                        bad word.  Sometimes they include other text, in that
+                        <a href="change.txt.html#case" class="d">case</a> the replaced text <a href="motion.txt.html#is" class="d">is</a> also listed after <a href="insert.txt.html#a" class="d">a</a> "<a href="change.txt.html#%3C" class="d">&lt;</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+                        If <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> <a href="motion.txt.html#is" class="d">is</a> used that suggestion <a href="motion.txt.html#is" class="d">is</a> used, without
+                        prompting.  For example, "1z=" always takes the first
+                        suggestion.
+
+                        If <a href="options.txt.html#%27verbose%27" class="o">'verbose'</a> <a href="motion.txt.html#is" class="d">is</a> non-zero <a href="insert.txt.html#a" class="d">a</a> score will be displayed
+                        with the suggestions to indicate the likeliness to the
+                        badly spelled <a href="motion.txt.html#word" class="d">word</a> (the higher the score the more
+                        different).
+                        When <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> was replaced the <a href="undo.txt.html#redo" class="d">redo</a> command "<a href="repeat.txt.html#." class="d">.</a>" will
+                        repeat the <a href="motion.txt.html#word" class="d">word</a> replacement.  This works like "ciw"<a href="motion.txt.html#%2C" class="d">,</a>
+                        the good <a href="motion.txt.html#word" class="d">word</a> and <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a>.  This does NOT work for Thai
+                        and other languages without spaces between words.
+
+                                        <a name="%3Aspellr" class="t">:spellr</a> <a name="%3Aspellrepall" class="t">:spellrepall</a> <a name="E752" class="t">E752</a> <a name="E753" class="t">E753</a>
+:spellr[epall]          Repeat the replacement done by <a href="#z%3D" class="l">z=</a> for all matches
+                        with the replaced <a href="motion.txt.html#word" class="d">word</a> in the current window.
+
+In <a href="insert.txt.html#Insert" class="d">Insert</a> mode, when the cursor <a href="motion.txt.html#is" class="d">is</a> after <a href="insert.txt.html#a" class="d">a</a> badly spelled word, you can use
+<a href="change.txt.html#CTRL-X" class="k">CTRL-X</a> <a href="change.txt.html#s" class="d">s</a> to find suggestions.  This works like <a href="insert.txt.html#Insert" class="d">Insert</a> mode completion.  Use
+<a href="motion.txt.html#CTRL-N" class="k">CTRL-N</a> to use the next suggestion, <a href="motion.txt.html#CTRL-P" class="k">CTRL-P</a> to <a href="motion.txt.html#go" class="d">go</a> back. <a href="insert.txt.html#i_CTRL-X_s" class="l">i_CTRL-X_s</a>
+
+The <a href="options.txt.html#%27spellsuggest%27" class="o">'spellsuggest'</a> option influences how the <a href="eval.txt.html#list" class="d">list</a> of suggestions <a href="motion.txt.html#is" class="d">is</a> generated
+and sorted.  See <a href="options.txt.html#%27spellsuggest%27" class="l">'spellsuggest'</a><a href="repeat.txt.html#." class="d">.</a>
+
+The <a href="options.txt.html#%27spellcapcheck%27" class="o">'spellcapcheck'</a> option <a href="motion.txt.html#is" class="d">is</a> used to check the first <a href="motion.txt.html#word" class="d">word</a> of <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#sentence" class="d">sentence</a>
+starts with <a href="insert.txt.html#a" class="d">a</a> capital.  This doesn't work for the first <a href="motion.txt.html#word" class="d">word</a> in the file.
+When there <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> line break right after <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#sentence" class="d">sentence</a> the highlighting of the next
+line may be postponed.  Use <a href="various.txt.html#CTRL-L" class="l">CTRL-L</a> when needed.  Also see <a href="#set-spc-auto" class="l">set-spc-auto</a> for
+how <a href="motion.txt.html#it" class="d">it</a> can be set automatically when <a href="options.txt.html#%27spelllang%27" class="o">'spelllang'</a> <a href="motion.txt.html#is" class="d">is</a> set.
+
+Vim counts the number of times <a href="insert.txt.html#a" class="d">a</a> good <a href="motion.txt.html#word" class="d">word</a> <a href="motion.txt.html#is" class="d">is</a> encountered.  This <a href="motion.txt.html#is" class="d">is</a> used to
+sort the suggestions: words that have been seen before get <a href="insert.txt.html#a" class="d">a</a> small bonus,
+words that have been seen often get <a href="insert.txt.html#a" class="d">a</a> bigger bonus.  The COMMON item in the
+affix file can be used to define common words, so that this mechanism also
+works in <a href="insert.txt.html#a" class="d">a</a> new or short file <a href="#spell-COMMON" class="l">spell-COMMON</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+2. Remarks on <a href="#spell" class="d">spell</a> checking                            <a name="spell-remarks" class="t">spell-remarks</a>
+
+PERFORMANCE
+
+Vim does on-the-fly <a href="#spell" class="d">spell</a> checking.  To make this work fast the <a href="motion.txt.html#word" class="d">word</a> <a href="eval.txt.html#list" class="d">list</a> <a href="motion.txt.html#is" class="d">is</a>
+loaded in memory.  Thus this uses <a href="insert.txt.html#a" class="d">a</a> lot of memory (1 Mbyte or more).  There
+might also be <a href="insert.txt.html#a" class="d">a</a> noticeable delay when the <a href="motion.txt.html#word" class="d">word</a> <a href="eval.txt.html#list" class="d">list</a> <a href="motion.txt.html#is" class="d">is</a> loaded, which happens
+when <a href="options.txt.html#%27spell%27" class="o">'spell'</a> <a href="motion.txt.html#is" class="d">is</a> set and when <a href="options.txt.html#%27spelllang%27" class="o">'spelllang'</a> <a href="motion.txt.html#is" class="d">is</a> set while <a href="options.txt.html#%27spell%27" class="o">'spell'</a> was already set.
+To minimize the delay each <a href="motion.txt.html#word" class="d">word</a> <a href="eval.txt.html#list" class="d">list</a> <a href="motion.txt.html#is" class="d">is</a> only loaded once, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> not deleted
+when <a href="options.txt.html#%27spelllang%27" class="o">'spelllang'</a> <a href="motion.txt.html#is" class="d">is</a> made empty or <a href="options.txt.html#%27spell%27" class="o">'spell'</a> <a href="motion.txt.html#is" class="d">is</a> reset.  When <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> <a href="motion.txt.html#is" class="d">is</a> set
+all the <a href="motion.txt.html#word" class="d">word</a> lists are reloaded, thus you may notice <a href="insert.txt.html#a" class="d">a</a> delay then too.
+
+
+REGIONS
+
+<a href="insert.txt.html#A" class="d">A</a> <a href="motion.txt.html#word" class="d">word</a> may be spelled differently in <a href="various.txt.html#various" class="d">various</a> regions.  For example, English
+comes in (at least) these variants:
+
+        en              all regions
+        en_au           Australia
+        en_ca           Canada
+        en_gb           Great Britain
+        en_nz           New Zealand
+        en_us           USA
+
+Words that are not used in one region but are used in another region are
+highlighted with SpellLocal <a href="syntax.txt.html#hl-SpellLocal" class="l">hl-SpellLocal</a><a href="repeat.txt.html#." class="d">.</a>
+
+Always use <a href="change.txt.html#lowercase" class="d">lowercase</a> letters for the language and region names.
+
+When adding <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> with <a href="#zg" class="l">zg</a> or another command it's always added for all
+regions.  You can change that by manually editing the <a href="options.txt.html#%27spellfile%27" class="o">'spellfile'</a>.  See
+<a href="#spell-wordlist-format" class="l">spell-wordlist-format</a><a href="repeat.txt.html#." class="d">.</a>  <span class="n">Note</span> that the regions <a href="motion.txt.html#as" class="d">as</a> specified in the files in
+<a href="options.txt.html#%27spellfile%27" class="o">'spellfile'</a> are only used when all entries in <a href="options.txt.html#%27spelllang%27" class="o">'spelllang'</a> specify the same
+region (not counting files specified by their .spl name).
+
+                                                        <a name="spell-german" class="t">spell-german</a>
+Specific exception: For German these special regions are used:
+        de              all German words accepted
+        de_de           old and new spelling
+        de_19           old spelling
+        de_20           new spelling
+        de_at           Austria
+        de_ch           Switzerland
+
+                                                        <a name="spell-russian" class="t">spell-russian</a>
+Specific exception: For <a href="russian.txt.html#Russian" class="d">Russian</a> these special regions are used:
+        ru              all <a href="russian.txt.html#Russian" class="d">Russian</a> words accepted
+        ru_ru           "IE" <a href="print.txt.html#letter" class="d">letter</a> spelling
+        ru_yo           "YO" <a href="print.txt.html#letter" class="d">letter</a> spelling
+
+                                                        <a name="spell-yiddish" class="t">spell-yiddish</a>
+Yiddish requires using "<a href="mbyte.txt.html#utf-8" class="d">utf-8</a>" encoding, because of the special characters
+used.  If you are using latin1 Vim will use transliterated (romanized) Yiddish
+instead.  If you want to use transliterated Yiddish with <a href="mbyte.txt.html#utf-8" class="d">utf-8</a> use "yi-tr"<a href="repeat.txt.html#." class="d">.</a>
+In <a href="insert.txt.html#a" class="d">a</a> table:
+        <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a>      <a href="options.txt.html#%27spelllang%27" class="o">'spelllang'</a>
+        <a href="mbyte.txt.html#utf-8" class="d">utf-8</a>           yi              Yiddish
+        latin1          yi              transliterated Yiddish
+        <a href="mbyte.txt.html#utf-8" class="d">utf-8</a>           yi-tr           transliterated Yiddish
+
+                                                        <a name="spell-cjk" class="t">spell-cjk</a>
+Chinese, <a href="mbyte.txt.html#Japanese" class="d">Japanese</a> and other East Asian characters are normally marked <a href="motion.txt.html#as" class="d">as</a>
+errors, because <a href="#spell" class="d">spell</a> checking of these characters <a href="motion.txt.html#is" class="d">is</a> not supported. If
+<a href="options.txt.html#%27spelllang%27" class="o">'spelllang'</a> includes "cjk"<a href="motion.txt.html#%2C" class="d">,</a> these characters are not marked <a href="motion.txt.html#as" class="d">as</a> errors.  This
+<a href="motion.txt.html#is" class="d">is</a> useful when editing text with <a href="#spell" class="d">spell</a> checking while some Asian words are
+present.
+
+
+<span class="c">SPELL FILES                                            </span> <a name="spell-load" class="t">spell-load</a>
+
+Vim searches for <a href="#spell" class="d">spell</a> files in the "<a href="#spell" class="d">spell</a>" subdirectory of the directories in
+<a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a>.  The name is: LL.EEE.spl, where:
+        LL      the language name
+        EEE     the value of <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a>
+
+The value for "LL" comes from <a href="options.txt.html#%27spelllang%27" class="o">'spelllang'</a>, but excludes the region name.
+Examples:
+<span class="h">        'spelllang'     LL </span>
+        en_us           en
+        en-rare         en-rare
+        medical_ca      medical
+
+Only the first file <a href="motion.txt.html#is" class="d">is</a> loaded, the one that <a href="motion.txt.html#is" class="d">is</a> first in <a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a>.  If
+this succeeds then additionally files with the name LL.EEE.add.spl are loaded.
+All the ones that are found are used.
+
+If no <a href="#spell" class="d">spell</a> file <a href="motion.txt.html#is" class="d">is</a> found the <a href="autocmd.txt.html#SpellFileMissing" class="l">SpellFileMissing</a> <a href="autocmd.txt.html#autocommand" class="d">autocommand</a> event <a href="motion.txt.html#is" class="d">is</a>
+triggered.  This may trigger the <a href="#spellfile.vim" class="l">spellfile.vim</a> <a href="usr_05.txt.html#plugin" class="d">plugin</a> to offer you
+downloading the <a href="#spell" class="d">spell</a> file.
+
+Additionally, the files related to the names in <a href="options.txt.html#%27spellfile%27" class="o">'spellfile'</a> are loaded.  These
+are the files that <a href="#zg" class="l">zg</a> and <a href="#zw" class="l">zw</a> add good and wrong words to.
+
+Exceptions:
+<a href="motion.txt.html#-" class="d">-</a> Vim uses "latin1" when <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> <a href="motion.txt.html#is" class="d">is</a> "iso-8859-15"<a href="repeat.txt.html#." class="d">.</a>  The euro sign doesn't
+  matter for spelling.
+<a href="motion.txt.html#-" class="d">-</a> When no <a href="#spell" class="d">spell</a> file for <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> <a href="motion.txt.html#is" class="d">is</a> found "ascii" <a href="motion.txt.html#is" class="d">is</a> tried.  This only
+  works for languages where nearly all words are ASCII, such <a href="motion.txt.html#as" class="d">as</a> English.  It
+  helps when <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> <a href="motion.txt.html#is" class="d">is</a> not "latin1"<a href="motion.txt.html#%2C" class="d">,</a> such <a href="motion.txt.html#as" class="d">as</a> iso-8859-2, and English text
+  <a href="motion.txt.html#is" class="d">is</a> being edited.  For the ".add" files the same name <a href="motion.txt.html#as" class="d">as</a> the found main
+  <a href="#spell" class="d">spell</a> file <a href="motion.txt.html#is" class="d">is</a> used.
+
+For example, with these values:
+        <a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a> <a href="motion.txt.html#is" class="d">is</a> "~/.vim,/usr/share/vim70,~/.vim/after"
+        <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a>    <a href="motion.txt.html#is" class="d">is</a> "iso-8859-2"
+        <a href="options.txt.html#%27spelllang%27" class="o">'spelllang'</a>   <a href="motion.txt.html#is" class="d">is</a> "pl"
+
+Vim will look for:
+1. ~/.vim/spell/pl.iso-8859-2.spl
+2. /usr/share/vim70/spell/pl.iso-8859-2.spl
+3. ~/.vim/spell/pl.iso-8859-2.add.spl
+4. /usr/share/vim70/spell/pl.iso-8859-2.add.spl
+5. ~/.vim/after/spell/pl.iso-8859-2.add.spl
+
+This assumes 1. <a href="motion.txt.html#is" class="d">is</a> not found and 2. <a href="motion.txt.html#is" class="d">is</a> found.
+
+If <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> <a href="motion.txt.html#is" class="d">is</a> "latin1" Vim will look for:
+1. ~/.vim/spell/pl.latin1.spl
+2. /usr/share/vim70/spell/pl.latin1.spl
+3. ~/.vim/after/spell/pl.latin1.spl
+4. ~/.vim/spell/pl.ascii.spl
+5. /usr/share/vim70/spell/pl.ascii.spl
+6. ~/.vim/after/spell/pl.ascii.spl
+
+This assumes none of them are found (Polish doesn't make sense when leaving
+out the non-ASCII characters).
+
+Spelling for EBCDIC <a href="motion.txt.html#is" class="d">is</a> currently not supported.
+
+<a href="insert.txt.html#A" class="d">A</a> <a href="#spell" class="d">spell</a> file might not be available in the current <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a>.  See
+<a href="#spell-mkspell" class="l">spell-mkspell</a> about how to create <a href="insert.txt.html#a" class="d">a</a> <a href="#spell" class="d">spell</a> file.  Converting <a href="insert.txt.html#a" class="d">a</a> <a href="#spell" class="d">spell</a> file
+with "iconv" will NOT work!
+
+<span class="n">Note:</span> on <a href="os_vms.txt.html#VMS" class="d">VMS</a> ".{enc}.spl" <a href="motion.txt.html#is" class="d">is</a> changed to "_{enc}.spl" to avoid trouble with
+filenames.
+
+                                                    <a name="spell-sug-file" class="t">spell-sug-file</a> <a name="E781" class="t">E781</a>
+If there <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> file with exactly the same name <a href="motion.txt.html#as" class="d">as</a> the ".spl" file but ending in
+".sug"<a href="motion.txt.html#%2C" class="d">,</a> that file will be used for giving better suggestions.  It isn't loaded
+before suggestions are made to reduce memory use.
+
+                                    <a name="E758" class="t">E758</a> <a name="E759" class="t">E759</a> <a name="E778" class="t">E778</a> <a name="E779" class="t">E779</a> <a name="E780" class="t">E780</a> <a name="E782" class="t">E782</a>
+When loading <a href="insert.txt.html#a" class="d">a</a> <a href="#spell" class="d">spell</a> file Vim checks that <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> properly formatted.  If you
+get an error the file may be truncated, modified or intended for another Vim
+version.
+
+
+<span class="c">SPELLFILE CLEANUP                                      </span> <a name="spellfile-cleanup" class="t">spellfile-cleanup</a>
+
+The <a href="#zw" class="l">zw</a> command turns existing entries in <a href="options.txt.html#%27spellfile%27" class="o">'spellfile'</a> into comment lines.
+This avoids having to write <a href="insert.txt.html#a" class="d">a</a> new file every time, but results in the file
+only getting longer, never shorter.  To clean up the comment lines in all
+".add" <a href="#spell" class="d">spell</a> files <a href="diff.txt.html#do" class="d">do</a> this: 
+<span class="e">        :runtime spell/cleanadd.vim</span>
+<span class="e"></span>
+This deletes all comment lines, except the ones that start with "##"<a href="repeat.txt.html#." class="d">.</a>  Use
+"##" lines to add comments that you want to keep.
+
+You can invoke this <a href="usr_41.txt.html#script" class="d">script</a> <a href="motion.txt.html#as" class="d">as</a> often <a href="motion.txt.html#as" class="d">as</a> you like.  <a href="insert.txt.html#A" class="d">A</a> variable <a href="motion.txt.html#is" class="d">is</a> provided to
+skip updating files that have been changed recently.  Set <a href="motion.txt.html#it" class="d">it</a> to the number of
+seconds that has passed since <a href="insert.txt.html#a" class="d">a</a> file was changed before <a href="motion.txt.html#it" class="d">it</a> will be cleaned.
+For example, to clean only files that were not changed in the last hour: 
+<span class="e">      let g:spell_clean_limit = 60 * 60</span>
+The default <a href="motion.txt.html#is" class="d">is</a> one second.
+
+
+WORDS
+
+Vim uses <a href="insert.txt.html#a" class="d">a</a> fixed method to recognize <a href="insert.txt.html#a" class="d">a</a> word.  This <a href="motion.txt.html#is" class="d">is</a> independent of
+<a href="options.txt.html#%27iskeyword%27" class="o">'iskeyword'</a>, so that <a href="motion.txt.html#it" class="d">it</a> also works in <a href="helphelp.txt.html#help" class="d">help</a> files and for languages that
+include characters like '-' in <a href="options.txt.html#%27iskeyword%27" class="o">'iskeyword'</a>.  The <a href="motion.txt.html#word" class="d">word</a> characters <a href="diff.txt.html#do" class="d">do</a> depend on
+<a href="options.txt.html#%27encoding%27" class="o">'encoding'</a>.
+
+The table with <a href="motion.txt.html#word" class="d">word</a> characters <a href="motion.txt.html#is" class="d">is</a> stored in the main .spl file.  Therefore <a href="motion.txt.html#it" class="d">it</a>
+matters what the current <a href="mbyte.txt.html#locale" class="d">locale</a> <a href="motion.txt.html#is" class="d">is</a> when generating it!  <a href="insert.txt.html#A" class="d">A</a> .add.spl file does
+not contain <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> table though.
+
+For <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> that starts with <a href="insert.txt.html#a" class="d">a</a> digit the digit <a href="motion.txt.html#is" class="d">is</a> ignored, unless the <a href="motion.txt.html#word" class="d">word</a> <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a>
+whole <a href="motion.txt.html#is" class="d">is</a> recognized.  Thus if "3D" <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> and "<a href="change.txt.html#D" class="d">D</a>" <a href="motion.txt.html#is" class="d">is</a> not then "3D" <a href="motion.txt.html#is" class="d">is</a>
+recognized <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> word, but if "3D" <a href="motion.txt.html#is" class="d">is</a> not <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> then only the "<a href="change.txt.html#D" class="d">D</a>" <a href="motion.txt.html#is" class="d">is</a> marked <a href="motion.txt.html#as" class="d">as</a>
+bad.  Hex numbers in the form 0x12ab and 0X12AB are recognized.
+
+
+<a href="motion.txt.html#WORD" class="d">WORD</a> COMBINATIONS
+
+It <a href="motion.txt.html#is" class="d">is</a> possible to spell-check words that include <a href="insert.txt.html#a" class="d">a</a> space.  This <a href="motion.txt.html#is" class="d">is</a> used to
+recognize words that are invalid when used by themselves, e.g. for "et al."<a href="repeat.txt.html#." class="d">.</a>
+It can also be used to recognize "the the" and highlight it.
+
+The number of spaces <a href="motion.txt.html#is" class="d">is</a> irrelevant.  In most cases <a href="insert.txt.html#a" class="d">a</a> line break may also
+appear.  However, this makes <a href="motion.txt.html#it" class="d">it</a> difficult to find out where to start checking
+for spelling mistakes.  When you make <a href="insert.txt.html#a" class="d">a</a> change to one line and only that line
+<a href="motion.txt.html#is" class="d">is</a> redrawn Vim won't look in the previous line, thus when "et" <a href="motion.txt.html#is" class="d">is</a> <a href="motion.txt.html#at" class="d">at</a> the <a href="intro.txt.html#end" class="d">end</a>
+of the previous line "al." will be flagged <a href="motion.txt.html#as" class="d">as</a> an error.  And when you type
+"the&lt;CR&gt;the" the highlighting doesn't appear until the first line <a href="motion.txt.html#is" class="d">is</a> redrawn.
+Use <a href="various.txt.html#CTRL-L" class="l">CTRL-L</a> to redraw right away.  "<a href="#%5Bs" class="d">[s</a>" will also stop <a href="motion.txt.html#at" class="d">at</a> <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> combination
+with <a href="insert.txt.html#a" class="d">a</a> line break.
+
+When encountering <a href="insert.txt.html#a" class="d">a</a> line break Vim skips characters such <a href="motion.txt.html#as" class="d">as</a> <a href="motion.txt.html#%27" class="d">'</a>*', '&gt;' and <a href="motion.txt.html#%27" class="d">'</a>"',
+so that comments in C, shell and Vim code can be <a href="#spell" class="d">spell</a> checked.
+
+
+<span class="c">SYNTAX HIGHLIGHTING                                    </span> <a name="spell-syntax" class="t">spell-syntax</a>
+
+Files that use <a href="syntax.txt.html#syntax" class="d">syntax</a> highlighting can specify where <a href="#spell" class="d">spell</a> checking should be
+done:
+
+1.  everywhere                     default
+2.  in specific items              use "contains=@Spell"
+3.  everywhere but specific items  use "contains=@NoSpell"
+
+For the second method adding the @NoSpell cluster will disable <a href="#spell" class="d">spell</a> checking
+again.  This can be used, for example, to add @Spell to the comments of <a href="insert.txt.html#a" class="d">a</a>
+program, and add @NoSpell for items that shouldn't be checked.
+Also see <a href="syntax.txt.html#%3Asyn-spell" class="l">:syn-spell</a> for text that <a href="motion.txt.html#is" class="d">is</a> not in <a href="insert.txt.html#a" class="d">a</a> <a href="syntax.txt.html#syntax" class="d">syntax</a> item.
+
+
+VIM SCRIPTS
+
+If you want to write <a href="insert.txt.html#a" class="d">a</a> Vim <a href="usr_41.txt.html#script" class="d">script</a> that does something with spelling, you may
+find these <a href="eval.txt.html#functions" class="d">functions</a> useful:
+
+    <a href="eval.txt.html#spellbadword%28%29" class="d">spellbadword()</a>      find badly spelled <a href="motion.txt.html#word" class="d">word</a> <a href="motion.txt.html#at" class="d">at</a> the cursor
+    <a href="eval.txt.html#spellsuggest%28%29" class="d">spellsuggest()</a>      get <a href="eval.txt.html#list" class="d">list</a> of spelling suggestions
+    <a href="eval.txt.html#soundfold%28%29" class="d">soundfold()</a>         get the sound-a-like version of <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a>
+
+
+SETTING <a href="options.txt.html#%27spellcapcheck%27" class="o">'spellcapcheck'</a> AUTOMATICALLY                   <a name="set-spc-auto" class="t">set-spc-auto</a>
+
+After the <a href="options.txt.html#%27spelllang%27" class="o">'spelllang'</a> option has been set successfully, Vim will source the
+files "spell/LANG.vim" in <a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a>.  "LANG" <a href="motion.txt.html#is" class="d">is</a> the value of <a href="options.txt.html#%27spelllang%27" class="o">'spelllang'</a>
+up to the first comma, dot or underscore.  This can be used to set <a href="options.txt.html#options" class="d">options</a>
+specifically for the language, especially <a href="options.txt.html#%27spellcapcheck%27" class="o">'spellcapcheck'</a>.
+
+The <a href="intro.txt.html#distribution" class="d">distribution</a> includes <a href="insert.txt.html#a" class="d">a</a> few of these files.  Use this command to see what
+they do: 
+<span class="e">        :next $VIMRUNTIME/spell/*.vim</span>
+<span class="e"></span>
+<span class="n">Note</span> that the default scripts don't set <a href="options.txt.html#%27spellcapcheck%27" class="o">'spellcapcheck'</a> if <a href="motion.txt.html#it" class="d">it</a> was changed from
+the default value.  This assumes the user prefers another value then.
+
+
+<span class="c">DOUBLE SCORING                                         </span> <a name="spell-double-scoring" class="t">spell-double-scoring</a>
+
+The <a href="options.txt.html#%27spellsuggest%27" class="o">'spellsuggest'</a> option can be used to select "double" scoring.  This
+mechanism <a href="motion.txt.html#is" class="d">is</a> based on the principle that there are two kinds of spelling
+mistakes:
+
+1. You know how to <a href="#spell" class="d">spell</a> the word, but mistype something.  This results in <a href="insert.txt.html#a" class="d">a</a>
+   small editing distance (character swapped/omitted/inserted) and possibly <a href="insert.txt.html#a" class="d">a</a>
+   <a href="motion.txt.html#word" class="d">word</a> that sounds completely different.
+
+2. You don't know how to <a href="#spell" class="d">spell</a> the <a href="motion.txt.html#word" class="d">word</a> and type something that sounds right.
+   The edit distance can be big but the <a href="motion.txt.html#word" class="d">word</a> <a href="motion.txt.html#is" class="d">is</a> similar after sound-folding.
+
+Since scores for these two mistakes will be very different we use <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a>
+for each and mix them.
+
+The sound-folding <a href="motion.txt.html#is" class="d">is</a> slow and people that know the language won't make the
+second kind of mistakes.  Therefore <a href="options.txt.html#%27spellsuggest%27" class="o">'spellsuggest'</a> can be set to select the
+preferred method for scoring the suggestions.
+
+<span class="h">==============================================================================</span>
+3. Generating <a href="insert.txt.html#a" class="d">a</a> <a href="#spell" class="d">spell</a> file                              <a name="spell-mkspell" class="t">spell-mkspell</a>
+
+Vim uses <a href="insert.txt.html#a" class="d">a</a> binary file format for spelling.  This greatly speeds up loading
+the <a href="motion.txt.html#word" class="d">word</a> <a href="eval.txt.html#list" class="d">list</a> and keeps <a href="motion.txt.html#it" class="d">it</a> small.
+                                                    <a name=".aff" class="t">.aff</a> <a name=".dic" class="t">.dic</a> <a name="Myspell" class="t">Myspell</a>
+You can create <a href="insert.txt.html#a" class="d">a</a> Vim <a href="#spell" class="d">spell</a> file from the <a href="#.aff" class="d">.aff</a> and <a href="#.dic" class="d">.dic</a> files that <a href="#Myspell" class="d">Myspell</a>
+uses.  <a href="#Myspell" class="d">Myspell</a> <a href="motion.txt.html#is" class="d">is</a> used by OpenOffice.org and Mozilla. The OpenOffice .oxt
+files are <a href="pi_zip.txt.html#zip" class="d">zip</a> files which contain the <a href="#.aff" class="d">.aff</a> and <a href="#.dic" class="d">.dic</a> files. You should be able
+to find them here:
+        <a class="u" href="http://extensions.services.openoffice.org/dictionary">http://extensions.services.openoffice.org/dictionary</a>
+The older, OpenOffice 2 files may be used if this doesn't work:
+        <a class="u" href="http://wiki.services.openoffice.org/wiki/Dictionaries">http://wiki.services.openoffice.org/wiki/Dictionaries</a>
+You can also use <a href="insert.txt.html#a" class="d">a</a> plain <a href="motion.txt.html#word" class="d">word</a> list.  The results are the same, the choice
+depends on what <a href="motion.txt.html#word" class="d">word</a> lists you can find.
+
+If you <a href="usr_90.txt.html#install" class="d">install</a> Aap (from www.a-a-p.org) you can use the recipes in the
+runtime/spell/??/ directories.  Aap will take care of downloading the files,
+apply patches needed for Vim and build the .spl file.
+
+Make sure your current <a href="mbyte.txt.html#locale" class="d">locale</a> <a href="motion.txt.html#is" class="d">is</a> set properly, otherwise Vim doesn't know what
+characters are upper/lower <a href="change.txt.html#case" class="d">case</a> letters.  If the <a href="mbyte.txt.html#locale" class="d">locale</a> isn't available (e.g.,
+when using an <a href="os_win32.txt.html#MS-Windows" class="d">MS-Windows</a> codepage on Unix) add tables to the <a href="#.aff" class="d">.aff</a> file
+<a href="#spell-affix-chars" class="l">spell-affix-chars</a><a href="repeat.txt.html#." class="d">.</a>  If the <a href="#.aff" class="d">.aff</a> file doesn't define <a href="insert.txt.html#a" class="d">a</a> table then the <a href="motion.txt.html#word" class="d">word</a>
+table of the currently active spelling <a href="motion.txt.html#is" class="d">is</a> used.  If spelling <a href="motion.txt.html#is" class="d">is</a> not active
+then Vim will try to guess.
+
+                                                        <a name="%3Amksp" class="t">:mksp</a> <a name="%3Amkspell" class="t">:mkspell</a>
+:mksp[ell][!] <span class="s">[-ascii]</span> <span class="s">{outname}</span> <span class="s">{inname}</span> <a href="eval.txt.html#..." class="d">...</a>
+                        Generate <a href="insert.txt.html#a" class="d">a</a> Vim <a href="#spell" class="d">spell</a> file from <a href="motion.txt.html#word" class="d">word</a> lists.  Example: 
+<span class="e">                :mkspell /tmp/nl nl_NL.words</span>
+                                                               <a name="E751" class="t">E751</a>
+                        When <span class="s">{outname}</span> ends in ".spl" <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> used <a href="motion.txt.html#as" class="d">as</a> the output
+                        file name.  Otherwise <a href="motion.txt.html#it" class="d">it</a> should be <a href="insert.txt.html#a" class="d">a</a> language name,
+                        such <a href="motion.txt.html#as" class="d">as</a> "en"<a href="motion.txt.html#%2C" class="d">,</a> without the region name.  The file
+                        written will be "<span class="s">{outname}</span>.<span class="s">{encoding}</span>.spl"<a href="motion.txt.html#%2C" class="d">,</a> where
+                        <span class="s">{encoding}</span> <a href="motion.txt.html#is" class="d">is</a> the value of the <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> option.
+
+                        When the output file already exists [!] <a href="vim_faq.txt.html#must" class="d">must</a> be used
+                        to overwrite it.
+
+                        When the <span class="s">[-ascii]</span> argument <a href="motion.txt.html#is" class="d">is</a> present, words with
+                        non-ascii characters are skipped.  The resulting file
+                        ends in "ascii.spl"<a href="repeat.txt.html#." class="d">.</a>
+
+                        The input can be the <a href="#Myspell" class="d">Myspell</a> format files <span class="s">{inname}</span>.aff
+                        and <span class="s">{inname}</span>.dic.  If <span class="s">{inname}</span>.aff does not exist then
+                        <span class="s">{inname}</span> <a href="motion.txt.html#is" class="d">is</a> used <a href="motion.txt.html#as" class="d">as</a> the file name of <a href="insert.txt.html#a" class="d">a</a> plain <a href="motion.txt.html#word" class="d">word</a>
+                        list.
+
+                        Multiple <span class="s">{inname}</span> arguments can be given to combine
+                        regions into one Vim <a href="#spell" class="d">spell</a> file.  Example: 
+<span class="e">                :mkspell ~/.vim/spell/en /tmp/en_US /tmp/en_CA /tmp/en_AU</span>
+                       This combines the English <a href="motion.txt.html#word" class="d">word</a> lists for US, CA and AU
+                        into one en.spl file.
+                        Up to eight regions can be combined. <a name="E754" class="t">E754</a> <a name="E755" class="t">E755</a>
+                        The REP and SAL items of the first <a href="#.aff" class="d">.aff</a> file where
+                        they appear are used. <a href="#spell-REP" class="l">spell-REP</a> <a href="#spell-SAL" class="l">spell-SAL</a>
+                                                                <a name="E845" class="t">E845</a>
+                        This command uses <a href="insert.txt.html#a" class="d">a</a> lot of memory, required to find
+                        the optimal <a href="motion.txt.html#word" class="d">word</a> tree (Polish, Italian and Hungarian
+                        require several hundred Mbyte).  The final result will
+                        be much smaller, because compression <a href="motion.txt.html#is" class="d">is</a> used.  To
+                        avoid running out of memory compression will be done
+                        now and then.  This can be tuned with the <a href="options.txt.html#%27mkspellmem%27" class="o">'mkspellmem'</a>
+                        option.
+
+                        After the <a href="#spell" class="d">spell</a> file was written and <a href="motion.txt.html#it" class="d">it</a> was being used
+                        in <a href="insert.txt.html#a" class="d">a</a> buffer <a href="motion.txt.html#it" class="d">it</a> will be reloaded automatically.
+
+:mksp[ell] <span class="s">[-ascii]</span> <span class="s">{name}</span>.<span class="s">{enc}</span>.add
+                        Like "<a href="#%3Amkspell" class="d">:mkspell</a>" above, using <span class="s">{name}</span>.<span class="s">{enc}</span>.add <a href="motion.txt.html#as" class="d">as</a> the
+                        input file and producing an output file in the same
+                        directory that has ".spl" appended.
+
+:mksp[ell] <span class="s">[-ascii]</span> <span class="s">{name}</span>
+                        Like "<a href="#%3Amkspell" class="d">:mkspell</a>" above, using <span class="s">{name}</span> <a href="motion.txt.html#as" class="d">as</a> the input file
+                        and producing an output file in the same directory
+                        that has ".{enc}.spl" appended.
+
+Vim will report the number of duplicate words.  This might be <a href="insert.txt.html#a" class="d">a</a> mistake in the
+<a href="eval.txt.html#list" class="d">list</a> of words.  But sometimes <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> used to have different prefixes and
+<a href="cmdline.txt.html#suffixes" class="d">suffixes</a> for the same basic <a href="motion.txt.html#word" class="d">word</a> to avoid them combining (e.g. Czech uses
+this).  If you want Vim to report all duplicate words set the <a href="options.txt.html#%27verbose%27" class="o">'verbose'</a>
+option.
+
+Since you might want to change <a href="insert.txt.html#a" class="d">a</a> <a href="#Myspell" class="d">Myspell</a> <a href="motion.txt.html#word" class="d">word</a> <a href="eval.txt.html#list" class="d">list</a> for use with Vim the
+following procedure <a href="motion.txt.html#is" class="d">is</a> recommended:
+
+1. Obtain the xx_YY.aff and xx_YY.dic files from Myspell.
+2. Make <a href="insert.txt.html#a" class="d">a</a> copy of these files to xx_YY.orig.aff and xx_YY.orig.dic.
+3. Change the xx_YY.aff and xx_YY.dic files to remove bad words, add missing
+   words, define <a href="motion.txt.html#word" class="d">word</a> characters with FOL/LOW/UPP, etc.  The distributed
+   "*.diff" files can be used.
+4. Start Vim with the right <a href="mbyte.txt.html#locale" class="d">locale</a> and use <a href="#%3Amkspell" class="l">:mkspell</a> to generate the Vim
+   <a href="#spell" class="d">spell</a> file.
+5. Try out the <a href="#spell" class="d">spell</a> file with "<a href="options.txt.html#%3Aset" class="d">:set</a> <a href="#spell" class="d">spell</a> spelllang=xx" if you wrote <a href="motion.txt.html#it" class="d">it</a> in
+   <a href="insert.txt.html#a" class="d">a</a> <a href="#spell" class="d">spell</a> directory in <a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a>, or "<a href="options.txt.html#%3Aset" class="d">:set</a> spelllang=xx.enc.spl" if you
+   wrote <a href="motion.txt.html#it" class="d">it</a> somewhere else.
+
+When the <a href="#Myspell" class="d">Myspell</a> files are updated you can <a href="diff.txt.html#merge" class="d">merge</a> the differences:
+1. Obtain the new <a href="#Myspell" class="d">Myspell</a> files <a href="motion.txt.html#as" class="d">as</a> xx_YY.new.aff and xx_UU.new.dic.
+2. Use Vimdiff to see what changed: 
+<span class="e">        vimdiff xx_YY.orig.dic xx_YY.new.dic</span>
+3. Take over the changes you like in xx_YY.dic.
+   You may also need to change xx_YY.aff.
+4. Rename xx_YY.new.dic to xx_YY.orig.dic and xx_YY.new.aff to xx_YY.new.aff.
+
+
+<span class="c">SPELL FILE VERSIONS                                    </span> <a name="E770" class="t">E770</a> <a name="E771" class="t">E771</a> <a name="E772" class="t">E772</a>
+
+Spell checking <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> relatively new feature in Vim, thus it's possible that the
+.spl file format will be changed to support more languages.  Vim will check
+the validity of the <a href="#spell" class="d">spell</a> file and report anything wrong.
+
+<span class="h">        E771: Old spell file, needs to be updated </span>
+This <a href="#spell" class="d">spell</a> file <a href="motion.txt.html#is" class="d">is</a> older than your Vim.  You need to update the .spl file.
+
+<span class="h">        E772: Spell file is for newer version of Vim </span>
+This means the <a href="#spell" class="d">spell</a> file was made for <a href="insert.txt.html#a" class="d">a</a> later version of Vim.  You need to
+update Vim.
+
+<span class="h">        E770: Unsupported section in spell file </span>
+This means the <a href="#spell" class="d">spell</a> file was made for <a href="insert.txt.html#a" class="d">a</a> later version of Vim and contains <a href="insert.txt.html#a" class="d">a</a>
+<a href="motion.txt.html#section" class="d">section</a> that <a href="motion.txt.html#is" class="d">is</a> required for the <a href="#spell" class="d">spell</a> file to work.  In this <a href="change.txt.html#case" class="d">case</a> it's
+probably <a href="insert.txt.html#a" class="d">a</a> good idea to upgrade your Vim.
+
+
+SPELL FILE DUMP
+
+If for some reason you want to check what words are supported by the currently
+used spelling files, use this command:
+
+                                                        <a name="%3Aspelldump" class="t">:spelldump</a> <a name="%3Aspelld" class="t">:spelld</a>
+:spelld[ump]            Open <a href="insert.txt.html#a" class="d">a</a> new <a href="windows.txt.html#window" class="d">window</a> and fill <a href="motion.txt.html#it" class="d">it</a> with all currently valid
+                        words.  Compound words are not included.
+                        <span class="n">Note:</span> For some languages the result may be enormous,
+                        causing Vim to run out of memory.
+
+:spelld[ump]!           Like "<a href="#%3Aspelldump" class="d">:spelldump</a>" and include the <a href="motion.txt.html#word" class="d">word</a> count.  This <a href="motion.txt.html#is" class="d">is</a>
+                        the number of times the <a href="motion.txt.html#word" class="d">word</a> was found while
+                        updating the screen.  Words that are in COMMON items
+                        get <a href="insert.txt.html#a" class="d">a</a> <a href="starting.txt.html#starting" class="d">starting</a> <a href="intro.txt.html#count" class="d">count</a> of 10.
+
+The format of the <a href="motion.txt.html#word" class="d">word</a> <a href="eval.txt.html#list" class="d">list</a> <a href="motion.txt.html#is" class="d">is</a> used <a href="#spell-wordlist-format" class="l">spell-wordlist-format</a><a href="repeat.txt.html#." class="d">.</a>  You should be
+able to read <a href="motion.txt.html#it" class="d">it</a> with "<a href="#%3Amkspell" class="d">:mkspell</a>" to generate one .spl file that includes all
+the words.
+
+When all entries to <a href="options.txt.html#%27spelllang%27" class="o">'spelllang'</a> use the same regions or no regions <a href="motion.txt.html#at" class="d">at</a> all then
+the region information <a href="motion.txt.html#is" class="d">is</a> included in the dumped words.  Otherwise only words
+for the current region are included and no "/regions" line <a href="motion.txt.html#is" class="d">is</a> generated.
+
+Comment lines with the name of the .spl file are used <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> header above the
+words that were generated from that .spl file.
+
+
+<span class="c">SPELL FILE MISSING             </span> <a name="spell-SpellFileMissing" class="t">spell-SpellFileMissing</a> <a name="spellfile.vim" class="t">spellfile.vim</a>
+
+If the <a href="#spell" class="d">spell</a> file for the language you are using <a href="motion.txt.html#is" class="d">is</a> not available, you will
+get an error message.  But if the "<a href="#spellfile.vim" class="d">spellfile.vim</a>" <a href="usr_05.txt.html#plugin" class="d">plugin</a> <a href="motion.txt.html#is" class="d">is</a> active <a href="motion.txt.html#it" class="d">it</a> will
+offer you to <a href="intro.txt.html#download" class="d">download</a> the <a href="#spell" class="d">spell</a> file.  Just follow the instructions, <a href="motion.txt.html#it" class="d">it</a> will
+ask you where to write the file (there <a href="vim_faq.txt.html#must" class="d">must</a> be <a href="insert.txt.html#a" class="d">a</a> writable directory in
+<a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a> for this).
+
+The <a href="usr_05.txt.html#plugin" class="d">plugin</a> has <a href="insert.txt.html#a" class="d">a</a> default place where to look for <a href="#spell" class="d">spell</a> files, on the Vim <a href="pi_netrw.txt.html#ftp" class="d">ftp</a>
+server.  If you want to use another location or another protocol, set the
+g:spellfile_URL variable to the directory that holds the <a href="#spell" class="d">spell</a> files.  The
+<a href="pi_netrw.txt.html#netrw" class="l">netrw</a> <a href="usr_05.txt.html#plugin" class="d">plugin</a> <a href="motion.txt.html#is" class="d">is</a> used for getting the file, look there for the specific
+<a href="syntax.txt.html#syntax" class="d">syntax</a> of the URL.  Example: 
+<span class="e">        let g:spellfile_URL = 'http://ftp.vim.org/vim/runtime/spell'</span>
+You may need to <a href="intro.txt.html#escape" class="d">escape</a> special characters.
+
+The <a href="usr_05.txt.html#plugin" class="d">plugin</a> will only ask about downloading <a href="insert.txt.html#a" class="d">a</a> language once.  If you want to
+try again anyway restart Vim, or set g:spellfile_URL to another value (e.g.,
+prepend <a href="insert.txt.html#a" class="d">a</a> space).
+
+To avoid using the "<a href="#spellfile.vim" class="d">spellfile.vim</a>" <a href="usr_05.txt.html#plugin" class="d">plugin</a> <a href="diff.txt.html#do" class="d">do</a> this in your <a href="starting.txt.html#vimrc" class="d">vimrc</a> file: 
+<span class="e"></span>
+<span class="e">        let loaded_spellfile_plugin = 1</span>
+<span class="e"></span>
+Instead of using the <a href="usr_05.txt.html#plugin" class="d">plugin</a> you can define <a href="insert.txt.html#a" class="d">a</a> <a href="autocmd.txt.html#SpellFileMissing" class="l">SpellFileMissing</a> <a href="autocmd.txt.html#autocommand" class="d">autocommand</a> to
+handle the missing file yourself.  You can use <a href="motion.txt.html#it" class="d">it</a> like this: 
+<span class="e"></span>
+<span class="e">        :au SpellFileMissing * call Download_spell_file(expand('&lt;amatch&gt;'))</span>
+<span class="e"></span>
+Thus the <a href="cmdline.txt.html#%3Camatch%3E" class="s">&lt;amatch&gt;</a> item contains the name of the language.  Another important
+value <a href="motion.txt.html#is" class="d">is</a> <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a>, since every encoding has its own <a href="#spell" class="d">spell</a> file.  With two
+exceptions:
+<a href="motion.txt.html#-" class="d">-</a> For ISO-8859-15 (latin9) the name "latin1" <a href="motion.txt.html#is" class="d">is</a> used (the encodings only
+  differ in characters not used in dictionary words).
+<a href="motion.txt.html#-" class="d">-</a> The name "ascii" may also be used for some languages where the words use
+  only ASCII letters for most of the words.
+
+The default "<a href="#spellfile.vim" class="d">spellfile.vim</a>" <a href="usr_05.txt.html#plugin" class="d">plugin</a> uses this autocommand, if you define your
+<a href="autocmd.txt.html#autocommand" class="d">autocommand</a> afterwards you may want to use ":au! <a href="autocmd.txt.html#SpellFileMissing" class="d">SpellFileMissing</a>" to overrule
+it.  If you define your <a href="autocmd.txt.html#autocommand" class="d">autocommand</a> before the <a href="usr_05.txt.html#plugin" class="d">plugin</a> <a href="motion.txt.html#is" class="d">is</a> loaded <a href="motion.txt.html#it" class="d">it</a> will notice
+this and not <a href="diff.txt.html#do" class="d">do</a> anything.
+                                                        <a name="E797" class="t">E797</a>
+<span class="n">Note</span> that the <a href="autocmd.txt.html#SpellFileMissing" class="d">SpellFileMissing</a> <a href="autocmd.txt.html#autocommand" class="d">autocommand</a> <a href="vim_faq.txt.html#must" class="d">must</a> not change or destroy the
+buffer the user was editing.
+
+<span class="h">==============================================================================</span>
+4. Spell file format                                    <a name="spell-file-format" class="t">spell-file-format</a>
+
+This <a href="motion.txt.html#is" class="d">is</a> the format of the files that are used by the person who creates and
+maintains <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> list.
+
+<span class="n">Note</span> that we avoid the <a href="motion.txt.html#word" class="d">word</a> "dictionary" here.  That <a href="motion.txt.html#is" class="d">is</a> because the goal of
+<a href="#spell" class="d">spell</a> checking differs from <a href="editing.txt.html#writing" class="d">writing</a> <a href="insert.txt.html#a" class="d">a</a> dictionary (as in the book).  For
+spelling we need <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of words that are OK, thus should not be highlighted.
+Person and company names will not appear in <a href="insert.txt.html#a" class="d">a</a> dictionary, but <a href="diff.txt.html#do" class="d">do</a> appear in <a href="insert.txt.html#a" class="d">a</a>
+<a href="motion.txt.html#word" class="d">word</a> list.  And some old words are rarely used while they are common
+misspellings.  These <a href="diff.txt.html#do" class="d">do</a> appear in <a href="insert.txt.html#a" class="d">a</a> dictionary but not in <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> list.
+
+There are two formats: <a href="insert.txt.html#A" class="d">A</a> straight <a href="eval.txt.html#list" class="d">list</a> of words and <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> using affix
+compression.  The files with affix compression are used by <a href="#Myspell" class="d">Myspell</a> (Mozilla
+and OpenOffice.org).  This requires two files, one with <a href="#.aff" class="d">.aff</a> and one with <a href="#.dic" class="d">.dic</a>
+extension.
+
+
+<span class="c">FORMAT OF STRAIGHT WORD LIST                           </span> <a name="spell-wordlist-format" class="t">spell-wordlist-format</a>
+
+The words <a href="vim_faq.txt.html#must" class="d">must</a> appear one per line.  That <a href="motion.txt.html#is" class="d">is</a> all that <a href="motion.txt.html#is" class="d">is</a> required.
+
+Additionally the following items are recognized:
+
+<a href="motion.txt.html#-" class="d">-</a> Empty and blank lines are ignored.
+
+<span class="h">        # comment </span>
+<a href="motion.txt.html#-" class="d">-</a> Lines <a href="starting.txt.html#starting" class="d">starting</a> with <a href="insert.txt.html#a" class="d">a</a> <a href="pattern.txt.html#%23" class="d">#</a> are ignored (comment lines).
+
+<span class="h">        /encoding=utf-8 </span>
+<a href="motion.txt.html#-" class="d">-</a> <a href="insert.txt.html#A" class="d">A</a> line <a href="starting.txt.html#starting" class="d">starting</a> with "/encoding="<a href="motion.txt.html#%2C" class="d">,</a> before any word, specifies the encoding
+  of the file.  After the second '=' comes an encoding name.  This tells Vim
+  to setup conversion from the specified encoding to <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a>.  Thus you can
+  use one <a href="motion.txt.html#word" class="d">word</a> <a href="eval.txt.html#list" class="d">list</a> for several target encodings.
+
+<span class="h">        /regions=usca </span>
+<a href="motion.txt.html#-" class="d">-</a> <a href="insert.txt.html#A" class="d">A</a> line <a href="starting.txt.html#starting" class="d">starting</a> with "/regions=" specifies the region names that are
+  supported.  Each region name <a href="vim_faq.txt.html#must" class="d">must</a> be two ASCII letters.  The first one <a href="motion.txt.html#is" class="d">is</a>
+  region 1.  Thus "/regions=usca" has region 1 "us" and region 2 "ca"<a href="repeat.txt.html#." class="d">.</a>
+  In an addition <a href="motion.txt.html#word" class="d">word</a> <a href="eval.txt.html#list" class="d">list</a> the region names should be equal to the main <a href="motion.txt.html#word" class="d">word</a>
+  list!
+
+<a href="motion.txt.html#-" class="d">-</a> Other lines <a href="starting.txt.html#starting" class="d">starting</a> with '/' are reserved for future use.  The ones that
+  are not recognized are ignored.  You <a href="diff.txt.html#do" class="d">do</a> get <a href="insert.txt.html#a" class="d">a</a> warning message, so that you
+  know something won't work.
+
+<a href="motion.txt.html#-" class="d">-</a> <a href="insert.txt.html#A" class="d">A</a> "<a href="pattern.txt.html#%2F" class="d">/</a>" may follow the <a href="motion.txt.html#word" class="d">word</a> with the following items:
+    <a href="change.txt.html#%3D" class="d">=</a>           Case <a href="vim_faq.txt.html#must" class="d">must</a> match exactly.
+    <a href="pattern.txt.html#%3F" class="d">?</a>           Rare word.
+    <a href="change.txt.html#%21" class="d">!</a>           Bad (wrong) word.
+    1 to 9      <a href="insert.txt.html#A" class="d">A</a> region in which the <a href="motion.txt.html#word" class="d">word</a> <a href="motion.txt.html#is" class="d">is</a> valid.  If no regions are
+                specified the <a href="motion.txt.html#word" class="d">word</a> <a href="motion.txt.html#is" class="d">is</a> valid in all regions.
+
+Example:
+
+        <a href="pattern.txt.html#%23" class="d">#</a> This <a href="motion.txt.html#is" class="d">is</a> an example <a href="motion.txt.html#word" class="d">word</a> <a href="eval.txt.html#list" class="d">list</a>          comment
+        /encoding=latin1                        encoding of the file
+        /regions=uscagb                         regions "us"<a href="motion.txt.html#%2C" class="d">,</a> "ca" and "gb"
+        example                                 <a href="motion.txt.html#word" class="d">word</a> for all regions
+        blah/12                                 <a href="motion.txt.html#word" class="d">word</a> for regions "us" and "ca"
+        vim/!                                   bad <a href="motion.txt.html#word" class="d">word</a>
+        Campbell/?3                             rare <a href="motion.txt.html#word" class="d">word</a> in region 3 "gb"
+        's mornings/=                           keep-case <a href="motion.txt.html#word" class="d">word</a>
+
+<span class="n">Note</span> that when "/=" <a href="motion.txt.html#is" class="d">is</a> used the same <a href="motion.txt.html#word" class="d">word</a> with all upper-case letters <a href="motion.txt.html#is" class="d">is</a> not
+accepted.  This <a href="motion.txt.html#is" class="d">is</a> different from <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> with mixed <a href="change.txt.html#case" class="d">case</a> that <a href="motion.txt.html#is" class="d">is</a> automatically
+marked <a href="motion.txt.html#as" class="d">as</a> keep-case, those words may appear in all upper-case letters.
+
+
+<span class="c">FORMAT WITH .AFF AND .DIC FILES                        </span> <a name="aff-dic-format" class="t">aff-dic-format</a>
+
+There are two files: the basic <a href="motion.txt.html#word" class="d">word</a> <a href="eval.txt.html#list" class="d">list</a> and an affix file.  The affix file
+specifies settings for the language and can contain affixes.  The affixes are
+used to modify the basic words to get the full <a href="motion.txt.html#word" class="d">word</a> list.  This significantly
+reduces the number of words, especially for <a href="insert.txt.html#a" class="d">a</a> language like Polish.  This <a href="motion.txt.html#is" class="d">is</a>
+called affix compression.
+
+The basic <a href="motion.txt.html#word" class="d">word</a> <a href="eval.txt.html#list" class="d">list</a> and the affix file are combined with the "<a href="#%3Amkspell" class="d">:mkspell</a>"
+command and results in <a href="insert.txt.html#a" class="d">a</a> binary <a href="#spell" class="d">spell</a> file.  All the preprocessing has been
+done, thus this file loads fast.  The binary <a href="#spell" class="d">spell</a> file format <a href="motion.txt.html#is" class="d">is</a> described in
+the source code (src/spell.c).  But only developers need to know about it.
+
+The preprocessing also allows us to take the <a href="#Myspell" class="d">Myspell</a> language files and modify
+them before the Vim <a href="motion.txt.html#word" class="d">word</a> <a href="eval.txt.html#list" class="d">list</a> <a href="motion.txt.html#is" class="d">is</a> made.  The tools for this can be found in the
+"src/spell" directory.
+
+The format for the affix and <a href="motion.txt.html#word" class="d">word</a> <a href="eval.txt.html#list" class="d">list</a> files <a href="motion.txt.html#is" class="d">is</a> based on what <a href="#Myspell" class="d">Myspell</a> uses
+(the <a href="#spell" class="d">spell</a> checker of Mozilla and OpenOffice.org).  <a href="insert.txt.html#A" class="d">A</a> description can be found
+here:
+<span class="h">        http://lingucomponent.openoffice.org/affix.readme </span>
+<span class="n">Note</span> that affixes are <a href="change.txt.html#case" class="d">case</a> sensitive, this isn't obvious from the description.
+
+Vim supports quite <a href="insert.txt.html#a" class="d">a</a> few extras.  They are described below <a href="#spell-affix-vim" class="l">spell-affix-vim</a><a href="repeat.txt.html#." class="d">.</a>
+Attempts have been made to keep this compatible with other <a href="#spell" class="d">spell</a> checkers, so
+that the same files can often be used.  One other project that offers more
+than <a href="#Myspell" class="d">Myspell</a> <a href="motion.txt.html#is" class="d">is</a> Hunspell <a href="motion.txt.html#%28" class="d">(</a> <a class="u" href="http://hunspell.sf.net">http://hunspell.sf.net</a> ).
+
+
+<span class="c">WORD LIST FORMAT                               </span> <a name="spell-dic-format" class="t">spell-dic-format</a>
+
+<a href="insert.txt.html#A" class="d">A</a> short example, with line numbers:
+
+<span class="h">        1       1234 </span>
+<span class="h">        2       aan </span>
+<span class="h">        3       Als </span>
+<span class="h">        4       Etten-Leur </span>
+<span class="h">        5       et al. </span>
+<span class="h">        6       's-Gravenhage </span>
+<span class="h">        7       's-Gravenhaags </span>
+<span class="h">        8       # word that differs between regions </span>
+<span class="h">        9       kado/1 </span>
+<span class="h">        10      cadeau/2 </span>
+<span class="h">        11      TCP,IP </span>
+<span class="h">        12      /the S affix may add a 's' </span>
+<span class="h">        13      bedel/S </span>
+
+The first line contains the number of words.  Vim ignores it, but you <a href="diff.txt.html#do" class="d">do</a> get
+an error message if it's not there.  <a name="E760" class="t">E760</a>
+
+What follows <a href="motion.txt.html#is" class="d">is</a> one <a href="motion.txt.html#word" class="d">word</a> per line.  White <a href="intro.txt.html#space" class="d">space</a> <a href="motion.txt.html#at" class="d">at</a> the <a href="intro.txt.html#end" class="d">end</a> of the line <a href="motion.txt.html#is" class="d">is</a>
+ignored, all other white <a href="intro.txt.html#space" class="d">space</a> matters.  The encoding <a href="motion.txt.html#is" class="d">is</a> specified in the
+affix file <a href="#spell-SET" class="l">spell-SET</a><a href="repeat.txt.html#." class="d">.</a>
+
+Comment lines start with '#' or '/'.  See the example lines 8 and 12.  <span class="n">Note</span>
+that putting <a href="insert.txt.html#a" class="d">a</a> comment after <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> <a href="motion.txt.html#is" class="d">is</a> NOT allowed:
+
+<span class="h">                someword   # comment that causes an error! </span>
+
+After the <a href="motion.txt.html#word" class="d">word</a> there <a href="motion.txt.html#is" class="d">is</a> an optional slash and flags.  Most of these flags are
+letters that indicate the affixes that can be used with this word.  These are
+specified with SFX and PFX lines in the <a href="#.aff" class="d">.aff</a> file, see <a href="#spell-SFX" class="l">spell-SFX</a> and
+<a href="#spell-PFX" class="l">spell-PFX</a><a href="repeat.txt.html#." class="d">.</a>  Vim allows using other flag types with the FLAG item in the
+affix file <a href="#spell-FLAG" class="l">spell-FLAG</a><a href="repeat.txt.html#." class="d">.</a>
+
+When the <a href="motion.txt.html#word" class="d">word</a> only has lower-case letters <a href="motion.txt.html#it" class="d">it</a> will also match with the <a href="motion.txt.html#word" class="d">word</a>
+<a href="starting.txt.html#starting" class="d">starting</a> with an upper-case letter.
+
+When the <a href="motion.txt.html#word" class="d">word</a> includes an upper-case letter, this means the upper-case <a href="print.txt.html#letter" class="d">letter</a>
+<a href="motion.txt.html#is" class="d">is</a> required <a href="motion.txt.html#at" class="d">at</a> this position.  The same <a href="motion.txt.html#word" class="d">word</a> with <a href="insert.txt.html#a" class="d">a</a> lower-case <a href="print.txt.html#letter" class="d">letter</a> <a href="motion.txt.html#at" class="d">at</a> this
+position will not match. When some of the other letters are upper-case <a href="motion.txt.html#it" class="d">it</a> will
+not match either.
+
+The <a href="motion.txt.html#word" class="d">word</a> with all upper-case characters will always be OK,
+
+<span class="h">        word list       matches                 does not match </span>
+        als             als Als ALS             ALs AlS aLs aLS
+        Als             Als  ALS                als ALs AlS aLs aLS
+        ALS             ALS                     als Als ALs AlS aLs aLS
+        AlS             AlS ALS                 als Als ALs aLs aLS
+
+The KEEPCASE affix ID can be used to specifically match <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> with identical
+<a href="change.txt.html#case" class="d">case</a> only, see below <a href="#spell-KEEPCASE" class="l">spell-KEEPCASE</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="n">Note:</span> in line 5 to 7 non-word characters are used.  You can include any
+character in <a href="insert.txt.html#a" class="d">a</a> word.  When checking the text <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> still only matches when <a href="motion.txt.html#it" class="d">it</a>
+appears with <a href="insert.txt.html#a" class="d">a</a> non-word character before and after it.  For <a href="#Myspell" class="d">Myspell</a> <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a>
+<a href="starting.txt.html#starting" class="d">starting</a> with <a href="insert.txt.html#a" class="d">a</a> non-word character probably won't work.
+
+In line 12 the <a href="motion.txt.html#word" class="d">word</a> "TCP/IP" <a href="motion.txt.html#is" class="d">is</a> defined.  Since the slash has <a href="insert.txt.html#a" class="d">a</a> special
+meaning the comma <a href="motion.txt.html#is" class="d">is</a> used instead.  This <a href="motion.txt.html#is" class="d">is</a> defined with the SLASH item in the
+affix file, see <a href="#spell-SLASH" class="l">spell-SLASH</a><a href="repeat.txt.html#." class="d">.</a>  <span class="n">Note</span> that without this SLASH item the <a href="motion.txt.html#word" class="d">word</a>
+will be "TCP,IP"<a href="repeat.txt.html#." class="d">.</a>
+
+
+<span class="c">AFFIX FILE FORMAT                      </span> <a name="spell-aff-format" class="t">spell-aff-format</a> <a name="spell-affix-vim" class="t">spell-affix-vim</a>
+
+                                                        <a name="spell-affix-comment" class="t">spell-affix-comment</a>
+Comment lines in the <a href="#.aff" class="d">.aff</a> file start with <a href="insert.txt.html#a" class="d">a</a> '#':
+
+<span class="h">        # comment line </span>
+
+Items with <a href="insert.txt.html#a" class="d">a</a> fixed number of arguments can be followed by <a href="insert.txt.html#a" class="d">a</a> comment.  But only
+if none of the arguments can contain white space.  The comment <a href="vim_faq.txt.html#must" class="d">must</a> start with
+<a href="insert.txt.html#a" class="d">a</a> "<a href="pattern.txt.html#%23" class="d">#</a>" character.  Example:
+
+<span class="h">        KEEPCASE =  # fix case for words with this flag </span>
+
+
+<span class="c">ENCODING                                                       </span> <a name="spell-SET" class="t">spell-SET</a>
+
+The affix file can be in any encoding that <a href="motion.txt.html#is" class="d">is</a> supported by "iconv"<a href="repeat.txt.html#." class="d">.</a>  However,
+in some cases the current <a href="mbyte.txt.html#locale" class="d">locale</a> should also be set properly <a href="motion.txt.html#at" class="d">at</a> the time
+<a href="#%3Amkspell" class="l">:mkspell</a> <a href="motion.txt.html#is" class="d">is</a> invoked.  Adding FOL/LOW/UPP lines removes this requirement
+<a href="#spell-FOL" class="l">spell-FOL</a><a href="repeat.txt.html#." class="d">.</a>
+
+The encoding should be specified before anything where the encoding matters.
+The encoding applies both to the affix file and the dictionary file.  It <a href="motion.txt.html#is" class="d">is</a>
+done with <a href="insert.txt.html#a" class="d">a</a> SET line:
+
+<span class="h">        SET utf-8 </span>
+
+The encoding can be different from the value of the <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> option <a href="motion.txt.html#at" class="d">at</a> the
+time "<a href="#%3Amkspell" class="d">:mkspell</a>" <a href="motion.txt.html#is" class="d">is</a> used.  Vim will then convert everything to <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> and
+generate <a href="insert.txt.html#a" class="d">a</a> <a href="#spell" class="d">spell</a> file for <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a>.  If some of the used characters to not
+fit in <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> you will get an error message.
+                                                        <a name="spell-affix-mbyte" class="t">spell-affix-mbyte</a>
+When using <a href="insert.txt.html#a" class="d">a</a> <a href="mbyte.txt.html#multi-byte" class="d">multi-byte</a> encoding it's possible to use more different affix
+flags.  But <a href="#Myspell" class="d">Myspell</a> doesn't support that, thus you may not want to use <a href="motion.txt.html#it" class="d">it</a>
+anyway.  For compatibility use an 8-bit encoding.
+
+
+INFORMATION
+
+These entries in the affix file can be used to add information to the <a href="#spell" class="d">spell</a>
+file.  There are no restrictions on the format, but they should be in the
+right encoding.
+
+                                <a name="spell-NAME" class="t">spell-NAME</a> <a name="spell-VERSION" class="t">spell-VERSION</a> <a name="spell-HOME" class="t">spell-HOME</a>
+                                <a name="spell-AUTHOR" class="t">spell-AUTHOR</a> <a name="spell-EMAIL" class="t">spell-EMAIL</a> <a name="spell-COPYRIGHT" class="t">spell-COPYRIGHT</a>
+        NAME            Name of the language
+        VERSION         1.0.1  with fixes
+        HOME            <a class="u" href="http://www.myhome.eu">http://www.myhome.eu</a>
+        AUTHOR          John Doe
+        EMAIL           john AT Doe DOT net
+        COPYRIGHT       LGPL
+
+These fields are <a href="change.txt.html#put" class="d">put</a> in the .spl file as-is.  The <a href="#%3Aspellinfo" class="l">:spellinfo</a> command can be
+used to <a href="starting.txt.html#view" class="d">view</a> the info.
+
+                                                        <a name="%3Aspellinfo" class="t">:spellinfo</a> <a name="%3Aspelli" class="t">:spelli</a>
+:spelli[nfo]            Display the information for the <a href="#spell" class="d">spell</a> file(s) used for
+                        the current buffer.
+
+
+CHARACTER TABLES
+                                                        <a name="spell-affix-chars" class="t">spell-affix-chars</a>
+When using an 8-bit encoding the affix file should define what characters are
+<a href="motion.txt.html#word" class="d">word</a> characters.  This <a href="motion.txt.html#is" class="d">is</a> because the system where "<a href="#%3Amkspell" class="d">:mkspell</a>" <a href="motion.txt.html#is" class="d">is</a> used may not
+support <a href="insert.txt.html#a" class="d">a</a> <a href="mbyte.txt.html#locale" class="d">locale</a> with this encoding and isalpha() won't work.  For example
+when using "cp1250" on Unix.
+                                                <a name="E761" class="t">E761</a> <a name="E762" class="t">E762</a> <a name="spell-FOL" class="t">spell-FOL</a>
+                                                <a name="spell-LOW" class="t">spell-LOW</a> <a name="spell-UPP" class="t">spell-UPP</a>
+Three lines in the affix file are needed.  Simplistic example:
+
+<span class="h">        FOL  áëñ </span>
+<span class="h">        LOW  áëñ </span>
+<span class="h">        UPP  ÁËÑ </span>
+
+All three lines <a href="vim_faq.txt.html#must" class="d">must</a> have exactly the same number of characters.
+
+The "FOL" line specifies the case-folded characters.  These are used to
+compare words while ignoring case.  For most encodings this <a href="motion.txt.html#is" class="d">is</a> identical to
+the lower <a href="change.txt.html#case" class="d">case</a> line.
+
+The "LOW" line specifies the characters in lower-case.  Mostly it's equal to
+the "FOL" line.
+
+The "UPP" line specifies the characters with upper-case.  That is, <a href="insert.txt.html#a" class="d">a</a> character
+<a href="motion.txt.html#is" class="d">is</a> upper-case where it's different from the character <a href="motion.txt.html#at" class="d">at</a> the same position in
+"FOL"<a href="repeat.txt.html#." class="d">.</a>
+
+An exception <a href="motion.txt.html#is" class="d">is</a> made for the German sharp <a href="change.txt.html#s" class="d">s</a> ß<a href="repeat.txt.html#." class="d">.</a>  The upper-case version <a href="motion.txt.html#is" class="d">is</a>
+"SS"<a href="repeat.txt.html#." class="d">.</a>  In the FOL/LOW/UPP lines <a href="motion.txt.html#it" class="d">it</a> should be included, so that it's recognized
+<a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> character, but use the ß character in all three.
+
+ASCII characters should be omitted, Vim always handles these in the same way.
+When the encoding <a href="motion.txt.html#is" class="d">is</a> <a href="mbyte.txt.html#UTF-8" class="d">UTF-8</a> no <a href="motion.txt.html#word" class="d">word</a> characters need to be specified.
+
+                                                        <a name="E763" class="t">E763</a>
+Vim allows you to use <a href="#spell" class="d">spell</a> checking for several languages in the same file.
+You can <a href="eval.txt.html#list" class="d">list</a> them in the <a href="options.txt.html#%27spelllang%27" class="o">'spelllang'</a> option.  As <a href="insert.txt.html#a" class="d">a</a> consequence all <a href="#spell" class="d">spell</a> files
+for the same encoding <a href="vim_faq.txt.html#must" class="d">must</a> use the same <a href="motion.txt.html#word" class="d">word</a> characters, otherwise they can't
+be combined without errors.
+
+If you get an <a href="#E763" class="d">E763</a> warning that the <a href="motion.txt.html#word" class="d">word</a> tables differ you need to update your
+".spl" <a href="#spell" class="d">spell</a> files.  If you downloaded the files, get the latest version of
+all <a href="#spell" class="d">spell</a> files you use.  If you are only using one, e.g., German, then also
+<a href="intro.txt.html#download" class="d">download</a> the recent English <a href="#spell" class="d">spell</a> files.  Otherwise generate the .spl file
+again with <a href="#%3Amkspell" class="l">:mkspell</a><a href="repeat.txt.html#." class="d">.</a>  If you still get <a href="message.txt.html#errors" class="d">errors</a> check the FOL, LOW and UPP
+lines in the used <a href="#.aff" class="d">.aff</a> files.
+
+The XX.ascii.spl <a href="#spell" class="d">spell</a> file generated with the "-ascii" argument will not
+contain the table with characters, so that <a href="motion.txt.html#it" class="d">it</a> can be combine with <a href="#spell" class="d">spell</a> files
+for any encoding.  The .add.spl files also <a href="diff.txt.html#do" class="d">do</a> not contain the table.
+
+
+MID-WORD CHARACTERS
+                                                        <a name="spell-midword" class="t">spell-midword</a>
+Some characters are only to be considered <a href="motion.txt.html#word" class="d">word</a> characters if they are used in
+between two ordinary <a href="motion.txt.html#word" class="d">word</a> characters.  An example <a href="motion.txt.html#is" class="d">is</a> the single <a href="change.txt.html#quote%3A" class="d">quote:</a> It <a href="motion.txt.html#is" class="d">is</a>
+often used to <a href="change.txt.html#put" class="d">put</a> text in quotes, thus <a href="motion.txt.html#it" class="d">it</a> can't be recognized <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a>
+character, but when <a href="motion.txt.html#it" class="d">it</a> appears in between <a href="motion.txt.html#word" class="d">word</a> characters <a href="motion.txt.html#it" class="d">it</a> <a href="vim_faq.txt.html#must" class="d">must</a> be part of
+the word.  This <a href="motion.txt.html#is" class="d">is</a> needed to detect <a href="insert.txt.html#a" class="d">a</a> spelling error such <a href="motion.txt.html#as" class="d">as</a> they'are.  That
+should be they're, but since "they" and "are" are words themselves that would
+<a href="motion.txt.html#go" class="d">go</a> unnoticed.
+
+These characters are defined with MIDWORD in the <a href="#.aff" class="d">.aff</a> file.  Example:
+
+<span class="h">        MIDWORD '- </span>
+
+
+<span class="c">FLAG TYPES                                             </span> <a name="spell-FLAG" class="t">spell-FLAG</a>
+
+Flags are used to specify the affixes that can be used with <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> and for
+other properties of the word.  Normally single-character flags are used.  This
+<a href="vi_diff.txt.html#limits" class="d">limits</a> the number of possible flags, especially for 8-bit encodings.  The FLAG
+item can be used if more affixes are to be used.  Possible values:
+
+        FLAG long       use two-character flags
+        FLAG num        use numbers, from 1 up to 65000
+        FLAG caplong    use one-character flags without A-Z and two-character
+                        flags that start with A-Z
+
+With "FLAG num" the numbers in <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of affixes need to be separated with <a href="insert.txt.html#a" class="d">a</a>
+comma: "234,2143,1435"<a href="repeat.txt.html#." class="d">.</a>  This method <a href="motion.txt.html#is" class="d">is</a> inefficient, but useful if the file <a href="motion.txt.html#is" class="d">is</a>
+generated with <a href="insert.txt.html#a" class="d">a</a> program.
+
+When using "caplong" the two-character flags all start with <a href="insert.txt.html#a" class="d">a</a> capital: "Aa"<a href="motion.txt.html#%2C" class="d">,</a>
+"B1"<a href="motion.txt.html#%2C" class="d">,</a> "BB"<a href="motion.txt.html#%2C" class="d">,</a> etc.  This <a href="motion.txt.html#is" class="d">is</a> useful to use one-character flags for the most
+common items and two-character flags for uncommon items.
+
+<span class="n">Note:</span> When using <a href="mbyte.txt.html#utf-8" class="d">utf-8</a> only characters up to 65000 may be used for flags.
+
+<span class="n">Note:</span> even when using "num" or "long" the number of flags available to
+compounding and prefixes <a href="motion.txt.html#is" class="d">is</a> limited to about 250.
+
+
+AFFIXES
+                                            <a name="spell-PFX" class="t">spell-PFX</a> <a name="spell-SFX" class="t">spell-SFX</a>
+The usual PFX (prefix) and SFX (suffix) lines are supported (see the <a href="#Myspell" class="d">Myspell</a>
+documentation or the Aspell manual:
+<a class="u" href="http://aspell.net/man-html/Affix-Compression.html">http://aspell.net/man-html/Affix-Compression.html</a>).
+
+Summary:
+<span class="h">        SFX L Y 2 </span>
+<span class="h">        SFX L 0 re [^x] </span>
+<span class="h">        SFX L 0 ro x </span>
+
+The first line <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> header and has four fields:
+        SFX <span class="s">{flag}</span> <span class="s">{combine}</span> <span class="s">{count}</span>
+
+<span class="s">{flag}</span>          The name used for the suffix.  Mostly it's <a href="insert.txt.html#a" class="d">a</a> single letter,
+                but other characters can be used, see <a href="#spell-FLAG" class="l">spell-FLAG</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="s">{combine}</span>       Can be 'Y' or 'N'.  When 'Y' then the <a href="motion.txt.html#word" class="d">word</a> plus suffix can
+                also have <a href="insert.txt.html#a" class="d">a</a> prefix.  When 'N' then <a href="insert.txt.html#a" class="d">a</a> prefix <a href="motion.txt.html#is" class="d">is</a> not allowed.
+
+<span class="s">{count}</span>         The number of lines following.  If this <a href="motion.txt.html#is" class="d">is</a> wrong you will get
+                an error message.
+
+For PFX the fields are exactly the same.
+
+The basic format for the following lines is:
+        SFX <span class="s">{flag}</span> <span class="s">{strip}</span> <span class="s">{add}</span> <span class="s">{condition}</span> <span class="s">{extra}</span>
+
+<span class="s">{flag}</span>          Must be the same <a href="motion.txt.html#as" class="d">as</a> the <span class="s">{flag}</span> used in the first line.
+
+<span class="s">{strip}</span>         Characters removed from the basic word.  There <a href="motion.txt.html#is" class="d">is</a> no check if
+                the characters are actually there, only the length <a href="motion.txt.html#is" class="d">is</a> used (in
+                bytes).  This better match the <span class="s">{condition}</span>, otherwise strange
+                things may happen.  If the <span class="s">{strip}</span> length <a href="motion.txt.html#is" class="d">is</a> equal to or
+                longer than the basic <a href="motion.txt.html#word" class="d">word</a> the suffix won't be used.
+                When <span class="s">{strip}</span> <a href="motion.txt.html#is" class="d">is</a> <a href="motion.txt.html#0" class="d">0</a> (zero) then nothing <a href="motion.txt.html#is" class="d">is</a> stripped.
+
+<span class="s">{add}</span>           Characters added to the basic word, after removing <span class="s">{strip}</span>.
+                Optionally there <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> '/' followed by flags.  The flags apply
+                to the <a href="motion.txt.html#word" class="d">word</a> plus affix.  See <a href="#spell-affix-flags" class="l">spell-affix-flags</a>
+
+<span class="s">{condition}</span>     <a href="insert.txt.html#A" class="d">A</a> simplistic pattern.  Only when this matches with <a href="insert.txt.html#a" class="d">a</a> basic
+                <a href="motion.txt.html#word" class="d">word</a> will the suffix be used for that word.  This <a href="motion.txt.html#is" class="d">is</a> normally
+                for using one suffix <a href="print.txt.html#letter" class="d">letter</a> with different <span class="s">{add}</span> and <span class="s">{strip}</span>
+                fields for words with different endings.
+                When <span class="s">{condition}</span> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> <a href="repeat.txt.html#." class="d">.</a> (dot) there <a href="motion.txt.html#is" class="d">is</a> no condition.
+                The <a href="pattern.txt.html#pattern" class="d">pattern</a> may contain:
+                <a href="motion.txt.html#-" class="d">-</a> Literal characters.
+                <a href="motion.txt.html#-" class="d">-</a> <a href="insert.txt.html#A" class="d">A</a> set of characters in []. <span class="s">[abc]</span> matches a, <a href="motion.txt.html#b" class="d">b</a> and c.
+                  <a href="insert.txt.html#A" class="d">A</a> dash <a href="motion.txt.html#is" class="d">is</a> allowed for <a href="insert.txt.html#a" class="d">a</a> range <span class="s">[a-c]</span>, but this <a href="motion.txt.html#is" class="d">is</a>
+                  Vim-specific.
+                <a href="motion.txt.html#-" class="d">-</a> <a href="insert.txt.html#A" class="d">A</a> set of characters that starts with <a href="insert.txt.html#a" class="d">a</a> ^, meaning the
+                  complement of the specified characters. <span class="s">[^abc]</span> matches any
+                  character but a, <a href="motion.txt.html#b" class="d">b</a> and c.
+
+<span class="s">{extra}</span>         Optional extra text:
+                    <a href="pattern.txt.html#%23" class="d">#</a> comment           Comment <a href="motion.txt.html#is" class="d">is</a> ignored
+                    <a href="motion.txt.html#-" class="d">-</a>                   Hunspell uses this, ignored
+
+For PFX the fields are the same, but the <span class="s">{strip}</span>, <span class="s">{add}</span> and <span class="s">{condition}</span> apply
+to the start of the word.
+
+<span class="n">Note:</span> <a href="#Myspell" class="d">Myspell</a> ignores any extra text after the relevant info.  Vim requires
+this text to start with <a href="insert.txt.html#a" class="d">a</a> "<a href="pattern.txt.html#%23" class="d">#</a>" so that mistakes don't <a href="motion.txt.html#go" class="d">go</a> unnoticed.  Example:
+
+<span class="h">        SFX F 0 in   [^i]n      # Spion &gt; Spionin  </span>
+<span class="h">        SFX F 0 nen  in         # Bauerin &gt; Bauerinnen </span>
+
+However, to avoid lots of <a href="message.txt.html#errors" class="d">errors</a> in affix files written for Myspell, you can
+add the IGNOREEXTRA flag.
+
+Apparently <a href="#Myspell" class="d">Myspell</a> allows an affix name to appear more than once.  Since this
+might also be <a href="insert.txt.html#a" class="d">a</a> mistake, Vim checks for an extra "<a href="change.txt.html#S" class="d">S</a>"<a href="repeat.txt.html#." class="d">.</a>  The affix files for
+<a href="#Myspell" class="d">Myspell</a> that use this feature apparently have this flag.  Example:
+
+<span class="h">        SFX a Y 1 S </span>
+<span class="h">        SFX a 0 an . </span>
+
+<span class="h">        SFX a Y 2 S </span>
+<span class="h">        SFX a 0 en . </span>
+<span class="h">        SFX a 0 on . </span>
+
+
+<span class="c">AFFIX FLAGS                                            </span> <a name="spell-affix-flags" class="t">spell-affix-flags</a>
+
+This <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> feature that comes from Hunspell: The affix may specify flags.  This
+works similar to flags specified on <a href="insert.txt.html#a" class="d">a</a> basic word.  The flags apply to the
+basic <a href="motion.txt.html#word" class="d">word</a> plus the affix (but there are restrictions).  Example:
+
+<span class="h">        SFX S Y 1 </span>
+<span class="h">        SFX S 0 s . </span>
+
+<span class="h">        SFX A Y 1 </span>
+<span class="h">        SFX A 0 able/S . </span>
+
+When the dictionary file contains "drink/AS" then these words are possible:
+
+        drink
+        drinks          uses <a href="change.txt.html#S" class="d">S</a> suffix
+        drinkable       uses <a href="insert.txt.html#A" class="d">A</a> suffix
+        drinkables      uses <a href="insert.txt.html#A" class="d">A</a> suffix and then <a href="change.txt.html#S" class="d">S</a> suffix
+
+Generally the flags of the suffix are added to the flags of the basic word,
+both are used for the <a href="motion.txt.html#word" class="d">word</a> plus suffix.  But the flags of the basic <a href="motion.txt.html#word" class="d">word</a> are
+only used once for affixes, except that both one prefix and one suffix can be
+used when both support combining.
+
+Specifically, the affix flags can be used for:
+<a href="motion.txt.html#-" class="d">-</a> Suffixes on suffixes, <a href="motion.txt.html#as" class="d">as</a> in the example above.  This works once, thus you
+  can have two <a href="cmdline.txt.html#suffixes" class="d">suffixes</a> on <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> (plus one prefix).
+<a href="motion.txt.html#-" class="d">-</a> Making the <a href="motion.txt.html#word" class="d">word</a> with the affix rare, by using the <a href="#spell-RARE" class="l">spell-RARE</a> flag.
+<a href="motion.txt.html#-" class="d">-</a> Exclude the <a href="motion.txt.html#word" class="d">word</a> with the affix from compounding, by using the
+  <a href="#spell-COMPOUNDFORBIDFLAG" class="l">spell-COMPOUNDFORBIDFLAG</a> flag.
+<a href="motion.txt.html#-" class="d">-</a> Allow the <a href="motion.txt.html#word" class="d">word</a> with the affix to be part of <a href="insert.txt.html#a" class="d">a</a> compound <a href="motion.txt.html#word" class="d">word</a> on the side of
+  the affix with the <a href="#spell-COMPOUNDPERMITFLAG" class="l">spell-COMPOUNDPERMITFLAG</a><a href="repeat.txt.html#." class="d">.</a>
+<a href="motion.txt.html#-" class="d">-</a> Use the NEEDCOMPOUND flag: <a href="motion.txt.html#word" class="d">word</a> plus affix can only be used <a href="motion.txt.html#as" class="d">as</a> part of <a href="insert.txt.html#a" class="d">a</a>
+  compound word. <a href="#spell-NEEDCOMPOUND" class="l">spell-NEEDCOMPOUND</a>
+<a href="motion.txt.html#-" class="d">-</a> Compound flags: <a href="motion.txt.html#word" class="d">word</a> plus affix can be part of <a href="insert.txt.html#a" class="d">a</a> compound <a href="motion.txt.html#word" class="d">word</a> <a href="motion.txt.html#at" class="d">at</a> the end,
+  middle, start, etc.  The flags are combined with the flags of the basic
+  word.  <a href="#spell-compound" class="l">spell-compound</a>
+<a href="motion.txt.html#-" class="d">-</a> NEEDAFFIX: another affix <a href="motion.txt.html#is" class="d">is</a> needed to make <a href="insert.txt.html#a" class="d">a</a> valid word.
+<a href="motion.txt.html#-" class="d">-</a> CIRCUMFIX, <a href="motion.txt.html#as" class="d">as</a> explained just below.
+
+
+<span class="c">IGNOREEXTRA                                            </span> <a name="spell-IGNOREEXTRA" class="t">spell-IGNOREEXTRA</a>
+
+Normally Vim gives an error for an extra field that does not start with '#'.
+This avoids <a href="message.txt.html#errors" class="d">errors</a> going unnoticed.  However, some files created for <a href="#Myspell" class="d">Myspell</a>
+or Hunspell may contain many entries with an extra field.  Use the IGNOREEXTRA
+flag to avoid lots of errors.
+
+
+<span class="c">CIRCUMFIX                                              </span> <a name="spell-CIRCUMFIX" class="t">spell-CIRCUMFIX</a>
+
+The CIRCUMFIX flag means <a href="insert.txt.html#a" class="d">a</a> prefix and suffix <a href="vim_faq.txt.html#must" class="d">must</a> be added <a href="motion.txt.html#at" class="d">at</a> the same time.
+If <a href="insert.txt.html#a" class="d">a</a> prefix has the CIRCUMFIX flag than only <a href="cmdline.txt.html#suffixes" class="d">suffixes</a> with the CIRCUMFIX flag
+can be added, and the other way around.
+An alternative <a href="motion.txt.html#is" class="d">is</a> to only specify the suffix, and give the that suffix two
+flags: The required prefix and the NEEDAFFIX flag.  <a href="#spell-NEEDAFFIX" class="l">spell-NEEDAFFIX</a>
+
+
+<span class="c">PFXPOSTPONE                                            </span> <a name="spell-PFXPOSTPONE" class="t">spell-PFXPOSTPONE</a>
+
+When an affix file has very many prefixes that apply to many words it's not
+possible to build the whole <a href="motion.txt.html#word" class="d">word</a> <a href="eval.txt.html#list" class="d">list</a> in memory.  This applies to Hebrew (a
+<a href="eval.txt.html#list" class="d">list</a> with all words <a href="motion.txt.html#is" class="d">is</a> over <a href="insert.txt.html#a" class="d">a</a> Gbyte).  In that <a href="change.txt.html#case" class="d">case</a> applying prefixes <a href="vim_faq.txt.html#must" class="d">must</a> be
+postponed.  This makes <a href="#spell" class="d">spell</a> checking slower.  It <a href="motion.txt.html#is" class="d">is</a> indicated by this keyword
+in the <a href="#.aff" class="d">.aff</a> file:
+
+<span class="h">        PFXPOSTPONE </span>
+
+Only prefixes without <a href="insert.txt.html#a" class="d">a</a> chop <a href="eval.txt.html#string" class="d">string</a> and without flags can be postponed.
+Prefixes with <a href="insert.txt.html#a" class="d">a</a> chop <a href="eval.txt.html#string" class="d">string</a> or with flags will still be included in the <a href="motion.txt.html#word" class="d">word</a>
+list.  An exception if the chop <a href="eval.txt.html#string" class="d">string</a> <a href="motion.txt.html#is" class="d">is</a> one character and equal to the last
+character of the added string, but in lower case.  Thus when the chop <a href="eval.txt.html#string" class="d">string</a>
+<a href="motion.txt.html#is" class="d">is</a> used to allow the following <a href="motion.txt.html#word" class="d">word</a> to start with an upper <a href="change.txt.html#case" class="d">case</a> letter.
+
+
+<span class="c">WORDS WITH A SLASH                                     </span> <a name="spell-SLASH" class="t">spell-SLASH</a>
+
+The slash <a href="motion.txt.html#is" class="d">is</a> used in the <a href="#.dic" class="d">.dic</a> file to separate the basic <a href="motion.txt.html#word" class="d">word</a> from the affix
+letters and other flags.  Unfortunately, this means you cannot use <a href="insert.txt.html#a" class="d">a</a> slash in
+<a href="insert.txt.html#a" class="d">a</a> word.  Thus "TCP/IP" <a href="motion.txt.html#is" class="d">is</a> not <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> but "TCP" with the flags "IP"<a href="repeat.txt.html#." class="d">.</a>  To include
+<a href="insert.txt.html#a" class="d">a</a> slash in the <a href="motion.txt.html#word" class="d">word</a> <a href="change.txt.html#put" class="d">put</a> <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#backslash" class="d">backslash</a> before it: "TCP\/IP"<a href="repeat.txt.html#." class="d">.</a>  In the rare <a href="change.txt.html#case" class="d">case</a>
+you want to use <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#backslash" class="d">backslash</a> inside <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> you need to use two backslashes.
+Any other use of the <a href="intro.txt.html#backslash" class="d">backslash</a> <a href="motion.txt.html#is" class="d">is</a> reserved for future expansion.
+
+
+<span class="c">KEEP-CASE WORDS                                        </span> <a name="spell-KEEPCASE" class="t">spell-KEEPCASE</a>
+
+In the affix file <a href="insert.txt.html#a" class="d">a</a> KEEPCASE line can be used to define the affix name used
+for keep-case words.  Example:
+
+<span class="h">        KEEPCASE = </span>
+
+This flag <a href="motion.txt.html#is" class="d">is</a> not supported by Myspell.  It has the meaning that <a href="change.txt.html#case" class="d">case</a> matters.
+This can be used if the <a href="motion.txt.html#word" class="d">word</a> does not have the first <a href="print.txt.html#letter" class="d">letter</a> in upper <a href="change.txt.html#case" class="d">case</a> <a href="motion.txt.html#at" class="d">at</a>
+the start of <a href="insert.txt.html#a" class="d">a</a> sentence.  Example:
+
+<span class="h">    word list       matches                 does not match </span>
+    's morgens/=    's morgens              'S morgens 's Morgens 'S MORGENS
+    's Morgens      's Morgens 'S MORGENS   'S morgens 's morgens
+
+The flag can also be used to avoid that the <a href="motion.txt.html#word" class="d">word</a> matches when <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> in all
+upper-case letters.
+
+
+<span class="c">RARE WORDS                                             </span> <a name="spell-RARE" class="t">spell-RARE</a>
+
+In the affix file <a href="insert.txt.html#a" class="d">a</a> RARE line can be used to define the affix name used for
+rare words.  Example:
+
+<span class="h">        RARE ? </span>
+
+Rare words are highlighted differently from bad words.  This <a href="motion.txt.html#is" class="d">is</a> to be used for
+words that are correct for the language, but are hardly ever used and could be
+<a href="insert.txt.html#a" class="d">a</a> typing mistake anyway.  When the same <a href="motion.txt.html#word" class="d">word</a> <a href="motion.txt.html#is" class="d">is</a> found <a href="motion.txt.html#as" class="d">as</a> good <a href="motion.txt.html#it" class="d">it</a> won't be
+highlighted <a href="motion.txt.html#as" class="d">as</a> rare.
+
+This flag can also be used on an affix, so that <a href="insert.txt.html#a" class="d">a</a> basic <a href="motion.txt.html#word" class="d">word</a> <a href="motion.txt.html#is" class="d">is</a> not rare but
+the basic <a href="motion.txt.html#word" class="d">word</a> plus affix <a href="motion.txt.html#is" class="d">is</a> rare <a href="#spell-affix-flags" class="l">spell-affix-flags</a><a href="repeat.txt.html#." class="d">.</a>  However, if the <a href="motion.txt.html#word" class="d">word</a>
+also appears <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> good <a href="motion.txt.html#word" class="d">word</a> in another way (e.g., in another region) <a href="motion.txt.html#it" class="d">it</a> won't
+be marked <a href="motion.txt.html#as" class="d">as</a> rare.
+
+
+<span class="c">BAD WORDS                                              </span> <a name="spell-BAD" class="t">spell-BAD</a>
+
+In the affix file <a href="insert.txt.html#a" class="d">a</a> BAD line can be used to define the affix name used for
+bad words.  Example:
+
+<span class="h">        BAD ! </span>
+
+This can be used to exclude words that would otherwise be good.  For example
+"the the" in the <a href="#.dic" class="d">.dic</a> file:
+
+<span class="h">        the the/! </span>
+
+Once <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> has been marked <a href="motion.txt.html#as" class="d">as</a> bad <a href="motion.txt.html#it" class="d">it</a> won't be undone by encountering the same
+<a href="motion.txt.html#word" class="d">word</a> <a href="motion.txt.html#as" class="d">as</a> good.
+
+The flag also applies to the <a href="motion.txt.html#word" class="d">word</a> with affixes, thus this can be used to <a href="motion.txt.html#mark" class="d">mark</a>
+<a href="insert.txt.html#a" class="d">a</a> whole bunch of related words <a href="motion.txt.html#as" class="d">as</a> bad.
+
+                                                        <a name="spell-FORBIDDENWORD" class="t">spell-FORBIDDENWORD</a>
+FORBIDDENWORD can be used just like BAD.  For compatibility with Hunspell.
+
+                                                        <a name="spell-NEEDAFFIX" class="t">spell-NEEDAFFIX</a>
+The NEEDAFFIX flag <a href="motion.txt.html#is" class="d">is</a> used to require that <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> <a href="motion.txt.html#is" class="d">is</a> used with an affix.  The
+<a href="motion.txt.html#word" class="d">word</a> itself <a href="motion.txt.html#is" class="d">is</a> not <a href="insert.txt.html#a" class="d">a</a> good <a href="motion.txt.html#word" class="d">word</a> (unless there <a href="motion.txt.html#is" class="d">is</a> an empty affix).  Example:
+
+<span class="h">        NEEDAFFIX + </span>
+
+
+<span class="c">COMPOUND WORDS                                         </span> <a name="spell-compound" class="t">spell-compound</a>
+
+<a href="insert.txt.html#A" class="d">A</a> compound <a href="motion.txt.html#word" class="d">word</a> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> longer <a href="motion.txt.html#word" class="d">word</a> made by concatenating words that appear in
+the <a href="#.dic" class="d">.dic</a> file.  To specify which words may be concatenated <a href="insert.txt.html#a" class="d">a</a> character <a href="motion.txt.html#is" class="d">is</a>
+used.  This character <a href="motion.txt.html#is" class="d">is</a> <a href="change.txt.html#put" class="d">put</a> in the <a href="eval.txt.html#list" class="d">list</a> of affixes after the word.  We will
+call this character <a href="insert.txt.html#a" class="d">a</a> flag here.  Obviously these flags <a href="vim_faq.txt.html#must" class="d">must</a> be different from
+any affix IDs used.
+
+                                                        <a name="spell-COMPOUNDFLAG" class="t">spell-COMPOUNDFLAG</a>
+The <a href="#Myspell" class="d">Myspell</a> compatible method uses one flag, specified with COMPOUNDFLAG.  All
+words with this flag combine in any order.  This means there <a href="motion.txt.html#is" class="d">is</a> no <a href="intro.txt.html#control" class="d">control</a>
+over which <a href="motion.txt.html#word" class="d">word</a> comes first.  Example:
+<span class="h">        COMPOUNDFLAG c </span>
+
+                                                        <a name="spell-COMPOUNDRULE" class="t">spell-COMPOUNDRULE</a>
+<a href="insert.txt.html#A" class="d">A</a> more advanced method to specify how compound words can be formed uses
+multiple items with multiple flags.  This <a href="motion.txt.html#is" class="d">is</a> not compatible with <a href="#Myspell" class="d">Myspell</a> 3.0.
+Let's start with an example:
+<span class="h">        COMPOUNDRULE c+ </span>
+<span class="h">        COMPOUNDRULE se </span>
+
+The first line defines that words with the "<a href="change.txt.html#c" class="d">c</a>" flag can be concatenated in any
+order.  The second line defines compound words that are made of one <a href="motion.txt.html#word" class="d">word</a> with
+the "<a href="change.txt.html#s" class="d">s</a>" flag and one <a href="motion.txt.html#word" class="d">word</a> with the "<a href="motion.txt.html#e" class="d">e</a>" flag.  With this dictionary:
+<span class="h">        bork/c </span>
+<span class="h">        onion/s </span>
+<span class="h">        soup/e </span>
+
+You can make these words:
+        bork
+        borkbork
+        borkborkbork
+        (etc.)
+        onion
+        soup
+        onionsoup
+
+The COMPOUNDRULE item may appear multiple times.  The argument <a href="motion.txt.html#is" class="d">is</a> made out of
+one or more groups, where each group can be:
+        one flag                        e.g., <a href="change.txt.html#c" class="d">c</a>
+        alternate flags inside <a href="motion.txt.html#%5B%5D" class="d">[]</a>       e.g., <span class="s">[abc]</span>
+Optionally this may be followed by:
+        *       the group appears zero or more times, e.g., sm*<a href="motion.txt.html#e" class="d">e</a>
+        <a href="motion.txt.html#%2B" class="d">+</a>       the group appears one or more times, e.g., c+
+        <a href="pattern.txt.html#%3F" class="d">?</a>       the group appears zero times or once, e.g., x?
+
+This <a href="motion.txt.html#is" class="d">is</a> similar to the <a href="pattern.txt.html#regexp" class="d">regexp</a> <a href="pattern.txt.html#pattern" class="d">pattern</a> <a href="syntax.txt.html#syntax" class="d">syntax</a> (but not the same!).  <a href="insert.txt.html#A" class="d">A</a> few
+examples with the sequence of <a href="motion.txt.html#word" class="d">word</a> flags they require:
+    COMPOUNDRULE x+         <a href="change.txt.html#x" class="d">x</a> xx xxx etc.
+    COMPOUNDRULE yz         yz
+    COMPOUNDRULE x+z        xz xxz xxxz etc.
+    COMPOUNDRULE yx+        yx yxx yxxx etc.
+    COMPOUNDRULE xy?z       xz xyz
+
+    COMPOUNDRULE <span class="s">[abc]</span>z    az bz cz
+    COMPOUNDRULE <span class="s">[abc]</span>+z   az aaz abaz bz baz bcbz cz caz cbaz etc.
+    COMPOUNDRULE a[xyz]+   ax axx axyz ay ayx ayzz az azy azxy etc.
+    COMPOUNDRULE sm*<a href="motion.txt.html#e" class="d">e</a>       se sme smme smmme etc.
+    COMPOUNDRULE s[xyz]*<a href="motion.txt.html#e" class="d">e</a>  se sxe sxye sxyxe sye syze sze szye szyxe  etc.
+
+<a href="insert.txt.html#A" class="d">A</a> specific example: Allow <a href="insert.txt.html#a" class="d">a</a> compound to be made of two words and <a href="insert.txt.html#a" class="d">a</a> dash:
+        In the <a href="#.aff" class="d">.aff</a> file:
+<span class="h">            COMPOUNDRULE sde </span>
+<span class="h">            NEEDAFFIX x </span>
+<span class="h">            COMPOUNDWORDMAX 3 </span>
+<span class="h">            COMPOUNDMIN 1 </span>
+        In the <a href="#.dic" class="d">.dic</a> file:
+<span class="h">            start/s </span>
+<span class="h">            end/e </span>
+<span class="h">            -/xd </span>
+
+This allows for the <a href="motion.txt.html#word" class="d">word</a> "start-end"<a href="motion.txt.html#%2C" class="d">,</a> but not "startend"<a href="repeat.txt.html#." class="d">.</a>
+
+An additional implied rule <a href="motion.txt.html#is" class="d">is</a> that, without further flags, <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> with <a href="insert.txt.html#a" class="d">a</a>
+prefix cannot be compounded after another word, and <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> with <a href="insert.txt.html#a" class="d">a</a> suffix
+cannot be compounded with <a href="insert.txt.html#a" class="d">a</a> following word.  Thus the affix cannot appear
+on the inside of <a href="insert.txt.html#a" class="d">a</a> compound word.  This can be changed with the
+<a href="#spell-COMPOUNDPERMITFLAG" class="l">spell-COMPOUNDPERMITFLAG</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="spell-NEEDCOMPOUND" class="t">spell-NEEDCOMPOUND</a>
+The NEEDCOMPOUND flag <a href="motion.txt.html#is" class="d">is</a> used to require that <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> <a href="motion.txt.html#is" class="d">is</a> used <a href="motion.txt.html#as" class="d">as</a> part of <a href="insert.txt.html#a" class="d">a</a>
+compound word.  The <a href="motion.txt.html#word" class="d">word</a> itself <a href="motion.txt.html#is" class="d">is</a> not <a href="insert.txt.html#a" class="d">a</a> good word.  Example:
+
+<span class="h">        NEEDCOMPOUND &amp; </span>
+
+                                                        <a name="spell-ONLYINCOMPOUND" class="t">spell-ONLYINCOMPOUND</a>
+The ONLYINCOMPOUND does exactly the same <a href="motion.txt.html#as" class="d">as</a> NEEDCOMPOUND.  Supported for
+compatibility with Hunspell.
+
+                                                        <a name="spell-COMPOUNDMIN" class="t">spell-COMPOUNDMIN</a>
+The minimal character length of <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> used for compounding <a href="motion.txt.html#is" class="d">is</a> specified with
+COMPOUNDMIN.  Example:
+<span class="h">        COMPOUNDMIN 5 </span>
+
+When omitted there <a href="motion.txt.html#is" class="d">is</a> no minimal length.  Obviously you could just leave out
+the compound flag from short words instead, this feature <a href="motion.txt.html#is" class="d">is</a> present for
+compatibility with Myspell.
+
+                                                        <a name="spell-COMPOUNDWORDMAX" class="t">spell-COMPOUNDWORDMAX</a>
+The maximum number of words that can be concatenated into <a href="insert.txt.html#a" class="d">a</a> compound <a href="motion.txt.html#word" class="d">word</a> <a href="motion.txt.html#is" class="d">is</a>
+specified with COMPOUNDWORDMAX.  Example:
+<span class="h">        COMPOUNDWORDMAX 3 </span>
+
+When omitted there <a href="motion.txt.html#is" class="d">is</a> no maximum.  It applies to all compound words.
+
+To set <a href="insert.txt.html#a" class="d">a</a> limit for words with specific flags make sure the items in
+COMPOUNDRULE where they appear don't allow too many words.
+
+                                                        <a name="spell-COMPOUNDSYLMAX" class="t">spell-COMPOUNDSYLMAX</a>
+The maximum number of syllables that <a href="insert.txt.html#a" class="d">a</a> compound <a href="motion.txt.html#word" class="d">word</a> may contain <a href="motion.txt.html#is" class="d">is</a> specified
+with COMPOUNDSYLMAX.  Example:
+<span class="h">        COMPOUNDSYLMAX 6 </span>
+
+This has no effect if there <a href="motion.txt.html#is" class="d">is</a> no SYLLABLE item.  Without COMPOUNDSYLMAX there
+<a href="motion.txt.html#is" class="d">is</a> no limit on the number of syllables.
+
+If both COMPOUNDWORDMAX and COMPOUNDSYLMAX are defined, <a href="insert.txt.html#a" class="d">a</a> compound <a href="motion.txt.html#word" class="d">word</a> <a href="motion.txt.html#is" class="d">is</a>
+accepted if <a href="motion.txt.html#it" class="d">it</a> fits one of the criteria, thus <a href="motion.txt.html#is" class="d">is</a> either made from up to
+COMPOUNDWORDMAX words or contains up to COMPOUNDSYLMAX syllables.
+
+                                                    <a name="spell-COMPOUNDFORBIDFLAG" class="t">spell-COMPOUNDFORBIDFLAG</a>
+The COMPOUNDFORBIDFLAG specifies <a href="insert.txt.html#a" class="d">a</a> flag that can be used on an affix.  It
+means that the <a href="motion.txt.html#word" class="d">word</a> plus affix cannot be used in <a href="insert.txt.html#a" class="d">a</a> compound word.  Example:
+        affix file:
+<span class="h">                COMPOUNDFLAG c </span>
+<span class="h">                COMPOUNDFORBIDFLAG x </span>
+<span class="h">                SFX a Y 2 </span>
+<span class="h">                SFX a 0 s   . </span>
+<span class="h">                SFX a 0 ize/x . </span>
+        dictionary:
+<span class="h">                word/c </span>
+<span class="h">                util/ac </span>
+
+This allows for "wordutil" and "wordutils" but not "wordutilize"<a href="repeat.txt.html#." class="d">.</a>
+<span class="n">Note:</span> this doesn't work for postponed prefixes yet.
+
+                                                    <a name="spell-COMPOUNDPERMITFLAG" class="t">spell-COMPOUNDPERMITFLAG</a>
+The COMPOUNDPERMITFLAG specifies <a href="insert.txt.html#a" class="d">a</a> flag that can be used on an affix.  It
+means that the <a href="motion.txt.html#word" class="d">word</a> plus affix can also be used in <a href="insert.txt.html#a" class="d">a</a> compound <a href="motion.txt.html#word" class="d">word</a> in <a href="insert.txt.html#a" class="d">a</a> way
+where the affix ends up halfway the word.  Without this flag that <a href="motion.txt.html#is" class="d">is</a> not
+allowed.
+<span class="n">Note:</span> this doesn't work for postponed prefixes yet.
+
+                                                    <a name="spell-COMPOUNDROOT" class="t">spell-COMPOUNDROOT</a>
+The COMPOUNDROOT flag <a href="motion.txt.html#is" class="d">is</a> used for words in the dictionary that are already <a href="insert.txt.html#a" class="d">a</a>
+compound.  This means <a href="motion.txt.html#it" class="d">it</a> counts for two words when checking the compounding
+rules.  Can also be used for an affix to <a href="intro.txt.html#count" class="d">count</a> the affix <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> compounding
+word.
+
+                                                <a name="spell-CHECKCOMPOUNDPATTERN" class="t">spell-CHECKCOMPOUNDPATTERN</a>
+CHECKCOMPOUNDPATTERN <a href="motion.txt.html#is" class="d">is</a> used to define patterns that, when matching <a href="motion.txt.html#at" class="d">at</a> the
+position where two words are compounded together forbids the compound.
+For example:
+<span class="h">        CHECKCOMPOUNDPATTERN o e </span>
+
+This forbids compounding if the first <a href="motion.txt.html#word" class="d">word</a> ends in "<a href="insert.txt.html#o" class="d">o</a>" and the second <a href="motion.txt.html#word" class="d">word</a>
+starts with "<a href="motion.txt.html#e" class="d">e</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+The arguments <a href="vim_faq.txt.html#must" class="d">must</a> be plain text, no patterns are actually supported, despite
+the item name.  Case <a href="motion.txt.html#is" class="d">is</a> always ignored.
+
+The Hunspell feature to use three arguments and flags <a href="motion.txt.html#is" class="d">is</a> not supported.
+
+                                                        <a name="spell-NOCOMPOUNDSUGS" class="t">spell-NOCOMPOUNDSUGS</a>
+This item indicates that using compounding to make suggestions <a href="motion.txt.html#is" class="d">is</a> not <a href="insert.txt.html#a" class="d">a</a> good
+idea.  Use this when compounding <a href="motion.txt.html#is" class="d">is</a> used with very short or one-character
+words.  E.g. to make numbers out of digits.  Without this flag creating
+suggestions would spend most time trying all kind of weird compound words.
+
+<span class="h">        NOCOMPOUNDSUGS </span>
+
+                                                        <a name="spell-SYLLABLE" class="t">spell-SYLLABLE</a>
+The SYLLABLE item defines characters or character sequences that are used to
+<a href="intro.txt.html#count" class="d">count</a> the number of syllables in <a href="insert.txt.html#a" class="d">a</a> word.  Example:
+<span class="h">        SYLLABLE aáeéiíoóöõuúüûy/aa/au/ea/ee/ei/ie/oa/oe/oo/ou/uu/ui </span>
+
+Before the first slash <a href="motion.txt.html#is" class="d">is</a> the set of characters that are counted for one
+syllable, also when repeated and mixed, until the next character that <a href="motion.txt.html#is" class="d">is</a> not
+in this set.  After the slash come sequences of characters that are counted
+for one syllable.  These are preferred over using characters from the set.
+With the example "ideeen" has three syllables, counted by "<a href="insert.txt.html#i" class="d">i</a>"<a href="motion.txt.html#%2C" class="d">,</a> "ee" and "<a href="motion.txt.html#e" class="d">e</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+Only case-folded letters need to be included.
+
+Another way to restrict compounding was mentioned above: Adding the
+<a href="#spell-COMPOUNDFORBIDFLAG" class="l">spell-COMPOUNDFORBIDFLAG</a> flag to an affix causes all words that are made
+with that affix to not be used for compounding.
+
+
+<span class="c">UNLIMITED COMPOUNDING                                  </span> <a name="spell-NOBREAK" class="t">spell-NOBREAK</a>
+
+For some languages, such <a href="motion.txt.html#as" class="d">as</a> Thai, there <a href="motion.txt.html#is" class="d">is</a> no <a href="intro.txt.html#space" class="d">space</a> in between words.  This
+looks like all words are compounded.  To specify this use the NOBREAK item in
+the affix file, without arguments:
+<span class="h">        NOBREAK </span>
+
+Vim will try to figure out where one <a href="motion.txt.html#word" class="d">word</a> ends and <a href="insert.txt.html#a" class="d">a</a> next starts.  When there
+are spelling mistakes this may not be quite right.
+
+
+                                                        <a name="spell-COMMON" class="t">spell-COMMON</a>
+Common words can be specified with the COMMON item.  This will give better
+suggestions when editing <a href="insert.txt.html#a" class="d">a</a> short file.  Example:
+
+<span class="h">        COMMON  the of to and a in is it you that he was for on are </span>
+
+The words <a href="vim_faq.txt.html#must" class="d">must</a> be separated by white space, up to 25 per line.
+When multiple regions are specified in <a href="insert.txt.html#a" class="d">a</a> "<a href="#%3Amkspell" class="d">:mkspell</a>" command the common words
+for all regions are combined and used for all regions.
+
+                                                        <a name="spell-NOSPLITSUGS" class="t">spell-NOSPLITSUGS</a>
+This item indicates that splitting <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> to make suggestions <a href="motion.txt.html#is" class="d">is</a> not <a href="insert.txt.html#a" class="d">a</a> good
+idea.  Split-word suggestions will appear only when there are few similar
+words.
+
+<span class="h">        NOSPLITSUGS </span>
+
+                                                        <a name="spell-NOSUGGEST" class="t">spell-NOSUGGEST</a>
+The flag specified with NOSUGGEST can be used for words that will not be
+suggested.  Can be used for obscene words.
+
+<span class="h">        NOSUGGEST % </span>
+
+
+<span class="c">REPLACEMENTS                                           </span> <a name="spell-REP" class="t">spell-REP</a>
+
+In the affix file REP items can be used to define common mistakes.  This <a href="motion.txt.html#is" class="d">is</a>
+used to make spelling suggestions.  The items define the "from" text and the
+"to" replacement.  Example:
+
+<span class="h">        REP 4 </span>
+<span class="h">        REP f ph </span>
+<span class="h">        REP ph f </span>
+<span class="h">        REP k ch </span>
+<span class="h">        REP ch k </span>
+
+The first line specifies the number of REP lines following.  Vim ignores the
+number, but <a href="motion.txt.html#it" class="d">it</a> <a href="vim_faq.txt.html#must" class="d">must</a> be there (for compatibility with Myspell).
+
+Don't include simple one-character replacements or swaps.  Vim will try these
+anyway.  You can include whole words if you want to, but you might want to use
+the "file:" item in <a href="options.txt.html#%27spellsuggest%27" class="o">'spellsuggest'</a> instead.
+
+You can include <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#space" class="d">space</a> by using an underscore:
+
+<span class="h">        REP the_the the </span>
+
+
+<span class="c">SIMILAR CHARACTERS                                     </span> <a name="spell-MAP" class="t">spell-MAP</a> <a name="E783" class="t">E783</a>
+
+In the affix file MAP items can be used to define letters that are very much
+alike.  This <a href="motion.txt.html#is" class="d">is</a> mostly used for <a href="insert.txt.html#a" class="d">a</a> <a href="print.txt.html#letter" class="d">letter</a> with different accents.  This <a href="motion.txt.html#is" class="d">is</a> used
+to prefer suggestions with these letters substituted.  Example:
+
+<span class="h">        MAP 2 </span>
+<span class="h">        MAP eéëêè </span>
+<span class="h">        MAP uüùúû </span>
+
+The first line specifies the number of MAP lines following.  Vim ignores the
+number, but the line <a href="vim_faq.txt.html#must" class="d">must</a> be there.
+
+Each <a href="print.txt.html#letter" class="d">letter</a> <a href="vim_faq.txt.html#must" class="d">must</a> appear in only one of the MAP items.  It's <a href="insert.txt.html#a" class="d">a</a> bit more
+efficient if the first <a href="print.txt.html#letter" class="d">letter</a> <a href="motion.txt.html#is" class="d">is</a> ASCII or <a href="motion.txt.html#at" class="d">at</a> least one without accents.
+
+
+<span class="c">.SUG FILE                                              </span> <a name="spell-NOSUGFILE" class="t">spell-NOSUGFILE</a>
+
+When soundfolding <a href="motion.txt.html#is" class="d">is</a> specified in the affix file then "<a href="#%3Amkspell" class="d">:mkspell</a>" will normally
+produce <a href="insert.txt.html#a" class="d">a</a> .sug file next to the .spl file.  This file <a href="motion.txt.html#is" class="d">is</a> used to find
+suggestions by their sound-a-like form quickly.  At the cost of <a href="insert.txt.html#a" class="d">a</a> lot of
+memory (the amount depends on the number of words, <a href="#%3Amkspell" class="l">:mkspell</a> will display an
+estimate when it's done).
+
+To avoid producing <a href="insert.txt.html#a" class="d">a</a> .sug file use this item in the affix file:
+
+<span class="h">        NOSUGFILE </span>
+
+Users can simply omit the .sug file if they don't want to use it.
+
+
+<span class="c">SOUND-A-LIKE                                           </span> <a name="spell-SAL" class="t">spell-SAL</a>
+
+In the affix file SAL items can be used to define the sounds-a-like mechanism
+to be used.  The main items define the "from" text and the "to" replacement.
+Simplistic example:
+
+<span class="h">        SAL CIA                  X </span>
+<span class="h">        SAL CH                   X </span>
+<span class="h">        SAL C                    K </span>
+<span class="h">        SAL K                    K </span>
+
+There are <a href="insert.txt.html#a" class="d">a</a> few rules and this can become quite complicated.  An explanation
+how <a href="motion.txt.html#it" class="d">it</a> works can be found in the Aspell manual:
+<a class="u" href="http://aspell.net/man-html/Phonetic-Code.html">http://aspell.net/man-html/Phonetic-Code.html</a>.
+
+There are <a href="insert.txt.html#a" class="d">a</a> few special items:
+
+<span class="h">        SAL followup            true </span>
+<span class="h">        SAL collapse_result     true </span>
+<span class="h">        SAL remove_accents      true </span>
+
+"1" has the same meaning <a href="motion.txt.html#as" class="d">as</a> "true"<a href="repeat.txt.html#." class="d">.</a>  Any other value means "false"<a href="repeat.txt.html#." class="d">.</a>
+
+
+<span class="c">SIMPLE SOUNDFOLDING                            </span> <a name="spell-SOFOFROM" class="t">spell-SOFOFROM</a> <a name="spell-SOFOTO" class="t">spell-SOFOTO</a>
+
+The SAL mechanism <a href="motion.txt.html#is" class="d">is</a> complex and slow.  <a href="insert.txt.html#A" class="d">A</a> simpler mechanism <a href="motion.txt.html#is" class="d">is</a> <a href="map.txt.html#mapping" class="d">mapping</a> all
+characters to another character, <a href="map.txt.html#mapping" class="d">mapping</a> similar sounding characters to the
+same character.  At the same time this does <a href="change.txt.html#case" class="d">case</a> folding.  You can not have
+both SAL items and simple soundfolding.
+
+There are two items required: one to specify the characters that are mapped
+and one that specifies the characters they are mapped to.  They <a href="vim_faq.txt.html#must" class="d">must</a> have
+exactly the same number of characters.  Example:
+
+<span class="h">    SOFOFROM abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ </span>
+<span class="h">    SOFOTO   ebctefghejklnnepkrstevvkesebctefghejklnnepkrstevvkes </span>
+
+In the example all vowels are mapped to the same character 'e'.  Another
+method would be to leave out all vowels.  Some characters that sound nearly
+the same and are often mixed up, such <a href="motion.txt.html#as" class="d">as</a> 'm' and 'n', are mapped to the same
+character.  Don't <a href="diff.txt.html#do" class="d">do</a> this too much, all words will start looking alike.
+
+Characters that <a href="diff.txt.html#do" class="d">do</a> not appear in SOFOFROM will be left out, except that all
+white <a href="intro.txt.html#space" class="d">space</a> <a href="motion.txt.html#is" class="d">is</a> replaced by one space.  Sequences of the same character in
+SOFOFROM are replaced by one.
+
+You can use the <a href="eval.txt.html#soundfold%28%29" class="l">soundfold()</a> function to try out the results.  Or set the
+<a href="options.txt.html#%27verbose%27" class="o">'verbose'</a> option to see the score in the output of the <a href="#z%3D" class="l">z=</a> command.
+
+
+<span class="c">UNSUPPORTED ITEMS                              </span> <a name="spell-affix-not-supported" class="t">spell-affix-not-supported</a>
+
+These items appear in the affix file of other <a href="#spell" class="d">spell</a> checkers.  In Vim they are
+ignored, not supported or defined in another way.
+
+ACCENT          (Hunspell)                              <a name="spell-ACCENT" class="t">spell-ACCENT</a>
+                Use MAP instead. <a href="#spell-MAP" class="l">spell-MAP</a>
+
+BREAK           (Hunspell)                              <a name="spell-BREAK" class="t">spell-BREAK</a>
+                Define break points.  Unclear how <a href="motion.txt.html#it" class="d">it</a> works exactly.
+                Not supported.
+
+CHECKCOMPOUNDCASE  (Hunspell)                   <a name="spell-CHECKCOMPOUNDCASE" class="t">spell-CHECKCOMPOUNDCASE</a>
+                Disallow <a href="change.txt.html#uppercase" class="d">uppercase</a> letters <a href="motion.txt.html#at" class="d">at</a> compound <a href="motion.txt.html#word" class="d">word</a> boundaries.
+                Not supported.
+
+CHECKCOMPOUNDDUP  (Hunspell)                    <a name="spell-CHECKCOMPOUNDDUP" class="t">spell-CHECKCOMPOUNDDUP</a>
+                Disallow using the same <a href="motion.txt.html#word" class="d">word</a> <a href="if_cscop.txt.html#twice" class="d">twice</a> in <a href="insert.txt.html#a" class="d">a</a> compound.  Not
+                supported.
+
+CHECKCOMPOUNDREP  (Hunspell)                    <a name="spell-CHECKCOMPOUNDREP" class="t">spell-CHECKCOMPOUNDREP</a>
+                Something about using REP items and compound words.  Not
+                supported.
+
+CHECKCOMPOUNDTRIPLE  (Hunspell)                 <a name="spell-CHECKCOMPOUNDTRIPLE" class="t">spell-CHECKCOMPOUNDTRIPLE</a>
+                Forbid three identical characters when compounding.  Not
+                supported.
+
+COMPLEXPREFIXES  (Hunspell)                             <a name="spell-COMPLEXPREFIXES" class="t">spell-COMPLEXPREFIXES</a>
+                Enables using two prefixes.  Not supported.
+
+COMPOUND        (Hunspell)                              <a name="spell-COMPOUND" class="t">spell-COMPOUND</a>
+                This <a href="motion.txt.html#is" class="d">is</a> one line with the <a href="intro.txt.html#count" class="d">count</a> of COMPOUND items, followed by
+                that many COMPOUND lines with <a href="insert.txt.html#a" class="d">a</a> pattern.
+                Remove the first line with the <a href="intro.txt.html#count" class="d">count</a> and rename the other
+                items to COMPOUNDRULE <a href="#spell-COMPOUNDRULE" class="l">spell-COMPOUNDRULE</a>
+
+COMPOUNDFIRST   (Hunspell)                              <a name="spell-COMPOUNDFIRST" class="t">spell-COMPOUNDFIRST</a>
+                Use COMPOUNDRULE instead. <a href="#spell-COMPOUNDRULE" class="l">spell-COMPOUNDRULE</a>
+
+COMPOUNDBEGIN   (Hunspell)                              <a name="spell-COMPOUNDBEGIN" class="t">spell-COMPOUNDBEGIN</a>
+                Use COMPOUNDRULE instead. <a href="#spell-COMPOUNDRULE" class="l">spell-COMPOUNDRULE</a>
+
+COMPOUNDEND     (Hunspell)                              <a name="spell-COMPOUNDEND" class="t">spell-COMPOUNDEND</a>
+                Use COMPOUNDRULE instead. <a href="#spell-COMPOUNDRULE" class="l">spell-COMPOUNDRULE</a>
+
+COMPOUNDMIDDLE  (Hunspell)                              <a name="spell-COMPOUNDMIDDLE" class="t">spell-COMPOUNDMIDDLE</a>
+                Use COMPOUNDRULE instead. <a href="#spell-COMPOUNDRULE" class="l">spell-COMPOUNDRULE</a>
+
+COMPOUNDRULES   (Hunspell)                              <a name="spell-COMPOUNDRULES" class="t">spell-COMPOUNDRULES</a>
+                <a href="eval.txt.html#Number" class="d">Number</a> of COMPOUNDRULE lines following.  Ignored, but the
+                argument <a href="vim_faq.txt.html#must" class="d">must</a> be <a href="insert.txt.html#a" class="d">a</a> number.
+
+COMPOUNDSYLLABLE  (Hunspell)                    <a name="spell-COMPOUNDSYLLABLE" class="t">spell-COMPOUNDSYLLABLE</a>
+                Use SYLLABLE and COMPOUNDSYLMAX instead. <a href="#spell-SYLLABLE" class="l">spell-SYLLABLE</a>
+                <a href="#spell-COMPOUNDSYLMAX" class="l">spell-COMPOUNDSYLMAX</a>
+
+KEY             (Hunspell)                              <a name="spell-KEY" class="t">spell-KEY</a>
+                Define characters that are close together on the keyboard.
+                Used to give better suggestions.  Not supported.
+
+LANG            (Hunspell)                              <a name="spell-LANG" class="t">spell-LANG</a>
+                This specifies language-specific behavior.  This actually
+                moves part of the language knowledge into the program,
+                therefore Vim does not support it.  Each language property
+                <a href="vim_faq.txt.html#must" class="d">must</a> be specified separately.
+
+LEMMA_PRESENT   (Hunspell)                              <a name="spell-LEMMA_PRESENT" class="t">spell-LEMMA_PRESENT</a>
+                Only needed for morphological analysis.
+
+MAXNGRAMSUGS    (Hunspell)                              <a name="spell-MAXNGRAMSUGS" class="t">spell-MAXNGRAMSUGS</a>
+                Set number of n-gram suggestions.  Not supported.
+
+PSEUDOROOT      (Hunspell)                              <a name="spell-PSEUDOROOT" class="t">spell-PSEUDOROOT</a>
+                Use NEEDAFFIX instead. <a href="#spell-NEEDAFFIX" class="l">spell-NEEDAFFIX</a>
+
+SUGSWITHDOTS    (Hunspell)                              <a name="spell-SUGSWITHDOTS" class="t">spell-SUGSWITHDOTS</a>
+                Adds dots to suggestions.  Vim doesn't need this.
+
+SYLLABLENUM     (Hunspell)                              <a name="spell-SYLLABLENUM" class="t">spell-SYLLABLENUM</a>
+                Not supported.
+
+TRY             (Myspell, Hunspell, others)             <a name="spell-TRY" class="t">spell-TRY</a>
+                Vim does not use the TRY item, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> ignored.  For making
+                suggestions the actual characters in the words are used, that
+                <a href="motion.txt.html#is" class="d">is</a> much more efficient.
+
+WORDCHARS       (Hunspell)                              <a name="spell-WORDCHARS" class="t">spell-WORDCHARS</a>
+                Used to recognize words.  Vim doesn't need it, because there
+                <a href="motion.txt.html#is" class="d">is</a> no need to separate words before checking them (using <a href="insert.txt.html#a" class="d">a</a>
+                trie instead of <a href="insert.txt.html#a" class="d">a</a> hashtable).
+
+ vim:tw=78:sw=4:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

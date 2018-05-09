@@ -1,0 +1,206 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: usr_01.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="usr_01.txt" class="t">usr_01.txt</a>    For <span class="i">Vim version 8.0.</span>  Last change: 2017 Jul 15
+
+                     VIM USER MANUAL <a href="motion.txt.html#-" class="d">-</a> by <a href="intro.txt.html#Bram" class="d">Bram</a> <a href="intro.txt.html#Moolenaar" class="d">Moolenaar</a>
+
+                              About the manuals
+
+
+This chapter introduces the manuals available with Vim.  Read this to know the
+conditions under which the commands are explained.
+
+<a href="#01.1" class="l">01.1</a>  Two manuals
+<a href="#01.2" class="l">01.2</a>  Vim installed
+<a href="#01.3" class="l">01.3</a>  Using the Vim <a href="#tutor" class="d">tutor</a>
+<a href="#01.4" class="l">01.4</a>  Copyright
+
+     Next chapter: <a href="usr_02.txt.html#usr_02.txt" class="l">usr_02.txt</a>  The first steps in Vim
+Table of contents: <a href="usr_toc.txt.html#usr_toc.txt" class="l">usr_toc.txt</a>
+
+<span class="h">==============================================================================</span>
+<a name="01.1" class="t">01.1</a>  Two manuals
+
+The Vim documentation consists of two parts:
+
+1. The <a href="autocmd.txt.html#User" class="d">User</a> manual
+   Task oriented explanations, from simple to complex.  Reads from start to
+   <a href="intro.txt.html#end" class="d">end</a> like <a href="insert.txt.html#a" class="d">a</a> book.
+
+2. The Reference manual
+   Precise description of how everything in Vim works.
+
+The <a href="intro.txt.html#notation" class="d">notation</a> used in these manuals <a href="motion.txt.html#is" class="d">is</a> explained here: <a href="intro.txt.html#notation" class="l">notation</a>
+
+
+JUMPING AROUND
+
+The text contains hyperlinks between the two parts, allowing you to quickly
+jump between the description of an editing task and <a href="insert.txt.html#a" class="d">a</a> precise explanation of
+the commands and <a href="options.txt.html#options" class="d">options</a> used for it.  Use these two commands:
+
+        Press  <a href="tagsrch.txt.html#CTRL-%5D" class="k">CTRL-]</a>  to jump to <a href="insert.txt.html#a" class="d">a</a> subject under the cursor.
+        Press  <a href="motion.txt.html#CTRL-O" class="k">CTRL-O</a>  to jump back (repeat to <a href="motion.txt.html#go" class="d">go</a> further back).
+
+Many links are in vertical bars, like this: <a href="/#bars" class="l">bars</a><a href="repeat.txt.html#." class="d">.</a>  The <a href="/#bars" class="d">bars</a> themselves may
+be hidden or invisible, see below.  An option name, like <a href="options.txt.html#%27number%27" class="o">'number'</a>, <a href="insert.txt.html#a" class="d">a</a> command
+in double <a href="quotes.txt.html#quotes" class="d">quotes</a> like "<a href="editing.txt.html#%3Awrite" class="d">:write</a>" and any other <a href="motion.txt.html#word" class="d">word</a> can also be used <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> link.
+Try <a href="motion.txt.html#it" class="d">it</a> out: Move the cursor to  <a href="tagsrch.txt.html#CTRL-%5D" class="k">CTRL-]</a>  and press <a href="tagsrch.txt.html#CTRL-%5D" class="k">CTRL-]</a> on it.
+
+Other subjects can be found with the "<a href="helphelp.txt.html#%3Ahelp" class="d">:help</a>" command, see <a href="/#help.txt" class="l">help.txt</a><a href="repeat.txt.html#." class="d">.</a>
+
+The <a href="/#bars" class="d">bars</a> and stars are usually hidden with the <a href="syntax.txt.html#conceal" class="l">conceal</a> feature.  They also
+use <a href="syntax.txt.html#hl-Ignore" class="l">hl-Ignore</a><a href="motion.txt.html#%2C" class="d">,</a> using the same color for the text <a href="motion.txt.html#as" class="d">as</a> the background.  You can
+make them visible with: 
+<span class="e">        :set conceallevel=0</span>
+<span class="e">        :hi link HelpBar Normal</span>
+<span class="e">        :hi link HelpStar Normal</span>
+<span class="e"></span>
+<span class="h">==============================================================================</span>
+<a name="01.2" class="t">01.2</a>  Vim installed
+
+Most of the manuals assume that Vim has been properly installed.  If you
+didn't <a href="diff.txt.html#do" class="d">do</a> that yet, or if Vim doesn't run properly (e.g., files can't be found
+or in the <a href="gui.txt.html#GUI" class="d">GUI</a> the <a href="gui.txt.html#menus" class="d">menus</a> <a href="diff.txt.html#do" class="d">do</a> not show up) first read the chapter on
+installation: <a href="usr_90.txt.html#usr_90.txt" class="l">usr_90.txt</a><a href="repeat.txt.html#." class="d">.</a>
+                                                        <a name="not-compatible" class="t">not-compatible</a>
+The manuals often assume you are using Vim with Vi-compatibility switched
+off.  For most commands this doesn't matter, but sometimes <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> important,
+e.g., for multi-level undo.  An <a href="starting.txt.html#easy" class="d">easy</a> way to make sure you are using <a href="insert.txt.html#a" class="d">a</a> <a href="todo.txt.html#nice" class="d">nice</a>
+setup <a href="motion.txt.html#is" class="d">is</a> to copy the example <a href="starting.txt.html#vimrc" class="d">vimrc</a> file.  By doing this inside Vim you don't
+have to check out where <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> located.  How to <a href="diff.txt.html#do" class="d">do</a> this depends on the system
+you are using:
+
+Unix: 
+<span class="e">        :!cp -i $VIMRUNTIME/vimrc_example.vim ~/.vimrc</span>
+MS-DOS, MS-Windows, OS/2: 
+<span class="e">        :!copy $VIMRUNTIME/vimrc_example.vim $VIM/_vimrc</span>
+Amiga: 
+<span class="e">        :!copy $VIMRUNTIME/vimrc_example.vim $VIM/.vimrc</span>
+<span class="e"></span>
+If the file already exists you probably want to keep it.
+
+If you start Vim now, the <a href="options.txt.html#%27compatible%27" class="o">'compatible'</a> option should be off.  You can check <a href="motion.txt.html#it" class="d">it</a>
+with this command: 
+<span class="e"></span>
+<span class="e">        :set compatible?</span>
+<span class="e"></span>
+If <a href="motion.txt.html#it" class="d">it</a> responds with "nocompatible" you are doing well.  If the response <a href="motion.txt.html#is" class="d">is</a>
+"compatible" you are in trouble.  You will have to find out why the option <a href="motion.txt.html#is" class="d">is</a>
+still set.  Perhaps the file you wrote above <a href="motion.txt.html#is" class="d">is</a> not found.  Use this command
+to find out: 
+<span class="e"></span>
+<span class="e">        :scriptnames</span>
+<span class="e"></span>
+If your file <a href="motion.txt.html#is" class="d">is</a> not in the list, check its location and name.  If <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> in the
+list, there <a href="vim_faq.txt.html#must" class="d">must</a> be some other place where the <a href="options.txt.html#%27compatible%27" class="o">'compatible'</a> option <a href="motion.txt.html#is" class="d">is</a> switched
+back on.
+
+For more info see <a href="starting.txt.html#vimrc" class="l">vimrc</a> and <a href="starting.txt.html#compatible-default" class="l">compatible-default</a><a href="repeat.txt.html#." class="d">.</a>
+
+        <span class="n">Note:</span>
+        This manual <a href="motion.txt.html#is" class="d">is</a> about using Vim in the normal way.  There <a href="motion.txt.html#is" class="d">is</a> an
+        alternative called "<a href="starting.txt.html#evim" class="d">evim</a>" (easy Vim).  This <a href="motion.txt.html#is" class="d">is</a> still Vim, but used in
+        <a href="insert.txt.html#a" class="d">a</a> way that resembles <a href="insert.txt.html#a" class="d">a</a> click-and-type editor like Notepad.  It always
+        stays in <a href="insert.txt.html#Insert" class="d">Insert</a> mode, thus <a href="motion.txt.html#it" class="d">it</a> feels very different.  It <a href="motion.txt.html#is" class="d">is</a> not
+        explained in the user manual, since <a href="motion.txt.html#it" class="d">it</a> should be mostly <a href="eval.txt.html#self" class="d">self</a>
+        explanatory.  See <a href="starting.txt.html#evim-keys" class="l">evim-keys</a> for details.
+
+<span class="h">==============================================================================</span>
+<a name="01.3" class="t">01.3</a>  Using the Vim <a href="#tutor" class="d">tutor</a>                             <a name="tutor" class="t">tutor</a> <a name="vimtutor" class="t">vimtutor</a>
+
+Instead of reading the text (boring!) you can use the <a href="#vimtutor" class="d">vimtutor</a> to learn your
+first Vim commands.  This <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> 30 minute tutorial that teaches the most basic
+Vim functionality hands-on.
+
+On Unix, if Vim has been properly installed, you can start <a href="motion.txt.html#it" class="d">it</a> from the shell:
+
+<span class="e">        vimtutor</span>
+<span class="e"></span>
+On <a href="os_win32.txt.html#MS-Windows" class="d">MS-Windows</a> you can find <a href="motion.txt.html#it" class="d">it</a> in the Program/Vim menu.  Or execute
+vimtutor.bat in the <a href="starting.txt.html#%24VIMRUNTIME" class="d">$VIMRUNTIME</a> directory.
+
+This will make <a href="insert.txt.html#a" class="d">a</a> copy of the <a href="#tutor" class="d">tutor</a> file, so that you can edit <a href="motion.txt.html#it" class="d">it</a> without
+the risk of damaging the original.
+   There are <a href="insert.txt.html#a" class="d">a</a> few translated versions of the tutor.  To find out if yours <a href="motion.txt.html#is" class="d">is</a>
+available, use the two-letter language code.  For French: 
+<span class="e"></span>
+<span class="e">        vimtutor fr</span>
+<span class="e"></span>
+On Unix, if you prefer using the <a href="gui.txt.html#GUI" class="d">GUI</a> version of Vim, use "gvimtutor" or
+"<a href="#vimtutor" class="d">vimtutor</a> <a href="starting.txt.html#-g" class="d">-g</a>" instead of "<a href="#vimtutor" class="d">vimtutor</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+For OpenVMS, if Vim has been properly installed, you can start <a href="#vimtutor" class="d">vimtutor</a> from <a href="insert.txt.html#a" class="d">a</a>
+<a href="os_vms.txt.html#VMS" class="d">VMS</a> prompt with: 
+<span class="e"></span>
+<span class="e">        @VIM:vimtutor</span>
+<span class="e"></span>
+Optionally add the two-letter language code <a href="motion.txt.html#as" class="d">as</a> above.
+
+
+On other systems, you have to <a href="diff.txt.html#do" class="d">do</a> <a href="insert.txt.html#a" class="d">a</a> little work:
+
+1. Copy the <a href="#tutor" class="d">tutor</a> file.  You can <a href="diff.txt.html#do" class="d">do</a> this with Vim (it knows where to find it):
+
+<span class="e">        vim --clean -c 'e $VIMRUNTIME/tutor/tutor' -c 'w! TUTORCOPY' -c 'q'</span>
+
+   This will write the file "TUTORCOPY" in the current directory.  To use <a href="insert.txt.html#a" class="d">a</a>
+translated version of the tutor, append the two-letter language code to the
+filename.  For French:
+
+<span class="e">        vim --clean -c 'e $VIMRUNTIME/tutor/tutor.fr' -c 'w! TUTORCOPY' -c 'q'</span>
+
+2. Edit the copied file with Vim:
+
+<span class="e">        vim --clean TUTORCOPY</span>
+
+   The --clean argument makes sure Vim <a href="motion.txt.html#is" class="d">is</a> started with <a href="todo.txt.html#nice" class="d">nice</a> defaults.
+
+3. Delete the copied file when you are finished with it:
+
+<span class="e">        del TUTORCOPY</span>
+
+<span class="h">==============================================================================</span>
+<a name="01.4" class="t">01.4</a>  Copyright                                       <a name="manual-copyright" class="t">manual-copyright</a>
+
+The Vim user manual and <a href="intro.txt.html#reference" class="d">reference</a> manual are Copyright (c) 1988-2003 by <a href="intro.txt.html#Bram" class="d">Bram</a>
+Moolenaar.  This material may be distributed only subject to the terms and
+conditions set forth in the Open Publication License, v1.0 or later.  The
+latest version <a href="motion.txt.html#is" class="d">is</a> presently available at:
+             <a class="u" href="http://www.opencontent.org/openpub/">http://www.opencontent.org/openpub/</a>
+
+People who contribute to the manuals <a href="vim_faq.txt.html#must" class="d">must</a> agree with the above <a href="uganda.txt.html#copyright" class="d">copyright</a>
+notice.
+                                                        <a name="frombook" class="t">frombook</a>
+Parts of the user manual come from the <a href="intro.txt.html#book" class="d">book</a> "<a href="intro.txt.html#Vi" class="d">Vi</a> IMproved <a href="motion.txt.html#-" class="d">-</a> Vim" by Steve
+Oualline (published by New Riders Publishing, ISBN: 0735710015).  The Open
+Publication License applies to this book.  Only selected parts are included
+and these have been modified (e.g., by removing the pictures, updating the
+text for Vim 6.0 and later, fixing mistakes).  The omission of the <a href="#frombook" class="l">frombook</a>
+<a href="tagsrch.txt.html#tag" class="d">tag</a> does not mean that the text does not come from the book.
+
+Many thanks to Steve Oualline and New Riders for creating this <a href="intro.txt.html#book" class="d">book</a> and
+publishing <a href="motion.txt.html#it" class="d">it</a> under the OPL!  It has been <a href="insert.txt.html#a" class="d">a</a> great <a href="helphelp.txt.html#help" class="d">help</a> while <a href="editing.txt.html#writing" class="d">writing</a> the user
+manual.  Not only by providing literal text, but also by setting the tone and
+style.
+
+If you make money through selling the manuals, you are strongly encouraged to
+<a href="uganda.txt.html#donate" class="d">donate</a> part of the profit to <a href="helphelp.txt.html#help" class="d">help</a> AIDS victims in Uganda.  See <a href="uganda.txt.html#iccf" class="l">iccf</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+
+Next chapter: <a href="usr_02.txt.html#usr_02.txt" class="l">usr_02.txt</a>  The first steps in Vim
+
+Copyright: see <a href="#manual-copyright" class="l">manual-copyright</a>  vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

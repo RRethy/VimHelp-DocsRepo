@@ -1,0 +1,1027 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: repeat.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="repeat.txt" class="t">repeat.txt</a>    For <span class="i">Vim version 8.0.</span>  Last change: 2018 Mar 04
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Bram Moolenaar</span>
+
+
+Repeating commands, Vim scripts and debugging                   <a name="repeating" class="t">repeating</a>
+
+Chapter 26 of the user manual introduces <a href="#repeating" class="d">repeating</a> <a href="usr_26.txt.html#usr_26.txt" class="l">usr_26.txt</a><a href="#." class="d">.</a>
+
+1. Single repeats               <a href="#single-repeat" class="l">single-repeat</a>
+2. Multiple repeats             <a href="#multi-repeat" class="l">multi-repeat</a>
+3. Complex repeats              <a href="#complex-repeat" class="l">complex-repeat</a>
+4. Using Vim scripts            <a href="#using-scripts" class="l">using-scripts</a>
+5. Using Vim <a href="#packages" class="d">packages</a>           <a href="#packages" class="l">packages</a>
+6. Creating Vim <a href="#packages" class="d">packages</a>        <a href="#package-create" class="l">package-create</a>
+7. Debugging scripts            <a href="#debug-scripts" class="l">debug-scripts</a>
+8. Profiling                    <a href="#profiling" class="l">profiling</a>
+
+<span class="h">==============================================================================</span>
+1. Single repeats                                       <a name="single-repeat" class="t">single-repeat</a>
+
+                                                        <a name="." class="t">.</a>
+<a href="#." class="d">.</a>                       Repeat last change, with <a href="intro.txt.html#count" class="d">count</a> replaced with <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a>.
+                        Also repeat <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#yank" class="d">yank</a> command, when the 'y' flag <a href="motion.txt.html#is" class="d">is</a>
+                        included in <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a>.  Does not repeat <a href="insert.txt.html#a" class="d">a</a>
+                        command-line command.
+
+Simple changes can be repeated with the "<a href="#." class="d">.</a>" command.  Without <a href="insert.txt.html#a" class="d">a</a> count, the
+<a href="intro.txt.html#count" class="d">count</a> of the last change <a href="motion.txt.html#is" class="d">is</a> used.  If you enter <a href="insert.txt.html#a" class="d">a</a> count, <a href="motion.txt.html#it" class="d">it</a> will replace the
+last one.  <a href="eval.txt.html#v%3Acount" class="l">v:count</a> and <a href="eval.txt.html#v%3Acount1" class="l">v:count1</a> will be set.
+
+If the last change included <a href="insert.txt.html#a" class="d">a</a> specification of <a href="insert.txt.html#a" class="d">a</a> numbered register, the
+<a href="sponsor.txt.html#register" class="d">register</a> number will be incremented.  See <a href="undo.txt.html#redo-register" class="l">redo-register</a> for an example how
+to use this.
+
+<span class="n">Note</span> that when <a href="#repeating" class="d">repeating</a> <a href="insert.txt.html#a" class="d">a</a> command that used <a href="insert.txt.html#a" class="d">a</a> <a href="visual.txt.html#Visual" class="d">Visual</a> selection, the same SIZE
+of area <a href="motion.txt.html#is" class="d">is</a> used, see <a href="visual.txt.html#visual-repeat" class="l">visual-repeat</a><a href="#." class="d">.</a>
+
+                                                        <a name="%40%3A" class="t">@:</a>
+<a href="#%40%3A" class="d">@:</a>                      Repeat last command-line <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> times.
+                        {not available when compiled without the
+                        <a href="various.txt.html#%2Bcmdline_hist" class="l">+cmdline_hist</a> feature}
+
+
+<span class="h">==============================================================================</span>
+2. Multiple repeats                                     <a name="multi-repeat" class="t">multi-repeat</a>
+
+                                                <a name="%3Ag" class="t">:g</a> <a name="%3Aglobal" class="t">:global</a> <a name="E148" class="t">E148</a>
+:[range]g[lobal]/{pattern}/[cmd]
+                        Execute the <a href="intro.txt.html#Ex" class="d">Ex</a> command <span class="s">[cmd]</span> (default "<a href="various.txt.html#%3Ap" class="d">:p</a>"<a href="motion.txt.html#%29" class="d">)</a> on the
+                        lines within <a href="cmdline.txt.html#%5Brange%5D" class="s">[range]</a> where <span class="s">{pattern}</span> matches.
+
+:[range]g[lobal]!/{pattern}/[cmd]
+                        Execute the <a href="intro.txt.html#Ex" class="d">Ex</a> command <span class="s">[cmd]</span> (default "<a href="various.txt.html#%3Ap" class="d">:p</a>"<a href="motion.txt.html#%29" class="d">)</a> on the
+                        lines within <a href="cmdline.txt.html#%5Brange%5D" class="s">[range]</a> where <span class="s">{pattern}</span> does NOT match.
+
+                                                        <a name="%3Av" class="t">:v</a> <a name="%3Avglobal" class="t">:vglobal</a>
+:[range]v[global]/{pattern}/[cmd]
+                        Same <a href="motion.txt.html#as" class="d">as</a> :g!.
+
+Instead of the '/' which surrounds the <span class="s">{pattern}</span>, you can use any other
+single byte character, but not an alphabetic character, '\', <a href="motion.txt.html#%27" class="d">'</a>"<a href="motion.txt.html#%27" class="d">'</a> or <a href="motion.txt.html#%27" class="d">'</a>|<a href="motion.txt.html#%27." class="d">'.</a>
+This <a href="motion.txt.html#is" class="d">is</a> useful if you want to include <a href="insert.txt.html#a" class="d">a</a> '/' in the search <a href="pattern.txt.html#pattern" class="d">pattern</a> or
+replacement string.
+
+For the definition of <a href="insert.txt.html#a" class="d">a</a> pattern, see <a href="pattern.txt.html#pattern" class="l">pattern</a><a href="#." class="d">.</a>
+
+<span class="n">NOTE</span> <span class="s">[cmd]</span> may contain <a href="insert.txt.html#a" class="d">a</a> range; see <a href="tips.txt.html#collapse" class="l">collapse</a> and <a href="usr_25.txt.html#edit-paragraph-join" class="l">edit-paragraph-join</a> for
+examples.
+
+The global commands work by first scanning through the <a href="cmdline.txt.html#%5Brange%5D" class="s">[range]</a> lines and
+marking each line where <a href="insert.txt.html#a" class="d">a</a> match occurs (for <a href="insert.txt.html#a" class="d">a</a> multi-line pattern, only the
+start of the match matters).
+In <a href="insert.txt.html#a" class="d">a</a> second scan the <span class="s">[cmd]</span> <a href="motion.txt.html#is" class="d">is</a> executed for each marked line, <a href="motion.txt.html#as" class="d">as</a> if the cursor
+was in that line.  For "<a href="#%3Av" class="d">:v</a>" and ":g!" the command <a href="motion.txt.html#is" class="d">is</a> executed for each not
+marked line.  If <a href="insert.txt.html#a" class="d">a</a> line <a href="motion.txt.html#is" class="d">is</a> deleted its <a href="motion.txt.html#mark" class="d">mark</a> disappears.
+The default for <a href="cmdline.txt.html#%5Brange%5D" class="s">[range]</a> <a href="motion.txt.html#is" class="d">is</a> the whole buffer (1,$).  Use "<a href="pattern.txt.html#CTRL-C" class="k">CTRL-C</a>" to interrupt
+the command.  If an error message <a href="motion.txt.html#is" class="d">is</a> given for <a href="insert.txt.html#a" class="d">a</a> line, the command for that
+line <a href="motion.txt.html#is" class="d">is</a> aborted and the global command continues with the next marked or
+unmarked line.
+                                                                <a name="E147" class="t">E147</a> 
+When the command <a href="motion.txt.html#is" class="d">is</a> used recursively, <a href="motion.txt.html#it" class="d">it</a> only works on one line.  Giving <a href="insert.txt.html#a" class="d">a</a>
+range <a href="motion.txt.html#is" class="d">is</a> then not allowed. This <a href="motion.txt.html#is" class="d">is</a> useful to find all lines that match <a href="insert.txt.html#a" class="d">a</a>
+<a href="pattern.txt.html#pattern" class="d">pattern</a> and <a href="diff.txt.html#do" class="d">do</a> not match another pattern: 
+<span class="e">        :g/found/v/notfound/{cmd}</span>
+This first finds all lines containing "found"<a href="motion.txt.html#%2C" class="d">,</a> but only executes <span class="s">{cmd}</span> when
+there <a href="motion.txt.html#is" class="d">is</a> no match for "notfound"<a href="#." class="d">.</a>
+
+To execute <a href="insert.txt.html#a" class="d">a</a> non-Ex command, you can use the <span class="e">:normal</span> command: 
+<span class="e">        :g/pat/normal {commands}</span>
+Make sure that <span class="s">{commands}</span> ends with <a href="insert.txt.html#a" class="d">a</a> whole command, otherwise Vim will wait
+for you to type the rest of the command for each match.  The screen will not
+have been updated, so you don't know what you are doing.  See <a href="various.txt.html#%3Anormal" class="l">:normal</a><a href="#." class="d">.</a>
+
+The undo/redo command will undo/redo the whole global command <a href="motion.txt.html#at" class="d">at</a> once.
+The previous context <a href="motion.txt.html#mark" class="d">mark</a> will only be set once (with "<a href="motion.txt.html#%27%27" class="d">''</a>" you <a href="motion.txt.html#go" class="d">go</a> back to
+where the cursor was before the global command).
+
+The global command sets both the last used search <a href="pattern.txt.html#pattern" class="d">pattern</a> and the last used
+substitute <a href="pattern.txt.html#pattern" class="d">pattern</a> (this <a href="motion.txt.html#is" class="d">is</a> <a href="intro.txt.html#vi" class="d">vi</a> compatible).  This makes <a href="motion.txt.html#it" class="d">it</a> <a href="starting.txt.html#easy" class="d">easy</a> to globally
+replace <a href="insert.txt.html#a" class="d">a</a> string:
+        :g/pat/s//PAT/g
+This replaces all occurrences of "pat" with "PAT"<a href="#." class="d">.</a>  The same can be done with:
+        :%s/pat/PAT/g
+Which <a href="motion.txt.html#is" class="d">is</a> two characters shorter!
+
+When using "global" in <a href="intro.txt.html#Ex" class="d">Ex</a> mode, <a href="insert.txt.html#a" class="d">a</a> special <a href="change.txt.html#case" class="d">case</a> <a href="motion.txt.html#is" class="d">is</a> using "<a href="editing.txt.html#%3Avisual" class="d">:visual</a>" <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a>
+command.  This will move to <a href="insert.txt.html#a" class="d">a</a> matching line, <a href="motion.txt.html#go" class="d">go</a> to <a href="intro.txt.html#Normal" class="d">Normal</a> mode to let you
+execute commands there until you use <a href="intro.txt.html#Q" class="l">Q</a> to return to <a href="intro.txt.html#Ex" class="d">Ex</a> mode.  This will be
+repeated for each matching line.  While doing this you cannot use "<a href="#%3Aglobal" class="d">:global</a>"<a href="#." class="d">.</a>
+To abort this type <a href="pattern.txt.html#CTRL-C" class="k">CTRL-C</a> twice.
+
+<span class="h">==============================================================================</span>
+3. Complex repeats                                      <a name="complex-repeat" class="t">complex-repeat</a>
+
+                                                        <a name="q" class="t">q</a> <a name="recording" class="t">recording</a>
+q{0-9a-zA-Z"<a href="motion.txt.html#%7D" class="d">}</a>           Record typed characters into <a href="sponsor.txt.html#register" class="d">register</a> <span class="s">{0-9a-zA-Z"}</span>
+                        (uppercase to append).  The 'q' command <a href="motion.txt.html#is" class="d">is</a> disabled
+                        while executing <a href="insert.txt.html#a" class="d">a</a> register, and <a href="motion.txt.html#it" class="d">it</a> doesn't work inside
+                        <a href="insert.txt.html#a" class="d">a</a> <a href="map.txt.html#mapping" class="d">mapping</a> and <a href="various.txt.html#%3Anormal" class="l">:normal</a><a href="#." class="d">.</a>
+
+                        <span class="n">Note:</span> If the <a href="sponsor.txt.html#register" class="d">register</a> being used for <a href="#recording" class="d">recording</a> <a href="motion.txt.html#is" class="d">is</a> also
+                        used for <a href="change.txt.html#y" class="l">y</a> and <a href="change.txt.html#p" class="l">p</a> the result <a href="motion.txt.html#is" class="d">is</a> most likely not
+                        what <a href="motion.txt.html#is" class="d">is</a> expected, because the <a href="change.txt.html#put" class="d">put</a> will paste the
+                        recorded <a href="map.txt.html#macro" class="d">macro</a> and the <a href="change.txt.html#yank" class="d">yank</a> will overwrite the
+                        recorded macro. <span class="s">{Vi: no recording}</span>
+
+<a href="#q" class="d">q</a>                       Stops recording.  (Implementation <span class="n">note:</span> The 'q' that
+                        stops <a href="#recording" class="d">recording</a> <a href="motion.txt.html#is" class="d">is</a> not stored in the register, unless
+                        <a href="motion.txt.html#it" class="d">it</a> was the result of <a href="insert.txt.html#a" class="d">a</a> mapping)  <span class="s">{Vi: no recording}</span>
+
+                                                        <a name="%40" class="t">@</a>
+@{0-9a-z".=*+}          Execute the contents of <a href="sponsor.txt.html#register" class="d">register</a> <span class="s">{0-9a-z".=*+}</span> <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a>
+                        times.  <span class="n">Note</span> that <a href="sponsor.txt.html#register" class="d">register</a> '%' (name of the current
+                        file) and '#' (name of the alternate file) cannot be
+                        used.
+                        The <a href="sponsor.txt.html#register" class="d">register</a> <a href="motion.txt.html#is" class="d">is</a> executed like <a href="insert.txt.html#a" class="d">a</a> mapping, that means
+                        that the difference between <a href="options.txt.html#%27wildchar%27" class="o">'wildchar'</a> and <a href="options.txt.html#%27wildcharm%27" class="o">'wildcharm'</a>
+                        applies.
+                        For "<a href="change.txt.html#%40%3D" class="d">@=</a>" you are prompted to enter an expression.  The
+                        result of the <a href="eval.txt.html#expression" class="d">expression</a> <a href="motion.txt.html#is" class="d">is</a> then executed.
+                        See also <a href="#%40%3A" class="l">@:</a><a href="#." class="d">.</a>  <span class="s">{Vi: only named registers}</span>
+
+                                                        <a name="%40%40" class="t">@@</a> <a name="E748" class="t">E748</a>
+<a href="#%40%40" class="d">@@</a>                      Repeat the previous @{0-9a-z"<a href="cmdline.txt.html#%3A" class="d">:</a>*<a href="motion.txt.html#%7D" class="d">}</a> <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> times.
+
+:[addr]*<span class="s">{0-9a-z".=+}</span>                                            <a name="%3A%40" class="t">:@</a> <a name="%3Astar" class="t">:star</a>
+:[addr]@{0-9a-z".=*+}   Execute the contents of <a href="sponsor.txt.html#register" class="d">register</a> <span class="s">{0-9a-z".=*+}</span> <a href="motion.txt.html#as" class="d">as</a> an <a href="intro.txt.html#Ex" class="d">Ex</a>
+                        command.  First set cursor <a href="motion.txt.html#at" class="d">at</a> line <span class="s">[addr]</span> (default <a href="motion.txt.html#is" class="d">is</a>
+                        current line).  When the last line in the <a href="sponsor.txt.html#register" class="d">register</a> does
+                        not have <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a> <a href="motion.txt.html#it" class="d">it</a> will be added automatically when
+                        the 'e' flag <a href="motion.txt.html#is" class="d">is</a> present in <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a>.
+                        <span class="n">Note</span> that the "<a href="cmdline.txt.html#%3A" class="d">:</a>*" command <a href="motion.txt.html#is" class="d">is</a> only recognized when the
+                        <a href="motion.txt.html#%27" class="d">'</a>*<a href="motion.txt.html#%27" class="d">'</a> flag <a href="motion.txt.html#is" class="d">is</a> present in <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a>.  This <a href="motion.txt.html#is" class="d">is</a> NOT the
+                        default when <a href="options.txt.html#%27nocompatible%27" class="o">'nocompatible'</a> <a href="motion.txt.html#is" class="d">is</a> used.
+                        For ":@=" the last used <a href="eval.txt.html#expression" class="d">expression</a> <a href="motion.txt.html#is" class="d">is</a> used.  The
+                        result of evaluating the <a href="eval.txt.html#expression" class="d">expression</a> <a href="motion.txt.html#is" class="d">is</a> executed <a href="motion.txt.html#as" class="d">as</a> an
+                        <a href="intro.txt.html#Ex" class="d">Ex</a> command.
+                        Mappings are not recognized in these commands.
+                        <span class="s">{Vi: only in some versions}</span> Future: Will execute the
+                        <a href="sponsor.txt.html#register" class="d">register</a> for each line in the address range.
+
+                                                        <a name="%3A%40%3A" class="t">:@:</a>
+:[addr]@:               Repeat last command-line.  First set cursor <a href="motion.txt.html#at" class="d">at</a> line
+                        <span class="s">[addr]</span> (default <a href="motion.txt.html#is" class="d">is</a> current line).  <span class="s">{not in Vi}</span>
+
+:[addr]@                                                        <a name="%3A%40%40" class="t">:@@</a>
+:[addr]@@               Repeat the previous :@{0-9a-z"}.  First set cursor <a href="motion.txt.html#at" class="d">at</a>
+                        line <span class="s">[addr]</span> (default <a href="motion.txt.html#is" class="d">is</a> current line).  {Vi: only in
+                        some versions}
+
+<span class="h">==============================================================================</span>
+4. Using Vim scripts                                    <a name="using-scripts" class="t">using-scripts</a>
+
+For <a href="editing.txt.html#writing" class="d">writing</a> <a href="insert.txt.html#a" class="d">a</a> Vim script, see chapter 41 of the user manual <a href="usr_41.txt.html#usr_41.txt" class="l">usr_41.txt</a><a href="#." class="d">.</a>
+
+                                        <a name="%3Aso" class="t">:so</a> <a name="%3Asource" class="t">:source</a> <a name="load-vim-script" class="t">load-vim-script</a>
+:so[urce] <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a>        Read <a href="intro.txt.html#Ex" class="d">Ex</a> commands from <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a>.  These are commands that
+                        start with <a href="insert.txt.html#a" class="d">a</a> "<a href="cmdline.txt.html#%3A" class="d">:</a>"<a href="#." class="d">.</a>
+                        Triggers the <a href="autocmd.txt.html#SourcePre" class="l">SourcePre</a> autocommand.
+
+:so[urce]! <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a>       Read Vim commands from <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a>.  These are commands
+                        that are executed from <a href="intro.txt.html#Normal" class="d">Normal</a> mode, like you type
+                        them.
+                        When used after <a href="#%3Aglobal" class="l">:global</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="editing.txt.html#%3Aargdo" class="l">:argdo</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="windows.txt.html#%3Awindo" class="l">:windo</a><a href="motion.txt.html#%2C" class="d">,</a>
+                        <a href="windows.txt.html#%3Abufdo" class="l">:bufdo</a><a href="motion.txt.html#%2C" class="d">,</a> in <a href="insert.txt.html#a" class="d">a</a> loop or when another command follows
+                        the display won't be updated while executing the
+                        commands.
+                        <span class="s">{not in Vi}</span>
+
+                                                        <a name="%3Aru" class="t">:ru</a> <a name="%3Aruntime" class="t">:runtime</a>
+:ru[ntime][!] <span class="s">[where]</span> <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a> ..
+                        Read <a href="intro.txt.html#Ex" class="d">Ex</a> commands from <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a> in each directory given
+                        by <a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a> and/or <a href="options.txt.html#%27packpath%27" class="o">'packpath'</a>.  There <a href="motion.txt.html#is" class="d">is</a> no error
+                        for non-existing files.
+                        
+                        Example: 
+<span class="e">                                :runtime syntax/c.vim</span>
+<span class="e"></span>
+                       There can be multiple <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a> arguments, separated by
+                        spaces.  Each <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a> <a href="motion.txt.html#is" class="d">is</a> searched for in the first
+                        directory from <a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a>, then in the second
+                        directory, etc.  Use <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#backslash" class="d">backslash</a> to include <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#space" class="d">space</a>
+                        inside <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a> (although it's better not to use spaces
+                        in file names, <a href="motion.txt.html#it" class="d">it</a> causes trouble).
+
+                        When [!] <a href="motion.txt.html#is" class="d">is</a> included, all found files are sourced.
+                        When <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> not included only the first found file <a href="motion.txt.html#is" class="d">is</a>
+                        sourced.
+
+                        When <span class="s">[where]</span> <a href="motion.txt.html#is" class="d">is</a> omitted only <a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a> <a href="motion.txt.html#is" class="d">is</a> used.
+                        Other values:
+                                START   search under "start" in <a href="options.txt.html#%27packpath%27" class="o">'packpath'</a>
+                                OPT     search under "opt" in <a href="options.txt.html#%27packpath%27" class="o">'packpath'</a>
+                                PACK    search under "start" and "opt" in
+                                        <a href="options.txt.html#%27packpath%27" class="o">'packpath'</a>
+                                ALL     first use <a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a>, then search
+                                        under "start" and "opt" in <a href="options.txt.html#%27packpath%27" class="o">'packpath'</a>
+
+                        When <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a> contains <a href="editing.txt.html#wildcards" class="d">wildcards</a> <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> expanded to all
+                        matching files.  Example: 
+<span class="e">                                :runtime! plugin/*.vim</span>
+                       This <a href="motion.txt.html#is" class="d">is</a> what Vim uses to load the <a href="usr_05.txt.html#plugin" class="d">plugin</a> files when
+                        <a href="starting.txt.html#starting" class="d">starting</a> up.  This similar command: 
+<span class="e">                                :runtime plugin/*.vim</span>
+                       would source the first file only.
+
+                        When <a href="options.txt.html#%27verbose%27" class="o">'verbose'</a> <a href="motion.txt.html#is" class="d">is</a> one or higher, there <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> message
+                        when no file could be found.
+                        When <a href="options.txt.html#%27verbose%27" class="o">'verbose'</a> <a href="motion.txt.html#is" class="d">is</a> two or higher, there <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> message
+                        about each searched file.
+                        <span class="s">{not in Vi}</span>
+
+                                                        <a name="%3Apa" class="t">:pa</a> <a name="%3Apackadd" class="t">:packadd</a> <a name="E919" class="t">E919</a>
+:pa[ckadd][!] <span class="s">{name}</span>    Search for an optional <a href="usr_05.txt.html#plugin" class="d">plugin</a> directory in <a href="options.txt.html#%27packpath%27" class="o">'packpath'</a>
+                        and source any <a href="usr_05.txt.html#plugin" class="d">plugin</a> files found.  The directory <a href="vim_faq.txt.html#must" class="d">must</a>
+                        match:
+<span class="h">                                pack/*/opt/{name} </span>
+                        The directory <a href="motion.txt.html#is" class="d">is</a> added to <a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a> if <a href="motion.txt.html#it" class="d">it</a> wasn't
+                        there yet.
+                        If the directory pack/*/opt/{name}/after exists <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a>
+                        added <a href="motion.txt.html#at" class="d">at</a> the <a href="intro.txt.html#end" class="d">end</a> of <a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a>.
+
+                        If loading <a href="#packages" class="d">packages</a> from "pack/*/start" was skipped,
+                        then this directory <a href="motion.txt.html#is" class="d">is</a> searched first:
+<span class="h">                                pack/*/start/{name} </span>
+
+                        <span class="n">Note</span> that <span class="s">{name}</span> <a href="motion.txt.html#is" class="d">is</a> the directory name, not the name
+                        of the .vim file.  All the files matching the <a href="pattern.txt.html#pattern" class="d">pattern</a>
+<span class="h">                                pack/*/opt/{name}/plugin/**/*.vim </span>
+                        will be sourced.  This allows for using subdirectories
+                        below "<a href="usr_05.txt.html#plugin" class="d">plugin</a>"<a href="motion.txt.html#%2C" class="d">,</a> just like with plugins in
+                        <a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a>.
+
+                        If the <a href="filetype.txt.html#filetype" class="d">filetype</a> detection was not enabled yet (this
+                        <a href="motion.txt.html#is" class="d">is</a> usually done with <a href="insert.txt.html#a" class="d">a</a> "<a href="syntax.txt.html#syntax" class="d">syntax</a> enable" or "<a href="filetype.txt.html#filetype" class="d">filetype</a>
+                        on" command in your <a href="starting.txt.html#.vimrc" class="d">.vimrc</a> file), this will also look
+                        for "<span class="s">{name}</span>/ftdetect/*.vim" files.
+
+                        When the optional <a href="change.txt.html#%21" class="d">!</a> <a href="motion.txt.html#is" class="d">is</a> added no <a href="usr_05.txt.html#plugin" class="d">plugin</a> files or
+                        <a href="filetype.txt.html#ftdetect" class="d">ftdetect</a> scripts are loaded, only the matching
+                        directories are added to <a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a>.  This <a href="motion.txt.html#is" class="d">is</a>
+                        useful in your .vimrc.  The plugins will then be
+                        loaded during initialization, see <a href="starting.txt.html#load-plugins" class="l">load-plugins</a><a href="#." class="d">.</a>
+
+                        Also see <a href="#pack-add" class="l">pack-add</a><a href="#." class="d">.</a>
+                        <span class="s">{only available when compiled with +eval}</span>
+
+                                                <a name="%3Apackl" class="t">:packl</a> <a name="%3Apackloadall" class="t">:packloadall</a>
+:packl[oadall][!]       Load all <a href="#packages" class="d">packages</a> in the "start" directory under each
+                        entry in <a href="options.txt.html#%27packpath%27" class="o">'packpath'</a>.
+                        
+                        First all the directories found are added to
+                        <a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a>, then the plugins found in the
+                        directories are sourced.  This allows for <a href="insert.txt.html#a" class="d">a</a> <a href="usr_05.txt.html#plugin" class="d">plugin</a> to
+                        depend on something of another plugin, e.g. an
+                        "<a href="eval.txt.html#autoload" class="d">autoload</a>" directory.  See <a href="#packload-two-steps" class="l">packload-two-steps</a> for
+                        how this can be useful.
+
+                        This <a href="motion.txt.html#is" class="d">is</a> normally done automatically during startup,
+                        after loading your <a href="starting.txt.html#.vimrc" class="d">.vimrc</a> file.  With this command <a href="motion.txt.html#it" class="d">it</a>
+                        can be done earlier.
+
+                        Packages will be loaded only once.  After this command
+                        <a href="motion.txt.html#it" class="d">it</a> won't happen again.  When the optional <a href="change.txt.html#%21" class="d">!</a> <a href="motion.txt.html#is" class="d">is</a> added
+                        this command will load <a href="#packages" class="d">packages</a> even when done before.
+
+                        An error only causes sourcing the <a href="usr_41.txt.html#script" class="d">script</a> where <a href="motion.txt.html#it" class="d">it</a>
+                        happens to be aborted, further plugins will be loaded.
+                        See <a href="#packages" class="l">packages</a><a href="#." class="d">.</a>
+                        <span class="s">{only available when compiled with +eval}</span>
+
+:scripte[ncoding] <span class="s">[encoding]</span>            <a name="%3Ascripte" class="t">:scripte</a> <a name="%3Ascriptencoding" class="t">:scriptencoding</a> <a name="E167" class="t">E167</a>
+                        Specify the character encoding used in the script.
+                        The following lines will be converted from <span class="s">[encoding]</span>
+                        to the value of the <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> option, if they are
+                        different.  Examples: 
+<span class="e">                                scriptencoding iso-8859-5</span>
+<span class="e">                                scriptencoding cp932</span>
+
+                        When <span class="s">[encoding]</span> <a href="motion.txt.html#is" class="d">is</a> empty, no conversion <a href="motion.txt.html#is" class="d">is</a> done.  This
+                        can be used to restrict conversion to <a href="insert.txt.html#a" class="d">a</a> sequence of
+                        lines: 
+<span class="e">                                scriptencoding euc-jp</span>
+<span class="e">                                ... lines to be converted ...</span>
+<span class="e">                                scriptencoding</span>
+<span class="e">                                ... not converted ...</span>
+<span class="e"></span>
+                       When conversion isn't supported by the system, there
+                        <a href="motion.txt.html#is" class="d">is</a> no error message and no conversion <a href="motion.txt.html#is" class="d">is</a> done.  When <a href="insert.txt.html#a" class="d">a</a>
+                        line can't be converted there <a href="motion.txt.html#is" class="d">is</a> no error and the
+                        original line <a href="motion.txt.html#is" class="d">is</a> kept.
+
+                        Don't use "ucs-2" or "ucs-4"<a href="motion.txt.html#%2C" class="d">,</a> scripts cannot be in
+                        these encodings (they would contain NUL bytes).
+                        When <a href="insert.txt.html#a" class="d">a</a> sourced <a href="usr_41.txt.html#script" class="d">script</a> starts with <a href="insert.txt.html#a" class="d">a</a> BOM (Byte Order
+                        Mark) in <a href="mbyte.txt.html#utf-8" class="d">utf-8</a> format Vim will recognize it, no need
+                        to use "<a href="#%3Ascriptencoding" class="d">:scriptencoding</a> <a href="mbyte.txt.html#utf-8" class="d">utf-8</a>" then.
+
+                        If you set the <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> option in your <a href="starting.txt.html#.vimrc" class="l">.vimrc</a><a href="motion.txt.html#%2C" class="d">,</a>
+                        <span class="e">:scriptencoding</span> <a href="vim_faq.txt.html#must" class="d">must</a> be placed after that. E.g.: 
+<span class="e">                                set encoding=utf-8</span>
+<span class="e">                                scriptencoding utf-8</span>
+
+                        When compiled without the <a href="various.txt.html#%2Bmulti_byte" class="l">+multi_byte</a> feature this
+                        command <a href="motion.txt.html#is" class="d">is</a> ignored.
+                        <span class="s">{not in Vi}</span>
+
+                                                <a name="%3Ascr" class="t">:scr</a> <a name="%3Ascriptnames" class="t">:scriptnames</a>
+:scr[iptnames]          <a href="eval.txt.html#List" class="d">List</a> all sourced <a href="usr_41.txt.html#script" class="d">script</a> names, in the order they were
+                        first sourced.  The number <a href="motion.txt.html#is" class="d">is</a> used for the <a href="usr_41.txt.html#script" class="d">script</a> ID
+                        <a href="map.txt.html#%3CSID%3E" class="l">&lt;SID&gt;</a><a href="#." class="d">.</a>
+                        <span class="s">{not in Vi}</span> {not available when compiled without the
+                        <a href="various.txt.html#%2Beval" class="l">+eval</a> feature}
+
+                                                <a name="%3Afini" class="t">:fini</a> <a name="%3Afinish" class="t">:finish</a> <a name="E168" class="t">E168</a>
+:fini[sh]               Stop sourcing <a href="insert.txt.html#a" class="d">a</a> script.  Can only be used in <a href="insert.txt.html#a" class="d">a</a> Vim
+                        <a href="usr_41.txt.html#script" class="d">script</a> file.  This <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> quick way to skip the rest of
+                        the file.  If <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> used after <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#%3Atry" class="l">:try</a> but before the
+                        matching <a href="eval.txt.html#%3Afinally" class="l">:finally</a> (if present), the commands
+                        following the "<a href="eval.txt.html#%3Afinally" class="d">:finally</a>" up to the matching <a href="eval.txt.html#%3Aendtry" class="l">:endtry</a>
+                        are executed first.  This process applies to all
+                        nested "<a href="eval.txt.html#%3Atry" class="d">:try</a>"<a href="change.txt.html#s" class="d">s</a> in the script.  The outermost "<a href="eval.txt.html#%3Aendtry" class="d">:endtry</a>"
+                        then stops sourcing the script.  <span class="s">{not in Vi}</span>
+
+All commands and command sequences can be repeated by putting them in <a href="insert.txt.html#a" class="d">a</a> named
+<a href="sponsor.txt.html#register" class="d">register</a> and then executing it.  There are two ways to get the commands in the
+register:
+<a href="motion.txt.html#-" class="d">-</a> Use the record command "<a href="#q" class="d">q</a>"<a href="#." class="d">.</a>  You type the commands once, and while they are
+  being executed they are stored in <a href="insert.txt.html#a" class="d">a</a> register.  Easy, because you can see
+  what you are doing.  If you make <a href="insert.txt.html#a" class="d">a</a> mistake, "<a href="change.txt.html#p" class="d">p</a>"ut the <a href="sponsor.txt.html#register" class="d">register</a> into the
+  file, edit the command sequence, and then delete <a href="motion.txt.html#it" class="d">it</a> into the <a href="sponsor.txt.html#register" class="d">register</a>
+  again.  You can continue <a href="#recording" class="d">recording</a> by appending to the <a href="sponsor.txt.html#register" class="d">register</a> (use an
+  <a href="change.txt.html#uppercase" class="d">uppercase</a> letter).
+<a href="motion.txt.html#-" class="d">-</a> Delete or <a href="change.txt.html#yank" class="d">yank</a> the command sequence into the register.
+
+Often used command sequences can be <a href="change.txt.html#put" class="d">put</a> under <a href="insert.txt.html#a" class="d">a</a> function key with the ':map'
+command.
+
+An alternative <a href="motion.txt.html#is" class="d">is</a> to <a href="change.txt.html#put" class="d">put</a> the commands in <a href="insert.txt.html#a" class="d">a</a> file, and execute them with the
+':source!' command.  Useful for long command sequences.  Can be combined with
+the ':map' command to <a href="change.txt.html#put" class="d">put</a> complicated commands under <a href="insert.txt.html#a" class="d">a</a> function key.
+
+The ':source' command reads <a href="intro.txt.html#Ex" class="d">Ex</a> commands from <a href="insert.txt.html#a" class="d">a</a> file line by line.  You will
+have to type any needed keyboard input.  The ':source!' command reads from <a href="insert.txt.html#a" class="d">a</a>
+<a href="usr_41.txt.html#script" class="d">script</a> file character by character, interpreting each character <a href="motion.txt.html#as" class="d">as</a> if you
+typed it.
+
+Example: When you give the ":!ls" command you get the <a href="message.txt.html#hit-enter" class="l">hit-enter</a> prompt.  If
+you ':source' <a href="insert.txt.html#a" class="d">a</a> file with the line "!ls" in it, you will have to type the
+<a href="intro.txt.html#%3CEnter%3E" class="s">&lt;Enter&gt;</a> yourself.  But if you ':source!' <a href="insert.txt.html#a" class="d">a</a> file with the line ":!ls" in it,
+the next characters from that file are read until <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a> <a href="motion.txt.html#is" class="d">is</a> found.  You will
+not have to type <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a> yourself, unless ":!ls" was the last line in the file.
+
+It <a href="motion.txt.html#is" class="d">is</a> possible to <a href="change.txt.html#put" class="d">put</a> ':source[!]' commands in the <a href="usr_41.txt.html#script" class="d">script</a> file, so you can
+make <a href="insert.txt.html#a" class="d">a</a> top-down hierarchy of <a href="usr_41.txt.html#script" class="d">script</a> files.  The ':source' command can be
+nested <a href="motion.txt.html#as" class="d">as</a> deep <a href="motion.txt.html#as" class="d">as</a> the number of files that can be opened <a href="motion.txt.html#at" class="d">at</a> one time (about
+15).  The ':source!' command can be nested up to 15 levels deep.
+
+You can use the "<a href="cmdline.txt.html#%3Csfile%3E" class="s">&lt;sfile&gt;</a>" <a href="eval.txt.html#string" class="d">string</a> (literally, this <a href="motion.txt.html#is" class="d">is</a> not <a href="insert.txt.html#a" class="d">a</a> special key) inside
+of the sourced file, in places where <a href="insert.txt.html#a" class="d">a</a> file name <a href="motion.txt.html#is" class="d">is</a> expected.  It will be
+replaced by the file name of the sourced file.  For example, if you have <a href="insert.txt.html#a" class="d">a</a>
+"other.vimrc" file in the same directory <a href="motion.txt.html#as" class="d">as</a> your "<a href="starting.txt.html#.vimrc" class="d">.vimrc</a>" file, you can source
+<a href="motion.txt.html#it" class="d">it</a> from your "<a href="starting.txt.html#.vimrc" class="d">.vimrc</a>" file with this command: 
+<span class="e">        :source &lt;sfile&gt;:h/other.vimrc</span>
+<span class="e"></span>
+In <a href="usr_41.txt.html#script" class="d">script</a> files terminal-dependent key codes are represented by
+terminal-independent two character codes.  This means that they can be used
+in the same way on different kinds of terminals.  The first character of <a href="insert.txt.html#a" class="d">a</a>
+key code <a href="motion.txt.html#is" class="d">is</a> 0x80 or 128, shown on the screen <a href="motion.txt.html#as" class="d">as</a> "~@"<a href="#." class="d">.</a>  The second one can be
+found in the <a href="eval.txt.html#list" class="d">list</a> <a href="intro.txt.html#key-notation" class="l">key-notation</a><a href="#." class="d">.</a>  Any of these codes can also be entered
+with <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> followed by the three digit decimal code.  This does NOT work for
+the <span class="s">&lt;t_xx&gt;</span> <a href="term.txt.html#termcap" class="d">termcap</a> codes, these can only be used in mappings.
+
+                                                        <a name="%3Asource_crnl" class="t">:source_crnl</a> <a name="W15" class="t">W15</a>
+MS-DOS, <a href="os_win32.txt.html#Win32" class="d">Win32</a> and OS/2: Files that are read with "<a href="#%3Asource" class="d">:source</a>" normally have
+<a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a><a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a> <a href="intro.txt.html#%3CEOL%3E" class="s">&lt;EOL&gt;</a>s.  These always work.  If you are using <a href="insert.txt.html#a" class="d">a</a> file with <a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a> <a href="intro.txt.html#%3CEOL%3E" class="s">&lt;EOL&gt;</a>s
+(for example, <a href="insert.txt.html#a" class="d">a</a> file made on Unix), this will be recognized if <a href="options.txt.html#%27fileformats%27" class="o">'fileformats'</a>
+<a href="motion.txt.html#is" class="d">is</a> not empty and the first line does not <a href="intro.txt.html#end" class="d">end</a> in <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a>.  This fails if the
+first line has something like "<a href="map.txt.html#%3Amap" class="d">:map</a> <a href="helphelp.txt.html#%3CF1%3E" class="s">&lt;F1&gt;</a> :help^M"<a href="motion.txt.html#%2C" class="d">,</a> where "^M" <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a>.  If
+the first line ends in <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a>, but following ones don't, you will get an error
+message, because the <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a> from the first lines will be lost.
+
+<a href="os_mac.txt.html#Mac" class="d">Mac</a> Classic: Files that are read with "<a href="#%3Asource" class="d">:source</a>" normally have <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a> <a href="intro.txt.html#%3CEOL%3E" class="s">&lt;EOL&gt;</a>s.
+These always work.  If you are using <a href="insert.txt.html#a" class="d">a</a> file with <a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a> <a href="intro.txt.html#%3CEOL%3E" class="s">&lt;EOL&gt;</a>s (for example, <a href="insert.txt.html#a" class="d">a</a>
+file made on Unix), this will be recognized if <a href="options.txt.html#%27fileformats%27" class="o">'fileformats'</a> <a href="motion.txt.html#is" class="d">is</a> not empty and
+the first line does not <a href="intro.txt.html#end" class="d">end</a> in <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a>.  Be careful not to use <a href="insert.txt.html#a" class="d">a</a> file with <a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a>
+linebreaks which has <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a> in first line.
+
+On other systems, Vim expects "<a href="#%3Asource" class="d">:source</a>"ed files to <a href="intro.txt.html#end" class="d">end</a> in <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a>.  These
+always work.  If you are using <a href="insert.txt.html#a" class="d">a</a> file with <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a><a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a> <a href="intro.txt.html#%3CEOL%3E" class="s">&lt;EOL&gt;</a>s (for example, <a href="insert.txt.html#a" class="d">a</a>
+file made on MS-DOS), all lines will have <a href="insert.txt.html#a" class="d">a</a> trailing <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a>.  This may cause
+problems for some commands (e.g., mappings).  There <a href="motion.txt.html#is" class="d">is</a> no automatic <a href="intro.txt.html#%3CEOL%3E" class="s">&lt;EOL&gt;</a>
+detection, because it's common to start with <a href="insert.txt.html#a" class="d">a</a> line that defines <a href="insert.txt.html#a" class="d">a</a> <a href="map.txt.html#mapping" class="d">mapping</a>
+that ends in <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a>, which will confuse the automaton.
+
+                                                        <a name="line-continuation" class="t">line-continuation</a>
+Long lines in <a href="insert.txt.html#a" class="d">a</a> "<a href="#%3Asource" class="d">:source</a>"<a href="change.txt.html#d" class="d">d</a> <a href="intro.txt.html#Ex" class="d">Ex</a> command <a href="usr_41.txt.html#script" class="d">script</a> file can be split by <a href="insert.txt.html#inserting" class="d">inserting</a>
+<a href="insert.txt.html#a" class="d">a</a> line continuation symbol "\" (backslash) <a href="motion.txt.html#at" class="d">at</a> the start of the next line.
+There can be white <a href="intro.txt.html#space" class="d">space</a> before the backslash, which <a href="motion.txt.html#is" class="d">is</a> ignored.
+
+Example: the lines 
+<span class="e">        :set comments=sr:/*,mb:*,el:*/,</span>
+<span class="e">                     \://,</span>
+<span class="e">                     \b:#,</span>
+<span class="e">                     \:%,</span>
+<span class="e">                     \n:&gt;,</span>
+<span class="e">                     \fb:-</span>
+are interpreted <a href="motion.txt.html#as" class="d">as</a> if they were given in one line:
+        <a href="options.txt.html#%3Aset" class="d">:set</a> comments=sr:/*,mb:*,el:*/,://,b:#,:%,n:&gt;,fb:-
+
+All leading <a href="pattern.txt.html#whitespace" class="d">whitespace</a> characters in the line before <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#backslash" class="d">backslash</a> are ignored.
+<span class="n">Note</span> however that trailing <a href="pattern.txt.html#whitespace" class="d">whitespace</a> in the line before <a href="motion.txt.html#it" class="d">it</a> cannot be
+inserted freely; <a href="motion.txt.html#it" class="d">it</a> depends on the position where <a href="insert.txt.html#a" class="d">a</a> command <a href="motion.txt.html#is" class="d">is</a> split up
+whether additional <a href="pattern.txt.html#whitespace" class="d">whitespace</a> <a href="motion.txt.html#is" class="d">is</a> allowed or not.
+
+When <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#space" class="d">space</a> <a href="motion.txt.html#is" class="d">is</a> required it's best to <a href="change.txt.html#put" class="d">put</a> <a href="motion.txt.html#it" class="d">it</a> right after the backslash.  <a href="insert.txt.html#A" class="d">A</a>
+<a href="intro.txt.html#space" class="d">space</a> <a href="motion.txt.html#at" class="d">at</a> the <a href="intro.txt.html#end" class="d">end</a> of <a href="insert.txt.html#a" class="d">a</a> line <a href="motion.txt.html#is" class="d">is</a> hard to see and may be accidentally deleted. 
+<span class="e">        :syn match Comment</span>
+<span class="e">                \ "very long regexp"</span>
+<span class="e">                \ keepend</span>
+<span class="e"></span>
+There <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> problem with the "<a href="insert.txt.html#%3Aappend" class="d">:append</a>" and "<a href="insert.txt.html#%3Ainsert" class="d">:insert</a>" commands: 
+<span class="e">   :1append</span>
+<span class="e">   \asdf</span>
+<span class="e">   .</span>
+The <a href="intro.txt.html#backslash" class="d">backslash</a> <a href="motion.txt.html#is" class="d">is</a> seen <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> <a href="#line-continuation" class="d">line-continuation</a> symbol, thus this results in the
+command: 
+<span class="e">   :1appendasdf</span>
+<span class="e">   .</span>
+To avoid this, add the 'C' flag to the <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a> option: 
+<span class="e">   :set cpo+=C</span>
+<span class="e">   :1append</span>
+<span class="e">   \asdf</span>
+<span class="e">   .</span>
+<span class="e">   :set cpo-=C</span>
+<span class="e"></span>
+<span class="n">Note</span> that when the commands are inside <a href="insert.txt.html#a" class="d">a</a> function, you need to add the 'C'
+flag when defining the function, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> not relevant when executing it. 
+<span class="e">   :set cpo+=C</span>
+<span class="e">   :function Foo()</span>
+<span class="e">   :1append</span>
+<span class="e">   \asdf</span>
+<span class="e">   .</span>
+<span class="e">   :endfunction</span>
+<span class="e">   :set cpo-=C</span>
+<span class="e"></span>
+Rationale:
+        Most programs work with <a href="insert.txt.html#a" class="d">a</a> trailing <a href="intro.txt.html#backslash" class="d">backslash</a> to indicate line
+        continuation.  Using this in Vim would cause incompatibility with Vi.
+        For example for this <a href="intro.txt.html#Vi" class="d">Vi</a> mapping: 
+<span class="e">                :map xx  asdf\</span>
+       Therefore the unusual leading <a href="intro.txt.html#backslash" class="d">backslash</a> <a href="motion.txt.html#is" class="d">is</a> used.
+
+<span class="h">==============================================================================</span>
+5. Using Vim <a href="#packages" class="d">packages</a>                                   <a name="packages" class="t">packages</a>
+
+<a href="insert.txt.html#A" class="d">A</a> Vim package <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> directory that contains one or more plugins.  The
+advantages over normal plugins:
+<a href="motion.txt.html#-" class="d">-</a> <a href="insert.txt.html#A" class="d">A</a> package can be downloaded <a href="motion.txt.html#as" class="d">as</a> an archive and unpacked in its own directory.
+  Thus the files are not mixed with files of other plugins.  That makes <a href="motion.txt.html#it" class="d">it</a>
+  <a href="starting.txt.html#easy" class="d">easy</a> to update and remove.
+<a href="motion.txt.html#-" class="d">-</a> <a href="insert.txt.html#A" class="d">A</a> package can be <a href="insert.txt.html#a" class="d">a</a> git, mercurial, etc. repository.  That makes <a href="motion.txt.html#it" class="d">it</a> really
+  <a href="starting.txt.html#easy" class="d">easy</a> to update.
+<a href="motion.txt.html#-" class="d">-</a> <a href="insert.txt.html#A" class="d">A</a> package can contain multiple plugins that depend on each other.
+<a href="motion.txt.html#-" class="d">-</a> <a href="insert.txt.html#A" class="d">A</a> package can contain plugins that are automatically loaded on <a href="starting.txt.html#startup" class="d">startup</a> and
+  ones that are only loaded when needed with <span class="e">:packadd</span>.
+
+
+<span class="h">Using a package and loading automatically </span>
+
+Let's assume your Vim files are in the "~/.vim" directory and you want to add <a href="insert.txt.html#a" class="d">a</a>
+package from <a href="insert.txt.html#a" class="d">a</a> <a href="pi_zip.txt.html#zip" class="d">zip</a> archive "/tmp/foopack.zip"<a href="cmdline.txt.html#%3A" class="d">:</a>
+        <a href="motion.txt.html#%25" class="d">%</a> mkdir <a href="starting.txt.html#-p" class="d">-p</a> ~/.vim/pack/foo
+        <a href="motion.txt.html#%25" class="d">%</a> cd ~/.vim/pack/foo
+        <a href="motion.txt.html#%25" class="d">%</a> unzip /tmp/foopack.zip
+
+The directory name "foo" <a href="motion.txt.html#is" class="d">is</a> arbitrary, you can pick anything you like.
+
+You would now have these files under ~/.vim:
+        pack/foo/README.txt
+        pack/foo/start/foobar/plugin/foo.vim
+        pack/foo/start/foobar/syntax/some.vim
+        pack/foo/opt/foodebug/plugin/debugger.vim
+
+When Vim starts up, after processing your .vimrc, <a href="motion.txt.html#it" class="d">it</a> scans all directories in
+<a href="options.txt.html#%27packpath%27" class="o">'packpath'</a> for plugins under the "pack/*/start" directory.  First all those
+directories are added to <a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a>.  Then all the plugins are loaded.
+See <a href="#packload-two-steps" class="l">packload-two-steps</a> for how these two steps can be useful.
+
+In the example Vim will find "pack/foo/start/foobar/plugin/foo.vim" and adds 
+"~/.vim/pack/foo/start/foobar" to <a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a>.
+
+If the "foobar" <a href="usr_05.txt.html#plugin" class="d">plugin</a> kicks in and sets the <a href="options.txt.html#%27filetype%27" class="o">'filetype'</a> to "some"<a href="motion.txt.html#%2C" class="d">,</a> Vim will
+find the syntax/some.vim file, because its directory <a href="motion.txt.html#is" class="d">is</a> in <a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a>.
+
+Vim will also load <a href="filetype.txt.html#ftdetect" class="d">ftdetect</a> files, if there are any.
+
+<span class="n">Note</span> that the files under "pack/foo/opt" are not loaded automatically, only the
+ones under "pack/foo/start"<a href="#." class="d">.</a>  See <a href="#pack-add" class="l">pack-add</a> below for how the "opt" directory
+<a href="motion.txt.html#is" class="d">is</a> used.
+
+Loading <a href="#packages" class="d">packages</a> automatically will not happen if loading plugins <a href="motion.txt.html#is" class="d">is</a> disabled,
+see <a href="starting.txt.html#load-plugins" class="l">load-plugins</a><a href="#." class="d">.</a>
+
+To load <a href="#packages" class="d">packages</a> earlier, so that <a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a> gets updated: 
+<span class="e">        :packloadall</span>
+This also works when loading plugins <a href="motion.txt.html#is" class="d">is</a> disabled.  The automatic loading will
+only happen once.
+
+If the package has an "after" directory, that directory <a href="motion.txt.html#is" class="d">is</a> added to the <a href="intro.txt.html#end" class="d">end</a> of
+<a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a>, so that anything there will be loaded later.
+
+
+<span class="h">Using a single plugin and loading it automatically </span>
+
+If you don't have <a href="insert.txt.html#a" class="d">a</a> package but <a href="insert.txt.html#a" class="d">a</a> single plugin, you need to create the extra
+directory level:
+        <a href="motion.txt.html#%25" class="d">%</a> mkdir <a href="starting.txt.html#-p" class="d">-p</a> ~/.vim/pack/foo/start/foobar
+        <a href="motion.txt.html#%25" class="d">%</a> cd ~/.vim/pack/foo/start/foobar
+        <a href="motion.txt.html#%25" class="d">%</a> unzip /tmp/someplugin.zip
+
+You would now have these files:
+        pack/foo/start/foobar/plugin/foo.vim
+        pack/foo/start/foobar/syntax/some.vim
+
+From here <a href="motion.txt.html#it" class="d">it</a> works like above.
+
+
+<span class="h">Optional plugins </span>
+                                                        <a name="pack-add" class="t">pack-add</a>
+To load an optional <a href="usr_05.txt.html#plugin" class="d">plugin</a> from <a href="insert.txt.html#a" class="d">a</a> pack use the <span class="e">:packadd</span> command: 
+<span class="e">        :packadd foodebug</span>
+This searches for "pack/*/opt/foodebug" in <a href="options.txt.html#%27packpath%27" class="o">'packpath'</a> and will find
+~/.vim/pack/foo/opt/foodebug/plugin/debugger.vim and source it.
+
+This could be done if some conditions are met.  For example, depending on
+whether Vim supports <a href="insert.txt.html#a" class="d">a</a> feature or <a href="insert.txt.html#a" class="d">a</a> dependency <a href="motion.txt.html#is" class="d">is</a> missing.
+
+You can also load an optional <a href="usr_05.txt.html#plugin" class="d">plugin</a> <a href="motion.txt.html#at" class="d">at</a> startup, by putting this command in
+your <a href="starting.txt.html#.vimrc" class="l">.vimrc</a><a href="cmdline.txt.html#%3A" class="d">:</a> 
+<span class="e">        :packadd! foodebug</span>
+The extra "<a href="change.txt.html#%21" class="d">!</a>" <a href="motion.txt.html#is" class="d">is</a> so that the <a href="usr_05.txt.html#plugin" class="d">plugin</a> isn't loaded if Vim was started with
+<a href="starting.txt.html#--noplugin" class="l">--noplugin</a><a href="#." class="d">.</a>
+
+It <a href="motion.txt.html#is" class="d">is</a> perfectly normal for <a href="insert.txt.html#a" class="d">a</a> package to only have files in the "opt"
+directory.  You then need to load each <a href="usr_05.txt.html#plugin" class="d">plugin</a> when you want to use it.
+
+
+<span class="h">Where to put what </span>
+
+Since color schemes, loaded with <span class="e">:colorscheme</span>, are found below
+"pack/*/start" and "pack/*/opt"<a href="motion.txt.html#%2C" class="d">,</a> you could <a href="change.txt.html#put" class="d">put</a> them anywhere.  We recommend
+you <a href="change.txt.html#put" class="d">put</a> them below "pack/*/opt"<a href="motion.txt.html#%2C" class="d">,</a> for example
+".vim/pack/mycolors/opt/dark/colors/very_dark.vim"<a href="#." class="d">.</a>
+
+Filetype plugins should <a href="motion.txt.html#go" class="d">go</a> under "pack/*/start"<a href="motion.txt.html#%2C" class="d">,</a> so that they are always
+found.  Unless you have more than one <a href="usr_05.txt.html#plugin" class="d">plugin</a> for <a href="insert.txt.html#a" class="d">a</a> file type and want to
+select which one to load with <span class="e">:packadd</span>.  E.g. depending on the compiler
+version: 
+<span class="e">        if foo_compiler_version &gt; 34</span>
+<span class="e">          packadd foo_new</span>
+<span class="e">        else</span>
+<span class="e">          packadd foo_old</span>
+<span class="e">        endif</span>
+<span class="e"></span>
+The "after" directory <a href="motion.txt.html#is" class="d">is</a> most likely not useful in <a href="insert.txt.html#a" class="d">a</a> package.  It's not
+disallowed though.
+
+<span class="h">==============================================================================</span>
+6. Creating Vim <a href="#packages" class="d">packages</a>                                <a name="package-create" class="t">package-create</a>
+
+This assumes you write one or more plugins that you distribute <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> package.
+
+If you have two unrelated plugins you would use two packages, so that Vim
+users can chose what they include or not.  Or you can decide to use one
+package with optional plugins, and tell the user to add the ones he wants with
+<span class="e">:packadd</span>.
+
+Decide how you want to distribute the package.  You can create an archive or
+you could use <a href="insert.txt.html#a" class="d">a</a> repository.  An archive can be used by more users, but <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a>
+bit harder to update to <a href="insert.txt.html#a" class="d">a</a> new version.  <a href="insert.txt.html#A" class="d">A</a> repository can usually be kept
+up-to-date easily, but <a href="motion.txt.html#it" class="d">it</a> requires <a href="insert.txt.html#a" class="d">a</a> program like "git" to be available.
+You can <a href="diff.txt.html#do" class="d">do</a> both, github can automatically create an archive for <a href="insert.txt.html#a" class="d">a</a> release.
+
+Your directory layout would be like this:
+   start/foobar/plugin/foo.vim          " always loaded, defines commands
+   start/foobar/plugin/bar.vim          " always loaded, defines commands
+   start/foobar/autoload/foo.vim        " loaded when foo command used
+   start/foobar/doc/foo.txt             " <a href="helphelp.txt.html#help" class="d">help</a> for foo.vim
+   start/foobar/doc/tags                " <a href="helphelp.txt.html#help" class="d">help</a> <a href="tagsrch.txt.html#tags" class="d">tags</a>
+   opt/fooextra/plugin/extra.vim        " optional plugin, defines commands
+   opt/fooextra/autoload/extra.vim      " loaded when extra command used
+   opt/fooextra/doc/extra.txt           " <a href="helphelp.txt.html#help" class="d">help</a> for extra.vim
+   opt/fooextra/doc/tags                " <a href="helphelp.txt.html#help" class="d">help</a> <a href="tagsrch.txt.html#tags" class="d">tags</a>
+
+This allows for the user to do: 
+<span class="e">        mkdir ~/.vim/pack/myfoobar</span>
+<span class="e">        cd ~/.vim/pack/myfoobar</span>
+<span class="e">        git clone https://github.com/you/foobar.git</span>
+<span class="e"></span>
+Here "myfoobar" <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> name that the user can choose, the only condition <a href="motion.txt.html#is" class="d">is</a> that
+<a href="motion.txt.html#it" class="d">it</a> differs from other packages.
+
+In your documentation you explain what the plugins do, and tell the user how
+to load the optional plugin: 
+<span class="e">        :packadd! fooextra</span>
+<span class="e"></span>
+You could add this packadd command in one of your plugins, to be executed when
+the optional <a href="usr_05.txt.html#plugin" class="d">plugin</a> <a href="motion.txt.html#is" class="d">is</a> needed.
+
+Run the <span class="e">:helptags</span> command to generate the doc/tags file.  Including this
+generated file in the package means that the user can drop the package in his
+pack directory and the <a href="helphelp.txt.html#help" class="d">help</a> command works right away.  Don't forget to re-run
+the command after <a href="change.txt.html#changing" class="d">changing</a> the <a href="usr_05.txt.html#plugin" class="d">plugin</a> help: 
+<span class="e">        :helptags path/start/foobar/doc</span>
+<span class="e">        :helptags path/opt/fooextra/doc</span>
+<span class="e"></span>
+<span class="e"></span>
+<span class="h">Dependencies between plugins </span>
+                                                        <a name="packload-two-steps" class="t">packload-two-steps</a>
+Suppose you have two plugins that depend on the same functionality. You can
+<a href="change.txt.html#put" class="d">put</a> the common functionality in an <a href="eval.txt.html#autoload" class="d">autoload</a> directory, so that <a href="motion.txt.html#it" class="d">it</a> will be
+found automatically.  Your package would have these files:
+
+        pack/foo/start/one/plugin/one.vim  
+<span class="e">                call foolib#getit()</span>
+       pack/foo/start/two/plugin/two.vim 
+<span class="e">                call foolib#getit()</span>
+       pack/foo/start/lib/autoload/foolib.vim 
+<span class="e">                func foolib#getit()</span>
+<span class="e"></span>
+This works, because loading <a href="#packages" class="d">packages</a> will first add all found directories to
+<a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a> before sourcing the plugins.
+
+<span class="h">==============================================================================</span>
+7. Debugging scripts                                    <a name="debug-scripts" class="t">debug-scripts</a>
+
+Besides the obvious <a href="message.txt.html#messages" class="d">messages</a> that you can add to your scripts to find out what
+they are doing, Vim offers <a href="insert.txt.html#a" class="d">a</a> debug mode.  This allows you to step through <a href="insert.txt.html#a" class="d">a</a>
+sourced file or user function and set breakpoints.
+
+<span class="n">NOTE:</span> The debugging mode <a href="motion.txt.html#is" class="d">is</a> far from perfect.  Debugging will have side
+effects on how Vim works.  You cannot use <a href="motion.txt.html#it" class="d">it</a> to debug everything.  For
+example, the display <a href="motion.txt.html#is" class="d">is</a> messed up by the debugging messages.
+<span class="s">{Vi does not have a debug mode}</span>
+
+An alternative to debug mode <a href="motion.txt.html#is" class="d">is</a> setting the <a href="options.txt.html#%27verbose%27" class="o">'verbose'</a> option.  With <a href="insert.txt.html#a" class="d">a</a> bigger
+number <a href="motion.txt.html#it" class="d">it</a> will give more <a href="starting.txt.html#verbose" class="d">verbose</a> <a href="message.txt.html#messages" class="d">messages</a> about what Vim <a href="motion.txt.html#is" class="d">is</a> doing.
+
+
+<span class="c">STARTING DEBUG MODE                                            </span> <a name="debug-mode" class="t">debug-mode</a>
+
+To enter debugging mode use one of these methods:
+1. Start Vim with the <a href="starting.txt.html#-D" class="l">-D</a> argument: 
+<span class="e">        vim -D file.txt</span>
+  Debugging will start <a href="motion.txt.html#as" class="d">as</a> soon <a href="motion.txt.html#as" class="d">as</a> the first <a href="starting.txt.html#vimrc" class="d">vimrc</a> file <a href="motion.txt.html#is" class="d">is</a> sourced.  This <a href="motion.txt.html#is" class="d">is</a>
+   useful to find out what <a href="motion.txt.html#is" class="d">is</a> happening when Vim <a href="motion.txt.html#is" class="d">is</a> <a href="starting.txt.html#starting" class="d">starting</a> up.  <a href="insert.txt.html#A" class="d">A</a> side
+   effect <a href="motion.txt.html#is" class="d">is</a> that Vim will switch the <a href="terminal.txt.html#terminal" class="d">terminal</a> mode before initialisations
+   have finished, with unpredictable results.
+   For <a href="insert.txt.html#a" class="d">a</a> GUI-only version (Windows, Macintosh) the debugging will start <a href="motion.txt.html#as" class="d">as</a>
+   soon <a href="motion.txt.html#as" class="d">as</a> the <a href="gui.txt.html#GUI" class="d">GUI</a> <a href="windows.txt.html#window" class="d">window</a> has been opened.  To make this happen early, add <a href="insert.txt.html#a" class="d">a</a>
+   "<a href="gui_x11.txt.html#%3Agui" class="d">:gui</a>" command in the <a href="starting.txt.html#vimrc" class="d">vimrc</a> file.
+                                                                <a name="%3Adebug" class="t">:debug</a>
+2. Run <a href="insert.txt.html#a" class="d">a</a> command with "<a href="#%3Adebug" class="d">:debug</a>" prepended.  Debugging will only be done while
+   this command executes.  Useful for debugging <a href="insert.txt.html#a" class="d">a</a> specific <a href="usr_41.txt.html#script" class="d">script</a> or user
+   function.  And for scripts and <a href="eval.txt.html#functions" class="d">functions</a> used by autocommands.  Example: 
+<span class="e">        :debug edit test.txt.gz</span>
+<span class="e"></span>
+3. Set <a href="insert.txt.html#a" class="d">a</a> breakpoint in <a href="insert.txt.html#a" class="d">a</a> sourced file or user function.  You could <a href="diff.txt.html#do" class="d">do</a> this in
+   the command line: 
+<span class="e">        vim -c "breakadd file */explorer.vim" .</span>
+  This will run Vim and stop in the first line of the "explorer.vim" script.
+   Breakpoints can also be set while in debugging mode.
+
+In debugging mode every executed command <a href="motion.txt.html#is" class="d">is</a> displayed before <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> executed.
+Comment lines, empty lines and lines that are not executed are skipped.  When
+<a href="insert.txt.html#a" class="d">a</a> line contains two commands, separated by "|"<a href="motion.txt.html#%2C" class="d">,</a> each command will be displayed
+separately.
+
+
+DEBUG MODE
+
+Once in debugging mode, the usual <a href="intro.txt.html#Ex" class="d">Ex</a> commands can be used.  For example, to
+inspect the value of <a href="insert.txt.html#a" class="d">a</a> variable: 
+<span class="e">        echo idx</span>
+When inside <a href="insert.txt.html#a" class="d">a</a> user function, this will print the value of the local variable
+"idx"<a href="#." class="d">.</a>  Prepend "<a href="eval.txt.html#g%3A" class="d">g:</a>" to get the value of <a href="insert.txt.html#a" class="d">a</a> global variable: 
+<span class="e">        echo g:idx</span>
+All commands are executed in the context of the current function or script.
+You can also set options, for example setting or resetting <a href="options.txt.html#%27verbose%27" class="o">'verbose'</a> will show
+what happens, but you might want to set <a href="motion.txt.html#it" class="d">it</a> just before executing the lines you
+are interested in: 
+<span class="e">        :set verbose=20</span>
+<span class="e"></span>
+Commands that require updating the screen should be avoided, because their
+effect won't be noticed until after leaving debug mode.  For example: 
+<span class="e">        :help</span>
+won't be very helpful.
+
+There <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> separate command-line <a href="cmdline.txt.html#history" class="d">history</a> for debug mode.
+
+The line number for <a href="insert.txt.html#a" class="d">a</a> function line <a href="motion.txt.html#is" class="d">is</a> relative to the start of the function.
+If you have trouble figuring out where you are, edit the file that defines
+the function in another Vim, search for the start of the function and <a href="diff.txt.html#do" class="d">do</a>
+"99j"<a href="#." class="d">.</a>  <a href="insert.txt.html#Replace" class="d">Replace</a> "99" with the line number.
+
+Additionally, these commands can be used:
+                                                        <a name="%3Econt" class="t">&gt;cont</a>
+        cont            Continue execution until the next breakpoint <a href="motion.txt.html#is" class="d">is</a> hit.
+                                                        <a name="%3Equit" class="t">&gt;quit</a>
+        quit            Abort execution.  This <a href="motion.txt.html#is" class="d">is</a> like using <a href="pattern.txt.html#CTRL-C" class="k">CTRL-C</a>, some
+                        things might still be executed, doesn't abort
+                        everything.  Still stops <a href="motion.txt.html#at" class="d">at</a> the next breakpoint.
+                                                        <a name="%3Enext" class="t">&gt;next</a>
+        next            Execute the command and come back to debug mode when
+                        it's finished.  This steps over user function calls
+                        and sourced files.
+                                                        <a name="%3Estep" class="t">&gt;step</a>
+        step            Execute the command and come back to debug mode for
+                        the next command.  This steps into called user
+                        <a href="eval.txt.html#functions" class="d">functions</a> and sourced files.
+                                                        <a name="%3Einterrupt" class="t">&gt;interrupt</a>
+        interrupt       This <a href="motion.txt.html#is" class="d">is</a> like using <a href="pattern.txt.html#CTRL-C" class="k">CTRL-C</a>, but unlike "<a href="#%3Equit" class="d">&gt;quit</a>" comes
+                        back to debug mode for the next command that <a href="motion.txt.html#is" class="d">is</a>
+                        executed.  Useful for <a href="eval.txt.html#testing" class="d">testing</a> <a href="eval.txt.html#%3Afinally" class="l">:finally</a> and <a href="eval.txt.html#%3Acatch" class="l">:catch</a>
+                        on interrupt exceptions.
+                                                        <a name="%3Efinish" class="t">&gt;finish</a>
+        finish          Finish the current <a href="usr_41.txt.html#script" class="d">script</a> or user function and come
+                        back to debug mode for the command after the one that
+                        sourced or called it.
+                                                        <a name="%3Ebt" class="t">&gt;bt</a>
+                                                        <a name="%3Ebacktrace" class="t">&gt;backtrace</a>
+                                                        <a name="%3Ewhere" class="t">&gt;where</a>
+        backtrace       Show the call stacktrace for current debugging session.
+        bt
+        where
+                                                        <a name="%3Eframe" class="t">&gt;frame</a>
+        frame <a href="pattern.txt.html#N" class="d">N</a>         Goes to <a href="pattern.txt.html#N" class="d">N</a> backtrace level. <a href="motion.txt.html#%2B" class="d">+</a> and <a href="motion.txt.html#-" class="d">-</a> <a href="sign.txt.html#signs" class="d">signs</a> make <a href="intro.txt.html#movement" class="d">movement</a>
+                        relative.  E.g., ":frame +3" goes three frames up.
+                                                        <a name="%3Eup" class="t">&gt;up</a>
+        up              Goes one level up from call stacktrace.
+                                                        <a name="%3Edown" class="t">&gt;down</a>
+        down            Goes one level down from call stacktrace.
+
+About the additional commands in debug mode:
+<a href="motion.txt.html#-" class="d">-</a> There <a href="motion.txt.html#is" class="d">is</a> no command-line completion for them, you get the completion for the
+  normal <a href="intro.txt.html#Ex" class="d">Ex</a> commands only.
+<a href="motion.txt.html#-" class="d">-</a> You can shorten them, up to <a href="insert.txt.html#a" class="d">a</a> single character, unless more than one command
+  starts with the same letter.  "<a href="motion.txt.html#f" class="d">f</a>" stands for "finish"<a href="motion.txt.html#%2C" class="d">,</a> use "fr" for "frame"<a href="#." class="d">.</a>
+<a href="motion.txt.html#-" class="d">-</a> Hitting <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a> will repeat the previous one.  When doing another command, this
+  <a href="motion.txt.html#is" class="d">is</a> reset (because it's not clear what you want to repeat).
+<a href="motion.txt.html#-" class="d">-</a> When you want to use the <a href="intro.txt.html#Ex" class="d">Ex</a> command with the same name, prepend <a href="insert.txt.html#a" class="d">a</a> colon:
+  ":cont"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="editing.txt.html#%3Anext" class="d">:next</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="#%3Afinish" class="d">:finish</a>" (or shorter).
+
+The backtrace shows the hierarchy of function calls, e.g.:
+<span class="h">        &gt;bt </span>
+<span class="h">          3 function One[3] </span>
+<span class="h">          2 Two[3] </span>
+<span class="h">        -&gt;1 Three[3] </span>
+<span class="h">          0 Four </span>
+<span class="h">        line 1: let four = 4 </span>
+
+The "-&gt;" points to the current frame.  Use "up"<a href="motion.txt.html#%2C" class="d">,</a> "down" and "frame <a href="pattern.txt.html#N" class="d">N</a>" to
+select another frame.
+
+In the current frame you can evaluate the local function variables.  There <a href="motion.txt.html#is" class="d">is</a>
+no way to see the command <a href="motion.txt.html#at" class="d">at</a> the current line yet.
+
+
+DEFINING BREAKPOINTS
+                                                        <a name="%3Abreaka" class="t">:breaka</a> <a name="%3Abreakadd" class="t">:breakadd</a>
+:breaka[dd] func <span class="s">[lnum]</span> <span class="s">{name}</span>
+                Set <a href="insert.txt.html#a" class="d">a</a> breakpoint in <a href="insert.txt.html#a" class="d">a</a> function.  Example: 
+<span class="e">                        :breakadd func Explore</span>
+               Doesn't check for <a href="insert.txt.html#a" class="d">a</a> valid function name, thus the breakpoint
+                can be set before the function <a href="motion.txt.html#is" class="d">is</a> defined.
+
+:breaka[dd] file <span class="s">[lnum]</span> <span class="s">{name}</span>
+                Set <a href="insert.txt.html#a" class="d">a</a> breakpoint in <a href="insert.txt.html#a" class="d">a</a> sourced file.  Example: 
+<span class="e">                        :breakadd file 43 .vimrc</span>
+<span class="e"></span>
+:breaka[dd] here
+                Set <a href="insert.txt.html#a" class="d">a</a> breakpoint in the current line of the current file.
+                Like doing: 
+<span class="e">                        :breakadd file &lt;cursor-line&gt; &lt;current-file&gt;</span>
+               <span class="n">Note</span> that this only works for commands that are executed when
+                sourcing the file, not for <a href="insert.txt.html#a" class="d">a</a> function defined in that file.
+
+:breaka[dd] <a href="eval.txt.html#expr" class="d">expr</a> <span class="s">{expression}</span>
+                Sets <a href="insert.txt.html#a" class="d">a</a> breakpoint, that will break whenever the <span class="s">{expression}</span>
+                evaluates to <a href="insert.txt.html#a" class="d">a</a> different value. Example: 
+<span class="e">                        :breakadd expr g:lnum</span>
+<span class="e"></span>
+               Will break, whenever the global variable lnum changes.
+                <span class="n">Note</span> if you watch <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#script-variable" class="l">script-variable</a> this will break
+                when switching scripts, since the <a href="usr_41.txt.html#script" class="d">script</a> variable <a href="motion.txt.html#is" class="d">is</a> only
+                valid in the <a href="usr_41.txt.html#script" class="d">script</a> where <a href="motion.txt.html#it" class="d">it</a> has been defined and if that
+                <a href="usr_41.txt.html#script" class="d">script</a> <a href="motion.txt.html#is" class="d">is</a> called from several other scripts, this will stop
+                whenever that particular variable will become visible or
+                unaccessible again.
+
+The <span class="s">[lnum]</span> <a href="motion.txt.html#is" class="d">is</a> the line number of the breakpoint.  Vim will stop <a href="motion.txt.html#at" class="d">at</a> or after
+this line.  When omitted line 1 <a href="motion.txt.html#is" class="d">is</a> used.
+
+                                                        <a name="%3Adebug-name" class="t">:debug-name</a>
+<span class="s">{name}</span> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> <a href="pattern.txt.html#pattern" class="d">pattern</a> that <a href="motion.txt.html#is" class="d">is</a> matched with the file or function name.  The
+<a href="pattern.txt.html#pattern" class="d">pattern</a> <a href="motion.txt.html#is" class="d">is</a> like what <a href="motion.txt.html#is" class="d">is</a> used for autocommands.  There <a href="vim_faq.txt.html#must" class="d">must</a> be <a href="insert.txt.html#a" class="d">a</a> full match (as
+if the <a href="pattern.txt.html#pattern" class="d">pattern</a> starts with "<a href="motion.txt.html#%5E" class="d">^</a>" and ends in "<a href="motion.txt.html#%24" class="d">$</a>").  <a href="insert.txt.html#A" class="d">A</a> "*" matches any sequence
+of characters.  <a href="options.txt.html#%27ignorecase%27" class="o">'ignorecase'</a> <a href="motion.txt.html#is" class="d">is</a> not used, but "\c" can be used in the <a href="pattern.txt.html#pattern" class="d">pattern</a>
+to ignore <a href="change.txt.html#case" class="d">case</a> <a href="pattern.txt.html#%2F%5Cc" class="l">/\c</a><a href="#." class="d">.</a>  Don't include the () for the function name!
+
+The match for sourced scripts <a href="motion.txt.html#is" class="d">is</a> done against the full file name.  If no path
+<a href="motion.txt.html#is" class="d">is</a> specified the current directory <a href="motion.txt.html#is" class="d">is</a> used.  Examples: 
+<span class="e">        breakadd file explorer.vim</span>
+matches "explorer.vim" in the current directory. 
+<span class="e">        breakadd file *explorer.vim</span>
+matches ".../plugin/explorer.vim"<a href="motion.txt.html#%2C" class="d">,</a> ".../plugin/iexplorer.vim"<a href="motion.txt.html#%2C" class="d">,</a> etc. 
+<span class="e">        breakadd file */explorer.vim</span>
+matches ".../plugin/explorer.vim" and "explorer.vim" in any other directory.
+
+The match for <a href="eval.txt.html#functions" class="d">functions</a> <a href="motion.txt.html#is" class="d">is</a> done against the name <a href="motion.txt.html#as" class="d">as</a> it's shown in the output
+of "<a href="eval.txt.html#%3Afunction" class="d">:function</a>"<a href="#." class="d">.</a>  For local <a href="eval.txt.html#functions" class="d">functions</a> this means that something like "<a href="map.txt.html#%3CSNR%3E" class="s">&lt;SNR&gt;</a>99_"
+<a href="motion.txt.html#is" class="d">is</a> prepended.
+
+<span class="n">Note</span> that <a href="eval.txt.html#functions" class="d">functions</a> are first loaded and later executed.  When they are loaded
+the "file" breakpoints are checked, when they are executed the "func"
+breakpoints.
+
+
+DELETING BREAKPOINTS
+                                                <a name="%3Abreakd" class="t">:breakd</a> <a name="%3Abreakdel" class="t">:breakdel</a> <a name="E161" class="t">E161</a>
+:breakd[el] <span class="s">{nr}</span>
+                Delete breakpoint <span class="s">{nr}</span>.  Use <a href="#%3Abreaklist" class="l">:breaklist</a> to see the number of
+                each breakpoint.
+
+:breakd[el] *
+                Delete all breakpoints.
+
+:breakd[el] func <span class="s">[lnum]</span> <span class="s">{name}</span>
+                Delete <a href="insert.txt.html#a" class="d">a</a> breakpoint in <a href="insert.txt.html#a" class="d">a</a> function.
+
+:breakd[el] file <span class="s">[lnum]</span> <span class="s">{name}</span>
+                Delete <a href="insert.txt.html#a" class="d">a</a> breakpoint in <a href="insert.txt.html#a" class="d">a</a> sourced file.
+
+:breakd[el] here
+                Delete <a href="insert.txt.html#a" class="d">a</a> breakpoint <a href="motion.txt.html#at" class="d">at</a> the current line of the current file.
+
+When <span class="s">[lnum]</span> <a href="motion.txt.html#is" class="d">is</a> omitted, the first breakpoint in the function or file <a href="motion.txt.html#is" class="d">is</a>
+deleted.
+The <span class="s">{name}</span> <a href="vim_faq.txt.html#must" class="d">must</a> be exactly the same <a href="motion.txt.html#as" class="d">as</a> what was typed for the "<a href="#%3Abreakadd" class="d">:breakadd</a>"
+command.  "explorer"<a href="motion.txt.html#%2C" class="d">,</a> "*explorer.vim" and "*explorer*" are different.
+
+
+LISTING BREAKPOINTS
+                                                        <a name="%3Abreakl" class="t">:breakl</a> <a name="%3Abreaklist" class="t">:breaklist</a>
+:breakl[ist]
+                <a href="eval.txt.html#List" class="d">List</a> all breakpoints.
+
+
+OBSCURE
+
+                                                <a name="%3Adebugg" class="t">:debugg</a> <a name="%3Adebuggreedy" class="t">:debuggreedy</a>
+:debugg[reedy]
+                Read debug mode commands from the normal input stream, instead
+                of getting them directly from the user.  Only useful for test
+                scripts.  Example: 
+<span class="e">                  echo 'q^Mq' | vim -e -s -c debuggreedy -c 'breakadd file script.vim' -S script.vim</span>
+<span class="e"></span>
+:0debugg[reedy]
+                Undo "<a href="#%3Adebuggreedy" class="d">:debuggreedy</a>"<a href="cmdline.txt.html#%3A" class="d">:</a> get debug mode commands directly from the
+                user, don't use typeahead for debug commands.
+
+<span class="h">==============================================================================</span>
+8. Profiling                                            <a name="profile" class="t">profile</a> <a name="profiling" class="t">profiling</a>
+
+Profiling means that Vim measures the time that <a href="motion.txt.html#is" class="d">is</a> spent on executing
+<a href="eval.txt.html#functions" class="d">functions</a> and/or scripts.  The <a href="various.txt.html#%2Bprofile" class="l">+profile</a> feature <a href="motion.txt.html#is" class="d">is</a> required for this.
+It <a href="motion.txt.html#is" class="d">is</a> only included when Vim was compiled with "huge" features.
+<span class="s">{Vi does not have profiling}</span>
+
+You can also use the <a href="eval.txt.html#reltime%28%29" class="l">reltime()</a> function to measure time.  This only requires
+the <a href="various.txt.html#%2Breltime" class="l">+reltime</a> feature, which <a href="motion.txt.html#is" class="d">is</a> present more often.
+
+For <a href="#profiling" class="d">profiling</a> <a href="syntax.txt.html#syntax" class="d">syntax</a> highlighting see <a href="syntax.txt.html#%3Asyntime" class="l">:syntime</a><a href="#." class="d">.</a>
+
+For example, to <a href="#profile" class="d">profile</a> the one_script.vim <a href="usr_41.txt.html#script" class="d">script</a> file: 
+<span class="e">        :profile start /tmp/one_script_profile</span>
+<span class="e">        :profile file one_script.vim</span>
+<span class="e">        :source one_script.vim</span>
+<span class="e">        :exit</span>
+<span class="e"></span>
+<span class="e"></span>
+:prof[ile] start <span class="s">{fname}</span>                        <a name="%3Aprof" class="t">:prof</a> <a name="%3Aprofile" class="t">:profile</a> <a name="E750" class="t">E750</a>
+                Start profiling, write the output in <span class="s">{fname}</span> upon exit.
+                "~/" and environment <a href="eval.txt.html#variables" class="d">variables</a> in <span class="s">{fname}</span> will be expanded.
+                If <span class="s">{fname}</span> already exists <a href="motion.txt.html#it" class="d">it</a> will be silently overwritten.
+                The variable <a href="eval.txt.html#v%3Aprofiling" class="l">v:profiling</a> <a href="motion.txt.html#is" class="d">is</a> set to one.
+
+:prof[ile] pause
+                Don't <a href="#profile" class="d">profile</a> until the following "<a href="#%3Aprofile" class="d">:profile</a> continue"<a href="#." class="d">.</a>  Can be
+                used when doing something that should not be counted (e.g., an
+                external command).  Does not nest.
+
+:prof[ile] continue
+                Continue <a href="#profiling" class="d">profiling</a> after "<a href="#%3Aprofile" class="d">:profile</a> pause"<a href="#." class="d">.</a>
+
+:prof[ile] func <span class="s">{pattern}</span>
+                Profile function that matches the <a href="pattern.txt.html#pattern" class="d">pattern</a> <span class="s">{pattern}</span>.
+                See <a href="#%3Adebug-name" class="l">:debug-name</a> for how <span class="s">{pattern}</span> <a href="motion.txt.html#is" class="d">is</a> used.
+
+:prof[ile][!] file <span class="s">{pattern}</span>
+                Profile <a href="usr_41.txt.html#script" class="d">script</a> file that matches the <a href="pattern.txt.html#pattern" class="d">pattern</a> <span class="s">{pattern}</span>.
+                See <a href="#%3Adebug-name" class="l">:debug-name</a> for how <span class="s">{pattern}</span> <a href="motion.txt.html#is" class="d">is</a> used.
+                This only profiles the <a href="usr_41.txt.html#script" class="d">script</a> itself, not the <a href="eval.txt.html#functions" class="d">functions</a>
+                defined in it.
+                When the [!] <a href="motion.txt.html#is" class="d">is</a> added then all <a href="eval.txt.html#functions" class="d">functions</a> defined in the <a href="usr_41.txt.html#script" class="d">script</a>
+                will also be profiled.
+                <span class="n">Note</span> that <a href="#profiling" class="d">profiling</a> only starts when the <a href="usr_41.txt.html#script" class="d">script</a> <a href="motion.txt.html#is" class="d">is</a> loaded
+                after this command.  <a href="insert.txt.html#A" class="d">A</a> <a href="#%3Aprofile" class="d">:profile</a> command in the <a href="usr_41.txt.html#script" class="d">script</a> itself
+                won't work.
+
+
+:profd[el] <a href="eval.txt.html#..." class="d">...</a>                                          <a name="%3Aprofd" class="t">:profd</a> <a name="%3Aprofdel" class="t">:profdel</a>
+                Stop <a href="#profiling" class="d">profiling</a> for the arguments specified. See <a href="#%3Abreakdel" class="l">:breakdel</a>
+                for the arguments.
+
+
+You <a href="vim_faq.txt.html#must" class="d">must</a> always start with <a href="insert.txt.html#a" class="d">a</a> "<a href="#%3Aprofile" class="d">:profile</a> start fname" command.  The resulting
+file <a href="motion.txt.html#is" class="d">is</a> written when Vim exits.  Here <a href="motion.txt.html#is" class="d">is</a> an example of the output, with line
+numbers prepended for the explanation:
+
+<span class="h">  1 FUNCTION  Test2() </span>
+<span class="h">  2 Called 1 time </span>
+<span class="h">  3 Total time:   0.155251 </span>
+<span class="h">  4  Self time:   0.002006 </span>
+<span class="h">  5  </span>
+<span class="h">  6 count  total (s)   self (s) </span>
+<span class="h">  7     9              0.000096   for i in range(8) </span>
+<span class="h">  8     8   0.153655   0.000410     call Test3() </span>
+<span class="h">  9     8              0.000070   endfor </span>
+<span class="h"> 10                               " Ask a question </span>
+<span class="h"> 11     1              0.001341   echo input("give me an answer: ") </span>
+
+The header (lines 1-4) gives the time for the whole function.  The "Total"
+time <a href="motion.txt.html#is" class="d">is</a> the time passed while the function was executing.  The "Self" time <a href="motion.txt.html#is" class="d">is</a>
+the "Total" time reduced by time spent in:
+<a href="motion.txt.html#-" class="d">-</a> other user defined <a href="eval.txt.html#functions" class="d">functions</a>
+<a href="motion.txt.html#-" class="d">-</a> sourced scripts
+<a href="motion.txt.html#-" class="d">-</a> executed autocommands
+<a href="motion.txt.html#-" class="d">-</a> external (shell) commands
+
+Lines 7-11 show the time spent in each executed line.  Lines that are not
+executed <a href="diff.txt.html#do" class="d">do</a> not count.  Thus <a href="insert.txt.html#a" class="d">a</a> comment line <a href="motion.txt.html#is" class="d">is</a> never counted.
+
+The Count column shows how many times <a href="insert.txt.html#a" class="d">a</a> line was executed.  <span class="n">Note</span> that the
+"for" command in line 7 <a href="motion.txt.html#is" class="d">is</a> executed one more time <a href="motion.txt.html#as" class="d">as</a> the following lines.
+That <a href="motion.txt.html#is" class="d">is</a> because the line <a href="motion.txt.html#is" class="d">is</a> also executed to detect the <a href="intro.txt.html#end" class="d">end</a> of the loop.
+
+The time Vim spends waiting for user input isn't counted <a href="motion.txt.html#at" class="d">at</a> all.  Thus how
+long you take to respond to the <a href="eval.txt.html#input%28%29" class="d">input()</a> prompt <a href="motion.txt.html#is" class="d">is</a> irrelevant.
+
+Profiling should give <a href="insert.txt.html#a" class="d">a</a> good indication of where time <a href="motion.txt.html#is" class="d">is</a> spent, but keep in
+mind there are <a href="various.txt.html#various" class="d">various</a> things that may clobber the results:
+
+<a href="motion.txt.html#-" class="d">-</a> The accuracy of the time measured depends on the gettimeofday() system
+  function.  It may only be <a href="motion.txt.html#as" class="d">as</a> accurate <a href="motion.txt.html#as" class="d">as</a> 1/100 second, even though the times
+  are displayed in micro seconds.
+
+<a href="motion.txt.html#-" class="d">-</a> Real elapsed time <a href="motion.txt.html#is" class="d">is</a> measured, if other processes are busy they may cause
+  delays <a href="motion.txt.html#at" class="d">at</a> unpredictable moments.  You may want to run the <a href="#profiling" class="d">profiling</a> several
+  times and use the lowest results.
+
+<a href="motion.txt.html#-" class="d">-</a> If you have several commands in one line you only get one time.  Split the
+  line to see the time for the individual commands.
+
+<a href="motion.txt.html#-" class="d">-</a> The time of the lines added up <a href="motion.txt.html#is" class="d">is</a> mostly <a href="various.txt.html#less" class="d">less</a> than the time of the whole
+  function.  There <a href="motion.txt.html#is" class="d">is</a> some overhead in between.
+
+<a href="motion.txt.html#-" class="d">-</a> Functions that are deleted before Vim exits will not produce <a href="#profiling" class="d">profiling</a>
+  information.  You can check the <a href="eval.txt.html#v%3Aprofiling" class="l">v:profiling</a> variable if needed: 
+<span class="e">        :if !v:profiling</span>
+<span class="e">        :   delfunc MyFunc</span>
+<span class="e">        :endif</span>
+
+<a href="motion.txt.html#-" class="d">-</a> Profiling may give weird results on multi-processor systems, when sleep
+  mode kicks in or the processor frequency <a href="motion.txt.html#is" class="d">is</a> reduced to save power.
+
+<a href="motion.txt.html#-" class="d">-</a> The "<a href="eval.txt.html#self" class="d">self</a>" time <a href="motion.txt.html#is" class="d">is</a> wrong when <a href="insert.txt.html#a" class="d">a</a> function <a href="motion.txt.html#is" class="d">is</a> used recursively.
+
+
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

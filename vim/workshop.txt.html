@@ -1,0 +1,112 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: workshop.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="workshop.txt" class="t">workshop.txt</a>  For <span class="i">Vim version 8.0.</span>  Last change: 2013 Jul 06
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Gordon Prieur</span>
+
+
+Sun <a href="visual.txt.html#Visual" class="d">Visual</a> WorkShop Features                    <a name="workshop" class="t">workshop</a> <a name="workshop-support" class="t">workshop-support</a>
+
+1. Introduction                                         <a href="#workshop-intro" class="l">workshop-intro</a>
+2. Commands                                             <a href="#workshop-commands" class="l">workshop-commands</a>
+3. Compiling vim/gvim for WorkShop                      <a href="#workshop-compiling" class="l">workshop-compiling</a>
+4. Configuring <a href="starting.txt.html#gvim" class="d">gvim</a> for <a href="insert.txt.html#a" class="d">a</a> WorkShop release tree         <a href="#workshop-configure" class="l">workshop-configure</a>
+5. Obtaining the latest version of the XPM library      <a href="#workshop-xpm" class="l">workshop-xpm</a>
+
+<span class="s">{Vi does not have any of these features}</span>
+<span class="s">{only available when compiled with the |+sun_workshop| feature}</span>
+
+<span class="h">==============================================================================</span>
+1. Introduction                                         <a name="workshop-intro" class="t">workshop-intro</a>
+
+Sun <a href="visual.txt.html#Visual" class="d">Visual</a> WorkShop has an "Editor of Choice" feature designed to let users
+debug using their favorite editors.  For the 6.0 release we have added support
+for gvim.  <a href="insert.txt.html#A" class="d">A</a> <a href="#workshop" class="d">workshop</a> debug session will have <a href="insert.txt.html#a" class="d">a</a> debugging <a href="windows.txt.html#window" class="d">window</a> and an editor
+<a href="windows.txt.html#window" class="d">window</a> (possibly others <a href="motion.txt.html#as" class="d">as</a> well).  The user can <a href="diff.txt.html#do" class="d">do</a> many debugging operations
+from the editor window, minimizing the need to switch from <a href="windows.txt.html#window" class="d">window</a> to window.
+
+The version of vim shipped with Sun <a href="visual.txt.html#Visual" class="d">Visual</a> WorkShop 6 (also called Forte
+Developer 6) <a href="motion.txt.html#is" class="d">is</a> vim 5.3.  The features in this release are much more reliable
+than the vim/gvim shipped with <a href="visual.txt.html#Visual" class="d">Visual</a> WorkShop.  VWS users wishing to use vim
+<a href="motion.txt.html#as" class="d">as</a> their editor should compile these sources and <a href="usr_90.txt.html#install" class="d">install</a> them in their
+<a href="#workshop" class="d">workshop</a> release tree.
+
+<span class="h">==============================================================================</span>
+2. Commands                                             <a name="workshop-commands" class="t">workshop-commands</a>
+
+                                                <a name="%3Aws" class="t">:ws</a> <a name="%3Awsverb" class="t">:wsverb</a>
+:ws[verb] verb                  Pass the verb to the verb executor
+
+Pass the verb to <a href="insert.txt.html#a" class="d">a</a> <a href="#workshop" class="d">workshop</a> function which gathers some arguments and
+sends the verb and data to <a href="#workshop" class="d">workshop</a> over an IPC connection.
+
+<span class="h">==============================================================================</span>
+3. Compiling vim/gvim for WorkShop                      <a name="workshop-compiling" class="t">workshop-compiling</a>
+
+Compiling vim with FEAT_SUN_WORKSHOP turns on all compile time flags necessary
+for building <a href="insert.txt.html#a" class="d">a</a> vim to work with <a href="visual.txt.html#Visual" class="d">Visual</a> WorkShop.  The features required for VWS
+have been built and tested using the Sun compilers from the VWS release.  They
+have not been built or tested using Gnu compilers.  This does not mean the
+features won't build and run if compiled with gcc, just that nothing <a href="motion.txt.html#is" class="d">is</a>
+guaranteed with gcc!
+
+<span class="h">==============================================================================</span>
+4. Configuring <a href="starting.txt.html#gvim" class="d">gvim</a> for <a href="insert.txt.html#a" class="d">a</a> WorkShop release tree         <a name="workshop-configure" class="t">workshop-configure</a>
+
+There are several assumptions which <a href="vim_faq.txt.html#must" class="d">must</a> be met in order to compile <a href="insert.txt.html#a" class="d">a</a> <a href="starting.txt.html#gvim" class="d">gvim</a> for
+use with Sun <a href="visual.txt.html#Visual" class="d">Visual</a> WorkShop 6.
+
+    <a href="insert.txt.html#o" class="d">o</a> You should use the compiler in VWS rather than gcc.  We have neither
+      built nor tested with gcc and cannot guarantee <a href="motion.txt.html#it" class="d">it</a> will build properly.
+
+    <a href="insert.txt.html#o" class="d">o</a> You <a href="vim_faq.txt.html#must" class="d">must</a> supply your own XPM library.  See <a href="#workshop-xpm" class="l">workshop-xpm</a> below for
+      details on obtaining the latest version of XPM.
+
+    <a href="insert.txt.html#o" class="d">o</a> Edit the Makefile in the src directory and uncomment the lines for Sun
+      <a href="visual.txt.html#Visual" class="d">Visual</a> WorkShop.  You can easily find these by searching for the <a href="eval.txt.html#string" class="d">string</a>
+      FEAT_SUN_WORKSHOP
+
+    <a href="insert.txt.html#o" class="d">o</a> We also suggest you use <a href="gui_x11.txt.html#Motif" class="d">Motif</a> for your gui.  This will provide <a href="starting.txt.html#gvim" class="d">gvim</a> with
+      the same look-and-feel <a href="motion.txt.html#as" class="d">as</a> the rest of Sun <a href="visual.txt.html#Visual" class="d">Visual</a> WorkShop.
+
+The following configuration line can be used to configure vim to build for use
+with Sun <a href="visual.txt.html#Visual" class="d">Visual</a> WorkShop:
+
+    <a href="motion.txt.html#%24" class="d">$</a> CC=cc configure --enable-workshop --enable-gui=motif \
+        -prefix=&lt;VWS-install-dir&gt;/contrib/contrib6/&lt;vim-version&gt;
+
+The VWS-install-dir should be the base directory where your Sun <a href="visual.txt.html#Visual" class="d">Visual</a> WorkShop
+was installed.  By default this <a href="motion.txt.html#is" class="d">is</a> /opt/SUNWspro.  It will normally require
+root permissions to <a href="usr_90.txt.html#install" class="d">install</a> the vim release.  You will also need to change the
+symlink <span class="s">&lt;VWS-install-dir&gt;</span>/bin/gvim to point to the vim in your newly installed
+directory.  The <span class="s">&lt;vim-version&gt;</span> should be <a href="insert.txt.html#a" class="d">a</a> unique version string.  <a href="insert.txt.html#I" class="d">I</a> use "vim"
+concatenated with the equivalent of version.h's VIM_VERSION_SHORT.
+
+<span class="h">==============================================================================</span>
+5. Obtaining the latest version of the XPM library      <a name="workshop-xpm" class="t">workshop-xpm</a>
+
+The XPM library <a href="motion.txt.html#is" class="d">is</a> required to show images within Vim with <a href="gui_x11.txt.html#Motif" class="d">Motif</a> or Athena.
+Without <a href="motion.txt.html#it" class="d">it</a> the toolbar and <a href="sign.txt.html#signs" class="d">signs</a> will be disabled.
+
+The XPM library <a href="motion.txt.html#is" class="d">is</a> provided by Arnaud Le Hors of the French National Institute
+for Research in Computer Science and Control.  It can be downloaded from
+<a class="u" href="http://cgit.freedesktop.org/xorg/lib/libXpm">http://cgit.freedesktop.org/xorg/lib/libXpm</a>.  The current release, <a href="motion.txt.html#as" class="d">as</a> of this
+writing, <a href="motion.txt.html#is" class="d">is</a> xpm-3.4k-solaris.tgz, which <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> gzip'ed <a href="pi_tar.txt.html#tar" class="d">tar</a> file.  If you create
+the directory /usr/local/xpm and untar the file there you can use the
+uncommented lines in the Makefile without <a href="change.txt.html#changing" class="d">changing</a> them.  If you use another
+xpm directory you will need to change the XPM_DIR in src/Makefile.
+
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

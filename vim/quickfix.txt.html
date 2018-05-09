@@ -1,0 +1,1793 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: quickfix.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="quickfix.txt" class="t">quickfix.txt</a>  For <span class="i">Vim version 8.0.</span>  Last change: 2018 May 01
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Bram Moolenaar</span>
+
+
+This subject <a href="motion.txt.html#is" class="d">is</a> introduced in <a href="motion.txt.html#section" class="d">section</a> <a href="usr_30.txt.html#30.1" class="l">30.1</a> of the user manual.
+
+1. Using QuickFix commands              <a href="#quickfix" class="l">quickfix</a>
+2. The error <a href="windows.txt.html#window" class="d">window</a>                     <a href="#quickfix-window" class="l">quickfix-window</a>
+3. Using more than one <a href="eval.txt.html#list" class="d">list</a> of <a href="message.txt.html#errors" class="d">errors</a>   <a href="#quickfix-error-lists" class="l">quickfix-error-lists</a>
+4. Using <a href="#%3Amake" class="d">:make</a>                          <a href="#%3Amake_makeprg" class="l">:make_makeprg</a>
+5. Using <a href="#%3Agrep" class="d">:grep</a>                          <a href="#grep" class="l">grep</a>
+6. Selecting <a href="insert.txt.html#a" class="d">a</a> compiler                 <a href="#compiler-select" class="l">compiler-select</a>
+7. The error format                     <a href="#error-file-format" class="l">error-file-format</a>
+8. The directory stack                  <a href="#quickfix-directory-stack" class="l">quickfix-directory-stack</a>
+9. Specific error file formats          <a href="#errorformats" class="l">errorformats</a>
+
+<span class="s">{Vi does not have any of these commands}</span>
+
+The <a href="#quickfix" class="d">quickfix</a> commands are not available when the <a href="various.txt.html#%2Bquickfix" class="l">+quickfix</a> feature was
+disabled <a href="motion.txt.html#at" class="d">at</a> compile time.
+
+<span class="h">=============================================================================</span>
+1. Using QuickFix commands                      <a name="quickfix" class="t">quickfix</a> <a name="Quickfix" class="t">Quickfix</a> <a name="E42" class="t">E42</a>
+
+Vim has <a href="insert.txt.html#a" class="d">a</a> special mode to speedup the edit-compile-edit cycle.  This <a href="motion.txt.html#is" class="d">is</a>
+inspired by the <a href="#quickfix" class="d">quickfix</a> option of the Manx's Aztec <a href="change.txt.html#C" class="d">C</a> compiler on the Amiga.
+The idea <a href="motion.txt.html#is" class="d">is</a> to save the error <a href="message.txt.html#messages" class="d">messages</a> from the compiler in <a href="insert.txt.html#a" class="d">a</a> file and use Vim
+to jump to the <a href="message.txt.html#errors" class="d">errors</a> one by one.  You can examine each problem and fix it,
+without having to remember all the error messages.
+
+In Vim the <a href="#quickfix" class="d">quickfix</a> commands are used more generally to find <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of
+positions in files.  For example, <a href="#%3Avimgrep" class="l">:vimgrep</a> finds <a href="pattern.txt.html#pattern" class="d">pattern</a> matches.  You can
+use the positions in <a href="insert.txt.html#a" class="d">a</a> <a href="usr_41.txt.html#script" class="d">script</a> with the <a href="eval.txt.html#getqflist%28%29" class="l">getqflist()</a> function.  Thus you can
+<a href="diff.txt.html#do" class="d">do</a> <a href="insert.txt.html#a" class="d">a</a> lot more than the edit/compile/fix cycle!
+
+If you have the error <a href="message.txt.html#messages" class="d">messages</a> in <a href="insert.txt.html#a" class="d">a</a> file you can start Vim with: 
+<span class="e">        vim -q filename</span>
+<span class="e"></span>
+From inside Vim an <a href="starting.txt.html#easy" class="d">easy</a> way to run <a href="insert.txt.html#a" class="d">a</a> command and handle the output <a href="motion.txt.html#is" class="d">is</a> with the
+<a href="#%3Amake" class="l">:make</a> command (see below).
+
+The <a href="options.txt.html#%27errorformat%27" class="o">'errorformat'</a> option should be set to match the error <a href="message.txt.html#messages" class="d">messages</a> from your
+compiler (see <a href="#errorformat" class="l">errorformat</a> below).
+
+                                                        <a name="quickfix-ID" class="t">quickfix-ID</a>
+Each <a href="#quickfix" class="d">quickfix</a> <a href="eval.txt.html#list" class="d">list</a> has <a href="insert.txt.html#a" class="d">a</a> unique identifier called the <a href="#quickfix" class="d">quickfix</a> ID and this
+number will not change within <a href="insert.txt.html#a" class="d">a</a> Vim session. The <a href="eval.txt.html#getqflist%28%29" class="d">getqflist()</a> function can be
+used to get the identifier assigned to <a href="insert.txt.html#a" class="d">a</a> list. There <a href="motion.txt.html#is" class="d">is</a> also <a href="insert.txt.html#a" class="d">a</a> <a href="#quickfix" class="d">quickfix</a> <a href="eval.txt.html#list" class="d">list</a>
+number which may change whenever more than ten lists are added to <a href="insert.txt.html#a" class="d">a</a> <a href="#quickfix" class="d">quickfix</a>
+stack.
+
+                                                <a name="location-list" class="t">location-list</a> <a name="E776" class="t">E776</a>
+<a href="insert.txt.html#A" class="d">A</a> location <a href="eval.txt.html#list" class="d">list</a> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> window-local <a href="#quickfix" class="d">quickfix</a> list. You get one after commands
+like <span class="e">:lvimgrep</span>, <span class="e">:lgrep</span>, <span class="e">:lhelpgrep</span>, <span class="e">:lmake</span>, etc., which create <a href="insert.txt.html#a" class="d">a</a>
+location <a href="eval.txt.html#list" class="d">list</a> instead of <a href="insert.txt.html#a" class="d">a</a> <a href="#quickfix" class="d">quickfix</a> <a href="eval.txt.html#list" class="d">list</a> <a href="motion.txt.html#as" class="d">as</a> the corresponding <span class="e">:vimgrep</span>,
+<span class="e">:grep</span>, <span class="e">:helpgrep</span>, <span class="e">:make</span> do.
+<a href="insert.txt.html#A" class="d">A</a> location <a href="eval.txt.html#list" class="d">list</a> <a href="motion.txt.html#is" class="d">is</a> associated with <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a> and each <a href="windows.txt.html#window" class="d">window</a> can have <a href="insert.txt.html#a" class="d">a</a>
+separate location list.  <a href="insert.txt.html#A" class="d">A</a> location <a href="eval.txt.html#list" class="d">list</a> can be associated with only one
+window.  The location <a href="eval.txt.html#list" class="d">list</a> <a href="motion.txt.html#is" class="d">is</a> independent of the <a href="#quickfix" class="d">quickfix</a> list.
+
+When <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a> with <a href="insert.txt.html#a" class="d">a</a> location <a href="eval.txt.html#list" class="d">list</a> <a href="motion.txt.html#is" class="d">is</a> split, the new <a href="windows.txt.html#window" class="d">window</a> gets <a href="insert.txt.html#a" class="d">a</a> copy of the
+location list.  When there are no longer any references to <a href="insert.txt.html#a" class="d">a</a> location list,
+the location <a href="eval.txt.html#list" class="d">list</a> <a href="motion.txt.html#is" class="d">is</a> destroyed.
+
+                                                <a name="quickfix-changedtick" class="t">quickfix-changedtick</a>
+Every <a href="#quickfix" class="d">quickfix</a> and location <a href="eval.txt.html#list" class="d">list</a> has <a href="insert.txt.html#a" class="d">a</a> read-only changedtick variable that
+tracks the total number of changes made to the list.  Every time the <a href="#quickfix" class="d">quickfix</a>
+<a href="eval.txt.html#list" class="d">list</a> <a href="motion.txt.html#is" class="d">is</a> modified, this <a href="intro.txt.html#count" class="d">count</a> <a href="motion.txt.html#is" class="d">is</a> incremented. This can be used to perform an
+action only when the <a href="eval.txt.html#list" class="d">list</a> has changed.  The <a href="eval.txt.html#getqflist%28%29" class="d">getqflist()</a> and <a href="eval.txt.html#getloclist%28%29" class="d">getloclist()</a>
+<a href="eval.txt.html#functions" class="d">functions</a> can be used to query the current value of changedtick.  You cannot
+change the changedtick variable.
+
+The following <a href="#quickfix" class="d">quickfix</a> commands can be used.  The location <a href="eval.txt.html#list" class="d">list</a> commands are
+similar to the <a href="#quickfix" class="d">quickfix</a> commands, <a href="change.txt.html#replacing" class="d">replacing</a> the 'c' prefix in the <a href="#quickfix" class="d">quickfix</a>
+command with 'l'.
+
+                                                        <a name="E924" class="t">E924</a>
+If the current <a href="windows.txt.html#window" class="d">window</a> was closed by an <a href="autocmd.txt.html#autocommand" class="l">autocommand</a> while processing <a href="insert.txt.html#a" class="d">a</a>
+location <a href="eval.txt.html#list" class="d">list</a> command, <a href="motion.txt.html#it" class="d">it</a> will be aborted.
+
+                                                        <a name="E925" class="t">E925</a> <a name="E926" class="t">E926</a>
+If the current <a href="#quickfix" class="d">quickfix</a> or location <a href="eval.txt.html#list" class="d">list</a> was changed by an <a href="autocmd.txt.html#autocommand" class="l">autocommand</a> while
+processing <a href="insert.txt.html#a" class="d">a</a> <a href="#quickfix" class="d">quickfix</a> or location <a href="eval.txt.html#list" class="d">list</a> command, <a href="motion.txt.html#it" class="d">it</a> will be aborted.
+
+                                                        <a name="%3Acc" class="t">:cc</a>
+:cc[!] <span class="s">[nr]</span>             Display error <span class="s">[nr]</span>.  If <span class="s">[nr]</span> <a href="motion.txt.html#is" class="d">is</a> omitted, the same
+                        error <a href="motion.txt.html#is" class="d">is</a> displayed again.  Without [!] this doesn't
+                        work when jumping to another buffer, the current buffer
+                        has been changed, there <a href="motion.txt.html#is" class="d">is</a> the only <a href="windows.txt.html#window" class="d">window</a> for the
+                        buffer and both <a href="options.txt.html#%27hidden%27" class="o">'hidden'</a> and <a href="options.txt.html#%27autowrite%27" class="o">'autowrite'</a> are off.
+                        When jumping to another buffer with [!] any changes to
+                        the current buffer are lost, unless <a href="options.txt.html#%27hidden%27" class="o">'hidden'</a> <a href="motion.txt.html#is" class="d">is</a> set or
+                        there <a href="motion.txt.html#is" class="d">is</a> another <a href="windows.txt.html#window" class="d">window</a> for this buffer.
+                        The <a href="options.txt.html#%27switchbuf%27" class="o">'switchbuf'</a> settings are respected when jumping
+                        to <a href="insert.txt.html#a" class="d">a</a> buffer.
+
+                                                        <a name="%3All" class="t">:ll</a>
+:ll[!] <span class="s">[nr]</span>             Same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Acc" class="d">:cc</a>"<a href="motion.txt.html#%2C" class="d">,</a> except the location <a href="eval.txt.html#list" class="d">list</a> for the
+                        current <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> used instead of the <a href="#quickfix" class="d">quickfix</a> list.
+
+                                                        <a name="%3Acn" class="t">:cn</a> <a name="%3Acnext" class="t">:cnext</a> <a name="E553" class="t">E553</a>
+:[count]cn[ext][!]      Display the <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> next error in the <a href="eval.txt.html#list" class="d">list</a> that
+                        includes <a href="insert.txt.html#a" class="d">a</a> file name.  If there are no file names <a href="motion.txt.html#at" class="d">at</a>
+                        all, <a href="motion.txt.html#go" class="d">go</a> to the <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> next error.  See <a href="#%3Acc" class="l">:cc</a> for
+                        [!] and <a href="options.txt.html#%27switchbuf%27" class="o">'switchbuf'</a>.
+
+                                                        <a name="%3Alne" class="t">:lne</a> <a name="%3Alnext" class="t">:lnext</a>
+:[count]lne[xt][!]      Same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Acnext" class="d">:cnext</a>"<a href="motion.txt.html#%2C" class="d">,</a> except the location <a href="eval.txt.html#list" class="d">list</a> for the
+                        current <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> used instead of the <a href="#quickfix" class="d">quickfix</a> list.
+
+:[count]cN[ext][!]                      <a name="%3Acp" class="t">:cp</a> <a name="%3Acprevious" class="t">:cprevious</a> <a name="%3AcN" class="t">:cN</a> <a name="%3AcNext" class="t">:cNext</a>
+:[count]cp[revious][!]  Display the <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> previous error in the <a href="eval.txt.html#list" class="d">list</a> that
+                        includes <a href="insert.txt.html#a" class="d">a</a> file name.  If there are no file names <a href="motion.txt.html#at" class="d">at</a>
+                        all, <a href="motion.txt.html#go" class="d">go</a> to the <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> previous error.  See <a href="#%3Acc" class="l">:cc</a> for
+                        [!] and <a href="options.txt.html#%27switchbuf%27" class="o">'switchbuf'</a>.
+
+
+:[count]lN[ext][!]                      <a name="%3Alp" class="t">:lp</a> <a name="%3Alprevious" class="t">:lprevious</a> <a name="%3AlN" class="t">:lN</a> <a name="%3AlNext" class="t">:lNext</a>
+:[count]lp[revious][!]  Same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3AcNext" class="d">:cNext</a>" and "<a href="#%3Acprevious" class="d">:cprevious</a>"<a href="motion.txt.html#%2C" class="d">,</a> except the location
+                        <a href="eval.txt.html#list" class="d">list</a> for the current <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> used instead of the
+                        <a href="#quickfix" class="d">quickfix</a> list.
+
+                                                        <a name="%3Acnf" class="t">:cnf</a> <a name="%3Acnfile" class="t">:cnfile</a>
+:[count]cnf[ile][!]     Display the first error in the <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> next file in
+                        the <a href="eval.txt.html#list" class="d">list</a> that includes <a href="insert.txt.html#a" class="d">a</a> file name.  If there are no
+                        file names <a href="motion.txt.html#at" class="d">at</a> all or if there <a href="motion.txt.html#is" class="d">is</a> no next file, <a href="motion.txt.html#go" class="d">go</a> to
+                        the <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> next error.  See <a href="#%3Acc" class="l">:cc</a> for [!] and
+                        <a href="options.txt.html#%27switchbuf%27" class="o">'switchbuf'</a>.
+
+                                                        <a name="%3Alnf" class="t">:lnf</a> <a name="%3Alnfile" class="t">:lnfile</a>
+:[count]lnf[ile][!]     Same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Acnfile" class="d">:cnfile</a>"<a href="motion.txt.html#%2C" class="d">,</a> except the location <a href="eval.txt.html#list" class="d">list</a> for the
+                        current <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> used instead of the <a href="#quickfix" class="d">quickfix</a> list.
+
+:[count]cNf[ile][!]                     <a name="%3Acpf" class="t">:cpf</a> <a name="%3Acpfile" class="t">:cpfile</a> <a name="%3AcNf" class="t">:cNf</a> <a name="%3AcNfile" class="t">:cNfile</a>
+:[count]cpf[ile][!]     Display the last error in the <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> previous file in
+                        the <a href="eval.txt.html#list" class="d">list</a> that includes <a href="insert.txt.html#a" class="d">a</a> file name.  If there are no
+                        file names <a href="motion.txt.html#at" class="d">at</a> all or if there <a href="motion.txt.html#is" class="d">is</a> no next file, <a href="motion.txt.html#go" class="d">go</a> to
+                        the <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> previous error.  See <a href="#%3Acc" class="l">:cc</a> for [!] and
+                        <a href="options.txt.html#%27switchbuf%27" class="o">'switchbuf'</a>.
+
+
+:[count]lNf[ile][!]                     <a name="%3Alpf" class="t">:lpf</a> <a name="%3Alpfile" class="t">:lpfile</a> <a name="%3AlNf" class="t">:lNf</a> <a name="%3AlNfile" class="t">:lNfile</a>
+:[count]lpf[ile][!]     Same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3AcNfile" class="d">:cNfile</a>" and "<a href="#%3Acpfile" class="d">:cpfile</a>"<a href="motion.txt.html#%2C" class="d">,</a> except the location
+                        <a href="eval.txt.html#list" class="d">list</a> for the current <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> used instead of the
+                        <a href="#quickfix" class="d">quickfix</a> list.
+
+                                                        <a name="%3Acrewind" class="t">:crewind</a> <a name="%3Acr" class="t">:cr</a>
+:cr[ewind][!] <span class="s">[nr]</span>      Display error <span class="s">[nr]</span>.  If <span class="s">[nr]</span> <a href="motion.txt.html#is" class="d">is</a> omitted, the FIRST
+                        error <a href="motion.txt.html#is" class="d">is</a> displayed.  See <a href="#%3Acc" class="l">:cc</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="%3Alrewind" class="t">:lrewind</a> <a name="%3Alr" class="t">:lr</a>
+:lr[ewind][!] <span class="s">[nr]</span>      Same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Acrewind" class="d">:crewind</a>"<a href="motion.txt.html#%2C" class="d">,</a> except the location <a href="eval.txt.html#list" class="d">list</a> for the
+                        current <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> used instead of the <a href="#quickfix" class="d">quickfix</a> list.
+
+                                                        <a name="%3Acfirst" class="t">:cfirst</a> <a name="%3Acfir" class="t">:cfir</a>
+:cfir[st][!] <span class="s">[nr]</span>       Same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Acrewind" class="d">:crewind</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="%3Alfirst" class="t">:lfirst</a> <a name="%3Alfir" class="t">:lfir</a>
+:lfir[st][!] <span class="s">[nr]</span>       Same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Alrewind" class="d">:lrewind</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="%3Aclast" class="t">:clast</a> <a name="%3Acla" class="t">:cla</a>
+:cla[st][!] <span class="s">[nr]</span>        Display error <span class="s">[nr]</span>.  If <span class="s">[nr]</span> <a href="motion.txt.html#is" class="d">is</a> omitted, the LAST
+                        error <a href="motion.txt.html#is" class="d">is</a> displayed.  See <a href="#%3Acc" class="l">:cc</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="%3Allast" class="t">:llast</a> <a name="%3Alla" class="t">:lla</a>
+:lla[st][!] <span class="s">[nr]</span>        Same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Aclast" class="d">:clast</a>"<a href="motion.txt.html#%2C" class="d">,</a> except the location <a href="eval.txt.html#list" class="d">list</a> for the
+                        current <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> used instead of the <a href="#quickfix" class="d">quickfix</a> list.
+
+                                                        <a name="%3Acq" class="t">:cq</a> <a name="%3Acquit" class="t">:cquit</a>
+:cq[uit][!]             Quit Vim with an error code, so that the compiler
+                        will not compile the same file again.
+                        WARNING: All changes in files are lost!  Also when the
+                        [!] <a href="motion.txt.html#is" class="d">is</a> not used.  It works like ":qall!" <a href="editing.txt.html#%3Aqall" class="l">:qall</a><a href="motion.txt.html#%2C" class="d">,</a>
+                        except that Vim returns <a href="insert.txt.html#a" class="d">a</a> non-zero exit code.
+
+                                                        <a name="%3Acf" class="t">:cf</a> <a name="%3Acfile" class="t">:cfile</a>
+:cf[ile][!] <span class="s">[errorfile]</span> Read the error file and jump to the first error.
+                        This <a href="motion.txt.html#is" class="d">is</a> done automatically when Vim <a href="motion.txt.html#is" class="d">is</a> started with
+                        the <a href="starting.txt.html#-q" class="d">-q</a> option.  You can use this command when you
+                        keep Vim running while compiling.  If you give the
+                        name of the errorfile, the <a href="options.txt.html#%27errorfile%27" class="o">'errorfile'</a> option will
+                        be set to <span class="s">[errorfile]</span>.  See <a href="#%3Acc" class="l">:cc</a> for [!].
+                        If the encoding of the error file differs from the
+                        <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> option, you can use the <a href="options.txt.html#%27makeencoding%27" class="o">'makeencoding'</a>
+                        option to specify the encoding.
+
+                                                        <a name="%3Alf" class="t">:lf</a> <a name="%3Alfile" class="t">:lfile</a>
+:lf[ile][!] <span class="s">[errorfile]</span> Same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Acfile" class="d">:cfile</a>"<a href="motion.txt.html#%2C" class="d">,</a> except the location <a href="eval.txt.html#list" class="d">list</a> for the
+                        current <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> used instead of the <a href="#quickfix" class="d">quickfix</a> list.
+                        You can not use the <a href="starting.txt.html#-q" class="d">-q</a> command-line option to set
+                        the location list.
+
+
+:cg[etfile] <span class="s">[errorfile]</span>                                 <a name="%3Acg" class="t">:cg</a> <a name="%3Acgetfile" class="t">:cgetfile</a>
+                        Read the error file.  Just like "<a href="#%3Acfile" class="d">:cfile</a>" but don't
+                        jump to the first error.
+                        If the encoding of the error file differs from the
+                        <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> option, you can use the <a href="options.txt.html#%27makeencoding%27" class="o">'makeencoding'</a>
+                        option to specify the encoding.
+
+
+:lg[etfile] <span class="s">[errorfile]</span>                                 <a name="%3Alg" class="t">:lg</a> <a name="%3Algetfile" class="t">:lgetfile</a>
+                        Same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Acgetfile" class="d">:cgetfile</a>"<a href="motion.txt.html#%2C" class="d">,</a> except the location <a href="eval.txt.html#list" class="d">list</a> for the
+                        current <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> used instead of the <a href="#quickfix" class="d">quickfix</a> list.
+
+                                                        <a name="%3Acaddf" class="t">:caddf</a> <a name="%3Acaddfile" class="t">:caddfile</a>
+:caddf[ile] <span class="s">[errorfile]</span> Read the error file and add the <a href="message.txt.html#errors" class="d">errors</a> from the
+                        errorfile to the current <a href="#quickfix" class="d">quickfix</a> list. If <a href="insert.txt.html#a" class="d">a</a> <a href="#quickfix" class="d">quickfix</a>
+                        <a href="eval.txt.html#list" class="d">list</a> <a href="motion.txt.html#is" class="d">is</a> not present, then <a href="insert.txt.html#a" class="d">a</a> new <a href="eval.txt.html#list" class="d">list</a> <a href="motion.txt.html#is" class="d">is</a> created.
+                        If the encoding of the error file differs from the
+                        <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> option, you can use the <a href="options.txt.html#%27makeencoding%27" class="o">'makeencoding'</a>
+                        option to specify the encoding.
+
+                                                        <a name="%3Aladdf" class="t">:laddf</a> <a name="%3Aladdfile" class="t">:laddfile</a>
+:laddf[ile] <span class="s">[errorfile]</span> Same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Acaddfile" class="d">:caddfile</a>"<a href="motion.txt.html#%2C" class="d">,</a> except the location <a href="eval.txt.html#list" class="d">list</a> for the
+                        current <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> used instead of the <a href="#quickfix" class="d">quickfix</a> list.
+
+                                                <a name="%3Acb" class="t">:cb</a> <a name="%3Acbuffer" class="t">:cbuffer</a> <a name="E681" class="t">E681</a>
+:cb[uffer][!] <span class="s">[bufnr]</span>   Read the error <a href="eval.txt.html#list" class="d">list</a> from the current buffer.
+                        When <span class="s">[bufnr]</span> <a href="motion.txt.html#is" class="d">is</a> given <a href="motion.txt.html#it" class="d">it</a> <a href="vim_faq.txt.html#must" class="d">must</a> be the number of <a href="insert.txt.html#a" class="d">a</a>
+                        loaded buffer.  That buffer will then be used instead
+                        of the current buffer.
+                        <a href="insert.txt.html#A" class="d">A</a> range can be specified for the lines to be used.
+                        Otherwise all lines in the buffer are used.
+                        See <a href="#%3Acc" class="l">:cc</a> for [!].
+
+                                                <a name="%3Alb" class="t">:lb</a> <a name="%3Albuffer" class="t">:lbuffer</a>
+:lb[uffer][!] <span class="s">[bufnr]</span>   Same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Acbuffer" class="d">:cbuffer</a>"<a href="motion.txt.html#%2C" class="d">,</a> except the location <a href="eval.txt.html#list" class="d">list</a> for the
+                        current <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> used instead of the <a href="#quickfix" class="d">quickfix</a> list.
+
+                                                <a name="%3Acgetb" class="t">:cgetb</a> <a name="%3Acgetbuffer" class="t">:cgetbuffer</a>
+:cgetb[uffer] <span class="s">[bufnr]</span>   Read the error <a href="eval.txt.html#list" class="d">list</a> from the current buffer.  Just
+                        like "<a href="#%3Acbuffer" class="d">:cbuffer</a>" but don't jump to the first error.
+
+                                                <a name="%3Algetb" class="t">:lgetb</a> <a name="%3Algetbuffer" class="t">:lgetbuffer</a>
+:lgetb[uffer] <span class="s">[bufnr]</span>   Same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Acgetbuffer" class="d">:cgetbuffer</a>"<a href="motion.txt.html#%2C" class="d">,</a> except the location <a href="eval.txt.html#list" class="d">list</a> for
+                        the current <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> used instead of the <a href="#quickfix" class="d">quickfix</a>
+                        list.
+
+                                                        <a name="%3Acad" class="t">:cad</a> <a name="%3Acaddbuffer" class="t">:caddbuffer</a>
+:cad[dbuffer] <span class="s">[bufnr]</span>   Read the error <a href="eval.txt.html#list" class="d">list</a> from the current buffer and add
+                        the <a href="message.txt.html#errors" class="d">errors</a> to the current <a href="#quickfix" class="d">quickfix</a> list.  If <a href="insert.txt.html#a" class="d">a</a>
+                        <a href="#quickfix" class="d">quickfix</a> <a href="eval.txt.html#list" class="d">list</a> <a href="motion.txt.html#is" class="d">is</a> not present, then <a href="insert.txt.html#a" class="d">a</a> new <a href="eval.txt.html#list" class="d">list</a> <a href="motion.txt.html#is" class="d">is</a>
+                        created. Otherwise, same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Acbuffer" class="d">:cbuffer</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="%3Aladdb" class="t">:laddb</a> <a name="%3Aladdbuffer" class="t">:laddbuffer</a>
+:laddb[uffer] <span class="s">[bufnr]</span>   Same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Acaddbuffer" class="d">:caddbuffer</a>"<a href="motion.txt.html#%2C" class="d">,</a> except the location <a href="eval.txt.html#list" class="d">list</a> for
+                        the current <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> used instead of the <a href="#quickfix" class="d">quickfix</a>
+                        list.
+
+                                                        <a name="%3Acex" class="t">:cex</a> <a name="%3Acexpr" class="t">:cexpr</a> <a name="E777" class="t">E777</a>
+:cex[pr][!] <span class="s">{expr}</span>      Create <a href="insert.txt.html#a" class="d">a</a> <a href="#quickfix" class="d">quickfix</a> <a href="eval.txt.html#list" class="d">list</a> using the result of <span class="s">{expr}</span> and
+                        jump to the first error.
+                        If <span class="s">{expr}</span> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> String, then each new-line terminated
+                        line in the <a href="eval.txt.html#String" class="d">String</a> <a href="motion.txt.html#is" class="d">is</a> processed using the global value
+                        of <a href="options.txt.html#%27errorformat%27" class="o">'errorformat'</a> and the result <a href="motion.txt.html#is" class="d">is</a> added to the
+                        <a href="#quickfix" class="d">quickfix</a> list.
+                        If <span class="s">{expr}</span> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> List, then each <a href="eval.txt.html#String" class="d">String</a> item in the <a href="eval.txt.html#list" class="d">list</a>
+                        <a href="motion.txt.html#is" class="d">is</a> processed and added to the <a href="#quickfix" class="d">quickfix</a> list.  Non
+                        <a href="eval.txt.html#String" class="d">String</a> items in the <a href="eval.txt.html#List" class="d">List</a> are ignored.
+                        See <a href="#%3Acc" class="l">:cc</a> for [!].
+                        Examples: 
+<span class="e">                                :cexpr system('grep -n xyz *')</span>
+<span class="e">                                :cexpr getline(1, '$')</span>
+
+                                                        <a name="%3Alex" class="t">:lex</a> <a name="%3Alexpr" class="t">:lexpr</a>
+:lex[pr][!] <span class="s">{expr}</span>      Same <a href="motion.txt.html#as" class="d">as</a> <a href="#%3Acexpr" class="l">:cexpr</a><a href="motion.txt.html#%2C" class="d">,</a> except the location <a href="eval.txt.html#list" class="d">list</a> for the
+                        current <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> used instead of the <a href="#quickfix" class="d">quickfix</a> list.
+
+                                                        <a name="%3Acgete" class="t">:cgete</a> <a name="%3Acgetexpr" class="t">:cgetexpr</a>
+:cgete[xpr] <span class="s">{expr}</span>      Create <a href="insert.txt.html#a" class="d">a</a> <a href="#quickfix" class="d">quickfix</a> <a href="eval.txt.html#list" class="d">list</a> using the result of <span class="s">{expr}</span>.
+                        Just like <a href="#%3Acexpr" class="l">:cexpr</a><a href="motion.txt.html#%2C" class="d">,</a> but don't jump to the first error.
+
+                                                        <a name="%3Algete" class="t">:lgete</a> <a name="%3Algetexpr" class="t">:lgetexpr</a>
+:lgete[xpr] <span class="s">{expr}</span>      Same <a href="motion.txt.html#as" class="d">as</a> <a href="#%3Acgetexpr" class="l">:cgetexpr</a><a href="motion.txt.html#%2C" class="d">,</a> except the location <a href="eval.txt.html#list" class="d">list</a> for the
+                        current <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> used instead of the <a href="#quickfix" class="d">quickfix</a> list.
+
+                                                        <a name="%3Acadde" class="t">:cadde</a> <a name="%3Acaddexpr" class="t">:caddexpr</a>
+:cadde[xpr] <span class="s">{expr}</span>      Evaluate <span class="s">{expr}</span> and add the resulting lines to the
+                        current <a href="#quickfix" class="d">quickfix</a> list. If <a href="insert.txt.html#a" class="d">a</a> <a href="#quickfix" class="d">quickfix</a> <a href="eval.txt.html#list" class="d">list</a> <a href="motion.txt.html#is" class="d">is</a> not
+                        present, then <a href="insert.txt.html#a" class="d">a</a> new <a href="eval.txt.html#list" class="d">list</a> <a href="motion.txt.html#is" class="d">is</a> created. The current
+                        cursor position will not be changed. See <a href="#%3Acexpr" class="l">:cexpr</a> for
+                        more information.
+                        Example: 
+<span class="e">    :g/mypattern/caddexpr expand("%") . ":" . line(".") .  ":" . getline(".")</span>
+
+                                                        <a name="%3Alad" class="t">:lad</a> <a name="%3Aladdexpr" class="t">:laddexpr</a>
+:lad[dexpr] <span class="s">{expr}</span>      Same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Acaddexpr" class="d">:caddexpr</a>"<a href="motion.txt.html#%2C" class="d">,</a> except the location <a href="eval.txt.html#list" class="d">list</a> for the
+                        current <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> used instead of the <a href="#quickfix" class="d">quickfix</a> list.
+
+                                                        <a name="%3Acl" class="t">:cl</a> <a name="%3Aclist" class="t">:clist</a>
+:cl[ist] <span class="s">[from]</span> [, <span class="s">[to]</span>]
+                        <a href="eval.txt.html#List" class="d">List</a> all <a href="message.txt.html#errors" class="d">errors</a> that are valid <a href="#quickfix-valid" class="l">quickfix-valid</a><a href="repeat.txt.html#." class="d">.</a>
+                        If numbers <span class="s">[from]</span> and/or <span class="s">[to]</span> are given, the respective
+                        range of <a href="message.txt.html#errors" class="d">errors</a> <a href="motion.txt.html#is" class="d">is</a> listed.  <a href="insert.txt.html#A" class="d">A</a> negative number counts
+                        from the last error backwards, -1 being the last error.
+                        The <a href="options.txt.html#%27switchbuf%27" class="o">'switchbuf'</a> settings are respected when jumping
+                        to <a href="insert.txt.html#a" class="d">a</a> buffer.
+
+:cl[ist] +{count}       <a href="eval.txt.html#List" class="d">List</a> the current and next <span class="s">{count}</span> valid errors.  This
+                        <a href="motion.txt.html#is" class="d">is</a> similar to "<a href="#%3Aclist" class="d">:clist</a> from from+count"<a href="motion.txt.html#%2C" class="d">,</a> where "from"
+                        <a href="motion.txt.html#is" class="d">is</a> the current error position.
+
+:cl[ist]! <span class="s">[from]</span> [, <span class="s">[to]</span>]
+                        <a href="eval.txt.html#List" class="d">List</a> all errors.
+
+:cl[ist]! +{count}      <a href="eval.txt.html#List" class="d">List</a> the current and next <span class="s">{count}</span> error lines.  This
+                        <a href="motion.txt.html#is" class="d">is</a> useful to see unrecognized lines after the current
+                        one.  For example, if "<a href="#%3Aclist" class="d">:clist</a>" shows:
+<span class="h">        8384 testje.java:252: error: cannot find symbol </span>
+                        Then using ":cl! +3" shows the reason:
+<span class="h">        8384 testje.java:252: error: cannot find symbol </span>
+<span class="h">        8385:   ZexitCode = Fmainx(); </span>
+<span class="h">        8386:               ^ </span>
+<span class="h">        8387:   symbol:   method Fmainx() </span>
+
+:lli[st] <span class="s">[from]</span> [, <span class="s">[to]</span>]                                <a name="%3Alli" class="t">:lli</a> <a name="%3Allist" class="t">:llist</a>
+                        Same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Aclist" class="d">:clist</a>"<a href="motion.txt.html#%2C" class="d">,</a> except the location <a href="eval.txt.html#list" class="d">list</a> for the
+                        current <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> used instead of the <a href="#quickfix" class="d">quickfix</a> list.
+
+:lli[st]! <span class="s">[from]</span> [, <span class="s">[to]</span>]
+                        <a href="eval.txt.html#List" class="d">List</a> all the entries in the location <a href="eval.txt.html#list" class="d">list</a> for the
+                        current window.
+
+If you <a href="insert.txt.html#insert" class="d">insert</a> or delete lines, mostly the correct error location <a href="motion.txt.html#is" class="d">is</a> still
+found because hidden marks are used.  Sometimes, when the <a href="motion.txt.html#mark" class="d">mark</a> has been
+deleted for some reason, the message "line changed" <a href="motion.txt.html#is" class="d">is</a> shown to warn you that
+the error location may not be correct.  If you quit Vim and start again the
+marks are lost and the error locations may not be correct anymore.
+
+Two autocommands are available for running commands before and after <a href="insert.txt.html#a" class="d">a</a>
+<a href="#quickfix" class="d">quickfix</a> command (':make', ':grep' and so on) <a href="motion.txt.html#is" class="d">is</a> executed. See
+<a href="autocmd.txt.html#QuickFixCmdPre" class="l">QuickFixCmdPre</a> and <a href="autocmd.txt.html#QuickFixCmdPost" class="l">QuickFixCmdPost</a> for details.
+
+                                                <a name="QuickFixCmdPost-example" class="t">QuickFixCmdPost-example</a>
+When <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> differs from the locale, the error <a href="message.txt.html#messages" class="d">messages</a> may have <a href="insert.txt.html#a" class="d">a</a>
+different encoding from what Vim <a href="motion.txt.html#is" class="d">is</a> using.  To convert the <a href="message.txt.html#messages" class="d">messages</a> you can
+use this code: 
+<span class="e">        function QfMakeConv()</span>
+<span class="e">           let qflist = getqflist()</span>
+<span class="e">           for i in qflist</span>
+<span class="e">              let i.text = iconv(i.text, "cp936", "utf-8")</span>
+<span class="e">           endfor</span>
+<span class="e">           call setqflist(qflist)</span>
+<span class="e">        endfunction</span>
+<span class="e"></span>
+<span class="e">        au QuickfixCmdPost make call QfMakeConv()</span>
+Another option <a href="motion.txt.html#is" class="d">is</a> using <a href="options.txt.html#%27makeencoding%27" class="o">'makeencoding'</a>.
+
+                                                        <a name="quickfix-title" class="t">quickfix-title</a>
+Every <a href="#quickfix" class="d">quickfix</a> and location <a href="eval.txt.html#list" class="d">list</a> has <a href="insert.txt.html#a" class="d">a</a> title. By default the title <a href="motion.txt.html#is" class="d">is</a> set to
+the command that created the list. The <a href="eval.txt.html#getqflist%28%29" class="l">getqflist()</a> and <a href="eval.txt.html#getloclist%28%29" class="l">getloclist()</a>
+<a href="eval.txt.html#functions" class="d">functions</a> can be used to get the title of <a href="insert.txt.html#a" class="d">a</a> <a href="#quickfix" class="d">quickfix</a> and <a href="insert.txt.html#a" class="d">a</a> location <a href="eval.txt.html#list" class="d">list</a>
+respectively. The <a href="eval.txt.html#setqflist%28%29" class="l">setqflist()</a> and <a href="eval.txt.html#setloclist%28%29" class="l">setloclist()</a> <a href="eval.txt.html#functions" class="d">functions</a> can be used to
+modify the title of <a href="insert.txt.html#a" class="d">a</a> <a href="#quickfix" class="d">quickfix</a> and location <a href="eval.txt.html#list" class="d">list</a> respectively. Examples: 
+<span class="e">        call setqflist([], 'a', {'title' : 'Cmd output'})</span>
+<span class="e">        echo getqflist({'title' : 1})</span>
+<span class="e">        call setloclist(3, [], 'a', {'title' : 'Cmd output'})</span>
+<span class="e">        echo getloclist(3, {'title' : 1})</span>
+
+                                                        <a name="quickfix-size" class="t">quickfix-size</a>
+You can get the number of entries (size) in <a href="insert.txt.html#a" class="d">a</a> <a href="#quickfix" class="d">quickfix</a> and <a href="insert.txt.html#a" class="d">a</a> location <a href="eval.txt.html#list" class="d">list</a>
+using the <a href="eval.txt.html#getqflist%28%29" class="l">getqflist()</a> and <a href="eval.txt.html#getloclist%28%29" class="l">getloclist()</a> <a href="eval.txt.html#functions" class="d">functions</a> respectively. Examples: 
+<span class="e">        echo getqflist({'size' : 1})</span>
+<span class="e">        echo getloclist(5, {'size' : 1})</span>
+
+                                                        <a name="quickfix-context" class="t">quickfix-context</a>
+Any Vim type can be associated <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> context with <a href="insert.txt.html#a" class="d">a</a> <a href="#quickfix" class="d">quickfix</a> or location list.
+The <a href="eval.txt.html#setqflist%28%29" class="l">setqflist()</a> and the <a href="eval.txt.html#setloclist%28%29" class="l">setloclist()</a> <a href="eval.txt.html#functions" class="d">functions</a> can be used to associate <a href="insert.txt.html#a" class="d">a</a>
+context with <a href="insert.txt.html#a" class="d">a</a> <a href="#quickfix" class="d">quickfix</a> and <a href="insert.txt.html#a" class="d">a</a> location <a href="eval.txt.html#list" class="d">list</a> respectively. The <a href="eval.txt.html#getqflist%28%29" class="l">getqflist()</a>
+and the <a href="eval.txt.html#getloclist%28%29" class="l">getloclist()</a> <a href="eval.txt.html#functions" class="d">functions</a> can be used to retrieve the context of <a href="insert.txt.html#a" class="d">a</a>
+<a href="#quickfix" class="d">quickfix</a> and <a href="insert.txt.html#a" class="d">a</a> location <a href="eval.txt.html#list" class="d">list</a> respectively. This <a href="motion.txt.html#is" class="d">is</a> useful for <a href="insert.txt.html#a" class="d">a</a> Vim <a href="usr_05.txt.html#plugin" class="d">plugin</a>
+dealing with multiple quickfix/location lists.
+Examples: 
+<span class="e"></span>
+<span class="e">        let somectx = {'name' : 'Vim', 'type' : 'Editor'}</span>
+<span class="e">        call setqflist([], 'a', {'context' : somectx})</span>
+<span class="e">        echo getqflist({'context' : 1})</span>
+<span class="e"></span>
+<span class="e">        let newctx = ['red', 'green', 'blue']</span>
+<span class="e">        call setloclist(2, [], 'a', {'id' : qfid, 'context' : newctx})</span>
+<span class="e">        echo getloclist(2, {'id' : qfid, 'context' : 1})</span>
+
+                                                        <a name="quickfix-parse" class="t">quickfix-parse</a>
+You can parse <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of lines using <a href="options.txt.html#%27errorformat%27" class="o">'errorformat'</a> without creating or
+modifying <a href="insert.txt.html#a" class="d">a</a> <a href="#quickfix" class="d">quickfix</a> <a href="eval.txt.html#list" class="d">list</a> using the <a href="eval.txt.html#getqflist%28%29" class="l">getqflist()</a> function. Examples: 
+<span class="e">        echo getqflist({'lines' : ["F1:10:Line10", "F2:20:Line20"]})</span>
+<span class="e">        echo getqflist({'lines' : systemlist('grep -Hn quickfix *')})</span>
+This returns <a href="insert.txt.html#a" class="d">a</a> dictionary where the <span class="o">'items'</span> key contains the <a href="eval.txt.html#list" class="d">list</a> of <a href="#quickfix" class="d">quickfix</a>
+entries parsed from lines. The following shows how to use <a href="insert.txt.html#a" class="d">a</a> custom
+<a href="options.txt.html#%27errorformat%27" class="o">'errorformat'</a> to parse the lines without modifying the <a href="options.txt.html#%27errorformat%27" class="o">'errorformat'</a> option: 
+<span class="e">        echo getqflist({'efm' : '%f#%l#%m', 'lines' : ['F1#10#Line']})</span>
+
+
+EXECUTE <a href="insert.txt.html#A" class="d">A</a> COMMAND IN ALL THE BUFFERS IN QUICKFIX OR LOCATION LIST:
+                                                        <a name="%3Acdo" class="t">:cdo</a>
+:cdo[!] <span class="s">{cmd}</span>           Execute <span class="s">{cmd}</span> in each valid entry in the <a href="#quickfix" class="d">quickfix</a> list.
+                        It works like doing this: 
+<span class="e">                                :cfirst</span>
+<span class="e">                                :{cmd}</span>
+<span class="e">                                :cnext</span>
+<span class="e">                                :{cmd}</span>
+<span class="e">                                etc.</span>
+                       When the current file can't be <a href="editing.txt.html#abandon" class="l">abandon</a>ed and the [!]
+                        <a href="motion.txt.html#is" class="d">is</a> not present, the command fails.
+                        When an error <a href="motion.txt.html#is" class="d">is</a> detected execution stops.
+                        The last buffer (or where an error occurred) becomes
+                        the current buffer.
+                        <span class="s">{cmd}</span> can contain <a href="motion.txt.html#%27" class="d">'</a>|<a href="motion.txt.html#%27" class="d">'</a> to concatenate several commands.
+
+                        Only valid entries in the <a href="#quickfix" class="d">quickfix</a> <a href="eval.txt.html#list" class="d">list</a> are used.
+                        <a href="insert.txt.html#A" class="d">A</a> range can be used to select entries, e.g.: 
+<span class="e">                                :10,$cdo cmd</span>
+                       To skip entries 1 to 9.
+
+                        <span class="n">Note:</span> While this command <a href="motion.txt.html#is" class="d">is</a> executing, the <a href="autocmd.txt.html#Syntax" class="d">Syntax</a>
+                        <a href="autocmd.txt.html#autocommand" class="d">autocommand</a> event <a href="motion.txt.html#is" class="d">is</a> disabled by adding <a href="motion.txt.html#it" class="d">it</a> to
+                        <a href="options.txt.html#%27eventignore%27" class="o">'eventignore'</a>.  This considerably speeds up editing
+                        each buffer.
+                        <span class="s">{not in Vi}</span>
+                        Also see <a href="windows.txt.html#%3Abufdo" class="l">:bufdo</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="tabpage.txt.html#%3Atabdo" class="l">:tabdo</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="editing.txt.html#%3Aargdo" class="l">:argdo</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="windows.txt.html#%3Awindo" class="l">:windo</a><a href="motion.txt.html#%2C" class="d">,</a>
+                        <a href="#%3Aldo" class="l">:ldo</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="#%3Acfdo" class="l">:cfdo</a> and <a href="#%3Alfdo" class="l">:lfdo</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="%3Acfdo" class="t">:cfdo</a>
+:cfdo[!] <span class="s">{cmd}</span>          Execute <span class="s">{cmd}</span> in each file in the <a href="#quickfix" class="d">quickfix</a> list.
+                        It works like doing this: 
+<span class="e">                                :cfirst</span>
+<span class="e">                                :{cmd}</span>
+<span class="e">                                :cnfile</span>
+<span class="e">                                :{cmd}</span>
+<span class="e">                                etc.</span>
+                       Otherwise <a href="motion.txt.html#it" class="d">it</a> works the same <a href="motion.txt.html#as" class="d">as</a> <span class="e">:cdo</span>.
+                        <span class="s">{not in Vi}</span>
+
+                                                        <a name="%3Aldo" class="t">:ldo</a>
+:ld[o][!] <span class="s">{cmd}</span>         Execute <span class="s">{cmd}</span> in each valid entry in the location <a href="eval.txt.html#list" class="d">list</a>
+                        for the current window.
+                        It works like doing this: 
+<span class="e">                                :lfirst</span>
+<span class="e">                                :{cmd}</span>
+<span class="e">                                :lnext</span>
+<span class="e">                                :{cmd}</span>
+<span class="e">                                etc.</span>
+                       Only valid entries in the location <a href="eval.txt.html#list" class="d">list</a> are used.
+                        Otherwise <a href="motion.txt.html#it" class="d">it</a> works the same <a href="motion.txt.html#as" class="d">as</a> <span class="e">:cdo</span>.
+                        <span class="s">{not in Vi}</span>
+
+                                                        <a name="%3Alfdo" class="t">:lfdo</a>
+:lfdo[!] <span class="s">{cmd}</span>          Execute <span class="s">{cmd}</span> in each file in the location <a href="eval.txt.html#list" class="d">list</a> for
+                        the current window.
+                        It works like doing this: 
+<span class="e">                                :lfirst</span>
+<span class="e">                                :{cmd}</span>
+<span class="e">                                :lnfile</span>
+<span class="e">                                :{cmd}</span>
+<span class="e">                                etc.</span>
+                       Otherwise <a href="motion.txt.html#it" class="d">it</a> works the same <a href="motion.txt.html#as" class="d">as</a> <span class="e">:ldo</span>.
+                        <span class="s">{not in Vi}</span>
+
+<span class="h">=============================================================================</span>
+2. The error <a href="windows.txt.html#window" class="d">window</a>                                     <a name="quickfix-window" class="t">quickfix-window</a>
+
+                                            <a name="%3Acope" class="t">:cope</a> <a name="%3Acopen" class="t">:copen</a> <a name="w%3Aquickfix_title" class="t">w:quickfix_title</a>
+:cope[n] <span class="s">[height]</span>       Open <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a> to show the current <a href="eval.txt.html#list" class="d">list</a> of errors.
+
+                        When <span class="s">[height]</span> <a href="motion.txt.html#is" class="d">is</a> given, the <a href="windows.txt.html#window" class="d">window</a> becomes that high
+                        (if there <a href="motion.txt.html#is" class="d">is</a> room).  When <span class="s">[height]</span> <a href="motion.txt.html#is" class="d">is</a> omitted the
+                        <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> made ten lines high.
+
+                        If there already <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> <a href="#quickfix" class="d">quickfix</a> window, <a href="motion.txt.html#it" class="d">it</a> will be made
+                        the current window.  It <a href="motion.txt.html#is" class="d">is</a> not possible to open <a href="insert.txt.html#a" class="d">a</a>
+                        second <a href="#quickfix" class="d">quickfix</a> window.  If <span class="s">[height]</span> <a href="motion.txt.html#is" class="d">is</a> given the
+                        existing <a href="windows.txt.html#window" class="d">window</a> will be resized to it.
+
+                        The <a href="windows.txt.html#window" class="d">window</a> will contain <a href="insert.txt.html#a" class="d">a</a> special buffer, with
+                        <a href="options.txt.html#%27buftype%27" class="o">'buftype'</a> equal to "<a href="#quickfix" class="d">quickfix</a>"<a href="repeat.txt.html#." class="d">.</a>  Don't change this!
+                        The <a href="windows.txt.html#window" class="d">window</a> will have the <a href="#w%3Aquickfix_title" class="d">w:quickfix_title</a> variable set
+                        which will indicate the command that produced the
+                        <a href="#quickfix" class="d">quickfix</a> list. This can be used to compose <a href="insert.txt.html#a" class="d">a</a> custom
+                        status line if the value of <a href="options.txt.html#%27statusline%27" class="o">'statusline'</a> <a href="motion.txt.html#is" class="d">is</a> adjusted
+                        properly. Whenever this buffer <a href="motion.txt.html#is" class="d">is</a> modified by <a href="insert.txt.html#a" class="d">a</a>
+                        <a href="#quickfix" class="d">quickfix</a> command or function, the <a href="eval.txt.html#b%3Achangedtick" class="l">b:changedtick</a>
+                        variable <a href="motion.txt.html#is" class="d">is</a> incremented.
+
+                                                        <a name="%3Alop" class="t">:lop</a> <a name="%3Alopen" class="t">:lopen</a>
+:lop[en] <span class="s">[height]</span>       Open <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a> to show the location <a href="eval.txt.html#list" class="d">list</a> for the
+                        current window. Works only when the location <a href="eval.txt.html#list" class="d">list</a> for
+                        the current <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> present.  You can have more than
+                        one location <a href="windows.txt.html#window" class="d">window</a> opened <a href="motion.txt.html#at" class="d">at</a> <a href="insert.txt.html#a" class="d">a</a> time.  Otherwise, <a href="motion.txt.html#it" class="d">it</a>
+                        acts the same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Acopen" class="d">:copen</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="%3Accl" class="t">:ccl</a> <a name="%3Acclose" class="t">:cclose</a>
+:ccl[ose]               Close the <a href="#quickfix" class="d">quickfix</a> window.
+
+                                                        <a name="%3Alcl" class="t">:lcl</a> <a name="%3Alclose" class="t">:lclose</a>
+:lcl[ose]               Close the <a href="windows.txt.html#window" class="d">window</a> showing the location <a href="eval.txt.html#list" class="d">list</a> for the
+                        current window.
+
+                                                        <a name="%3Acw" class="t">:cw</a> <a name="%3Acwindow" class="t">:cwindow</a>
+:cw[indow] <span class="s">[height]</span>     Open the <a href="#quickfix" class="d">quickfix</a> <a href="windows.txt.html#window" class="d">window</a> when there are recognized
+                        errors.  If the <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> already open and there are
+                        no recognized errors, close the window.
+
+                                                        <a name="%3Alw" class="t">:lw</a> <a name="%3Alwindow" class="t">:lwindow</a>
+:lw[indow] <span class="s">[height]</span>     Same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Acwindow" class="d">:cwindow</a>"<a href="motion.txt.html#%2C" class="d">,</a> except use the <a href="windows.txt.html#window" class="d">window</a> showing the
+                        location <a href="eval.txt.html#list" class="d">list</a> for the current window.
+
+                                                        <a name="%3Acbo" class="t">:cbo</a> <a name="%3Acbottom" class="t">:cbottom</a>
+:cbo[ttom]              Put the cursor in the last line of the <a href="#quickfix" class="d">quickfix</a> <a href="windows.txt.html#window" class="d">window</a>
+                        and scroll to make <a href="motion.txt.html#it" class="d">it</a> visible.  This <a href="motion.txt.html#is" class="d">is</a> useful for
+                        when <a href="message.txt.html#errors" class="d">errors</a> are added by an asynchronous callback.
+                        Only call <a href="motion.txt.html#it" class="d">it</a> once in <a href="insert.txt.html#a" class="d">a</a> while if there are many
+                        updates to avoid <a href="insert.txt.html#a" class="d">a</a> lot of redrawing.
+
+                                                        <a name="%3Albo" class="t">:lbo</a> <a name="%3Albottom" class="t">:lbottom</a>
+:lbo[ttom]              Same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Acbottom" class="d">:cbottom</a>"<a href="motion.txt.html#%2C" class="d">,</a> except use the <a href="windows.txt.html#window" class="d">window</a> showing the
+                        location <a href="eval.txt.html#list" class="d">list</a> for the current window.
+
+Normally the <a href="#quickfix" class="d">quickfix</a> <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> <a href="motion.txt.html#at" class="d">at</a> the bottom of the screen.  If there are
+vertical splits, it's <a href="motion.txt.html#at" class="d">at</a> the bottom of the rightmost column of windows.  To
+make <a href="motion.txt.html#it" class="d">it</a> always occupy the full width: 
+<span class="e">        :botright cwindow</span>
+You can move the <a href="windows.txt.html#window" class="d">window</a> around with <a href="windows.txt.html#window-moving" class="l">window-moving</a> commands.
+For example, to move <a href="motion.txt.html#it" class="d">it</a> to the top: <a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="various.txt.html#K" class="d">K</a>
+The <a href="options.txt.html#%27winfixheight%27" class="o">'winfixheight'</a> option will be set, which means that the <a href="windows.txt.html#window" class="d">window</a> will mostly
+keep its height, ignoring <a href="options.txt.html#%27winheight%27" class="o">'winheight'</a> and <a href="options.txt.html#%27equalalways%27" class="o">'equalalways'</a>.  You can change the
+height manually (e.g., by dragging the status line above <a href="motion.txt.html#it" class="d">it</a> with the mouse).
+
+In the <a href="#quickfix" class="d">quickfix</a> window, each line <a href="motion.txt.html#is" class="d">is</a> one error.  The line number <a href="motion.txt.html#is" class="d">is</a> equal to
+the error number.  The current entry <a href="motion.txt.html#is" class="d">is</a> highlighted with the QuickFixLine
+highlighting.  You can change <a href="motion.txt.html#it" class="d">it</a> to your liking, e.g.: 
+<span class="e">        :hi QuickFixLine ctermbg=Yellow guibg=Yellow</span>
+<span class="e"></span>
+You can use ":.cc" to jump to the error under the cursor.
+Hitting the <a href="intro.txt.html#%3CEnter%3E" class="s">&lt;Enter&gt;</a> key or double-clicking the mouse on <a href="insert.txt.html#a" class="d">a</a> line has the same
+effect.  The file containing the error <a href="motion.txt.html#is" class="d">is</a> opened in the <a href="windows.txt.html#window" class="d">window</a> above the
+<a href="#quickfix" class="d">quickfix</a> window.  If there already <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a> for that file, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> used
+instead.  If the buffer in the used <a href="windows.txt.html#window" class="d">window</a> has changed, and the error <a href="motion.txt.html#is" class="d">is</a> in
+another file, jumping to the error will fail.  You will first have to make
+sure the <a href="windows.txt.html#window" class="d">window</a> contains <a href="insert.txt.html#a" class="d">a</a> buffer which can be abandoned.
+                                        <a name="CTRL-W_%3CEnter%3E" class="t">CTRL-W_&lt;Enter&gt;</a> <a name="CTRL-W_%3CCR%3E" class="t">CTRL-W_&lt;CR&gt;</a>
+You can use <a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="intro.txt.html#%3CEnter%3E" class="s">&lt;Enter&gt;</a> to open <a href="insert.txt.html#a" class="d">a</a> new <a href="windows.txt.html#window" class="d">window</a> and jump to the error there.
+
+When the <a href="#quickfix" class="d">quickfix</a> <a href="windows.txt.html#window" class="d">window</a> has been filled, two <a href="autocmd.txt.html#autocommand" class="d">autocommand</a> events are
+triggered.  First the <a href="options.txt.html#%27filetype%27" class="o">'filetype'</a> option <a href="motion.txt.html#is" class="d">is</a> set to "qf"<a href="motion.txt.html#%2C" class="d">,</a> which triggers the
+<a href="autocmd.txt.html#FileType" class="d">FileType</a> event.  Then the <a href="autocmd.txt.html#BufReadPost" class="d">BufReadPost</a> event <a href="motion.txt.html#is" class="d">is</a> triggered, using "<a href="#quickfix" class="d">quickfix</a>" for
+the buffer name.  This can be used to perform some action on the listed
+errors.  Example: 
+<span class="e">        au BufReadPost quickfix  setlocal modifiable</span>
+<span class="e">                \ | silent exe 'g/^/s//\=line(".")." "/'</span>
+<span class="e">                \ | setlocal nomodifiable</span>
+This prepends the line number to each line.  <span class="n">Note</span> the use of "\=" in the
+substitute <a href="eval.txt.html#string" class="d">string</a> of the "<a href="change.txt.html#%3As" class="d">:s</a>" command, which <a href="motion.txt.html#is" class="d">is</a> used to evaluate an
+expression.
+The <a href="autocmd.txt.html#BufWinEnter" class="d">BufWinEnter</a> event <a href="motion.txt.html#is" class="d">is</a> also triggered, again using "<a href="#quickfix" class="d">quickfix</a>" for the buffer
+name.
+
+<span class="n">Note:</span> When adding to an existing <a href="#quickfix" class="d">quickfix</a> <a href="eval.txt.html#list" class="d">list</a> the <a href="autocmd.txt.html#autocommand" class="d">autocommand</a> are not
+triggered.
+
+<span class="n">Note:</span> Making changes in the <a href="#quickfix" class="d">quickfix</a> <a href="windows.txt.html#window" class="d">window</a> has no effect on the <a href="eval.txt.html#list" class="d">list</a> of
+errors.  <a href="options.txt.html#%27modifiable%27" class="o">'modifiable'</a> <a href="motion.txt.html#is" class="d">is</a> off to avoid making changes.  If you delete or <a href="insert.txt.html#insert" class="d">insert</a>
+lines anyway, the relation between the text and the error number <a href="motion.txt.html#is" class="d">is</a> messed up.
+If you really want to <a href="diff.txt.html#do" class="d">do</a> this, you could write the contents of the <a href="#quickfix" class="d">quickfix</a>
+<a href="windows.txt.html#window" class="d">window</a> to <a href="insert.txt.html#a" class="d">a</a> file and use "<a href="#%3Acfile" class="d">:cfile</a>" to have <a href="motion.txt.html#it" class="d">it</a> parsed and used <a href="motion.txt.html#as" class="d">as</a> the new error
+list.
+
+                                                <a name="location-list-window" class="t">location-list-window</a>
+The location <a href="eval.txt.html#list" class="d">list</a> <a href="windows.txt.html#window" class="d">window</a> displays the entries in <a href="insert.txt.html#a" class="d">a</a> location list.  When you
+open <a href="insert.txt.html#a" class="d">a</a> location <a href="eval.txt.html#list" class="d">list</a> window, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> created below the current <a href="windows.txt.html#window" class="d">window</a> and
+displays the location <a href="eval.txt.html#list" class="d">list</a> for the current window.  The location <a href="eval.txt.html#list" class="d">list</a> <a href="windows.txt.html#window" class="d">window</a>
+<a href="motion.txt.html#is" class="d">is</a> similar to the <a href="#quickfix" class="d">quickfix</a> window, except that you can have more than one
+location <a href="eval.txt.html#list" class="d">list</a> <a href="windows.txt.html#window" class="d">window</a> open <a href="motion.txt.html#at" class="d">at</a> <a href="insert.txt.html#a" class="d">a</a> time. When you use <a href="insert.txt.html#a" class="d">a</a> location <a href="eval.txt.html#list" class="d">list</a> command in
+this window, the displayed location <a href="eval.txt.html#list" class="d">list</a> <a href="motion.txt.html#is" class="d">is</a> used.
+
+When you select <a href="insert.txt.html#a" class="d">a</a> file from the location <a href="eval.txt.html#list" class="d">list</a> window, the following steps are
+used to find <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a> to edit the file:
+
+1. If <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a> with the location <a href="eval.txt.html#list" class="d">list</a> displayed in the location <a href="eval.txt.html#list" class="d">list</a> <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a>
+   present, then the file <a href="motion.txt.html#is" class="d">is</a> opened in that window.
+2. If the above step fails and if the file <a href="motion.txt.html#is" class="d">is</a> already opened in another
+   window, then that <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> used.
+3. If the above step fails then an existing <a href="windows.txt.html#window" class="d">window</a> showing <a href="insert.txt.html#a" class="d">a</a> buffer with
+   <a href="options.txt.html#%27buftype%27" class="o">'buftype'</a> not set <a href="motion.txt.html#is" class="d">is</a> used.
+4. If the above step fails, then the file <a href="motion.txt.html#is" class="d">is</a> edited in <a href="insert.txt.html#a" class="d">a</a> new window.
+
+In all of the above cases, if the location <a href="eval.txt.html#list" class="d">list</a> for the selected <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> not
+yet set, then <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> set to the location <a href="eval.txt.html#list" class="d">list</a> displayed in the location <a href="eval.txt.html#list" class="d">list</a>
+window.
+
+                                                        <a name="quickfix-window-ID" class="t">quickfix-window-ID</a>
+You can use the <a href="eval.txt.html#getqflist%28%29" class="l">getqflist()</a> and <a href="eval.txt.html#getloclist%28%29" class="l">getloclist()</a> <a href="eval.txt.html#functions" class="d">functions</a> to obtain the
+<a href="windows.txt.html#window" class="d">window</a> ID of the <a href="#quickfix" class="d">quickfix</a> <a href="windows.txt.html#window" class="d">window</a> and location <a href="eval.txt.html#list" class="d">list</a> <a href="windows.txt.html#window" class="d">window</a> respectively (if
+present).  Examples: 
+<span class="e">        echo getqflist({'winid' : 1}).winid</span>
+<span class="e">        echo getloclist(2, {'winid' : 1}).winid</span>
+
+                                                        <a name="getqflist-examples" class="t">getqflist-examples</a>
+The <a href="eval.txt.html#getqflist%28%29" class="d">getqflist()</a> and <a href="eval.txt.html#getloclist%28%29" class="d">getloclist()</a> <a href="eval.txt.html#functions" class="d">functions</a> can be used to get the <a href="various.txt.html#various" class="d">various</a>
+attributes of <a href="insert.txt.html#a" class="d">a</a> <a href="#quickfix" class="d">quickfix</a> and location <a href="eval.txt.html#list" class="d">list</a> respectively. Some examples for
+using these <a href="eval.txt.html#functions" class="d">functions</a> are below:
+
+<span class="e">    " get the title of the current quickfix list</span>
+<span class="e">    :echo getqflist({'title' : 0}).title</span>
+<span class="e"></span>
+<span class="e">    " get the identifier of the current quickfix list</span>
+<span class="e">    :let qfid = getqflist({'id' : 0}).id</span>
+<span class="e"></span>
+<span class="e">    " get the index of the current quickfix list in the stack</span>
+<span class="e">    :let qfnum = getqflist({'nr' : 0}).nr</span>
+<span class="e"></span>
+<span class="e">    " get the items of a quickfix list specified by an identifier</span>
+<span class="e">    :echo getqflist({'id' : qfid, 'items' : 0}).items</span>
+<span class="e"></span>
+<span class="e">    " get the number of entries in a quickfix list specified by an id</span>
+<span class="e">    :echo getqflist({'id' : qfid, 'size' : 0}).size</span>
+<span class="e"></span>
+<span class="e">    " get the context of the third quickfix list in the stack</span>
+<span class="e">    :echo getqflist({'nr' : 3, 'context' : 0}).context</span>
+<span class="e"></span>
+<span class="e">    " get the number of quickfix lists in the stack</span>
+<span class="e">    :echo getqflist({'nr' : '$'}).nr</span>
+<span class="e"></span>
+<span class="e">    " get the number of times the current quickfix list is changed</span>
+<span class="e">    :echo getqflist({'changedtick' : 0}).changedtick</span>
+<span class="e"></span>
+<span class="e">    " get the current entry in a quickfix list specified by an identifier</span>
+<span class="e">    :echo getqflist({'id' : qfid, 'idx' : 0}).idx</span>
+<span class="e"></span>
+<span class="e">    " get all the quickfix list attributes using an identifier</span>
+<span class="e">    :echo getqflist({'id' : qfid, 'all' : 0})</span>
+<span class="e"></span>
+<span class="e">    " parse text from a List of lines and return a quickfix list</span>
+<span class="e">    :let myList = ["a.java:10:L10", "b.java:20:L20"]</span>
+<span class="e">    :echo getqflist({'lines' : myList}).items</span>
+<span class="e"></span>
+<span class="e">    " parse text using a custom 'efm' and return a quickfix list</span>
+<span class="e">    :echo getqflist({'lines' : ['a.c#10#Line 10'], 'efm':'%f#%l#%m'}).items</span>
+<span class="e"></span>
+<span class="e">    " get the quickfix list window id</span>
+<span class="e">    :echo getqflist({'winid' : 0}).winid</span>
+<span class="e"></span>
+<span class="e">    " get the context of the current location list</span>
+<span class="e">    :echo getloclist(0, {'context' : 0}).context</span>
+<span class="e"></span>
+<span class="e">    " get the location list window id of the third window</span>
+<span class="e">    :echo getloclist(3, {'winid' : 0}).winid</span>
+
+                                                        <a name="setqflist-examples" class="t">setqflist-examples</a>
+The <a href="eval.txt.html#setqflist%28%29" class="d">setqflist()</a> and <a href="eval.txt.html#setloclist%28%29" class="d">setloclist()</a> <a href="eval.txt.html#functions" class="d">functions</a> can be used to set the <a href="various.txt.html#various" class="d">various</a>
+attributes of <a href="insert.txt.html#a" class="d">a</a> <a href="#quickfix" class="d">quickfix</a> and location <a href="eval.txt.html#list" class="d">list</a> respectively. Some examples for
+using these <a href="eval.txt.html#functions" class="d">functions</a> are below:
+
+<span class="e">    " set the title of the current quickfix list</span>
+<span class="e">    :call setqflist([], 'a', {'title' : 'Mytitle'})</span>
+<span class="e"></span>
+<span class="e">    " set the context of a quickfix list specified by an identifier</span>
+<span class="e">    :call setqflist([], 'a', {'id' : qfid, 'context' : {'val' : 100}})</span>
+<span class="e"></span>
+<span class="e">    " create a new quickfix list from a command output</span>
+<span class="e">    :call setqflist([], ' ', {'lines' : systemlist('grep -Hn main *.c')})</span>
+<span class="e"></span>
+<span class="e">    " parse text using a custom efm and add to a particular quickfix list</span>
+<span class="e">    :call setqflist([], 'a', {'id' : qfid,</span>
+<span class="e">                \ 'lines' : ["a.c#10#L10", "b.c#20#L20"], 'efm':'%f#%l#%m'})</span>
+<span class="e"></span>
+<span class="e">    " add items to the quickfix list specified by an identifier</span>
+<span class="e">    :let newItems = [{'filename' : 'a.txt', 'lnum' : 10, 'text' : "Apple"},</span>
+<span class="e">                    \ {'filename' : 'b.txt', 'lnum' : 20, 'text' : "Orange"}]</span>
+<span class="e">    :call setqflist([], 'a', {'id' : qfid, 'items' : newItems})</span>
+<span class="e"></span>
+<span class="e">    " free all the quickfix lists in the stack</span>
+<span class="e">    :call setqflist([], 'f')</span>
+<span class="e"></span>
+<span class="e">    " set the title of the fourth quickfix list</span>
+<span class="e">    :call setqflist([], 'a', {'nr' : 4, 'title' : 'SomeTitle'})</span>
+<span class="e"></span>
+<span class="e">    " create a new quickfix list at the end of the stack</span>
+<span class="e">    :call setqflist([], ' ', {'nr' : '$',</span>
+<span class="e">                        \ 'lines' : systemlist('grep -Hn class *.java')})</span>
+<span class="e"></span>
+<span class="e">    " create a new location list from a command output</span>
+<span class="e">    :call setloclist(0, [], ' ', {'lines' : systemlist('grep -Hn main *.c')})</span>
+<span class="e"></span>
+<span class="e">    " replace the location list entries for the third window</span>
+<span class="e">    :call setloclist(3, [], 'r', {'items' : newItems})</span>
+
+<span class="h">=============================================================================</span>
+3. Using more than one <a href="eval.txt.html#list" class="d">list</a> of <a href="message.txt.html#errors" class="d">errors</a>                   <a name="quickfix-error-lists" class="t">quickfix-error-lists</a>
+
+So far has been assumed that there <a href="motion.txt.html#is" class="d">is</a> only one <a href="eval.txt.html#list" class="d">list</a> of errors.  Actually the
+ten last used lists are remembered.  When <a href="starting.txt.html#starting" class="d">starting</a> <a href="insert.txt.html#a" class="d">a</a> new list, the previous
+ones are automatically kept.  Two commands can be used to access older error
+lists.  They set one of the existing error lists <a href="motion.txt.html#as" class="d">as</a> the current one.
+
+                                                <a name="%3Acolder" class="t">:colder</a> <a name="%3Acol" class="t">:col</a> <a name="E380" class="t">E380</a>
+:col[der] <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a>       Go to older error list.  When <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> <a href="motion.txt.html#is" class="d">is</a> given, <a href="diff.txt.html#do" class="d">do</a>
+                        this <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> times.  When already <a href="motion.txt.html#at" class="d">at</a> the oldest error
+                        list, an error message <a href="motion.txt.html#is" class="d">is</a> given.
+
+                                                <a name="%3Alolder" class="t">:lolder</a> <a name="%3Alol" class="t">:lol</a>
+:lol[der] <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a>       Same <a href="motion.txt.html#as" class="d">as</a> <span class="e">:colder</span>, except use the location <a href="eval.txt.html#list" class="d">list</a> for
+                        the current <a href="windows.txt.html#window" class="d">window</a> instead of the <a href="#quickfix" class="d">quickfix</a> list.
+
+                                                <a name="%3Acnewer" class="t">:cnewer</a> <a name="%3Acnew" class="t">:cnew</a> <a name="E381" class="t">E381</a>
+:cnew[er] <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a>       Go to newer error list.  When <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> <a href="motion.txt.html#is" class="d">is</a> given, <a href="diff.txt.html#do" class="d">do</a>
+                        this <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> times.  When already <a href="motion.txt.html#at" class="d">at</a> the newest error
+                        list, an error message <a href="motion.txt.html#is" class="d">is</a> given.
+
+                                                <a name="%3Alnewer" class="t">:lnewer</a> <a name="%3Alnew" class="t">:lnew</a>
+:lnew[er] <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a>       Same <a href="motion.txt.html#as" class="d">as</a> <span class="e">:cnewer</span>, except use the location <a href="eval.txt.html#list" class="d">list</a> for
+                        the current <a href="windows.txt.html#window" class="d">window</a> instead of the <a href="#quickfix" class="d">quickfix</a> list.
+
+                                                <a name="%3Achistory" class="t">:chistory</a> <a name="%3Achi" class="t">:chi</a>
+:chi[story]             Show the <a href="eval.txt.html#list" class="d">list</a> of error lists.  The current <a href="eval.txt.html#list" class="d">list</a> <a href="motion.txt.html#is" class="d">is</a>
+                        marked with "<a href="change.txt.html#%3E" class="d">&gt;</a>"<a href="repeat.txt.html#." class="d">.</a>  The output looks like:
+<span class="h">                                  error list 1 of 3; 43 errors </span>
+<span class="h">                                &gt; error list 2 of 3; 0 errors </span>
+<span class="h">                                  error list 3 of 3; 15 errors </span>
+
+                                                <a name="%3Alhistory" class="t">:lhistory</a> <a name="%3Alhi" class="t">:lhi</a>
+:lhi[story]             Show the <a href="eval.txt.html#list" class="d">list</a> of location lists, otherwise like
+                        <span class="e">:chistory</span>.
+
+When adding <a href="insert.txt.html#a" class="d">a</a> new error list, <a href="motion.txt.html#it" class="d">it</a> becomes the current list.
+
+When "<a href="#%3Acolder" class="d">:colder</a>" has been used and "<a href="#%3Amake" class="d">:make</a>" or "<a href="#%3Agrep" class="d">:grep</a>" <a href="motion.txt.html#is" class="d">is</a> used to add <a href="insert.txt.html#a" class="d">a</a> new error
+list, one newer <a href="eval.txt.html#list" class="d">list</a> <a href="motion.txt.html#is" class="d">is</a> overwritten.  This <a href="motion.txt.html#is" class="d">is</a> especially useful if you are
+browsing with "<a href="#%3Agrep" class="d">:grep</a>" <a href="#grep" class="l">grep</a><a href="repeat.txt.html#." class="d">.</a>  If you want to keep the more recent error
+lists, use "<a href="#%3Acnewer" class="d">:cnewer</a> 99" first.
+
+To get the number of lists in the <a href="#quickfix" class="d">quickfix</a> and location <a href="eval.txt.html#list" class="d">list</a> stack, you can
+use the <a href="eval.txt.html#getqflist%28%29" class="l">getqflist()</a> and <a href="eval.txt.html#getloclist%28%29" class="l">getloclist()</a> <a href="eval.txt.html#functions" class="d">functions</a> respectively with the <a href="eval.txt.html#list" class="d">list</a>
+number set to the special value '$'. Examples: 
+<span class="e">        echo getqflist({'nr' : '$'}).nr</span>
+<span class="e">        echo getloclist(3, {'nr' : '$'}).nr</span>
+To get the number of the current <a href="eval.txt.html#list" class="d">list</a> in the stack: 
+<span class="e">        echo getqflist({'nr' : 0}).nr</span>
+
+<span class="h">=============================================================================</span>
+4. Using <a href="#%3Amake" class="d">:make</a>                                          <a name="%3Amake_makeprg" class="t">:make_makeprg</a>
+
+                                                        <a name="%3Amak" class="t">:mak</a> <a name="%3Amake" class="t">:make</a>
+:mak[e][!] <span class="s">[arguments]</span>  1. All relevant <a href="autocmd.txt.html#QuickFixCmdPre" class="l">QuickFixCmdPre</a> autocommands are
+                           executed.
+                        2. If the <a href="options.txt.html#%27autowrite%27" class="o">'autowrite'</a> option <a href="motion.txt.html#is" class="d">is</a> on, write any changed
+                           <a href="windows.txt.html#buffers" class="d">buffers</a>
+                        3. An errorfile name <a href="motion.txt.html#is" class="d">is</a> made from <a href="options.txt.html#%27makeef%27" class="o">'makeef'</a>.  If
+                           <a href="options.txt.html#%27makeef%27" class="o">'makeef'</a> doesn't contain "##"<a href="motion.txt.html#%2C" class="d">,</a> and <a href="insert.txt.html#a" class="d">a</a> file with this
+                           name already exists, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> deleted.
+                        4. The program given with the <a href="options.txt.html#%27makeprg%27" class="o">'makeprg'</a> option <a href="motion.txt.html#is" class="d">is</a>
+                           started (default "make"<a href="motion.txt.html#%29" class="d">)</a> with the optional
+                           <span class="s">[arguments]</span> and the output <a href="motion.txt.html#is" class="d">is</a> saved in the
+                           errorfile (for <a href="os_unix.txt.html#Unix" class="d">Unix</a> <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> also echoed on the
+                           screen).
+                        5. The errorfile <a href="motion.txt.html#is" class="d">is</a> read using <a href="options.txt.html#%27errorformat%27" class="o">'errorformat'</a>.
+                        6. All relevant <a href="autocmd.txt.html#QuickFixCmdPost" class="l">QuickFixCmdPost</a> autocommands are
+                           executed.  See example below.
+                        7. If [!] <a href="motion.txt.html#is" class="d">is</a> not given the first error <a href="motion.txt.html#is" class="d">is</a> jumped to.
+                        8. The errorfile <a href="motion.txt.html#is" class="d">is</a> deleted.
+                        9. You can now move through the <a href="message.txt.html#errors" class="d">errors</a> with commands
+                           like <a href="#%3Acnext" class="l">:cnext</a> and <a href="#%3Acprevious" class="l">:cprevious</a><a href="motion.txt.html#%2C" class="d">,</a> see above.
+                        This command does not accept <a href="insert.txt.html#a" class="d">a</a> comment, any "
+                        characters are considered part of the arguments.
+                        If the encoding of the program output differs from the
+                        <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> option, you can use the <a href="options.txt.html#%27makeencoding%27" class="o">'makeencoding'</a>
+                        option to specify the encoding.
+
+                                                        <a name="%3Almak" class="t">:lmak</a> <a name="%3Almake" class="t">:lmake</a>
+:lmak[e][!] <span class="s">[arguments]</span>
+                        Same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Amake" class="d">:make</a>"<a href="motion.txt.html#%2C" class="d">,</a> except the location <a href="eval.txt.html#list" class="d">list</a> for the
+                        current <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> used instead of the <a href="#quickfix" class="d">quickfix</a> list.
+
+The "<a href="#%3Amake" class="d">:make</a>" command executes the command given with the <a href="options.txt.html#%27makeprg%27" class="o">'makeprg'</a> option.
+This <a href="motion.txt.html#is" class="d">is</a> done by passing the command to the shell given with the <a href="options.txt.html#%27shell%27" class="o">'shell'</a>
+option.  This works almost like typing
+
+        ":!{makeprg} <span class="s">[arguments]</span> <span class="s">{shellpipe}</span> <span class="s">{errorfile}</span>"<a href="repeat.txt.html#." class="d">.</a>
+
+<span class="s">{makeprg}</span> <a href="motion.txt.html#is" class="d">is</a> the <a href="eval.txt.html#string" class="d">string</a> given with the <a href="options.txt.html#%27makeprg%27" class="o">'makeprg'</a> option.  Any command can be
+used, not just "make"<a href="repeat.txt.html#." class="d">.</a>  Characters '%' and '#' are expanded <a href="motion.txt.html#as" class="d">as</a> usual on <a href="insert.txt.html#a" class="d">a</a>
+command-line.  You can use "%&lt;" to <a href="insert.txt.html#insert" class="d">insert</a> the current file name without
+extension, or "#&lt;" to <a href="insert.txt.html#insert" class="d">insert</a> the alternate file name without extension, for
+example: 
+<span class="e">   :set makeprg=make\ #&lt;.o</span>
+<span class="e"></span>
+<span class="s">[arguments]</span> <a href="motion.txt.html#is" class="d">is</a> anything that <a href="motion.txt.html#is" class="d">is</a> typed after "<a href="#%3Amake" class="d">:make</a>"<a href="repeat.txt.html#." class="d">.</a>
+<span class="s">{shellpipe}</span> <a href="motion.txt.html#is" class="d">is</a> the <a href="options.txt.html#%27shellpipe%27" class="o">'shellpipe'</a> option.
+<span class="s">{errorfile}</span> <a href="motion.txt.html#is" class="d">is</a> the <a href="options.txt.html#%27makeef%27" class="o">'makeef'</a> option, with ## replaced to make <a href="motion.txt.html#it" class="d">it</a> unique.
+
+The placeholder "<a href="motion.txt.html#%24" class="d">$</a>*" can be used for the argument <a href="eval.txt.html#list" class="d">list</a> in <span class="s">{makeprg}</span> if the
+command needs some additional characters after its arguments.  The <a href="motion.txt.html#%24" class="d">$</a>* <a href="motion.txt.html#is" class="d">is</a>
+replaced then by all arguments.  Example: 
+<span class="e">   :set makeprg=latex\ \\\\nonstopmode\ \\\\input\\{$*}</span>
+or simpler 
+<span class="e">   :let &amp;mp = 'latex \\nonstopmode \\input\{$*}'</span>
+"<a href="motion.txt.html#%24" class="d">$</a>*" can be given multiple times, for example: 
+<span class="e">   :set makeprg=gcc\ -o\ $*\ $*</span>
+<span class="e"></span>
+The <a href="options.txt.html#%27shellpipe%27" class="o">'shellpipe'</a> option defaults to "<a href="change.txt.html#%3E" class="d">&gt;</a>" for the Amiga, <a href="os_msdos.txt.html#MS-DOS" class="d">MS-DOS</a> and Win32.  This
+means that the output of the compiler <a href="motion.txt.html#is" class="d">is</a> saved in <a href="insert.txt.html#a" class="d">a</a> file and not shown on the
+screen directly.  For <a href="os_unix.txt.html#Unix" class="d">Unix</a> "| tee" <a href="motion.txt.html#is" class="d">is</a> used.  The compiler output <a href="motion.txt.html#is" class="d">is</a> shown on
+the screen and saved in <a href="insert.txt.html#a" class="d">a</a> file the same time.  Depending on the shell used
+"|<a href="change.txt.html#%26" class="d">&amp;</a> tee" or "2&gt;&amp;1| tee" <a href="motion.txt.html#is" class="d">is</a> the default, so stderr output will be included.
+
+If <a href="options.txt.html#%27shellpipe%27" class="o">'shellpipe'</a> <a href="motion.txt.html#is" class="d">is</a> empty, the <span class="s">{errorfile}</span> part will be omitted.  This <a href="motion.txt.html#is" class="d">is</a> useful
+for compilers that write to an errorfile themselves (e.g., Manx's <a href="os_amiga.txt.html#Amiga" class="d">Amiga</a> C).
+
+
+<span class="h">Using QuickFixCmdPost to fix the encoding </span>
+
+It may be that <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> <a href="motion.txt.html#is" class="d">is</a> set to an encoding that differs from the <a href="message.txt.html#messages" class="d">messages</a>
+your build program produces.  This example shows how to fix this after Vim has
+read the error messages: 
+<span class="e"></span>
+<span class="e">        function QfMakeConv()</span>
+<span class="e">           let qflist = getqflist()</span>
+<span class="e">           for i in qflist</span>
+<span class="e">              let i.text = iconv(i.text, "cp936", "utf-8")</span>
+<span class="e">           endfor</span>
+<span class="e">           call setqflist(qflist)</span>
+<span class="e">        endfunction</span>
+<span class="e"></span>
+<span class="e">        au QuickfixCmdPost make call QfMakeConv()</span>
+<span class="e"></span>
+(Example by Faque Cheng)
+Another option <a href="motion.txt.html#is" class="d">is</a> using <a href="options.txt.html#%27makeencoding%27" class="o">'makeencoding'</a>.
+
+<span class="h">==============================================================================</span>
+5. Using <a href="#%3Avimgrep" class="d">:vimgrep</a> and <a href="#%3Agrep" class="d">:grep</a>                             <a name="grep" class="t">grep</a> <a name="lid" class="t">lid</a>
+
+Vim has two ways to find matches for <a href="insert.txt.html#a" class="d">a</a> pattern: Internal and external.  The
+advantage of the internal <a href="#grep" class="d">grep</a> <a href="motion.txt.html#is" class="d">is</a> that <a href="motion.txt.html#it" class="d">it</a> works on all systems and uses the
+powerful Vim search patterns.  An external <a href="#grep" class="d">grep</a> program can be used when the
+Vim <a href="#grep" class="d">grep</a> does not <a href="diff.txt.html#do" class="d">do</a> what you want.
+
+The internal method will be slower, because files are read into memory.  The
+advantages are:
+<a href="motion.txt.html#-" class="d">-</a> Line separators and encoding are automatically recognized, <a href="motion.txt.html#as" class="d">as</a> if <a href="insert.txt.html#a" class="d">a</a> file <a href="motion.txt.html#is" class="d">is</a>
+  being edited.
+<a href="motion.txt.html#-" class="d">-</a> Uses Vim search patterns.  Multi-line patterns can be used.
+<a href="motion.txt.html#-" class="d">-</a> When plugins are enabled: compressed and remote files can be searched.
+        <a href="pi_gzip.txt.html#gzip" class="l">gzip</a> <a href="pi_netrw.txt.html#netrw" class="l">netrw</a>
+
+To be able to <a href="diff.txt.html#do" class="d">do</a> this Vim loads each file <a href="motion.txt.html#as" class="d">as</a> if <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> being edited.  When
+there <a href="motion.txt.html#is" class="d">is</a> no match in the file the associated buffer <a href="motion.txt.html#is" class="d">is</a> wiped out again.  The
+<a href="options.txt.html#%27hidden%27" class="o">'hidden'</a> option <a href="motion.txt.html#is" class="d">is</a> ignored here to avoid running out of memory or file
+descriptors when searching many files.  However, when the <a href="windows.txt.html#%3Ahide" class="l">:hide</a> command
+modifier <a href="motion.txt.html#is" class="d">is</a> used the <a href="windows.txt.html#buffers" class="d">buffers</a> are kept loaded.  This makes following searches
+in the same files <a href="insert.txt.html#a" class="d">a</a> lot faster.
+
+<span class="n">Note</span> that <a href="#%3Acopen" class="l">:copen</a> (or <a href="#%3Alopen" class="l">:lopen</a> for <a href="#%3Algrep" class="l">:lgrep</a><a href="motion.txt.html#%29" class="d">)</a> may be used to open <a href="insert.txt.html#a" class="d">a</a> buffer
+containing the search results in linked form.  The <a href="various.txt.html#%3Asilent" class="l">:silent</a> command may be
+used to suppress the default full screen <a href="#grep" class="d">grep</a> output.  The ":grep!" form of
+the <a href="#%3Agrep" class="l">:grep</a> command doesn't jump to the first match automatically.  These
+commands can be combined to create <a href="insert.txt.html#a" class="d">a</a> NewGrep command: 
+<span class="e"></span>
+<span class="e">        command! -nargs=+ NewGrep execute 'silent grep! &lt;args&gt;' | copen 42</span>
+<span class="e"></span>
+<span class="e"></span>
+5.1 using Vim's internal <a href="#grep" class="d">grep</a>
+
+                                        <a name="%3Avim" class="t">:vim</a> <a name="%3Avimgrep" class="t">:vimgrep</a> <a name="E682" class="t">E682</a> <a name="E683" class="t">E683</a>
+:vim[grep][!] /{pattern}/[g][j] <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a> <a href="eval.txt.html#..." class="d">...</a>
+                        Search for <span class="s">{pattern}</span> in the files <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a> <a href="eval.txt.html#..." class="d">...</a> and set
+                        the error <a href="eval.txt.html#list" class="d">list</a> to the matches.  Files matching
+                        <a href="options.txt.html#%27wildignore%27" class="o">'wildignore'</a> are ignored; files in <a href="options.txt.html#%27suffixes%27" class="o">'suffixes'</a> are
+                        searched last.
+                        Without the 'g' flag each line <a href="motion.txt.html#is" class="d">is</a> added only once.
+                        With 'g' every match <a href="motion.txt.html#is" class="d">is</a> added.
+
+                        <span class="s">{pattern}</span> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> Vim search pattern.  Instead of
+                        enclosing <a href="motion.txt.html#it" class="d">it</a> in <a href="pattern.txt.html#%2F" class="d">/</a> any non-ID character (see
+                        <a href="options.txt.html#%27isident%27" class="l">'isident'</a><a href="motion.txt.html#%29" class="d">)</a> can be used, so long <a href="motion.txt.html#as" class="d">as</a> <a href="motion.txt.html#it" class="d">it</a> does not
+                        appear in <span class="s">{pattern}</span>.
+                        <a href="options.txt.html#%27ignorecase%27" class="o">'ignorecase'</a> applies.  To overrule <a href="motion.txt.html#it" class="d">it</a> <a href="change.txt.html#put" class="d">put</a> <a href="pattern.txt.html#%2F%5Cc" class="l">/\c</a> in the
+                        <a href="pattern.txt.html#pattern" class="d">pattern</a> to ignore <a href="change.txt.html#case" class="d">case</a> or <a href="pattern.txt.html#%2F%5CC" class="l">/\C</a> to match case.
+                        <a href="options.txt.html#%27smartcase%27" class="o">'smartcase'</a> <a href="motion.txt.html#is" class="d">is</a> not used.
+                        If <span class="s">{pattern}</span> <a href="motion.txt.html#is" class="d">is</a> empty (e.g. <a href="version7.txt.html#%2F%2F" class="d">//</a> <a href="motion.txt.html#is" class="d">is</a> specified), the last
+                        used search <a href="pattern.txt.html#pattern" class="d">pattern</a> <a href="motion.txt.html#is" class="d">is</a> used. <a href="pattern.txt.html#last-pattern" class="l">last-pattern</a>
+
+                        When <a href="insert.txt.html#a" class="d">a</a> number <a href="motion.txt.html#is" class="d">is</a> <a href="change.txt.html#put" class="d">put</a> before the command this <a href="motion.txt.html#is" class="d">is</a> used
+                        <a href="motion.txt.html#as" class="d">as</a> the maximum number of matches to find.  Use
+                        ":1vimgrep <a href="pattern.txt.html#pattern" class="d">pattern</a> file" to find only the first.
+                        Useful if you only want to check if there <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> match
+                        and quit quickly when it's found.
+
+                        Without the 'j' flag Vim jumps to the first match.
+                        With 'j' only the <a href="#quickfix" class="d">quickfix</a> <a href="eval.txt.html#list" class="d">list</a> <a href="motion.txt.html#is" class="d">is</a> updated.
+                        With the [!] any changes in the current buffer are
+                        abandoned.
+
+                        Every second or so the searched file name <a href="motion.txt.html#is" class="d">is</a> displayed
+                        to give you an idea of the progress made.
+                        Examples: 
+<span class="e">                                :vimgrep /an error/ *.c</span>
+<span class="e">                                :vimgrep /\&lt;FileName\&gt;/ *.h include/*</span>
+<span class="e">                                :vimgrep /myfunc/ **/*.c</span>
+                       For the use of "**" see <a href="editing.txt.html#starstar-wildcard" class="l">starstar-wildcard</a><a href="repeat.txt.html#." class="d">.</a>
+
+:vim[grep][!] <span class="s">{pattern}</span> <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a> <a href="eval.txt.html#..." class="d">...</a>
+                        Like above, but instead of enclosing the <a href="pattern.txt.html#pattern" class="d">pattern</a> in <a href="insert.txt.html#a" class="d">a</a>
+                        non-ID character use <a href="insert.txt.html#a" class="d">a</a> white-separated pattern.  The
+                        <a href="pattern.txt.html#pattern" class="d">pattern</a> <a href="vim_faq.txt.html#must" class="d">must</a> start with an ID character.
+                        Example: 
+<span class="e">                                :vimgrep Error *.c</span>
+
+                                                        <a name="%3Alv" class="t">:lv</a> <a name="%3Alvimgrep" class="t">:lvimgrep</a>
+:lv[imgrep][!] /{pattern}/[g][j] <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a> <a href="eval.txt.html#..." class="d">...</a>
+:lv[imgrep][!] <span class="s">{pattern}</span> <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a> <a href="eval.txt.html#..." class="d">...</a>
+                        Same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Avimgrep" class="d">:vimgrep</a>"<a href="motion.txt.html#%2C" class="d">,</a> except the location <a href="eval.txt.html#list" class="d">list</a> for the
+                        current <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> used instead of the <a href="#quickfix" class="d">quickfix</a> list.
+
+                                                <a name="%3Avimgrepa" class="t">:vimgrepa</a> <a name="%3Avimgrepadd" class="t">:vimgrepadd</a>
+:vimgrepa[dd][!] /{pattern}/[g][j] <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a> <a href="eval.txt.html#..." class="d">...</a>
+:vimgrepa[dd][!] <span class="s">{pattern}</span> <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a> <a href="eval.txt.html#..." class="d">...</a>
+                        Just like "<a href="#%3Avimgrep" class="d">:vimgrep</a>"<a href="motion.txt.html#%2C" class="d">,</a> but instead of making <a href="insert.txt.html#a" class="d">a</a> new <a href="eval.txt.html#list" class="d">list</a>
+                        of <a href="message.txt.html#errors" class="d">errors</a> the matches are appended to the current
+                        list.
+
+                                                <a name="%3Alvimgrepa" class="t">:lvimgrepa</a> <a name="%3Alvimgrepadd" class="t">:lvimgrepadd</a>
+:lvimgrepa[dd][!] /{pattern}/[g][j] <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a> <a href="eval.txt.html#..." class="d">...</a>
+:lvimgrepa[dd][!] <span class="s">{pattern}</span> <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a> <a href="eval.txt.html#..." class="d">...</a>
+                        Same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Avimgrepadd" class="d">:vimgrepadd</a>"<a href="motion.txt.html#%2C" class="d">,</a> except the location <a href="eval.txt.html#list" class="d">list</a> for
+                        the current <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> used instead of the <a href="#quickfix" class="d">quickfix</a>
+                        list.
+
+5.2 External <a href="#grep" class="d">grep</a>
+
+Vim can interface with "<a href="#grep" class="d">grep</a>" and grep-like programs (such <a href="motion.txt.html#as" class="d">as</a> the GNU
+id-utils) in <a href="insert.txt.html#a" class="d">a</a> similar way to its compiler integration (see <a href="#%3Amake" class="l">:make</a> above).
+
+[Unix trivia: The name for the <a href="os_unix.txt.html#Unix" class="d">Unix</a> "<a href="#grep" class="d">grep</a>" command comes from ":g/re/p"<a href="motion.txt.html#%2C" class="d">,</a> where
+"re" stands for Regular Expression.]
+
+                                                            <a name="%3Agr" class="t">:gr</a> <a name="%3Agrep" class="t">:grep</a>
+:gr[ep][!] <span class="s">[arguments]</span>  Just like "<a href="#%3Amake" class="d">:make</a>"<a href="motion.txt.html#%2C" class="d">,</a> but use <a href="options.txt.html#%27grepprg%27" class="o">'grepprg'</a> instead of
+                        <a href="options.txt.html#%27makeprg%27" class="o">'makeprg'</a> and <a href="options.txt.html#%27grepformat%27" class="o">'grepformat'</a> instead of <a href="options.txt.html#%27errorformat%27" class="o">'errorformat'</a>.
+                        When <a href="options.txt.html#%27grepprg%27" class="o">'grepprg'</a> <a href="motion.txt.html#is" class="d">is</a> "internal" this works like
+                        <a href="#%3Avimgrep" class="l">:vimgrep</a><a href="repeat.txt.html#." class="d">.</a>  <span class="n">Note</span> that the <a href="pattern.txt.html#pattern" class="d">pattern</a> needs to be
+                        enclosed in separator characters then.
+                        If the encoding of the program output differs from the
+                        <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> option, you can use the <a href="options.txt.html#%27makeencoding%27" class="o">'makeencoding'</a>
+                        option to specify the encoding.
+
+                                                            <a name="%3Algr" class="t">:lgr</a> <a name="%3Algrep" class="t">:lgrep</a>
+:lgr[ep][!] <span class="s">[arguments]</span> Same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Agrep" class="d">:grep</a>"<a href="motion.txt.html#%2C" class="d">,</a> except the location <a href="eval.txt.html#list" class="d">list</a> for the
+                        current <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> used instead of the <a href="#quickfix" class="d">quickfix</a> list.
+
+                                                        <a name="%3Agrepa" class="t">:grepa</a> <a name="%3Agrepadd" class="t">:grepadd</a>
+:grepa[dd][!] <span class="s">[arguments]</span>
+                        Just like "<a href="#%3Agrep" class="d">:grep</a>"<a href="motion.txt.html#%2C" class="d">,</a> but instead of making <a href="insert.txt.html#a" class="d">a</a> new <a href="eval.txt.html#list" class="d">list</a> of
+                        <a href="message.txt.html#errors" class="d">errors</a> the matches are appended to the current list.
+                        Example: 
+<span class="e">                                :call setqflist([])</span>
+<span class="e">                                :bufdo grepadd! something %</span>
+                       The first command makes <a href="insert.txt.html#a" class="d">a</a> new error <a href="eval.txt.html#list" class="d">list</a> which <a href="motion.txt.html#is" class="d">is</a>
+                        empty.  The second command executes "grepadd" for each
+                        listed buffer.  <span class="n">Note</span> the use of <a href="change.txt.html#%21" class="d">!</a> to avoid that
+                        "<a href="#%3Agrepadd" class="d">:grepadd</a>" jumps to the first error, which <a href="motion.txt.html#is" class="d">is</a> not
+                        allowed with <a href="windows.txt.html#%3Abufdo" class="l">:bufdo</a><a href="repeat.txt.html#." class="d">.</a>
+                        An example that uses the argument <a href="eval.txt.html#list" class="d">list</a> and avoids
+                        <a href="message.txt.html#errors" class="d">errors</a> for files without matches: 
+<span class="e">                                :silent argdo try </span>
+<span class="e">                                  \ | grepadd! something %</span>
+<span class="e">                                  \ | catch /E480:/</span>
+<span class="e">                                  \ | endtry"</span>
+
+                        If the encoding of the program output differs from the
+                        <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> option, you can use the <a href="options.txt.html#%27makeencoding%27" class="o">'makeencoding'</a>
+                        option to specify the encoding.
+
+                                                        <a name="%3Algrepa" class="t">:lgrepa</a> <a name="%3Algrepadd" class="t">:lgrepadd</a>
+:lgrepa[dd][!] <span class="s">[arguments]</span>
+                        Same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Agrepadd" class="d">:grepadd</a>"<a href="motion.txt.html#%2C" class="d">,</a> except the location <a href="eval.txt.html#list" class="d">list</a> for the
+                        current <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> used instead of the <a href="#quickfix" class="d">quickfix</a> list.
+
+5.3 Setting up external <a href="#grep" class="d">grep</a>
+
+If you have <a href="insert.txt.html#a" class="d">a</a> standard "<a href="#grep" class="d">grep</a>" program installed, the <a href="#%3Agrep" class="d">:grep</a> command may work
+well with the defaults.  The <a href="syntax.txt.html#syntax" class="d">syntax</a> <a href="motion.txt.html#is" class="d">is</a> very similar to the standard command: 
+<span class="e"></span>
+<span class="e">        :grep foo *.c</span>
+<span class="e"></span>
+Will search all files with the .c extension for the substring "foo"<a href="repeat.txt.html#." class="d">.</a>  The
+arguments to <a href="#%3Agrep" class="d">:grep</a> are passed straight to the "<a href="#grep" class="d">grep</a>" program, so you can use
+whatever <a href="options.txt.html#options" class="d">options</a> your "<a href="#grep" class="d">grep</a>" supports.
+
+By default, <a href="#%3Agrep" class="d">:grep</a> invokes <a href="#grep" class="d">grep</a> with the <a href="starting.txt.html#-n" class="d">-n</a> option (show file and line
+numbers).  You can change this with the <a href="options.txt.html#%27grepprg%27" class="o">'grepprg'</a> option.  You will need to set
+<a href="options.txt.html#%27grepprg%27" class="o">'grepprg'</a> if:
+
+<a href="motion.txt.html#a%29" class="d">a)</a>      You are using <a href="insert.txt.html#a" class="d">a</a> program that isn't called "<a href="#grep" class="d">grep</a>"
+b)      You have to call <a href="#grep" class="d">grep</a> with <a href="insert.txt.html#a" class="d">a</a> full path
+c)      You want to pass other <a href="options.txt.html#options" class="d">options</a> automatically (e.g. <a href="change.txt.html#case" class="d">case</a> insensitive
+        search.)
+
+Once "<a href="#grep" class="d">grep</a>" has executed, Vim parses the results using the <a href="options.txt.html#%27grepformat%27" class="o">'grepformat'</a>
+option.  This option works in the same way <a href="motion.txt.html#as" class="d">as</a> the <a href="options.txt.html#%27errorformat%27" class="o">'errorformat'</a> option <a href="motion.txt.html#-" class="d">-</a> see
+that for details.  You may need to change <a href="options.txt.html#%27grepformat%27" class="o">'grepformat'</a> from the default if
+your <a href="#grep" class="d">grep</a> outputs in <a href="insert.txt.html#a" class="d">a</a> non-standard format, or you are using some other
+program with <a href="insert.txt.html#a" class="d">a</a> special format.
+
+Once the results are parsed, Vim loads the first file containing <a href="insert.txt.html#a" class="d">a</a> match and
+jumps to the appropriate line, in the same way that <a href="motion.txt.html#it" class="d">it</a> jumps to <a href="insert.txt.html#a" class="d">a</a> compiler
+error in <a href="#quickfix" class="l">quickfix</a> mode.  You can then use the <a href="#%3Acnext" class="l">:cnext</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="#%3Aclist" class="l">:clist</a><a href="motion.txt.html#%2C" class="d">,</a> etc.
+commands to see the other matches.
+
+
+5.4 Using <a href="#%3Agrep" class="d">:grep</a> with id-utils
+
+You can set up <a href="#%3Agrep" class="d">:grep</a> to work with the GNU id-utils like this: 
+<span class="e"></span>
+<span class="e">        :set grepprg=lid\ -Rgrep\ -s</span>
+<span class="e">        :set grepformat=%f:%l:%m</span>
+<span class="e"></span>
+then 
+<span class="e">        :grep (regexp)</span>
+<span class="e"></span>
+works just <a href="motion.txt.html#as" class="d">as</a> you'd expect.
+(provided you remembered to mkid first :)
+
+
+5.5 Browsing source code with <a href="#%3Avimgrep" class="d">:vimgrep</a> or <a href="#%3Agrep" class="d">:grep</a>
+
+Using the stack of error lists that Vim keeps, you can browse your files to
+look for <a href="eval.txt.html#functions" class="d">functions</a> and the <a href="eval.txt.html#functions" class="d">functions</a> they call.  For example, suppose that you
+have to add an argument to the read_file() function.  You enter this command: 
+<span class="e"></span>
+<span class="e">        :vimgrep /\&lt;read_file\&gt;/ *.c</span>
+<span class="e"></span>
+You use "<a href="#%3Acn" class="d">:cn</a>" to <a href="motion.txt.html#go" class="d">go</a> along the <a href="eval.txt.html#list" class="d">list</a> of matches and add the argument.  At one
+place you have to get the new argument from <a href="insert.txt.html#a" class="d">a</a> higher level function msg(), and
+need to change that one too.  Thus you use: 
+<span class="e"></span>
+<span class="e">        :vimgrep /\&lt;msg\&gt;/ *.c</span>
+<span class="e"></span>
+While <a href="change.txt.html#changing" class="d">changing</a> the msg() functions, you find another function that needs to
+get the argument from <a href="insert.txt.html#a" class="d">a</a> higher level.  You can again use "<a href="#%3Avimgrep" class="d">:vimgrep</a>" to find
+these functions.  Once you are finished with one function, you can use 
+<span class="e"></span>
+<span class="e">        :colder</span>
+<span class="e"></span>
+to <a href="motion.txt.html#go" class="d">go</a> back to the previous one.
+
+This works like browsing <a href="insert.txt.html#a" class="d">a</a> tree: "<a href="#%3Avimgrep" class="d">:vimgrep</a>" goes one level deeper, creating <a href="insert.txt.html#a" class="d">a</a>
+<a href="eval.txt.html#list" class="d">list</a> of branches.  "<a href="#%3Acolder" class="d">:colder</a>" goes back to the previous level.  You can mix
+this use of "<a href="#%3Avimgrep" class="d">:vimgrep</a>" and "colder" to browse all the locations in <a href="insert.txt.html#a" class="d">a</a> tree-like
+way.  If you <a href="diff.txt.html#do" class="d">do</a> this consistently, you will find all locations without the
+need to write down <a href="insert.txt.html#a" class="d">a</a> "<a href="todo.txt.html#todo" class="d">todo</a>" list.
+
+<span class="h">=============================================================================</span>
+6. Selecting <a href="insert.txt.html#a" class="d">a</a> compiler                                 <a name="compiler-select" class="t">compiler-select</a>
+
+                                                <a name="%3Acomp" class="t">:comp</a> <a name="%3Acompiler" class="t">:compiler</a> <a name="E666" class="t">E666</a>
+:comp[iler][!] <span class="s">{name}</span>           Set <a href="options.txt.html#options" class="d">options</a> to work with compiler <span class="s">{name}</span>.
+                                Without the "<a href="change.txt.html#%21" class="d">!</a>" <a href="options.txt.html#options" class="d">options</a> are set for the
+                                current buffer.  With "<a href="change.txt.html#%21" class="d">!</a>" global <a href="options.txt.html#options" class="d">options</a> are
+                                set.
+                                If you use "<a href="#%3Acompiler" class="d">:compiler</a> foo" in "file.foo" and
+                                then ":compiler! <a href="motion.txt.html#bar" class="d">bar</a>" in another buffer, Vim
+                                will keep on using "foo" in "file.foo"<a href="repeat.txt.html#." class="d">.</a>
+                                {not available when compiled without the
+                                <a href="various.txt.html#%2Beval" class="l">+eval</a> feature}
+
+
+The Vim plugins in the "compiler" directory will set <a href="options.txt.html#options" class="d">options</a> to use the
+selected compiler.  For <span class="e">:compiler</span> local <a href="options.txt.html#options" class="d">options</a> are set, for <span class="e">:compiler!</span>
+global options.
+                                                        <a name="current_compiler" class="t">current_compiler</a>
+To support older Vim versions, the plugins always use "<a href="#current_compiler" class="d">current_compiler</a>" and
+not "b:current_compiler"<a href="repeat.txt.html#." class="d">.</a>  What the command actually does <a href="motion.txt.html#is" class="d">is</a> the following:
+
+<a href="motion.txt.html#-" class="d">-</a> Delete the "<a href="#current_compiler" class="d">current_compiler</a>" and "b:current_compiler" variables.
+<a href="motion.txt.html#-" class="d">-</a> Define the "CompilerSet" user command.  With "<a href="change.txt.html#%21" class="d">!</a>" <a href="motion.txt.html#it" class="d">it</a> does "<a href="options.txt.html#%3Aset" class="d">:set</a>"<a href="motion.txt.html#%2C" class="d">,</a> without "<a href="change.txt.html#%21" class="d">!</a>"
+  <a href="motion.txt.html#it" class="d">it</a> does "<a href="options.txt.html#%3Asetlocal" class="d">:setlocal</a>"<a href="repeat.txt.html#." class="d">.</a>
+<a href="motion.txt.html#-" class="d">-</a> Execute ":runtime! compiler/{name}.vim"<a href="repeat.txt.html#." class="d">.</a>  The plugins are expected to set
+  <a href="options.txt.html#options" class="d">options</a> with "CompilerSet" and set the "<a href="#current_compiler" class="d">current_compiler</a>" variable to the
+  name of the compiler.
+<a href="motion.txt.html#-" class="d">-</a> Delete the "CompilerSet" user command.
+<a href="motion.txt.html#-" class="d">-</a> Set "b:current_compiler" to the value of "<a href="#current_compiler" class="d">current_compiler</a>"<a href="repeat.txt.html#." class="d">.</a>
+<a href="motion.txt.html#-" class="d">-</a> Without "<a href="change.txt.html#%21" class="d">!</a>" the old value of "<a href="#current_compiler" class="d">current_compiler</a>" <a href="motion.txt.html#is" class="d">is</a> restored.
+
+
+For <a href="editing.txt.html#writing" class="d">writing</a> <a href="insert.txt.html#a" class="d">a</a> compiler plugin, see <a href="usr_41.txt.html#write-compiler-plugin" class="l">write-compiler-plugin</a><a href="repeat.txt.html#." class="d">.</a>
+
+
+<span class="c">GCC                                    </span> <a name="quickfix-gcc" class="t">quickfix-gcc</a>  <a name="compiler-gcc" class="t">compiler-gcc</a>
+
+There's one variable you can set for the GCC compiler:
+
+g:compiler_gcc_ignore_unmatched_lines
+                                Ignore lines that don't match any patterns
+                                defined for GCC.  Useful if output from
+                                commands run from make are generating false
+                                positives.
+
+
+<span class="c">MANX AZTEC C                           </span> <a name="quickfix-manx" class="t">quickfix-manx</a> <a name="compiler-manx" class="t">compiler-manx</a>
+
+To use Vim with Manx's Aztec <a href="change.txt.html#C" class="d">C</a> compiler on the <a href="os_amiga.txt.html#Amiga" class="d">Amiga</a> you should <a href="diff.txt.html#do" class="d">do</a> the
+following:
+<a href="motion.txt.html#-" class="d">-</a> Set the CCEDIT environment variable with the command: 
+<span class="e">        mset "CCEDIT=vim -q"</span>
+<a href="motion.txt.html#-" class="d">-</a> Compile with the <a href="starting.txt.html#-qf" class="d">-qf</a> option.  If the compiler finds any errors, Vim <a href="motion.txt.html#is" class="d">is</a>
+  started and the cursor <a href="motion.txt.html#is" class="d">is</a> positioned on the first error.  The error message
+  will be displayed on the last line.  You can <a href="motion.txt.html#go" class="d">go</a> to other <a href="message.txt.html#errors" class="d">errors</a> with the
+  commands mentioned above.  You can fix the <a href="message.txt.html#errors" class="d">errors</a> and write the file(s).
+<a href="motion.txt.html#-" class="d">-</a> If you exit Vim normally the compiler will re-compile the same file.  If you
+  exit with the <a href="#%3Acq" class="d">:cq</a> command, the compiler will terminate.  Do this if you
+  cannot fix the error, or if another file needs to be compiled first.
+
+There are some restrictions to the <a href="#Quickfix" class="d">Quickfix</a> mode on the Amiga.  The
+compiler only writes the first 25 <a href="message.txt.html#errors" class="d">errors</a> to the errorfile (Manx's
+documentation does not say how to get more).  If you want to find the others,
+you will have to fix <a href="insert.txt.html#a" class="d">a</a> few <a href="message.txt.html#errors" class="d">errors</a> and exit the editor.  After recompiling,
+up to 25 remaining <a href="message.txt.html#errors" class="d">errors</a> will be found.
+
+If Vim was started from the compiler, the <a href="various.txt.html#%3Ash" class="d">:sh</a> and some <a href="various.txt.html#%3A%21" class="d">:!</a>  commands will not
+work, because Vim <a href="motion.txt.html#is" class="d">is</a> then running in the same process <a href="motion.txt.html#as" class="d">as</a> the compiler and
+stdin (standard input) will not be interactive.
+
+
+<span class="c">PERL                                   </span> <a name="quickfix-perl" class="t">quickfix-perl</a> <a name="compiler-perl" class="t">compiler-perl</a>
+
+The <a href="if_perl.txt.html#Perl" class="d">Perl</a> compiler <a href="usr_05.txt.html#plugin" class="d">plugin</a> doesn't actually compile, but invokes Perl's internal
+<a href="syntax.txt.html#syntax" class="d">syntax</a> checking feature and parses the output for possible <a href="message.txt.html#errors" class="d">errors</a> so you can
+correct them in quick-fix mode.
+
+Warnings are forced regardless of "no warnings" or "$^W <a href="change.txt.html#%3D" class="d">=</a> <a href="motion.txt.html#0" class="d">0</a>" within the file
+being checked.  To disable this set g:perl_compiler_force_warnings to <a href="insert.txt.html#a" class="d">a</a> zero
+value.  For example: 
+<span class="e">        let g:perl_compiler_force_warnings = 0</span>
+<span class="e"></span>
+<span class="e"></span>
+<span class="c">PYUNIT COMPILER                                        </span> <a name="compiler-pyunit" class="t">compiler-pyunit</a>
+
+This <a href="motion.txt.html#is" class="d">is</a> not actually <a href="insert.txt.html#a" class="d">a</a> compiler, but <a href="insert.txt.html#a" class="d">a</a> unit <a href="eval.txt.html#testing" class="d">testing</a> framework for the
+<a href="if_pyth.txt.html#Python" class="d">Python</a> language.  It <a href="motion.txt.html#is" class="d">is</a> included into standard <a href="if_pyth.txt.html#Python" class="d">Python</a> <a href="intro.txt.html#distribution" class="d">distribution</a>
+<a href="starting.txt.html#starting" class="d">starting</a> from version 2.0.  For older versions, you can get <a href="motion.txt.html#it" class="d">it</a> from
+<a class="u" href="http://pyunit.sourceforge.net">http://pyunit.sourceforge.net</a>.
+
+When you run your tests with the <a href="helphelp.txt.html#help" class="d">help</a> of the framework, possible <a href="message.txt.html#errors" class="d">errors</a>
+are parsed by Vim and presented for you in quick-fix mode.
+
+Unfortunately, there <a href="motion.txt.html#is" class="d">is</a> no standard way to run the tests.
+The alltests.py <a href="usr_41.txt.html#script" class="d">script</a> seems to be used quite often, that's all.
+Useful values for the <a href="options.txt.html#%27makeprg%27" class="o">'makeprg'</a> <a href="options.txt.html#options" class="d">options</a> therefore are:
+ setlocal makeprg=./alltests.py " Run <a href="insert.txt.html#a" class="d">a</a> testsuite
+ setlocal makeprg=python\ <a href="cmdline.txt.html#%25%3AS" class="d">%:S</a>   " Run <a href="insert.txt.html#a" class="d">a</a> single testcase
+
+Also see <a class="u" href="http://vim.sourceforge.net/tip_view.php?tip_id=280">http://vim.sourceforge.net/tip_view.php?tip_id=280</a>.
+
+
+<span class="c">TEX COMPILER                                           </span> <a name="compiler-tex" class="t">compiler-tex</a>
+
+Included in the <a href="intro.txt.html#distribution" class="d">distribution</a> compiler for TeX ($VIMRUNTIME/compiler/tex.vim)
+uses make command if possible.  If the compiler finds <a href="insert.txt.html#a" class="d">a</a> file named "Makefile"
+or "makefile" in the current directory, <a href="motion.txt.html#it" class="d">it</a> supposes that you want to process
+your *TeX files with make, and the makefile does the right work.  In this <a href="change.txt.html#case" class="d">case</a>
+compiler sets <a href="options.txt.html#%27errorformat%27" class="o">'errorformat'</a> for *TeX output and leaves <a href="options.txt.html#%27makeprg%27" class="o">'makeprg'</a> untouched.  If
+neither "Makefile" nor "makefile" <a href="motion.txt.html#is" class="d">is</a> found, the compiler will not use make.
+You can force the compiler to ignore makefiles by defining
+b:tex_ignore_makefile or g:tex_ignore_makefile variable (they are checked for
+existence only).
+
+If the compiler chose not to use make, <a href="motion.txt.html#it" class="d">it</a> need to choose <a href="insert.txt.html#a" class="d">a</a> right program for
+processing your input.  If b:tex_flavor or <a href="filetype.txt.html#g%3Atex_flavor" class="d">g:tex_flavor</a> (in this precedence)
+variable exists, <a href="motion.txt.html#it" class="d">it</a> defines TeX flavor for <a href="#%3Amake" class="d">:make</a> (actually, this <a href="motion.txt.html#is" class="d">is</a> the name
+of executed command), and if both <a href="eval.txt.html#variables" class="d">variables</a> <a href="diff.txt.html#do" class="d">do</a> not exist, <a href="motion.txt.html#it" class="d">it</a> defaults to
+"latex"<a href="repeat.txt.html#." class="d">.</a>  For example, while editing chapter2.tex \input-ed from mypaper.tex
+written in AMS-TeX: 
+<span class="e"></span>
+<span class="e">        :let b:tex_flavor = 'amstex'</span>
+<span class="e">        :compiler tex</span>
+       [editing...] 
+<span class="e">        :make mypaper</span>
+<span class="e"></span>
+<span class="n">Note</span> that you <a href="vim_faq.txt.html#must" class="d">must</a> specify <a href="insert.txt.html#a" class="d">a</a> name of the file to process <a href="motion.txt.html#as" class="d">as</a> an argument (to
+process the right file when editing \input-ed or \include-ed file; portable
+solution for substituting <a href="motion.txt.html#%25" class="d">%</a> for no arguments <a href="motion.txt.html#is" class="d">is</a> welcome).  This <a href="motion.txt.html#is" class="d">is</a> not in the
+semantics of make, where you specify <a href="insert.txt.html#a" class="d">a</a> target, not source, but you may specify
+filename without extension ".tex" and mean this <a href="motion.txt.html#as" class="d">as</a> "make filename.dvi or
+filename.pdf or filename.some_result_extension according to compiler"<a href="repeat.txt.html#." class="d">.</a>
+
+<span class="n">Note:</span> tex command line <a href="syntax.txt.html#syntax" class="d">syntax</a> <a href="motion.txt.html#is" class="d">is</a> set to usable both for MikTeX (suggestion
+by Srinath Avadhanula) and teTeX (checked by Artem Chuprina).  Suggestion
+from <a href="#errorformat-LaTeX" class="l">errorformat-LaTeX</a> <a href="motion.txt.html#is" class="d">is</a> too complex to keep <a href="motion.txt.html#it" class="d">it</a> working for different
+shells and OSes and also does not allow to use other available TeX options,
+if any.  If your TeX doesn't support "-interaction=nonstopmode"<a href="motion.txt.html#%2C" class="d">,</a> please
+report <a href="motion.txt.html#it" class="d">it</a> with different means to express \nonstopmode from the command line.
+
+<span class="h">=============================================================================</span>
+7. The error format                                     <a name="error-file-format" class="t">error-file-format</a>
+
+                                        <a name="errorformat" class="t">errorformat</a> <a name="E372" class="t">E372</a> <a name="E373" class="t">E373</a> <a name="E374" class="t">E374</a>
+                                                <a name="E375" class="t">E375</a> <a name="E376" class="t">E376</a> <a name="E377" class="t">E377</a> <a name="E378" class="t">E378</a>
+The <a href="options.txt.html#%27errorformat%27" class="o">'errorformat'</a> option specifies <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of formats that are recognized.  The
+first format that matches with an error message <a href="motion.txt.html#is" class="d">is</a> used.  You can add several
+formats for different <a href="message.txt.html#messages" class="d">messages</a> your compiler produces, or even entries for
+multiple compilers.  See <a href="#efm-entries" class="l">efm-entries</a><a href="repeat.txt.html#." class="d">.</a>
+
+Each entry in <a href="options.txt.html#%27errorformat%27" class="o">'errorformat'</a> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> scanf-like <a href="eval.txt.html#string" class="d">string</a> that describes the format.
+First, you need to know how scanf works.  Look in the documentation of your
+<a href="change.txt.html#C" class="d">C</a> compiler.  Below you find the <a href="motion.txt.html#%25" class="d">%</a> items that Vim understands.  Others are
+invalid.
+
+<a href="eval.txt.html#Special" class="d">Special</a> characters in <a href="options.txt.html#%27errorformat%27" class="o">'errorformat'</a> are comma and backslash.  See
+<a href="#efm-entries" class="l">efm-entries</a> for how to deal with them.  <span class="n">Note</span> that <a href="insert.txt.html#a" class="d">a</a> literal "<a href="motion.txt.html#%25" class="d">%</a>" <a href="motion.txt.html#is" class="d">is</a> matched
+by "%%"<a href="motion.txt.html#%2C" class="d">,</a> thus <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> not escaped with <a href="insert.txt.html#a" class="d">a</a> backslash.
+Keep in mind that in the <span class="e">:make</span> and <span class="e">:grep</span> output all NUL characters are
+replaced with SOH (0x01).
+
+<span class="n">Note:</span> By default the difference between upper and <a href="change.txt.html#lowercase" class="d">lowercase</a> <a href="motion.txt.html#is" class="d">is</a> ignored.  If
+you want to match case, add "\C" to the <a href="pattern.txt.html#pattern" class="d">pattern</a> <a href="pattern.txt.html#%2F%5CC" class="l">/\C</a><a href="repeat.txt.html#." class="d">.</a>
+
+
+Basic items
+
+        %f              file name (finds <a href="insert.txt.html#a" class="d">a</a> string)
+        %o              module name (finds <a href="insert.txt.html#a" class="d">a</a> string)
+        %l              line number (finds <a href="insert.txt.html#a" class="d">a</a> number)
+        %c              column number (finds <a href="insert.txt.html#a" class="d">a</a> number representing character
+                        column of the error, (1 <span class="s">&lt;tab&gt;</span> <a href="change.txt.html#%3D%3D" class="d">==</a> 1 character column))
+        %v              virtual column number (finds <a href="insert.txt.html#a" class="d">a</a> number representing
+                        screen column of the error (1 <span class="s">&lt;tab&gt;</span> <a href="change.txt.html#%3D%3D" class="d">==</a> 8 screen
+                        columns))
+        %t              error type (finds <a href="insert.txt.html#a" class="d">a</a> single character)
+        %n              error number (finds <a href="insert.txt.html#a" class="d">a</a> number)
+        %m              error message (finds <a href="insert.txt.html#a" class="d">a</a> string)
+        %r              matches the "rest" of <a href="insert.txt.html#a" class="d">a</a> single-line file message %O/P/Q
+        %p              pointer line (finds <a href="insert.txt.html#a" class="d">a</a> sequence of '-', '.', <a href="motion.txt.html#%27" class="d">'</a> <a href="motion.txt.html#%27" class="d">'</a> or
+                        tabs and uses the length for the column number)
+        <a href="motion.txt.html#%25" class="d">%</a>*<span class="s">{conv}</span>        any scanf non-assignable conversion
+        %%              the single '%' character
+        %s              search text (finds <a href="insert.txt.html#a" class="d">a</a> string)
+
+The "%f" conversion may depend on the current <a href="options.txt.html#%27isfname%27" class="o">'isfname'</a> setting.  "~/" <a href="motion.txt.html#is" class="d">is</a>
+expanded to the <a href="intro.txt.html#home" class="d">home</a> directory and environment <a href="eval.txt.html#variables" class="d">variables</a> are expanded.
+
+The "%f" and "%m" conversions have to detect the <a href="intro.txt.html#end" class="d">end</a> of the string.  This
+normally happens by matching following characters and items.  When nothing <a href="motion.txt.html#is" class="d">is</a>
+following the rest of the line <a href="motion.txt.html#is" class="d">is</a> matched.  If "%f" <a href="motion.txt.html#is" class="d">is</a> followed by <a href="insert.txt.html#a" class="d">a</a> '%' or <a href="insert.txt.html#a" class="d">a</a>
+backslash, <a href="motion.txt.html#it" class="d">it</a> will look for <a href="insert.txt.html#a" class="d">a</a> sequence of <a href="options.txt.html#%27isfname%27" class="o">'isfname'</a> characters.
+
+On MS-DOS, <a href="os_win32.txt.html#MS-Windows" class="d">MS-Windows</a> and <a href="os_os2.txt.html#OS%2F2" class="d">OS/2</a> <a href="insert.txt.html#a" class="d">a</a> leading "C:" will be included in "%f"<a href="motion.txt.html#%2C" class="d">,</a> even
+when using "%f:"<a href="repeat.txt.html#." class="d">.</a>  This means that <a href="insert.txt.html#a" class="d">a</a> file name which <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> single alphabetical
+<a href="print.txt.html#letter" class="d">letter</a> will not be detected.
+
+The "%p" conversion <a href="motion.txt.html#is" class="d">is</a> normally followed by <a href="insert.txt.html#a" class="d">a</a> "<a href="motion.txt.html#%5E" class="d">^</a>"<a href="repeat.txt.html#." class="d">.</a>  It's used for compilers
+that output <a href="insert.txt.html#a" class="d">a</a> line like: 
+<span class="e">            ^</span>
+or 
+<span class="e">   ---------^</span>
+to indicate the column of the error.  This <a href="motion.txt.html#is" class="d">is</a> to be used in <a href="insert.txt.html#a" class="d">a</a> multi-line error
+message.  See <a href="#errorformat-javac" class="l">errorformat-javac</a> for <a href="insert.txt.html#a" class="d">a</a>  useful example.
+
+The "%s" conversion specifies the text to search for, to locate the error line.
+The text <a href="motion.txt.html#is" class="d">is</a> used <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> literal string.  The anchors "<a href="motion.txt.html#%5E" class="d">^</a>" and "<a href="motion.txt.html#%24" class="d">$</a>" are added to
+the text to locate the error line exactly matching the search text and the
+text <a href="motion.txt.html#is" class="d">is</a> prefixed with the "\V" atom to make <a href="motion.txt.html#it" class="d">it</a> "very nomagic"<a href="repeat.txt.html#." class="d">.</a>  The "%s"
+conversion can be used to locate lines without <a href="insert.txt.html#a" class="d">a</a> line number in the error
+output.  Like the output of the "<a href="#grep" class="d">grep</a>" shell command.
+When the <a href="pattern.txt.html#pattern" class="d">pattern</a> <a href="motion.txt.html#is" class="d">is</a> present the line number will not be used.
+
+The "%o" conversion specifies the module name in <a href="#quickfix" class="d">quickfix</a> entry.  If present
+<a href="motion.txt.html#it" class="d">it</a> will be used in <a href="#quickfix" class="d">quickfix</a> error <a href="windows.txt.html#window" class="d">window</a> instead of the filename.  The module
+name <a href="motion.txt.html#is" class="d">is</a> used only for displaying purposes, the file name <a href="motion.txt.html#is" class="d">is</a> used when jumping
+to the file.
+
+Changing directory
+
+The following <a href="change.txt.html#uppercase" class="d">uppercase</a> conversion characters specify the type of special
+format strings.  At most one of them may be given <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> prefix <a href="motion.txt.html#at" class="d">at</a> the begin
+of <a href="insert.txt.html#a" class="d">a</a> single comma-separated format pattern.
+Some compilers produce <a href="message.txt.html#messages" class="d">messages</a> that consist of directory names that have to
+be prepended to each file name read by %f (example: GNU make).  The following
+codes can be used to scan these directory names; they will be stored in an
+internal directory stack.                                       <a name="E379" class="t">E379</a>
+        %D              "enter directory" format string; expects <a href="insert.txt.html#a" class="d">a</a> following
+                          %f that finds the directory name
+        %X              "leave directory" format string; expects following %f
+
+When defining an "enter directory" or "leave directory" format, the "%D" or
+"%X" has to be given <a href="motion.txt.html#at" class="d">at</a> the start of that substring.  Vim tracks the directory
+changes and prepends the current directory to each erroneous file found with <a href="insert.txt.html#a" class="d">a</a>
+relative path.  See <a href="#quickfix-directory-stack" class="l">quickfix-directory-stack</a> for details, <a href="tips.txt.html#tips" class="d">tips</a> and
+limitations.
+
+
+Multi-line <a href="message.txt.html#messages" class="d">messages</a>                             <a name="errorformat-multi-line" class="t">errorformat-multi-line</a>
+
+It <a href="motion.txt.html#is" class="d">is</a> possible to read the output of programs that produce multi-line
+messages, i.e. error strings that consume more than one line.  Possible
+prefixes are:
+        %E              start of <a href="insert.txt.html#a" class="d">a</a> multi-line error message
+        %W              start of <a href="insert.txt.html#a" class="d">a</a> multi-line warning message
+        %I              start of <a href="insert.txt.html#a" class="d">a</a> multi-line informational message
+        %A              start of <a href="insert.txt.html#a" class="d">a</a> multi-line message (unspecified type)
+        %&gt;              for next line start with current <a href="pattern.txt.html#pattern" class="d">pattern</a> again <a href="#efm-%25%3E" class="l">efm-%&gt;</a>
+        %C              continuation of <a href="insert.txt.html#a" class="d">a</a> multi-line message
+        %Z              <a href="intro.txt.html#end" class="d">end</a> of <a href="insert.txt.html#a" class="d">a</a> multi-line message
+These can be used with '+' and '-', see <a href="#efm-ignore" class="l">efm-ignore</a> below.
+
+Using "\n" in the <a href="pattern.txt.html#pattern" class="d">pattern</a> won't work to match multi-line messages.
+
+Example: Your compiler happens to write out <a href="message.txt.html#errors" class="d">errors</a> in the following format
+(leading line numbers not being part of the actual output):
+
+<span class="h">     1  Error 275 </span>
+<span class="h">     2  line 42 </span>
+<span class="h">     3  column 3 </span>
+<span class="h">     4  ' ' expected after '--' </span>
+
+The appropriate error format <a href="eval.txt.html#string" class="d">string</a> has to look like this: 
+<span class="e">   :set efm=%EError\ %n,%Cline\ %l,%Ccolumn\ %c,%Z%m</span>
+<span class="e"></span>
+And the <a href="#%3Aclist" class="l">:clist</a> error message generated for this error is:
+
+ 1:42 col 3 error 275:  <a href="motion.txt.html#%27" class="d">'</a> <a href="motion.txt.html#%27" class="d">'</a> expected after '--'
+
+Another example: Think of <a href="insert.txt.html#a" class="d">a</a> <a href="if_pyth.txt.html#Python" class="d">Python</a> interpreter that produces the following
+error message (line numbers are not part of the actual output):
+
+     1  ==============================================================
+     2  FAIL: testGetTypeIdCachesResult (dbfacadeTest.DjsDBFacadeTest)
+     3  --------------------------------------------------------------
+     4  Traceback (most recent call last):
+     5    File "unittests/dbfacadeTest.py"<a href="motion.txt.html#%2C" class="d">,</a> line 89, in testFoo
+     6      self.assertEquals(34, dtid)
+     7    File "/usr/lib/python2.2/unittest.py"<a href="motion.txt.html#%2C" class="d">,</a> line 286, in
+     8   failUnlessEqual
+     9      raise self.failureException, \
+    10  AssertionError: 34 != 33
+    11
+    12  --------------------------------------------------------------
+    13  Ran 27 tests in 0.063s
+
+Say you want <a href="#%3Aclist" class="l">:clist</a> write the relevant information of this message only,
+namely:
+ 5 unittests/dbfacadeTest.py:89:  AssertionError: 34 != 33
+
+Then the error format <a href="eval.txt.html#string" class="d">string</a> could be defined <a href="motion.txt.html#as" class="d">as</a> follows: 
+<span class="e">  :set efm=%C\ %.%#,%A\ \ File\ \"%f\"\\,\ line\ %l%.%#,%Z%[%^\ ]%\\@=%m</span>
+<span class="e"></span>
+<span class="n">Note</span> that the %C <a href="eval.txt.html#string" class="d">string</a> <a href="motion.txt.html#is" class="d">is</a> given before the %A here: since the <a href="eval.txt.html#expression" class="d">expression</a>
+<a href="motion.txt.html#%27" class="d">'</a> %.%#' (which stands for the regular <a href="eval.txt.html#expression" class="d">expression</a> <a href="motion.txt.html#%27" class="d">'</a> <a href="repeat.txt.html#." class="d">.</a>*<a href="motion.txt.html#%27%29" class="d">')</a> matches every line
+<a href="starting.txt.html#starting" class="d">starting</a> with <a href="insert.txt.html#a" class="d">a</a> space, followed by any characters to the <a href="intro.txt.html#end" class="d">end</a> of the line,
+<a href="motion.txt.html#it" class="d">it</a> also hides line 7 which would trigger <a href="insert.txt.html#a" class="d">a</a> separate error message otherwise.
+Error format strings are always parsed <a href="pattern.txt.html#pattern" class="d">pattern</a> by <a href="pattern.txt.html#pattern" class="d">pattern</a> until the first
+match occurs.
+                                                        <a name="efm-%25%3E" class="t">efm-%&gt;</a>
+The %&gt; item can be used to avoid trying patterns that appear earlier in
+<a href="options.txt.html#%27errorformat%27" class="o">'errorformat'</a>.  This <a href="motion.txt.html#is" class="d">is</a> useful for patterns that match just about anything.
+For example, if the error looks like this:
+
+<span class="h">        Error in line 123 of foo.c: </span>
+<span class="h">        unknown variable "i" </span>
+
+This can be found with: 
+<span class="e">        :set efm=xxx,%E%&gt;Error in line %l of %f:,%Z%m</span>
+Where "xxx" has <a href="insert.txt.html#a" class="d">a</a> <a href="pattern.txt.html#pattern" class="d">pattern</a> that would also match the second line.
+
+Important: There <a href="motion.txt.html#is" class="d">is</a> no memory of what part of the <a href="#errorformat" class="d">errorformat</a> matched before;
+every line in the error file gets <a href="insert.txt.html#a" class="d">a</a> complete new run through the error format
+lines.  For example, if one has: 
+<span class="e">  setlocal efm=aa,bb,cc,dd,ee</span>
+Where aa, bb, etc. are error format strings.  Each line of the error file will
+be matched to the <a href="pattern.txt.html#pattern" class="d">pattern</a> aa, then bb, then cc, etc.  Just because <a href="change.txt.html#cc" class="d">cc</a> matched
+the previous error line does _not_ mean that <a href="change.txt.html#dd" class="d">dd</a> will be tried first on the
+current line, even if <a href="change.txt.html#cc" class="d">cc</a> and <a href="change.txt.html#dd" class="d">dd</a> are multi-line <a href="#errorformat" class="d">errorformat</a> strings.
+
+
+
+Separate file name                      <a name="errorformat-separate-filename" class="t">errorformat-separate-filename</a>
+
+These prefixes are useful if the file name <a href="motion.txt.html#is" class="d">is</a> given once and multiple <a href="message.txt.html#messages" class="d">messages</a>
+follow that refer to this file name.
+        %O              single-line file message: overread the matched part
+        %P              single-line file message: push file %f onto the stack
+        %Q              single-line file message: pop the last file from stack
+
+Example: Given <a href="insert.txt.html#a" class="d">a</a> compiler that produces the following error logfile (without
+leading line numbers):
+
+     1  [a1.tt]
+     2  (1,17)  error: ';' missing
+     3  (21,2)  warning: variable 'z' not defined
+     4  (67,3)  error: <a href="intro.txt.html#end" class="d">end</a> of file found before <a href="eval.txt.html#string" class="d">string</a> ended
+     5
+     6  [a2.tt]
+     7
+     8  [a3.tt]
+     9  NEW compiler v1.1
+    10  (2,2)   warning: variable 'x' not defined
+    11  (67,3)  warning: 's' already defined
+
+This logfile lists several <a href="message.txt.html#messages" class="d">messages</a> for each file enclosed in [...] which are
+properly parsed by an error format like this: 
+<span class="e">  :set efm=%+P[%f],(%l\\,%c)%*[\ ]%t%*[^:]:\ %m,%-Q</span>
+<span class="e"></span>
+<a href="insert.txt.html#A" class="d">A</a> call of <a href="#%3Aclist" class="l">:clist</a> writes them accordingly with their correct filenames:
+
+  2 a1.tt:1 col 17 error: ';' missing
+  3 a1.tt:21 col 2 warning: variable 'z' not defined
+  4 a1.tt:67 col 3 error: <a href="intro.txt.html#end" class="d">end</a> of file found before <a href="eval.txt.html#string" class="d">string</a> ended
+  8 a3.tt:2 col 2 warning: variable 'x' not defined
+  9 a3.tt:67 col 3 warning: 's' already defined
+
+Unlike the other prefixes that all match against whole lines, %P, %Q and %O
+can be used to match several patterns in the same line.  Thus <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> possible
+to parse even nested files like in the following line:
+  <span class="s">{"file1" {"file2" error1}</span> error2 <span class="s">{"file3" error3 {"file4" error4 error5}</span>}}
+The %O then parses over strings that <a href="diff.txt.html#do" class="d">do</a> not contain any push/pop file name
+information.  See <a href="#errorformat-LaTeX" class="l">errorformat-LaTeX</a> for an extended example.
+
+
+Ignoring and using whole <a href="message.txt.html#messages" class="d">messages</a>                       <a name="efm-ignore" class="t">efm-ignore</a>
+
+The codes '+' or '-' can be combined with the <a href="change.txt.html#uppercase" class="d">uppercase</a> codes above; in that
+<a href="change.txt.html#case" class="d">case</a> they have to precede the letter, e.g. '%+A' or '%-G':
+        %-              <a href="diff.txt.html#do" class="d">do</a> not include the matching multi-line in any output
+        %+              include the whole matching line in the %m error <a href="eval.txt.html#string" class="d">string</a>
+
+One prefix <a href="motion.txt.html#is" class="d">is</a> only useful in combination with '+' or '-', namely %G.  It parses
+over lines containing general information like compiler version strings or
+other headers that can be skipped.
+        %-G             ignore this message
+        %+G             general message
+
+
+<a href="pattern.txt.html#Pattern" class="d">Pattern</a> matching
+
+The scanf()-like "<a href="motion.txt.html#%25" class="d">%</a>*<a href="motion.txt.html#%5B%5D" class="d">[]</a>" <a href="intro.txt.html#notation" class="d">notation</a> <a href="motion.txt.html#is" class="d">is</a> supported for backward-compatibility
+with previous versions of Vim.  However, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> also possible to specify
+(nearly) any Vim supported regular <a href="eval.txt.html#expression" class="d">expression</a> in format strings.
+Since <a href="intro.txt.html#meta" class="d">meta</a> characters of the regular <a href="eval.txt.html#expression" class="d">expression</a> language can be part of
+ordinary matching strings or file names (and therefore internally have to
+be escaped), <a href="intro.txt.html#meta" class="d">meta</a> symbols have to be written with leading '%':
+        %\              The single '\' character.  <span class="n">Note</span> that this has to be
+                        escaped <a href="motion.txt.html#%28" class="d">(</a>"%\\"<a href="motion.txt.html#%29" class="d">)</a> in "<a href="options.txt.html#%3Aset" class="d">:set</a> errorformat=" definitions.
+        %.              The single '.' character.
+        %#              The single <a href="motion.txt.html#%27" class="d">'</a>*'(!) character.
+        %^              The single '^' character.  <span class="n">Note</span> that this <a href="motion.txt.html#is" class="d">is</a> not
+                        useful, the <a href="pattern.txt.html#pattern" class="d">pattern</a> already matches start of line.
+        %$              The single '$' character.  <span class="n">Note</span> that this <a href="motion.txt.html#is" class="d">is</a> not
+                        useful, the <a href="pattern.txt.html#pattern" class="d">pattern</a> already matches <a href="intro.txt.html#end" class="d">end</a> of line.
+        %[              The single '[' character for <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%5B%5D" class="d">[]</a> character range.
+        %~              The single '~' character.
+When using character classes in expressions (see <a href="pattern.txt.html#%2F%5Ci" class="l">/\i</a> for an overview),
+terms containing the "\+" quantifier can be written in the scanf() "<a href="motion.txt.html#%25" class="d">%</a>*"
+notation.  Example: "%\\d%\\+" <a href="motion.txt.html#%28" class="d">(</a>"\d\+"<a href="motion.txt.html#%2C" class="d">,</a> "any number"<a href="motion.txt.html#%29" class="d">)</a> <a href="motion.txt.html#is" class="d">is</a> equivalent to "<a href="motion.txt.html#%25" class="d">%</a>*\\d"<a href="repeat.txt.html#." class="d">.</a>
+Important <span class="n">note:</span> The \(...\) grouping of sub-matches can not be used in format
+specifications because <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> reserved for internal conversions.
+
+
+Multiple entries in <a href="options.txt.html#%27errorformat%27" class="o">'errorformat'</a>                       <a name="efm-entries" class="t">efm-entries</a>
+
+To be able to detect output from several compilers, several format patterns
+may be <a href="change.txt.html#put" class="d">put</a> in <a href="options.txt.html#%27errorformat%27" class="o">'errorformat'</a>, separated by commas (note: blanks after the comma
+are ignored).  The first <a href="pattern.txt.html#pattern" class="d">pattern</a> that has <a href="insert.txt.html#a" class="d">a</a> complete match <a href="motion.txt.html#is" class="d">is</a> used.  If no
+match <a href="motion.txt.html#is" class="d">is</a> found, matching parts from the last one will be used, although the
+file name <a href="motion.txt.html#is" class="d">is</a> removed and the error message <a href="motion.txt.html#is" class="d">is</a> set to the whole message.  If
+there <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> <a href="pattern.txt.html#pattern" class="d">pattern</a> that may match output from several compilers (but not in <a href="insert.txt.html#a" class="d">a</a>
+right way), <a href="change.txt.html#put" class="d">put</a> <a href="motion.txt.html#it" class="d">it</a> after one that <a href="motion.txt.html#is" class="d">is</a> more restrictive.
+
+To include <a href="insert.txt.html#a" class="d">a</a> comma in <a href="insert.txt.html#a" class="d">a</a> <a href="pattern.txt.html#pattern" class="d">pattern</a> precede <a href="motion.txt.html#it" class="d">it</a> with <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#backslash" class="d">backslash</a> (you have to type
+two in <a href="insert.txt.html#a" class="d">a</a> "<a href="options.txt.html#%3Aset" class="d">:set</a>" command).  To include <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#backslash" class="d">backslash</a> itself give two backslashes
+(you have to type four in <a href="insert.txt.html#a" class="d">a</a> "<a href="options.txt.html#%3Aset" class="d">:set</a>" command).  You also need to <a href="change.txt.html#put" class="d">put</a> <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#backslash" class="d">backslash</a>
+before <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#space" class="d">space</a> for "<a href="options.txt.html#%3Aset" class="d">:set</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+
+Valid matches                                           <a name="quickfix-valid" class="t">quickfix-valid</a>
+
+If <a href="insert.txt.html#a" class="d">a</a> line does not completely match one of the entries in <a href="options.txt.html#%27errorformat%27" class="o">'errorformat'</a>, the
+whole line <a href="motion.txt.html#is" class="d">is</a> <a href="change.txt.html#put" class="d">put</a> in the error message and the entry <a href="motion.txt.html#is" class="d">is</a> marked "not valid"
+These lines are skipped with the "<a href="#%3Acn" class="d">:cn</a>" and "<a href="#%3Acp" class="d">:cp</a>" commands (unless there <a href="motion.txt.html#is" class="d">is</a>
+no valid line <a href="motion.txt.html#at" class="d">at</a> all).  You can use ":cl!" to display all the error messages.
+
+If the error format does not contain <a href="insert.txt.html#a" class="d">a</a> file name Vim cannot switch to the
+correct file.  You will have to <a href="diff.txt.html#do" class="d">do</a> this by hand.
+
+
+Examples
+
+The format of the file from the <a href="os_amiga.txt.html#Amiga" class="d">Amiga</a> Aztec compiler is:
+
+        filename&gt;linenumber:columnnumber:errortype:errornumber:errormessage
+
+        filename        name of the file in which the error was detected
+        linenumber      line number where the error was detected
+        columnnumber    column number where the error was detected
+        errortype       type of the error, normally <a href="insert.txt.html#a" class="d">a</a> single 'E' or 'W'
+        errornumber     number of the error (for lookup in the manual)
+        errormessage    description of the error
+
+This can be matched with this <a href="options.txt.html#%27errorformat%27" class="o">'errorformat'</a> entry:
+        %f&gt;%l:%c:%t:%n:%m
+
+Some examples for <a href="change.txt.html#C" class="d">C</a> compilers that produce single-line error outputs:
+%f:%l:\ %t%*[^0123456789]%n:\ %m        for Manx/Aztec <a href="change.txt.html#C" class="d">C</a> error <a href="message.txt.html#messages" class="d">messages</a>
+                                        (scanf() doesn't understand <span class="s">[0-9]</span>)
+%f\ %l\ %t%*[^0-9]%n:\ %m               for SAS <a href="change.txt.html#C" class="d">C</a>
+\"%f\"\\,%*[^0-9]%l:\ %m                for generic <a href="change.txt.html#C" class="d">C</a> compilers
+%f:%l:\ %m                              for GCC
+%f:%l:\ %m,%Dgmake[%*\\d]:\ Entering\ directory\ `%f',
+%Dgmake[%*\\d]:\ Leaving\ directory\ `%f'
+                                        for GCC with gmake (concat the lines!)
+%f(%l)\ :\ <a href="motion.txt.html#%25" class="d">%</a>*[^:]:\ %m                  old SCO <a href="change.txt.html#C" class="d">C</a> compiler (pre-OS5)
+%f(%l)\ :\ %t%*[^0-9]%n:\ %m            idem, with error type and number
+%f:%l:\ %m,In\ file\ included\ from\ %f:%l:,\^I\^Ifrom\ %f:%l%m
+                                        for GCC, with some extras
+
+Extended examples for the handling of multi-line <a href="message.txt.html#messages" class="d">messages</a> are given below,
+see <a href="#errorformat-Jikes" class="l">errorformat-Jikes</a> and <a href="#errorformat-LaTeX" class="l">errorformat-LaTeX</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="n">Note</span> the <a href="intro.txt.html#backslash" class="d">backslash</a> in front of <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#space" class="d">space</a> and double <a href="change.txt.html#quote." class="d">quote.</a>  It <a href="motion.txt.html#is" class="d">is</a> required for
+the <a href="options.txt.html#%3Aset" class="d">:set</a> command.  There are two backslashes in front of <a href="insert.txt.html#a" class="d">a</a> comma, one for the
+<a href="options.txt.html#%3Aset" class="d">:set</a> command and one to avoid recognizing the comma <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> separator of error
+formats.
+
+
+Filtering <a href="message.txt.html#messages" class="d">messages</a>
+
+If you have <a href="insert.txt.html#a" class="d">a</a> compiler that produces error <a href="message.txt.html#messages" class="d">messages</a> that <a href="diff.txt.html#do" class="d">do</a> not fit in the
+format string, you could write <a href="insert.txt.html#a" class="d">a</a> program that translates the error <a href="message.txt.html#messages" class="d">messages</a>
+into this format.  You can use this program with the "<a href="#%3Amake" class="d">:make</a>" command by
+<a href="change.txt.html#changing" class="d">changing</a> the <a href="options.txt.html#%27makeprg%27" class="o">'makeprg'</a> option.  For example: 
+<span class="e">   :set mp=make\ \\\|&amp;\ error_filter</span>
+The backslashes before the pipe character are required to avoid <a href="motion.txt.html#it" class="d">it</a> to be
+recognized <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> command separator.  The <a href="intro.txt.html#backslash" class="d">backslash</a> before each <a href="intro.txt.html#space" class="d">space</a> <a href="motion.txt.html#is" class="d">is</a>
+required for the set command.
+
+<span class="h">=============================================================================</span>
+8. The directory stack                          <a name="quickfix-directory-stack" class="t">quickfix-directory-stack</a>
+
+<a href="#Quickfix" class="d">Quickfix</a> maintains <a href="insert.txt.html#a" class="d">a</a> stack for saving all used directories parsed from the
+make output.  For GNU-make this <a href="motion.txt.html#is" class="d">is</a> rather simple, <a href="motion.txt.html#as" class="d">as</a> <a href="motion.txt.html#it" class="d">it</a> always prints the
+absolute path of all directories <a href="motion.txt.html#it" class="d">it</a> enters and leaves.  Regardless if this <a href="motion.txt.html#is" class="d">is</a>
+done via <a href="insert.txt.html#a" class="d">a</a> <a href="options.txt.html#%27cd%27" class="o">'cd'</a> command in the makefile or with the parameter "<a href="starting.txt.html#-C" class="d">-C</a> dir" (change
+to directory before reading the makefile).  It may be useful to use the switch
+"<a href="starting.txt.html#-w" class="d">-w</a>" to force GNU-make to print out the working directory before and after
+processing.
+
+Maintaining the correct directory <a href="motion.txt.html#is" class="d">is</a> more complicated if you don't use
+GNU-make.  AIX-make for example doesn't print any information about its
+working directory.  Then you need to enhance the makefile.  In the makefile of
+LessTif there <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> command which echoes "Making <span class="s">{target}</span> in <span class="s">{dir}</span>"<a href="repeat.txt.html#." class="d">.</a>  The
+special problem here <a href="motion.txt.html#is" class="d">is</a> that <a href="motion.txt.html#it" class="d">it</a> doesn't print information on leaving the
+directory and that <a href="motion.txt.html#it" class="d">it</a> doesn't print the absolute path.
+
+To solve the problem with relative paths and missing "leave directory"
+<a href="message.txt.html#messages" class="d">messages</a> Vim uses following algorithm:
+
+1) Check if the given directory <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> subdirectory of the current directory.
+   If this <a href="motion.txt.html#is" class="d">is</a> true, store <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#as" class="d">as</a> the current directory.
+2) If <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> not <a href="insert.txt.html#a" class="d">a</a> subdir of the current directory, try if this <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a>
+   subdirectory of one of the upper directories.
+3) If the directory still isn't found, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> assumed to be <a href="insert.txt.html#a" class="d">a</a> subdirectory
+   of Vim's current directory.
+
+Additionally <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> checked for every file, if <a href="motion.txt.html#it" class="d">it</a> really exists in the
+identified directory.  If not, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> searched in all other directories of the
+directory stack (NOT the directory subtree!).  If <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> still not found, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a>
+assumed that <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> in Vim's current directory.
+
+There are limitations in this algorithm.  These examples assume that make just
+prints information about entering <a href="insert.txt.html#a" class="d">a</a> directory in the form "Making all in dir"<a href="repeat.txt.html#." class="d">.</a>
+
+1) Assume you have following directories and files:
+   ./dir1
+   ./dir1/file1.c
+   ./file1.c
+
+   If make processes the directory "./dir1" before the current directory and
+   there <a href="motion.txt.html#is" class="d">is</a> an error in the file "./file1.c"<a href="motion.txt.html#%2C" class="d">,</a> you will <a href="intro.txt.html#end" class="d">end</a> up with the file
+   "./dir1/file.c" loaded by Vim.
+
+   This can only be solved with <a href="insert.txt.html#a" class="d">a</a> "leave directory" message.
+
+2) Assume you have following directories and files:
+   ./dir1
+   ./dir1/dir2
+   ./dir2
+
+   You get the following:
+
+   Make output                    Directory interpreted by Vim
+   ------------------------       ----------------------------
+   Making all in dir1             ./dir1
+   Making all in dir2             ./dir1/dir2
+   Making all in dir2             ./dir1/dir2
+
+   This can be solved by <a href="print.txt.html#printing" class="d">printing</a> absolute directories in the "enter directory"
+   message or by <a href="print.txt.html#printing" class="d">printing</a> "leave directory" messages.
+
+To avoid this problem, ensure to print absolute directory names and "leave
+directory" messages.
+
+Examples for Makefiles:
+
+Unix:
+    libs:
+            for dn in $(LIBDIRS); <a href="diff.txt.html#do" class="d">do</a>                            \
+                (cd $$dn; echo "Entering dir '$$(pwd)'"<a href="motion.txt.html#%3B" class="d">;</a> make); \
+                echo "Leaving dir"<a href="motion.txt.html#%3B" class="d">;</a>                             \
+            done
+
+Add
+    %DEntering\ dir\ '%f',%XLeaving\ dir
+to your <a href="options.txt.html#%27errorformat%27" class="o">'errorformat'</a> to handle the above output.
+
+<span class="n">Note</span> that Vim doesn't check if the directory name in <a href="insert.txt.html#a" class="d">a</a> "leave directory"
+<a href="message.txt.html#messages" class="d">messages</a> <a href="motion.txt.html#is" class="d">is</a> the current directory.  This <a href="motion.txt.html#is" class="d">is</a> why you could just use the message
+"Leaving dir"<a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">=============================================================================</span>
+9. Specific error file formats                  <a name="errorformats" class="t">errorformats</a>
+
+                                                <a name="errorformat-Jikes" class="t">errorformat-Jikes</a>
+Jikes(TM), <a href="insert.txt.html#a" class="d">a</a> source-to-bytecode Java compiler published by IBM Research,
+produces simple multi-line error messages.
+
+An <a href="options.txt.html#%27errorformat%27" class="o">'errorformat'</a> <a href="eval.txt.html#string" class="d">string</a> matching the produced <a href="message.txt.html#messages" class="d">messages</a> <a href="motion.txt.html#is" class="d">is</a> shown below.
+The following lines can be placed in the user's <a href="starting.txt.html#vimrc" class="l">vimrc</a> to overwrite Vim's
+recognized default formats, or see <a href="options.txt.html#%3Aset%2B%3D" class="l">:set+=</a> how to <a href="usr_90.txt.html#install" class="d">install</a> this format
+additionally to the default. 
+<span class="e"></span>
+<span class="e">  :set efm=%A%f:%l:%c:%*\\d:%*\\d:,</span>
+<span class="e">        \%C%*\\s%trror:%m,</span>
+<span class="e">        \%+C%*[^:]%trror:%m,</span>
+<span class="e">        \%C%*\\s%tarning:%m,</span>
+<span class="e">        \%C%m</span>
+
+Jikes(TM) produces <a href="insert.txt.html#a" class="d">a</a> single-line error message when invoked with the option
+"+E"<a href="motion.txt.html#%2C" class="d">,</a> and can be matched with the following: 
+<span class="e"></span>
+<span class="e">  :setl efm=%f:%l:%v:%*\\d:%*\\d:%*\\s%m</span>
+
+                                                <a name="errorformat-javac" class="t">errorformat-javac</a>
+This <a href="options.txt.html#%27errorformat%27" class="o">'errorformat'</a> has been reported to work well for javac, which outputs <a href="insert.txt.html#a" class="d">a</a>
+line with "<a href="motion.txt.html#%5E" class="d">^</a>" to indicate the column of the error: 
+<span class="e">  :setl efm=%A%f:%l:\ %m,%-Z%p^,%-C%.%#</span>
+or: 
+<span class="e">  :setl efm=%A%f:%l:\ %m,%+Z%p^,%+C%.%#,%-G%.%#</span>
+
+Here <a href="motion.txt.html#is" class="d">is</a> an alternative from Michael F. Lamb for <a href="os_unix.txt.html#Unix" class="d">Unix</a> that filters the <a href="message.txt.html#errors" class="d">errors</a>
+first: 
+<span class="e">  :setl errorformat=%Z%f:%l:\ %m,%A%p^,%-G%*[^sl]%.%#</span>
+<span class="e">  :setl makeprg=javac\ %:S\ 2&gt;&amp;1\ \\\|\ vim-javac-filter</span>
+<span class="e"></span>
+You need to <a href="change.txt.html#put" class="d">put</a> the following in "vim-javac-filter" somewhere in your path
+(e.g., in ~/bin) and make <a href="motion.txt.html#it" class="d">it</a> executable: 
+<span class="e">   #!/bin/sed -f</span>
+<span class="e">   /\^$/s/\t/\ /g;/:[0-9]\+:/{h;d};/^[ \t]*\^/G;</span>
+<span class="e"></span>
+In English, that sed script:
+<a href="motion.txt.html#-" class="d">-</a> Changes single tabs to single spaces and
+<a href="motion.txt.html#-" class="d">-</a> Moves the line with the filename, line number, error message to just after
+  the pointer line. That way, the unused error text between doesn't break
+  vim's notion of <a href="insert.txt.html#a" class="d">a</a> "multi-line message" and also doesn't force us to include
+  <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> "continuation of <a href="insert.txt.html#a" class="d">a</a> multi-line message."
+
+                                                <a name="errorformat-ant" class="t">errorformat-ant</a>
+For ant (http://jakarta.apache.org/) the above <a href="#errorformat" class="d">errorformat</a> has to be modified
+to honour the leading <span class="s">[javac]</span> in front of each javac output line: 
+<span class="e">  :set efm=%A\ %#[javac]\ %f:%l:\ %m,%-Z\ %#[javac]\ %p^,%-C%.%#</span>
+<span class="e"></span>
+The <a href="options.txt.html#%27errorformat%27" class="o">'errorformat'</a> can also be configured to handle ant together with either
+javac or jikes.  If you're using jikes, you should tell ant to use jikes' +E
+command line switch which forces jikes to generate one-line error messages.
+This <a href="motion.txt.html#is" class="d">is</a> what the second line (of <a href="insert.txt.html#a" class="d">a</a> build.xml file) below does: 
+<span class="e">  &lt;property name = "build.compiler"       value = "jikes"/&gt;</span>
+<span class="e">  &lt;property name = "build.compiler.emacs" value = "true"/&gt;</span>
+<span class="e"></span>
+The <a href="options.txt.html#%27errorformat%27" class="o">'errorformat'</a> which handles ant with both javac and jikes is: 
+<span class="e">  :set efm=\ %#[javac]\ %#%f:%l:%c:%*\\d:%*\\d:\ %t%[%^:]%#:%m,</span>
+<span class="e">           \%A\ %#[javac]\ %f:%l:\ %m,%-Z\ %#[javac]\ %p^,%-C%.%#</span>
+
+                                                <a name="errorformat-jade" class="t">errorformat-jade</a>
+parsing jade (see <a class="u" href="http://www.jclark.com/">http://www.jclark.com/</a>) <a href="message.txt.html#errors" class="d">errors</a> <a href="motion.txt.html#is" class="d">is</a> simple: 
+<span class="e">  :set efm=jade:%f:%l:%c:%t:%m</span>
+
+                                                <a name="errorformat-LaTeX" class="t">errorformat-LaTeX</a>
+The following <a href="motion.txt.html#is" class="d">is</a> an example how an <a href="options.txt.html#%27errorformat%27" class="o">'errorformat'</a> <a href="eval.txt.html#string" class="d">string</a> can be specified
+for the (La)TeX typesetting system which displays error <a href="message.txt.html#messages" class="d">messages</a> over
+multiple lines.  The output of "<a href="#%3Aclist" class="d">:clist</a>" and "<a href="#%3Acc" class="d">:cc</a>" etc. commands displays
+multi-lines in <a href="insert.txt.html#a" class="d">a</a> single line, leading white <a href="intro.txt.html#space" class="d">space</a> <a href="motion.txt.html#is" class="d">is</a> removed.
+It should be <a href="starting.txt.html#easy" class="d">easy</a> to adopt the above LaTeX <a href="#errorformat" class="d">errorformat</a> to any compiler output
+consisting of multi-line errors.
+
+The commands can be placed in <a href="insert.txt.html#a" class="d">a</a> <a href="starting.txt.html#vimrc" class="l">vimrc</a> file or some other Vim <a href="usr_41.txt.html#script" class="d">script</a> file,
+e.g. <a href="insert.txt.html#a" class="d">a</a> <a href="usr_41.txt.html#script" class="d">script</a> containing LaTeX related stuff which <a href="motion.txt.html#is" class="d">is</a> loaded only when editing
+LaTeX sources.
+Make sure to copy all lines of the example (in the given order), afterwards
+remove the comment lines.  For the '\' <a href="intro.txt.html#notation" class="d">notation</a> <a href="motion.txt.html#at" class="d">at</a> the start of some lines see
+<a href="repeat.txt.html#line-continuation" class="l">line-continuation</a><a href="repeat.txt.html#." class="d">.</a>
+
+                First prepare <a href="options.txt.html#%27makeprg%27" class="o">'makeprg'</a> such that LaTeX will report multiple
+                errors; <a href="diff.txt.html#do" class="d">do</a> not stop when the first error has occurred: 
+<span class="e"> :set makeprg=latex\ \\\\nonstopmode\ \\\\input\\{$*}</span>
+
+                Start of multi-line error messages: 
+<span class="e"> :set efm=%E!\ LaTeX\ %trror:\ %m,</span>
+<span class="e">        \%E!\ %m,</span>
+               Start of multi-line warning messages; the first two also
+                include the line number.  Meaning of some regular expressions:
+                  <a href="motion.txt.html#-" class="d">-</a> "%.%#"  <a href="motion.txt.html#%28" class="d">(</a>"<a href="repeat.txt.html#." class="d">.</a>*"<a href="motion.txt.html#%29" class="d">)</a>   matches <a href="insert.txt.html#a" class="d">a</a> (possibly empty) <a href="eval.txt.html#string" class="d">string</a>
+                  <a href="motion.txt.html#-" class="d">-</a> "<a href="motion.txt.html#%25" class="d">%</a>*\\d" <a href="motion.txt.html#%28" class="d">(</a>"\d\+"<a href="motion.txt.html#%29" class="d">)</a> matches <a href="insert.txt.html#a" class="d">a</a> number 
+<span class="e">        \%+WLaTeX\ %.%#Warning:\ %.%#line\ %l%.%#,</span>
+<span class="e">        \%+W%.%#\ at\ lines\ %l--%*\\d,</span>
+<span class="e">        \%WLaTeX\ %.%#Warning:\ %m,</span>
+               Possible continuations of error/warning messages; the first
+                one also includes the line number: 
+<span class="e">        \%Cl.%l\ %m,</span>
+<span class="e">        \%+C\ \ %m.,</span>
+<span class="e">        \%+C%.%#-%.%#,</span>
+<span class="e">        \%+C%.%#[]%.%#,</span>
+<span class="e">        \%+C[]%.%#,</span>
+<span class="e">        \%+C%.%#%[{}\\]%.%#,</span>
+<span class="e">        \%+C&lt;%.%#&gt;%.%#,</span>
+<span class="e">        \%C\ \ %m,</span>
+               Lines that match the following patterns <a href="diff.txt.html#do" class="d">do</a> not contain any
+                important information; <a href="diff.txt.html#do" class="d">do</a> not include them in messages: 
+<span class="e">        \%-GSee\ the\ LaTeX%m,</span>
+<span class="e">        \%-GType\ \ H\ &lt;return&gt;%m,</span>
+<span class="e">        \%-G\ ...%.%#,</span>
+<span class="e">        \%-G%.%#\ (C)\ %.%#,</span>
+<span class="e">        \%-G(see\ the\ transcript%.%#),</span>
+               Generally exclude any empty or whitespace-only line from
+                being displayed: 
+<span class="e">        \%-G\\s%#,</span>
+               The LaTeX output log does not specify the names of erroneous
+                source files per line; rather they are given globally,
+                enclosed in parentheses.
+                The following patterns try to match these names and store
+                them in an internal stack.  The patterns possibly scan over
+                the same input line (one after another), the trailing "%r"
+                conversion indicates the "rest" of the line that will be
+                parsed in the next <a href="motion.txt.html#go" class="d">go</a> until the <a href="intro.txt.html#end" class="d">end</a> of line <a href="motion.txt.html#is" class="d">is</a> reached.
+
+                Overread <a href="insert.txt.html#a" class="d">a</a> file name enclosed in '('...')'; <a href="diff.txt.html#do" class="d">do</a> not push <a href="motion.txt.html#it" class="d">it</a>
+                on <a href="insert.txt.html#a" class="d">a</a> stack since the file apparently does not contain any
+                error: 
+<span class="e">        \%+O(%f)%r,</span>
+               Push <a href="insert.txt.html#a" class="d">a</a> file name onto the stack.  The name <a href="motion.txt.html#is" class="d">is</a> given after '(': 
+<span class="e">        \%+P(%f%r,</span>
+<span class="e">        \%+P\ %\\=(%f%r,</span>
+<span class="e">        \%+P%*[^()](%f%r,</span>
+<span class="e">        \%+P[%\\d%[^()]%#(%f%r,</span>
+               Pop the last stored file name when <a href="insert.txt.html#a" class="d">a</a> ')' <a href="motion.txt.html#is" class="d">is</a> scanned: 
+<span class="e">        \%+Q)%r,</span>
+<span class="e">        \%+Q%*[^()])%r,</span>
+<span class="e">        \%+Q[%\\d%*[^()])%r</span>
+<span class="e"></span>
+<span class="n">Note</span> that in some cases file names in the LaTeX output log cannot be parsed
+properly.  The parser might have been messed up by unbalanced parentheses
+then.  The above example tries to catch the most relevant cases only.
+You can customize the given setting to suit your own purposes, for example,
+all the annoying "Overfull <a href="eval.txt.html#..." class="d">...</a>" warnings could be excluded from being
+recognized <a href="motion.txt.html#as" class="d">as</a> an error.
+Alternatively to filtering the LaTeX compiler output, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> also possible
+to directly read the *.log file that <a href="motion.txt.html#is" class="d">is</a> produced by the <span class="s">[La]</span>TeX compiler.
+This contains even more useful information about possible error causes.
+However, to properly parse such <a href="insert.txt.html#a" class="d">a</a> complex file, an external <a href="change.txt.html#filter" class="d">filter</a> should
+be used.  See the description further above how to make such <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#filter" class="d">filter</a> known
+by Vim.
+
+                                                <a name="errorformat-Perl" class="t">errorformat-Perl</a>
+In $VIMRUNTIME/tools you can find the efm_perl.pl script, which filters <a href="if_perl.txt.html#Perl" class="d">Perl</a>
+error <a href="message.txt.html#messages" class="d">messages</a> into <a href="insert.txt.html#a" class="d">a</a> format that <a href="#quickfix" class="d">quickfix</a> mode will understand.  See the
+start of the file about how to use it.  (This <a href="usr_41.txt.html#script" class="d">script</a> <a href="motion.txt.html#is" class="d">is</a> deprecated, see
+<a href="#compiler-perl" class="l">compiler-perl</a>.)
+
+
+
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

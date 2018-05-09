@@ -1,0 +1,156 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: hebrew.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="hebrew.txt" class="t">hebrew.txt</a>    For <span class="i">Vim version 8.0.</span>  Last change: 2007 Jun 14
+
+
+           <span class="i">VIM REFERENCE MANUAL    by Ron Aaron (and Avner Lottem)</span>
+
+
+Hebrew Language support (options <a href="change.txt.html#%26" class="d">&amp;</a> mapping) for Vim             <a name="hebrew" class="t">hebrew</a>
+
+The supporting <a href="options.txt.html#%27rightleft%27" class="o">'rightleft'</a> functionality was originally created by Avner
+Lottem. <span class="s">&lt;alottem at gmail dot com&gt;</span>  Ron Aaron <span class="s">&lt;ron at ronware dot org&gt;</span> <a href="motion.txt.html#is" class="d">is</a>
+currently helping support these features.
+
+<span class="s">{Vi does not have any of these commands}</span>
+
+All this <a href="motion.txt.html#is" class="d">is</a> only available when the <a href="various.txt.html#%2Brightleft" class="l">+rightleft</a> feature was enabled <a href="motion.txt.html#at" class="d">at</a>
+compile time.
+
+
+Introduction
+<span class="h">------------</span>
+Hebrew-specific <a href="options.txt.html#options" class="d">options</a> are <a href="options.txt.html#%27hkmap%27" class="o">'hkmap'</a>, <a href="options.txt.html#%27hkmapp%27" class="o">'hkmapp'</a> <a href="options.txt.html#%27keymap%27" class="o">'keymap'</a>=hebrew and <a href="options.txt.html#%27aleph%27" class="o">'aleph'</a>.
+Hebrew-useful <a href="options.txt.html#options" class="d">options</a> are <a href="options.txt.html#%27delcombine%27" class="o">'delcombine'</a>, <a href="options.txt.html#%27allowrevins%27" class="o">'allowrevins'</a>, <a href="options.txt.html#%27revins%27" class="o">'revins'</a>, <a href="options.txt.html#%27rightleft%27" class="o">'rightleft'</a>
+and <a href="options.txt.html#%27rightleftcmd%27" class="o">'rightleftcmd'</a>.
+
+The <a href="options.txt.html#%27rightleft%27" class="o">'rightleft'</a> mode reverses the display order, so characters are displayed
+from right to left instead of the usual left to right.  This <a href="motion.txt.html#is" class="d">is</a> useful
+primarily when editing Hebrew or other Middle-Eastern languages.
+See <a href="rileft.txt.html#rileft.txt" class="l">rileft.txt</a> for further details.
+
+Details
+<span class="h">--------------</span>
+<a href="motion.txt.html#%2B" class="d">+</a>  Options:
+   <a href="motion.txt.html#%2B" class="d">+</a>  <a href="options.txt.html#%27rightleft%27" class="o">'rightleft'</a> ('rl') sets <a href="windows.txt.html#window" class="d">window</a> orientation to right-to-left.  This means
+      that the logical text 'ABC' will be displayed <a href="motion.txt.html#as" class="d">as</a> 'CBA', and will start
+      drawing <a href="motion.txt.html#at" class="d">at</a> the right edge of the window, not the left edge.
+   <a href="motion.txt.html#%2B" class="d">+</a>  <a href="options.txt.html#%27hkmap%27" class="o">'hkmap'</a> ('hk') sets keyboard <a href="map.txt.html#mapping" class="d">mapping</a> to Hebrew, in insert/replace modes.
+   <a href="motion.txt.html#%2B" class="d">+</a>  <a href="options.txt.html#%27aleph%27" class="o">'aleph'</a> ('al'), numeric, holds the decimal code of Aleph, for keyboard
+      mapping.
+   <a href="motion.txt.html#%2B" class="d">+</a>  <a href="options.txt.html#%27hkmapp%27" class="o">'hkmapp'</a> ('hkp') sets keyboard <a href="map.txt.html#mapping" class="d">mapping</a> to 'phonetic hebrew'
+
+   <span class="n">NOTE:</span> these three ('hkmap', <a href="options.txt.html#%27hkmapp%27" class="o">'hkmapp'</a> and <a href="options.txt.html#%27aleph%27" class="o">'aleph'</a>) are obsolete.  You should
+         use "<a href="options.txt.html#%3Aset" class="d">:set</a> keymap=hebrewp" instead.
+
+   <a href="motion.txt.html#%2B" class="d">+</a>  <a href="options.txt.html#%27delcombine%27" class="o">'delcombine'</a> ('deco'), boolean, if editing <a href="mbyte.txt.html#UTF-8" class="d">UTF-8</a> encoded Hebrew, allows
+      one to remove the niqud or te`amim by pressing 'x' on <a href="insert.txt.html#a" class="d">a</a> character (with
+      associated niqud).
+
+   <a href="motion.txt.html#%2B" class="d">+</a>  <a href="options.txt.html#%27rightleftcmd%27" class="o">'rightleftcmd'</a> ('rlc') makes the command-prompt for searches show up on
+      the right side.  It only takes effect if the <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> <a href="options.txt.html#%27rightleft%27" class="o">'rightleft'</a>.
+
+<a href="motion.txt.html#%2B" class="d">+</a>  Encoding:
+   <a href="motion.txt.html#%2B" class="d">+</a>  Under Unix, ISO 8859-8 encoding (Hebrew letters codes: 224-250).
+   <a href="motion.txt.html#%2B" class="d">+</a>  Under MS DOS, PC encoding (Hebrew letters codes: 128-154).
+      These are defaults, that can be overridden using the <a href="options.txt.html#%27aleph%27" class="o">'aleph'</a> option.
+   <a href="motion.txt.html#%2B" class="d">+</a>  You should prefer using UTF8, <a href="motion.txt.html#as" class="d">as</a> <a href="motion.txt.html#it" class="d">it</a> supports the combining-characters
+      ('deco' does nothing if UTF8 encoding <a href="motion.txt.html#is" class="d">is</a> not active).
+
+<a href="motion.txt.html#%2B" class="d">+</a>  Vim arguments:
+   <a href="motion.txt.html#%2B" class="d">+</a>  'vim <a href="starting.txt.html#-H" class="d">-H</a> file' starts editing <a href="insert.txt.html#a" class="d">a</a> Hebrew file, i.e. <a href="options.txt.html#%27rightleft%27" class="o">'rightleft'</a> and <a href="options.txt.html#%27hkmap%27" class="o">'hkmap'</a>
+      are set.
+
+<a href="motion.txt.html#%2B" class="d">+</a>  Keyboard:
+   <a href="motion.txt.html#%2B" class="d">+</a>  The <a href="options.txt.html#%27allowrevins%27" class="o">'allowrevins'</a> option enables the <span class="k">CTRL-_</span> command in <a href="insert.txt.html#Insert" class="d">Insert</a> mode and
+      in <a href="cmdline.txt.html#Command-line" class="d">Command-line</a> mode.
+
+   <a href="motion.txt.html#%2B" class="d">+</a>  <span class="k">CTRL-_</span> in insert/replace modes toggles <a href="options.txt.html#%27revins%27" class="o">'revins'</a> and <a href="options.txt.html#%27hkmap%27" class="o">'hkmap'</a> <a href="motion.txt.html#as" class="d">as</a> follows:
+
+      When in rightleft window, <a href="options.txt.html#%27revins%27" class="o">'revins'</a> and <a href="options.txt.html#%27nohkmap%27" class="o">'nohkmap'</a> are toggled, since
+      English will likely be inserted in this case.
+
+      When in norightleft window, <a href="options.txt.html#%27revins%27" class="o">'revins'</a> <a href="options.txt.html#%27hkmap%27" class="o">'hkmap'</a> are toggled, since Hebrew
+      will likely be inserted in this case.
+
+      <span class="k">CTRL-_</span> moves the cursor to the <a href="intro.txt.html#end" class="d">end</a> of the typed text.
+
+   <a href="motion.txt.html#%2B" class="d">+</a>  <span class="k">CTRL-_</span> in command mode only toggles keyboard <a href="map.txt.html#mapping" class="d">mapping</a> (see Bugs below).
+      This setting <a href="motion.txt.html#is" class="d">is</a> independent of <a href="options.txt.html#%27hkmap%27" class="o">'hkmap'</a> option, which only applies to
+      insert/replace mode.
+
+      <span class="n">Note:</span> On some keyboards, <span class="k">CTRL-_</span> <a href="motion.txt.html#is" class="d">is</a> mapped to <span class="k">CTRL-?</span>.
+
+   <a href="motion.txt.html#%2B" class="d">+</a>  Keyboard <a href="map.txt.html#mapping" class="d">mapping</a> while <a href="options.txt.html#%27hkmap%27" class="o">'hkmap'</a> <a href="motion.txt.html#is" class="d">is</a> set (standard Israeli keyboard):
+
+        <a href="repeat.txt.html#q" class="d">q</a> <a href="motion.txt.html#w" class="d">w</a> <a href="motion.txt.html#e" class="d">e</a> <a href="change.txt.html#r" class="d">r</a> <a href="motion.txt.html#t" class="d">t</a> <a href="change.txt.html#y" class="d">y</a> <a href="undo.txt.html#u" class="d">u</a> <a href="insert.txt.html#i" class="d">i</a> <a href="insert.txt.html#o" class="d">o</a> <a href="change.txt.html#p" class="d">p</a>
+        <a href="pattern.txt.html#%2F" class="d">/</a> <a href="motion.txt.html#%27" class="d">'</a> ק ר א ט ו ן ם פ
+
+         <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#s" class="d">s</a> <a href="change.txt.html#d" class="d">d</a> <a href="motion.txt.html#f" class="d">f</a> <a href="index.txt.html#g" class="d">g</a> <a href="motion.txt.html#h" class="d">h</a> <a href="motion.txt.html#j" class="d">j</a> <a href="motion.txt.html#k" class="d">k</a> <a href="motion.txt.html#l" class="d">l</a> <a href="motion.txt.html#%3B" class="d">;</a> <a href="motion.txt.html#%27" class="d">'</a>
+         ש ד ג כ ע י ח ל ך ף <a href="motion.txt.html#%2C" class="d">,</a>
+
+          <a href="index.txt.html#z" class="d">z</a> <a href="change.txt.html#x" class="d">x</a> <a href="change.txt.html#c" class="d">c</a> <a href="visual.txt.html#v" class="d">v</a> <a href="motion.txt.html#b" class="d">b</a> <a href="pattern.txt.html#n" class="d">n</a> <a href="motion.txt.html#m" class="d">m</a> <a href="motion.txt.html#%2C" class="d">,</a> <a href="repeat.txt.html#." class="d">.</a> <a href="pattern.txt.html#%2F" class="d">/</a>
+          ז ס ב ה נ מ צ ת ץ <a href="repeat.txt.html#." class="d">.</a>
+
+      This <a href="motion.txt.html#is" class="d">is</a> also the keymap when 'keymap=hebrew' <a href="motion.txt.html#is" class="d">is</a> set.  The advantage of
+      <a href="options.txt.html#%27keymap%27" class="o">'keymap'</a> <a href="motion.txt.html#is" class="d">is</a> that <a href="motion.txt.html#it" class="d">it</a> works properly when using UTF8, e.g. <a href="motion.txt.html#it" class="d">it</a> inserts the
+      correct characters; <a href="options.txt.html#%27hkmap%27" class="o">'hkmap'</a> does not.  The <a href="options.txt.html#%27keymap%27" class="o">'keymap'</a> keyboard can also
+      <a href="insert.txt.html#insert" class="d">insert</a> niqud and te`amim.  To see what those mappings are, look <a href="motion.txt.html#at" class="d">at</a> the
+      keymap file 'hebrew.vim' etc.
+
+
+Typing backwards
+
+If the <a href="options.txt.html#%27revins%27" class="o">'revins'</a> (reverse insert) option <a href="motion.txt.html#is" class="d">is</a> set, <a href="insert.txt.html#inserting" class="d">inserting</a> happens backwards.
+This can be used to type Hebrew.  When <a href="insert.txt.html#inserting" class="d">inserting</a> characters the cursor <a href="motion.txt.html#is" class="d">is</a> not
+moved and the text moves rightwards.  <a href="insert.txt.html#A" class="d">A</a> <a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a> deletes the character under the
+cursor.  <a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> and <a href="scroll.txt.html#CTRL-U" class="k">CTRL-U</a> also work in the opposite direction.  <a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a>, <a href="index.txt.html#CTRL-W" class="k">CTRL-W</a>
+and <a href="scroll.txt.html#CTRL-U" class="k">CTRL-U</a> <a href="diff.txt.html#do" class="d">do</a> not stop <a href="motion.txt.html#at" class="d">at</a> the start of <a href="insert.txt.html#insert" class="d">insert</a> or <a href="intro.txt.html#end" class="d">end</a> of line, no matter how
+the <a href="options.txt.html#%27backspace%27" class="o">'backspace'</a> option <a href="motion.txt.html#is" class="d">is</a> set.
+
+There <a href="motion.txt.html#is" class="d">is</a> no reverse replace mode (yet).
+
+If the <a href="options.txt.html#%27showmode%27" class="o">'showmode'</a> option <a href="motion.txt.html#is" class="d">is</a> set, "<a href="starting.txt.html#--" class="d">--</a> REVERSE INSERT <a href="starting.txt.html#--" class="d">--</a>" will be shown in the
+status line when reverse <a href="insert.txt.html#Insert" class="d">Insert</a> mode <a href="motion.txt.html#is" class="d">is</a> active.
+
+When the <a href="options.txt.html#%27allowrevins%27" class="o">'allowrevins'</a> option <a href="motion.txt.html#is" class="d">is</a> set, reverse <a href="insert.txt.html#Insert" class="d">Insert</a> mode can be also entered
+via <span class="k">CTRL-_</span>, which has some extra functionality: First, keyboard <a href="map.txt.html#mapping" class="d">mapping</a> <a href="motion.txt.html#is" class="d">is</a>
+changed according to the <a href="windows.txt.html#window" class="d">window</a> orientation <a href="starting.txt.html#--" class="d">--</a> if in <a href="insert.txt.html#a" class="d">a</a> left-to-right window,
+<a href="options.txt.html#%27revins%27" class="o">'revins'</a> <a href="motion.txt.html#is" class="d">is</a> used to enter Hebrew text, so the keyboard changes to Hebrew
+('hkmap' <a href="motion.txt.html#is" class="d">is</a> set); if in <a href="insert.txt.html#a" class="d">a</a> right-to-left window, <a href="options.txt.html#%27revins%27" class="o">'revins'</a> <a href="motion.txt.html#is" class="d">is</a> used to enter
+English text, so the keyboard changes to English ('hkmap' <a href="motion.txt.html#is" class="d">is</a> reset).  Second,
+when <a href="starting.txt.html#exiting" class="d">exiting</a> <a href="options.txt.html#%27revins%27" class="o">'revins'</a> via <span class="k">CTRL-_</span>, the cursor moves to the <a href="intro.txt.html#end" class="d">end</a> of the typed
+text (if possible).
+
+
+Pasting when in <a href="insert.txt.html#a" class="d">a</a> rightleft <a href="windows.txt.html#window" class="d">window</a>
+<span class="h">----------------------------------</span>
+When cutting text with the mouse and pasting <a href="motion.txt.html#it" class="d">it</a> in <a href="insert.txt.html#a" class="d">a</a> rightleft <a href="windows.txt.html#window" class="d">window</a>
+the text will be reversed, because the characters come from the cut buffer
+from the left to the right, while inserted in the file from the right to
+the left.   In order to avoid it, <a href="options.txt.html#toggle" class="d">toggle</a> <a href="options.txt.html#%27revins%27" class="o">'revins'</a> (by typing <span class="k">CTRL-?</span> or <span class="k">CTRL-_</span>)
+before pasting.
+
+
+Hebrew characters and the <a href="options.txt.html#%27isprint%27" class="o">'isprint'</a> variable
+<span class="h">--------------------------------------------</span>
+Sometimes Hebrew character codes are in the non-printable range defined by
+the <a href="options.txt.html#%27isprint%27" class="o">'isprint'</a> variable.  For example in the Linux console, the Hebrew font
+encoding starts from 128, while the default <a href="options.txt.html#%27isprint%27" class="o">'isprint'</a> variable <a href="motion.txt.html#is" class="d">is</a> @,161-255.
+The result <a href="motion.txt.html#is" class="d">is</a> that all Hebrew characters are displayed <a href="motion.txt.html#as" class="d">as</a> ~x.  To solve this
+problem, set isprint=@,128-255.
+
+
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

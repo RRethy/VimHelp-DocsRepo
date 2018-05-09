@@ -1,0 +1,1426 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: pattern.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="pattern.txt" class="t">pattern.txt</a>   For <span class="i">Vim version 8.0.</span>  Last change: 2018 Mar 13
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Bram Moolenaar</span>
+
+
+Patterns and search commands                            <a name="pattern-searches" class="t">pattern-searches</a>
+
+The very basics can be found in <a href="motion.txt.html#section" class="d">section</a> <a href="usr_03.txt.html#03.9" class="l">03.9</a> of the user manual.  <a href="insert.txt.html#A" class="d">A</a> few more
+explanations are in chapter 27 <a href="usr_27.txt.html#usr_27.txt" class="l">usr_27.txt</a><a href="repeat.txt.html#." class="d">.</a>
+
+1. Search commands              <a href="#search-commands" class="l">search-commands</a>
+2. The definition of <a href="insert.txt.html#a" class="d">a</a> <a href="#pattern" class="d">pattern</a>  <a href="#search-pattern" class="l">search-pattern</a>
+3. Magic                        <a href="#%2Fmagic" class="l">/magic</a>
+4. Overview of <a href="#pattern" class="d">pattern</a> items    <a href="#pattern-overview" class="l">pattern-overview</a>
+5. Multi items                  <a href="#pattern-multi-items" class="l">pattern-multi-items</a>
+6. Ordinary atoms               <a href="#pattern-atoms" class="l">pattern-atoms</a>
+7. Ignoring <a href="change.txt.html#case" class="d">case</a> in <a href="insert.txt.html#a" class="d">a</a> <a href="#pattern" class="d">pattern</a>   <a href="#%2Fignorecase" class="l">/ignorecase</a>
+8. Composing characters         <a href="#patterns-composing" class="l">patterns-composing</a>
+9. Compare with <a href="if_perl.txt.html#Perl" class="d">Perl</a> patterns   <a href="#perl-patterns" class="l">perl-patterns</a>
+10. Highlighting matches        <a href="#match-highlight" class="l">match-highlight</a>
+
+<span class="h">==============================================================================</span>
+1. Search commands                              <a name="search-commands" class="t">search-commands</a>
+
+                                                        <a name="%2F" class="t">/</a>
+/{pattern}[/]&lt;CR&gt;       Search forward for the <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a>'th occurrence of
+                        <span class="s">{pattern}</span> <a href="motion.txt.html#exclusive" class="l">exclusive</a><a href="repeat.txt.html#." class="d">.</a>
+
+/{pattern}/{offset}&lt;CR&gt; Search forward for the <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a>'th occurrence of
+                        <span class="s">{pattern}</span> and <a href="motion.txt.html#go" class="d">go</a> <a href="#%7Boffset%7D" class="l">{offset}</a> lines up or down.
+                        <a href="motion.txt.html#linewise" class="l">linewise</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="%2F%3CCR%3E" class="t">/&lt;CR&gt;</a>
+<a href="#%2F%3CCR%3E" class="d">/&lt;CR&gt;</a>                   Search forward for the <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a>'th occurrence of the
+                        latest used <a href="#pattern" class="d">pattern</a> <a href="#last-pattern" class="l">last-pattern</a> with latest used
+                        <a href="#%7Boffset%7D" class="l">{offset}</a><a href="repeat.txt.html#." class="d">.</a>
+
+//{offset}&lt;CR&gt;          Search forward for the <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a>'th occurrence of the
+                        latest used <a href="#pattern" class="d">pattern</a> <a href="#last-pattern" class="l">last-pattern</a> with new
+                        <a href="#%7Boffset%7D" class="l">{offset}</a><a href="repeat.txt.html#." class="d">.</a>  If <a href="#%7Boffset%7D" class="s">{offset}</a> <a href="motion.txt.html#is" class="d">is</a> empty no offset <a href="motion.txt.html#is" class="d">is</a> used.
+
+                                                        <a name="%3F" class="t">?</a>
+?{pattern}[?]&lt;CR&gt;       Search backward for the <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a>'th previous
+                        occurrence of <span class="s">{pattern}</span> <a href="motion.txt.html#exclusive" class="l">exclusive</a><a href="repeat.txt.html#." class="d">.</a>
+
+?{pattern}?{offset}&lt;CR&gt; Search backward for the <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a>'th previous
+                        occurrence of <span class="s">{pattern}</span> and <a href="motion.txt.html#go" class="d">go</a> <a href="#%7Boffset%7D" class="l">{offset}</a> lines up or
+                        down <a href="motion.txt.html#linewise" class="l">linewise</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="%3F%3CCR%3E" class="t">?&lt;CR&gt;</a>
+<a href="#%3F%3CCR%3E" class="d">?&lt;CR&gt;</a>                   Search backward for the <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a>'th occurrence of the
+                        latest used <a href="#pattern" class="d">pattern</a> <a href="#last-pattern" class="l">last-pattern</a> with latest used
+                        <a href="#%7Boffset%7D" class="l">{offset}</a><a href="repeat.txt.html#." class="d">.</a>
+
+??{offset}&lt;CR&gt;          Search backward for the <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a>'th occurrence of the
+                        latest used <a href="#pattern" class="d">pattern</a> <a href="#last-pattern" class="l">last-pattern</a> with new
+                        <a href="#%7Boffset%7D" class="l">{offset}</a><a href="repeat.txt.html#." class="d">.</a>  If <a href="#%7Boffset%7D" class="s">{offset}</a> <a href="motion.txt.html#is" class="d">is</a> empty no offset <a href="motion.txt.html#is" class="d">is</a> used.
+
+                                                        <a name="n" class="t">n</a>
+<a href="#n" class="d">n</a>                       Repeat the latest "<a href="#%2F" class="d">/</a>" or "<a href="#%3F" class="d">?</a>" <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> times.
+                        If the cursor doesn't move the search <a href="motion.txt.html#is" class="d">is</a> repeated with
+                        <a href="intro.txt.html#count" class="d">count</a> <a href="motion.txt.html#%2B" class="d">+</a> 1.
+                        <a href="#last-pattern" class="l">last-pattern</a> <span class="s">{Vi: no count}</span>
+
+                                                        <a name="N" class="t">N</a>
+<a href="#N" class="d">N</a>                       Repeat the latest "<a href="#%2F" class="d">/</a>" or "<a href="#%3F" class="d">?</a>" <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> times in
+                        opposite direction. <a href="#last-pattern" class="l">last-pattern</a> <span class="s">{Vi: no count}</span>
+
+                                                        <a name="star" class="t">star</a> <a name="E348" class="t">E348</a> <a name="E349" class="t">E349</a>
+*                       Search forward for the <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a>'th occurrence of the
+                        <a href="motion.txt.html#word" class="d">word</a> nearest to the cursor.  The <a href="motion.txt.html#word" class="d">word</a> used for the
+                        search <a href="motion.txt.html#is" class="d">is</a> the first of:
+                                1. the keyword under the cursor <a href="options.txt.html#%27iskeyword%27" class="l">'iskeyword'</a>
+                                2. the first keyword after the cursor, in the
+                                   current line
+                                3. the non-blank <a href="motion.txt.html#word" class="d">word</a> under the cursor
+                                4. the first non-blank <a href="motion.txt.html#word" class="d">word</a> after the cursor,
+                                   in the current line
+                        Only whole keywords are searched for, like with the
+                        command "/\&lt;keyword\&gt;"<a href="repeat.txt.html#." class="d">.</a>  <a href="motion.txt.html#exclusive" class="l">exclusive</a>  <span class="s">{not in Vi}</span>
+                        <a href="options.txt.html#%27ignorecase%27" class="o">'ignorecase'</a> <a href="motion.txt.html#is" class="d">is</a> used, <a href="options.txt.html#%27smartcase%27" class="o">'smartcase'</a> <a href="motion.txt.html#is" class="d">is</a> not.
+
+                                                        <a name="%23" class="t">#</a>
+<a href="#%23" class="d">#</a>                       Same <a href="motion.txt.html#as" class="d">as</a> "*"<a href="motion.txt.html#%2C" class="d">,</a> but search backward.  The pound sign
+                        (character 163) also works.  If the "<a href="#%23" class="d">#</a>" key works <a href="motion.txt.html#as" class="d">as</a>
+                        backspace, try using "stty erase <a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a>" before <a href="starting.txt.html#starting" class="d">starting</a>
+                        Vim (&lt;BS&gt; <a href="motion.txt.html#is" class="d">is</a> <a href="motion.txt.html#CTRL-H" class="k">CTRL-H</a> or <a href="insert.txt.html#a" class="d">a</a> real backspace).  <span class="s">{not in Vi}</span>
+
+                                                        <a name="gstar" class="t">gstar</a>
+<a href="index.txt.html#g" class="d">g</a>*                      Like "*"<a href="motion.txt.html#%2C" class="d">,</a> but don't <a href="change.txt.html#put" class="d">put</a> "\&lt;" and "\&gt;" around the word.
+                        This makes the search also find matches that are not <a href="insert.txt.html#a" class="d">a</a>
+                        whole word.  <span class="s">{not in Vi}</span>
+
+                                                        <a name="g%23" class="t">g#</a>
+<a href="#g%23" class="d">g#</a>                      Like "<a href="#%23" class="d">#</a>"<a href="motion.txt.html#%2C" class="d">,</a> but don't <a href="change.txt.html#put" class="d">put</a> "\&lt;" and "\&gt;" around the word.
+                        This makes the search also find matches that are not <a href="insert.txt.html#a" class="d">a</a>
+                        whole word.  <span class="s">{not in Vi}</span>
+
+                                                        <a name="gd" class="t">gd</a>
+<a href="#gd" class="d">gd</a>                      Goto local Declaration.  When the cursor <a href="motion.txt.html#is" class="d">is</a> on <a href="insert.txt.html#a" class="d">a</a> local
+                        variable, this command will jump to its declaration.
+                        First Vim searches for the start of the current
+                        function, just like "<a href="motion.txt.html#%5B%5B" class="d">[[</a>"<a href="repeat.txt.html#." class="d">.</a>  If <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> not found the
+                        search stops in line 1.  If <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> found, Vim goes back
+                        until <a href="insert.txt.html#a" class="d">a</a> blank line <a href="motion.txt.html#is" class="d">is</a> found.  From this position Vim
+                        searches for the keyword under the cursor, like with
+                        "*"<a href="motion.txt.html#%2C" class="d">,</a> but lines that look like <a href="insert.txt.html#a" class="d">a</a> comment are ignored
+                        (see <a href="options.txt.html#%27comments%27" class="o">'comments'</a> option).
+                        <span class="n">Note</span> that this <a href="motion.txt.html#is" class="d">is</a> not guaranteed to work, Vim does not
+                        really check the syntax, <a href="motion.txt.html#it" class="d">it</a> only searches for <a href="insert.txt.html#a" class="d">a</a> match
+                        with the keyword.  If included files also need to be
+                        searched use the commands listed in <a href="tagsrch.txt.html#include-search" class="l">include-search</a><a href="repeat.txt.html#." class="d">.</a>
+                        After this command <a href="#n" class="l">n</a> searches forward for the next
+                        match (not backward).
+                        <span class="s">{not in Vi}</span>
+
+                                                        <a name="gD" class="t">gD</a>
+<a href="#gD" class="d">gD</a>                      Goto global Declaration.  When the cursor <a href="motion.txt.html#is" class="d">is</a> on <a href="insert.txt.html#a" class="d">a</a>
+                        global variable that <a href="motion.txt.html#is" class="d">is</a> defined in the file, this
+                        command will jump to its declaration.  This works just
+                        like "<a href="#gd" class="d">gd</a>"<a href="motion.txt.html#%2C" class="d">,</a> except that the search for the keyword
+                        always starts in line 1.  <span class="s">{not in Vi}</span>
+
+                                                        <a name="1gd" class="t">1gd</a>
+<a href="#1gd" class="d">1gd</a>                     Like "<a href="#gd" class="d">gd</a>"<a href="motion.txt.html#%2C" class="d">,</a> but ignore matches inside <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#%7B%7D" class="d">{}</a> block that
+                        ends before the cursor position. <span class="s">{not in Vi}</span>
+
+                                                        <a name="1gD" class="t">1gD</a>
+<a href="#1gD" class="d">1gD</a>                     Like "<a href="#gD" class="d">gD</a>"<a href="motion.txt.html#%2C" class="d">,</a> but ignore matches inside <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#%7B%7D" class="d">{}</a> block that
+                        ends before the cursor position. <span class="s">{not in Vi}</span>
+
+                                                        <a name="CTRL-C" class="t">CTRL-C</a>
+<a href="#CTRL-C" class="k">CTRL-C</a>                  Interrupt current (search) command.  Use <a href="scroll.txt.html#CTRL-B" class="k">CTRL-B</a>reak on
+                        <a href="os_msdos.txt.html#MS-DOS" class="d">MS-DOS</a> <a href="os_dos.txt.html#dos-CTRL-Break" class="l">dos-CTRL-Break</a><a href="repeat.txt.html#." class="d">.</a>
+                        In <a href="intro.txt.html#Normal" class="d">Normal</a> mode, any pending command <a href="motion.txt.html#is" class="d">is</a> aborted.
+
+                                                        <a name="%3Anoh" class="t">:noh</a> <a name="%3Anohlsearch" class="t">:nohlsearch</a>
+:noh[lsearch]           Stop the highlighting for the <a href="options.txt.html#%27hlsearch%27" class="o">'hlsearch'</a> option.  It
+                        <a href="motion.txt.html#is" class="d">is</a> automatically turned back on when using <a href="insert.txt.html#a" class="d">a</a> search
+                        command, or setting the <a href="options.txt.html#%27hlsearch%27" class="o">'hlsearch'</a> option.
+                        This command doesn't work in an autocommand, because
+                        the highlighting state <a href="motion.txt.html#is" class="d">is</a> saved and restored when
+                        executing autocommands <a href="autocmd.txt.html#autocmd-searchpat" class="l">autocmd-searchpat</a><a href="repeat.txt.html#." class="d">.</a>
+                        Same thing for when invoking <a href="insert.txt.html#a" class="d">a</a> user function.
+
+While typing the search <a href="#pattern" class="d">pattern</a> the current match will be shown if the
+<a href="options.txt.html#%27incsearch%27" class="o">'incsearch'</a> option <a href="motion.txt.html#is" class="d">is</a> on.  Remember that you still have to finish the search
+command with <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a> to actually position the cursor <a href="motion.txt.html#at" class="d">at</a> the displayed match.  Or
+use <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a> to <a href="editing.txt.html#abandon" class="d">abandon</a> the search.
+
+All matches for the last used search <a href="#pattern" class="d">pattern</a> will be highlighted if you set
+the <a href="options.txt.html#%27hlsearch%27" class="o">'hlsearch'</a> option.  This can be suspended with the <a href="#%3Anohlsearch" class="l">:nohlsearch</a> command.
+
+When no match <a href="motion.txt.html#is" class="d">is</a> found you get the error: <a name="E486" class="t">E486</a> <a href="#Pattern" class="d">Pattern</a> not found
+<span class="n">Note</span> that for the <a href="repeat.txt.html#%3Aglobal" class="l">:global</a> command this behaves like <a href="insert.txt.html#a" class="d">a</a> normal message, for <a href="intro.txt.html#Vi" class="d">Vi</a>
+compatibility.  For the <a href="change.txt.html#%3As" class="l">:s</a> command the "<a href="motion.txt.html#e" class="d">e</a>" flag can be used to avoid the
+error message <a href="change.txt.html#%3As_flags" class="l">:s_flags</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                        <a name="search-offset" class="t">search-offset</a> <a name="%7Boffset%7D" class="t">{offset}</a>
+These commands search for the specified pattern.  With "<a href="#%2F" class="d">/</a>" and "<a href="#%3F" class="d">?</a>" an
+additional offset may be given.  There are two types of offsets: line offsets
+and character offsets.  <span class="s">{the character offsets are not in Vi}</span>
+
+The offset gives the cursor position relative to the found match:
+    <span class="s">[num]</span>       <span class="s">[num]</span> lines downwards, in column 1
+    +[num]      <span class="s">[num]</span> lines downwards, in column 1
+    -[num]      <span class="s">[num]</span> lines upwards, in column 1
+    e[+num]     <span class="s">[num]</span> characters to the right of the <a href="intro.txt.html#end" class="d">end</a> of the match
+    e[-num]     <span class="s">[num]</span> characters to the left of the <a href="intro.txt.html#end" class="d">end</a> of the match
+    s[+num]     <span class="s">[num]</span> characters to the right of the start of the match
+    s[-num]     <span class="s">[num]</span> characters to the left of the start of the match
+    b[+num]     <span class="s">[num]</span> identical to s[+num] above (mnemonic: begin)
+    b[-num]     <span class="s">[num]</span> identical to s[-num] above (mnemonic: begin)
+    ;{pattern}  perform another search, see <a href="#%2F%2F%3B" class="l">//;</a>
+
+If <a href="insert.txt.html#a" class="d">a</a> '-' or '+' <a href="motion.txt.html#is" class="d">is</a> given but <span class="s">[num]</span> <a href="motion.txt.html#is" class="d">is</a> omitted, <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> of one will be used.
+When including an offset with 'e', the search becomes <a href="motion.txt.html#inclusive" class="d">inclusive</a> (the
+character the cursor lands on <a href="motion.txt.html#is" class="d">is</a> included in operations).
+
+Examples:
+
+<span class="h">pattern                 cursor position </span>
+/test/+1                one line below "test"<a href="motion.txt.html#%2C" class="d">,</a> in column 1
+/test/e                 on the last <a href="motion.txt.html#t" class="d">t</a> of "test"
+/test/s+2               on the 's' of "test"
+/test/b-3               three characters before "test"
+
+If one of these commands <a href="motion.txt.html#is" class="d">is</a> used after an operator, the characters between
+the cursor position before and after the search <a href="motion.txt.html#is" class="d">is</a> affected.  However, if <a href="insert.txt.html#a" class="d">a</a>
+line offset <a href="motion.txt.html#is" class="d">is</a> given, the whole lines between the two cursor positions are
+affected.
+
+An example of how to search for matches with <a href="insert.txt.html#a" class="d">a</a> <a href="#pattern" class="d">pattern</a> and change the match
+with another word: 
+<span class="e">        /foo&lt;CR&gt;        find "foo"</span>
+<span class="e">        c//e&lt;CR&gt;        change until end of match</span>
+<span class="e">        bar&lt;Esc&gt;        type replacement</span>
+<span class="e">        //&lt;CR&gt;          go to start of next match</span>
+<span class="e">        c//e&lt;CR&gt;        change until end of match</span>
+<span class="e">        beep&lt;Esc&gt;       type another replacement</span>
+<span class="e">                        etc.</span>
+
+                                                        <a name="%2F%2F%3B" class="t">//;</a> <a name="E386" class="t">E386</a>
+<a href="insert.txt.html#A" class="d">A</a> very special offset <a href="motion.txt.html#is" class="d">is</a> ';' followed by another search command.  For example: 
+<span class="e"></span>
+<span class="e">   /test 1/;/test</span>
+<span class="e">   /test.*/+1;?ing?</span>
+<span class="e"></span>
+The first one first finds the next occurrence of "test 1"<a href="motion.txt.html#%2C" class="d">,</a> and then the first
+occurrence of "test" after that.
+
+This <a href="motion.txt.html#is" class="d">is</a> like executing two search commands after each other, except that:
+<a href="motion.txt.html#-" class="d">-</a> It can be used <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> single motion command after an operator.
+<a href="motion.txt.html#-" class="d">-</a> The direction for <a href="insert.txt.html#a" class="d">a</a> following "<a href="#n" class="d">n</a>" or "<a href="#N" class="d">N</a>" command comes from the first
+  search command.
+<a href="motion.txt.html#-" class="d">-</a> When an error occurs the cursor <a href="motion.txt.html#is" class="d">is</a> not moved <a href="motion.txt.html#at" class="d">at</a> all.
+
+                                                        <a name="last-pattern" class="t">last-pattern</a>
+The last used <a href="#pattern" class="d">pattern</a> and offset are remembered.  They can be used to repeat
+the search, possibly in another direction or with another count.  <span class="n">Note</span> that
+two patterns are remembered: One for <span class="o">'normal'</span> search commands and one for the
+substitute command "<a href="change.txt.html#%3As" class="d">:s</a>"<a href="repeat.txt.html#." class="d">.</a>  Each time an empty <a href="#pattern" class="d">pattern</a> <a href="motion.txt.html#is" class="d">is</a> given, the previously
+used <a href="#pattern" class="d">pattern</a> <a href="motion.txt.html#is" class="d">is</a> used.  However, if there <a href="motion.txt.html#is" class="d">is</a> no previous search command, <a href="insert.txt.html#a" class="d">a</a>
+previous substitute <a href="#pattern" class="d">pattern</a> <a href="motion.txt.html#is" class="d">is</a> used, if possible.
+
+The <a href="options.txt.html#%27magic%27" class="o">'magic'</a> option sticks with the last used pattern.  If you change <a href="options.txt.html#%27magic%27" class="o">'magic'</a>,
+this will not change how the last used <a href="#pattern" class="d">pattern</a> will be interpreted.
+The <a href="options.txt.html#%27ignorecase%27" class="o">'ignorecase'</a> option does not <a href="diff.txt.html#do" class="d">do</a> this.  When <a href="options.txt.html#%27ignorecase%27" class="o">'ignorecase'</a> <a href="motion.txt.html#is" class="d">is</a> changed, <a href="motion.txt.html#it" class="d">it</a>
+will result in the <a href="#pattern" class="d">pattern</a> to match other text.
+
+All matches for the last used search <a href="#pattern" class="d">pattern</a> will be highlighted if you set
+the <a href="options.txt.html#%27hlsearch%27" class="o">'hlsearch'</a> option.
+
+To clear the last used search pattern: 
+<span class="e">        :let @/ = ""</span>
+This will not set the <a href="#pattern" class="d">pattern</a> to an empty string, because that would match
+everywhere.  The <a href="#pattern" class="d">pattern</a> <a href="motion.txt.html#is" class="d">is</a> really cleared, like when <a href="starting.txt.html#starting" class="d">starting</a> Vim.
+
+The search usually skips matches that don't move the cursor.  Whether the next
+match <a href="motion.txt.html#is" class="d">is</a> found <a href="motion.txt.html#at" class="d">at</a> the next character or after the skipped match depends on the
+'c' flag in <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a>.  See <a href="options.txt.html#cpo-c" class="l">cpo-c</a><a href="repeat.txt.html#." class="d">.</a>
+           with 'c' flag:   "/..." advances 1 to 3 characters
+        without 'c' flag:   "/..." advances 1 character
+The unpredictability with the 'c' flag <a href="motion.txt.html#is" class="d">is</a> caused by <a href="starting.txt.html#starting" class="d">starting</a> the search in the
+first column, skipping matches until one <a href="motion.txt.html#is" class="d">is</a> found past the cursor position.
+
+When searching backwards, searching starts <a href="motion.txt.html#at" class="d">at</a> the start of the line, using the
+'c' flag in <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a> <a href="motion.txt.html#as" class="d">as</a> described above.  Then the last match before the
+cursor position <a href="motion.txt.html#is" class="d">is</a> used.
+
+In <a href="intro.txt.html#Vi" class="d">Vi</a> the "<a href="tagsrch.txt.html#%3Atag" class="d">:tag</a>" command sets the last search <a href="#pattern" class="d">pattern</a> when the <a href="tagsrch.txt.html#tag" class="d">tag</a> <a href="motion.txt.html#is" class="d">is</a> searched
+for.  In Vim this <a href="motion.txt.html#is" class="d">is</a> not done, the previous search <a href="#pattern" class="d">pattern</a> <a href="motion.txt.html#is" class="d">is</a> still remembered,
+unless the 't' flag <a href="motion.txt.html#is" class="d">is</a> present in <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a>.  The search <a href="#pattern" class="d">pattern</a> <a href="motion.txt.html#is" class="d">is</a> always
+<a href="change.txt.html#put" class="d">put</a> in the search history.
+
+If the <a href="options.txt.html#%27wrapscan%27" class="o">'wrapscan'</a> option <a href="motion.txt.html#is" class="d">is</a> on (which <a href="motion.txt.html#is" class="d">is</a> the default), searches wrap around
+the <a href="intro.txt.html#end" class="d">end</a> of the buffer.  If <a href="options.txt.html#%27wrapscan%27" class="o">'wrapscan'</a> <a href="motion.txt.html#is" class="d">is</a> not set, the backward search stops
+<a href="motion.txt.html#at" class="d">at</a> the beginning and the forward search stops <a href="motion.txt.html#at" class="d">at</a> the <a href="intro.txt.html#end" class="d">end</a> of the buffer.  If
+<a href="options.txt.html#%27wrapscan%27" class="o">'wrapscan'</a> <a href="motion.txt.html#is" class="d">is</a> set and the <a href="#pattern" class="d">pattern</a> was not found the error message "<a href="#pattern" class="d">pattern</a>
+not found" <a href="motion.txt.html#is" class="d">is</a> given, and the cursor will not be moved.  If <a href="options.txt.html#%27wrapscan%27" class="o">'wrapscan'</a> <a href="motion.txt.html#is" class="d">is</a> not
+set the message becomes "search hit BOTTOM without match" when searching
+forward, or "search hit TOP without match" when searching backward.  If
+wrapscan <a href="motion.txt.html#is" class="d">is</a> set and the search wraps around the <a href="intro.txt.html#end" class="d">end</a> of the file the message
+"search hit TOP, continuing <a href="motion.txt.html#at" class="d">at</a> BOTTOM" or "search hit BOTTOM, continuing <a href="motion.txt.html#at" class="d">at</a>
+TOP" <a href="motion.txt.html#is" class="d">is</a> given when searching backwards or forwards respectively.  This can be
+switched off by setting the 's' flag in the <a href="options.txt.html#%27shortmess%27" class="o">'shortmess'</a> option.  The highlight
+method 'w' <a href="motion.txt.html#is" class="d">is</a> used for this message (default: standout).
+
+                                                        <a name="search-range" class="t">search-range</a>
+You can limit the search command "<a href="#%2F" class="d">/</a>" to <a href="insert.txt.html#a" class="d">a</a> certain range of lines by including
+\%&gt;l items.  For example, to match the <a href="motion.txt.html#word" class="d">word</a> "limit" below line 199 and above
+line 300: 
+<span class="e">        /\%&gt;199l\%&lt;300llimit</span>
+Also see <a href="#%2F%5C%25%3El" class="l">/\%&gt;l</a><a href="repeat.txt.html#." class="d">.</a>
+
+Another way <a href="motion.txt.html#is" class="d">is</a> to use the "<a href="change.txt.html#%3Asubstitute" class="d">:substitute</a>" command with the 'c' flag.  Example: 
+<span class="e">   :.,300s/Pattern//gc</span>
+This command will search from the cursor position until line 300 for
+"<a href="#Pattern" class="d">Pattern</a>"<a href="repeat.txt.html#." class="d">.</a>  At the match, you will be asked to type <a href="insert.txt.html#a" class="d">a</a> character.  Type 'q' to
+stop <a href="motion.txt.html#at" class="d">at</a> this match, type 'n' to find the next match.
+
+The "*"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="#%23" class="d">#</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="index.txt.html#g" class="d">g</a>*" and "<a href="#g%23" class="d">g#</a>" commands look for <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> near the cursor in this
+order, the first one that <a href="motion.txt.html#is" class="d">is</a> found <a href="motion.txt.html#is" class="d">is</a> used:
+<a href="motion.txt.html#-" class="d">-</a> The keyword currently under the cursor.
+<a href="motion.txt.html#-" class="d">-</a> The first keyword to the right of the cursor, in the same line.
+<a href="motion.txt.html#-" class="d">-</a> The <a href="motion.txt.html#WORD" class="d">WORD</a> currently under the cursor.
+<a href="motion.txt.html#-" class="d">-</a> The first <a href="motion.txt.html#WORD" class="d">WORD</a> to the right of the cursor, in the same line.
+The keyword may only contain letters and characters in <a href="options.txt.html#%27iskeyword%27" class="o">'iskeyword'</a>.
+The <a href="motion.txt.html#WORD" class="d">WORD</a> may contain any non-blanks (&lt;Tab&gt;s and/or <a href="motion.txt.html#%3CSpace%3E" class="s">&lt;Space&gt;</a>s).
+<span class="n">Note</span> that if you type with ten fingers, the characters are <a href="starting.txt.html#easy" class="d">easy</a> to remember:
+the "<a href="#%23" class="d">#</a>" <a href="motion.txt.html#is" class="d">is</a> under your left hand middle finger (search to the left and up) and
+the "*" <a href="motion.txt.html#is" class="d">is</a> under your right hand middle finger (search to the right and down).
+(this depends on your keyboard layout though).
+
+<span class="h">==============================================================================</span>
+2. The definition of <a href="insert.txt.html#a" class="d">a</a> <a href="#pattern" class="d">pattern</a>          <a name="search-pattern" class="t">search-pattern</a> <a name="pattern" class="t">pattern</a> <a name="%5Bpattern%5D" class="t">[pattern]</a>
+                                        <a name="regular-expression" class="t">regular-expression</a> <a name="regexp" class="t">regexp</a> <a name="Pattern" class="t">Pattern</a>
+                                        <a name="E76" class="t">E76</a> <a name="E383" class="t">E383</a> <a name="E476" class="t">E476</a>
+
+For starters, read chapter 27 of the user manual <a href="usr_27.txt.html#usr_27.txt" class="l">usr_27.txt</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                <a name="%2Fbar" class="t">/bar</a> <a name="%2F%5Cbar" class="t">/\bar</a> <a name="%2Fpattern" class="t">/pattern</a>
+1. <a href="insert.txt.html#A" class="d">A</a> <a href="#pattern" class="d">pattern</a> <a href="motion.txt.html#is" class="d">is</a> one or more branches, separated by "\|"<a href="repeat.txt.html#." class="d">.</a>  It matches anything
+   that matches one of the branches.  Example: "foo\|<a href="options.txt.html#beep" class="d">beep</a>" matches "foo" and
+   matches "<a href="options.txt.html#beep" class="d">beep</a>"<a href="repeat.txt.html#." class="d">.</a>  If more than one branch matches, the first one <a href="motion.txt.html#is" class="d">is</a> used.
+
+   <a href="#pattern" class="d">pattern</a> ::=      branch
+                or  branch \| branch
+                or  branch \| branch \| branch
+                etc.
+
+                                                <a name="%2Fbranch" class="t">/branch</a> <a name="%2F%5C%26" class="t">/\&amp;</a>
+2. <a href="insert.txt.html#A" class="d">A</a> branch <a href="motion.txt.html#is" class="d">is</a> one or more concats, separated by "\&amp;"<a href="repeat.txt.html#." class="d">.</a>  It matches the last
+   concat, but only if all the preceding concats also match <a href="motion.txt.html#at" class="d">at</a> the same
+   position.  Examples:
+        "foobeep\&amp;..." matches "foo" in "foobeep"<a href="repeat.txt.html#." class="d">.</a>
+        "<a href="repeat.txt.html#." class="d">.</a>*Peter\&amp;.*Bob" matches in <a href="insert.txt.html#a" class="d">a</a> line containing both "Peter" and "Bob"
+
+   branch ::=       concat
+                or  concat \&amp; concat
+                or  concat \&amp; concat \&amp; concat
+                etc.
+
+                                                <a name="%2Fconcat" class="t">/concat</a>
+3. <a href="insert.txt.html#A" class="d">A</a> concat <a href="motion.txt.html#is" class="d">is</a> one or more pieces, concatenated.  It matches <a href="insert.txt.html#a" class="d">a</a> match for the
+   first piece, followed by <a href="insert.txt.html#a" class="d">a</a> match for the second piece, etc.  Example:
+   "f[0-9]b"<a href="motion.txt.html#%2C" class="d">,</a> first matches "<a href="motion.txt.html#f" class="d">f</a>"<a href="motion.txt.html#%2C" class="d">,</a> then <a href="insert.txt.html#a" class="d">a</a> digit and then "<a href="motion.txt.html#b" class="d">b</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+   concat  ::=      piece
+                or  piece piece
+                or  piece piece piece
+                etc.
+
+                                                <a name="%2Fpiece" class="t">/piece</a>
+4. <a href="insert.txt.html#A" class="d">A</a> piece <a href="motion.txt.html#is" class="d">is</a> an atom, possibly followed by <a href="insert.txt.html#a" class="d">a</a> multi, an indication of how many
+   times the atom can be matched.  Example: "<a href="insert.txt.html#a" class="d">a</a>*" matches any sequence of "<a href="insert.txt.html#a" class="d">a</a>"
+   characters: ""<a href="motion.txt.html#%2C" class="d">,</a> "<a href="insert.txt.html#a" class="d">a</a>"<a href="motion.txt.html#%2C" class="d">,</a> "aa"<a href="motion.txt.html#%2C" class="d">,</a> etc.  See <a href="#%2Fmulti" class="l">/multi</a><a href="repeat.txt.html#." class="d">.</a>
+
+   piece   ::=      atom
+                or  atom  multi
+
+                                                <a name="%2Fatom" class="t">/atom</a>
+5. An atom can be one of <a href="insert.txt.html#a" class="d">a</a> long <a href="eval.txt.html#list" class="d">list</a> of items.  Many atoms match one character
+   in the text.  It <a href="motion.txt.html#is" class="d">is</a> often an ordinary character or <a href="insert.txt.html#a" class="d">a</a> character class.
+   Braces can be used to make <a href="insert.txt.html#a" class="d">a</a> <a href="#pattern" class="d">pattern</a> into an atom.  The "\z(\)" construct
+   <a href="motion.txt.html#is" class="d">is</a> only for <a href="syntax.txt.html#syntax" class="d">syntax</a> highlighting.
+
+   atom    ::=      ordinary-atom               <a href="#%2Fordinary-atom" class="l">/ordinary-atom</a>
+                or  \( <a href="#pattern" class="d">pattern</a> \)               <a href="#%2F%5C%28" class="l">/\(</a>
+                or  \%( <a href="#pattern" class="d">pattern</a> \)              <a href="#%2F%5C%25%28" class="l">/\%(</a>
+                or  \z( <a href="#pattern" class="d">pattern</a> \)              <a href="syntax.txt.html#%2F%5Cz%28" class="l">/\z(</a>
+
+
+                                <a name="%2F%5C%25%23%3D" class="t">/\%#=</a> <a name="two-engines" class="t">two-engines</a> <a name="NFA" class="t">NFA</a>
+Vim includes two <a href="#regexp" class="d">regexp</a> engines:
+1. An old, backtracking engine that supports everything.
+2. <a href="insert.txt.html#A" class="d">A</a> new, <a href="#NFA" class="d">NFA</a> engine that works much faster on some patterns, possibly slower
+   on some patterns.
+
+Vim will automatically select the right engine for you.  However, if you run
+into <a href="insert.txt.html#a" class="d">a</a> problem or want to specifically select one engine or the other, you can
+prepend one of the following to the pattern:
+
+        \%#=0   Force automatic selection.  Only has an effect when
+                <a href="options.txt.html#%27regexpengine%27" class="o">'regexpengine'</a> has been set to <a href="insert.txt.html#a" class="d">a</a> non-zero value.
+        \%#=1   Force using the old engine.
+        \%#=2   Force using the <a href="#NFA" class="d">NFA</a> engine.
+
+You can also use the <a href="options.txt.html#%27regexpengine%27" class="o">'regexpengine'</a> option to change the default.
+
+                         <a name="E864" class="t">E864</a> <a name="E868" class="t">E868</a> <a name="E874" class="t">E874</a> <a name="E875" class="t">E875</a> <a name="E876" class="t">E876</a> <a name="E877" class="t">E877</a> <a name="E878" class="t">E878</a>
+If selecting the <a href="#NFA" class="d">NFA</a> engine and <a href="motion.txt.html#it" class="d">it</a> runs into something that <a href="motion.txt.html#is" class="d">is</a> not implemented
+the <a href="#pattern" class="d">pattern</a> will not match.  This <a href="motion.txt.html#is" class="d">is</a> only useful when debugging Vim.
+
+<span class="h">==============================================================================</span>
+3. Magic                                                        <a name="%2Fmagic" class="t">/magic</a>
+
+Some characters in the <a href="#pattern" class="d">pattern</a> are taken literally.  They match with the same
+character in the text.  When preceded with <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#backslash" class="d">backslash</a> however, these
+characters get <a href="insert.txt.html#a" class="d">a</a> special meaning.
+
+Other characters have <a href="insert.txt.html#a" class="d">a</a> special meaning without <a href="insert.txt.html#a" class="d">a</a> backslash.  They need to be
+preceded with <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#backslash" class="d">backslash</a> to match literally.
+
+If <a href="insert.txt.html#a" class="d">a</a> character <a href="motion.txt.html#is" class="d">is</a> taken literally or not depends on the <a href="options.txt.html#%27magic%27" class="o">'magic'</a> option and the
+items mentioned next.
+                                                        <a name="%2F%5Cm" class="t">/\m</a> <a name="%2F%5CM" class="t">/\M</a>
+Use of "\m" makes the <a href="#pattern" class="d">pattern</a> after <a href="motion.txt.html#it" class="d">it</a> be interpreted <a href="motion.txt.html#as" class="d">as</a> if <a href="options.txt.html#%27magic%27" class="o">'magic'</a> <a href="motion.txt.html#is" class="d">is</a> set,
+ignoring the actual value of the <a href="options.txt.html#%27magic%27" class="o">'magic'</a> option.
+Use of "\M" makes the <a href="#pattern" class="d">pattern</a> after <a href="motion.txt.html#it" class="d">it</a> be interpreted <a href="motion.txt.html#as" class="d">as</a> if <a href="options.txt.html#%27nomagic%27" class="o">'nomagic'</a> <a href="motion.txt.html#is" class="d">is</a> used.
+                                                        <a name="%2F%5Cv" class="t">/\v</a> <a name="%2F%5CV" class="t">/\V</a>
+Use of "\v" means that in the <a href="#pattern" class="d">pattern</a> after <a href="motion.txt.html#it" class="d">it</a> all ASCII characters except
+'0'-'9', 'a'-'z', 'A'-'Z' and '_' have <a href="insert.txt.html#a" class="d">a</a> special meaning.  "very magic"
+
+Use of "\V" means that in the <a href="#pattern" class="d">pattern</a> after <a href="motion.txt.html#it" class="d">it</a> only the <a href="intro.txt.html#backslash" class="d">backslash</a> and the
+terminating character (/ or ?) has <a href="insert.txt.html#a" class="d">a</a> special meaning.  "very nomagic"
+
+Examples:
+<span class="h">after:    \v       \m       \M       \V         matches </span>
+                <a href="options.txt.html#%27magic%27" class="o">'magic'</a> <a href="options.txt.html#%27nomagic%27" class="o">'nomagic'</a>
+          <a href="motion.txt.html#%24" class="d">$</a>        <a href="motion.txt.html#%24" class="d">$</a>        <a href="motion.txt.html#%24" class="d">$</a>        \$         matches end-of-line
+          <a href="repeat.txt.html#." class="d">.</a>        <a href="repeat.txt.html#." class="d">.</a>        \.       \.         matches any character
+          *        *        \*       \*         any number of the previous atom
+          <a href="change.txt.html#%7E" class="d">~</a>        <a href="change.txt.html#%7E" class="d">~</a>        \~       \~         latest substitute <a href="eval.txt.html#string" class="d">string</a>
+          ()       \(\)     \(\)     \(\)       grouping into an atom
+          |        \|       \|       \|         separating alternatives
+          \a       \a       \a       \a         alphabetic character
+          \\       \\       \\       \\         literal <a href="intro.txt.html#backslash" class="d">backslash</a>
+          \.       \.       <a href="repeat.txt.html#." class="d">.</a>        <a href="repeat.txt.html#." class="d">.</a>          literal dot
+          \{       <a href="motion.txt.html#%7B" class="d">{</a>        <a href="motion.txt.html#%7B" class="d">{</a>        <a href="motion.txt.html#%7B" class="d">{</a>          literal '{'
+          <a href="insert.txt.html#a" class="d">a</a>        <a href="insert.txt.html#a" class="d">a</a>        <a href="insert.txt.html#a" class="d">a</a>        <a href="insert.txt.html#a" class="d">a</a>          literal 'a'
+
+<span class="s">{only Vim supports \m, \M, \v and \V}</span>
+
+It <a href="motion.txt.html#is" class="d">is</a> recommended to always keep the <a href="options.txt.html#%27magic%27" class="o">'magic'</a> option <a href="motion.txt.html#at" class="d">at</a> the default setting,
+which <a href="motion.txt.html#is" class="d">is</a> <a href="options.txt.html#%27magic%27" class="o">'magic'</a>.  This avoids portability problems.  To make <a href="insert.txt.html#a" class="d">a</a> <a href="#pattern" class="d">pattern</a> immune
+to the <a href="options.txt.html#%27magic%27" class="o">'magic'</a> option being set or not, <a href="change.txt.html#put" class="d">put</a> "\m" or "\M" <a href="motion.txt.html#at" class="d">at</a> the start of the
+pattern.
+
+<span class="h">==============================================================================</span>
+4. Overview of <a href="#pattern" class="d">pattern</a> items                            <a name="pattern-overview" class="t">pattern-overview</a>
+                                                <a name="E865" class="t">E865</a> <a name="E866" class="t">E866</a> <a name="E867" class="t">E867</a> <a name="E869" class="t">E869</a>
+
+Overview of multi items.                                <a name="%2Fmulti" class="t">/multi</a> <a name="E61" class="t">E61</a> <a name="E62" class="t">E62</a>
+More explanation and examples below, follow the links.          <a name="E64" class="t">E64</a> <a name="E871" class="t">E871</a>
+
+<span class="h">          multi </span>
+<span class="h">     'magic' 'nomagic'  matches of the preceding atom </span>
+<a href="#%2Fstar" class="l">/star</a> *       \*      <a href="motion.txt.html#0" class="d">0</a> or more       <a href="motion.txt.html#as" class="d">as</a> many <a href="motion.txt.html#as" class="d">as</a> possible
+<a href="#%2F%5C%2B" class="l">/\+</a>   \+      \+      1 or more       <a href="motion.txt.html#as" class="d">as</a> many <a href="motion.txt.html#as" class="d">as</a> possible <a href="motion.txt.html#%28" class="d">(</a>*<a href="motion.txt.html#%29" class="d">)</a>
+<a href="#%2F%5C%3D" class="l">/\=</a>   \=      \=      <a href="motion.txt.html#0" class="d">0</a> or 1          <a href="motion.txt.html#as" class="d">as</a> many <a href="motion.txt.html#as" class="d">as</a> possible <a href="motion.txt.html#%28" class="d">(</a>*<a href="motion.txt.html#%29" class="d">)</a>
+<a href="#%2F%5C%3F" class="l">/\?</a>   \?      \?      <a href="motion.txt.html#0" class="d">0</a> or 1          <a href="motion.txt.html#as" class="d">as</a> many <a href="motion.txt.html#as" class="d">as</a> possible <a href="motion.txt.html#%28" class="d">(</a>*<a href="motion.txt.html#%29" class="d">)</a>
+
+<a href="#%2F%5C%7B" class="l">/\{</a>   \{n,m}  \{n,m}  <a href="#n" class="d">n</a> to <a href="motion.txt.html#m" class="d">m</a>          <a href="motion.txt.html#as" class="d">as</a> many <a href="motion.txt.html#as" class="d">as</a> possible <a href="motion.txt.html#%28" class="d">(</a>*<a href="motion.txt.html#%29" class="d">)</a>
+        \{n}    \{n}    <a href="#n" class="d">n</a>               exactly <a href="motion.txt.html#%28" class="d">(</a>*<a href="motion.txt.html#%29" class="d">)</a>
+        \{n,}   \{n,}   <a href="motion.txt.html#at" class="d">at</a> least <a href="#n" class="d">n</a>      <a href="motion.txt.html#as" class="d">as</a> many <a href="motion.txt.html#as" class="d">as</a> possible <a href="motion.txt.html#%28" class="d">(</a>*<a href="motion.txt.html#%29" class="d">)</a>
+        \{,m}   \{,m}   <a href="motion.txt.html#0" class="d">0</a> to <a href="motion.txt.html#m" class="d">m</a>          <a href="motion.txt.html#as" class="d">as</a> many <a href="motion.txt.html#as" class="d">as</a> possible <a href="motion.txt.html#%28" class="d">(</a>*<a href="motion.txt.html#%29" class="d">)</a>
+        \{}     \{}     <a href="motion.txt.html#0" class="d">0</a> or more       <a href="motion.txt.html#as" class="d">as</a> many <a href="motion.txt.html#as" class="d">as</a> possible (same <a href="motion.txt.html#as" class="d">as</a> *<a href="motion.txt.html#%29" class="d">)</a> <a href="motion.txt.html#%28" class="d">(</a>*<a href="motion.txt.html#%29" class="d">)</a>
+
+<a href="#%2F%5C%7B-" class="l">/\{-</a>  \{-n,m} \{-n,m} <a href="#n" class="d">n</a> to <a href="motion.txt.html#m" class="d">m</a>          <a href="motion.txt.html#as" class="d">as</a> few <a href="motion.txt.html#as" class="d">as</a> possible <a href="motion.txt.html#%28" class="d">(</a>*<a href="motion.txt.html#%29" class="d">)</a>
+        \{-n}   \{-n}   <a href="#n" class="d">n</a>               exactly <a href="motion.txt.html#%28" class="d">(</a>*<a href="motion.txt.html#%29" class="d">)</a>
+        \{-n,}  \{-n,}  <a href="motion.txt.html#at" class="d">at</a> least <a href="#n" class="d">n</a>      <a href="motion.txt.html#as" class="d">as</a> few <a href="motion.txt.html#as" class="d">as</a> possible <a href="motion.txt.html#%28" class="d">(</a>*<a href="motion.txt.html#%29" class="d">)</a>
+        \{-,m}  \{-,m}  <a href="motion.txt.html#0" class="d">0</a> to <a href="motion.txt.html#m" class="d">m</a>          <a href="motion.txt.html#as" class="d">as</a> few <a href="motion.txt.html#as" class="d">as</a> possible <a href="motion.txt.html#%28" class="d">(</a>*<a href="motion.txt.html#%29" class="d">)</a>
+        \{-}    \{-}    <a href="motion.txt.html#0" class="d">0</a> or more       <a href="motion.txt.html#as" class="d">as</a> few <a href="motion.txt.html#as" class="d">as</a> possible <a href="motion.txt.html#%28" class="d">(</a>*<a href="motion.txt.html#%29" class="d">)</a>
+
+                                                        <a name="E59" class="t">E59</a>
+<a href="#%2F%5C%40%3E" class="l">/\@&gt;</a>  \@&gt;     \@&gt;     1, like matching <a href="insert.txt.html#a" class="d">a</a> whole <a href="#pattern" class="d">pattern</a> <a href="motion.txt.html#%28" class="d">(</a>*<a href="motion.txt.html#%29" class="d">)</a>
+<a href="#%2F%5C%40%3D" class="l">/\@=</a>  \@=     \@=     nothing, requires <a href="insert.txt.html#a" class="d">a</a> match <a href="#%2Fzero-width" class="l">/zero-width</a> <a href="motion.txt.html#%28" class="d">(</a>*<a href="motion.txt.html#%29" class="d">)</a>
+<a href="#%2F%5C%40%21" class="l">/\@!</a>  \@!     \@!     nothing, requires NO match <a href="#%2Fzero-width" class="l">/zero-width</a> <a href="motion.txt.html#%28" class="d">(</a>*<a href="motion.txt.html#%29" class="d">)</a>
+<a href="#%2F%5C%40%3C%3D" class="l">/\@&lt;=</a> \@&lt;=    \@&lt;=    nothing, requires <a href="insert.txt.html#a" class="d">a</a> match behind <a href="#%2Fzero-width" class="l">/zero-width</a> <a href="motion.txt.html#%28" class="d">(</a>*<a href="motion.txt.html#%29" class="d">)</a>
+<a href="#%2F%5C%40%3C%21" class="l">/\@&lt;!</a> \@&lt;!    \@&lt;!    nothing, requires NO match behind <a href="#%2Fzero-width" class="l">/zero-width</a> <a href="motion.txt.html#%28" class="d">(</a>*<a href="motion.txt.html#%29" class="d">)</a>
+
+<a href="motion.txt.html#%28" class="d">(</a>*<a href="motion.txt.html#%29" class="d">)</a> <span class="s">{not in Vi}</span>
+
+
+Overview of ordinary atoms.                             <a name="%2Fordinary-atom" class="t">/ordinary-atom</a>
+More explanation and examples below, follow the links.
+
+<span class="h">      ordinary atom </span>
+<span class="h">      magic   nomagic   matches </span>
+<a href="#%2F%5E" class="l">/^</a>    <a href="motion.txt.html#%5E" class="d">^</a>       <a href="motion.txt.html#%5E" class="d">^</a>       start-of-line (at start of pattern) <a href="#%2Fzero-width" class="l">/zero-width</a>
+<a href="#%2F%5C%5E" class="l">/\^</a>   \^      \^      literal '^'
+<a href="#%2F%5C_%5E" class="l">/\_^</a>  \_^     \_^     start-of-line (used anywhere) <a href="#%2Fzero-width" class="l">/zero-width</a>
+<a href="#%2F%24" class="l">/$</a>    <a href="motion.txt.html#%24" class="d">$</a>       <a href="motion.txt.html#%24" class="d">$</a>       end-of-line (at <a href="intro.txt.html#end" class="d">end</a> of pattern) <a href="#%2Fzero-width" class="l">/zero-width</a>
+<a href="#%2F%5C%24" class="l">/\$</a>   \$      \$      literal '$'
+<a href="#%2F%5C_%24" class="l">/\_$</a>  \_$     \_$     end-of-line (used anywhere) <a href="#%2Fzero-width" class="l">/zero-width</a>
+<a href="#%2F." class="l">/.</a>    <a href="repeat.txt.html#." class="d">.</a>       \.      any single character (not an end-of-line)
+<a href="#%2F%5C_." class="l">/\_.</a>  \_.     \_.     any single character or end-of-line
+<a href="#%2F%5C%3C" class="l">/\&lt;</a>   \&lt;      \&lt;      beginning of <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> <a href="#%2Fzero-width" class="l">/zero-width</a>
+<a href="#%2F%5C%3E" class="l">/\&gt;</a>   \&gt;      \&gt;      <a href="intro.txt.html#end" class="d">end</a> of <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> <a href="#%2Fzero-width" class="l">/zero-width</a>
+<a href="#%2F%5Czs" class="l">/\zs</a>  \zs     \zs     anything, sets start of match
+<a href="#%2F%5Cze" class="l">/\ze</a>  \ze     \ze     anything, sets <a href="intro.txt.html#end" class="d">end</a> of match
+<a href="#%2F%5C%25%5E" class="l">/\%^</a>  \%^     \%^     beginning of file <a href="#%2Fzero-width" class="l">/zero-width</a>         <a name="E71" class="t">E71</a>
+<a href="#%2F%5C%25%24" class="l">/\%$</a>  \%$     \%$     <a href="intro.txt.html#end" class="d">end</a> of file <a href="#%2Fzero-width" class="l">/zero-width</a>
+<a href="#%2F%5C%25V" class="l">/\%V</a>  \%V     \%V     inside <a href="visual.txt.html#Visual" class="d">Visual</a> area <a href="#%2Fzero-width" class="l">/zero-width</a>
+<a href="#%2F%5C%25%23" class="l">/\%#</a>  \%#     \%#     cursor position <a href="#%2Fzero-width" class="l">/zero-width</a>
+<a href="#%2F%5C%25%27m" class="l">/\%'m</a> \%'m    \%'m    <a href="motion.txt.html#mark" class="d">mark</a> <a href="motion.txt.html#m" class="d">m</a> position <a href="#%2Fzero-width" class="l">/zero-width</a>
+<a href="#%2F%5C%25l" class="l">/\%l</a>  \%23l   \%23l   in line 23 <a href="#%2Fzero-width" class="l">/zero-width</a>
+<a href="#%2F%5C%25c" class="l">/\%c</a>  \%23c   \%23c   in column 23 <a href="#%2Fzero-width" class="l">/zero-width</a>
+<a href="#%2F%5C%25v" class="l">/\%v</a>  \%23v   \%23v   in virtual column 23 <a href="#%2Fzero-width" class="l">/zero-width</a>
+
+Character classes <span class="s">{not in Vi}</span>:                          <a name="%2Fcharacter-classes" class="t">/character-classes</a>
+<span class="h">      magic   nomagic   matches </span>
+<a href="#%2F%5Ci" class="l">/\i</a>   \i      \i      identifier character (see <a href="options.txt.html#%27isident%27" class="o">'isident'</a> option)
+<a href="#%2F%5CI" class="l">/\I</a>   \I      \I      like "\i"<a href="motion.txt.html#%2C" class="d">,</a> but excluding digits
+<a href="#%2F%5Ck" class="l">/\k</a>   \k      \k      keyword character (see <a href="options.txt.html#%27iskeyword%27" class="o">'iskeyword'</a> option)
+<a href="#%2F%5CK" class="l">/\K</a>   \K      \K      like "\k"<a href="motion.txt.html#%2C" class="d">,</a> but excluding digits
+<a href="#%2F%5Cf" class="l">/\f</a>   \f      \f      file name character (see <a href="options.txt.html#%27isfname%27" class="o">'isfname'</a> option)
+<a href="#%2F%5CF" class="l">/\F</a>   \F      \F      like "\f"<a href="motion.txt.html#%2C" class="d">,</a> but excluding digits
+<a href="#%2F%5Cp" class="l">/\p</a>   \p      \p      printable character (see <a href="options.txt.html#%27isprint%27" class="o">'isprint'</a> option)
+<a href="#%2F%5CP" class="l">/\P</a>   \P      \P      like "\p"<a href="motion.txt.html#%2C" class="d">,</a> but excluding digits
+<a href="#%2F%5Cs" class="l">/\s</a>   \s      \s      <a href="#whitespace" class="d">whitespace</a> character: <a href="motion.txt.html#%3CSpace%3E" class="s">&lt;Space&gt;</a> and <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a>
+<a href="#%2F%5CS" class="l">/\S</a>   \S      \S      non-whitespace character; opposite of \s
+<a href="#%2F%5Cd" class="l">/\d</a>   \d      \d      digit:                          <span class="s">[0-9]</span>
+<a href="#%2F%5CD" class="l">/\D</a>   \D      \D      non-digit:                      <span class="s">[^0-9]</span>
+<a href="#%2F%5Cx" class="l">/\x</a>   \x      \x      hex digit:                      <span class="s">[0-9A-Fa-f]</span>
+<a href="#%2F%5CX" class="l">/\X</a>   \X      \X      non-hex digit:                  <span class="s">[^0-9A-Fa-f]</span>
+<a href="#%2F%5Co" class="l">/\o</a>   \o      \o      <a href="eval.txt.html#octal" class="d">octal</a> digit:                    <span class="s">[0-7]</span>
+<a href="#%2F%5CO" class="l">/\O</a>   \O      \O      non-octal digit:                <span class="s">[^0-7]</span>
+<a href="#%2F%5Cw" class="l">/\w</a>   \w      \w      <a href="motion.txt.html#word" class="d">word</a> character:                 <span class="s">[0-9A-Za-z_]</span>
+<a href="#%2F%5CW" class="l">/\W</a>   \W      \W      non-word character:             <span class="s">[^0-9A-Za-z_]</span>
+<a href="#%2F%5Ch" class="l">/\h</a>   \h      \h      head of <a href="motion.txt.html#word" class="d">word</a> character:         <span class="s">[A-Za-z_]</span>
+<a href="#%2F%5CH" class="l">/\H</a>   \H      \H      non-head of <a href="motion.txt.html#word" class="d">word</a> character:     <span class="s">[^A-Za-z_]</span>
+<a href="#%2F%5Ca" class="l">/\a</a>   \a      \a      alphabetic character:           <span class="s">[A-Za-z]</span>
+<a href="#%2F%5CA" class="l">/\A</a>   \A      \A      non-alphabetic character:       <span class="s">[^A-Za-z]</span>
+<a href="#%2F%5Cl" class="l">/\l</a>   \l      \l      <a href="change.txt.html#lowercase" class="d">lowercase</a> character:            <span class="s">[a-z]</span>
+<a href="#%2F%5CL" class="l">/\L</a>   \L      \L      non-lowercase character:        <span class="s">[^a-z]</span>
+<a href="#%2F%5Cu" class="l">/\u</a>   \u      \u      <a href="change.txt.html#uppercase" class="d">uppercase</a> character:            <span class="s">[A-Z]</span>
+<a href="#%2F%5CU" class="l">/\U</a>   \U      \U      non-uppercase character         <span class="s">[^A-Z]</span>
+<a href="#%2F%5C_" class="l">/\_</a>   \_x     \_x     where <a href="change.txt.html#x" class="d">x</a> <a href="motion.txt.html#is" class="d">is</a> any of the characters above: character
+                        class with end-of-line included
+(end of character classes)
+
+<span class="h">      magic   nomagic   matches </span>
+<a href="#%2F%5Ce" class="l">/\e</a>   \e      \e      <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a>
+<a href="#%2F%5Ct" class="l">/\t</a>   \t      \t      <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a>
+<a href="#%2F%5Cr" class="l">/\r</a>   \r      \r      <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a>
+<a href="#%2F%5Cb" class="l">/\b</a>   \b      \b      <a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a>
+<a href="#%2F%5Cn" class="l">/\n</a>   \n      \n      end-of-line
+<a href="#%2F%7E" class="l">/~</a>    <a href="change.txt.html#%7E" class="d">~</a>       \~      last given substitute <a href="eval.txt.html#string" class="d">string</a>
+<a href="#%2F%5C1" class="l">/\1</a>   \1      \1      same <a href="eval.txt.html#string" class="d">string</a> <a href="motion.txt.html#as" class="d">as</a> matched by first \(\) <span class="s">{not in Vi}</span>
+<a href="#%2F%5C2" class="l">/\2</a>   \2      \2      Like "\1"<a href="motion.txt.html#%2C" class="d">,</a> but uses second \(\)
+           <a href="eval.txt.html#..." class="d">...</a>
+<a href="#%2F%5C9" class="l">/\9</a>   \9      \9      Like "\1"<a href="motion.txt.html#%2C" class="d">,</a> but uses ninth \(\)
+                                                                <a name="E68" class="t">E68</a>
+<a href="syntax.txt.html#%2F%5Cz1" class="l">/\z1</a>  \z1     \z1     only for <a href="syntax.txt.html#syntax" class="d">syntax</a> highlighting, see <a href="syntax.txt.html#%3Asyn-ext-match" class="l">:syn-ext-match</a>
+           <a href="eval.txt.html#..." class="d">...</a>
+<a href="syntax.txt.html#%2F%5Cz1" class="l">/\z1</a>  \z9     \z9     only for <a href="syntax.txt.html#syntax" class="d">syntax</a> highlighting, see <a href="syntax.txt.html#%3Asyn-ext-match" class="l">:syn-ext-match</a>
+
+        <a href="change.txt.html#x" class="d">x</a>       <a href="change.txt.html#x" class="d">x</a>       <a href="insert.txt.html#a" class="d">a</a> character with no special meaning matches itself
+
+<a href="#%2F%5B%5D" class="l">/[]</a>   <a href="motion.txt.html#%5B%5D" class="d">[]</a>      \[]     any character specified inside the <a href="motion.txt.html#%5B%5D" class="d">[]</a>
+<a href="#%2F%5C%25%5B%5D" class="l">/\%[]</a> \%[]    \%[]    <a href="insert.txt.html#a" class="d">a</a> sequence of optionally matched atoms
+
+<a href="#%2F%5Cc" class="l">/\c</a>   \c      \c      ignore case, <a href="diff.txt.html#do" class="d">do</a> not use the <a href="options.txt.html#%27ignorecase%27" class="o">'ignorecase'</a> option
+<a href="#%2F%5CC" class="l">/\C</a>   \C      \C      match case, <a href="diff.txt.html#do" class="d">do</a> not use the <a href="options.txt.html#%27ignorecase%27" class="o">'ignorecase'</a> option
+<a href="#%2F%5CZ" class="l">/\Z</a>   \Z      \Z      ignore differences in <a href="mbyte.txt.html#Unicode" class="d">Unicode</a> "combining characters"<a href="repeat.txt.html#." class="d">.</a>
+                        Useful when searching voweled Hebrew or <a href="arabic.txt.html#Arabic" class="d">Arabic</a> text.
+
+<span class="h">      magic   nomagic   matches </span>
+<a href="#%2F%5Cm" class="l">/\m</a>   \m      \m      <a href="options.txt.html#%27magic%27" class="o">'magic'</a> on for the following chars in the <a href="#pattern" class="d">pattern</a>
+<a href="#%2F%5CM" class="l">/\M</a>   \M      \M      <a href="options.txt.html#%27magic%27" class="o">'magic'</a> off for the following chars in the <a href="#pattern" class="d">pattern</a>
+<a href="#%2F%5Cv" class="l">/\v</a>   \v      \v      the following chars in the <a href="#pattern" class="d">pattern</a> are "very magic"
+<a href="#%2F%5CV" class="l">/\V</a>   \V      \V      the following chars in the <a href="#pattern" class="d">pattern</a> are "very nomagic"
+<a href="#%2F%5C%25%23%3D" class="l">/\%#=</a>   \%#=1   \%#=1   select <a href="#regexp" class="d">regexp</a> engine <a href="#%2Fzero-width" class="l">/zero-width</a>
+
+<a href="#%2F%5C%25d" class="l">/\%d</a>  \%d     \%d     match specified decimal character (eg \%d123)
+<a href="#%2F%5C%25x" class="l">/\%x</a>  \%x     \%x     match specified hex character (eg \%x2a)
+<a href="#%2F%5C%25o" class="l">/\%o</a>  \%o     \%o     match specified <a href="eval.txt.html#octal" class="d">octal</a> character (eg \%o040)
+<a href="#%2F%5C%25u" class="l">/\%u</a>  \%u     \%u     match specified <a href="mbyte.txt.html#multibyte" class="d">multibyte</a> character (eg \%u20ac)
+<a href="#%2F%5C%25U" class="l">/\%U</a>  \%U     \%U     match specified large <a href="mbyte.txt.html#multibyte" class="d">multibyte</a> character (eg
+                        \%U12345678)
+<a href="#%2F%5C%25C" class="l">/\%C</a>  \%C     \%C     match any composing characters
+
+<span class="h">Example                 matches </span>
+\&lt;\I\i*         or
+\&lt;\h\w*
+\&lt;[a-zA-Z_][a-zA-Z0-9_]*
+                        An identifier (e.g., in <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#C" class="d">C</a> program).
+
+\(\.$\|\. \)            <a href="insert.txt.html#A" class="d">A</a> period followed by <a href="intro.txt.html#%3CEOL%3E" class="s">&lt;EOL&gt;</a> or <a href="insert.txt.html#a" class="d">a</a> space.
+
+[.!?][])"<a href="motion.txt.html#%27%5D" class="d">']</a>*\($\|<a href="index.txt.html#%5B" class="d">[</a> ]\)  <a href="insert.txt.html#A" class="d">A</a> search <a href="#pattern" class="d">pattern</a> that finds the <a href="intro.txt.html#end" class="d">end</a> of <a href="insert.txt.html#a" class="d">a</a> sentence,
+                        with almost the same definition <a href="motion.txt.html#as" class="d">as</a> the "<a href="motion.txt.html#%29" class="d">)</a>" command.
+
+cat\Z                   Both "cat" and "cà<a href="motion.txt.html#t" class="d">t</a>" <a href="motion.txt.html#%28" class="d">(</a>"<a href="insert.txt.html#a" class="d">a</a>" followed by 0x0300)
+                        Does not match "cà<a href="motion.txt.html#t" class="d">t</a>" (character 0x00e0), even
+                        though <a href="motion.txt.html#it" class="d">it</a> may look the same.
+
+
+<span class="h">==============================================================================</span>
+5. Multi items                                          <a name="pattern-multi-items" class="t">pattern-multi-items</a>
+
+An atom can be followed by an indication of how many times the atom can be
+matched and in what way.  This <a href="motion.txt.html#is" class="d">is</a> called <a href="insert.txt.html#a" class="d">a</a> multi.  See <a href="#%2Fmulti" class="l">/multi</a> for an
+overview.
+
+                                                        <a name="%2Fstar" class="t">/star</a> <a name="%2F%5Cstar" class="t">/\star</a>
+*       (use \* when <a href="options.txt.html#%27magic%27" class="o">'magic'</a> <a href="motion.txt.html#is" class="d">is</a> not set)
+        Matches <a href="motion.txt.html#0" class="d">0</a> or more of the preceding atom, <a href="motion.txt.html#as" class="d">as</a> many <a href="motion.txt.html#as" class="d">as</a> possible.
+<span class="h">        Example  'nomagic'      matches </span>
+        <a href="insert.txt.html#a" class="d">a</a>*         a\*          ""<a href="motion.txt.html#%2C" class="d">,</a> "<a href="insert.txt.html#a" class="d">a</a>"<a href="motion.txt.html#%2C" class="d">,</a> "aa"<a href="motion.txt.html#%2C" class="d">,</a> "aaa"<a href="motion.txt.html#%2C" class="d">,</a> etc.
+        <a href="repeat.txt.html#." class="d">.</a>*         \.\*         anything, also an empty string, no end-of-line
+        \_.*       \_.\*        everything up to the <a href="intro.txt.html#end" class="d">end</a> of the buffer
+        \_.*END    \_.\*END     everything up to and including the last "END"
+                                in the buffer
+
+        Exception: When "*" <a href="motion.txt.html#is" class="d">is</a> used <a href="motion.txt.html#at" class="d">at</a> the start of the <a href="#pattern" class="d">pattern</a> or just after
+        "<a href="motion.txt.html#%5E" class="d">^</a>" <a href="motion.txt.html#it" class="d">it</a> matches the <a href="#star" class="d">star</a> character.
+
+        Be aware that <a href="repeat.txt.html#repeating" class="d">repeating</a> "\_." can match <a href="insert.txt.html#a" class="d">a</a> lot of text and take <a href="insert.txt.html#a" class="d">a</a> long
+        time.  For example, "\_.*END" matches all text from the current
+        position to the last occurrence of "END" in the file.  Since the "*"
+        will match <a href="motion.txt.html#as" class="d">as</a> many <a href="motion.txt.html#as" class="d">as</a> possible, this first skips over all lines until
+        the <a href="intro.txt.html#end" class="d">end</a> of the file and then tries matching "END"<a href="motion.txt.html#%2C" class="d">,</a> backing up one
+        character <a href="motion.txt.html#at" class="d">at</a> <a href="insert.txt.html#a" class="d">a</a> time.
+
+                                                        <a name="%2F%5C%2B" class="t">/\+</a>
+\+      Matches 1 or more of the preceding atom, <a href="motion.txt.html#as" class="d">as</a> many <a href="motion.txt.html#as" class="d">as</a> possible. {not in
+        Vi}
+<span class="h">        Example         matches </span>
+        ^.\+$           any non-empty line
+        \s\+            white <a href="intro.txt.html#space" class="d">space</a> of <a href="motion.txt.html#at" class="d">at</a> least one character
+
+                                                        <a name="%2F%5C%3D" class="t">/\=</a>
+\=      Matches <a href="motion.txt.html#0" class="d">0</a> or 1 of the preceding atom, <a href="motion.txt.html#as" class="d">as</a> many <a href="motion.txt.html#as" class="d">as</a> possible. <span class="s">{not in Vi}</span>
+<span class="h">        Example         matches </span>
+        foo\=           "fo" and "foo"
+
+                                                        <a name="%2F%5C%3F" class="t">/\?</a>
+\?      Just like \=.  Cannot be used when searching backwards with the "<a href="#%3F" class="d">?</a>"
+        command. <span class="s">{not in Vi}</span>
+
+                                        <a name="%2F%5C%7B" class="t">/\{</a> <a name="E60" class="t">E60</a> <a name="E554" class="t">E554</a> <a name="E870" class="t">E870</a>
+\{n,m}  Matches <a href="#n" class="d">n</a> to <a href="motion.txt.html#m" class="d">m</a> of the preceding atom, <a href="motion.txt.html#as" class="d">as</a> many <a href="motion.txt.html#as" class="d">as</a> possible
+\{n}    Matches <a href="#n" class="d">n</a> of the preceding atom
+\{n,}   Matches <a href="motion.txt.html#at" class="d">at</a> least <a href="#n" class="d">n</a> of the preceding atom, <a href="motion.txt.html#as" class="d">as</a> many <a href="motion.txt.html#as" class="d">as</a> possible
+\{,m}   Matches <a href="motion.txt.html#0" class="d">0</a> to <a href="motion.txt.html#m" class="d">m</a> of the preceding atom, <a href="motion.txt.html#as" class="d">as</a> many <a href="motion.txt.html#as" class="d">as</a> possible
+\{}     Matches <a href="motion.txt.html#0" class="d">0</a> or more of the preceding atom, <a href="motion.txt.html#as" class="d">as</a> many <a href="motion.txt.html#as" class="d">as</a> possible (like *<a href="motion.txt.html#%29" class="d">)</a>
+                                                        <a name="%2F%5C%7B-" class="t">/\{-</a>
+\{-n,m} matches <a href="#n" class="d">n</a> to <a href="motion.txt.html#m" class="d">m</a> of the preceding atom, <a href="motion.txt.html#as" class="d">as</a> few <a href="motion.txt.html#as" class="d">as</a> possible
+\{-n}   matches <a href="#n" class="d">n</a> of the preceding atom
+\{-n,}  matches <a href="motion.txt.html#at" class="d">at</a> least <a href="#n" class="d">n</a> of the preceding atom, <a href="motion.txt.html#as" class="d">as</a> few <a href="motion.txt.html#as" class="d">as</a> possible
+\{-,m}  matches <a href="motion.txt.html#0" class="d">0</a> to <a href="motion.txt.html#m" class="d">m</a> of the preceding atom, <a href="motion.txt.html#as" class="d">as</a> few <a href="motion.txt.html#as" class="d">as</a> possible
+\{-}    matches <a href="motion.txt.html#0" class="d">0</a> or more of the preceding atom, <a href="motion.txt.html#as" class="d">as</a> few <a href="motion.txt.html#as" class="d">as</a> possible
+        <span class="s">{Vi does not have any of these}</span>
+
+        <a href="#n" class="d">n</a> and <a href="motion.txt.html#m" class="d">m</a> are positive decimal numbers or zero
+                                                                <a name="non-greedy" class="t">non-greedy</a>
+        If <a href="insert.txt.html#a" class="d">a</a> "<a href="motion.txt.html#-" class="d">-</a>" appears immediately after the "<a href="motion.txt.html#%7B" class="d">{</a>"<a href="motion.txt.html#%2C" class="d">,</a> then <a href="insert.txt.html#a" class="d">a</a> shortest match
+        first algorithm <a href="motion.txt.html#is" class="d">is</a> used (see example below).  In particular, "\{-}" <a href="motion.txt.html#is" class="d">is</a>
+        the same <a href="motion.txt.html#as" class="d">as</a> "*" but uses the shortest match first algorithm.  BUT: <a href="insert.txt.html#A" class="d">A</a>
+        match that starts earlier <a href="motion.txt.html#is" class="d">is</a> preferred over <a href="insert.txt.html#a" class="d">a</a> shorter match: "a\{-}b"
+        matches "aaab" in "xaaab"<a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">        Example                 matches </span>
+        ab\{2,3}c               "abbc" or "abbbc"
+        a\{5}                   "aaaaa"
+        ab\{2,}c                "abbc"<a href="motion.txt.html#%2C" class="d">,</a> "abbbc"<a href="motion.txt.html#%2C" class="d">,</a> "abbbbc"<a href="motion.txt.html#%2C" class="d">,</a> etc.
+        ab\{,3}c                "ac"<a href="motion.txt.html#%2C" class="d">,</a> "abc"<a href="motion.txt.html#%2C" class="d">,</a> "abbc" or "abbbc"
+        a[bc]\{3}d              "abbbd"<a href="motion.txt.html#%2C" class="d">,</a> "abbcd"<a href="motion.txt.html#%2C" class="d">,</a> "acbcd"<a href="motion.txt.html#%2C" class="d">,</a> "acccd"<a href="motion.txt.html#%2C" class="d">,</a> etc.
+        a\(bc\)\{1,2}d          "abcd" or "abcbcd"
+        a[bc]\{-}[cd]           "abc" in "abcd"
+        a[bc]*[cd]              "abcd" in "abcd"
+
+        The <a href="motion.txt.html#%7D" class="d">}</a> may optionally be preceded with <a href="insert.txt.html#a" class="d">a</a> backslash: \{n,m\}.
+
+                                                        <a name="%2F%5C%40%3D" class="t">/\@=</a>
+\@=     Matches the preceding atom with zero width. <span class="s">{not in Vi}</span>
+        Like "(?=pattern)" in Perl.
+<span class="h">        Example                 matches </span>
+        foo\(bar\)\@=           "foo" in "foobar"
+        foo\(bar\)\@=foo        nothing
+                                                        <a name="%2Fzero-width" class="t">/zero-width</a>
+        When using "\@=" (or "<a href="motion.txt.html#%5E" class="d">^</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="motion.txt.html#%24" class="d">$</a>"<a href="motion.txt.html#%2C" class="d">,</a> "\&lt;"<a href="motion.txt.html#%2C" class="d">,</a> "\&gt;"<a href="motion.txt.html#%29" class="d">)</a> no characters are included
+        in the match.  These items are only used to check if <a href="insert.txt.html#a" class="d">a</a> match can be
+        made.  This can be tricky, because <a href="insert.txt.html#a" class="d">a</a> match with following items will
+        be done in the same position.  The last example above will not match
+        "foobarfoo"<a href="motion.txt.html#%2C" class="d">,</a> because <a href="motion.txt.html#it" class="d">it</a> tries match "foo" in the same position where
+        "<a href="motion.txt.html#bar" class="d">bar</a>" matched.
+
+        <span class="n">Note</span> that using "\&amp;" works the same <a href="motion.txt.html#as" class="d">as</a> using "\@="<a href="cmdline.txt.html#%3A" class="d">:</a> "foo\&amp;.." <a href="motion.txt.html#is" class="d">is</a> the
+        same <a href="motion.txt.html#as" class="d">as</a> "\(foo\)\@=.."<a href="repeat.txt.html#." class="d">.</a>  But using "\&amp;" <a href="motion.txt.html#is" class="d">is</a> easier, you don't need the
+        braces.
+
+
+                                                        <a name="%2F%5C%40%21" class="t">/\@!</a>
+\@!     Matches with zero width if the preceding atom does NOT match <a href="motion.txt.html#at" class="d">at</a> the
+        current position. <a href="#%2Fzero-width" class="l">/zero-width</a> <span class="s">{not in Vi}</span>
+        Like "(?!pattern)" in Perl.
+<span class="h">        Example                 matches </span>
+        foo\(bar\)\@!           any "foo" not followed by "<a href="motion.txt.html#bar" class="d">bar</a>"
+        a.\{-}p\@!              "<a href="insert.txt.html#a" class="d">a</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="motion.txt.html#ap" class="d">ap</a>"<a href="motion.txt.html#%2C" class="d">,</a> "app"<a href="motion.txt.html#%2C" class="d">,</a> "appp"<a href="motion.txt.html#%2C" class="d">,</a> etc. not immediately
+                                followed by <a href="insert.txt.html#a" class="d">a</a> "<a href="change.txt.html#p" class="d">p</a>"
+        if \(\(then\)\@!.\)*<a href="motion.txt.html#%24" class="d">$</a>   "if " not followed by "then"
+
+        Using "\@!" <a href="motion.txt.html#is" class="d">is</a> tricky, because there are many places where <a href="insert.txt.html#a" class="d">a</a> <a href="#pattern" class="d">pattern</a>
+        does not match.  "a.*p\@!" will match from an "<a href="insert.txt.html#a" class="d">a</a>" to the <a href="intro.txt.html#end" class="d">end</a> of the
+        line, because "<a href="repeat.txt.html#." class="d">.</a>*" can match all characters in the line and the "<a href="change.txt.html#p" class="d">p</a>"
+        doesn't match <a href="motion.txt.html#at" class="d">at</a> the <a href="intro.txt.html#end" class="d">end</a> of the line.  "a.\{-}p\@!" will match any
+        "<a href="insert.txt.html#a" class="d">a</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="motion.txt.html#ap" class="d">ap</a>"<a href="motion.txt.html#%2C" class="d">,</a> "app"<a href="motion.txt.html#%2C" class="d">,</a> etc. that isn't followed by <a href="insert.txt.html#a" class="d">a</a> "<a href="change.txt.html#p" class="d">p</a>"<a href="motion.txt.html#%2C" class="d">,</a> because the "<a href="repeat.txt.html#." class="d">.</a>"
+        can match <a href="insert.txt.html#a" class="d">a</a> "<a href="change.txt.html#p" class="d">p</a>" and "p\@!" doesn't match after that.
+
+        You can't use "\@!" to look for <a href="insert.txt.html#a" class="d">a</a> non-match before the matching
+        position: "\(foo\)\@!bar" will match "<a href="motion.txt.html#bar" class="d">bar</a>" in "foobar"<a href="motion.txt.html#%2C" class="d">,</a> because <a href="motion.txt.html#at" class="d">at</a> the
+        position where "<a href="motion.txt.html#bar" class="d">bar</a>" matches, "foo" does not match.  To avoid matching
+        "foobar" you could use "\(foo\)\@!...bar"<a href="motion.txt.html#%2C" class="d">,</a> but that doesn't match <a href="insert.txt.html#a" class="d">a</a>
+        <a href="motion.txt.html#bar" class="d">bar</a> <a href="motion.txt.html#at" class="d">at</a> the start of <a href="insert.txt.html#a" class="d">a</a> line.  Use "\(foo\)\@&lt;!bar"<a href="repeat.txt.html#." class="d">.</a>
+
+        Useful example: to find "foo" in <a href="insert.txt.html#a" class="d">a</a> line that does not contain "<a href="motion.txt.html#bar" class="d">bar</a>"<a href="cmdline.txt.html#%3A" class="d">:</a> 
+<span class="e">                /^\%(.*bar\)\@!.*\zsfoo</span>
+       This <a href="#pattern" class="d">pattern</a> first checks that there <a href="motion.txt.html#is" class="d">is</a> not <a href="insert.txt.html#a" class="d">a</a> single position in the
+        line where "<a href="motion.txt.html#bar" class="d">bar</a>" matches.  If "<a href="repeat.txt.html#." class="d">.</a>*<a href="motion.txt.html#bar" class="d">bar</a>" matches somewhere the \@! will
+        reject the pattern.  When there <a href="motion.txt.html#is" class="d">is</a> no match any "foo" will be found.
+        The "\zs" <a href="motion.txt.html#is" class="d">is</a> to have the match start just before "foo"<a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="%2F%5C%40%3C%3D" class="t">/\@&lt;=</a>
+\@&lt;=    Matches with zero width if the preceding atom matches just before what
+        follows. <a href="#%2Fzero-width" class="l">/zero-width</a> <span class="s">{not in Vi}</span>
+        Like "(?&lt;=pattern)" in Perl, but Vim allows non-fixed-width patterns.
+<span class="h">        Example                 matches </span>
+        \(an\_s\+\)\@&lt;=file     "file" after "an" and white <a href="intro.txt.html#space" class="d">space</a> or an
+                                end-of-line
+        For speed it's often much better to avoid this multi.  Try using "\zs"
+        instead <a href="#%2F%5Czs" class="l">/\zs</a><a href="repeat.txt.html#." class="d">.</a>  To match the same <a href="motion.txt.html#as" class="d">as</a> the above example:
+                an\_s\+\zsfile
+        At least set <a href="insert.txt.html#a" class="d">a</a> limit for the look-behind, see below.
+
+        "\@&lt;=" and "\@&lt;!" check for matches just before what follows.
+        Theoretically these matches could start anywhere before this position.
+        But to limit the time needed, only the line where what follows matches
+        <a href="motion.txt.html#is" class="d">is</a> searched, and one line before that (if there <a href="motion.txt.html#is" class="d">is</a> one).  This should
+        be sufficient to match most things and not be too slow.
+
+        In the old <a href="#regexp" class="d">regexp</a> engine the part of the <a href="#pattern" class="d">pattern</a> after "\@&lt;=" and
+        "\@&lt;!" are checked for <a href="insert.txt.html#a" class="d">a</a> match first, thus things like "\1" don't work
+        to <a href="intro.txt.html#reference" class="d">reference</a> \(\) inside the preceding atom.  It does work the other
+        way around:
+<span class="h">        Bad example                     matches </span>
+        \%#=1\1\@&lt;=,\([a-z]\+\)         ",abc" in "abc,abc"
+
+        However, the new <a href="#regexp" class="d">regexp</a> engine works differently, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> better to not
+        rely on this behavior, <a href="diff.txt.html#do" class="d">do</a> not use \@&lt;= if <a href="motion.txt.html#it" class="d">it</a> can be avoided:
+<span class="h">        Example                         matches </span>
+        \([a-z]\+\)\zs,\1               ",abc" in "abc,abc"
+
+\@123&lt;=
+        Like "\@&lt;=" but only look back 123 bytes. This avoids trying lots
+        of matches that are known to fail and make executing the <a href="#pattern" class="d">pattern</a> very
+        slow.  Example, check if there <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> "<a href="change.txt.html#%3C" class="d">&lt;</a>" just before "span"<a href="cmdline.txt.html#%3A" class="d">:</a>
+                /&lt;\@1&lt;=span
+        This will try matching "<a href="change.txt.html#%3C" class="d">&lt;</a>" only one byte before "span"<a href="motion.txt.html#%2C" class="d">,</a> which <a href="motion.txt.html#is" class="d">is</a> the
+        only place that works anyway.
+        After crossing <a href="insert.txt.html#a" class="d">a</a> line boundary, the limit <a href="motion.txt.html#is" class="d">is</a> relative to the <a href="intro.txt.html#end" class="d">end</a> of
+        the line.  Thus the characters <a href="motion.txt.html#at" class="d">at</a> the start of the line with the match
+        are not counted (this <a href="motion.txt.html#is" class="d">is</a> just to keep <a href="motion.txt.html#it" class="d">it</a> simple).
+        The number zero <a href="motion.txt.html#is" class="d">is</a> the same <a href="motion.txt.html#as" class="d">as</a> no limit.
+
+                                                        <a name="%2F%5C%40%3C%21" class="t">/\@&lt;!</a>
+\@&lt;!    Matches with zero width if the preceding atom does NOT match just
+        before what follows.  Thus this matches if there <a href="motion.txt.html#is" class="d">is</a> no position in the
+        current or previous line where the atom matches such that <a href="motion.txt.html#it" class="d">it</a> ends just
+        before what follows.  <a href="#%2Fzero-width" class="l">/zero-width</a> <span class="s">{not in Vi}</span>
+        Like "(?&lt;!pattern)" in Perl, but Vim allows non-fixed-width patterns.
+        The match with the preceding atom <a href="motion.txt.html#is" class="d">is</a> made to <a href="intro.txt.html#end" class="d">end</a> just before the match
+        with what follows, thus an atom that ends in "<a href="repeat.txt.html#." class="d">.</a>*" will work.
+        Warning: This can be slow (because many positions need to be checked
+        for <a href="insert.txt.html#a" class="d">a</a> match).  Use <a href="insert.txt.html#a" class="d">a</a> limit if you can, see below.
+<span class="h">        Example                 matches </span>
+        \(foo\)\@&lt;!bar          any "<a href="motion.txt.html#bar" class="d">bar</a>" that's not in "foobar"
+        \(\/\/.*\)\@&lt;!in        "in" which <a href="motion.txt.html#is" class="d">is</a> not after "<a href="version7.txt.html#%2F%2F" class="d">//</a>"
+
+\@123&lt;!
+        Like "\@&lt;!" but only look back 123 bytes. This avoids trying lots of
+        matches that are known to fail and make executing the <a href="#pattern" class="d">pattern</a> very
+        slow.
+
+                                                        <a name="%2F%5C%40%3E" class="t">/\@&gt;</a>
+\@&gt;     Matches the preceding atom like matching <a href="insert.txt.html#a" class="d">a</a> whole pattern. <span class="s">{not in Vi}</span>
+        Like "(?&gt;pattern)" in Perl.
+<span class="h">        Example         matches </span>
+        \(a*\)\@&gt;a      nothing (the "<a href="insert.txt.html#a" class="d">a</a>*" takes all the "<a href="insert.txt.html#a" class="d">a</a>"'s, there can't be
+                        another one following)
+
+        This matches the preceding atom <a href="motion.txt.html#as" class="d">as</a> if <a href="motion.txt.html#it" class="d">it</a> was <a href="insert.txt.html#a" class="d">a</a> <a href="#pattern" class="d">pattern</a> by itself.  If
+        <a href="motion.txt.html#it" class="d">it</a> doesn't match, there <a href="motion.txt.html#is" class="d">is</a> no retry with shorter sub-matches or
+        anything.  Observe this difference: "<a href="insert.txt.html#a" class="d">a</a>*<a href="motion.txt.html#b" class="d">b</a>" and "<a href="insert.txt.html#a" class="d">a</a>*<a href="motion.txt.html#ab" class="d">ab</a>" both match
+        "aaab"<a href="motion.txt.html#%2C" class="d">,</a> but in the second <a href="change.txt.html#case" class="d">case</a> the "<a href="insert.txt.html#a" class="d">a</a>*" matches only the first two
+        "<a href="insert.txt.html#a" class="d">a</a>"s.  "\(a*\)\@&gt;ab" will not match "aaab"<a href="motion.txt.html#%2C" class="d">,</a> because the "<a href="insert.txt.html#a" class="d">a</a>*" matches
+        the "aaa" (as many "<a href="insert.txt.html#a" class="d">a</a>"<a href="change.txt.html#s" class="d">s</a> <a href="motion.txt.html#as" class="d">as</a> possible), thus the "<a href="motion.txt.html#ab" class="d">ab</a>" can't match.
+
+
+<span class="h">==============================================================================</span>
+6.  Ordinary atoms                                      <a name="pattern-atoms" class="t">pattern-atoms</a>
+
+An ordinary atom can be:
+
+                                                        <a name="%2F%5E" class="t">/^</a>
+<a href="motion.txt.html#%5E" class="d">^</a>       At beginning of <a href="#pattern" class="d">pattern</a> or after "\|"<a href="motion.txt.html#%2C" class="d">,</a> "\("<a href="motion.txt.html#%2C" class="d">,</a> "\%(" or "\n"<a href="cmdline.txt.html#%3A" class="d">:</a> matches
+        start-of-line; <a href="motion.txt.html#at" class="d">at</a> other positions, matches literal '^'. <a href="#%2Fzero-width" class="l">/zero-width</a>
+<span class="h">        Example         matches </span>
+        ^beep(          the start of the <a href="change.txt.html#C" class="d">C</a> function "<a href="options.txt.html#beep" class="d">beep</a>" (probably).
+
+                                                        <a name="%2F%5C%5E" class="t">/\^</a>
+\^      Matches literal '^'.  Can be used <a href="motion.txt.html#at" class="d">at</a> any position in the pattern.
+
+                                                        <a name="%2F%5C_%5E" class="t">/\_^</a>
+\_^     Matches start-of-line. <a href="#%2Fzero-width" class="l">/zero-width</a>  Can be used <a href="motion.txt.html#at" class="d">at</a> any position in
+        the pattern.
+<span class="h">        Example         matches </span>
+        \_s*\_^foo      white <a href="intro.txt.html#space" class="d">space</a> and blank lines and then "foo" <a href="motion.txt.html#at" class="d">at</a>
+                        start-of-line
+
+                                                        <a name="%2F%24" class="t">/$</a>
+<a href="motion.txt.html#%24" class="d">$</a>       At <a href="intro.txt.html#end" class="d">end</a> of <a href="#pattern" class="d">pattern</a> or in front of "\|"<a href="motion.txt.html#%2C" class="d">,</a> "\)" or "\n" ('magic' on):
+        matches end-of-line <a href="intro.txt.html#%3CEOL%3E" class="s">&lt;EOL&gt;</a>; <a href="motion.txt.html#at" class="d">at</a> other positions, matches literal '$'.
+        <a href="#%2Fzero-width" class="l">/zero-width</a>
+
+                                                        <a name="%2F%5C%24" class="t">/\$</a>
+\$      Matches literal '$'.  Can be used <a href="motion.txt.html#at" class="d">at</a> any position in the pattern.
+
+                                                        <a name="%2F%5C_%24" class="t">/\_$</a>
+\_$     Matches end-of-line. <a href="#%2Fzero-width" class="l">/zero-width</a>  Can be used <a href="motion.txt.html#at" class="d">at</a> any position in the
+        pattern.  <span class="n">Note</span> that "a\_$b" never matches, since "<a href="motion.txt.html#b" class="d">b</a>" cannot match an
+        end-of-line.  Use "a\nb" instead <a href="#%2F%5Cn" class="l">/\n</a><a href="repeat.txt.html#." class="d">.</a>
+<span class="h">        Example         matches </span>
+        foo\_$\_s*      "foo" <a href="motion.txt.html#at" class="d">at</a> end-of-line and following white <a href="intro.txt.html#space" class="d">space</a> and
+                        blank lines
+
+<a href="repeat.txt.html#." class="d">.</a>       (with <a href="options.txt.html#%27nomagic%27" class="o">'nomagic'</a>: \.)                            <a name="%2F." class="t">/.</a> <a name="%2F%5C." class="t">/\.</a>
+        Matches any single character, but not an end-of-line.
+
+                                                        <a name="%2F%5C_." class="t">/\_.</a>
+\_.     Matches any single character or end-of-line.
+        Careful: "\_.*" matches all text to the <a href="intro.txt.html#end" class="d">end</a> of the buffer!
+
+                                                        <a name="%2F%5C%3C" class="t">/\&lt;</a>
+\&lt;      Matches the beginning of <a href="insert.txt.html#a" class="d">a</a> word: The next char <a href="motion.txt.html#is" class="d">is</a> the first char of <a href="insert.txt.html#a" class="d">a</a>
+        word.  The <a href="options.txt.html#%27iskeyword%27" class="o">'iskeyword'</a> option specifies what <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> character.
+        <a href="#%2Fzero-width" class="l">/zero-width</a>
+
+                                                        <a name="%2F%5C%3E" class="t">/\&gt;</a>
+\&gt;      Matches the <a href="intro.txt.html#end" class="d">end</a> of <a href="insert.txt.html#a" class="d">a</a> word: The previous char <a href="motion.txt.html#is" class="d">is</a> the last char of <a href="insert.txt.html#a" class="d">a</a>
+        word.  The <a href="options.txt.html#%27iskeyword%27" class="o">'iskeyword'</a> option specifies what <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> character.
+        <a href="#%2Fzero-width" class="l">/zero-width</a>
+
+                                                        <a name="%2F%5Czs" class="t">/\zs</a>
+\zs     Matches <a href="motion.txt.html#at" class="d">at</a> any position, and sets the start of the match there: The
+        next char <a href="motion.txt.html#is" class="d">is</a> the first char of the whole match. <a href="#%2Fzero-width" class="l">/zero-width</a>
+        Example: 
+<span class="e">                /^\s*\zsif</span>
+       matches an "if" <a href="motion.txt.html#at" class="d">at</a> the start of <a href="insert.txt.html#a" class="d">a</a> line, ignoring white space.
+        Can be used multiple times, the last one encountered in <a href="insert.txt.html#a" class="d">a</a> matching
+        branch <a href="motion.txt.html#is" class="d">is</a> used.  Example: 
+<span class="e">                /\(.\{-}\zsFab\)\{3}</span>
+       Finds the third occurrence of "Fab"<a href="repeat.txt.html#." class="d">.</a>
+        This cannot be followed by <a href="insert.txt.html#a" class="d">a</a> multi. <a name="E888" class="t">E888</a>
+        <span class="s">{not in Vi}</span> <span class="s">{not available when compiled without the |+syntax| feature}</span>
+                                                        <a name="%2F%5Cze" class="t">/\ze</a>
+\ze     Matches <a href="motion.txt.html#at" class="d">at</a> any position, and sets the <a href="intro.txt.html#end" class="d">end</a> of the match there: The
+        previous char <a href="motion.txt.html#is" class="d">is</a> the last char of the whole match. <a href="#%2Fzero-width" class="l">/zero-width</a>
+        Can be used multiple times, the last one encountered in <a href="insert.txt.html#a" class="d">a</a> matching
+        branch <a href="motion.txt.html#is" class="d">is</a> used.
+        Example: "end\ze\(if\|for\)" matches the "<a href="intro.txt.html#end" class="d">end</a>" in "endif" and
+        "endfor"<a href="repeat.txt.html#." class="d">.</a>
+        This cannot be followed by <a href="insert.txt.html#a" class="d">a</a> multi. <a href="#E888" class="l">E888</a>
+        <span class="s">{not in Vi}</span> <span class="s">{not available when compiled without the |+syntax| feature}</span>
+
+                                                <a name="%2F%5C%25%5E" class="t">/\%^</a> <a name="start-of-file" class="t">start-of-file</a>
+\%^     Matches start of the file.  When matching with <a href="insert.txt.html#a" class="d">a</a> string, matches the
+        start of the string. <span class="s">{not in Vi}</span>
+        For example, to find the first "VIM" in <a href="insert.txt.html#a" class="d">a</a> file: 
+<span class="e">                /\%^\_.\{-}\zsVIM</span>
+
+                                                <a name="%2F%5C%25%24" class="t">/\%$</a> <a name="end-of-file" class="t">end-of-file</a>
+\%$     Matches <a href="intro.txt.html#end" class="d">end</a> of the file.  When matching with <a href="insert.txt.html#a" class="d">a</a> string, matches the
+        <a href="intro.txt.html#end" class="d">end</a> of the string. <span class="s">{not in Vi}</span>
+        <span class="n">Note</span> that this does NOT find the last "VIM" in <a href="insert.txt.html#a" class="d">a</a> file: 
+<span class="e">                /VIM\_.\{-}\%$</span>
+       It will find the next VIM, because the part after <a href="motion.txt.html#it" class="d">it</a> will always
+        match.  This one will find the last "VIM" in the file: 
+<span class="e">                /VIM\ze\(\(VIM\)\@!\_.\)*\%$</span>
+       This uses <a href="#%2F%5C%40%21" class="l">/\@!</a> to ascertain that "VIM" does NOT match in any
+        position after the first "VIM"<a href="repeat.txt.html#." class="d">.</a>
+        Searching from the <a href="intro.txt.html#end" class="d">end</a> of the file backwards <a href="motion.txt.html#is" class="d">is</a> easier!
+
+                                                <a name="%2F%5C%25V" class="t">/\%V</a>
+\%V     Match inside the <a href="visual.txt.html#Visual" class="d">Visual</a> area.  When <a href="visual.txt.html#Visual" class="d">Visual</a> mode has already been
+        stopped match in the area that <a href="visual.txt.html#gv" class="l">gv</a> would reselect.
+        This <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> <a href="#%2Fzero-width" class="l">/zero-width</a> match.  To make sure the whole <a href="#pattern" class="d">pattern</a> <a href="motion.txt.html#is" class="d">is</a>
+        inside the <a href="visual.txt.html#Visual" class="d">Visual</a> area <a href="change.txt.html#put" class="d">put</a> <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#at" class="d">at</a> the start and just before the <a href="intro.txt.html#end" class="d">end</a> of
+        the pattern, e.g.: 
+<span class="e">                /\%Vfoo.*ba\%Vr</span>
+       This also works if only "foo <a href="motion.txt.html#bar" class="d">bar</a>" was Visually selected. This: 
+<span class="e">                /\%Vfoo.*bar\%V</span>
+       would match "foo <a href="motion.txt.html#bar" class="d">bar</a>" if the <a href="visual.txt.html#Visual" class="d">Visual</a> selection continues after the "<a href="change.txt.html#r" class="d">r</a>"<a href="repeat.txt.html#." class="d">.</a>
+        Only works for the current buffer.
+
+                                                <a name="%2F%5C%25%23" class="t">/\%#</a> <a name="cursor-position" class="t">cursor-position</a>
+\%#     Matches with the cursor position.  Only works when matching in <a href="insert.txt.html#a" class="d">a</a>
+        buffer displayed in <a href="insert.txt.html#a" class="d">a</a> window. <span class="s">{not in Vi}</span>
+        WARNING: When the cursor <a href="motion.txt.html#is" class="d">is</a> moved after the <a href="#pattern" class="d">pattern</a> was used, the
+        result becomes invalid.  Vim doesn't automatically update the matches.
+        This <a href="motion.txt.html#is" class="d">is</a> especially relevant for <a href="syntax.txt.html#syntax" class="d">syntax</a> highlighting and <a href="options.txt.html#%27hlsearch%27" class="o">'hlsearch'</a>.
+        In other words: When the cursor moves the display isn't updated for
+        this change.  An update <a href="motion.txt.html#is" class="d">is</a> done for lines which are changed (the whole
+        line <a href="motion.txt.html#is" class="d">is</a> updated) or when using the <a href="various.txt.html#CTRL-L" class="l">CTRL-L</a> command (the whole screen
+        <a href="motion.txt.html#is" class="d">is</a> updated).  Example, to highlight the <a href="motion.txt.html#word" class="d">word</a> under the cursor: 
+<span class="e">                /\k*\%#\k*</span>
+       When <a href="options.txt.html#%27hlsearch%27" class="o">'hlsearch'</a> <a href="motion.txt.html#is" class="d">is</a> set and you move the cursor around and make changes
+        this will clearly show when the match <a href="motion.txt.html#is" class="d">is</a> updated or not.
+
+                                                <a name="%2F%5C%25%27m" class="t">/\%'m</a> <a name="%2F%5C%25%3C%27m" class="t">/\%&lt;'m</a> <a name="%2F%5C%25%3E%27m" class="t">/\%&gt;'m</a>
+\%'m    Matches with the position of <a href="motion.txt.html#mark" class="d">mark</a> m.
+\%&lt;'m   Matches before the position of <a href="motion.txt.html#mark" class="d">mark</a> m.
+\%&gt;'m   Matches after the position of <a href="motion.txt.html#mark" class="d">mark</a> m.
+        Example, to highlight the text from <a href="motion.txt.html#mark" class="d">mark</a> 's to 'e: 
+<span class="e">                /.\%&gt;'s.*\%&lt;'e..</span>
+       <span class="n">Note</span> that two dots are required to include <a href="motion.txt.html#mark" class="d">mark</a> 'e in the match.  That
+        <a href="motion.txt.html#is" class="d">is</a> because "\%&lt;'e" matches <a href="motion.txt.html#at" class="d">at</a> the character before the 'e mark, and
+        since it's <a href="insert.txt.html#a" class="d">a</a> <a href="#%2Fzero-width" class="l">/zero-width</a> match <a href="motion.txt.html#it" class="d">it</a> doesn't include that character.
+        <span class="s">{not in Vi}</span>
+        WARNING: When the <a href="motion.txt.html#mark" class="d">mark</a> <a href="motion.txt.html#is" class="d">is</a> moved after the <a href="#pattern" class="d">pattern</a> was used, the result
+        becomes invalid.  Vim doesn't automatically update the matches.
+        Similar to moving the cursor for "\%#" <a href="#%2F%5C%25%23" class="l">/\%#</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                <a name="%2F%5C%25l" class="t">/\%l</a> <a name="%2F%5C%25%3El" class="t">/\%&gt;l</a> <a name="%2F%5C%25%3Cl" class="t">/\%&lt;l</a> <a name="E951" class="t">E951</a>
+\%23l   Matches in <a href="insert.txt.html#a" class="d">a</a> specific line.
+\%&lt;23l  Matches above <a href="insert.txt.html#a" class="d">a</a> specific line (lower line number).
+\%&gt;23l  Matches below <a href="insert.txt.html#a" class="d">a</a> specific line (higher line number).
+        These three can be used to match specific lines in <a href="insert.txt.html#a" class="d">a</a> buffer.  The "23"
+        can be any line number.  The first line <a href="motion.txt.html#is" class="d">is</a> 1. <span class="s">{not in Vi}</span>
+        WARNING: When <a href="insert.txt.html#inserting" class="d">inserting</a> or <a href="change.txt.html#deleting" class="d">deleting</a> lines Vim does not automatically
+        update the matches.  This means <a href="autocmd.txt.html#Syntax" class="d">Syntax</a> highlighting quickly becomes
+        wrong.
+        Example, to highlight the line where the cursor currently is: 
+<span class="e">                :exe '/\%' . line(".") . 'l.*'</span>
+       When <a href="options.txt.html#%27hlsearch%27" class="o">'hlsearch'</a> <a href="motion.txt.html#is" class="d">is</a> set and you move the cursor around and make changes
+        this will clearly show when the match <a href="motion.txt.html#is" class="d">is</a> updated or not.
+
+                                                <a name="%2F%5C%25c" class="t">/\%c</a> <a name="%2F%5C%25%3Ec" class="t">/\%&gt;c</a> <a name="%2F%5C%25%3Cc" class="t">/\%&lt;c</a>
+\%23c   Matches in <a href="insert.txt.html#a" class="d">a</a> specific column.
+\%&lt;23c  Matches before <a href="insert.txt.html#a" class="d">a</a> specific column.
+\%&gt;23c  Matches after <a href="insert.txt.html#a" class="d">a</a> specific column.
+        These three can be used to match specific columns in <a href="insert.txt.html#a" class="d">a</a> buffer or
+        string.  The "23" can be any column number.  The first column <a href="motion.txt.html#is" class="d">is</a> 1.
+        Actually, the column <a href="motion.txt.html#is" class="d">is</a> the byte number (thus it's not exactly right
+        for <a href="mbyte.txt.html#multi-byte" class="d">multi-byte</a> characters).  <span class="s">{not in Vi}</span>
+        WARNING: When <a href="insert.txt.html#inserting" class="d">inserting</a> or <a href="change.txt.html#deleting" class="d">deleting</a> text Vim does not automatically
+        update the matches.  This means <a href="autocmd.txt.html#Syntax" class="d">Syntax</a> highlighting quickly becomes
+        wrong.
+        Example, to highlight the column where the cursor currently is: 
+<span class="e">                :exe '/\%' . col(".") . 'c'</span>
+       When <a href="options.txt.html#%27hlsearch%27" class="o">'hlsearch'</a> <a href="motion.txt.html#is" class="d">is</a> set and you move the cursor around and make changes
+        this will clearly show when the match <a href="motion.txt.html#is" class="d">is</a> updated or not.
+        Example for matching <a href="insert.txt.html#a" class="d">a</a> single byte in column 44: 
+<span class="e">                /\%&gt;43c.\%&lt;46c</span>
+       <span class="n">Note</span> that "\%&lt;46c" matches in column 45 when the "<a href="repeat.txt.html#." class="d">.</a>" matches <a href="insert.txt.html#a" class="d">a</a> byte in
+        column 44.
+                                                <a name="%2F%5C%25v" class="t">/\%v</a> <a name="%2F%5C%25%3Ev" class="t">/\%&gt;v</a> <a name="%2F%5C%25%3Cv" class="t">/\%&lt;v</a>
+\%23v   Matches in <a href="insert.txt.html#a" class="d">a</a> specific virtual column.
+\%&lt;23v  Matches before <a href="insert.txt.html#a" class="d">a</a> specific virtual column.
+\%&gt;23v  Matches after <a href="insert.txt.html#a" class="d">a</a> specific virtual column.
+        These three can be used to match specific virtual columns in <a href="insert.txt.html#a" class="d">a</a> buffer
+        or string.  When not matching with <a href="insert.txt.html#a" class="d">a</a> buffer in <a href="insert.txt.html#a" class="d">a</a> window, the option
+        values of the current <a href="windows.txt.html#window" class="d">window</a> are used (e.g., <a href="options.txt.html#%27tabstop%27" class="o">'tabstop'</a>).
+        The "23" can be any column number.  The first column <a href="motion.txt.html#is" class="d">is</a> 1.
+        <span class="n">Note</span> that some virtual column positions will never match, because they
+        are halfway through <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#tab" class="d">tab</a> or other character that occupies more than
+        one screen character.  <span class="s">{not in Vi}</span>
+        WARNING: When <a href="insert.txt.html#inserting" class="d">inserting</a> or <a href="change.txt.html#deleting" class="d">deleting</a> text Vim does not automatically
+        update highlighted matches.  This means <a href="autocmd.txt.html#Syntax" class="d">Syntax</a> highlighting quickly
+        becomes wrong.
+        Example, to highlight all the characters after virtual column 72: 
+<span class="e">                /\%&gt;72v.*</span>
+       When <a href="options.txt.html#%27hlsearch%27" class="o">'hlsearch'</a> <a href="motion.txt.html#is" class="d">is</a> set and you move the cursor around and make changes
+        this will clearly show when the match <a href="motion.txt.html#is" class="d">is</a> updated or not.
+        To match the text up to column 17: 
+<span class="e">                /^.*\%17v</span>
+       Column 17 <a href="motion.txt.html#is" class="d">is</a> not included, because this <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> <a href="#%2Fzero-width" class="l">/zero-width</a> match. To
+        include the column use: 
+<span class="e">                /^.*\%17v.</span>
+       This command does the same thing, but also matches when there <a href="motion.txt.html#is" class="d">is</a> no
+        character in column 17: 
+<span class="e">                /^.*\%&lt;18v.</span>
+       <span class="n">Note</span> that without the "<a href="motion.txt.html#%5E" class="d">^</a>" to anchor the match in the first column,
+        this will also highlight column 17: 
+<span class="e">                /.*\%17v</span>
+       Column 17 <a href="motion.txt.html#is" class="d">is</a> highlighted by <a href="options.txt.html#%27hlsearch%27" class="o">'hlsearch'</a> because there <a href="motion.txt.html#is" class="d">is</a> another match
+        where "<a href="repeat.txt.html#." class="d">.</a>*" matches zero characters.
+<a href="change.txt.html#%3C" class="d">&lt;</a>
+
+Character classes: <span class="s">{not in Vi}</span>
+\i      identifier character (see <a href="options.txt.html#%27isident%27" class="o">'isident'</a> option)     <a name="%2F%5Ci" class="t">/\i</a>
+\I      like "\i"<a href="motion.txt.html#%2C" class="d">,</a> but excluding digits                 <a name="%2F%5CI" class="t">/\I</a>
+\k      keyword character (see <a href="options.txt.html#%27iskeyword%27" class="o">'iskeyword'</a> option)      <a name="%2F%5Ck" class="t">/\k</a>
+\K      like "\k"<a href="motion.txt.html#%2C" class="d">,</a> but excluding digits                 <a name="%2F%5CK" class="t">/\K</a>
+\f      file name character (see <a href="options.txt.html#%27isfname%27" class="o">'isfname'</a> option)      <a name="%2F%5Cf" class="t">/\f</a>
+\F      like "\f"<a href="motion.txt.html#%2C" class="d">,</a> but excluding digits                 <a name="%2F%5CF" class="t">/\F</a>
+\p      printable character (see <a href="options.txt.html#%27isprint%27" class="o">'isprint'</a> option)      <a name="%2F%5Cp" class="t">/\p</a>
+\P      like "\p"<a href="motion.txt.html#%2C" class="d">,</a> but excluding digits                 <a name="%2F%5CP" class="t">/\P</a>
+
+<span class="n">NOTE:</span> the above also work for <a href="mbyte.txt.html#multi-byte" class="d">multi-byte</a> characters.  The ones below only
+match ASCII characters, <a href="motion.txt.html#as" class="d">as</a> indicated by the range.
+
+                                                <a name="whitespace" class="t">whitespace</a> <a name="white-space" class="t">white-space</a>
+\s      <a href="#whitespace" class="d">whitespace</a> character: <a href="motion.txt.html#%3CSpace%3E" class="s">&lt;Space&gt;</a> and <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a>         <a name="%2F%5Cs" class="t">/\s</a>
+\S      non-whitespace character; opposite of \s        <a name="%2F%5CS" class="t">/\S</a>
+\d      digit:                          <span class="s">[0-9]</span>           <a name="%2F%5Cd" class="t">/\d</a>
+\D      non-digit:                      <span class="s">[^0-9]</span>          <a name="%2F%5CD" class="t">/\D</a>
+\x      hex digit:                      <span class="s">[0-9A-Fa-f]</span>     <a name="%2F%5Cx" class="t">/\x</a>
+\X      non-hex digit:                  <span class="s">[^0-9A-Fa-f]</span>    <a name="%2F%5CX" class="t">/\X</a>
+\o      <a href="eval.txt.html#octal" class="d">octal</a> digit:                    <span class="s">[0-7]</span>           <a name="%2F%5Co" class="t">/\o</a>
+\O      non-octal digit:                <span class="s">[^0-7]</span>          <a name="%2F%5CO" class="t">/\O</a>
+\w      <a href="motion.txt.html#word" class="d">word</a> character:                 <span class="s">[0-9A-Za-z_]</span>    <a name="%2F%5Cw" class="t">/\w</a>
+\W      non-word character:             <span class="s">[^0-9A-Za-z_]</span>   <a name="%2F%5CW" class="t">/\W</a>
+\h      head of <a href="motion.txt.html#word" class="d">word</a> character:         <span class="s">[A-Za-z_]</span>       <a name="%2F%5Ch" class="t">/\h</a>
+\H      non-head of <a href="motion.txt.html#word" class="d">word</a> character:     <span class="s">[^A-Za-z_]</span>      <a name="%2F%5CH" class="t">/\H</a>
+\a      alphabetic character:           <span class="s">[A-Za-z]</span>        <a name="%2F%5Ca" class="t">/\a</a>
+\A      non-alphabetic character:       <span class="s">[^A-Za-z]</span>       <a name="%2F%5CA" class="t">/\A</a>
+\l      <a href="change.txt.html#lowercase" class="d">lowercase</a> character:            <span class="s">[a-z]</span>           <a name="%2F%5Cl" class="t">/\l</a>
+\L      non-lowercase character:        <span class="s">[^a-z]</span>          <a name="%2F%5CL" class="t">/\L</a>
+\u      <a href="change.txt.html#uppercase" class="d">uppercase</a> character:            <span class="s">[A-Z]</span>           <a name="%2F%5Cu" class="t">/\u</a>
+\U      non-uppercase character:        <span class="s">[^A-Z]</span>          <a name="%2F%5CU" class="t">/\U</a>
+
+        <span class="n">NOTE:</span> Using the atom <a href="motion.txt.html#is" class="d">is</a> faster than the <a href="motion.txt.html#%5B%5D" class="d">[]</a> form.
+
+        <span class="n">NOTE:</span> <a href="options.txt.html#%27ignorecase%27" class="o">'ignorecase'</a>, "\c" and "\C" are not used by character classes.
+
+                        <a name="%2F%5C_" class="t">/\_</a> <a name="E63" class="t">E63</a> <a name="%2F%5C_i" class="t">/\_i</a> <a name="%2F%5C_I" class="t">/\_I</a> <a name="%2F%5C_k" class="t">/\_k</a> <a name="%2F%5C_K" class="t">/\_K</a> <a name="%2F%5C_f" class="t">/\_f</a> <a name="%2F%5C_F" class="t">/\_F</a>
+                        <a name="%2F%5C_p" class="t">/\_p</a> <a name="%2F%5C_P" class="t">/\_P</a> <a name="%2F%5C_s" class="t">/\_s</a> <a name="%2F%5C_S" class="t">/\_S</a> <a name="%2F%5C_d" class="t">/\_d</a> <a name="%2F%5C_D" class="t">/\_D</a> <a name="%2F%5C_x" class="t">/\_x</a> <a name="%2F%5C_X" class="t">/\_X</a>
+                        <a name="%2F%5C_o" class="t">/\_o</a> <a name="%2F%5C_O" class="t">/\_O</a> <a name="%2F%5C_w" class="t">/\_w</a> <a name="%2F%5C_W" class="t">/\_W</a> <a name="%2F%5C_h" class="t">/\_h</a> <a name="%2F%5C_H" class="t">/\_H</a> <a name="%2F%5C_a" class="t">/\_a</a> <a name="%2F%5C_A" class="t">/\_A</a>
+                        <a name="%2F%5C_l" class="t">/\_l</a> <a name="%2F%5C_L" class="t">/\_L</a> <a name="%2F%5C_u" class="t">/\_u</a> <a name="%2F%5C_U" class="t">/\_U</a>
+\_x     Where "<a href="change.txt.html#x" class="d">x</a>" <a href="motion.txt.html#is" class="d">is</a> any of the characters above: The character class with
+        end-of-line added
+(end of character classes)
+
+\e      matches <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a>                                   <a name="%2F%5Ce" class="t">/\e</a>
+\t      matches <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a>                                   <a name="%2F%5Ct" class="t">/\t</a>
+\r      matches <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a>                                    <a name="%2F%5Cr" class="t">/\r</a>
+\b      matches <a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a>                                    <a name="%2F%5Cb" class="t">/\b</a>
+\n      matches an end-of-line                          <a name="%2F%5Cn" class="t">/\n</a>
+        When matching in <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#string" class="d">string</a> instead of buffer text <a href="insert.txt.html#a" class="d">a</a> literal newline
+        character <a href="motion.txt.html#is" class="d">is</a> matched.
+
+<a href="change.txt.html#%7E" class="d">~</a>       matches the last given substitute <a href="eval.txt.html#string" class="d">string</a>        <a name="%2F%7E" class="t">/~</a> <a name="%2F%5C%7E" class="t">/\~</a>
+
+\(\)    <a href="insert.txt.html#A" class="d">A</a> <a href="#pattern" class="d">pattern</a> enclosed by escaped parentheses.      <a name="%2F%5C%28" class="t">/\(</a> <a name="%2F%5C%28%5C%29" class="t">/\(\)</a> <a name="%2F%5C%29" class="t">/\)</a>
+        E.g., "\(^a\)" matches 'a' <a href="motion.txt.html#at" class="d">at</a> the start of <a href="insert.txt.html#a" class="d">a</a> line.
+        <a name="E51" class="t">E51</a> <a name="E54" class="t">E54</a> <a name="E55" class="t">E55</a> <a name="E872" class="t">E872</a> <a name="E873" class="t">E873</a>
+
+\1      Matches the same <a href="eval.txt.html#string" class="d">string</a> that was matched by     <a name="%2F%5C1" class="t">/\1</a> <a name="E65" class="t">E65</a>
+        the first sub-expression in \( and \). <span class="s">{not in Vi}</span>
+        Example: "\([a-z]\).\1" matches "ata"<a href="motion.txt.html#%2C" class="d">,</a> "ehe"<a href="motion.txt.html#%2C" class="d">,</a> "tot"<a href="motion.txt.html#%2C" class="d">,</a> etc.
+\2      Like "\1"<a href="motion.txt.html#%2C" class="d">,</a> but uses second sub-expression,      <a name="%2F%5C2" class="t">/\2</a>
+<span class="c">   ...                                                 </span> <a name="%2F%5C3" class="t">/\3</a>
+\9      Like "\1"<a href="motion.txt.html#%2C" class="d">,</a> but uses ninth sub-expression.       <a name="%2F%5C9" class="t">/\9</a>
+        <span class="n">Note:</span> The numbering of groups <a href="motion.txt.html#is" class="d">is</a> done based on which "\(" comes first
+        in the <a href="#pattern" class="d">pattern</a> (going left to right), NOT based on what <a href="motion.txt.html#is" class="d">is</a> matched
+        first.
+
+\%(\)   <a href="insert.txt.html#A" class="d">A</a> <a href="#pattern" class="d">pattern</a> enclosed by escaped parentheses.      <a name="%2F%5C%25%28%5C%29" class="t">/\%(\)</a> <a name="%2F%5C%25%28" class="t">/\%(</a> <a name="E53" class="t">E53</a>
+        Just like \(\), but without counting <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> sub-expression.  This
+        allows using more groups and it's <a href="insert.txt.html#a" class="d">a</a> little bit faster.
+        <span class="s">{not in Vi}</span>
+
+<a href="change.txt.html#x" class="d">x</a>       <a href="insert.txt.html#A" class="d">A</a> single character, with no special meaning, matches itself
+
+                                                        <a name="%2F%5C" class="t">/\</a> <a name="%2F%5C%5C" class="t">/\\</a>
+\x      <a href="insert.txt.html#A" class="d">A</a> <a href="intro.txt.html#backslash" class="d">backslash</a> followed by <a href="insert.txt.html#a" class="d">a</a> single character, with no special meaning,
+        <a href="motion.txt.html#is" class="d">is</a> reserved for future expansions
+
+<a href="motion.txt.html#%5B%5D" class="d">[]</a>      (with <a href="options.txt.html#%27nomagic%27" class="o">'nomagic'</a>: \[])           <a name="%2F%5B%5D" class="t">/[]</a> <a name="%2F%5C%5B%5D" class="t">/\[]</a> <a name="%2F%5C_%5B%5D" class="t">/\_[]</a> <a name="%2Fcollection" class="t">/collection</a>
+\_[]
+        <a href="insert.txt.html#A" class="d">A</a> collection.  This <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> sequence of characters enclosed in brackets.
+        It matches any single character in the collection.
+<span class="h">        Example         matches </span>
+        <span class="s">[xyz]</span>           any 'x', 'y' or 'z'
+        <span class="s">[a-zA-Z]</span>$       any alphabetic character <a href="motion.txt.html#at" class="d">at</a> the <a href="intro.txt.html#end" class="d">end</a> of <a href="insert.txt.html#a" class="d">a</a> line
+        \c[a-z]$        same
+        [А-яЁё<a href="index.txt.html#%5D" class="d">]</a>             <a href="russian.txt.html#Russian" class="d">Russian</a> alphabet (with <a href="mbyte.txt.html#utf-8" class="d">utf-8</a> and cp1251)
+
+                                                                <a name="%2F%5B%5Cn%5D" class="t">/[\n]</a>
+        With "\_" prepended the collection also includes the end-of-line.
+        The same can be done by including "\n" in the collection.  The
+        end-of-line <a href="motion.txt.html#is" class="d">is</a> also matched when the collection starts with "<a href="motion.txt.html#%5E" class="d">^</a>"<a href="change.txt.html#%21" class="d">!</a>  Thus
+        "\_[^ab]" matches the end-of-line and any character but "<a href="insert.txt.html#a" class="d">a</a>" and "<a href="motion.txt.html#b" class="d">b</a>"<a href="repeat.txt.html#." class="d">.</a>
+        This makes <a href="motion.txt.html#it" class="d">it</a> <a href="intro.txt.html#Vi" class="d">Vi</a> compatible: Without the "\_" or "\n" the collection
+        does not match an end-of-line.
+                                                                <a name="E769" class="t">E769</a>
+        When the ']' <a href="motion.txt.html#is" class="d">is</a> not there Vim will not give an error message but
+        assume no collection <a href="motion.txt.html#is" class="d">is</a> used.  Useful to search for '['.  However, you
+        <a href="diff.txt.html#do" class="d">do</a> get <a href="#E769" class="d">E769</a> for internal searching.  And be aware that in <a href="insert.txt.html#a" class="d">a</a>
+        <span class="e">:substitute</span> command the whole command becomes the pattern.  E.g.
+        ":s/[/x/" searches for "[/x" and replaces <a href="motion.txt.html#it" class="d">it</a> with nothing.  It does
+        not search for "<a href="index.txt.html#%5B" class="d">[</a>" and replaces <a href="motion.txt.html#it" class="d">it</a> with "<a href="change.txt.html#x" class="d">x</a>"<a href="change.txt.html#%21" class="d">!</a>
+
+                                                                <a name="E944" class="t">E944</a> <a name="E945" class="t">E945</a>
+        If the sequence begins with "<a href="motion.txt.html#%5E" class="d">^</a>"<a href="motion.txt.html#%2C" class="d">,</a> <a href="motion.txt.html#it" class="d">it</a> matches any single character NOT
+        in the collection: "[^xyz]" matches anything but 'x', 'y' and 'z'.
+        <a href="motion.txt.html#-" class="d">-</a> If two characters in the sequence are separated by '-', this <a href="motion.txt.html#is" class="d">is</a>
+          shorthand for the full <a href="eval.txt.html#list" class="d">list</a> of ASCII characters between them.  E.g.,
+          "[0-9]" matches any decimal digit. If the <a href="starting.txt.html#starting" class="d">starting</a> character exceeds
+          the ending character, e.g. <span class="s">[c-a]</span>, <a href="#E944" class="d">E944</a> occurs. Non-ASCII characters
+          can be used, but the character values <a href="vim_faq.txt.html#must" class="d">must</a> not be more than 256 apart
+          in the old <a href="#regexp" class="d">regexp</a> engine. For example, searching by [\u3000-\u4000]
+          after setting re=1 emits <a href="insert.txt.html#a" class="d">a</a> <a href="#E945" class="d">E945</a> error. Prepending \%#=2 will fix it.
+        <a href="motion.txt.html#-" class="d">-</a> <a href="insert.txt.html#A" class="d">A</a> character class <a href="eval.txt.html#expression" class="d">expression</a> <a href="motion.txt.html#is" class="d">is</a> evaluated to the set of characters
+          belonging to that character class.  The following character classes
+          are supported:
+<span class="h">                  Name        Func      Contents </span>
+<a name="%5B%3Aalnum%3A%5D" class="t">[:alnum:]</a>       <a href="#%5B%3Aalnum%3A%5D" class="d">[:alnum:]</a>   isalnum   ASCII letters and digits
+<a name="%5B%3Aalpha%3A%5D" class="t">[:alpha:]</a>       <a href="#%5B%3Aalpha%3A%5D" class="d">[:alpha:]</a>   isalpha   ASCII letters
+<a name="%5B%3Ablank%3A%5D" class="t">[:blank:]</a>       <a href="#%5B%3Ablank%3A%5D" class="d">[:blank:]</a>             <a href="intro.txt.html#space" class="d">space</a> and <a href="intro.txt.html#tab" class="d">tab</a>
+<a name="%5B%3Acntrl%3A%5D" class="t">[:cntrl:]</a>       <a href="#%5B%3Acntrl%3A%5D" class="d">[:cntrl:]</a>   iscntrl   ASCII <a href="intro.txt.html#control" class="d">control</a> characters
+<a name="%5B%3Adigit%3A%5D" class="t">[:digit:]</a>       <a href="#%5B%3Adigit%3A%5D" class="d">[:digit:]</a>             decimal digits '0' to '9'
+<a name="%5B%3Agraph%3A%5D" class="t">[:graph:]</a>       <a href="#%5B%3Agraph%3A%5D" class="d">[:graph:]</a>   isgraph   ASCII printable characters excluding
+                                        <a href="intro.txt.html#space" class="d">space</a>
+<a name="%5B%3Alower%3A%5D" class="t">[:lower:]</a>       <a href="#%5B%3Alower%3A%5D" class="d">[:lower:]</a>   (1)       <a href="change.txt.html#lowercase" class="d">lowercase</a> letters (all letters when
+                                        <a href="options.txt.html#%27ignorecase%27" class="o">'ignorecase'</a> <a href="motion.txt.html#is" class="d">is</a> used)
+<a name="%5B%3Aprint%3A%5D" class="t">[:print:]</a>       <a href="#%5B%3Aprint%3A%5D" class="d">[:print:]</a>   (2)       printable characters including <a href="intro.txt.html#space" class="d">space</a>
+<a name="%5B%3Apunct%3A%5D" class="t">[:punct:]</a>       <a href="#%5B%3Apunct%3A%5D" class="d">[:punct:]</a>   ispunct   ASCII punctuation characters
+<a name="%5B%3Aspace%3A%5D" class="t">[:space:]</a>       <a href="#%5B%3Aspace%3A%5D" class="d">[:space:]</a>             <a href="#whitespace" class="d">whitespace</a> characters: space, tab, CR,
+                                        NL, vertical tab, form feed
+<a name="%5B%3Aupper%3A%5D" class="t">[:upper:]</a>       <a href="#%5B%3Aupper%3A%5D" class="d">[:upper:]</a>   (3)       <a href="change.txt.html#uppercase" class="d">uppercase</a> letters (all letters when
+                                        <a href="options.txt.html#%27ignorecase%27" class="o">'ignorecase'</a> <a href="motion.txt.html#is" class="d">is</a> used)
+<a name="%5B%3Axdigit%3A%5D" class="t">[:xdigit:]</a>      <a href="#%5B%3Axdigit%3A%5D" class="d">[:xdigit:]</a>            hexadecimal digits: 0-9, a-f, A-F
+<a name="%5B%3Areturn%3A%5D" class="t">[:return:]</a>      <a href="#%5B%3Areturn%3A%5D" class="d">[:return:]</a>            the <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a> character
+<a name="%5B%3Atab%3A%5D" class="t">[:tab:]</a>         <a href="#%5B%3Atab%3A%5D" class="d">[:tab:]</a>               the <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a> character
+<a name="%5B%3Aescape%3A%5D" class="t">[:escape:]</a>      <a href="#%5B%3Aescape%3A%5D" class="d">[:escape:]</a>            the <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a> character
+<a name="%5B%3Abackspace%3A%5D" class="t">[:backspace:]</a>   <a href="#%5B%3Abackspace%3A%5D" class="d">[:backspace:]</a>         the <a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a> character
+          The brackets in character class expressions are additional to the
+          brackets delimiting <a href="insert.txt.html#a" class="d">a</a> collection.  For example, the following <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a>
+          plausible <a href="#pattern" class="d">pattern</a> for <a href="insert.txt.html#a" class="d">a</a> UNIX filename: "[-./[:alnum:]_~]\+" That is,
+          <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of <a href="motion.txt.html#at" class="d">at</a> least one character, each of which <a href="motion.txt.html#is" class="d">is</a> either '-', '.',
+          '/', alphabetic, numeric, '_' or '~'.
+          These items only work for 8-bit characters, except <a href="#%5B%3Alower%3A%5D" class="d">[:lower:]</a> and
+          <a href="#%5B%3Aupper%3A%5D" class="d">[:upper:]</a> also work for <a href="mbyte.txt.html#multi-byte" class="d">multi-byte</a> characters when using the new
+          <a href="#regexp" class="d">regexp</a> engine.  See <a href="#two-engines" class="l">two-engines</a><a href="repeat.txt.html#." class="d">.</a>  In the future these items may
+          work for <a href="mbyte.txt.html#multi-byte" class="d">multi-byte</a> characters.  For now, to get all "alpha"
+          characters you can use: [[:lower:][:upper:]].
+
+          The "Func" column shows what library function <a href="motion.txt.html#is" class="d">is</a> used.  The
+          implementation depends on the system.  Otherwise:
+          (1) Uses islower() for ASCII and Vim builtin rules for other
+          characters when built with the <a href="various.txt.html#%2Bmulti_byte" class="l">+multi_byte</a> feature.
+          (2) Uses Vim builtin rules
+          (3) As with (1) but using isupper()
+                                                        <a name="%2F%5B%5B%3D" class="t">/[[=</a> <a name="%5B%3D%3D%5D" class="t">[==]</a>
+        <a href="motion.txt.html#-" class="d">-</a> An equivalence class.  This means that characters are matched that
+          have almost the same meaning, e.g., when ignoring accents.  This
+          only works for Unicode, latin1 and latin9.  The form is:
+                [=a=]
+                                                        <a name="%2F%5B%5B." class="t">/[[.</a> <a name="%5B..%5D" class="t">[..]</a>
+        <a href="motion.txt.html#-" class="d">-</a> <a href="insert.txt.html#A" class="d">A</a> collation element.  This currently simply accepts <a href="insert.txt.html#a" class="d">a</a> single
+          character in the form:
+                [.a.]
+                                                          <a name="%2F%5C%5D" class="t">/\]</a>
+        <a href="motion.txt.html#-" class="d">-</a> To include <a href="insert.txt.html#a" class="d">a</a> literal ']', '^', '-' or '\' in the collection, <a href="change.txt.html#put" class="d">put</a> <a href="insert.txt.html#a" class="d">a</a>
+          <a href="intro.txt.html#backslash" class="d">backslash</a> before it: "[xyz\]]"<a href="motion.txt.html#%2C" class="d">,</a> "[\^xyz]"<a href="motion.txt.html#%2C" class="d">,</a> "[xy\-z]" and "[xyz\\]"<a href="repeat.txt.html#." class="d">.</a>
+          (Note: POSIX does not support the use of <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#backslash" class="d">backslash</a> this way).  For
+          ']' you can also make <a href="motion.txt.html#it" class="d">it</a> the first character (following <a href="insert.txt.html#a" class="d">a</a> possible
+          "<a href="motion.txt.html#%5E" class="d">^</a>"):  "[]xyz]" or "[^]xyz]" <span class="s">{not in Vi}</span>.
+          For '-' you can also make <a href="motion.txt.html#it" class="d">it</a> the first or last character: "[-xyz]"<a href="motion.txt.html#%2C" class="d">,</a>
+          "[^-xyz]" or "[xyz-]"<a href="repeat.txt.html#." class="d">.</a>  For '\' you can also let <a href="motion.txt.html#it" class="d">it</a> be followed by
+          any character that's not in "^]-\bdertnoUux"<a href="repeat.txt.html#." class="d">.</a>  "[\xyz]" matches '\',
+          'x', 'y' and 'z'.  It's better to use "\\" though, future expansions
+          may use other characters after '\'.
+        <a href="motion.txt.html#-" class="d">-</a> Omitting the trailing <a href="index.txt.html#%5D" class="d">]</a> <a href="motion.txt.html#is" class="d">is</a> not considered an error. "<a href="motion.txt.html#%5B%5D" class="d">[]</a>" works like
+          "[]]"<a href="motion.txt.html#%2C" class="d">,</a> <a href="motion.txt.html#it" class="d">it</a> matches the ']' character.
+        <a href="motion.txt.html#-" class="d">-</a> The following translations are accepted when the 'l' flag <a href="motion.txt.html#is" class="d">is</a> not
+          included in <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a> <span class="s">{not in Vi}</span>:
+                \e      <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a>
+                \t      <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a>
+                \r      <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a>    (NOT end-of-line!)
+                \b      <a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a>
+                \n      line break, see above <a href="#%2F%5B%5Cn%5D" class="l">/[\n]</a>
+                \d123   decimal number of character
+                \o40    <a href="eval.txt.html#octal" class="d">octal</a> number of character up to 0377
+                \x20    hexadecimal number of character up to 0xff
+                \u20AC  hex. number of <a href="mbyte.txt.html#multibyte" class="d">multibyte</a> character up to 0xffff
+                \U1234  hex. number of <a href="mbyte.txt.html#multibyte" class="d">multibyte</a> character up to 0xffffffff
+          <span class="n">NOTE:</span> The other <a href="intro.txt.html#backslash" class="d">backslash</a> codes mentioned above <a href="diff.txt.html#do" class="d">do</a> not work inside
+          []!
+        <a href="motion.txt.html#-" class="d">-</a> Matching with <a href="insert.txt.html#a" class="d">a</a> collection can be slow, because each character in
+          the text has to be compared with each character in the collection.
+          Use one of the other atoms above when possible.  Example: "\d" <a href="motion.txt.html#is" class="d">is</a>
+          much faster than "[0-9]" and matches the same characters.  However,
+          the new <a href="#NFA" class="l">NFA</a> <a href="#regexp" class="d">regexp</a> engine deals with this better than the old one.
+
+                                                <a name="%2F%5C%25%5B%5D" class="t">/\%[]</a> <a name="E69" class="t">E69</a> <a name="E70" class="t">E70</a> <a name="E369" class="t">E369</a>
+\%[]    <a href="insert.txt.html#A" class="d">A</a> sequence of optionally matched atoms.  This always matches.
+        It matches <a href="motion.txt.html#as" class="d">as</a> much of the <a href="eval.txt.html#list" class="d">list</a> of atoms <a href="motion.txt.html#it" class="d">it</a> contains <a href="motion.txt.html#as" class="d">as</a> possible.  Thus
+        <a href="motion.txt.html#it" class="d">it</a> stops <a href="motion.txt.html#at" class="d">at</a> the first atom that doesn't match.  For example: 
+<span class="e">                /r\%[ead]</span>
+       matches "<a href="change.txt.html#r" class="d">r</a>"<a href="motion.txt.html#%2C" class="d">,</a> "re"<a href="motion.txt.html#%2C" class="d">,</a> "rea" or "read"<a href="repeat.txt.html#." class="d">.</a>  The longest that matches <a href="motion.txt.html#is" class="d">is</a> used.
+        To match the <a href="intro.txt.html#Ex" class="d">Ex</a> command "function"<a href="motion.txt.html#%2C" class="d">,</a> where "fu" <a href="motion.txt.html#is" class="d">is</a> required and
+        "nction" <a href="motion.txt.html#is" class="d">is</a> optional, this would work: 
+<span class="e">                /\&lt;fu\%[nction]\&gt;</span>
+       The end-of-word atom "\&gt;" <a href="motion.txt.html#is" class="d">is</a> used to avoid matching "fu" in "full"<a href="repeat.txt.html#." class="d">.</a>
+        It gets more complicated when the atoms are not ordinary characters.
+        You don't often have to use it, but <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> possible.  Example: 
+<span class="e">                /\&lt;r\%[[eo]ad]\&gt;</span>
+       Matches the words "<a href="change.txt.html#r" class="d">r</a>"<a href="motion.txt.html#%2C" class="d">,</a> "re"<a href="motion.txt.html#%2C" class="d">,</a> "ro"<a href="motion.txt.html#%2C" class="d">,</a> "rea"<a href="motion.txt.html#%2C" class="d">,</a> "roa"<a href="motion.txt.html#%2C" class="d">,</a> "read" and "road"<a href="repeat.txt.html#." class="d">.</a>
+        There can be no \(\), \%(\) or \z(\) items inside the <a href="motion.txt.html#%5B%5D" class="d">[]</a> and \%[] does
+        not nest.
+        To include <a href="insert.txt.html#a" class="d">a</a> "<a href="index.txt.html#%5B" class="d">[</a>" use "[[]" and for "<a href="index.txt.html#%5D" class="d">]</a>" use []]"<a href="motion.txt.html#%2C" class="d">,</a> e.g.,: 
+<span class="e">                /index\%[[[]0[]]]</span>
+       matches "<a href="index.txt.html#index" class="d">index</a>" "index["<a href="motion.txt.html#%2C" class="d">,</a> "index[0" and "index[0]"<a href="repeat.txt.html#." class="d">.</a>
+        <span class="s">{not available when compiled without the |+syntax| feature}</span>
+
+                                <a name="%2F%5C%25d" class="t">/\%d</a> <a name="%2F%5C%25x" class="t">/\%x</a> <a name="%2F%5C%25o" class="t">/\%o</a> <a name="%2F%5C%25u" class="t">/\%u</a> <a name="%2F%5C%25U" class="t">/\%U</a> <a name="E678" class="t">E678</a>
+
+\%d123  Matches the character specified with <a href="insert.txt.html#a" class="d">a</a> decimal number.  Must be
+        followed by <a href="insert.txt.html#a" class="d">a</a> non-digit.
+\%o40   Matches the character specified with an <a href="eval.txt.html#octal" class="d">octal</a> number up to 0377.
+        Numbers below 040 <a href="vim_faq.txt.html#must" class="d">must</a> be followed by <a href="insert.txt.html#a" class="d">a</a> non-octal digit or <a href="insert.txt.html#a" class="d">a</a> non-digit.
+\%x2a   Matches the character specified with up to two hexadecimal characters.
+\%u20AC Matches the character specified with up to four hexadecimal
+        characters.
+\%U1234abcd     Matches the character specified with up to eight hexadecimal
+        characters.
+
+<span class="h">==============================================================================</span>
+7. Ignoring <a href="change.txt.html#case" class="d">case</a> in <a href="insert.txt.html#a" class="d">a</a> <a href="#pattern" class="d">pattern</a>                                   <a name="%2Fignorecase" class="t">/ignorecase</a>
+
+If the <a href="options.txt.html#%27ignorecase%27" class="o">'ignorecase'</a> option <a href="motion.txt.html#is" class="d">is</a> on, the <a href="change.txt.html#case" class="d">case</a> of normal letters <a href="motion.txt.html#is" class="d">is</a> ignored.
+<a href="options.txt.html#%27smartcase%27" class="o">'smartcase'</a> can be set to ignore <a href="change.txt.html#case" class="d">case</a> when the <a href="#pattern" class="d">pattern</a> contains <a href="change.txt.html#lowercase" class="d">lowercase</a>
+letters only.
+                                                        <a name="%2F%5Cc" class="t">/\c</a> <a name="%2F%5CC" class="t">/\C</a>
+When "\c" appears anywhere in the pattern, the whole <a href="#pattern" class="d">pattern</a> <a href="motion.txt.html#is" class="d">is</a> handled like
+<a href="options.txt.html#%27ignorecase%27" class="o">'ignorecase'</a> <a href="motion.txt.html#is" class="d">is</a> on.  The actual value of <a href="options.txt.html#%27ignorecase%27" class="o">'ignorecase'</a> and <a href="options.txt.html#%27smartcase%27" class="o">'smartcase'</a> <a href="motion.txt.html#is" class="d">is</a>
+ignored.  "\C" does the opposite: Force matching <a href="change.txt.html#case" class="d">case</a> for the whole pattern.
+<span class="s">{only Vim supports \c and \C}</span>
+<span class="n">Note</span> that <a href="options.txt.html#%27ignorecase%27" class="o">'ignorecase'</a>, "\c" and "\C" are not used for the character classes.
+
+Examples:
+<span class="h">      pattern   'ignorecase'  'smartcase'       matches </span>
+        foo       off           <a href="motion.txt.html#-" class="d">-</a>               foo
+        foo       on            <a href="motion.txt.html#-" class="d">-</a>               foo Foo FOO
+        Foo       on            off             foo Foo FOO
+        Foo       on            on                  Foo
+        \cfoo     <a href="motion.txt.html#-" class="d">-</a>             <a href="motion.txt.html#-" class="d">-</a>               foo Foo FOO
+        foo\C     <a href="motion.txt.html#-" class="d">-</a>             <a href="motion.txt.html#-" class="d">-</a>               foo
+
+Technical detail:                               <a name="NL-used-for-Nul" class="t">NL-used-for-Nul</a>
+<a href="intro.txt.html#%3CNul%3E" class="s">&lt;Nul&gt;</a> characters in the file are stored <a href="motion.txt.html#as" class="d">as</a> <a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a> in memory.  In the display
+they are shown <a href="motion.txt.html#as" class="d">as</a> "^@"<a href="repeat.txt.html#." class="d">.</a>  The translation <a href="motion.txt.html#is" class="d">is</a> done when reading and <a href="editing.txt.html#writing" class="d">writing</a>
+files.  To match <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#%3CNul%3E" class="s">&lt;Nul&gt;</a> with <a href="insert.txt.html#a" class="d">a</a> search <a href="#pattern" class="d">pattern</a> you can just enter <span class="k">CTRL-@</span> or
+"<a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> 000"<a href="repeat.txt.html#." class="d">.</a>  This <a href="motion.txt.html#is" class="d">is</a> probably just what you expect.  Internally the
+character <a href="motion.txt.html#is" class="d">is</a> replaced with <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a> in the search pattern.  What <a href="motion.txt.html#is" class="d">is</a> unusual <a href="motion.txt.html#is" class="d">is</a>
+that typing <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> <a href="motion.txt.html#CTRL-J" class="k">CTRL-J</a> also inserts <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a>, thus also searches for <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#%3CNul%3E" class="s">&lt;Nul&gt;</a>
+in the file.  <span class="s">{Vi cannot handle &lt;Nul&gt; characters in the file at all}</span>
+
+                                                <a name="CR-used-for-NL" class="t">CR-used-for-NL</a>
+When <a href="options.txt.html#%27fileformat%27" class="o">'fileformat'</a> <a href="motion.txt.html#is" class="d">is</a> "<a href="os_mac.txt.html#mac" class="d">mac</a>"<a href="motion.txt.html#%2C" class="d">,</a> <a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a> characters in the file are stored <a href="motion.txt.html#as" class="d">as</a> <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a>
+characters internally.  In the text they are shown <a href="motion.txt.html#as" class="d">as</a> "^J"<a href="repeat.txt.html#." class="d">.</a>  Otherwise this
+works similar to the usage of <a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a> for <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#%3CNul%3E" class="s">&lt;Nul&gt;</a>.
+
+When working with <a href="eval.txt.html#expression" class="d">expression</a> evaluation, <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a> character in the <a href="#pattern" class="d">pattern</a>
+matches <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a> in the string.  The use of "\n" (backslash n) to match <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a>
+doesn't work there, <a href="motion.txt.html#it" class="d">it</a> only works to match text in the buffer.
+
+                                                <a name="pattern-multi-byte" class="t">pattern-multi-byte</a>
+Patterns will also work with <a href="mbyte.txt.html#multi-byte" class="d">multi-byte</a> characters, mostly <a href="motion.txt.html#as" class="d">as</a> you would
+expect.  But invalid bytes may cause trouble, <a href="insert.txt.html#a" class="d">a</a> <a href="#pattern" class="d">pattern</a> with an invalid byte
+will probably never match.
+
+<span class="h">==============================================================================</span>
+8. Composing characters                                 <a name="patterns-composing" class="t">patterns-composing</a>
+
+                                                        <a name="%2F%5CZ" class="t">/\Z</a>
+When "\Z" appears anywhere in the pattern, all composing characters are
+ignored.  Thus only the base characters need to match, the composing
+characters may be different and the number of composing characters may differ.
+Only relevant when <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> <a href="motion.txt.html#is" class="d">is</a> "<a href="mbyte.txt.html#utf-8" class="d">utf-8</a>"<a href="repeat.txt.html#." class="d">.</a>
+Exception: If the <a href="#pattern" class="d">pattern</a> starts with one or more composing characters, these
+<a href="vim_faq.txt.html#must" class="d">must</a> match.
+                                                        <a name="%2F%5C%25C" class="t">/\%C</a>
+Use "\%C" to skip any composing characters.  For example, the <a href="#pattern" class="d">pattern</a> "<a href="insert.txt.html#a" class="d">a</a>" does
+not match in "cà<a href="motion.txt.html#t" class="d">t</a>" (where the <a href="insert.txt.html#a" class="d">a</a> has the composing character 0x0300), but
+"a\%C" does.  <span class="n">Note</span> that this does not match "cá<a href="motion.txt.html#t" class="d">t</a>" (where the á <a href="motion.txt.html#is" class="d">is</a> character
+0xe1, <a href="motion.txt.html#it" class="d">it</a> does not have <a href="insert.txt.html#a" class="d">a</a> compositing character).  It does match "cat" (where
+the <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#is" class="d">is</a> just an a).
+
+When <a href="insert.txt.html#a" class="d">a</a> composing character appears <a href="motion.txt.html#at" class="d">at</a> the start of the <a href="#pattern" class="d">pattern</a> of after an
+item that doesn't include the composing character, <a href="insert.txt.html#a" class="d">a</a> match <a href="motion.txt.html#is" class="d">is</a> found <a href="motion.txt.html#at" class="d">at</a> any
+character that includes this composing character.
+
+When using <a href="insert.txt.html#a" class="d">a</a> dot and <a href="insert.txt.html#a" class="d">a</a> composing character, this works the same <a href="motion.txt.html#as" class="d">as</a> the
+composing character by itself, except that <a href="motion.txt.html#it" class="d">it</a> doesn't matter what comes before
+this.
+
+The order of composing characters does not matter.  Also, the text may have
+more composing characters than the pattern, <a href="motion.txt.html#it" class="d">it</a> still matches.  But all
+composing characters in the <a href="#pattern" class="d">pattern</a> <a href="vim_faq.txt.html#must" class="d">must</a> be found in the text.
+
+Suppose <a href="motion.txt.html#B" class="d">B</a> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> base character and <a href="change.txt.html#x" class="d">x</a> and <a href="change.txt.html#y" class="d">y</a> are composing characters:
+<span class="h">        pattern         text            match </span>
+        Bxy             Bxy             yes (perfect match)
+        Bxy             Byx             yes (order ignored)
+        Bxy             By              no (x missing)
+        Bxy             Bx              no (y missing)
+        Bx              Bx              yes (perfect match)
+        Bx              By              no (x missing)
+        Bx              Bxy             yes (extra <a href="change.txt.html#y" class="d">y</a> ignored)
+        Bx              Byx             yes (extra <a href="change.txt.html#y" class="d">y</a> ignored)
+
+<span class="h">==============================================================================</span>
+9. Compare with <a href="if_perl.txt.html#Perl" class="d">Perl</a> patterns                           <a name="perl-patterns" class="t">perl-patterns</a>
+
+Vim's regexes are most similar to Perl's, in terms of what you can do.  The
+difference between them <a href="motion.txt.html#is" class="d">is</a> mostly just notation;  here's <a href="insert.txt.html#a" class="d">a</a> summary of where
+they differ:
+
+<span class="h">Capability                      in Vimspeak     in Perlspeak </span>
+<span class="h">----------------------------------------------------------------</span>
+force <a href="change.txt.html#case" class="d">case</a> insensitivity        \c              (?i)
+force <a href="change.txt.html#case" class="d">case</a> sensitivity          \C              (?-i)
+backref-less grouping           \%(atom\)       (?:atom)
+conservative quantifiers        \{-n,m}         *?, +?, ??, {}?
+0-width match                   atom\@=         (?=atom)
+0-width non-match               atom\@!         (?!atom)
+0-width preceding match         atom\@&lt;=        (?&lt;=atom)
+0-width preceding non-match     atom\@&lt;!        (?&lt;!atom)
+match without retry             atom\@&gt;         (?&gt;atom)
+
+Vim and <a href="if_perl.txt.html#Perl" class="d">Perl</a> handle newline characters inside <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#string" class="d">string</a> <a href="insert.txt.html#a" class="d">a</a> bit differently:
+
+In Perl, <a href="motion.txt.html#%5E" class="d">^</a> and <a href="motion.txt.html#%24" class="d">$</a> only match <a href="motion.txt.html#at" class="d">at</a> the very beginning and <a href="intro.txt.html#end" class="d">end</a> of the text,
+by default, but you can set the 'm' flag, which lets them match <a href="motion.txt.html#at" class="d">at</a>
+embedded newlines <a href="motion.txt.html#as" class="d">as</a> well.  You can also set the 's' flag, which causes
+<a href="insert.txt.html#a" class="d">a</a> <a href="repeat.txt.html#." class="d">.</a> to match newlines <a href="motion.txt.html#as" class="d">as</a> well.  (Both these flags can be changed inside
+<a href="insert.txt.html#a" class="d">a</a> <a href="#pattern" class="d">pattern</a> using the same <a href="syntax.txt.html#syntax" class="d">syntax</a> used for the <a href="insert.txt.html#i" class="d">i</a> flag above, BTW.)
+
+On the other hand, Vim's <a href="motion.txt.html#%5E" class="d">^</a> and <a href="motion.txt.html#%24" class="d">$</a> always match <a href="motion.txt.html#at" class="d">at</a> embedded newlines, and
+you get two separate atoms, \%^ and \%$, which only match <a href="motion.txt.html#at" class="d">at</a> the very
+start and <a href="intro.txt.html#end" class="d">end</a> of the text, respectively.  Vim solves the second problem
+by giving you the \_ "modifier"<a href="cmdline.txt.html#%3A" class="d">:</a>  <a href="change.txt.html#put" class="d">put</a> <a href="motion.txt.html#it" class="d">it</a> in front of <a href="insert.txt.html#a" class="d">a</a> <a href="repeat.txt.html#." class="d">.</a> or <a href="insert.txt.html#a" class="d">a</a> character
+class, and they will match newlines <a href="motion.txt.html#as" class="d">as</a> well.
+
+Finally, these constructs are unique to Perl:
+<a href="motion.txt.html#-" class="d">-</a> execution of arbitrary code in the regex:  (?{perl code})
+<a href="motion.txt.html#-" class="d">-</a> conditional expressions:  (?(condition)true-expr|false-expr)
+
+...and these are unique to Vim:
+<a href="motion.txt.html#-" class="d">-</a> <a href="change.txt.html#changing" class="d">changing</a> the magic-ness of <a href="insert.txt.html#a" class="d">a</a> pattern:  \v \V \m \M
+   (very useful for avoiding backslashitis)
+<a href="motion.txt.html#-" class="d">-</a> sequence of optionally matching atoms:  \%[atoms]
+<a href="motion.txt.html#-" class="d">-</a> \&amp; (which <a href="motion.txt.html#is" class="d">is</a> to \| what "and" <a href="motion.txt.html#is" class="d">is</a> to "or"<a href="motion.txt.html#%3B" class="d">;</a>  <a href="motion.txt.html#it" class="d">it</a> forces several branches
+   to match <a href="motion.txt.html#at" class="d">at</a> one spot)
+<a href="motion.txt.html#-" class="d">-</a> matching lines/columns by number:  \%5l \%5c \%5v
+<a href="motion.txt.html#-" class="d">-</a> setting the start and <a href="intro.txt.html#end" class="d">end</a> of the match:  \zs \ze
+
+<span class="h">==============================================================================</span>
+10. Highlighting matches                                <a name="match-highlight" class="t">match-highlight</a>
+
+                                                        <a name="%3Amat" class="t">:mat</a> <a name="%3Amatch" class="t">:match</a>
+:mat[ch] <span class="s">{group}</span> /{pattern}/
+                Define <a href="insert.txt.html#a" class="d">a</a> <a href="#pattern" class="d">pattern</a> to highlight in the current window.  It will
+                be highlighted with <span class="s">{group}</span>.  Example: 
+<span class="e">                        :highlight MyGroup ctermbg=green guibg=green</span>
+<span class="e">                        :match MyGroup /TODO/</span>
+               Instead of <a href="version7.txt.html#%2F%2F" class="d">//</a> any character can be used to <a href="motion.txt.html#mark" class="d">mark</a> the start and
+                <a href="intro.txt.html#end" class="d">end</a> of the <span class="s">{pattern}</span>.  Watch out for using special characters,
+                such <a href="motion.txt.html#as" class="d">as</a> <a href="motion.txt.html#%27" class="d">'</a>"<a href="motion.txt.html#%27" class="d">'</a> and <a href="motion.txt.html#%27" class="d">'</a>|<a href="motion.txt.html#%27." class="d">'.</a>
+
+                <span class="s">{group}</span> <a href="vim_faq.txt.html#must" class="d">must</a> exist <a href="motion.txt.html#at" class="d">at</a> the moment this command <a href="motion.txt.html#is" class="d">is</a> executed.
+
+                The <span class="s">{group}</span> highlighting still applies when <a href="insert.txt.html#a" class="d">a</a> character <a href="motion.txt.html#is" class="d">is</a>
+                to be highlighted for <a href="options.txt.html#%27hlsearch%27" class="o">'hlsearch'</a>, <a href="motion.txt.html#as" class="d">as</a> the highlighting for
+                matches <a href="motion.txt.html#is" class="d">is</a> given higher priority than that of <a href="options.txt.html#%27hlsearch%27" class="o">'hlsearch'</a>.
+                <a href="autocmd.txt.html#Syntax" class="d">Syntax</a> highlighting (see <a href="options.txt.html#%27syntax%27" class="o">'syntax'</a>) <a href="motion.txt.html#is" class="d">is</a> also overruled by
+                matches.
+
+                <span class="n">Note</span> that highlighting the last used search <a href="#pattern" class="d">pattern</a> with
+                <a href="options.txt.html#%27hlsearch%27" class="o">'hlsearch'</a> <a href="motion.txt.html#is" class="d">is</a> used in all windows, while the <a href="#pattern" class="d">pattern</a> defined
+                with "<a href="#%3Amatch" class="d">:match</a>" only exists in the current window.  It <a href="motion.txt.html#is" class="d">is</a> kept
+                when switching to another buffer.
+
+                <a href="options.txt.html#%27ignorecase%27" class="o">'ignorecase'</a> does not apply, use <a href="#%2F%5Cc" class="l">/\c</a> in the <a href="#pattern" class="d">pattern</a> to
+                ignore case.  Otherwise <a href="change.txt.html#case" class="d">case</a> <a href="motion.txt.html#is" class="d">is</a> not ignored.
+
+                <a href="options.txt.html#%27redrawtime%27" class="o">'redrawtime'</a> defines the maximum time searched for <a href="#pattern" class="d">pattern</a>
+                matches.
+
+                When matching end-of-line and Vim redraws only part of the
+                display you may get unexpected results.  That <a href="motion.txt.html#is" class="d">is</a> because Vim
+                looks for <a href="insert.txt.html#a" class="d">a</a> match in the line where redrawing starts.
+
+                Also see <a href="eval.txt.html#matcharg%28%29" class="l">matcharg()</a> and <a href="eval.txt.html#getmatches%28%29" class="l">getmatches()</a><a href="repeat.txt.html#." class="d">.</a> The former returns
+                the highlight group and <a href="#pattern" class="d">pattern</a> of <a href="insert.txt.html#a" class="d">a</a> previous <a href="#%3Amatch" class="l">:match</a>
+                command.  The latter returns <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> with highlight groups and
+                patterns defined by both <a href="eval.txt.html#matchadd%28%29" class="l">matchadd()</a> and <a href="#%3Amatch" class="l">:match</a><a href="repeat.txt.html#." class="d">.</a>
+
+                Highlighting matches using <a href="#%3Amatch" class="l">:match</a> are limited to three
+                matches (aside from <a href="#%3Amatch" class="l">:match</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="#%3A2match" class="l">:2match</a> and <a href="#%3A3match" class="l">:3match</a> are
+                available). <a href="eval.txt.html#matchadd%28%29" class="l">matchadd()</a> does not have this limitation and in
+                addition makes <a href="motion.txt.html#it" class="d">it</a> possible to prioritize matches.
+
+                Another example, which highlights all characters in virtual
+                column 72 and more: 
+<span class="e">                        :highlight rightMargin term=bold ctermfg=blue guifg=blue</span>
+<span class="e">                        :match rightMargin /.\%&gt;72v/</span>
+               To highlight all character that are in virtual column 7: 
+<span class="e">                        :highlight col8 ctermbg=grey guibg=grey</span>
+<span class="e">                        :match col8 /\%&lt;8v.\%&gt;7v/</span>
+               <span class="n">Note</span> the use of two items to also match <a href="insert.txt.html#a" class="d">a</a> character that
+                occupies more than one virtual column, such <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> TAB.
+
+:mat[ch]
+:mat[ch] none
+                Clear <a href="insert.txt.html#a" class="d">a</a> previously defined match pattern.
+
+
+:2mat[ch] <span class="s">{group}</span> /{pattern}/                                   <a name="%3A2match" class="t">:2match</a>
+:2mat[ch]
+:2mat[ch] none
+:3mat[ch] <span class="s">{group}</span> /{pattern}/                                   <a name="%3A3match" class="t">:3match</a>
+:3mat[ch]
+:3mat[ch] none
+                Just like <a href="#%3Amatch" class="l">:match</a> above, but set <a href="insert.txt.html#a" class="d">a</a> separate match.  Thus
+                there can be three matches active <a href="motion.txt.html#at" class="d">at</a> the same time.  The match
+                with the lowest number has priority if several match <a href="motion.txt.html#at" class="d">at</a> the
+                same position.
+                The "<a href="#%3A3match" class="d">:3match</a>" command <a href="motion.txt.html#is" class="d">is</a> used by the <a href="pi_paren.txt.html#matchparen" class="l">matchparen</a> plugin.  You
+                are suggested to use "<a href="#%3Amatch" class="d">:match</a>" for manual matching and
+                "<a href="#%3A2match" class="d">:2match</a>" for another plugin.
+
+
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

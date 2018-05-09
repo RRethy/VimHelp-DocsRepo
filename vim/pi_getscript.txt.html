@@ -1,0 +1,496 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: pi_getscript.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="pi_getscript.txt" class="t">pi_getscript.txt</a>  For <span class="i">Vim version 7.0.</span>  Last change: 2017 Aug 01
+
+<span class="e">                GETSCRIPT REFERENCE MANUAL  by Charles E. Campbell</span>
+
+Authors:  Charles E. Campbell  <span class="s">&lt;NdrOchip@ScampbellPfamilyA.Mbiz&gt;</span>
+          (remove NOSPAM from the email address)
+                                                <a name="GetLatestVimScripts-copyright" class="t">GetLatestVimScripts-copyright</a>
+Copyright: (c) 2004-2012 by Charles E. Campbell <a name="glvs-copyright" class="t">glvs-copyright</a>
+        The VIM LICENSE (see <a href="uganda.txt.html#copyright" class="l">copyright</a><a href="motion.txt.html#%29" class="d">)</a> applies to the files in this
+        package, including getscriptPlugin.vim, getscript.vim,
+        GetLatestVimScripts.dist, and pi_getscript.txt, except use "<a href="#getscript" class="d">getscript</a>"
+        instead of "Vim"<a href="repeat.txt.html#." class="d">.</a>  Like anything else that's free, <a href="#getscript" class="d">getscript</a> and its
+        associated files are provided *<a href="motion.txt.html#as" class="d">as</a> <a href="motion.txt.html#is" class="d">is</a>* and comes with no warranty of
+        any kind, either expressed or implied.  No guarantees of
+        merchantability.  No guarantees of suitability for any purpose.  By
+        using this plugin, you agree that in no event will the <a href="uganda.txt.html#copyright" class="d">copyright</a>
+        holder be liable for any damages resulting from the use of this
+        software. Use <a href="motion.txt.html#at" class="d">at</a> your own risk!
+
+Getscript <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> <a href="usr_05.txt.html#plugin" class="d">plugin</a> that simplifies retrieval of the latest versions of the
+scripts that you yourself use!  Typing <a href="#%3AGLVS" class="l">:GLVS</a> will invoke getscript; <a href="motion.txt.html#it" class="d">it</a> will
+then use the <span class="s">&lt;GetLatestVimScripts.dat&gt;</span> (see <a href="#GetLatestVimScripts_dat" class="l">GetLatestVimScripts_dat</a><a href="motion.txt.html#%29" class="d">)</a> file to
+get the latest versions of scripts listed therein from <a class="u" href="http://vim.sf.net/">http://vim.sf.net/</a>.
+
+<span class="h">==============================================================================</span>
+1. <a href="quickref.txt.html#Contents" class="d">Contents</a>                             <a name="glvs-contents" class="t">glvs-contents</a> <a name="glvs" class="t">glvs</a> <a name="getscript" class="t">getscript</a>
+<span class="c">                                       </span> <a name="GetLatestVimScripts" class="t">GetLatestVimScripts</a>
+
+        1. Contents........................................: <a href="#glvs-contents" class="l">glvs-contents</a>
+        2. <a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> <a href="starting.txt.html#--" class="d">--</a> Getting Started..........: <a href="#glvs-install" class="l">glvs-install</a>
+        3. <a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> Usage.......................: <a href="#glvs-usage" class="l">glvs-usage</a>
+        4. <a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> Data File...................: <a href="#glvs-data" class="l">glvs-data</a>
+        5. <a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> Friendly Plugins............: <a href="#glvs-plugins" class="l">glvs-plugins</a>
+        6. <a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> AutoInstall.................: <a href="#glvs-autoinstall" class="l">glvs-autoinstall</a>
+        7. GetLatestViMScripts Options.....................: <a href="#glvs-options" class="l">glvs-options</a>
+        8. <a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> Algorithm...................: <a href="#glvs-alg" class="l">glvs-alg</a>
+        9. <a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> History.....................: <a href="#glvs-hist" class="l">glvs-hist</a>
+
+
+<span class="h">==============================================================================</span>
+2. <a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> <a href="starting.txt.html#--" class="d">--</a> Getting Started               <a name="getscript-start" class="t">getscript-start</a>
+                                                <a name="getlatestvimscripts-install" class="t">getlatestvimscripts-install</a>
+
+        VERSION FROM VIM DISTRIBUTION                   <a name="glvs-dist-install" class="t">glvs-dist-install</a>
+
+Vim 7.0 does not include the GetLatestVimScripts.dist file which
+serves <a href="motion.txt.html#as" class="d">as</a> an example and <a href="insert.txt.html#a" class="d">a</a> template.  So, you'll need to create
+your own!  See <a href="#GetLatestVimScripts_dat" class="l">GetLatestVimScripts_dat</a><a href="repeat.txt.html#." class="d">.</a>
+
+        VERSION FROM VIM SF NET                         <a name="glvs-install" class="t">glvs-install</a>
+
+<span class="n">NOTE:</span> The last step, that of renaming/moving the GetLatestVimScripts.dist
+file, <a href="motion.txt.html#is" class="d">is</a> for those who have just downloaded GetLatestVimScripts.tar.bz2 for
+the first time.
+
+The GetLatestVimScripts.dist file serves <a href="motion.txt.html#as" class="d">as</a> an example and <a href="insert.txt.html#a" class="d">a</a> <a href="autocmd.txt.html#template" class="d">template</a> for your
+own personal list.  Feel free to remove all the scripts mentioned within it;
+the "important" part of <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> the first two lines.
+
+Your computer needs to have wget or curl for <a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> to <a href="diff.txt.html#do" class="d">do</a> its work.
+
+        1. if compressed:  gunzip getscript.vba.gz
+        2. Unix:
+                vim getscript.vba
+                <a href="repeat.txt.html#%3Aso" class="d">:so</a> <a href="motion.txt.html#%25" class="d">%</a>
+                <a href="editing.txt.html#%3Aq" class="d">:q</a>
+                cd ~/.vim/GetLatest
+                mv GetLatestVimScripts.dist GetLatestVimScripts.dat
+                (edit GetLatestVimScripts.dat to <a href="usr_90.txt.html#install" class="d">install</a> your own personal
+                <a href="eval.txt.html#list" class="d">list</a> of desired plugins <a href="starting.txt.html#--" class="d">--</a> see <a href="#GetLatestVimScripts_dat" class="l">GetLatestVimScripts_dat</a><a href="motion.txt.html#%29" class="d">)</a>
+
+        3. Windows:
+                vim getscript.vba
+                <a href="repeat.txt.html#%3Aso" class="d">:so</a> <a href="motion.txt.html#%25" class="d">%</a>
+                <a href="editing.txt.html#%3Aq" class="d">:q</a>
+                cd **path-to-vimfiles**/GetLatest
+                mv GetLatestVimScripts.dist GetLatestVimScripts.dat
+                (edit GetLatestVimScripts.dat to <a href="usr_90.txt.html#install" class="d">install</a> your own personal
+                <a href="eval.txt.html#list" class="d">list</a> of desired plugins <a href="starting.txt.html#--" class="d">--</a> see <a href="#GetLatestVimScripts_dat" class="l">GetLatestVimScripts_dat</a><a href="motion.txt.html#%29" class="d">)</a>
+
+
+<span class="h">==============================================================================</span>
+3. <a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> Usage                            <a name="glvs-usage" class="t">glvs-usage</a> <a name="%3AGLVS" class="t">:GLVS</a>
+
+Unless <a href="motion.txt.html#it" class="d">it</a> has been defined elsewhere, 
+<span class="e"></span>
+<span class="e">        :GLVS</span>
+<span class="e"></span>
+will invoke GetLatestVimScripts().  If some other <a href="usr_05.txt.html#plugin" class="d">plugin</a> has defined that
+command, then you may type
+
+<span class="e">        :GetLatestVimScripts</span>
+
+The <a href="usr_41.txt.html#script" class="d">script</a> will attempt to update and, if permitted, will automatically
+<a href="usr_90.txt.html#install" class="d">install</a> scripts from <a class="u" href="http://vim.sourceforge.net/">http://vim.sourceforge.net/</a>.  To <a href="diff.txt.html#do" class="d">do</a> so <a href="motion.txt.html#it" class="d">it</a> will peruse <a href="insert.txt.html#a" class="d">a</a>
+file,
+
+<span class="e">        .vim/GetLatest/GetLatestVimScripts.dat                    (unix)</span>
+
+or 
+<span class="e">        ..wherever..\vimfiles\GetLatest\GetLatestVimScripts.dat   (windows)</span>
+(see <a href="#glvs-data" class="l">glvs-data</a>), and examine plugins in your [.vim|vimfiles]/plugin
+directory (see <a href="#glvs-plugins" class="l">glvs-plugins</a>).
+
+Scripts which have been downloaded will appear in the
+~/.vim/GetLatest (unix) or ..wherever..\vimfiles\GetLatest (windows)
+subdirectory.  <a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> will attempt to automatically
+<a href="usr_90.txt.html#install" class="d">install</a> them if you have the following line in your <span class="s">&lt;.vimrc&gt;</span>: 
+<span class="e"></span>
+<span class="e">        let g:GetLatestVimScripts_allowautoinstall=1</span>
+<span class="e"></span>
+The <span class="s">&lt;GetLatestVimScripts.dat&gt;</span> file will be automatically be updated to
+reflect the latest version of script(s) so downloaded.
+(also see <a href="#glvs-options" class="l">glvs-options</a><a href="motion.txt.html#%29" class="d">)</a>
+
+
+<span class="h">==============================================================================</span>
+4. <a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> Data File                <a name="getscript-data" class="t">getscript-data</a> <a name="glvs-data" class="t">glvs-data</a>
+<span class="c">                                               </span> <a name="%3AGetLatestVimScripts_dat" class="t">:GetLatestVimScripts_dat</a>
+The data file <span class="s">&lt;GetLatestVimScripts.dat&gt;</span> <a href="vim_faq.txt.html#must" class="d">must</a> have for its first two lines
+the following text:
+
+<span class="e">        ScriptID SourceID Filename</span>
+<span class="e">        --------------------------</span>
+
+Following those two lines are three columns; the first two are numeric
+followed by <a href="insert.txt.html#a" class="d">a</a> text column.  The GetLatest/GetLatestVimScripts.dist file
+contains an example of such <a href="insert.txt.html#a" class="d">a</a> data file.  Anything following <a href="insert.txt.html#a" class="d">a</a> #... <a href="motion.txt.html#is" class="d">is</a>
+ignored, so you may embed comments in the file.
+
+The first number on each line gives the script's ScriptID.  When you're about
+to use <a href="insert.txt.html#a" class="d">a</a> web browser to look <a href="motion.txt.html#at" class="d">at</a> scripts on <a class="u" href="http://vim.sf.net/">http://vim.sf.net/</a>, just before you
+click on the script's link, you'll see <a href="insert.txt.html#a" class="d">a</a> line resembling
+
+        <a class="u" href="http://vim.sourceforge.net/scripts/script.php?script_id=40">http://vim.sourceforge.net/scripts/script.php?script_id=40</a>
+
+The "40" happens to be <a href="insert.txt.html#a" class="d">a</a> ScriptID that <a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> needs to
+<a href="intro.txt.html#download" class="d">download</a> the associated page, and <a href="motion.txt.html#is" class="d">is</a> assigned by vim.sf.net itself
+during initial uploading of the plugin.
+
+The second number on each line gives the script's SourceID.  The SourceID
+records the <a href="intro.txt.html#count" class="d">count</a> of uploaded scripts <a href="motion.txt.html#as" class="d">as</a> determined by vim.sf.net; hence <a href="motion.txt.html#it" class="d">it</a>
+serves to indicate "when" <a href="insert.txt.html#a" class="d">a</a> <a href="usr_41.txt.html#script" class="d">script</a> was uploaded.  Setting the SourceID to 1
+insures that <a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> will assume that the <a href="usr_41.txt.html#script" class="d">script</a> <a href="motion.txt.html#it" class="d">it</a> has <a href="motion.txt.html#is" class="d">is</a>
+out-of-date.
+
+The SourceID <a href="motion.txt.html#is" class="d">is</a> extracted by <a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> from the script's page on
+vim.sf.net; whenever <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> greater than the one stored in the
+GetLatestVimScripts.dat file, the <a href="usr_41.txt.html#script" class="d">script</a> will be downloaded
+(see <a href="#GetLatestVimScripts_dat" class="l">GetLatestVimScripts_dat</a>).
+
+If your script's <a href="intro.txt.html#author" class="d">author</a> has included <a href="insert.txt.html#a" class="d">a</a> special comment line in his/her plugin,
+the <a href="usr_05.txt.html#plugin" class="d">plugin</a> itself will be used by <a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> to build your
+<span class="s">&lt;GetLatestVimScripts.dat&gt;</span> file, including any dependencies on other scripts <a href="motion.txt.html#it" class="d">it</a>
+may have.  As an example, consider: 
+<span class="e"></span>
+<span class="e">        " GetLatestVimScripts: 884  1 :AutoInstall: AutoAlign.vim</span>
+<span class="e"></span>
+This comment line tells getscript.vim to check vimscript #884 and that the
+<a href="usr_41.txt.html#script" class="d">script</a> <a href="motion.txt.html#is" class="d">is</a> automatically installable.  Getscript will also use this line to
+<a href="helphelp.txt.html#help" class="d">help</a> build the GetLatestVimScripts.dat file, by including <a href="insert.txt.html#a" class="d">a</a> line such as: 
+<span class="e"></span>
+<span class="e">        884 1 :AutoInstall: AutoAlign.vim</span>
+
+assuming that such <a href="insert.txt.html#a" class="d">a</a> line isn't already in GetLatestVimScripts.dat file.
+See <a href="#glvs-plugins" class="l">glvs-plugins</a> for more.  Thus, <a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> thus provides <a href="insert.txt.html#a" class="d">a</a>
+comprehensive ability to keep your plugins up-to-date!
+
+In summary:
+
+<span class="c"> </span> * Optionally tell <a href="#getscript" class="d">getscript</a> that <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> allowed to build/append <a href="insert.txt.html#a" class="d">a</a>
+    GetLatestVimScripts.dat file based upon already installed plugins: 
+<span class="e">        let g:GetLatestVimScripts_allowautoinstall=1</span>
+
+<span class="c"> </span> * <a href="insert.txt.html#A" class="d">A</a> line such <a href="motion.txt.html#as" class="d">as</a> 
+<span class="e">        " GetLatestVimScripts: 884  1 :AutoInstall: AutoAlign.vim</span>
+   in an already-downloaded <a href="usr_05.txt.html#plugin" class="d">plugin</a> constitutes the concurrence of the
+    <a href="usr_05.txt.html#plugin" class="d">plugin</a> <a href="intro.txt.html#author" class="d">author</a> that <a href="#getscript" class="d">getscript</a> may <a href="diff.txt.html#do" class="d">do</a> AutoInstall.  Not all plugins
+    may be AutoInstall-able, and the plugin's <a href="intro.txt.html#author" class="d">author</a> <a href="motion.txt.html#is" class="d">is</a> best situated
+    to know whether or not his/her <a href="usr_05.txt.html#plugin" class="d">plugin</a> will AutoInstall properly.
+
+<span class="c"> </span> * <a href="insert.txt.html#A" class="d">A</a> line such <a href="motion.txt.html#as" class="d">as</a> 
+<span class="e">        884 1 :AutoInstall: AutoAlign.vim</span>
+   in your GetLatestVimScripts.dat file constitutes your permission
+    to <a href="#getscript" class="d">getscript</a> to <a href="diff.txt.html#do" class="d">do</a> AutoInstall.  AutoInstall requires both your
+    and the <a href="usr_05.txt.html#plugin" class="d">plugin</a> author's permission.  See <a href="#GetLatestVimScripts_dat" class="l">GetLatestVimScripts_dat</a><a href="repeat.txt.html#." class="d">.</a>
+
+
+                                                <a name="GetLatestVimScripts_dat" class="t">GetLatestVimScripts_dat</a>
+As an example of <a href="insert.txt.html#a" class="d">a</a> <span class="s">&lt;GetLatestVimScripts.dat&gt;</span> file:
+
+<span class="e">    ScriptID SourceID Filename</span>
+<span class="e">    --------------------------</span>
+<span class="e">    294 1 :AutoInstall: Align.vim</span>
+<span class="e">    120 2 Decho.vim</span>
+<span class="e">     40 3 DrawIt.tar.gz</span>
+<span class="e">    451 4 EasyAccents.vim</span>
+<span class="e">    195 5 engspchk.vim</span>
+<span class="e">    642 6 GetLatestVimScripts.vim</span>
+<span class="e">    489 7 Manpageview.vim</span>
+
+<span class="n">Note:</span> the first two lines are required, but essentially act <a href="motion.txt.html#as" class="d">as</a> comments.
+
+
+<span class="h">==============================================================================</span>
+5. <a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> Friendly Plugins <a name="getscript-plugins" class="t">getscript-plugins</a> <a name="glvs-plugins" class="t">glvs-plugins</a>
+
+<span class="h">                (this section is for plugin authors)</span>
+
+If <a href="insert.txt.html#a" class="d">a</a> <a href="usr_05.txt.html#plugin" class="d">plugin</a> <a href="intro.txt.html#author" class="d">author</a> includes the following comment anywhere in their plugin,
+<a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> will find <a href="motion.txt.html#it" class="d">it</a> and use <a href="motion.txt.html#it" class="d">it</a> to automatically build the user's
+GetLatestVimScripts.dat files:
+
+<span class="e">                                 src_id</span>
+<span class="e">                                    v</span>
+<span class="e">        " GetLatestVimScripts: ### ### yourscriptname</span>
+<span class="e">                                ^</span>
+<span class="e">                            scriptid</span>
+
+As an author, you should include such <a href="insert.txt.html#a" class="d">a</a> line in to refer to your own <a href="usr_41.txt.html#script" class="d">script</a>
+plus any additional lines describing any <a href="usr_05.txt.html#plugin" class="d">plugin</a> dependencies <a href="motion.txt.html#it" class="d">it</a> may have.
+Same format, of course!
+
+If your command <a href="motion.txt.html#is" class="d">is</a> auto-installable (see <a href="#glvs-autoinstall" class="l">glvs-autoinstall</a>), and most scripts
+are, then you may include :AutoInstall: just before "yourscriptname"<a href="cmdline.txt.html#%3A" class="d">:</a>
+
+<span class="e">                                 src_id</span>
+<span class="e">                                    v</span>
+<span class="e">        " GetLatestVimScripts: ### ### :AutoInstall: yourscriptname</span>
+<span class="e">                                ^</span>
+<span class="e">                            scriptid</span>
+
+<span class="h">NOTE: The :AutoInstall: feature requires both the plugin author's and</span>
+<span class="h">      the user's permission to operate!</span>
+
+<a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> commands for those scripts are then appended, if not
+already present, to the user's GetLatest/GetLatestVimScripts.dat file.  It <a href="motion.txt.html#is" class="d">is</a>
+<a href="insert.txt.html#a" class="d">a</a> relatively painless way to automate the acquisition of any scripts your
+plugins depend upon.
+
+Now, <a href="motion.txt.html#as" class="d">as</a> an author, you probably don't want <a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> to <a href="intro.txt.html#download" class="d">download</a>
+your own scripts atop your own copy, thereby overwriting your not-yet-released
+hard work.  <a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> provides <a href="insert.txt.html#a" class="d">a</a> solution for this:  <a href="change.txt.html#put" class="d">put</a>
+
+<span class="e">        0 0 yourscriptname</span>
+
+into your <span class="s">&lt;GetLatestVimScripts.dat&gt;</span> file and <a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> will skip
+examining the "yourscriptname" scripts for those <a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> comment
+lines.  As <a href="insert.txt.html#a" class="d">a</a> result, those lines won't be inadvertently installed into your
+<span class="s">&lt;GetLatestVimScripts.dat&gt;</span> file and subsequently used to <a href="intro.txt.html#download" class="d">download</a> your own
+scripts.  This <a href="motion.txt.html#is" class="d">is</a> especially important to <a href="diff.txt.html#do" class="d">do</a> if you've included the
+:AutoInstall: option.
+
+Be certain to use the same "yourscriptname" in the "<a href="motion.txt.html#0" class="d">0</a> <a href="motion.txt.html#0" class="d">0</a> yourscriptname" line
+<a href="motion.txt.html#as" class="d">as</a> you've used in your <a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> comment!
+
+
+<span class="h">==============================================================================</span>
+6. <a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> AutoInstall                      <a name="getscript-autoinstall" class="t">getscript-autoinstall</a>
+                                                        <a name="glvs-autoinstall" class="t">glvs-autoinstall</a>
+
+<a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> now supports "AutoInstall"<a href="repeat.txt.html#." class="d">.</a>  Not all scripts are
+supportive of auto-install, <a href="motion.txt.html#as" class="d">as</a> they may have special things you need to <a href="diff.txt.html#do" class="d">do</a> to
+<a href="usr_90.txt.html#install" class="d">install</a> them (please refer to the script's "<a href="usr_90.txt.html#install" class="d">install</a>" directions).  On the
+other hand, most scripts will be auto-installable.
+
+To let <a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> <a href="diff.txt.html#do" class="d">do</a> an autoinstall, the data file's comment field
+should begin with (surrounding blanks are ignored): 
+<span class="e"></span>
+<span class="e">        :AutoInstall:</span>
+
+Both colons are needed, and <a href="motion.txt.html#it" class="d">it</a> should begin the comment (yourscriptname)
+field.
+
+One may prevent any autoinstalling by putting the following line in your
+<span class="s">&lt;.vimrc&gt;</span>: 
+<span class="e"></span>
+<span class="e">        let g:GetLatestVimScripts_allowautoinstall= 0</span>
+
+With :AutoInstall: enabled, <a href="motion.txt.html#as" class="d">as</a> <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> by default, files which <a href="intro.txt.html#end" class="d">end</a> with
+
+        ---.tar.bz2  <a href="cmdline.txt.html#%3A" class="d">:</a> decompressed <a href="change.txt.html#%26" class="d">&amp;</a> untarred in .vim/ directory
+        ---.vba.bz2  <a href="cmdline.txt.html#%3A" class="d">:</a> decompressed in .vim/ directory, then <a href="pi_vimball.txt.html#vimball" class="d">vimball</a> handles <a href="motion.txt.html#it" class="d">it</a>
+        ---.vim.bz2  <a href="cmdline.txt.html#%3A" class="d">:</a> decompressed <a href="change.txt.html#%26" class="d">&amp;</a> moved into .vim/plugin directory
+        ---.tar.gz   <a href="cmdline.txt.html#%3A" class="d">:</a> decompressed <a href="change.txt.html#%26" class="d">&amp;</a> untarred in .vim/ directory
+        ---.vba.gz   <a href="cmdline.txt.html#%3A" class="d">:</a> decompressed in .vim/ directory, then <a href="pi_vimball.txt.html#vimball" class="d">vimball</a> handles <a href="motion.txt.html#it" class="d">it</a>
+        ---.vim.gz   <a href="cmdline.txt.html#%3A" class="d">:</a> decompressed <a href="change.txt.html#%26" class="d">&amp;</a> moved into .vim/plugin directory
+        ---.vba      <a href="cmdline.txt.html#%3A" class="d">:</a> unzipped in .vim/ directory
+        ---.vim      <a href="cmdline.txt.html#%3A" class="d">:</a> moved to .vim/plugin directory
+        ---.zip      <a href="cmdline.txt.html#%3A" class="d">:</a> unzipped in .vim/ directory
+
+and which merely need to have their components placed by the untar/gunzip or
+move-to-plugin-directory process should be auto-installable.  Vimballs, of
+course, should always be auto-installable.
+
+When <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> <a href="usr_41.txt.html#script" class="d">script</a> not auto-installable?  Let me give an example:
+
+        .vim/after/syntax/blockhl.vim
+
+The <span class="s">&lt;blockhl.vim&gt;</span> <a href="usr_41.txt.html#script" class="d">script</a> provides block highlighting for C/C++ programs; <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a>
+available at:
+
+        <a class="u" href="http://vim.sourceforge.net/scripts/script.php?script_id=104">http://vim.sourceforge.net/scripts/script.php?script_id=104</a>
+
+Currently, vim's after/syntax only supports by-filetype scripts (in
+blockhl.vim's case, that's after/syntax/c.vim).  Hence, auto-install would
+possibly overwrite the current user's after/syntax/c.vim file.
+
+In my own case, <a href="insert.txt.html#I" class="d">I</a> use <span class="s">&lt;aftersyntax.vim&gt;</span> (renamed to after/syntax/c.vim) to
+allow <a href="insert.txt.html#a" class="d">a</a> after/syntax/c/ directory:
+
+        <a class="u" href="http://vim.sourceforge.net/scripts/script.php?script_id=1023">http://vim.sourceforge.net/scripts/script.php?script_id=1023</a>
+
+The <a href="usr_41.txt.html#script" class="d">script</a> allows multiple <a href="syntax.txt.html#syntax" class="d">syntax</a> files to exist separately in the
+after/syntax/c subdirectory.  <a href="insert.txt.html#I" class="d">I</a> can't bundle aftersyntax.vim in and build an
+appropriate tarball for auto-install because of the potential for the
+after/syntax/c.vim contained in <a href="motion.txt.html#it" class="d">it</a> to overwrite <a href="insert.txt.html#a" class="d">a</a> user's c.vim.
+
+
+<span class="h">==============================================================================</span>
+7. <a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> Options                                  <a name="glvs-options" class="t">glvs-options</a>
+
+<span class="e">        g:GetLatestVimScripts_wget</span>
+       default= "wget"
+                This variable holds the name of the command for obtaining
+                scripts.
+
+<span class="e">        g:GetLatestVimScripts_options</span>
+       default= "<a href="starting.txt.html#-q" class="d">-q</a> <a href="starting.txt.html#-O" class="d">-O</a>"
+                This variable holds the <a href="options.txt.html#options" class="d">options</a> to be used with the
+                g:GetLatestVimScripts_wget command.
+
+<span class="e">        g:GetLatestVimScripts_allowautoinstall</span>
+       default= 1
+                This variable indicates whether <a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> <a href="motion.txt.html#is" class="d">is</a> allowed
+                to attempt to automatically <a href="usr_90.txt.html#install" class="d">install</a> scripts.  Furthermore, the
+                <a href="usr_05.txt.html#plugin" class="d">plugin</a> <a href="intro.txt.html#author" class="d">author</a> has to have explicitly indicated that his/her
+                <a href="usr_05.txt.html#plugin" class="d">plugin</a> <a href="motion.txt.html#is" class="d">is</a> automatically installable (via the :AutoInstall:
+                keyword in the <a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> comment line).
+
+<span class="e">        g:GetLatestVimScripts_autoinstalldir</span>
+       default= $HOME/.vim     (linux)
+        default= $HOME/vimfiles (windows)
+                Override where :AutoInstall: scripts will be installed.
+                Doesn't override <a href="pi_vimball.txt.html#vimball" class="d">vimball</a> installation.
+
+<span class="e">        g:GetLatestVimScripts_scriptaddr</span>
+       default='http://vim.sourceforge.net/script.php?script_id='
+                Override this if your system needs
+          <a href="eval.txt.html#..." class="d">...</a>  ='http://vim.sourceforge.net/script/script.php?script_id='
+
+<span class="h">==============================================================================</span>
+8. <a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> Algorithm                <a name="glvs-algorithm" class="t">glvs-algorithm</a> <a name="glvs-alg" class="t">glvs-alg</a>
+
+The Vim sourceforge page dynamically creates <a href="insert.txt.html#a" class="d">a</a> page by keying off of the
+so-called script-id.  Within the webpage of
+
+        <a class="u" href="http://vim.sourceforge.net/scripts/script.php?script_id=40">http://vim.sourceforge.net/scripts/script.php?script_id=40</a>
+
+<a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> line specifying the latest source-id (src_id).  The source identifier
+numbers are always increasing, hence if the src_id <a href="motion.txt.html#is" class="d">is</a> greater than the one
+recorded for the <a href="usr_41.txt.html#script" class="d">script</a> in <a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> then it's time to <a href="intro.txt.html#download" class="d">download</a> <a href="insert.txt.html#a" class="d">a</a>
+newer copy of that script.
+
+<a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> will then <a href="intro.txt.html#download" class="d">download</a> the <a href="usr_41.txt.html#script" class="d">script</a> and update its internal
+database of <a href="usr_41.txt.html#script" class="d">script</a> ids, source ids, and scriptnames.
+
+The AutoInstall process will:
+
+        Move the file from GetLatest/ to the following directory
+                <a href="os_unix.txt.html#Unix" class="d">Unix</a>   <a href="cmdline.txt.html#%3A" class="d">:</a> $HOME/.vim
+                Windows: $HOME\vimfiles
+        if the downloaded file ends with ".bz2"
+                bunzip2 <a href="motion.txt.html#it" class="d">it</a>
+        else if the downloaded file ends with ".gz"
+                gunzip <a href="motion.txt.html#it" class="d">it</a>
+        if the resulting file ends with ".zip"
+                unzip <a href="motion.txt.html#it" class="d">it</a>
+        else if the resulting file ends with ".tar"
+                <a href="pi_tar.txt.html#tar" class="d">tar</a> -oxvf <a href="motion.txt.html#it" class="d">it</a>
+        else if the resulting file ends with ".vim"
+                move <a href="motion.txt.html#it" class="d">it</a> to the <a href="usr_05.txt.html#plugin" class="d">plugin</a> subdirectory
+
+
+<span class="h">==============================================================================</span>
+9. <a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> History          <a name="getscript-history" class="t">getscript-history</a> <a name="glvs-hist" class="t">glvs-hist</a> {{{1
+
+v36 Apr 22, 2013 <a href="cmdline.txt.html#%3A" class="d">:</a> * (glts) suggested use of plugin/**<a href="pattern.txt.html#%2F" class="d">/</a>*.vim instead of
+                     plugin/*.vim in <a href="eval.txt.html#globpath%28%29" class="d">globpath()</a> call.
+                   * (Andy Wokula) got warning message when setting
+                     g:loaded_getscriptPlugin
+v35 Apr 07, 2012 <a href="cmdline.txt.html#%3A" class="d">:</a> * (MengHuan Yu) pointed out that the <a href="usr_41.txt.html#script" class="d">script</a> URL has
+                     changed (somewhat).  However, <a href="motion.txt.html#it" class="d">it</a> doesn't work, and
+                     the original one does (under Linux). I'll make <a href="motion.txt.html#it" class="d">it</a>
+                     yet-another-option.
+v34 Jun 23, 2011 <a href="cmdline.txt.html#%3A" class="d">:</a> * handles additional decompression <a href="options.txt.html#options" class="d">options</a> for tarballs
+                     (tgz taz tbz txz)
+v33 May 31, 2011 <a href="cmdline.txt.html#%3A" class="d">:</a> * using <a href="eval.txt.html#fnameescape%28%29" class="d">fnameescape()</a> instead of <a href="eval.txt.html#escape%28%29" class="d">escape()</a>
+                   * *.xz support
+v32 Jun 19, 2010 <a href="cmdline.txt.html#%3A" class="d">:</a> * (Jan Steffens) added support for xz compression
+v31 Jun 29, 2008 <a href="cmdline.txt.html#%3A" class="d">:</a> * (Bill McCarthy) fixed having hls enabled with <a href="#getscript" class="d">getscript</a>
+                   * (David Schaefer) the acd option interferes with vimballs
+                     Solution: bypass the acd option
+v30 Jun 13, 2008 <a href="cmdline.txt.html#%3A" class="d">:</a> * GLVS now checks for existence of <a href="eval.txt.html#fnameescape%28%29" class="d">fnameescape()</a> and will
+                     issue an error message if <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> not supported
+v29 Jan 07, 2008 <a href="cmdline.txt.html#%3A" class="d">:</a> * <a href="intro.txt.html#Bram" class="d">Bram</a> <a href="motion.txt.html#M" class="d">M</a> pointed out that <a href="options.txt.html#cpo" class="d">cpo</a> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> global option and that
+                     getscriptPlugin.vim was setting <a href="motion.txt.html#it" class="d">it</a> but not restoring it.
+v28 Jan 02, 2008 <a href="cmdline.txt.html#%3A" class="d">:</a> * improved shell quoting character handling, cygwin
+                     interface, register-a bypass
+    Oct 29, 2007   * Bill McCarthy suggested <a href="insert.txt.html#a" class="d">a</a> change to <a href="#getscript" class="d">getscript</a> that avoids
+                     creating pop-up <a href="windows.txt.html#windows" class="d">windows</a>
+v24 Apr 16, 2007 <a href="cmdline.txt.html#%3A" class="d">:</a> * removed save&amp;restore of the fo option during <a href="usr_41.txt.html#script" class="d">script</a>
+                     loading
+v23 Nov 03, 2006 <a href="cmdline.txt.html#%3A" class="d">:</a> * ignores comments (#...)
+<span class="c">                  </span> * handles vimballs
+v22 Oct 13, 2006 <a href="cmdline.txt.html#%3A" class="d">:</a> * supports automatic use of curl if wget <a href="motion.txt.html#is" class="d">is</a> not
+                     available
+v21 May 01, 2006 <a href="cmdline.txt.html#%3A" class="d">:</a> * now takes advantage of autoloading.
+v20 Dec 23, 2005 <a href="cmdline.txt.html#%3A" class="d">:</a> * Eric Haarbauer found&amp;fixed <a href="insert.txt.html#a" class="d">a</a> bug with unzip use;
+                     unzip needs the <a href="starting.txt.html#-o" class="d">-o</a> flag to overwrite.
+v19 Nov 28, 2005 <a href="cmdline.txt.html#%3A" class="d">:</a> * v18's GetLatestVimScript line accessed the wrong
+                     script! Fixed.
+v18 Mar 21, 2005 <a href="cmdline.txt.html#%3A" class="d">:</a> * bugfix to automatic database construction
+<span class="c">                  </span> * bugfix <a href="motion.txt.html#-" class="d">-</a> nowrapscan caused an error
+                     (tnx to David Green for the fix)
+    Apr 01, 2005   * if shell <a href="motion.txt.html#is" class="d">is</a> bash, "mv" instead of "ren" used in
+                     :AutoInstall:s, even though its o/s <a href="motion.txt.html#is" class="d">is</a> <a href="windows.txt.html#windows" class="d">windows</a>
+    Apr 01, 2005   * when downloading <a href="message.txt.html#errors" class="d">errors</a> occurred, GLVS was
+                     terminating early.  It now just goes on to trying
+                     the next <a href="usr_41.txt.html#script" class="d">script</a> (after trying three times to
+                     <a href="intro.txt.html#download" class="d">download</a> <a href="insert.txt.html#a" class="d">a</a> <a href="usr_41.txt.html#script" class="d">script</a> description page)
+    Apr 20, 2005   * bugfix <a href="motion.txt.html#-" class="d">-</a> when <a href="insert.txt.html#a" class="d">a</a> failure to <a href="intro.txt.html#download" class="d">download</a> occurred,
+                     <a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> would stop early and claim that
+                     everything was current.  Fixed.
+v17 Aug 25, 2004 <a href="cmdline.txt.html#%3A" class="d">:</a> * g:GetLatestVimScripts_allowautoinstall, which
+                     defaults to 1, can be used to prevent all
+                     :AutoInstall:
+v16 Aug 25, 2004 <a href="cmdline.txt.html#%3A" class="d">:</a> * made execution of bunzip2/gunzip/tar/zip silent
+<span class="c">                  </span> * fixed bug with :AutoInstall: use of helptags
+v15 Aug 24, 2004 <a href="cmdline.txt.html#%3A" class="d">:</a> * bugfix: the "<a href="motion.txt.html#0" class="d">0</a> <a href="motion.txt.html#0" class="d">0</a> comment" <a href="intro.txt.html#download" class="d">download</a> prevention wasn't
+                     always preventing downloads (just usually).  Fixed.
+v14 Aug 24, 2004 <a href="cmdline.txt.html#%3A" class="d">:</a> * bugfix <a href="starting.txt.html#--" class="d">--</a> helptags was using dotvim, rather than
+                     s:dotvim.  Fixed.
+v13 Aug 23, 2004 <a href="cmdline.txt.html#%3A" class="d">:</a> * will skip downloading <a href="insert.txt.html#a" class="d">a</a> file if its scriptid or srcid
+                     <a href="motion.txt.html#is" class="d">is</a> zero.  Useful for <a href="usr_41.txt.html#script" class="d">script</a> authors; that way their
+                     own <a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> activity won't overwrite
+                     their scripts.
+v12 Aug 23, 2004 <a href="cmdline.txt.html#%3A" class="d">:</a> * bugfix <a href="motion.txt.html#-" class="d">-</a> <a href="insert.txt.html#a" class="d">a</a> "return" got left in the <a href="intro.txt.html#distribution" class="d">distribution</a> that
+                     was intended only for testing.  Removed, now works.
+<span class="c">                  </span> * :AutoInstall: implemented
+v11 Aug 20, 2004 <a href="cmdline.txt.html#%3A" class="d">:</a> * <a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> <a href="motion.txt.html#is" class="d">is</a> now <a href="insert.txt.html#a" class="d">a</a> plugin:
+<span class="c">                  </span> * :GetLatestVimScripts command
+<span class="c">                  </span> * (runtimepath)/GetLatest/GetLatestVimScripts.dat
+                     now holds scripts that need updating
+v10 Apr 19, 2004 <a href="cmdline.txt.html#%3A" class="d">:</a> * moved <a href="cmdline.txt.html#history" class="d">history</a> from <a href="usr_41.txt.html#script" class="d">script</a> to doc
+v9  Jan 23, 2004 <a href="cmdline.txt.html#%3A" class="d">:</a>   <a href="windows.txt.html#windows" class="d">windows</a> (win32/win16/win95) will use
+                     double <a href="quotes.txt.html#quotes" class="d">quotes</a> <a href="motion.txt.html#%28" class="d">(</a>""<a href="motion.txt.html#%29" class="d">)</a> whereas other systems will use
+                     single <a href="quotes.txt.html#quotes" class="d">quotes</a> ('') around the urls in calls via wget
+v8  Dec 01, 2003 <a href="cmdline.txt.html#%3A" class="d">:</a>   makes three tries <a href="motion.txt.html#at" class="d">at</a> downloading
+v7  Sep 02, 2003 <a href="cmdline.txt.html#%3A" class="d">:</a>   added error <a href="message.txt.html#messages" class="d">messages</a> if "Click on..." or "src_id="
+                     not found in downloaded webpage
+                     Uses t_ti, t_te, and rs to make progress visible
+v6  Aug 06, 2003 <a href="cmdline.txt.html#%3A" class="d">:</a>   final status <a href="message.txt.html#messages" class="d">messages</a> now display summary of work
+                     <a href="motion.txt.html#%28" class="d">(</a> "Downloaded someqty scripts" or
+                       "Everything was current"<a href="motion.txt.html#%29" class="d">)</a>
+                     Now <a href="#GetLatestVimScripts" class="d">GetLatestVimScripts</a> <a href="motion.txt.html#is" class="d">is</a> careful about downloading
+                     GetLatestVimScripts.vim itself!
+                     (goes to <span class="s">&lt;NEW_GetLatestVimScripts.vim&gt;</span>)
+v5  Aug 04, 2003 <a href="cmdline.txt.html#%3A" class="d">:</a>   missing an endif near bottom
+v4  Jun 17, 2003 <a href="cmdline.txt.html#%3A" class="d">:</a>   redraw! just before each "considering" message
+v3  May 27, 2003 <a href="cmdline.txt.html#%3A" class="d">:</a>   Protects downloaded files from errant shell
+                     expansions with single quotes: '...'
+v2  May 14, 2003 <a href="cmdline.txt.html#%3A" class="d">:</a>   extracts name of item to be obtained from the
+                     <a href="usr_41.txt.html#script" class="d">script</a> file.  Uses <a href="motion.txt.html#it" class="d">it</a> instead of comment field
+                     for output filename; comment <a href="motion.txt.html#is" class="d">is</a> used in the
+                     "considering..." line and <a href="motion.txt.html#is" class="d">is</a> now just <a href="insert.txt.html#a" class="d">a</a> comment!
+<span class="c">                  </span> * Fixed <a href="insert.txt.html#a" class="d">a</a> bug: <a href="insert.txt.html#a" class="d">a</a> string-of-numbers <a href="motion.txt.html#is" class="d">is</a> not the
+                     same <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> number, so <a href="insert.txt.html#I" class="d">I</a> added zero to them
+                     and they became numbers.  Fixes comparison.
+
+<span class="h">==============================================================================</span>
+vim:tw=78:ts=8:ft=help:fdm=marker
+
+</pre>
+</div>
+</div>
+</body>
+</html>

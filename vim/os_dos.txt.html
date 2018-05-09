@@ -1,0 +1,312 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: os_dos.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="os_dos.txt" class="t">os_dos.txt</a>    For <span class="i">Vim version 8.0.</span>  Last change: 2006 Mar 30
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Bram Moolenaar</span>
+
+
+                                                        <a name="dos" class="t">dos</a> <a name="DOS" class="t">DOS</a>
+This file documents the common particularities of the <a href="os_msdos.txt.html#MS-DOS" class="d">MS-DOS</a> and <a href="os_win32.txt.html#Win32" class="d">Win32</a>
+versions of Vim.  Also see <a href="os_win32.txt.html#os_win32.txt" class="l">os_win32.txt</a> and <a href="os_msdos.txt.html#os_msdos.txt" class="l">os_msdos.txt</a><a href="repeat.txt.html#." class="d">.</a>
+
+1. File locations               <a href="#dos-locations" class="l">dos-locations</a>
+2. Using backslashes            <a href="#dos-backslash" class="l">dos-backslash</a>
+3. Standard mappings            <a href="#dos-standard-mappings" class="l">dos-standard-mappings</a>
+4. Screen output and colors     <a href="#dos-colors" class="l">dos-colors</a>
+5. File formats                 <a href="#dos-file-formats" class="l">dos-file-formats</a>
+6. <a href="editing.txt.html#%3Acd" class="d">:cd</a> command                  <a href="#dos-%3Acd" class="l">dos-:cd</a>
+7. Interrupting                 <a href="#dos-CTRL-Break" class="l">dos-CTRL-Break</a>
+8. Temp files                   <a href="#dos-temp-files" class="l">dos-temp-files</a>
+9. Shell option default         <a href="#dos-shell" class="l">dos-shell</a>
+
+<span class="h">==============================================================================</span>
+1. File locations                                       <a name="dos-locations" class="t">dos-locations</a>
+
+If you keep the Vim executable in the directory that contains the <a href="helphelp.txt.html#help" class="d">help</a> and
+<a href="syntax.txt.html#syntax" class="d">syntax</a> subdirectories, there <a href="motion.txt.html#is" class="d">is</a> no need to <a href="diff.txt.html#do" class="d">do</a> anything special for Vim to
+work.  No registry entries or environment <a href="eval.txt.html#variables" class="d">variables</a> need to be set.  Just make
+sure that the directory <a href="motion.txt.html#is" class="d">is</a> in your search path, or use <a href="insert.txt.html#a" class="d">a</a> shortcut on the
+desktop.
+
+Your <a href="starting.txt.html#vimrc" class="d">vimrc</a> files <a href="motion.txt.html#%28" class="d">(</a>"<a href="starting.txt.html#_vimrc" class="d">_vimrc</a>" and "<a href="gui.txt.html#_gvimrc" class="d">_gvimrc</a>"<a href="motion.txt.html#%29" class="d">)</a> are normally located one directory
+up from the runtime files.  If you want to <a href="change.txt.html#put" class="d">put</a> them somewhere else, set the
+environment variable <a href="starting.txt.html#%24VIM" class="d">$VIM</a> to the directory where you keep them.  Example: 
+<span class="e">        set VIM=C:\user\piet</span>
+Will find "c:\user\piet\_vimrc"<a href="repeat.txt.html#." class="d">.</a>
+<span class="n">Note:</span> This would only be needed when the computer <a href="motion.txt.html#is" class="d">is</a> used by several people.
+Otherwise it's simpler to keep your <a href="starting.txt.html#_vimrc" class="d">_vimrc</a> file in the default place.
+
+If you move the executable to another location, you also need to set the <a href="starting.txt.html#%24VIM" class="d">$VIM</a>
+environment variable.  The runtime files will be found in "$VIM/vim{version}"<a href="repeat.txt.html#." class="d">.</a>
+Example: 
+<span class="e">        set VIM=E:\vim</span>
+Will find the version 5.4 runtime files in "e:\vim\vim54"<a href="repeat.txt.html#." class="d">.</a>
+<span class="n">Note:</span> This <a href="motion.txt.html#is" class="d">is</a> _not_ recommended.  The preferred way <a href="motion.txt.html#is" class="d">is</a> to keep the executable
+in the runtime directory.
+
+If you move your executable AND want to <a href="change.txt.html#put" class="d">put</a> your "<a href="starting.txt.html#_vimrc" class="d">_vimrc</a>" and "<a href="gui.txt.html#_gvimrc" class="d">_gvimrc</a>" files
+somewhere else, you <a href="vim_faq.txt.html#must" class="d">must</a> set <a href="starting.txt.html#%24VIM" class="d">$VIM</a> to where you <a href="starting.txt.html#vimrc" class="d">vimrc</a> files are, and set
+<a href="starting.txt.html#%24VIMRUNTIME" class="d">$VIMRUNTIME</a> to the runtime files.  Example: 
+<span class="e">        set VIM=C:\usr\piet</span>
+<span class="e">        set VIMRUNTIME=E:\vim\vim54</span>
+Will find "c:\user\piet\_vimrc" and the runtime files in "e:\vim\vim54"<a href="repeat.txt.html#." class="d">.</a>
+
+See <a href="starting.txt.html#%24VIM" class="l">$VIM</a> and <a href="starting.txt.html#%24VIMRUNTIME" class="l">$VIMRUNTIME</a> for more information.
+
+Under Windows 95, you can set <a href="starting.txt.html#%24VIM" class="d">$VIM</a> in your C:\autoexec.bat file.  For
+example: 
+<span class="e">  set VIM=D:\vim</span>
+Under Windows NT, you can set environment <a href="eval.txt.html#variables" class="d">variables</a> for each user separately
+under "Start/Settings/Control Panel-&gt;System"<a href="motion.txt.html#%2C" class="d">,</a> or through the properties in the
+menu of "My Computer"<a href="motion.txt.html#%2C" class="d">,</a> under the Environment Tab.
+
+<span class="h">==============================================================================</span>
+2. Using backslashes                                    <a name="dos-backslash" class="t">dos-backslash</a>
+
+Using backslashes in file names can be <a href="insert.txt.html#a" class="d">a</a> problem.  <a href="intro.txt.html#Vi" class="d">Vi</a> halves the number of
+backslashes for some commands.  Vim <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> bit more tolerant and does not remove
+backslashes from <a href="insert.txt.html#a" class="d">a</a> file name, so "<a href="editing.txt.html#%3Ae" class="d">:e</a> c:\foo\bar" works <a href="motion.txt.html#as" class="d">as</a> expected.  But when
+<a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#backslash" class="d">backslash</a> occurs before <a href="insert.txt.html#a" class="d">a</a> special character (space, comma, backslash, etc.),
+Vim removes the backslash.  Use slashes to avoid problems: "<a href="editing.txt.html#%3Ae" class="d">:e</a> c:/foo/bar"
+works fine.  Vim replaces the slashes with backslashes internally to avoid
+problems with some <a href="os_msdos.txt.html#MS-DOS" class="d">MS-DOS</a> programs and <a href="os_win32.txt.html#Win32" class="d">Win32</a> programs.
+
+When you prefer to use forward slashes, set the <a href="options.txt.html#%27shellslash%27" class="o">'shellslash'</a> option.  Vim will
+then replace backslashes with forward slashes when expanding file names.  This
+<a href="motion.txt.html#is" class="d">is</a> especially useful when using <a href="insert.txt.html#a" class="d">a</a> Unix-like <a href="options.txt.html#%27shell%27" class="o">'shell'</a>.
+
+<span class="h">==============================================================================</span>
+3. Standard mappings                            <a name="dos-standard-mappings" class="t">dos-standard-mappings</a>
+
+The mappings for <a href="motion.txt.html#CTRL-P" class="k">CTRL-P</a>ageUp and <a href="motion.txt.html#CTRL-P" class="k">CTRL-P</a>ageDown have been removed, they now
+jump to the next or previous <a href="intro.txt.html#tab" class="d">tab</a> page <a href="tabpage.txt.html#%3CC-PageUp%3E" class="l">&lt;C-PageUp&gt;</a> <a href="tabpage.txt.html#%3CC-PageDown%3E" class="l">&lt;C-PageDown&gt;</a>
+
+If you want them to move to the first and last screen line you can use these
+mappings:
+
+<span class="h">key             key code     Normal/Visual mode     Insert mode </span>
+<a href="motion.txt.html#CTRL-P" class="k">CTRL-P</a>ageUp     <span class="s">&lt;M-N&gt;</span><span class="s">&lt;M-C-D&gt;</span>        <a href="motion.txt.html#H" class="d">H</a>               <span class="s">&lt;C-O&gt;</span>H
+<a href="motion.txt.html#CTRL-P" class="k">CTRL-P</a>ageDown   <span class="s">&lt;M-N&gt;</span>v              L$              <span class="s">&lt;C-O&gt;</span>L<span class="s">&lt;C-O&gt;</span>$
+
+Additionally, these keys are available for copy/cut/paste.  In the <a href="os_win32.txt.html#Win32" class="d">Win32</a>
+and DJGPP versions, they also use the clipboard.
+
+Shift-Insert    paste text (from clipboard)                     <a name="%3CS-Insert%3E" class="t">&lt;S-Insert&gt;</a>
+<a href="motion.txt.html#CTRL-I" class="k">CTRL-I</a>nsert     copy <a href="visual.txt.html#Visual" class="d">Visual</a> text (to clipboard)                 <a name="%3CC-Insert%3E" class="t">&lt;C-Insert&gt;</a>
+<a href="scroll.txt.html#CTRL-D" class="k">CTRL-D</a>el        cut <a href="visual.txt.html#Visual" class="d">Visual</a> text (to clipboard)                  <a name="%3CC-Del%3E" class="t">&lt;C-Del&gt;</a>
+Shift-Del       cut <a href="visual.txt.html#Visual" class="d">Visual</a> text (to clipboard)                  <a name="%3CS-Del%3E" class="t">&lt;S-Del&gt;</a>
+<a href="change.txt.html#CTRL-X" class="k">CTRL-X</a>          cut <a href="visual.txt.html#Visual" class="d">Visual</a> text (to clipboard)
+
+These mappings accomplish this (Win32 and DJGPP versions of Vim):
+
+<span class="h">key             key code     Normal     Visual      Insert </span>
+Shift-Insert    <span class="s">&lt;M-N&gt;</span><span class="s">&lt;M-T&gt;</span>   "*<a href="change.txt.html#P" class="d">P</a>        "<a href="starting.txt.html#-d" class="d">-d</a>"*<a href="change.txt.html#P" class="d">P</a>      <span class="s">&lt;C-R&gt;</span><span class="s">&lt;C-O&gt;</span>*
+<a href="motion.txt.html#CTRL-I" class="k">CTRL-I</a>nsert     <span class="s">&lt;M-N&gt;</span><span class="s">&lt;M-U&gt;</span>              "*<a href="change.txt.html#y" class="d">y</a>
+Shift-Del       <span class="s">&lt;M-N&gt;</span><span class="s">&lt;M-W&gt;</span>              "*<a href="change.txt.html#d" class="d">d</a>
+<a href="scroll.txt.html#CTRL-D" class="k">CTRL-D</a>el        <span class="s">&lt;M-N&gt;</span><span class="s">&lt;M-X&gt;</span>              "*<a href="change.txt.html#d" class="d">d</a>
+<a href="change.txt.html#CTRL-X" class="k">CTRL-X</a>          <span class="s">&lt;C-X&gt;</span>                   "*<a href="change.txt.html#d" class="d">d</a>
+
+Or these mappings (non-Win32 version of Vim):
+
+<span class="h">key             key code     Normal     Visual      Insert </span>
+Shift-Insert    <span class="s">&lt;M-N&gt;</span><span class="s">&lt;M-T&gt;</span>   <a href="change.txt.html#P" class="d">P</a>          "-dP        <span class="s">&lt;C-R&gt;</span><span class="s">&lt;C-O&gt;</span>"
+<a href="motion.txt.html#CTRL-I" class="k">CTRL-I</a>nsert     <span class="s">&lt;M-N&gt;</span><span class="s">&lt;M-U&gt;</span>              <a href="change.txt.html#y" class="d">y</a>
+Shift-Del       <span class="s">&lt;M-N&gt;</span><span class="s">&lt;M-W&gt;</span>              <a href="change.txt.html#d" class="d">d</a>
+<a href="scroll.txt.html#CTRL-D" class="k">CTRL-D</a>el        <span class="s">&lt;M-N&gt;</span><span class="s">&lt;M-X&gt;</span>              <a href="change.txt.html#d" class="d">d</a>
+
+When the <a href="gui.txt.html#clipboard" class="d">clipboard</a> <a href="motion.txt.html#is" class="d">is</a> supported, the "* <a href="sponsor.txt.html#register" class="d">register</a> <a href="motion.txt.html#is" class="d">is</a> used.
+
+<span class="h">==============================================================================</span>
+4. Screen output and colors                             <a name="dos-colors" class="t">dos-colors</a>
+
+The default output method for the screen <a href="motion.txt.html#is" class="d">is</a> to use bios calls.  This works
+right away on most systems.  You <a href="diff.txt.html#do" class="d">do</a> not need ansi.sys.  You can use "<a href="term.txt.html#%3Amode" class="d">:mode</a>" to
+set the current screen mode.  See <a href="term.txt.html#%3Amode" class="l">:mode</a><a href="repeat.txt.html#." class="d">.</a>
+
+To change the screen colors that Vim uses, you can use the <a href="syntax.txt.html#%3Ahighlight" class="l">:highlight</a>
+command.  The <a href="intro.txt.html#Normal" class="d">Normal</a> highlight group specifies the colors Vim uses for normal
+text.  For example, to get grey text on <a href="insert.txt.html#a" class="d">a</a> blue background: 
+<span class="e">        :hi Normal ctermbg=Blue ctermfg=grey</span>
+See <a href="syntax.txt.html#highlight-groups" class="l">highlight-groups</a> for other groups that are available.
+
+<a href="insert.txt.html#A" class="d">A</a> <a href="#DOS" class="d">DOS</a> console does not support attributes like <a href="syntax.txt.html#bold" class="d">bold</a> and underlining.  You can
+set the color used in five modes with nine terminal options.  <span class="n">Note</span> that this
+<a href="motion.txt.html#is" class="d">is</a> not necessary since you can set the color directly with the "<a href="syntax.txt.html#%3Ahighlight" class="d">:highlight</a>"
+command; these <a href="options.txt.html#options" class="d">options</a> are for backward compatibility with older Vim versions.
+The <a href="options.txt.html#%27highlight%27" class="l">'highlight'</a> option specifies which of the five modes <a href="motion.txt.html#is" class="d">is</a> used for which
+action. 
+<span class="e"></span>
+<span class="e">        :set t_mr=^V^[\|xxm             start of invert mode</span>
+<span class="e">        :set t_md=^V^[\|xxm             start of bold mode</span>
+<span class="e">        :set t_me=^V^[\|xxm             back to normal text</span>
+<span class="e"></span>
+<span class="e">        :set t_so=^V^[\|xxm             start of standout mode</span>
+<span class="e">        :set t_se=^V^[\|xxm             back to normal text</span>
+<span class="e"></span>
+<span class="e">        :set t_us=^V^[\|xxm             start of underline mode</span>
+<span class="e">        :set t_ue=^V^[\|xxm             back to normal text</span>
+<span class="e"></span>
+<span class="e">        :set t_ZH=^V^[\|xxm             start of italics mode</span>
+<span class="e">        :set t_ZR=^V^[\|xxm             back to normal text</span>
+<span class="e"></span>
+^V <a href="motion.txt.html#is" class="d">is</a> <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a>
+^[ <a href="motion.txt.html#is" class="d">is</a> <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a>
+You <a href="vim_faq.txt.html#must" class="d">must</a> replace xx with <a href="insert.txt.html#a" class="d">a</a> decimal code, which <a href="motion.txt.html#is" class="d">is</a> the foreground color number
+and background color number added together:
+
+<span class="h">COLOR                   FOREGROUND      BACKGROUND      </span>
+Black                       <a href="motion.txt.html#0" class="d">0</a>               <a href="motion.txt.html#0" class="d">0</a>
+DarkBlue                    1              16
+DarkGreen                   2              32
+DarkCyan                    3              48
+DarkRed                     4              64
+DarkMagenta                 5              80
+Brown, DarkYellow           6              96
+LightGray                   7             112
+DarkGray                    8             128 *
+Blue, LightBlue             9             144 *
+Green, LightGreen          10             160 *
+Cyan, LightCyan            11             176 *
+Red, LightRed              12             192 *
+Magenta, LightMagenta      13             208 *
+Yellow, LightYellow        14             224 *
+White                      15             240 *
+
+* Depending on the display mode, the color codes above 128 may not be
+  available, and code 128 will make the text blink.
+
+When you use 0, the color <a href="motion.txt.html#is" class="d">is</a> reset to the one used when you started Vim
+(usually 7, lightgray on black, but you can override this.  If you have
+overridden the default colors in <a href="insert.txt.html#a" class="d">a</a> command prompt, you may need to adjust
+some of the highlight colors in your vimrc---see below).
+This <a href="motion.txt.html#is" class="d">is</a> the default for t_me.
+
+The defaults for the <a href="various.txt.html#various" class="d">various</a> highlight modes are:
+        <a href="term.txt.html#t_mr" class="d">t_mr</a>    112      reverse mode: Black text (0) on LightGray (112)
+        <a href="term.txt.html#t_md" class="d">t_md</a>     15      <a href="syntax.txt.html#bold" class="d">bold</a> mode: White text (15) on Black (0)
+        <a href="term.txt.html#t_me" class="d">t_me</a>      <a href="motion.txt.html#0" class="d">0</a>      normal mode (revert to default)
+
+        <a href="term.txt.html#t_so" class="d">t_so</a>     31      <a href="syntax.txt.html#standout" class="d">standout</a> mode: White (15) text on DarkBlue (16)
+        <a href="term.txt.html#t_se" class="d">t_se</a>      <a href="motion.txt.html#0" class="d">0</a>      <a href="syntax.txt.html#standout" class="d">standout</a> mode <a href="intro.txt.html#end" class="d">end</a> (revert to default)
+
+        t_czh   225      <a href="syntax.txt.html#italic" class="d">italic</a> mode: DarkBlue text (1) on Yellow (224)
+        t_czr     <a href="motion.txt.html#0" class="d">0</a>      <a href="syntax.txt.html#italic" class="d">italic</a> mode <a href="intro.txt.html#end" class="d">end</a> (revert to default)
+
+        <a href="term.txt.html#t_us" class="d">t_us</a>     67      <a href="syntax.txt.html#underline" class="d">underline</a> mode: DarkCyan text (3) on DarkRed (64)
+        <a href="term.txt.html#t_ue" class="d">t_ue</a>      <a href="motion.txt.html#0" class="d">0</a>      <a href="syntax.txt.html#underline" class="d">underline</a> mode <a href="intro.txt.html#end" class="d">end</a> (revert to default)
+
+These colors were chosen because they also look good when using an inverted
+display, but you can change them to your liking.
+
+Example: 
+<span class="e">  :set t_mr=^V^[\|97m   " start of invert mode: DarkBlue (1) on Brown (96)</span>
+<span class="e">  :set t_md=^V^[\|67m   " start of bold mode: DarkCyan (3) on DarkRed (64)</span>
+<span class="e">  :set t_me=^V^[\|112m  " back to normal mode: Black (0) on LightGray (112)</span>
+<span class="e"></span>
+<span class="e">  :set t_so=^V^[\|37m   " start of standout mode: DarkMagenta (5) on DarkGreen</span>
+<span class="e">                                                                        (32)</span>
+<span class="e">  :set t_se=^V^[\|112m  " back to normal mode: Black (0) on LightGray (112)</span>
+<span class="e"></span>
+<span class="h">==============================================================================</span>
+5. File formats                                         <a name="dos-file-formats" class="t">dos-file-formats</a>
+
+If the <a href="options.txt.html#%27fileformat%27" class="o">'fileformat'</a> option <a href="motion.txt.html#is" class="d">is</a> set to "<a href="#dos" class="d">dos</a>" (which <a href="motion.txt.html#is" class="d">is</a> the default), Vim accepts
+<a href="insert.txt.html#a" class="d">a</a> single <a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a> or <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a><a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a> pair for end-of-line (&lt;EOL&gt;).  When <a href="editing.txt.html#writing" class="d">writing</a> <a href="insert.txt.html#a" class="d">a</a>
+file, Vim uses <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a><a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a>.  Thus, if you edit <a href="insert.txt.html#a" class="d">a</a> file and write it, Vim replaces
+<a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a> with <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a><a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a>.
+
+If the <a href="options.txt.html#%27fileformat%27" class="o">'fileformat'</a> option <a href="motion.txt.html#is" class="d">is</a> set to "<a href="os_unix.txt.html#unix" class="d">unix</a>"<a href="motion.txt.html#%2C" class="d">,</a> Vim uses <a href="insert.txt.html#a" class="d">a</a> single <a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a> for <a href="intro.txt.html#%3CEOL%3E" class="s">&lt;EOL&gt;</a>
+and shows <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a> <a href="motion.txt.html#as" class="d">as</a> ^M.
+
+You can use Vim to replace <a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a> with <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a><a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a> by reading in any mode and
+<a href="editing.txt.html#writing" class="d">writing</a> in Dos mode <a href="motion.txt.html#%28" class="d">(</a>"<a href="options.txt.html#%3Ase" class="d">:se</a> ff=dos").
+You can use Vim to replace <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a><a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a> with <a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a> by reading in Dos mode and
+<a href="editing.txt.html#writing" class="d">writing</a> in <a href="os_unix.txt.html#Unix" class="d">Unix</a> mode <a href="motion.txt.html#%28" class="d">(</a>"<a href="options.txt.html#%3Ase" class="d">:se</a> ff=unix").
+
+Vim sets <a href="options.txt.html#%27fileformat%27" class="o">'fileformat'</a> automatically when <a href="options.txt.html#%27fileformats%27" class="o">'fileformats'</a> <a href="motion.txt.html#is" class="d">is</a> not empty (which <a href="motion.txt.html#is" class="d">is</a>
+the default), so you don't really have to worry about what you are doing.
+                                        <a href="options.txt.html#%27fileformat%27" class="l">'fileformat'</a> <a href="options.txt.html#%27fileformats%27" class="l">'fileformats'</a>
+
+If you want to edit <a href="insert.txt.html#a" class="d">a</a> <a href="usr_41.txt.html#script" class="d">script</a> file or <a href="insert.txt.html#a" class="d">a</a> binary file, you should set the
+<a href="options.txt.html#%27binary%27" class="o">'binary'</a> option before loading the file.  Script files and binary files may
+contain single <a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a> characters which Vim would replace with <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a><a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a>.  You can
+set <a href="options.txt.html#%27binary%27" class="o">'binary'</a> automatically by <a href="starting.txt.html#starting" class="d">starting</a> Vim with the "<a href="starting.txt.html#-b" class="d">-b</a>" (binary) option.
+
+<span class="h">==============================================================================</span>
+6. <a href="editing.txt.html#%3Acd" class="d">:cd</a> command                                          <a name="dos-%3Acd" class="t">dos-:cd</a>
+
+The "<a href="editing.txt.html#%3Acd" class="d">:cd</a>" command recognizes the drive specifier and changes the current
+drive.  Use "<a href="editing.txt.html#%3Acd" class="d">:cd</a> c:" to make drive <a href="change.txt.html#C" class="d">C</a> the active drive.  Use "<a href="editing.txt.html#%3Acd" class="d">:cd</a> d:\foo" to <a href="motion.txt.html#go" class="d">go</a>
+to the directory "foo" in the root of drive D.  Vim also recognizes UNC names
+if the system supports them; e.g., "<a href="editing.txt.html#%3Acd" class="d">:cd</a> \\server\share\dir"<a href="repeat.txt.html#." class="d">.</a>  <a href="editing.txt.html#%3Acd" class="l">:cd</a>
+
+<span class="h">==============================================================================</span>
+7. Interrupting                                         <a name="dos-CTRL-Break" class="t">dos-CTRL-Break</a>
+
+Use <a href="scroll.txt.html#CTRL-B" class="k">CTRL-B</a>reak instead of <a href="pattern.txt.html#CTRL-C" class="k">CTRL-C</a> to interrupt searches.  Vim does not detect
+the <a href="pattern.txt.html#CTRL-C" class="k">CTRL-C</a> until <a href="motion.txt.html#it" class="d">it</a> tries to read <a href="insert.txt.html#a" class="d">a</a> key.
+
+<span class="h">==============================================================================</span>
+8. Temp files                                           <a name="dos-temp-files" class="t">dos-temp-files</a>
+
+Only for the 16 bit and 32 bit <a href="#DOS" class="d">DOS</a> version:
+Vim puts temporary files (for filtering) in the first of these directories
+that exists and in which Vim can create <a href="insert.txt.html#a" class="d">a</a> file:
+        $TMP
+        $TEMP
+        C:\TMP
+        C:\TEMP
+        current directory
+
+For the <a href="os_win32.txt.html#Win32" class="d">Win32</a> version (both console and GUI):
+Vim uses standard Windows <a href="eval.txt.html#functions" class="d">functions</a> to obtain <a href="insert.txt.html#a" class="d">a</a> temporary file name (for
+filtering).  The first of these directories that exists and in which Vim can
+create <a href="insert.txt.html#a" class="d">a</a> file <a href="motion.txt.html#is" class="d">is</a> used:
+        $TMP
+        $TEMP
+        current directory
+
+<span class="h">==============================================================================</span>
+9. Shell option default                                 <a name="dos-shell" class="t">dos-shell</a>
+
+The default for the <a href="options.txt.html#%27sh%27" class="o">'sh'</a> ('shell') option <a href="motion.txt.html#is" class="d">is</a> "command.com" on Windows 95 and
+"cmd.exe" on Windows NT.  If <a href="starting.txt.html#SHELL" class="d">SHELL</a> <a href="motion.txt.html#is" class="d">is</a> defined, Vim uses <a href="starting.txt.html#SHELL" class="d">SHELL</a> instead, and if
+<a href="starting.txt.html#SHELL" class="d">SHELL</a> <a href="motion.txt.html#is" class="d">is</a> not defined but <a href="starting.txt.html#COMSPEC" class="d">COMSPEC</a> is, Vim uses COMSPEC.  Vim starts external
+commands with "<span class="s">&lt;shell&gt;</span> /c <span class="s">&lt;command_name&gt;</span>"<a href="repeat.txt.html#." class="d">.</a>  Typing <a href="starting.txt.html#CTRL-Z" class="k">CTRL-Z</a> starts <a href="insert.txt.html#a" class="d">a</a> new command
+subshell.  Return to Vim with "exit"<a href="repeat.txt.html#." class="d">.</a>   <a href="options.txt.html#%27shell%27" class="l">'shell'</a> <a href="starting.txt.html#CTRL-Z" class="l">CTRL-Z</a>
+
+If you are running <a href="insert.txt.html#a" class="d">a</a> third-party shell, you may need to set the
+<a href="options.txt.html#%27shellcmdflag%27" class="l">'shellcmdflag'</a> ('shcf') and <a href="options.txt.html#%27shellquote%27" class="l">'shellquote'</a> ('shq') or <a href="options.txt.html#%27shellxquote%27" class="l">'shellxquote'</a>
+('sxq') options.  Unfortunately, this also depends on the version of Vim used.
+For example, with the MKS Korn shell or with bash, the values of the <a href="options.txt.html#options" class="d">options</a>
+should be:
+
+<span class="h">                DOS 16 bit          DOS 32 bit          Win32  </span>
+<a href="options.txt.html#%27shellcmdflag%27" class="o">'shellcmdflag'</a>     <a href="starting.txt.html#-c" class="d">-c</a>                   <a href="starting.txt.html#-c" class="d">-c</a>               <a href="starting.txt.html#-c" class="d">-c</a>
+<a href="options.txt.html#%27shellquote%27" class="o">'shellquote'</a>       "
+<a href="options.txt.html#%27shellxquote%27" class="o">'shellxquote'</a>                                            "
+
+For Dos 16 bit this starts the shell as:
+        <span class="s">&lt;shell&gt;</span> <a href="starting.txt.html#-c" class="d">-c</a> "command name" &gt;file
+For <a href="os_win32.txt.html#Win32" class="d">Win32</a> as:
+        <span class="s">&lt;shell&gt;</span> <a href="starting.txt.html#-c" class="d">-c</a> "command name &gt;file"
+For <a href="#DOS" class="d">DOS</a> 32 bit, DJGPP does this internally somehow.
+
+When <a href="starting.txt.html#starting" class="d">starting</a> up, Vim checks for the presence of "sh" anywhere in the <a href="options.txt.html#%27shell%27" class="o">'shell'</a>
+option.  If <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> present, Vim sets the <a href="options.txt.html#%27shellcmdflag%27" class="o">'shellcmdflag'</a> and <a href="options.txt.html#%27shellquote%27" class="o">'shellquote'</a> or
+<a href="options.txt.html#%27shellxquote%27" class="o">'shellxquote'</a> <a href="options.txt.html#options" class="d">options</a> will be set <a href="motion.txt.html#as" class="d">as</a> described above.
+
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

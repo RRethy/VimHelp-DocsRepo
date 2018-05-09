@@ -1,0 +1,286 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: usr_31.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="usr_31.txt" class="t">usr_31.txt</a>    For <span class="i">Vim version 8.0.</span>  Last change: 2007 May 08
+
+                     VIM USER MANUAL <a href="motion.txt.html#-" class="d">-</a> by <a href="intro.txt.html#Bram" class="d">Bram</a> <a href="intro.txt.html#Moolenaar" class="d">Moolenaar</a>
+
+                              Exploiting the <a href="gui.txt.html#GUI" class="d">GUI</a>
+
+
+Vim works well in <a href="insert.txt.html#a" class="d">a</a> terminal, but the <a href="gui.txt.html#GUI" class="d">GUI</a> has <a href="insert.txt.html#a" class="d">a</a> few extra items.  <a href="insert.txt.html#A" class="d">A</a> file
+browser can be used for commands that use <a href="insert.txt.html#a" class="d">a</a> file.  <a href="insert.txt.html#A" class="d">A</a> <a href="gui_w32.txt.html#dialog" class="d">dialog</a> to make <a href="insert.txt.html#a" class="d">a</a> choice
+between alternatives.  Use keyboard shortcuts to access menu items quickly.
+
+<a href="#31.1" class="l">31.1</a>  The file browser
+<a href="#31.2" class="l">31.2</a>  Confirmation
+<a href="#31.3" class="l">31.3</a>  Menu shortcuts
+<a href="#31.4" class="l">31.4</a>  Vim <a href="windows.txt.html#window" class="d">window</a> position and size
+<a href="#31.5" class="l">31.5</a>  Various
+
+     Next chapter: <a href="usr_32.txt.html#usr_32.txt" class="l">usr_32.txt</a>  The <a href="undo.txt.html#undo" class="d">undo</a> tree
+ Previous chapter: <a href="usr_30.txt.html#usr_30.txt" class="l">usr_30.txt</a>  Editing programs
+Table of contents: <a href="usr_toc.txt.html#usr_toc.txt" class="l">usr_toc.txt</a>
+
+<span class="h">==============================================================================</span>
+<a name="31.1" class="t">31.1</a>  The file browser
+
+When using the File/Open... menu you get <a href="insert.txt.html#a" class="d">a</a> file browser.  This makes <a href="motion.txt.html#it" class="d">it</a> easier
+to find the file you want to edit.  But what if you want to split <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a> to
+edit another file?  There <a href="motion.txt.html#is" class="d">is</a> no menu entry for this.  You could first use
+Window/Split and then File/Open..., but that's more work.
+   Since you are typing most commands in Vim, opening the file browser with <a href="insert.txt.html#a" class="d">a</a>
+typed command <a href="motion.txt.html#is" class="d">is</a> possible <a href="motion.txt.html#as" class="d">as</a> well.  To make the split command use the file
+browser, prepend "browse"<a href="cmdline.txt.html#%3A" class="d">:</a> 
+<span class="e"></span>
+<span class="e">        :browse split</span>
+<span class="e"></span>
+<a href="visual.txt.html#Select" class="d">Select</a> <a href="insert.txt.html#a" class="d">a</a> file and then the "<a href="windows.txt.html#%3Asplit" class="d">:split</a>" command will be executed with it.  If you
+cancel the file <a href="gui_w32.txt.html#dialog" class="d">dialog</a> nothing happens, the <a href="windows.txt.html#window" class="d">window</a> isn't split.
+   You can also specify <a href="insert.txt.html#a" class="d">a</a> file name argument.  This <a href="motion.txt.html#is" class="d">is</a> used to tell the file
+browser where to start.  Example: 
+<span class="e"></span>
+<span class="e">        :browse split /etc</span>
+<span class="e"></span>
+The file browser will pop up, <a href="starting.txt.html#starting" class="d">starting</a> in the directory "/etc"<a href="repeat.txt.html#." class="d">.</a>
+
+The "<a href="editing.txt.html#%3Abrowse" class="d">:browse</a>" command can be prepended to just about any command that opens <a href="insert.txt.html#a" class="d">a</a>
+file.
+   If no directory <a href="motion.txt.html#is" class="d">is</a> specified, Vim will decide where to start the file
+browser.  By default <a href="motion.txt.html#it" class="d">it</a> uses the same directory <a href="motion.txt.html#as" class="d">as</a> the last time.  Thus when
+you used "<a href="editing.txt.html#%3Abrowse" class="d">:browse</a> split" and selected <a href="insert.txt.html#a" class="d">a</a> file in "/usr/local/share"<a href="motion.txt.html#%2C" class="d">,</a> the next
+time you use <a href="insert.txt.html#a" class="d">a</a> "<a href="editing.txt.html#%3Abrowse" class="d">:browse</a>" <a href="motion.txt.html#it" class="d">it</a> will start in "/usr/local/share" again.
+   This can be changed with the <a href="options.txt.html#%27browsedir%27" class="o">'browsedir'</a> option.  It can have one of three
+values:
+
+        last            Use the last directory browsed (default)
+        buffer          Use the same directory <a href="motion.txt.html#as" class="d">as</a> the current buffer
+        current         use the current directory
+
+For example, when you are in the directory "/usr"<a href="motion.txt.html#%2C" class="d">,</a> editing the file
+"/usr/local/share/readme"<a href="motion.txt.html#%2C" class="d">,</a> then the command: 
+<span class="e"></span>
+<span class="e">        :set browsedir=buffer</span>
+<span class="e">        :browse edit</span>
+<span class="e"></span>
+Will start the browser in "/usr/local/share"<a href="repeat.txt.html#." class="d">.</a>  Alternatively: 
+<span class="e"></span>
+<span class="e">        :set browsedir=current</span>
+<span class="e">        :browse edit</span>
+<span class="e"></span>
+Will start the browser in "/usr"<a href="repeat.txt.html#." class="d">.</a>
+
+        <span class="n">Note:</span>
+        To avoid using the mouse, most file browsers offer using key presses
+        to navigate.  Since this <a href="motion.txt.html#is" class="d">is</a> different for every system, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> not
+        explained here.  Vim uses <a href="insert.txt.html#a" class="d">a</a> standard browser when possible, your
+        system documentation should contain an explanation on the keyboard
+        shortcuts somewhere.
+
+When you are not using the <a href="gui.txt.html#GUI" class="d">GUI</a> version, you could use the file explorer <a href="windows.txt.html#window" class="d">window</a>
+to select files like in <a href="insert.txt.html#a" class="d">a</a> file browser.  However, this doesn't work for the
+"<a href="editing.txt.html#%3Abrowse" class="d">:browse</a>" command.  See <a href="pi_netrw.txt.html#netrw-browse" class="l">netrw-browse</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+<a name="31.2" class="t">31.2</a>  Confirmation
+
+Vim protects you from accidentally overwriting <a href="insert.txt.html#a" class="d">a</a> file and other ways to lose
+changes.  If you <a href="diff.txt.html#do" class="d">do</a> something that might be <a href="insert.txt.html#a" class="d">a</a> bad thing to do, Vim produces an
+error message and suggests appending <a href="change.txt.html#%21" class="d">!</a> if you really want to <a href="diff.txt.html#do" class="d">do</a> it.
+   To avoid retyping the command with the !, you can make Vim give you <a href="insert.txt.html#a" class="d">a</a>
+dialog.  You can then press "OK" or "Cancel" to tell Vim what you want.
+   For example, you are editing <a href="insert.txt.html#a" class="d">a</a> file and made changes to it.  You start
+editing another file with: 
+<span class="e"></span>
+<span class="e">        :confirm edit foo.txt</span>
+<span class="e"></span>
+Vim will pop up <a href="insert.txt.html#a" class="d">a</a> <a href="gui_w32.txt.html#dialog" class="d">dialog</a> that looks something like this:
+
+        +-----------------------------------+
+        |                                   |
+        |   <a href="pattern.txt.html#%3F" class="d">?</a>   Save changes to "bar.txt"<a href="pattern.txt.html#%3F" class="d">?</a>  |
+        |                                   |
+        |   YES   NO             CANCEL     |
+        +-----------------------------------+
+
+Now make your choice.  If you <a href="diff.txt.html#do" class="d">do</a> want to save the changes, select "YES"<a href="repeat.txt.html#." class="d">.</a>  If
+you want to lose the changes for ever: "NO"<a href="repeat.txt.html#." class="d">.</a>  If you forgot what you were
+doing and want to check what really changed use "CANCEL"<a href="repeat.txt.html#." class="d">.</a>  You will be back in
+the same file, with the changes still there.
+
+Just like "<a href="editing.txt.html#%3Abrowse" class="d">:browse</a>"<a href="motion.txt.html#%2C" class="d">,</a> the "<a href="editing.txt.html#%3Aconfirm" class="d">:confirm</a>" command can be prepended to most commands
+that edit another file.  They can also be combined: 
+<span class="e"></span>
+<span class="e">        :confirm browse edit</span>
+<span class="e"></span>
+This will produce <a href="insert.txt.html#a" class="d">a</a> <a href="gui_w32.txt.html#dialog" class="d">dialog</a> when the current buffer was changed.  Then <a href="motion.txt.html#it" class="d">it</a> will
+pop up <a href="insert.txt.html#a" class="d">a</a> file browser to select the file to edit.
+
+        <span class="n">Note:</span>
+        In the <a href="gui_w32.txt.html#dialog" class="d">dialog</a> you can use the keyboard to select the choice.
+        Typically the <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a> key and the cursor keys change the choice.
+        Pressing <a href="intro.txt.html#%3CEnter%3E" class="s">&lt;Enter&gt;</a> selects the choice.  This depends on the system
+        though.
+
+When you are not using the GUI, the "<a href="editing.txt.html#%3Aconfirm" class="d">:confirm</a>" command works <a href="motion.txt.html#as" class="d">as</a> well.  Instead
+of popping up <a href="insert.txt.html#a" class="d">a</a> dialog, Vim will print the message <a href="motion.txt.html#at" class="d">at</a> the bottom of the Vim
+<a href="windows.txt.html#window" class="d">window</a> and ask you to press <a href="insert.txt.html#a" class="d">a</a> key to make <a href="insert.txt.html#a" class="d">a</a> choice. 
+<span class="e"></span>
+<span class="e">        :confirm edit main.c</span>
+<span class="h">       Save changes to "Untitled"? </span>
+<span class="h">        [Y]es, (N)o, (C)ancel:  </span>
+
+You can now press the single key for the choice.  You don't have to press
+<a href="intro.txt.html#%3CEnter%3E" class="s">&lt;Enter&gt;</a>, unlike other typing on the command line.
+
+<span class="h">==============================================================================</span>
+<a name="31.3" class="t">31.3</a>  Menu shortcuts
+
+The keyboard <a href="motion.txt.html#is" class="d">is</a> used for all Vim commands.  The <a href="gui.txt.html#menus" class="d">menus</a> provide <a href="insert.txt.html#a" class="d">a</a> simple way to
+select commands, without knowing what they are called.  But you have to move
+your hand from the keyboard and grab the mouse.
+   Menus can often be selected with keys <a href="motion.txt.html#as" class="d">as</a> well.  This depends on your
+system, but most often <a href="motion.txt.html#it" class="d">it</a> works this way.  Use the <span class="s">&lt;Alt&gt;</span> key in combination
+with the underlined <a href="print.txt.html#letter" class="d">letter</a> of <a href="insert.txt.html#a" class="d">a</a> menu.  For example, <span class="s">&lt;A-w&gt;</span> (&lt;Alt&gt; and w) pops
+up the Window menu.
+   In the Window menu, the "split" item has the <a href="change.txt.html#p" class="d">p</a> underlined.  To select it,
+let <a href="motion.txt.html#go" class="d">go</a> of the <span class="s">&lt;Alt&gt;</span> key and press p.
+
+After the first selection of <a href="insert.txt.html#a" class="d">a</a> menu with the <span class="s">&lt;Alt&gt;</span> key, you can use the cursor
+keys to move through the menus.  <a href="motion.txt.html#%3CRight%3E" class="s">&lt;Right&gt;</a> selects <a href="insert.txt.html#a" class="d">a</a> submenu and <span class="s">&lt;left&gt;</span> closes
+it.  <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a> also closes <a href="insert.txt.html#a" class="d">a</a> menu.  <a href="intro.txt.html#%3CEnter%3E" class="s">&lt;Enter&gt;</a> selects <a href="insert.txt.html#a" class="d">a</a> menu item.
+
+There <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> conflict between using the <span class="s">&lt;Alt&gt;</span> key to select menu items, and
+using <span class="s">&lt;Alt&gt;</span> key combinations for mappings.  The <a href="options.txt.html#%27winaltkeys%27" class="o">'winaltkeys'</a> option tells Vim
+what <a href="motion.txt.html#it" class="d">it</a> should <a href="diff.txt.html#do" class="d">do</a> with the <span class="s">&lt;Alt&gt;</span> key.
+   The default value "menu" <a href="motion.txt.html#is" class="d">is</a> the smart choice: If the key combination <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a>
+menu shortcut <a href="motion.txt.html#it" class="d">it</a> can't be mapped.  All other keys are available for mapping.
+   The value "no" doesn't use any <span class="s">&lt;Alt&gt;</span> keys for the menus.  Thus you <a href="vim_faq.txt.html#must" class="d">must</a> use
+the mouse for the menus, and all <span class="s">&lt;Alt&gt;</span> keys can be mapped.
+   The value "yes" means that Vim will use any <span class="s">&lt;Alt&gt;</span> keys for the menus.  Some
+<span class="s">&lt;Alt&gt;</span> key combinations may also <a href="diff.txt.html#do" class="d">do</a> other things than selecting <a href="insert.txt.html#a" class="d">a</a> menu.
+
+<span class="h">==============================================================================</span>
+<a name="31.4" class="t">31.4</a>  Vim <a href="windows.txt.html#window" class="d">window</a> position and size
+
+To see the current Vim <a href="windows.txt.html#window" class="d">window</a> position on the screen use: 
+<span class="e"></span>
+<span class="e">        :winpos</span>
+<span class="e"></span>
+This will only work in the GUI.  The output may look like this:
+
+<span class="h">        Window position: X 272, Y 103 </span>
+
+The position <a href="motion.txt.html#is" class="d">is</a> given in screen pixels.  Now you can use the numbers to move
+Vim somewhere else.  For example, to move <a href="motion.txt.html#it" class="d">it</a> to the left <a href="insert.txt.html#a" class="d">a</a> hundred pixels: 
+<span class="e"></span>
+<span class="e">        :winpos 172 103</span>
+
+        <span class="n">Note:</span>
+        There may be <a href="insert.txt.html#a" class="d">a</a> small offset between the reported position and where
+        the <a href="windows.txt.html#window" class="d">window</a> moves.  This <a href="motion.txt.html#is" class="d">is</a> because of the border around the window.
+        This <a href="motion.txt.html#is" class="d">is</a> added by the <a href="windows.txt.html#window" class="d">window</a> manager.
+
+You can use this command in your <a href="starting.txt.html#startup" class="d">startup</a> <a href="usr_41.txt.html#script" class="d">script</a> to position the <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#at" class="d">at</a> <a href="insert.txt.html#a" class="d">a</a>
+specific position.
+
+The size of the Vim <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> computed in characters.  Thus this depends on
+the size of the font being used.  You can see the current size with this
+command: 
+<span class="e"></span>
+<span class="e">        :set lines columns</span>
+<span class="e"></span>
+To change the size set the <a href="options.txt.html#%27lines%27" class="o">'lines'</a> and/or <a href="options.txt.html#%27columns%27" class="o">'columns'</a> <a href="options.txt.html#options" class="d">options</a> to <a href="insert.txt.html#a" class="d">a</a> new value: 
+<span class="e"></span>
+<span class="e">        :set lines=50</span>
+<span class="e">        :set columns=80</span>
+<span class="e"></span>
+Obtaining the size works in <a href="insert.txt.html#a" class="d">a</a> terminal just like in the GUI.  Setting the size
+<a href="motion.txt.html#is" class="d">is</a> not possible in most terminals.
+
+You can start the X-Windows version of <a href="starting.txt.html#gvim" class="d">gvim</a> with an argument to specify the
+size and position of the window: 
+<span class="e"></span>
+<span class="e">        gvim -geometry {width}x{height}+{x_offset}+{y_offset}</span>
+<span class="e"></span>
+<span class="s">{width}</span> and <span class="s">{height}</span> are in characters, <span class="s">{x_offset}</span> and <span class="s">{y_offset}</span> are in
+pixels.  Example: 
+<span class="e"></span>
+<span class="e">        gvim -geometry 80x25+100+300</span>
+<span class="e"></span>
+<span class="h">==============================================================================</span>
+<a name="31.5" class="t">31.5</a>  Various
+
+You can use <a href="starting.txt.html#gvim" class="d">gvim</a> to edit an e-mail message.  In your e-mail program you <a href="vim_faq.txt.html#must" class="d">must</a>
+select <a href="starting.txt.html#gvim" class="d">gvim</a> to be the editor for messages.  When you try that, you will
+see that <a href="motion.txt.html#it" class="d">it</a> doesn't work: The mail program thinks that editing <a href="motion.txt.html#is" class="d">is</a> finished,
+while <a href="starting.txt.html#gvim" class="d">gvim</a> <a href="motion.txt.html#is" class="d">is</a> still running!
+   What happens <a href="motion.txt.html#is" class="d">is</a> that <a href="starting.txt.html#gvim" class="d">gvim</a> disconnects from the shell <a href="motion.txt.html#it" class="d">it</a> was started in.
+That <a href="motion.txt.html#is" class="d">is</a> fine when you start <a href="starting.txt.html#gvim" class="d">gvim</a> in <a href="insert.txt.html#a" class="d">a</a> terminal, so that you can <a href="diff.txt.html#do" class="d">do</a> other work
+in that terminal.  But when you really want to wait for <a href="starting.txt.html#gvim" class="d">gvim</a> to finish, you
+<a href="vim_faq.txt.html#must" class="d">must</a> prevent <a href="motion.txt.html#it" class="d">it</a> from disconnecting.  The "<a href="starting.txt.html#-f" class="d">-f</a>" argument does this: 
+<span class="e"></span>
+<span class="e">        gvim -f file.txt</span>
+<span class="e"></span>
+The "<a href="starting.txt.html#-f" class="d">-f</a>" stands for foreground.  Now Vim will block the shell <a href="motion.txt.html#it" class="d">it</a> was started
+in until you finish editing and exit.
+
+
+DELAYED START OF THE <a href="gui.txt.html#GUI" class="d">GUI</a>
+
+On <a href="os_unix.txt.html#Unix" class="d">Unix</a> it's possible to first start Vim in <a href="insert.txt.html#a" class="d">a</a> terminal.  That's useful if you
+<a href="diff.txt.html#do" class="d">do</a> <a href="various.txt.html#various" class="d">various</a> tasks in the same shell.  If you are editing <a href="insert.txt.html#a" class="d">a</a> file and decide you
+want to use the <a href="gui.txt.html#GUI" class="d">GUI</a> after all, you can start <a href="motion.txt.html#it" class="d">it</a> with: 
+<span class="e"></span>
+<span class="e">        :gui</span>
+<span class="e"></span>
+Vim will open the <a href="gui.txt.html#GUI" class="d">GUI</a> <a href="windows.txt.html#window" class="d">window</a> and no longer use the terminal.  You can continue
+using the terminal for something else.  The "<a href="starting.txt.html#-f" class="d">-f</a>" argument <a href="motion.txt.html#is" class="d">is</a> used here to run
+the <a href="gui.txt.html#GUI" class="d">GUI</a> in the foreground.  You can also use "<a href="gui_x11.txt.html#%3Agui" class="d">:gui</a> <a href="starting.txt.html#-f" class="d">-f</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+
+THE GVIM STARTUP FILE
+
+When <a href="starting.txt.html#gvim" class="d">gvim</a> starts, <a href="motion.txt.html#it" class="d">it</a> reads the <a href="gui.txt.html#gvimrc" class="d">gvimrc</a> file.  That's similar to the <a href="starting.txt.html#vimrc" class="d">vimrc</a> file
+used when <a href="starting.txt.html#starting" class="d">starting</a> Vim.  The <a href="gui.txt.html#gvimrc" class="d">gvimrc</a> file can be used for settings and commands
+that are only to be used when the <a href="gui.txt.html#GUI" class="d">GUI</a> <a href="motion.txt.html#is" class="d">is</a> going to be started.  For example,
+you can set the <a href="options.txt.html#%27lines%27" class="o">'lines'</a> option to set <a href="insert.txt.html#a" class="d">a</a> different <a href="windows.txt.html#window" class="d">window</a> size: 
+<span class="e"></span>
+<span class="e">        :set lines=55</span>
+<span class="e"></span>
+You don't want to <a href="diff.txt.html#do" class="d">do</a> this in <a href="insert.txt.html#a" class="d">a</a> terminal, since its size <a href="motion.txt.html#is" class="d">is</a> fixed (except for
+an xterm that supports resizing).
+   The <a href="gui.txt.html#gvimrc" class="d">gvimrc</a> file <a href="motion.txt.html#is" class="d">is</a> searched for in the same locations <a href="motion.txt.html#as" class="d">as</a> the <a href="starting.txt.html#vimrc" class="d">vimrc</a> file.
+Normally its name <a href="motion.txt.html#is" class="d">is</a> "~/.gvimrc" for <a href="os_unix.txt.html#Unix" class="d">Unix</a> and "$VIM/_gvimrc" for MS-Windows.
+The <a href="gui.txt.html#%24MYGVIMRC" class="d">$MYGVIMRC</a> environment variable <a href="motion.txt.html#is" class="d">is</a> set to it, thus you can use this command
+to edit the file, if you have one: 
+<span class="e"></span>
+<span class="e">        :edit $MYGVIMRC</span>
+
+   If for some reason you don't want to use the normal <a href="gui.txt.html#gvimrc" class="d">gvimrc</a> file, you can
+specify another one with the "<a href="starting.txt.html#-U" class="d">-U</a>" argument: 
+<span class="e"></span>
+<span class="e">        gvim -U thisrc ...</span>
+<span class="e"></span>
+That allows <a href="starting.txt.html#starting" class="d">starting</a> <a href="starting.txt.html#gvim" class="d">gvim</a> for different kinds of editing.  You could set
+another font size, for example.
+   To completely skip reading <a href="insert.txt.html#a" class="d">a</a> <a href="gui.txt.html#gvimrc" class="d">gvimrc</a> file: 
+<span class="e"></span>
+<span class="e">        gvim -U NONE ...</span>
+<span class="e"></span>
+<span class="h">==============================================================================</span>
+<span class="e"></span>
+Next chapter: <a href="usr_32.txt.html#usr_32.txt" class="l">usr_32.txt</a>  The <a href="undo.txt.html#undo" class="d">undo</a> tree
+
+Copyright: see <a href="usr_01.txt.html#manual-copyright" class="l">manual-copyright</a>  vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

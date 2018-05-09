@@ -1,0 +1,513 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: usr_21.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="usr_21.txt" class="t">usr_21.txt</a>    For <span class="i">Vim version 8.0.</span>  Last change: 2012 Nov 02
+
+                     VIM USER MANUAL <a href="motion.txt.html#-" class="d">-</a> by <a href="intro.txt.html#Bram" class="d">Bram</a> <a href="intro.txt.html#Moolenaar" class="d">Moolenaar</a>
+
+                           Go away and come back
+
+
+This chapter goes into mixing the use of other programs with Vim.  Either by
+executing program from inside Vim or by leaving Vim and coming back later.
+Furthermore, this <a href="motion.txt.html#is" class="d">is</a> about the ways to remember the state of Vim and restore
+<a href="motion.txt.html#it" class="d">it</a> later.
+
+<a href="#21.1" class="l">21.1</a>  Suspend and resume
+<a href="#21.2" class="l">21.2</a>  Executing shell commands
+<a href="#21.3" class="l">21.3</a>  Remembering information; <a href="starting.txt.html#viminfo" class="d">viminfo</a>
+<a href="#21.4" class="l">21.4</a>  Sessions
+<a href="#21.5" class="l">21.5</a>  Views
+<a href="#21.6" class="l">21.6</a>  Modelines
+
+     Next chapter: <a href="usr_22.txt.html#usr_22.txt" class="l">usr_22.txt</a>  Finding the file to edit
+ Previous chapter: <a href="usr_20.txt.html#usr_20.txt" class="l">usr_20.txt</a>  Typing command-line commands quickly
+Table of contents: <a href="usr_toc.txt.html#usr_toc.txt" class="l">usr_toc.txt</a>
+
+<span class="h">==============================================================================</span>
+<a name="21.1" class="t">21.1</a>  Suspend and resume
+
+Like most <a href="os_unix.txt.html#Unix" class="d">Unix</a> programs Vim can be suspended by pressing <a href="starting.txt.html#CTRL-Z" class="k">CTRL-Z</a>.  This stops
+Vim and takes you back to the shell <a href="motion.txt.html#it" class="d">it</a> was started in.  You can then <a href="diff.txt.html#do" class="d">do</a> any
+other commands until you are bored with them.  Then bring back Vim with the
+"fg" command. 
+<span class="e"></span>
+<span class="e">        CTRL-Z</span>
+<span class="e">        {any sequence of shell commands}</span>
+<span class="e">        fg</span>
+<span class="e"></span>
+You are right back where you left Vim, nothing has changed.
+   In <a href="change.txt.html#case" class="d">case</a> pressing <a href="starting.txt.html#CTRL-Z" class="k">CTRL-Z</a> doesn't work, you can also use "<a href="starting.txt.html#%3Asuspend" class="d">:suspend</a>"<a href="repeat.txt.html#." class="d">.</a>
+Don't forget to bring Vim back to the foreground, you would lose any changes
+that you made!
+
+Only <a href="os_unix.txt.html#Unix" class="d">Unix</a> has support for this.  On other systems Vim will start <a href="insert.txt.html#a" class="d">a</a> shell for
+you.  This also has the functionality of being able to execute shell commands.
+But it's <a href="insert.txt.html#a" class="d">a</a> new shell, not the one that you started Vim from.
+   When you are running the <a href="gui.txt.html#GUI" class="d">GUI</a> you can't <a href="motion.txt.html#go" class="d">go</a> back to the shell where Vim was
+started.  <a href="starting.txt.html#CTRL-Z" class="k">CTRL-Z</a> will minimize the Vim <a href="windows.txt.html#window" class="d">window</a> instead.
+
+<span class="h">==============================================================================</span>
+<a name="21.2" class="t">21.2</a>  Executing shell commands
+
+To execute <a href="insert.txt.html#a" class="d">a</a> single shell command from Vim use ":!{command}"<a href="repeat.txt.html#." class="d">.</a>  For example, to
+see <a href="insert.txt.html#a" class="d">a</a> directory listing: 
+<span class="e"></span>
+<span class="e">        :!ls</span>
+<span class="e">        :!dir</span>
+<span class="e"></span>
+The first one <a href="motion.txt.html#is" class="d">is</a> for Unix, the second one for MS-Windows.
+   Vim will execute the program.  When <a href="motion.txt.html#it" class="d">it</a> ends you will get <a href="insert.txt.html#a" class="d">a</a> prompt to hit
+<a href="intro.txt.html#%3CEnter%3E" class="s">&lt;Enter&gt;</a>.  This allows you to have <a href="insert.txt.html#a" class="d">a</a> look <a href="motion.txt.html#at" class="d">at</a> the output from the command before
+returning to the text you were editing.
+   The "<a href="change.txt.html#%21" class="d">!</a>" <a href="motion.txt.html#is" class="d">is</a> also used in other places where <a href="insert.txt.html#a" class="d">a</a> program <a href="motion.txt.html#is" class="d">is</a> run.  Let's take
+<a href="insert.txt.html#a" class="d">a</a> look <a href="motion.txt.html#at" class="d">at</a> an overview:
+
+        :!{program}             execute <span class="s">{program}</span>
+        <a href="insert.txt.html#%3Ar" class="d">:r</a> !{program}           execute <span class="s">{program}</span> and read its output
+        <a href="editing.txt.html#%3Aw" class="d">:w</a> !{program}           execute <span class="s">{program}</span> and send text to its input
+        :[range]!{program}      <a href="change.txt.html#filter" class="d">filter</a> text through <span class="s">{program}</span>
+
+Notice that the presence of <a href="insert.txt.html#a" class="d">a</a> range before "!{program}" makes <a href="insert.txt.html#a" class="d">a</a> big
+difference.  Without <a href="motion.txt.html#it" class="d">it</a> executes the program normally, with the range <a href="insert.txt.html#a" class="d">a</a> number
+of text lines <a href="motion.txt.html#is" class="d">is</a> filtered through the program.
+
+Executing <a href="insert.txt.html#a" class="d">a</a> whole row of programs this way <a href="motion.txt.html#is" class="d">is</a> possible.  But <a href="insert.txt.html#a" class="d">a</a> shell <a href="motion.txt.html#is" class="d">is</a> much
+better <a href="motion.txt.html#at" class="d">at</a> it.  You can start <a href="insert.txt.html#a" class="d">a</a> new shell this way: 
+<span class="e"></span>
+<span class="e">        :shell</span>
+<span class="e"></span>
+This <a href="motion.txt.html#is" class="d">is</a> similar to using <a href="starting.txt.html#CTRL-Z" class="k">CTRL-Z</a> to <a href="starting.txt.html#suspend" class="d">suspend</a> Vim.  The difference <a href="motion.txt.html#is" class="d">is</a> that <a href="insert.txt.html#a" class="d">a</a> new
+shell <a href="motion.txt.html#is" class="d">is</a> started.
+
+When using the <a href="gui.txt.html#GUI" class="d">GUI</a> the shell will be using the Vim <a href="windows.txt.html#window" class="d">window</a> for its input and
+output.  Since Vim <a href="motion.txt.html#is" class="d">is</a> not <a href="insert.txt.html#a" class="d">a</a> terminal emulator, this will not work perfectly.
+If you have trouble, try toggling the <a href="options.txt.html#%27guipty%27" class="o">'guipty'</a> option.  If this still doesn't
+work well enough, start <a href="insert.txt.html#a" class="d">a</a> new terminal to run the shell in.  For example with:
+
+<span class="e">        :!xterm&amp;</span>
+<span class="e"></span>
+<span class="h">==============================================================================</span>
+<a name="21.3" class="t">21.3</a>  Remembering information; <a href="starting.txt.html#viminfo" class="d">viminfo</a>
+
+After editing for <a href="insert.txt.html#a" class="d">a</a> while you will have text in registers, marks in <a href="various.txt.html#various" class="d">various</a>
+files, <a href="insert.txt.html#a" class="d">a</a> command line <a href="cmdline.txt.html#history" class="d">history</a> filled with carefully crafted commands.  When
+you exit Vim all of this <a href="motion.txt.html#is" class="d">is</a> lost.  But you can get <a href="motion.txt.html#it" class="d">it</a> back!
+
+The <a href="starting.txt.html#viminfo" class="d">viminfo</a> file <a href="motion.txt.html#is" class="d">is</a> designed to store status information:
+
+        <a href="cmdline.txt.html#Command-line" class="d">Command-line</a> and Search <a href="pattern.txt.html#pattern" class="d">pattern</a> <a href="cmdline.txt.html#history" class="d">history</a>
+        Text in <a href="change.txt.html#registers" class="d">registers</a>
+        Marks for <a href="various.txt.html#various" class="d">various</a> files
+        The buffer <a href="eval.txt.html#list" class="d">list</a>
+        Global <a href="eval.txt.html#variables" class="d">variables</a>
+
+Each time you exit Vim <a href="motion.txt.html#it" class="d">it</a> will store this information in <a href="insert.txt.html#a" class="d">a</a> file, the <a href="starting.txt.html#viminfo" class="d">viminfo</a>
+file.  When Vim starts again, the <a href="starting.txt.html#viminfo" class="d">viminfo</a> file <a href="motion.txt.html#is" class="d">is</a> read and the information
+restored.
+
+The <a href="options.txt.html#%27viminfo%27" class="o">'viminfo'</a> option <a href="motion.txt.html#is" class="d">is</a> set by default to restore <a href="insert.txt.html#a" class="d">a</a> limited number of items.
+You might want to set <a href="motion.txt.html#it" class="d">it</a> to remember more information.  This <a href="motion.txt.html#is" class="d">is</a> done through
+the following command: 
+<span class="e"></span>
+<span class="e">        :set viminfo=string</span>
+<span class="e"></span>
+The <a href="eval.txt.html#string" class="d">string</a> specifies what to save.  The <a href="syntax.txt.html#syntax" class="d">syntax</a> of this <a href="eval.txt.html#string" class="d">string</a> <a href="motion.txt.html#is" class="d">is</a> an option
+character followed by an argument.  The option/argument pairs are separated by
+commas.
+   Take <a href="insert.txt.html#a" class="d">a</a> look <a href="motion.txt.html#at" class="d">at</a> how you can build up your own <a href="starting.txt.html#viminfo" class="d">viminfo</a> string.  First, the <a href="motion.txt.html#%27" class="d">'</a>
+option <a href="motion.txt.html#is" class="d">is</a> used to specify how many files for which you save marks (a-z).  Pick
+<a href="insert.txt.html#a" class="d">a</a> <a href="todo.txt.html#nice" class="d">nice</a> even number for this option (1000, for instance).  Your command now
+looks like this: 
+<span class="e"></span>
+<span class="e">        :set viminfo='1000</span>
+<span class="e"></span>
+The <a href="motion.txt.html#f" class="d">f</a> option controls whether global marks (A-Z and 0-9) are stored.  If this
+option <a href="motion.txt.html#is" class="d">is</a> 0, none are stored.  If <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> 1 or you <a href="diff.txt.html#do" class="d">do</a> not specify an <a href="motion.txt.html#f" class="d">f</a> option,
+the marks are stored.  You want this feature, so now you have this: 
+<span class="e"></span>
+<span class="e">        :set viminfo='1000,f1</span>
+<span class="e"></span>
+The <a href="change.txt.html#%3C" class="d">&lt;</a> option controls how many lines are saved for each of the registers.  By
+default, all the lines are saved.  If 0, nothing <a href="motion.txt.html#is" class="d">is</a> saved.  To avoid adding
+thousands of lines to your <a href="starting.txt.html#viminfo" class="d">viminfo</a> file (which might never get used and makes
+<a href="starting.txt.html#starting" class="d">starting</a> Vim slower) you use <a href="insert.txt.html#a" class="d">a</a> maximum of 500 lines: 
+<span class="e"></span>
+<span class="e">        :set viminfo='1000,f1,&lt;500</span>
+
+Other <a href="options.txt.html#options" class="d">options</a> you might want to use:
+        <a href="cmdline.txt.html#%3A" class="d">:</a>       number of lines to save from the command line <a href="cmdline.txt.html#history" class="d">history</a>
+        <a href="repeat.txt.html#%40" class="d">@</a>       number of lines to save from the input line <a href="cmdline.txt.html#history" class="d">history</a>
+        <a href="pattern.txt.html#%2F" class="d">/</a>       number of lines to save from the search <a href="cmdline.txt.html#history" class="d">history</a>
+        <a href="change.txt.html#r" class="d">r</a>       removable media, for which no marks will be stored (can be
+                used several times)
+        <a href="change.txt.html#%21" class="d">!</a>       global <a href="eval.txt.html#variables" class="d">variables</a> that start with an <a href="change.txt.html#uppercase" class="d">uppercase</a> <a href="print.txt.html#letter" class="d">letter</a> and
+                don't contain <a href="change.txt.html#lowercase" class="d">lowercase</a> letters
+        <a href="motion.txt.html#h" class="d">h</a>       disable <a href="options.txt.html#%27hlsearch%27" class="o">'hlsearch'</a> highlighting when <a href="starting.txt.html#starting" class="d">starting</a>
+        <a href="motion.txt.html#%25" class="d">%</a>       the buffer <a href="eval.txt.html#list" class="d">list</a> (only restored when <a href="starting.txt.html#starting" class="d">starting</a> Vim without file
+                arguments)
+        <a href="change.txt.html#c" class="d">c</a>       convert the text using <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a>
+        <a href="pattern.txt.html#n" class="d">n</a>       name used for the <a href="starting.txt.html#viminfo" class="d">viminfo</a> file (must be the last option)
+
+See the <a href="options.txt.html#%27viminfo%27" class="o">'viminfo'</a> option and <a href="starting.txt.html#viminfo-file" class="l">viminfo-file</a> for more information.
+
+When you run Vim multiple times, the last one <a href="starting.txt.html#exiting" class="d">exiting</a> will store its
+information.  This may cause information that previously <a href="starting.txt.html#exiting" class="d">exiting</a> Vims stored
+to be lost.  Each item can be remembered only once.
+
+
+GETTING BACK TO WHERE YOU STOPPED VIM
+
+You are halfway editing <a href="insert.txt.html#a" class="d">a</a> file and it's time to leave for holidays.  You exit
+Vim and <a href="motion.txt.html#go" class="d">go</a> enjoy yourselves, forgetting all about your work.  After <a href="insert.txt.html#a" class="d">a</a> couple
+of weeks you start Vim, and type:
+
+<span class="e">        '0</span>
+<span class="e"></span>
+And you are right back where you left Vim.  So you can get on with your work.
+   Vim creates <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#mark" class="d">mark</a> each time you exit Vim.  The last one <a href="motion.txt.html#is" class="d">is</a> '0.  The
+position that <a href="motion.txt.html#%270" class="d">'0</a> pointed to <a href="motion.txt.html#is" class="d">is</a> made '1.  And '1 <a href="motion.txt.html#is" class="d">is</a> made to '2, and so forth.
+<a href="motion.txt.html#Mark" class="d">Mark</a> '9 <a href="motion.txt.html#is" class="d">is</a> lost.
+   The <a href="motion.txt.html#%3Amarks" class="l">:marks</a> command <a href="motion.txt.html#is" class="d">is</a> useful to find out where <a href="motion.txt.html#%270" class="d">'0</a> to '9 will take you.
+
+
+GETTING BACK TO SOME FILE
+
+If you want to <a href="motion.txt.html#go" class="d">go</a> back to <a href="insert.txt.html#a" class="d">a</a> file that you edited recently, but not when
+<a href="starting.txt.html#exiting" class="d">exiting</a> Vim, there <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> slightly more complicated way.  You can see <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of
+files by typing the command: 
+<span class="e"></span>
+<span class="e">        :oldfiles</span>
+<span class="h">       1: ~/.viminfo </span>
+<span class="h">        2: ~/text/resume.txt </span>
+<span class="h">        3: /tmp/draft </span>
+
+Now you would like to edit the second file, which <a href="motion.txt.html#is" class="d">is</a> in the <a href="eval.txt.html#list" class="d">list</a> preceded by
+"2:"<a href="repeat.txt.html#." class="d">.</a>  You type: 
+<span class="e"></span>
+<span class="e">        :e #&lt;2</span>
+<span class="e"></span>
+Instead of "<a href="editing.txt.html#%3Ae" class="d">:e</a>" you can use any command that has <a href="insert.txt.html#a" class="d">a</a> file name argument, the
+"#&lt;2" item works in the same place <a href="motion.txt.html#as" class="d">as</a> "<a href="motion.txt.html#%25" class="d">%</a>" (current file name) and "<a href="pattern.txt.html#%23" class="d">#</a>"
+(alternate file name).  So you can also split the <a href="windows.txt.html#window" class="d">window</a> to edit the third
+file: 
+<span class="e"></span>
+<span class="e">        :split #&lt;3</span>
+<span class="e"></span>
+That #&lt;123 thing <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> bit complicated when you just want to edit <a href="insert.txt.html#a" class="d">a</a> file.
+Fortunately there <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> simpler way: 
+<span class="e"></span>
+<span class="e">        :browse oldfiles</span>
+<span class="h">       1: ~/.viminfo </span>
+<span class="h">        2: ~/text/resume.txt </span>
+<span class="h">        3: /tmp/draft </span>
+        <a href="starting.txt.html#--" class="d">--</a> More <a href="starting.txt.html#--" class="d">--</a>
+
+You get the same <a href="eval.txt.html#list" class="d">list</a> of files <a href="motion.txt.html#as" class="d">as</a> with <a href="starting.txt.html#%3Aoldfiles" class="l">:oldfiles</a><a href="repeat.txt.html#." class="d">.</a>  If you want to edit
+"resume.txt" first press "<a href="repeat.txt.html#q" class="d">q</a>" to stop the listing.  You will get <a href="insert.txt.html#a" class="d">a</a> prompt:
+
+<span class="h">        Type number and &lt;Enter&gt; (empty cancels): </span>
+
+Type "2" and press <a href="intro.txt.html#%3CEnter%3E" class="s">&lt;Enter&gt;</a> to edit the second file.
+
+More info <a href="motion.txt.html#at" class="d">at</a> <a href="starting.txt.html#%3Aoldfiles" class="l">:oldfiles</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="eval.txt.html#v%3Aoldfiles" class="l">v:oldfiles</a> and <a href="cmdline.txt.html#c_%23%3C" class="l">c_#&lt;</a><a href="repeat.txt.html#." class="d">.</a>
+
+
+MOVE INFO FROM ONE VIM TO ANOTHER
+
+You can use the "<a href="starting.txt.html#%3Awviminfo" class="d">:wviminfo</a>" and "<a href="starting.txt.html#%3Arviminfo" class="d">:rviminfo</a>" commands to save and restore the
+information while still running Vim.  This <a href="motion.txt.html#is" class="d">is</a> useful for exchanging <a href="sponsor.txt.html#register" class="d">register</a>
+contents between two instances of Vim, for example.  In the first Vim do: 
+<span class="e"></span>
+<span class="e">        :wviminfo! ~/tmp/viminfo</span>
+<span class="e"></span>
+And in the second Vim do: 
+<span class="e"></span>
+<span class="e">        :rviminfo! ~/tmp/viminfo</span>
+<span class="e"></span>
+Obviously, the "<a href="motion.txt.html#w" class="d">w</a>" stands for "write" and the "<a href="change.txt.html#r" class="d">r</a>" for "read"<a href="repeat.txt.html#." class="d">.</a>
+   The <a href="change.txt.html#%21" class="d">!</a> character <a href="motion.txt.html#is" class="d">is</a> used by "<a href="starting.txt.html#%3Awviminfo" class="d">:wviminfo</a>" to forcefully overwrite an existing
+file.  When <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> omitted, and the file exists, the information <a href="motion.txt.html#is" class="d">is</a> merged into
+the file.
+   The <a href="change.txt.html#%21" class="d">!</a> character used for "<a href="starting.txt.html#%3Arviminfo" class="d">:rviminfo</a>" means that all the information <a href="motion.txt.html#is" class="d">is</a>
+used, this may overwrite existing information.  Without the <a href="change.txt.html#%21" class="d">!</a> only information
+that wasn't set <a href="motion.txt.html#is" class="d">is</a> used.
+   These commands can also be used to store info and use <a href="motion.txt.html#it" class="d">it</a> again later.  You
+could make <a href="insert.txt.html#a" class="d">a</a> directory full of <a href="starting.txt.html#viminfo" class="d">viminfo</a> files, each containing info for <a href="insert.txt.html#a" class="d">a</a>
+different purpose.
+
+<span class="h">==============================================================================</span>
+<a name="21.4" class="t">21.4</a>  Sessions
+
+Suppose you are editing along, and <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> the <a href="intro.txt.html#end" class="d">end</a> of the day.  You want to quit
+work and pick up where you left off the next day.  You can <a href="diff.txt.html#do" class="d">do</a> this by saving
+your editing session and restoring <a href="motion.txt.html#it" class="d">it</a> the next day.
+   <a href="insert.txt.html#A" class="d">A</a> Vim session contains all the information about what you are editing.
+This includes things such <a href="motion.txt.html#as" class="d">as</a> the file list, <a href="windows.txt.html#window" class="d">window</a> layout, global variables,
+<a href="options.txt.html#options" class="d">options</a> and other information.  (Exactly what <a href="motion.txt.html#is" class="d">is</a> remembered <a href="motion.txt.html#is" class="d">is</a> controlled by
+the <a href="options.txt.html#%27sessionoptions%27" class="o">'sessionoptions'</a> option, described below.)
+   The following command creates <a href="insert.txt.html#a" class="d">a</a> session file: 
+<span class="e"></span>
+<span class="e">        :mksession vimbook.vim</span>
+<span class="e"></span>
+Later if you want to restore this session, you can use this command: 
+<span class="e"></span>
+<span class="e">        :source vimbook.vim</span>
+<span class="e"></span>
+If you want to start Vim and restore <a href="insert.txt.html#a" class="d">a</a> specific session, you can use the
+following command: 
+<span class="e"></span>
+<span class="e">        vim -S vimbook.vim</span>
+<span class="e"></span>
+This tells Vim to read <a href="insert.txt.html#a" class="d">a</a> specific file on startup.  The 'S' stands for
+session (actually, you can source any Vim <a href="usr_41.txt.html#script" class="d">script</a> with -S, thus <a href="motion.txt.html#it" class="d">it</a> might <a href="motion.txt.html#as" class="d">as</a>
+well stand for "source").
+
+The <a href="windows.txt.html#windows" class="d">windows</a> that were open are restored, with the same position and size <a href="motion.txt.html#as" class="d">as</a>
+before.  Mappings and option values are like before.
+   What exactly <a href="motion.txt.html#is" class="d">is</a> restored depends on the <a href="options.txt.html#%27sessionoptions%27" class="o">'sessionoptions'</a> option.  The
+default value <a href="motion.txt.html#is" class="d">is</a> "blank,buffers,curdir,folds,help,options,winsize"<a href="repeat.txt.html#." class="d">.</a>
+
+        blank           keep empty <a href="windows.txt.html#windows" class="d">windows</a>
+        <a href="windows.txt.html#buffers" class="d">buffers</a>         all buffers, not only the ones in <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a>
+        curdir          the current directory
+        <a href="fold.txt.html#folds" class="d">folds</a>           folds, also manually created ones
+        <a href="helphelp.txt.html#help" class="d">help</a>            the <a href="helphelp.txt.html#help" class="d">help</a> <a href="windows.txt.html#window" class="d">window</a>
+        <a href="options.txt.html#options" class="d">options</a>         all <a href="options.txt.html#options" class="d">options</a> and mappings
+        winsize         <a href="windows.txt.html#window" class="d">window</a> sizes
+
+Change this to your liking.  To also restore the size of the Vim window, for
+example, use: 
+<span class="e"></span>
+<span class="e">        :set sessionoptions+=resize</span>
+<span class="e"></span>
+<span class="e"></span>
+SESSION HERE, SESSION THERE
+
+The obvious way to use sessions <a href="motion.txt.html#is" class="d">is</a> when working on different projects.
+Suppose you store your session files in the directory "~/.vim"<a href="repeat.txt.html#." class="d">.</a>  You are
+currently working on the "secret" project and have to switch to the "boring"
+project: 
+<span class="e"></span>
+<span class="e">        :wall</span>
+<span class="e">        :mksession! ~/.vim/secret.vim</span>
+<span class="e">        :source ~/.vim/boring.vim</span>
+<span class="e"></span>
+This first uses "<a href="editing.txt.html#%3Awall" class="d">:wall</a>" to write all modified files.  Then the current session
+<a href="motion.txt.html#is" class="d">is</a> saved, using ":mksession!"<a href="repeat.txt.html#." class="d">.</a>  This overwrites the previous session.  The
+next time you load the secret session you can continue where you were <a href="motion.txt.html#at" class="d">at</a> this
+point.  And finally you load the new "boring" session.
+
+If you open <a href="helphelp.txt.html#help" class="d">help</a> windows, split and close <a href="various.txt.html#various" class="d">various</a> windows, and generally mess
+up the <a href="windows.txt.html#window" class="d">window</a> layout, you can <a href="motion.txt.html#go" class="d">go</a> back to the last saved session: 
+<span class="e"></span>
+<span class="e">        :source ~/.vim/boring.vim</span>
+<span class="e"></span>
+Thus you have complete <a href="intro.txt.html#control" class="d">control</a> over whether you want to continue next time
+where you are now, by saving the current setup in <a href="insert.txt.html#a" class="d">a</a> session, or keep the
+session file <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> <a href="starting.txt.html#starting" class="d">starting</a> point.
+   Another way of using sessions <a href="motion.txt.html#is" class="d">is</a> to create <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a> layout that you like to
+use, and save this in <a href="insert.txt.html#a" class="d">a</a> session.  Then you can <a href="motion.txt.html#go" class="d">go</a> back to this layout whenever
+you want.
+   For example, this <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> <a href="todo.txt.html#nice" class="d">nice</a> layout to use:
+
+        +----------------------------------------+
+        |                  VIM <a href="motion.txt.html#-" class="d">-</a> main <a href="helphelp.txt.html#help" class="d">help</a> file  |
+        |                                        |
+        |Move around:  Use the cursor keys, or "<a href="motion.txt.html#h" class="d">h</a>|
+        <span class="l">help.txt================================</span>
+        |explorer   |                            |
+        |dir        |<a href="change.txt.html#%7E" class="d">~</a>                           |
+        |dir        |<a href="change.txt.html#%7E" class="d">~</a>                           |
+        |file       |<a href="change.txt.html#%7E" class="d">~</a>                           |
+        |file       |<a href="change.txt.html#%7E" class="d">~</a>                           |
+        |file       |<a href="change.txt.html#%7E" class="d">~</a>                           |
+        |file       |<a href="change.txt.html#%7E" class="d">~</a>                           |
+        <span class="l">~/=========</span>[No File]===================|
+        |                                        |
+        +----------------------------------------+
+
+This has <a href="insert.txt.html#a" class="d">a</a> <a href="helphelp.txt.html#help" class="d">help</a> <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#at" class="d">at</a> the top, so that you can read this text.  The narrow
+vertical <a href="windows.txt.html#window" class="d">window</a> on the left contains <a href="insert.txt.html#a" class="d">a</a> file explorer.  This <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> Vim <a href="usr_05.txt.html#plugin" class="d">plugin</a>
+that lists the contents of <a href="insert.txt.html#a" class="d">a</a> directory.  You can select files to edit there.
+More about this in the next chapter.
+   Create this from <a href="insert.txt.html#a" class="d">a</a> just started Vim with: 
+<span class="e"></span>
+<span class="e">        :help</span>
+<span class="e">        CTRL-W w</span>
+<span class="e">        :vertical split ~/</span>
+<span class="e"></span>
+You can resize the <a href="windows.txt.html#windows" class="d">windows</a> <a href="insert.txt.html#a" class="d">a</a> bit to your liking.  Then save the session with:
+
+<span class="e">        :mksession ~/.vim/mine.vim</span>
+<span class="e"></span>
+Now you can start Vim with this layout: 
+<span class="e"></span>
+<span class="e">        vim -S ~/.vim/mine.vim</span>
+<span class="e"></span>
+Hint: To open <a href="insert.txt.html#a" class="d">a</a> file you see listed in the explorer <a href="windows.txt.html#window" class="d">window</a> in the empty
+window, move the cursor to the filename and press "<a href="insert.txt.html#O" class="d">O</a>"<a href="repeat.txt.html#." class="d">.</a>  Double clicking with
+the mouse will also <a href="diff.txt.html#do" class="d">do</a> this.
+
+
+UNIX AND MS-WINDOWS
+
+Some people have to <a href="diff.txt.html#do" class="d">do</a> work on <a href="os_win32.txt.html#MS-Windows" class="d">MS-Windows</a> systems one day and on <a href="os_unix.txt.html#Unix" class="d">Unix</a> another
+day.  If you are one of them, consider adding "slash" and "<a href="os_unix.txt.html#unix" class="d">unix</a>" to
+<a href="options.txt.html#%27sessionoptions%27" class="o">'sessionoptions'</a>.  The session files will then be written in <a href="insert.txt.html#a" class="d">a</a> format that can
+be used on both systems.  This <a href="motion.txt.html#is" class="d">is</a> the command to <a href="change.txt.html#put" class="d">put</a> in your <a href="starting.txt.html#vimrc" class="d">vimrc</a> file: 
+<span class="e"></span>
+<span class="e">        :set sessionoptions+=unix,slash</span>
+<span class="e"></span>
+Vim will use the <a href="os_unix.txt.html#Unix" class="d">Unix</a> format then, because the <a href="os_win32.txt.html#MS-Windows" class="d">MS-Windows</a> Vim can read and
+write <a href="os_unix.txt.html#Unix" class="d">Unix</a> files, but <a href="os_unix.txt.html#Unix" class="d">Unix</a> Vim can't read <a href="os_win32.txt.html#MS-Windows" class="d">MS-Windows</a> format session files.
+Similarly, <a href="os_win32.txt.html#MS-Windows" class="d">MS-Windows</a> Vim understands file names with <a href="pattern.txt.html#%2F" class="d">/</a> to separate names, but
+<a href="os_unix.txt.html#Unix" class="d">Unix</a> Vim doesn't understand \.
+
+
+SESSIONS AND VIMINFO
+
+Sessions store many things, but not the position of marks, contents of
+<a href="change.txt.html#registers" class="d">registers</a> and the command line history.  You need to use the <a href="starting.txt.html#viminfo" class="d">viminfo</a> feature
+for these things.
+   In most situations you will want to use sessions separately from viminfo.
+This can be used to switch to another session, but keep the command line
+history.  And <a href="change.txt.html#yank" class="d">yank</a> text into <a href="change.txt.html#registers" class="d">registers</a> in one session, and paste <a href="motion.txt.html#it" class="d">it</a> back in
+another session.
+   You might prefer to keep the info with the session.  You will have to <a href="diff.txt.html#do" class="d">do</a>
+this yourself then.  Example: 
+<span class="e"></span>
+<span class="e">        :mksession! ~/.vim/secret.vim</span>
+<span class="e">        :wviminfo! ~/.vim/secret.viminfo</span>
+<span class="e"></span>
+And to restore this again: 
+<span class="e"></span>
+<span class="e">        :source ~/.vim/secret.vim</span>
+<span class="e">        :rviminfo! ~/.vim/secret.viminfo</span>
+<span class="e"></span>
+<span class="h">==============================================================================</span>
+<a name="21.5" class="t">21.5</a>  Views
+
+<a href="insert.txt.html#A" class="d">A</a> session stores the looks of the whole of Vim.  When you want to store the
+properties for one <a href="windows.txt.html#window" class="d">window</a> only, use <a href="insert.txt.html#a" class="d">a</a> view.
+   The use of <a href="insert.txt.html#a" class="d">a</a> <a href="starting.txt.html#view" class="d">view</a> <a href="motion.txt.html#is" class="d">is</a> for when you want to edit <a href="insert.txt.html#a" class="d">a</a> file in <a href="insert.txt.html#a" class="d">a</a> specific way.
+For example, you have line numbers enabled with the <a href="options.txt.html#%27number%27" class="o">'number'</a> option and
+defined <a href="insert.txt.html#a" class="d">a</a> few folds.  Just like with sessions, you can remember this <a href="starting.txt.html#view" class="d">view</a> on
+the file and restore <a href="motion.txt.html#it" class="d">it</a> later.  Actually, when you store <a href="insert.txt.html#a" class="d">a</a> session, <a href="motion.txt.html#it" class="d">it</a> stores
+the <a href="starting.txt.html#view" class="d">view</a> of each window.
+   There are two basic ways to use views.  The first <a href="motion.txt.html#is" class="d">is</a> to let Vim pick <a href="insert.txt.html#a" class="d">a</a> name
+for the <a href="starting.txt.html#view" class="d">view</a> file.  You can restore the <a href="starting.txt.html#view" class="d">view</a> when you later edit the same
+file.  To store the <a href="starting.txt.html#view" class="d">view</a> for the current window: 
+<span class="e"></span>
+<span class="e">        :mkview</span>
+<span class="e"></span>
+Vim will decide where to store the view.  When you later edit the same file
+you get the <a href="starting.txt.html#view" class="d">view</a> back with this command: 
+<span class="e"></span>
+<span class="e">        :loadview</span>
+<span class="e"></span>
+That's easy, isn't it?
+   Now you want to <a href="starting.txt.html#view" class="d">view</a> the file without the <a href="options.txt.html#%27number%27" class="o">'number'</a> option on, or with all
+<a href="fold.txt.html#folds" class="d">folds</a> open, you can set the <a href="options.txt.html#options" class="d">options</a> to make the <a href="windows.txt.html#window" class="d">window</a> look that way.  Then
+store this <a href="starting.txt.html#view" class="d">view</a> with: 
+<span class="e"></span>
+<span class="e">        :mkview 1</span>
+<span class="e"></span>
+Obviously, you can get this back with: 
+<span class="e"></span>
+<span class="e">        :loadview 1</span>
+<span class="e"></span>
+Now you can switch between the two views on the file by using "<a href="starting.txt.html#%3Aloadview" class="d">:loadview</a>" with
+and without the "1" argument.
+   You can store up to ten views for the same file this way, one unnumbered
+and nine numbered 1 to 9.
+
+
+<a href="insert.txt.html#A" class="d">A</a> VIEW WITH <a href="insert.txt.html#A" class="d">A</a> NAME
+
+The second basic way to use views <a href="motion.txt.html#is" class="d">is</a> by storing the <a href="starting.txt.html#view" class="d">view</a> in <a href="insert.txt.html#a" class="d">a</a> file with <a href="insert.txt.html#a" class="d">a</a> name
+you choose.  This <a href="starting.txt.html#view" class="d">view</a> can be loaded while editing another file.  Vim will
+then switch to editing the file specified in the view.  Thus you can use this
+to quickly switch to editing another file, with all its <a href="options.txt.html#options" class="d">options</a> set <a href="motion.txt.html#as" class="d">as</a> you
+saved them.
+   For example, to save the <a href="starting.txt.html#view" class="d">view</a> of the current file: 
+<span class="e"></span>
+<span class="e">        :mkview ~/.vim/main.vim</span>
+<span class="e"></span>
+You can restore <a href="motion.txt.html#it" class="d">it</a> with: 
+<span class="e"></span>
+<span class="e">        :source ~/.vim/main.vim</span>
+<span class="e"></span>
+<span class="h">==============================================================================</span>
+<a name="21.6" class="t">21.6</a>  Modelines
+
+When editing <a href="insert.txt.html#a" class="d">a</a> specific file, you might set <a href="options.txt.html#options" class="d">options</a> specifically for that
+file.  Typing these commands each time <a href="motion.txt.html#is" class="d">is</a> boring.  Using <a href="insert.txt.html#a" class="d">a</a> session or <a href="starting.txt.html#view" class="d">view</a> for
+editing <a href="insert.txt.html#a" class="d">a</a> file doesn't work when sharing the file between several people.
+   The solution for this situation <a href="motion.txt.html#is" class="d">is</a> adding <a href="insert.txt.html#a" class="d">a</a> <a href="options.txt.html#modeline" class="d">modeline</a> to the file.  This <a href="motion.txt.html#is" class="d">is</a>
+<a href="insert.txt.html#a" class="d">a</a> line of text that tells Vim the values of options, to be used in this file
+only.
+   <a href="insert.txt.html#A" class="d">A</a> typical example <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#C" class="d">C</a> program where you make indents by <a href="insert.txt.html#a" class="d">a</a> multiple of 4
+spaces.  This requires setting the <a href="options.txt.html#%27shiftwidth%27" class="o">'shiftwidth'</a> option to 4.  This <a href="options.txt.html#modeline" class="d">modeline</a>
+will <a href="diff.txt.html#do" class="d">do</a> that:
+
+<span class="h">        /* vim:set shiftwidth=4: */ </span>
+
+Put this line <a href="motion.txt.html#as" class="d">as</a> one of the first or last five lines in the file.  When
+editing the file, you will notice that <a href="options.txt.html#%27shiftwidth%27" class="o">'shiftwidth'</a> will have been set to
+four.  When editing another file, it's set back to the default value of eight.
+   For some files the <a href="options.txt.html#modeline" class="d">modeline</a> fits well in the header, thus <a href="motion.txt.html#it" class="d">it</a> can be <a href="change.txt.html#put" class="d">put</a> <a href="motion.txt.html#at" class="d">at</a>
+the top of the file.  For text files and other files where the <a href="options.txt.html#modeline" class="d">modeline</a> gets
+in the way of the normal contents, <a href="change.txt.html#put" class="d">put</a> <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#at" class="d">at</a> the <a href="intro.txt.html#end" class="d">end</a> of the file.
+
+The <a href="options.txt.html#%27modelines%27" class="o">'modelines'</a> option specifies how many lines <a href="motion.txt.html#at" class="d">at</a> the start and <a href="intro.txt.html#end" class="d">end</a> of the
+file are inspected for containing <a href="insert.txt.html#a" class="d">a</a> modeline.  To inspect ten lines: 
+<span class="e"></span>
+<span class="e">        :set modelines=10</span>
+<span class="e"></span>
+The <a href="options.txt.html#%27modeline%27" class="o">'modeline'</a> option can be used to switch this off.  Do this when you are
+working <a href="motion.txt.html#as" class="d">as</a> root on <a href="os_unix.txt.html#Unix" class="d">Unix</a> or Administrator on MS-Windows, or when you don't
+trust the files you are editing: 
+<span class="e"></span>
+<span class="e">        :set nomodeline</span>
+<span class="e"></span>
+Use this format for the modeline:
+
+<span class="h">        any-text vim:set {option}={value} ... : any-text </span>
+
+The "any-text" indicates that you can <a href="change.txt.html#put" class="d">put</a> any text before and after the part
+that Vim will use.  This allows making <a href="motion.txt.html#it" class="d">it</a> look like <a href="insert.txt.html#a" class="d">a</a> comment, like what was
+done above with <a href="pattern.txt.html#%2F" class="d">/</a>* and *<a href="pattern.txt.html#%2F." class="d">/.</a>
+   The " <a href="options.txt.html#vim%3A" class="d">vim:</a>" part <a href="motion.txt.html#is" class="d">is</a> what makes Vim recognize this line.  There <a href="vim_faq.txt.html#must" class="d">must</a> be
+white <a href="intro.txt.html#space" class="d">space</a> before "vim"<a href="motion.txt.html#%2C" class="d">,</a> or "vim" <a href="vim_faq.txt.html#must" class="d">must</a> be <a href="motion.txt.html#at" class="d">at</a> the start of the line.  Thus
+using something like "gvim:" will not work.
+   The part between the colons <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> "<a href="options.txt.html#%3Aset" class="d">:set</a>" command.  It works the same way <a href="motion.txt.html#as" class="d">as</a>
+typing the "<a href="options.txt.html#%3Aset" class="d">:set</a>" command, except that you need to <a href="insert.txt.html#insert" class="d">insert</a> <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#backslash" class="d">backslash</a> before <a href="insert.txt.html#a" class="d">a</a>
+colon (otherwise <a href="motion.txt.html#it" class="d">it</a> would be seen <a href="motion.txt.html#as" class="d">as</a> the <a href="intro.txt.html#end" class="d">end</a> of the modeline).
+
+Another example:
+
+<span class="h">        // vim:set textwidth=72 dir=c\:\tmp:  use c:\tmp here </span>
+
+There <a href="motion.txt.html#is" class="d">is</a> an extra <a href="intro.txt.html#backslash" class="d">backslash</a> before the first colon, so that it's included in
+the "<a href="options.txt.html#%3Aset" class="d">:set</a>" command.  The text after the second colon <a href="motion.txt.html#is" class="d">is</a> ignored, thus <a href="insert.txt.html#a" class="d">a</a> remark
+can be placed there.
+
+For more details see <a href="options.txt.html#modeline" class="l">modeline</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+
+Next chapter: <a href="usr_22.txt.html#usr_22.txt" class="l">usr_22.txt</a>  Finding the file to edit
+
+Copyright: see <a href="usr_01.txt.html#manual-copyright" class="l">manual-copyright</a>  vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

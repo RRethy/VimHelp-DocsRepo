@@ -1,0 +1,135 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: pi_logipat.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="pi_logipat.txt" class="t">pi_logipat.txt</a>        Logical Patterns                        Jun 22, 2015
+
+Author:  Charles E. Campbell  <span class="s">&lt;NdrOchip@ScampbellPfamily.AbizM&gt;</span>
+Copyright: (c) 2004-2015 by Charles E. Campbell <a name="logiPat-copyright" class="t">logiPat-copyright</a>
+           The VIM LICENSE applies to LogiPat.vim and LogiPat.txt
+           (see <a href="uganda.txt.html#copyright" class="l">copyright</a><a href="motion.txt.html#%29" class="d">)</a> except use "LogiPat" instead of "Vim"
+           No warranty, express or implied.  Use At-Your-Own-Risk.
+
+<span class="h">==============================================================================</span>
+1. <a href="quickref.txt.html#Contents" class="d">Contents</a>                                     <a name="logiPat" class="t">logiPat</a> <a name="logiPat-contents" class="t">logiPat-contents</a>
+
+        1. Contents.................: <a href="#logiPat-contents" class="l">logiPat-contents</a>
+        2. LogiPat Manual...........: <a href="#logiPat-manual" class="l">logiPat-manual</a>
+        3. LogiPat Examples.........: <a href="#logiPat-examples" class="l">logiPat-examples</a>
+        4. Caveat...................: <a href="#logiPat-caveat" class="l">logiPat-caveat</a>
+        5. LogiPat History..........: <a href="#logiPat-history" class="l">logiPat-history</a>
+
+
+<span class="h">==============================================================================</span>
+2. LogiPat Manual                       <a name="logiPat-manual" class="t">logiPat-manual</a> <a name="logiPat-man" class="t">logiPat-man</a>
+
+        <a name="logiPat-arg" class="t">logiPat-arg</a> <a name="logiPat-input" class="t">logiPat-input</a> <a name="logiPat-pattern" class="t">logiPat-pattern</a> <a name="logiPat-operators" class="t">logiPat-operators</a>
+        Boolean logic patterns are composed of
+
+                        operators  <a href="change.txt.html#%21" class="d">!</a> <a href="change.txt.html#%3D" class="d">=</a> not
+                                   | <a href="change.txt.html#%3D" class="d">=</a> logical-or
+                                   <a href="change.txt.html#%26" class="d">&amp;</a> <a href="change.txt.html#%3D" class="d">=</a> logical-and
+                        grouping   <a href="motion.txt.html#%28" class="d">(</a> <a href="eval.txt.html#..." class="d">...</a> <a href="motion.txt.html#%29" class="d">)</a>
+                        patterns   "<a href="pattern.txt.html#pattern" class="d">pattern</a>"
+
+        <a href="#%3ALogiPat" class="d">:LogiPat</a> <span class="s">{boolean-logic pattern}</span>                <a name="%3ALogiPat" class="t">:LogiPat</a>
+                <a href="#%3ALogiPat" class="d">:LogiPat</a> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> command which takes <a href="insert.txt.html#a" class="d">a</a> boolean-logic
+                argument <a href="motion.txt.html#%28" class="d">(</a><a href="#logiPat-arg" class="l">logiPat-arg</a>).
+
+        <a href="#%3ALP" class="d">:LP</a> <span class="s">{boolean-logic pattern}</span>                     <a name="%3ALP" class="t">:LP</a>
+                <a href="#%3ALP" class="d">:LP</a> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> shorthand command version of <a href="#%3ALogiPat" class="d">:LogiPat</a>
+
+        <a href="#%3ALPE" class="d">:LPE</a> <span class="s">{boolean-logic pattern}</span>                    <a name="%3ALPE" class="t">:LPE</a>
+                No search <a href="motion.txt.html#is" class="d">is</a> done, but the conversion from the
+                <a href="options.txt.html#boolean" class="d">boolean</a> logic <a href="pattern.txt.html#pattern" class="d">pattern</a> to the regular <a href="eval.txt.html#expression" class="d">expression</a>
+                <a href="motion.txt.html#is" class="d">is</a> performed and echoed onto the display.
+
+        :LogiPatFlags <span class="s">{search flags}</span>                    <a name="LogiPat-flags" class="t">LogiPat-flags</a>
+                :LogiPatFlags <span class="s">{search flags}</span>
+                LogiPat uses the <a href="eval.txt.html#search%28%29" class="l">search()</a> command.  The flags
+                passed to that call to <a href="eval.txt.html#search%28%29" class="d">search()</a> may be specified
+                by the :LogiPatFlags command.
+
+        <a href="#%3ALPF" class="d">:LPF</a> <span class="s">{search flags}</span>                             <a name="%3ALPF" class="t">:LPF</a>
+                <a href="#%3ALPF" class="d">:LPF</a> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> shorthand version of :LogiPatFlags.
+
+        <a href="eval.txt.html#%3Alet" class="d">:let</a> pat=LogiPat({boolean-logic pattern})       <a name="LogiPat%28%29" class="t">LogiPat()</a>
+                If one calls <a href="#LogiPat%28%29" class="d">LogiPat()</a> directly, no search
+                <a href="motion.txt.html#is" class="d">is</a> done, but the transformation from the <a href="options.txt.html#boolean" class="d">boolean</a>
+                logic <a href="pattern.txt.html#pattern" class="d">pattern</a> into <a href="insert.txt.html#a" class="d">a</a> regular <a href="eval.txt.html#expression" class="d">expression</a> <a href="pattern.txt.html#pattern" class="d">pattern</a>
+                <a href="motion.txt.html#is" class="d">is</a> performed and returned.
+
+        To get <a href="insert.txt.html#a" class="d">a</a> " inside <a href="insert.txt.html#a" class="d">a</a> pattern, <a href="motion.txt.html#as" class="d">as</a> opposed to having <a href="motion.txt.html#it" class="d">it</a> delimit
+        the pattern, double it.
+
+
+<span class="h">==============================================================================</span>
+3. LogiPat Examples                                     <a name="logiPat-examples" class="t">logiPat-examples</a>
+
+        LogiPat takes Boolean logic arguments and produces <a href="insert.txt.html#a" class="d">a</a> regular
+        <a href="eval.txt.html#expression" class="d">expression</a> which implements the choices.  <a href="insert.txt.html#A" class="d">A</a> series of examples
+        follows:
+
+<span class="e">        :LogiPat "abc"</span>
+               will search for lines containing the <a href="eval.txt.html#string" class="d">string</a>  :abc:
+
+<span class="e">        :LogiPat "ab""cd"</span>
+               will search for lines containing the <a href="eval.txt.html#string" class="d">string</a>  <a href="map.txt.html#%3Aab" class="d">:ab</a>"c:
+
+<span class="e">        :LogiPat !"abc"</span>
+               will search for lines which don't contain the <a href="eval.txt.html#string" class="d">string</a>  :abc:
+
+<span class="e">        :LogiPat "abc"|"def"</span>
+               will search for lines which contain either the <a href="eval.txt.html#string" class="d">string</a>
+                :abc:  or the <a href="eval.txt.html#string" class="d">string</a>  :def:
+
+<span class="e">        :LogiPat !("abc"|"def")</span>
+               will search for lines which don't contain either
+                of the strings  :abc:  or  :def:
+
+<span class="e">        :LogiPat "abc"&amp;"def"</span>
+               will search for lines which contain both of the strings
+                :abc:  and  :def:
+
+<span class="e">        :let pat= LogiPat('!"abc"')</span>
+               will return the regular <a href="eval.txt.html#expression" class="d">expression</a> which will match
+                all lines not containing  :abc: <a href="repeat.txt.html#." class="d">.</a>  The double <a href="quotes.txt.html#quotes" class="d">quotes</a>
+                are needed to pass normal patterns to LogiPat, and
+                differentiate such patterns from <a href="options.txt.html#boolean" class="d">boolean</a> logic
+                operators.
+
+
+<span class="h">==============================================================================</span>
+4. Caveat                                               <a name="logiPat-caveat" class="t">logiPat-caveat</a>
+
+        The "not" <a href="motion.txt.html#operator" class="d">operator</a> may be fragile; ie. <a href="motion.txt.html#it" class="d">it</a> may not always play well
+        with the <a href="change.txt.html#%26" class="d">&amp;</a> (logical-and) and | (logical-or) operators.  Please try out
+        your patterns, possibly with <a href="options.txt.html#%3Aset" class="d">:set</a> hls, to insure that what <a href="motion.txt.html#is" class="d">is</a> matching
+        <a href="motion.txt.html#is" class="d">is</a> what you want.
+
+
+<span class="h">==============================================================================</span>
+3. LogiPat History                                      <a name="logiPat-history" class="t">logiPat-history</a>
+
+        v4 Jun 22, 2015 * LogiPat has been picked up by <a href="intro.txt.html#Bram" class="d">Bram</a> <a href="motion.txt.html#M" class="d">M</a> for standard
+                          <a href="usr_05.txt.html#plugin" class="d">plugin</a> distribution; hence the name change
+        v3 Sep 25, 2006 * LP_Or() fixed; <a href="motion.txt.html#it" class="d">it</a> now encapsulates its output
+                          in \%(...\) parentheses
+           Dec 12, 2011 * <a href="#%3ALPE" class="l">:LPE</a> added
+                        * "" <a href="motion.txt.html#is" class="d">is</a> mapped to <a href="insert.txt.html#a" class="d">a</a> single " and left inside patterns
+        v2 May 31, 2005 * LPF and LogiPatFlags commands weren't working
+        v1 May 23, 2005 * initial release
+
+
+<span class="h">==============================================================================</span>
+vim:tw=78:ts=8:ft=help
+
+</pre>
+</div>
+</div>
+</body>
+</html>

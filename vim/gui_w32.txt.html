@@ -1,0 +1,468 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: gui_w32.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="gui_w32.txt" class="t">gui_w32.txt</a>   For <span class="i">Vim version 8.0.</span>  Last change: 2017 Oct 27
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Bram Moolenaar</span>
+
+
+Vim's <a href="os_win32.txt.html#Win32" class="d">Win32</a> Graphical <a href="autocmd.txt.html#User" class="d">User</a> Interface                    <a name="gui-w32" class="t">gui-w32</a> <a name="win32-gui" class="t">win32-gui</a>
+
+1. Starting the <a href="gui.txt.html#GUI" class="d">GUI</a>             <a href="#gui-w32-start" class="l">gui-w32-start</a>
+2. Vim <a href="motion.txt.html#as" class="d">as</a> default editor        <a href="#vim-default-editor" class="l">vim-default-editor</a>
+3. Using the <a href="gui.txt.html#clipboard" class="d">clipboard</a>          <a href="#gui-clipboard" class="l">gui-clipboard</a>
+4. Shell Commands               <a href="#gui-shell-win32" class="l">gui-shell-win32</a>
+5. <a href="eval.txt.html#Special" class="d">Special</a> colors               <a href="#win32-colors" class="l">win32-colors</a>
+6. Windows dialogs <a href="change.txt.html#%26" class="d">&amp;</a> browsers   <a href="#gui-w32-dialogs" class="l">gui-w32-dialogs</a>
+7. Command line arguments       <a href="#gui-w32-cmdargs" class="l">gui-w32-cmdargs</a>
+8. Various                      <a href="#gui-w32-various" class="l">gui-w32-various</a>
+
+Other relevant documentation:
+<a href="gui.txt.html#gui.txt" class="l">gui.txt</a>       For generic items of the GUI.
+<a href="os_win32.txt.html#os_win32.txt" class="l">os_win32.txt</a>  For <a href="os_win32.txt.html#Win32" class="d">Win32</a> specific items.
+
+<span class="s">{Vi does not have a Windows GUI}</span>
+
+<span class="h">==============================================================================</span>
+1. Starting the <a href="gui.txt.html#GUI" class="d">GUI</a>                                     <a name="gui-w32-start" class="t">gui-w32-start</a>
+
+The <a href="os_win32.txt.html#Win32" class="d">Win32</a> <a href="gui.txt.html#GUI" class="d">GUI</a> version of Vim will always start the GUI, no matter how you
+start <a href="motion.txt.html#it" class="d">it</a> or what it's called.
+
+The <a href="gui.txt.html#GUI" class="d">GUI</a> will always run in the Windows subsystem.  Mostly shells automatically
+return with <a href="insert.txt.html#a" class="d">a</a> command prompt after <a href="starting.txt.html#starting" class="d">starting</a> gvim.  If not, you should use the
+"start" command: 
+<span class="e">        start gvim [options] file ..</span>
+<span class="e"></span>
+<span class="n">Note:</span> All fonts (bold, italic) <a href="vim_faq.txt.html#must" class="d">must</a> be of the same size!!!  If you don't <a href="diff.txt.html#do" class="d">do</a>
+this, text will disappear or mess up the display.  Vim does not check the font
+sizes.  It's the size in screen pixels that <a href="vim_faq.txt.html#must" class="d">must</a> be the same.  <span class="n">Note</span> that some
+fonts that have the same point size don't have the same pixel size!
+Additionally, the positioning of the fonts <a href="vim_faq.txt.html#must" class="d">must</a> be the same (ascent and
+descent).
+
+The <a href="os_win32.txt.html#Win32" class="d">Win32</a> <a href="gui.txt.html#GUI" class="d">GUI</a> has an extra menu item:  "Edit/Select Font"<a href="repeat.txt.html#." class="d">.</a>  It brings up the
+standard Windows font selector.
+
+Setting the menu height doesn't work for the <a href="os_win32.txt.html#Win32" class="d">Win32</a> GUI.
+
+                                                        <a name="gui-win32-maximized" class="t">gui-win32-maximized</a>
+If you want Vim to start with <a href="insert.txt.html#a" class="d">a</a> maximized window, add this command to your
+<a href="starting.txt.html#vimrc" class="d">vimrc</a> or <a href="gui.txt.html#gvimrc" class="d">gvimrc</a> file: 
+<span class="e">        au GUIEnter * simalt ~x</span>
+
+
+Using Vim <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> <a href="usr_05.txt.html#plugin" class="d">plugin</a>                                   <a name="gui-w32-windowid" class="t">gui-w32-windowid</a>
+
+When <a href="starting.txt.html#gvim" class="d">gvim</a> starts up normally, <a href="motion.txt.html#it" class="d">it</a> creates its own top level window.  If you
+pass Vim the command-line option <a href="starting.txt.html#--windowid" class="l">--windowid</a> with <a href="insert.txt.html#a" class="d">a</a> decimal or hexadecimal
+value, Vim will create <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a> that <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> child of the <a href="windows.txt.html#window" class="d">window</a> with the given
+ID.  This enables Vim to act <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> <a href="usr_05.txt.html#plugin" class="d">plugin</a> in another application.  This really
+<a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> programmer's interface, and <a href="motion.txt.html#is" class="d">is</a> of no use without <a href="insert.txt.html#a" class="d">a</a> supporting application
+to spawn Vim correctly.
+
+<span class="h">==============================================================================</span>
+2. Vim <a href="motion.txt.html#as" class="d">as</a> default editor                                <a name="vim-default-editor" class="t">vim-default-editor</a>
+
+To set Vim <a href="motion.txt.html#as" class="d">as</a> the default editor for <a href="insert.txt.html#a" class="d">a</a> file type:
+1. Start <a href="insert.txt.html#a" class="d">a</a> Windows Explorer
+2. Choose View/Options -&gt; File Types
+3. <a href="visual.txt.html#Select" class="d">Select</a> the path to <a href="starting.txt.html#gvim" class="d">gvim</a> for every file type that you want to use <a href="motion.txt.html#it" class="d">it</a> for.
+   (you can also use three spaces in the file type field, for files without an
+   extension).
+   In the "open" action, use: 
+<span class="e">        gvim "%1"</span>
+  The <a href="quotes.txt.html#quotes" class="d">quotes</a> are required for using file names with embedded spaces.
+   You can also use this: 
+<span class="e">        gvim "%L"</span>
+  This should avoid short (8.3 character) file names in some situations.  But
+   I'm not sure if this works everywhere.
+
+When you open <a href="insert.txt.html#a" class="d">a</a> file in Vim by double clicking it, Vim changes to that
+file's directory.
+
+If you want Vim to start full-screen, use this for the Open action: 
+<span class="e">        gvim -c "simalt ~x" "%1"</span>
+<span class="e"></span>
+Another method, which also works when you <a href="change.txt.html#put" class="d">put</a> Vim in another directory (e.g.,
+when you have got <a href="insert.txt.html#a" class="d">a</a> new version):
+1. select <a href="insert.txt.html#a" class="d">a</a> file you want to use Vim with
+2. <span class="s">&lt;Shift-F10&gt;</span>
+3. select "Open With..." menu entry
+4. click "Other..."
+5. browse to the (new) location of Vim and click "Open"
+6. make "Always Use this program..." checked
+7. <span class="s">&lt;OK&gt;</span>
+
+                                                <a name="send-to-menu" class="t">send-to-menu</a> <a name="sendto" class="t">sendto</a>
+You can also <a href="usr_90.txt.html#install" class="d">install</a> Vim in the "Send To" menu:
+1. Start <a href="insert.txt.html#a" class="d">a</a> Windows Explorer
+2. Navigate to your <a href="#sendto" class="d">sendto</a> directory:
+   Windows NT: %windir%\profiles\%user%\sendto (e.g.
+               "c:\winnt\profiles\mattha\sendto"<a href="motion.txt.html#%29" class="d">)</a>
+   Windows XP: C:\Documents and Settings\%user%\SendTo
+   Windows Vista: C:\Users\%user%\AppData\Roaming\Microsoft\Windows\SendTo <a href="repeat.txt.html#." class="d">.</a>
+3. Right-click in the file pane and select New-&gt;Shortcut
+4. Follow the shortcut wizard, using the full path to VIM/GVIM.
+
+When you 'send <a href="insert.txt.html#a" class="d">a</a> file to Vim', Vim changes to that file's directory.  Note,
+however, that any long directory names will appear in their short (MS-DOS)
+form.  This <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> limitation of the Windows "Send To" mechanism.
+
+                                                <a name="notepad" class="t">notepad</a>
+You could replace notepad.exe with gvim.exe, but that has <a href="insert.txt.html#a" class="d">a</a> few side effects.
+Some programs rely on <a href="#notepad" class="d">notepad</a> arguments, which are not recognized by Vim.  For
+example "<a href="#notepad" class="d">notepad</a> <a href="starting.txt.html#-p" class="d">-p</a>" <a href="motion.txt.html#is" class="d">is</a> used by some applications to print <a href="insert.txt.html#a" class="d">a</a> file.  It's
+better to leave <a href="#notepad" class="d">notepad</a> where <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> and use another way to start Vim.
+
+                                                <a name="win32-popup-menu" class="t">win32-popup-menu</a>
+<a href="insert.txt.html#A" class="d">A</a> more drastic approach <a href="motion.txt.html#is" class="d">is</a> to <a href="usr_90.txt.html#install" class="d">install</a> an "Edit with Vim" entry in the popup
+menu for the right mouse button.  With this you can edit any file with Vim.
+
+This can co-exist with the file associations mentioned above.  The difference
+<a href="motion.txt.html#is" class="d">is</a> that the file associations will make <a href="starting.txt.html#starting" class="d">starting</a> Vim the default action.  With
+the "Edit with Vim" menu entry you can keep the existing file association for
+double clicking on the file, and edit the file with Vim when you want.  For
+example, you can associate "*.mak" with your make program.  You can execute
+the makefile by double clicking <a href="motion.txt.html#it" class="d">it</a> and use the "Edit with Vim" entry to edit
+the makefile.
+
+You can select any files and right-click to see <a href="insert.txt.html#a" class="d">a</a> menu option called "Edit
+with <a href="starting.txt.html#gvim" class="d">gvim</a>"<a href="repeat.txt.html#." class="d">.</a>  Choosing this menu option will invoke <a href="starting.txt.html#gvim" class="d">gvim</a> with the file you have
+selected.  If you select multiple files, you will find two gvim-related menu
+options:
+"Edit with multiple gvims"  <a href="starting.txt.html#--" class="d">--</a> one <a href="starting.txt.html#gvim" class="d">gvim</a> for each file in the selection
+"Edit with single <a href="starting.txt.html#gvim" class="d">gvim</a>"     <a href="starting.txt.html#--" class="d">--</a> one <a href="starting.txt.html#gvim" class="d">gvim</a> for all the files in the selection
+And if there already <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> <a href="starting.txt.html#gvim" class="d">gvim</a> running:
+"Edit with existing <a href="starting.txt.html#gvim" class="d">gvim</a>"   <a href="starting.txt.html#--" class="d">--</a> edit the file with the running <a href="starting.txt.html#gvim" class="d">gvim</a>
+
+The "edit with existing Vim" entries can be disabled by adding an entry in the
+registry under HKLM\Software\Vim\Gvim, named DisableEditWithExisting, and with
+any value.
+                                                <a name="install-registry" class="t">install-registry</a>
+You can add the "Edit with Vim" menu entry in an <a href="starting.txt.html#easy" class="d">easy</a> way by using the
+"install.exe" program.  It will add several registry entries for you.
+
+You can also <a href="diff.txt.html#do" class="d">do</a> this by hand.  This <a href="motion.txt.html#is" class="d">is</a> complicated!  Use the install.exe if
+you can.
+
+1. Start the registry editor with "regedit"<a href="repeat.txt.html#." class="d">.</a>
+2. Add these keys:
+<span class="h">   key          value name                  value </span>
+   HKEY_CLASSES_ROOT\CLSID\{51EEE242-AD87-11d3-9C1E-0090278BBD99}
+                <span class="s">{default}</span>                   Vim Shell Extension
+   HKEY_CLASSES_ROOT\CLSID\{51EEE242-AD87-11d3-9C1E-0090278BBD99}\InProcServer32
+                <span class="s">{default}</span>                   <span class="s">{path}</span>\gvimext.dll
+                ThreadingModel              Apartment
+   HKEY_CLASSES_ROOT\*\shellex\ContextMenuHandlers\gvim
+                <span class="s">{default}</span>                   <span class="s">{51EEE242-AD87-11d3-9C1E-0090278BBD99}</span>
+   HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved
+                <span class="s">{51EEE242-AD87-11d3-9C1E-0090278BBD99}</span>
+                                            Vim Shell Extension
+   HKEY_LOCAL_MACHINE\Software\Vim\Gvim
+                path                        <span class="s">{path}</span>\gvim.exe
+   HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Uninstall\vim 5.6
+                DisplayName                 Vim 5.6: Edit with Vim popup menu entry
+                UninstallString             <span class="s">{path}</span>\uninstal.exe
+
+   <a href="insert.txt.html#Replace" class="d">Replace</a> <span class="s">{path}</span> with the path that leads to the executable.
+   Don't type <span class="s">{default}</span>, this <a href="motion.txt.html#is" class="d">is</a> the value for the key itself.
+
+To remove "Edit with Vim" from the popup menu, just remove the registry
+entries mentioned above.  The "uninstal.exe" program can <a href="diff.txt.html#do" class="d">do</a> this for you.  You
+can also use the entry in the Windows standard "Add/Remove Programs" list.
+
+If you notice that this entry overrules other file type associations, set
+those associations again by hand (using Windows Explorer, see above).  This
+only seems to happen on some Windows NT versions (Windows bug?).  Procedure:
+1. Find the name of the file type.  This can be done by <a href="starting.txt.html#starting" class="d">starting</a> the registry
+   editor, and searching for the extension in \\HKEY_CLASSES_ROOT
+2. In <a href="insert.txt.html#a" class="d">a</a> Windows Explorer, use View/Options/File Types.  Search for the file
+   type in the <a href="eval.txt.html#list" class="d">list</a> and click "Edit"<a href="repeat.txt.html#." class="d">.</a>  In the actions list, you can select on
+   to be used <a href="motion.txt.html#as" class="d">as</a> the default (normally the "open" action) and click on the
+   "Set Default" button.
+
+
+Vim in the "Open With..." context menu                  <a name="win32-open-with-menu" class="t">win32-open-with-menu</a>
+
+If you use the Vim <a href="usr_90.txt.html#install" class="d">install</a> program you have the choice to add Vim to the "Open
+With..." menu.  This means you can use Vim to edit many files.  Not every file
+(for unclear reasons...), thus the "Edit with Vim" menu entry <a href="motion.txt.html#is" class="d">is</a> still useful.
+
+One reason to add this <a href="motion.txt.html#is" class="d">is</a> to be able to edit HTML files directly from Internet
+Explorer.  To enable this use the "Tools" menu, "Internet Options..." entry.
+In the <a href="#dialog" class="d">dialog</a> select the "Programs" <a href="intro.txt.html#tab" class="d">tab</a> and select Vim in the "HTML editor"
+choice.  If it's not there than installing didn't work properly.
+
+Doing this manually can be done with this script:
+
+<span class="h">----------------------------------------------------------</span>
+REGEDIT4
+
+[HKEY_CLASSES_ROOT\Applications\gvim.exe]
+
+[HKEY_CLASSES_ROOT\Applications\gvim.exe\shell]
+
+[HKEY_CLASSES_ROOT\Applications\gvim.exe\shell\edit]
+
+[HKEY_CLASSES_ROOT\Applications\gvim.exe\shell\edit\command]
+<a href="change.txt.html#%40%3D" class="d">@=</a>"c:\\vim\\vim62\\gvim.exe \"%1\""
+
+[HKEY_CLASSES_ROOT\.htm\OpenWithList\gvim.exe]
+
+[HKEY_CLASSES_ROOT\*\OpenWithList\gvim.exe]
+
+<span class="h">----------------------------------------------------------</span>
+
+Change the "c:\\vim\\vim62" bit to where gvim.exe <a href="motion.txt.html#is" class="d">is</a> actually located.
+
+To uninstall this run the Vim uninstall program or manually delete the
+registry entries with "regedit"<a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+3. Using the <a href="gui.txt.html#clipboard" class="d">clipboard</a>                                  <a name="gui-clipboard" class="t">gui-clipboard</a>
+
+Windows has <a href="insert.txt.html#a" class="d">a</a> clipboard, where you can copy text to, and paste text from.  Vim
+supports this in several ways.  For other systems see <a href="gui.txt.html#gui-selections" class="l">gui-selections</a><a href="repeat.txt.html#." class="d">.</a>
+
+The "* <a href="sponsor.txt.html#register" class="d">register</a> reflects the contents of the clipboard.  <a href="gui.txt.html#quotestar" class="l">quotestar</a>
+
+When the "unnamed" <a href="eval.txt.html#string" class="d">string</a> <a href="motion.txt.html#is" class="d">is</a> included in the <a href="options.txt.html#%27clipboard%27" class="o">'clipboard'</a> option, the unnamed
+<a href="sponsor.txt.html#register" class="d">register</a> <a href="motion.txt.html#is" class="d">is</a> the same.  Thus you can <a href="change.txt.html#yank" class="d">yank</a> to and paste from the <a href="gui.txt.html#clipboard" class="d">clipboard</a>
+without prepending "* to commands.
+
+The 'a' flag in <a href="options.txt.html#%27guioptions%27" class="o">'guioptions'</a> <a href="motion.txt.html#is" class="d">is</a> not included by default.  This means that text
+<a href="motion.txt.html#is" class="d">is</a> only <a href="change.txt.html#put" class="d">put</a> on the <a href="gui.txt.html#clipboard" class="d">clipboard</a> when an operation <a href="motion.txt.html#is" class="d">is</a> performed on it.  Just
+Visually selecting text doesn't <a href="change.txt.html#put" class="d">put</a> <a href="motion.txt.html#it" class="d">it</a> on the clipboard.  When the 'a' flag <a href="motion.txt.html#is" class="d">is</a>
+included, the text <a href="motion.txt.html#is" class="d">is</a> copied to the <a href="gui.txt.html#clipboard" class="d">clipboard</a> even when <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> not operated
+upon.
+
+                                                        <a name="mswin.vim" class="t">mswin.vim</a>
+To use the standard <a href="os_win32.txt.html#MS-Windows" class="d">MS-Windows</a> way of <a href="change.txt.html#CTRL-X" class="k">CTRL-X</a>, <a href="pattern.txt.html#CTRL-C" class="k">CTRL-C</a> and <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a>, use the
+$VIMRUNTIME/mswin.vim script.  You could add this line to your <a href="starting.txt.html#_vimrc" class="d">_vimrc</a> file: 
+<span class="e">        source $VIMRUNTIME/mswin.vim</span>
+<span class="e"></span>
+Since <a href="pattern.txt.html#CTRL-C" class="k">CTRL-C</a> <a href="motion.txt.html#is" class="d">is</a> used to copy the text to the clipboard, <a href="motion.txt.html#it" class="d">it</a> can't be used to
+cancel an operation.  Use <a href="scroll.txt.html#CTRL-B" class="k">CTRL-B</a>reak for that.
+
+<a href="starting.txt.html#CTRL-Z" class="k">CTRL-Z</a> <a href="motion.txt.html#is" class="d">is</a> used for undo.  This means you can't <a href="starting.txt.html#suspend" class="d">suspend</a> Vim with this key, use
+<a href="starting.txt.html#%3Asuspend" class="l">:suspend</a> instead (if it's supported <a href="motion.txt.html#at" class="d">at</a> all).
+
+                                                <a name="CTRL-V-alternative" class="t">CTRL-V-alternative</a> <a name="CTRL-Q" class="t">CTRL-Q</a>
+Since <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> <a href="motion.txt.html#is" class="d">is</a> used to paste, you can't use <a href="motion.txt.html#it" class="d">it</a> to start <a href="insert.txt.html#a" class="d">a</a> blockwise <a href="visual.txt.html#Visual" class="d">Visual</a>
+selection.  You can use <a href="#CTRL-Q" class="k">CTRL-Q</a> instead.  You can also use <a href="#CTRL-Q" class="k">CTRL-Q</a> in <a href="insert.txt.html#Insert" class="d">Insert</a>
+mode and <a href="cmdline.txt.html#Command-line" class="d">Command-line</a> mode to get the old meaning of <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a>.  But <a href="#CTRL-Q" class="k">CTRL-Q</a>
+doesn't work for terminals when it's used for <a href="intro.txt.html#control" class="d">control</a> flow.
+
+<span class="n">NOTE:</span> The <a href="gui.txt.html#clipboard" class="d">clipboard</a> support still has <a href="insert.txt.html#a" class="d">a</a> number of bugs.  See <a href="todo.txt.html#todo" class="l">todo</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+4. Shell Commands                                       <a name="gui-shell-win32" class="t">gui-shell-win32</a>
+
+Vim uses another <a href="windows.txt.html#window" class="d">window</a> for external commands, to make <a href="motion.txt.html#it" class="d">it</a> possible to run any
+command.  The external command gets its own environment for running, just like
+<a href="motion.txt.html#it" class="d">it</a> was started from <a href="insert.txt.html#a" class="d">a</a> <a href="os_dos.txt.html#DOS" class="d">DOS</a> prompt.
+
+                                                        <a name="win32-vimrun" class="t">win32-vimrun</a>
+Executing an external command <a href="motion.txt.html#is" class="d">is</a> done indirectly by the "vimrun" command.  The
+"vimrun.exe" <a href="vim_faq.txt.html#must" class="d">must</a> be in the path for this to work.  Or <a href="motion.txt.html#it" class="d">it</a> <a href="vim_faq.txt.html#must" class="d">must</a> be in the same
+directory <a href="motion.txt.html#as" class="d">as</a> the Vim executable.  If "vimrun" cannot be found, the command <a href="motion.txt.html#is" class="d">is</a>
+executed directly, but then the <a href="os_dos.txt.html#DOS" class="d">DOS</a> <a href="windows.txt.html#window" class="d">window</a> closes immediately after the
+external command has finished.
+WARNING: If you close this <a href="windows.txt.html#window" class="d">window</a> with the "<a href="change.txt.html#X" class="d">X</a>" button, and confirm the
+question if you really want to kill the application, Vim may be killed too!
+(This does not apply to commands run asynchronously with "<a href="os_win32.txt.html#%3A%21start" class="d">:!start</a>".)
+
+The <a href="windows.txt.html#window" class="d">window</a> in which the commands are executed will be the default you have set
+up for "Console" in Control Panel.
+
+                                                        <a name="win32-%21start" class="t">win32-!start</a>
+Normally, Vim waits for <a href="insert.txt.html#a" class="d">a</a> command to complete before continuing (this makes
+sense for most shell commands which produce output for Vim to use).  If you
+want Vim to start <a href="insert.txt.html#a" class="d">a</a> program and return immediately, you can use the following
+syntax: 
+<span class="e">        :!start [/min] {command}</span>
+The optional "/min" causes the <a href="windows.txt.html#window" class="d">window</a> to be minimized.
+
+<span class="h">==============================================================================</span>
+5. <a href="eval.txt.html#Special" class="d">Special</a> colors                                       <a name="win32-colors" class="t">win32-colors</a>
+
+On Win32, the normal <a href="os_dos.txt.html#DOS" class="d">DOS</a> colors can be used.  See <a href="os_dos.txt.html#dos-colors" class="l">dos-colors</a><a href="repeat.txt.html#." class="d">.</a>
+
+Additionally the system configured colors can also be used.  These are known
+by the names Sys_XXX, where XXX <a href="motion.txt.html#is" class="d">is</a> the appropriate system color name, from the
+following <a href="eval.txt.html#list" class="d">list</a> (see the <a href="os_win32.txt.html#Win32" class="d">Win32</a> documentation for full descriptions).  Case <a href="motion.txt.html#is" class="d">is</a>
+ignored.
+
+Sys_3DDKShadow          Sys_3DFace                      Sys_BTNFace
+Sys_3DHilight           Sys_3DHighlight                 Sys_BTNHilight
+Sys_BTNHighlight        Sys_3DLight                     Sys_3DShadow
+Sys_BTNShadow           Sys_ActiveBorder                Sys_ActiveCaption
+Sys_AppWorkspace        Sys_Background                  Sys_Desktop
+Sys_BTNText             Sys_CaptionText                 Sys_GrayText
+Sys_Highlight           Sys_HighlightText               Sys_InactiveBorder
+Sys_InactiveCaption     Sys_InactiveCaptionText         Sys_InfoBK
+Sys_InfoText            Sys_Menu                        Sys_MenuText
+Sys_ScrollBar           Sys_Window                      Sys_WindowFrame
+Sys_WindowText
+
+Probably the most useful values are
+        Sys_Window          <a href="intro.txt.html#Normal" class="d">Normal</a> <a href="windows.txt.html#window" class="d">window</a> background
+        Sys_WindowText      <a href="intro.txt.html#Normal" class="d">Normal</a> <a href="windows.txt.html#window" class="d">window</a> text
+        Sys_Highlight       Highlighted background
+        Sys_HighlightText   Highlighted text
+
+These extra colors are also available:
+Gray, Grey, LightYellow, SeaGreen, Orange, Purple, SlateBlue, Violet,
+
+                                                                <a name="rgb.txt" class="t">rgb.txt</a>
+Additionally, colors defined by <a href="insert.txt.html#a" class="d">a</a> "<a href="#rgb.txt" class="d">rgb.txt</a>" file can be used.  This file <a href="motion.txt.html#is" class="d">is</a>
+well known from X11.  <a href="insert.txt.html#A" class="d">A</a> few lines from it: 
+<span class="e"></span>
+<span class="e">  255 218 185              peach puff</span>
+<span class="e">  205 133  63              peru</span>
+<span class="e">  255 181 197              pink</span>
+<span class="e"></span>
+This shows the layout of the file:  First the R, <a href="motion.txt.html#G" class="d">G</a> and <a href="motion.txt.html#B" class="d">B</a> value <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> decimal
+number, followed by the name of the color.  The four fields are separated by
+spaces.
+
+You can get an <a href="#rgb.txt" class="d">rgb.txt</a> file from any <a href="options.txt.html#X11" class="d">X11</a> distribution.  It <a href="motion.txt.html#is" class="d">is</a> located in <a href="insert.txt.html#a" class="d">a</a>
+directory like "/usr/X11R6/lib/X11/"<a href="repeat.txt.html#." class="d">.</a>  For Vim <a href="motion.txt.html#it" class="d">it</a> <a href="vim_faq.txt.html#must" class="d">must</a> be located in the
+<a href="starting.txt.html#%24VIMRUNTIME" class="d">$VIMRUNTIME</a> directory.  Thus the file can be found with "$VIMRUNTIME/rgb.txt"<a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+                                                <a name="gui-w32-dialogs" class="t">gui-w32-dialogs</a> <a name="dialog" class="t">dialog</a>
+6. Windows dialogs <a href="change.txt.html#%26" class="d">&amp;</a> browsers
+
+The <a href="os_win32.txt.html#Win32" class="d">Win32</a> <a href="gui.txt.html#GUI" class="d">GUI</a> can use familiar Windows components for some operations, <a href="motion.txt.html#as" class="d">as</a> well
+<a href="motion.txt.html#as" class="d">as</a> the traditional interface shared with the console version.
+
+
+6.1 Dialogs
+
+The dialogs displayed by the "confirm" family (i.e. the <a href="options.txt.html#%27confirm%27" class="o">'confirm'</a> option,
+<a href="editing.txt.html#%3Aconfirm" class="l">:confirm</a> command and <a href="eval.txt.html#confirm%28%29" class="l">confirm()</a> function) are GUI-based rather than the
+console-based ones used by other versions.  The 'c' flag in <a href="options.txt.html#%27guioptions%27" class="o">'guioptions'</a>
+changes this.
+
+
+6.2 File Browsers
+
+When prepending "<a href="editing.txt.html#%3Abrowse" class="d">:browse</a>" before file editing commands, <a href="insert.txt.html#a" class="d">a</a> file requester <a href="motion.txt.html#is" class="d">is</a>
+used to allow you to select an existing file.  See <a href="editing.txt.html#%3Abrowse" class="l">:browse</a><a href="repeat.txt.html#." class="d">.</a>
+
+
+6.3 Tearoff Menus
+
+The <a href="os_win32.txt.html#Win32" class="d">Win32</a> <a href="gui.txt.html#GUI" class="d">GUI</a> emulates Motif's tear-off menus.  At the top of each menu you
+will see <a href="insert.txt.html#a" class="d">a</a> small graphic "rip here" sign.  Selecting <a href="motion.txt.html#it" class="d">it</a> will cause <a href="insert.txt.html#a" class="d">a</a> floating
+<a href="windows.txt.html#window" class="d">window</a> to be created with the same menu entries on it.  The floating menu can
+then be accessed just <a href="motion.txt.html#as" class="d">as</a> if <a href="motion.txt.html#it" class="d">it</a> was the original (including sub-menus), but
+without having to <a href="motion.txt.html#go" class="d">go</a> to the menu <a href="motion.txt.html#bar" class="d">bar</a> each time.
+This <a href="motion.txt.html#is" class="d">is</a> most useful if you find yourself using <a href="insert.txt.html#a" class="d">a</a> command buried in <a href="insert.txt.html#a" class="d">a</a> sub-menu
+over and over again.
+The tearoff <a href="gui.txt.html#menus" class="d">menus</a> can be positioned where you like, and always stay just above
+the Main Vim window.  You can get rid of them by closing them <a href="motion.txt.html#as" class="d">as</a> usual; they
+also of course close when you exit Vim.
+
+                                                        <a name="%3Atearoff" class="t">:tearoff</a> <a name="%3Ate" class="t">:te</a>
+:te[aroff] <span class="s">{name}</span>       Tear-off the menu <span class="s">{name}</span>.  The menu named <a href="vim_faq.txt.html#must" class="d">must</a> have <a href="motion.txt.html#at" class="d">at</a>
+                        least one subentry, but need not appear on the
+                        menu-bar (see <a href="gui.txt.html#win32-hidden-menus" class="l">win32-hidden-menus</a>).
+
+Example: 
+<span class="e">        :tearoff File</span>
+will make the "File" menu (if there <a href="motion.txt.html#is" class="d">is</a> one) appear <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> tearoff menu. 
+<span class="e"></span>
+<span class="e">        :amenu ]Toolbar.Make    :make&lt;CR&gt;</span>
+<span class="e">        :tearoff ]Toolbar</span>
+This creates <a href="insert.txt.html#a" class="d">a</a> floating menu that doesn't exist on the main menu-bar.
+
+<span class="n">Note</span> that <a href="insert.txt.html#a" class="d">a</a> menu that starts with ']' will not be displayed.
+
+<span class="h">==============================================================================</span>
+7. Command line arguments                               <a name="gui-w32-cmdargs" class="t">gui-w32-cmdargs</a>
+
+Command line arguments behave the same way <a href="motion.txt.html#as" class="d">as</a> with the console application,
+see <a href="os_win32.txt.html#win32-cmdargs" class="l">win32-cmdargs</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+8. Various                                              <a name="gui-w32-various" class="t">gui-w32-various</a>
+
+                                                        <a name="gui-w32-printing" class="t">gui-w32-printing</a>
+The "File/Print" menu prints the text with <a href="syntax.txt.html#syntax" class="d">syntax</a> highlighting, see
+<a href="print.txt.html#%3Ahardcopy" class="l">:hardcopy</a><a href="repeat.txt.html#." class="d">.</a>  If you just want to print the raw text and have <a href="insert.txt.html#a" class="d">a</a> default
+printer installed this should also work: 
+<span class="e">        :w &gt;&gt;prn</span>
+<span class="e"></span>
+Vim supports <a href="insert.txt.html#a" class="d">a</a> number of standard MS Windows features.  Some of these are
+detailed elsewhere: see <a href="options.txt.html#%27mouse%27" class="l">'mouse'</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="gui.txt.html#win32-hidden-menus" class="l">win32-hidden-menus</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="drag-n-drop-win32" class="t">drag-n-drop-win32</a>
+You can drag and drop one or more files into the Vim window, where they will
+be opened <a href="motion.txt.html#as" class="d">as</a> normal.  See <a href="gui.txt.html#drag-n-drop" class="l">drag-n-drop</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="%3Asimalt" class="t">:simalt</a> <a name="%3Asim" class="t">:sim</a>
+:sim[alt] <span class="s">{key}</span>         simulate pressing <span class="s">{key}</span> while holding Alt pressed.
+                        <span class="s">{not in Vi}</span> <span class="s">{only for Win32 versions}</span>
+                        <span class="n">Note:</span> "<a href="change.txt.html#%3Asi" class="d">:si</a>" means "<a href="change.txt.html#%3As" class="d">:s</a>" with the "<a href="insert.txt.html#i" class="d">i</a>" flag.
+
+Normally, Vim takes <a href="intro.txt.html#control" class="d">control</a> of all Alt-&lt;Key&gt; combinations, to increase the
+number of possible mappings.  This clashes with the standard use of Alt <a href="motion.txt.html#as" class="d">as</a> the
+key for accessing menus.
+The quick way of getting standard behavior <a href="motion.txt.html#is" class="d">is</a> to set the <a href="options.txt.html#%27winaltkeys%27" class="o">'winaltkeys'</a> option
+to "yes"<a href="repeat.txt.html#." class="d">.</a>  This however prevents you from <a href="map.txt.html#mapping" class="d">mapping</a> Alt keys <a href="motion.txt.html#at" class="d">at</a> all.
+Another way <a href="motion.txt.html#is" class="d">is</a> to set <a href="options.txt.html#%27winaltkeys%27" class="o">'winaltkeys'</a> to "menu"<a href="repeat.txt.html#." class="d">.</a>  Menu shortcut keys are then
+handled by windows, other ALT keys can be mapped.  This doesn't allow <a href="insert.txt.html#a" class="d">a</a>
+dependency on the current state though.
+To get round this, the <a href="#%3Asimalt" class="d">:simalt</a> command allows Vim (when <a href="options.txt.html#%27winaltkeys%27" class="o">'winaltkeys'</a> <a href="motion.txt.html#is" class="d">is</a> not
+"yes"<a href="motion.txt.html#%29" class="d">)</a> to fake <a href="insert.txt.html#a" class="d">a</a> Windows-style Alt keypress.  You can use this to map Alt key
+combinations (or anything else for that matter) to produce standard Windows
+actions.  Here are some examples: 
+<span class="e"></span>
+<span class="e">        :map &lt;M-f&gt; :simalt f&lt;CR&gt;</span>
+This makes Alt-F pop down the 'File' menu (with the stock Menu.vim) by
+simulating the keystrokes Alt, F. 
+<span class="e">        :map &lt;M-Space&gt; :simalt ~&lt;CR&gt;</span>
+This maps Alt-Space to pop down the system menu for the Vim window.  <span class="n">Note</span> that
+<a href="change.txt.html#%7E" class="d">~</a> <a href="motion.txt.html#is" class="d">is</a> used by simalt to represent the <a href="motion.txt.html#%3CSpace%3E" class="s">&lt;Space&gt;</a> character. 
+<span class="e">        :map &lt;C-n&gt; :simalt ~n&lt;CR&gt;</span>
+Maps Control-N to produce the keys Alt-Space followed by N.  This minimizes the
+Vim <a href="windows.txt.html#window" class="d">window</a> via the system menu.
+
+<span class="n">Note</span> that the key changes depending on the language you are using.
+
+                                                <a name="intellimouse-wheel-problems" class="t">intellimouse-wheel-problems</a>
+When using the Intellimouse mouse wheel causes Vim to stop accepting input, <a href="motion.txt.html#go" class="d">go</a>
+to:
+        ControlPanel <a href="motion.txt.html#-" class="d">-</a> Mouse <a href="motion.txt.html#-" class="d">-</a> Wheel <a href="motion.txt.html#-" class="d">-</a> UniversalScrolling <a href="motion.txt.html#-" class="d">-</a> Exceptions
+
+And add <a href="starting.txt.html#gvim" class="d">gvim</a> to the <a href="eval.txt.html#list" class="d">list</a> of applications.  This problem only appears to happen
+with the Intellimouse driver 2.2 and when "Universal Scrolling" <a href="motion.txt.html#is" class="d">is</a> turned on.
+
+
+XPM support                                             <a name="w32-xpm-support" class="t">w32-xpm-support</a>
+
+Gvim can be build on <a href="os_win32.txt.html#MS-Windows" class="d">MS-Windows</a> with support for XPM files.  <a href="various.txt.html#%2Bxpm_w32" class="l">+xpm_w32</a>
+See the Make_mvc.mak file for instructions, search for XPM.
+
+To try out if XPM support works <a href="diff.txt.html#do" class="d">do</a> this: 
+<span class="e">        :help</span>
+<span class="e">        :exe 'sign define vimxpm icon=' . $VIMRUNTIME . '\\vim16x16.xpm'</span>
+<span class="e">        :exe 'sign place 1 line=1 name=vimxpm file=' . expand('%:p')</span>
+
+
+ vim:tw=78:sw=4:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

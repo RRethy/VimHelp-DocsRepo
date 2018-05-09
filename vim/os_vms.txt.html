@@ -1,0 +1,969 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: os_vms.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="os_vms.txt" class="t">os_vms.txt</a>    For <span class="i">Vim version 8.0.</span>  Last change: 2018 May 06
+
+
+                  <span class="i">VIM REFERENCE MANUAL</span>
+
+
+                                                        <a name="VMS" class="t">VMS</a> <a name="vms" class="t">vms</a>
+This file contains the particularities for the <a href="#VMS" class="d">VMS</a> version of Vim.
+You can reach this information file by typing <a href="helphelp.txt.html#%3Ahelp" class="d">:help</a> <a href="#VMS" class="d">VMS</a> in Vim command
+prompt.
+
+ 1. Getting started     <a href="#vms-started" class="l">vms-started</a>
+ 2. Download files      <a href="#vms-download" class="l">vms-download</a>
+ 3. Compiling           <a href="#vms-compiling" class="l">vms-compiling</a>
+ 4. Problems            <a href="#vms-problems" class="l">vms-problems</a>
+ 5. Deploy              <a href="#vms-deploy" class="l">vms-deploy</a>
+ 6. Practical usage     <a href="#vms-usage" class="l">vms-usage</a>
+ 7. <a href="gui.txt.html#GUI" class="d">GUI</a> mode questions  <a href="#vms-gui" class="l">vms-gui</a>
+ 8. Useful notes        <a href="#vms-notes" class="l">vms-notes</a>
+ 9. <a href="#VMS" class="d">VMS</a> related changes <a href="#vms-changes" class="l">vms-changes</a>
+10. Authors             <a href="#vms-authors" class="l">vms-authors</a>
+
+<span class="h">==============================================================================</span>
+
+1. Getting started                                      <a name="vms-started" class="t">vms-started</a>
+
+Vim (Vi IMproved) <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> Vi-compatible text editor that runs on nearly every
+operating system known to humanity.  Now use Vim on OpenVMS too, in character
+or X/Motif environment.  It <a href="motion.txt.html#is" class="d">is</a> fully featured and absolutely compatible with
+Vim on other operating systems.
+
+<span class="h">==============================================================================</span>
+
+2. Download files                                       <a name="vms-download" class="t">vms-download</a>
+
+You can <a href="intro.txt.html#download" class="d">download</a> the Vim source code by <a href="pi_netrw.txt.html#ftp" class="d">ftp</a> from the official Vim site:
+        <a class="u" href="ftp://ftp.vim.org/pub/vim/">ftp://ftp.vim.org/pub/vim/</a>
+Or use one of the mirrors:
+        <a class="u" href="ftp://ftp.vim.org/pub/vim/MIRRORS">ftp://ftp.vim.org/pub/vim/MIRRORS</a>
+
+You can <a href="intro.txt.html#download" class="d">download</a> precompiled executables from:
+        <a class="u" href="http://www.polarhome.com/vim/">http://www.polarhome.com/vim/</a>
+        <a class="u" href="ftp://ftp.polarhome.com/pub/vim/">ftp://ftp.polarhome.com/pub/vim/</a>
+
+To use the precompiled binary version, you need one of these archives:
+
+  vim-XX-exe-ia64-gui.zip       IA64 GUI/Motif executables
+  vim-XX-exe-ia64-gtk.zip       IA64 GUI/GTK executables
+  vim-XX-exe-ia64-term.zip      IA64 console executables
+  vim-XX-exe-axp-gui.zip        Alpha GUI/Motif executables
+  vim-XX-exe-axp-gtk.zip        Alpha GUI/GTK executables
+  vim-XX-exe-axp-term.zip       Alpha console executables
+  vim-XX-exe-vax-gui.zip        VAX <a href="gui.txt.html#GUI" class="d">GUI</a> executables
+  vim-XX-exe-vax-term.zip       VAX console executables
+
+and of course (optional)
+  vim-XX-runtime.zip            runtime files
+
+The binary archives contain: vim.exe, ctags.exe, xxd.exe files.
+
+For <a href="gui_x11.txt.html#GTK" class="d">GTK</a> executables you will need GTKLIB that <a href="motion.txt.html#is" class="d">is</a> available for
+Alpha and IA64 platform.
+
+<span class="h">==============================================================================</span>
+
+3. Compiling                                            <a name="vms-compiling" class="t">vms-compiling</a>
+
+See the file [.SRC]INSTALLVMS.TXT.
+
+<span class="h">==============================================================================</span>
+
+4. Problems                                             <a name="vms-problems" class="t">vms-problems</a>
+
+The code has been tested under Open <a href="#VMS" class="d">VMS</a> 6.2 <a href="motion.txt.html#-" class="d">-</a> 8.2 on Alpha, VAX and IA64
+platforms with the DEC <a href="change.txt.html#C" class="d">C</a> compiler.  It should work without big problems.
+If your system does not have some include libraries you can tune up in
+OS_VMS_CONF.H file.
+
+If you decided to build Vim with +perl, +python, etc. options, first you need
+to <a href="intro.txt.html#download" class="d">download</a> OpenVMS distributions of <a href="if_perl.txt.html#Perl" class="d">Perl</a> and Python.  Build and deploy the
+libraries and change adequate lines in MAKE_VMS.MMS file.  There should not be
+<a href="insert.txt.html#a" class="d">a</a> problem from Vim side.
+
+Also GTK, XPM library paths should be configured in MAKE_VMS.MMS
+
+<span class="n">Note:</span> Under VAX <a href="motion.txt.html#it" class="d">it</a> should work with the DEC <a href="change.txt.html#C" class="d">C</a> compiler without problems.  The
+VAX <a href="change.txt.html#C" class="d">C</a> compiler <a href="motion.txt.html#is" class="d">is</a> not fully ANSI <a href="change.txt.html#C" class="d">C</a> compatible in pre-processor directives
+semantics, therefore you have to use <a href="insert.txt.html#a" class="d">a</a> converter program that will <a href="diff.txt.html#do" class="d">do</a> the lion
+part of the job.  For detailed instructions read file INSTALLvms.txt
+
+MMS_VIM.EXE <a href="motion.txt.html#is" class="d">is</a> build together with VIM.EXE, but for XXD.EXE you should
+change to <a href="insert.txt.html#a" class="d">a</a> subdirectory and build <a href="motion.txt.html#it" class="d">it</a> separately.
+
+CTAGS <a href="motion.txt.html#is" class="d">is</a> not part of the Vim source <a href="intro.txt.html#distribution" class="d">distribution</a> anymore, however the OpenVMS
+specific source might contain CTAGS source files <a href="motion.txt.html#as" class="d">as</a> described above.
+You can find more information about CTAGS on <a href="#VMS" class="d">VMS</a> <a href="motion.txt.html#at" class="d">at</a>
+<a class="u" href="http://www.polarhome.com/ctags/">http://www.polarhome.com/ctags/</a>
+
+Advanced users may try some acrobatics in FEATURE.H file <a href="motion.txt.html#as" class="d">as</a> well.
+
+It <a href="motion.txt.html#is" class="d">is</a> possible to compile with <a href="various.txt.html#%2Bxfontset" class="d">+xfontset</a> <a href="various.txt.html#%2Bxim" class="d">+xim</a> <a href="options.txt.html#options" class="d">options</a> too, but then you have
+to set up <a href="gui.txt.html#GUI" class="d">GUI</a> fonts etc. correctly.  See <a href="helphelp.txt.html#%3Ahelp" class="d">:help</a> <a href="mbyte.txt.html#xim" class="d">xim</a> from Vim command prompt.
+
+You may want to use <a href="gui.txt.html#GUI" class="d">GUI</a> with <a href="gui_x11.txt.html#GTK" class="d">GTK</a> icons, then you have to <a href="intro.txt.html#download" class="d">download</a> and <a href="usr_90.txt.html#install" class="d">install</a>
+<a href="gui_x11.txt.html#GTK" class="d">GTK</a> for OpenVMS or <a href="motion.txt.html#at" class="d">at</a> least runtime shareable images <a href="motion.txt.html#-" class="d">-</a> LIBGTK from
+polarhome.com
+
+For more advanced questions, please send your problem to Vim on <a href="#VMS" class="d">VMS</a> mailing
+<a href="eval.txt.html#list" class="d">list</a> <span class="s">&lt;vim-vms@polarhome.com&gt;</span>
+More about the vim-vms <a href="eval.txt.html#list" class="d">list</a> can be found at:
+<a class="u" href="http://www.polarhome.com/mailman/listinfo/vim-vms">http://www.polarhome.com/mailman/listinfo/vim-vms</a>
+
+<span class="h">==============================================================================</span>
+
+5. Deploy                                               <a name="vms-deploy" class="t">vms-deploy</a>
+
+Vim uses <a href="insert.txt.html#a" class="d">a</a> special directory structure to hold the document and runtime files:
+
+   vim (or wherever)
+    |<a href="motion.txt.html#-" class="d">-</a> tmp
+    |<a href="motion.txt.html#-" class="d">-</a> vim57
+    |----- doc
+    |----- <a href="syntax.txt.html#syntax" class="d">syntax</a>
+    |<a href="motion.txt.html#-" class="d">-</a> vim62
+    |----- doc
+    |----- <a href="syntax.txt.html#syntax" class="d">syntax</a>
+    |<a href="motion.txt.html#-" class="d">-</a> vim64
+    |----- doc
+    |----- <a href="syntax.txt.html#syntax" class="d">syntax</a>
+    <a href="starting.txt.html#vimrc" class="d">vimrc</a>    (system rc files)
+    <a href="gui.txt.html#gvimrc" class="d">gvimrc</a>
+
+Use: 
+<span class="e"></span>
+<span class="e">        define/nolog VIM        device:[path.vim]</span>
+<span class="e">        define/nolog VIMRUNTIME device:[path.vim.vim60]</span>
+<span class="e">        define/nolog TMP        device:[path.tmp]</span>
+<span class="e"></span>
+To get vim.exe to find its document, filetype, and <a href="syntax.txt.html#syntax" class="d">syntax</a> files, and to
+specify <a href="insert.txt.html#a" class="d">a</a> directory where temporary files will be located.  Copy the "runtime"
+subdirectory of the Vim <a href="intro.txt.html#distribution" class="d">distribution</a> to vimruntime.
+
+Logicals <a href="starting.txt.html#%24VIMRUNTIME" class="d">$VIMRUNTIME</a> and $TMP are optional.
+
+If <a href="starting.txt.html#%24VIMRUNTIME" class="d">$VIMRUNTIME</a> <a href="motion.txt.html#is" class="d">is</a> not set, Vim will guess and try to set up automatically.
+Read more about <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#at" class="d">at</a> <a href="helphelp.txt.html#%3Ahelp" class="d">:help</a> runtime
+
+If $TMP <a href="motion.txt.html#is" class="d">is</a> not set, you will not be able to use some <a href="eval.txt.html#functions" class="d">functions</a> <a href="motion.txt.html#as" class="d">as</a> CTAGS,
+XXD, <a href="print.txt.html#printing" class="d">printing</a> etc. that use temporary directory for normal operation.
+The $TMP directory should be readable and writable by the user(s).
+The easiest way to set up $TMP <a href="motion.txt.html#is" class="d">is</a> to define <a href="insert.txt.html#a" class="d">a</a> logical: 
+<span class="e"></span>
+<span class="e">        define/nolog TMP SYS$SCRATCH</span>
+or as: 
+<span class="e">        define/nolog TMP SYS$LOGIN</span>
+<span class="e"></span>
+<span class="h">==============================================================================</span>
+<span class="e"></span>
+6. Practical usage                                      <a name="vms-usage" class="t">vms-usage</a>
+
+Usually, you want to run just one version of Vim on your system, therefore
+<a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> enough to dedicate one directory for Vim.
+Copy the whole Vim runtime directory structure to the deployment position.
+Add the following lines to your LOGIN.COM (in SYS$LOGIN directory).
+Set up the logical <a href="starting.txt.html#%24VIM" class="d">$VIM</a> as: 
+<span class="e"></span>
+<span class="e">        $ define VIM device:&lt;path&gt;</span>
+<span class="e"></span>
+Set up some symbols: 
+<span class="e"></span>
+<span class="e">        $ ! vi starts Vim in chr. mode.</span>
+<span class="e">        $ vi*m  :== mcr VIM:VIM.EXE</span>
+<span class="e"></span>
+<span class="e">        $ !gvi starts Vim in GUI mode.</span>
+<span class="e">        $ gv*im :== spawn/nowait mcr VIM:VIM.EXE -g</span>
+<span class="e"></span>
+Please, check the notes for customization and configuration of symbols.
+
+You may want to create <a href="starting.txt.html#.vimrc" class="d">.vimrc</a> and <a href="gui.txt.html#.gvimrc" class="d">.gvimrc</a> files in your <a href="intro.txt.html#home" class="d">home</a> directory
+(SYS$LOGIN) to overwrite default settings.
+
+The easiest way <a href="motion.txt.html#is" class="d">is</a> just rename example files.  You may leave the menu file
+(MENU.VIM) and files <a href="starting.txt.html#vimrc" class="d">vimrc</a> and <a href="gui.txt.html#gvimrc" class="d">gvimrc</a> in the original <a href="starting.txt.html#%24VIM" class="d">$VIM</a> directory.  It will
+be the default setup for all users, and for users <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> enough to just have
+their own additions or resetting in their <a href="intro.txt.html#home" class="d">home</a> directory in files <a href="starting.txt.html#.vimrc" class="d">.vimrc</a> and
+.gvimrc.  It should work without problems.
+
+<span class="n">Note:</span> Remember, system rc files (default for all users) don't have <a href="insert.txt.html#a" class="d">a</a> leading
+"<a href="repeat.txt.html#." class="d">.</a>"<a href="repeat.txt.html#." class="d">.</a>  So, system rc files are: 
+<span class="e"></span>
+<span class="e">        $VIM:vimrc</span>
+<span class="e">        $VIM:gvimrc</span>
+<span class="e">        $VIM:menu.vim</span>
+<span class="e"></span>
+and user customized rc files are: 
+<span class="e"></span>
+<span class="e">        sys$login:.vimrc</span>
+<span class="e">        sys$login:.gvimrc</span>
+<span class="e"></span>
+You can check that everything <a href="motion.txt.html#is" class="d">is</a> <a href="motion.txt.html#at" class="d">at</a> the right place with the <a href="various.txt.html#%3Aversion" class="d">:version</a> command.
+
+Example LOGIN.COM: 
+<span class="e"></span>
+<span class="e">        $ define/nolog VIM RF10:[UTIL.VIM]</span>
+<span class="e">        $ vi*m :== mcr VIM:VIM.EXE</span>
+<span class="e">        $ gv*im:== spawn/nowait/input=NLA0 mcr VIM:VIM.EXE -g -GEOMETRY 80x40</span>
+<span class="e">        $ set disp/create/node=192.168.5.223/trans=tcpip</span>
+<span class="e"></span>
+<span class="n">Note:</span> This set-up should be enough, if you are working on <a href="insert.txt.html#a" class="d">a</a> standalone server or
+clustered environment, but if you want to use Vim <a href="motion.txt.html#as" class="d">as</a> an internode editor in
+DECNET environment, <a href="motion.txt.html#it" class="d">it</a> will satisfy <a href="motion.txt.html#as" class="d">as</a> well.
+You just have to define the "whole" path: 
+<span class="e"></span>
+<span class="e">        $ define VIM "&lt;server_name&gt;[""user password""]::device:&lt;path&gt;"</span>
+<span class="e">        $ vi*m :== "mcr VIM:VIM.EXE"</span>
+<span class="e"></span>
+For example: 
+<span class="e"></span>
+<span class="e">        $ define VIM "PLUTO::RF10:[UTIL.VIM]"</span>
+<span class="e">        $ define VIM "PLUTO""ZAY mypass""::RF10:[UTIL.VIM]" ! if passwd required</span>
+<span class="e"></span>
+You can also use the <a href="starting.txt.html#%24VIMRUNTIME" class="d">$VIMRUNTIME</a> logical to point to the proper version of Vim
+if you have installed more versions <a href="motion.txt.html#at" class="d">at</a> the same time.  If <a href="starting.txt.html#%24VIMRUNTIME" class="d">$VIMRUNTIME</a> <a href="motion.txt.html#is" class="d">is</a> not
+defined Vim will borrow its value from the <a href="starting.txt.html#%24VIM" class="d">$VIM</a> logical.  You can find more
+information about the <a href="starting.txt.html#%24VIMRUNTIME" class="d">$VIMRUNTIME</a> logical by typing <a href="helphelp.txt.html#%3Ahelp" class="d">:help</a> runtime <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> Vim
+command.
+
+System administrators might want to set up <a href="insert.txt.html#a" class="d">a</a> system wide Vim installation,
+then add to the SYS$STARTUP:SYLOGICALS.COM 
+<span class="e"></span>
+<span class="e">        $ define/nolog/sys VIM device:&lt;path&gt;</span>
+<span class="e">        $ define/nolog/sys TMP SYS$SCRATCH</span>
+<span class="e"></span>
+And to the SYS$STARTUP:SYLOGIN.COM 
+<span class="e"></span>
+<span class="e">        $ vi*m :== mcr VIM:VIM.EXE</span>
+<span class="e">        $ gv*im:== spawn/nowait/input=NLA0 mcr VIM:VIM.EXE -g -GEOMETRY 80x40</span>
+<span class="e"></span>
+<span class="e"></span>
+It will set up <a href="insert.txt.html#a" class="d">a</a> normal Vim work environment for every user on the system.
+
+IMPORTANT: Vim on OpenVMS (and on other <a href="change.txt.html#case" class="d">case</a> insensitive system) command line
+parameters are assumed to be lowercase. In order to indicate that <a href="insert.txt.html#a" class="d">a</a> command
+line parameter <a href="motion.txt.html#is" class="d">is</a> <a href="change.txt.html#uppercase" class="d">uppercase</a> "<a href="pattern.txt.html#%2F" class="d">/</a>" sign <a href="vim_faq.txt.html#must" class="d">must</a> be used.
+
+Examples:
+  
+<span class="e">        vim -R  filename  ! means: -r List swap files and exit</span>
+<span class="e">        vim -/r filename  ! means: -R Readonly mode (like "view")</span>
+<span class="e">        vim -u  &lt;vimrc&gt;   ! means: -u Use &lt;vimrc&gt; instead of any .vimrc</span>
+<span class="e">        vim -/u &lt;gvimrc&gt;  ! means: -U Use &lt;gvimrc&gt; instead of any .gvimrc</span>
+<span class="e"></span>
+<span class="h">==============================================================================</span>
+<span class="e"></span>
+7. <a href="gui.txt.html#GUI" class="d">GUI</a> mode questions                                   <a name="vms-gui" class="t">vms-gui</a>
+
+OpenVMS <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> real mainframe OS, therefore even if <a href="motion.txt.html#it" class="d">it</a> has <a href="insert.txt.html#a" class="d">a</a> <a href="gui.txt.html#GUI" class="d">GUI</a> console, most
+of the users <a href="diff.txt.html#do" class="d">do</a> not use <a href="insert.txt.html#a" class="d">a</a> native X/Window environment during normal operation.
+It <a href="motion.txt.html#is" class="d">is</a> not possible to start Vim in <a href="gui.txt.html#GUI" class="d">GUI</a> mode "just like that"<a href="repeat.txt.html#." class="d">.</a>  But anyhow <a href="motion.txt.html#it" class="d">it</a>
+<a href="motion.txt.html#is" class="d">is</a> not too complicated either.
+
+First of all: you will need an executable that <a href="motion.txt.html#is" class="d">is</a> built with the <a href="gui.txt.html#GUI" class="d">GUI</a> enabled.
+
+Second: you need to have installed DECW/Motif on your <a href="#VMS" class="d">VMS</a> server, otherwise
+you will get <a href="message.txt.html#errors" class="d">errors</a> that some shareable libraries are missing.
+
+Third: If you choose to run Vim with extra features such <a href="motion.txt.html#as" class="d">as</a> GUI/GTK then you
+need <a href="insert.txt.html#a" class="d">a</a> <a href="gui_x11.txt.html#GTK" class="d">GTK</a> installation too or <a href="motion.txt.html#at" class="d">at</a> least <a href="insert.txt.html#a" class="d">a</a> <a href="gui_x11.txt.html#GTK" class="d">GTK</a> runtime environment (LIBGTK
+can be downloaded from <a class="u" href="http://www.polarhome.com/vim/">http://www.polarhome.com/vim/</a>).
+
+1) If you are working on the <a href="#VMS" class="d">VMS</a> X/Motif console:
+   Start Vim with the command: 
+<span class="e"></span>
+<span class="e">        $ mc device:&lt;path&gt;VIM.EXE -g</span>
+
+   or type <a href="gui_x11.txt.html#%3Agui" class="d">:gui</a> <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> command to the Vim command prompt.  For more info <a href="helphelp.txt.html#%3Ahelp" class="d">:help</a>
+   <a href="gui.txt.html#gui" class="d">gui</a>
+
+2) If you are working on some other X/Window environment like <a href="os_unix.txt.html#Unix" class="d">Unix</a> or <a href="insert.txt.html#a" class="d">a</a> remote
+   <a href="change.txt.html#X" class="d">X</a> <a href="#VMS" class="d">VMS</a> console.  Set up display to your host with: 
+<span class="e"></span>
+<span class="e">        $ set disp/create/node=&lt;your IP address&gt;/trans=&lt;transport-name&gt;</span>
+
+   and start Vim <a href="motion.txt.html#as" class="d">as</a> in point 1.  You can find more <a href="helphelp.txt.html#help" class="d">help</a> in <a href="#VMS" class="d">VMS</a> documentation or
+   type: <a href="helphelp.txt.html#help" class="d">help</a> set disp in <a href="#VMS" class="d">VMS</a> prompt.
+   Examples: 
+<span class="e"></span>
+<span class="e">        $ set disp/create/node=192.168.5.159             ! default trans is DECnet</span>
+<span class="e">        $ set disp/create/node=192.168.5.159/trans=tcpip ! TCP/IP network</span>
+<span class="e">        $ set disp/create/node=192.168.5.159/trans=local ! display on the same node</span>
+<span class="e"></span>
+<span class="n">Note:</span> you should define just one of these.
+For more information type $help set disp in <a href="#VMS" class="d">VMS</a> prompt.
+
+3) Another elegant solution <a href="motion.txt.html#is" class="d">is</a> XDM if you have installed on OpenVMS box.
+   It <a href="motion.txt.html#is" class="d">is</a> possible to work from XDM client <a href="motion.txt.html#as" class="d">as</a> from <a href="gui.txt.html#GUI" class="d">GUI</a> console.
+
+4) If you are working on <a href="os_win32.txt.html#MS-Windows" class="d">MS-Windows</a> or some other non X/Window environment
+   you need to set up one <a href="change.txt.html#X" class="d">X</a> server and run Vim <a href="motion.txt.html#as" class="d">as</a> in point 2.
+   For <a href="os_win32.txt.html#MS-Windows" class="d">MS-Windows</a> there are available free <a href="change.txt.html#X" class="d">X</a> servers <a href="motion.txt.html#as" class="d">as</a> MIX, Omni <a href="change.txt.html#X" class="d">X</a> etc.,
+   <a href="motion.txt.html#as" class="d">as</a> well <a href="motion.txt.html#as" class="d">as</a> excellent commercial products <a href="motion.txt.html#as" class="d">as</a> eXcursion or ReflectionX with
+   built-in DEC support.
+
+Please note, that executables without <a href="gui.txt.html#GUI" class="d">GUI</a> are slightly faster during <a href="starting.txt.html#startup" class="d">startup</a>
+than with enabled <a href="gui.txt.html#GUI" class="d">GUI</a> in character mode. Therefore, if you <a href="diff.txt.html#do" class="d">do</a> not use <a href="gui.txt.html#GUI" class="d">GUI</a>
+features, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> worth to choose non <a href="gui.txt.html#GUI" class="d">GUI</a> executables.
+
+<span class="h">==============================================================================</span>
+
+8. Useful notes                                         <a name="vms-notes" class="t">vms-notes</a>
+
+8.1 Backspace/delete
+8.2 Filters
+8.3 <a href="#VMS" class="d">VMS</a> file version numbers
+8.4 Directory conversion
+8.5 Remote host invocation
+8.6 Terminal problems
+8.7 Hex-editing and other external tools
+8.8 Sourcing <a href="starting.txt.html#vimrc" class="d">vimrc</a> and <a href="gui.txt.html#gvimrc" class="d">gvimrc</a>
+8.9 Printing from Vim
+8.10 Setting up the symbols
+8.11 <a href="diff.txt.html#diff" class="d">diff</a> and other GNU programs
+8.12 <a href="diff.txt.html#diff-mode" class="d">diff-mode</a>
+8.13 Allow '$' in <a href="change.txt.html#C" class="d">C</a> keywords
+8.14 VIMTUTOR for beginners
+8.15 Slow start in console mode issue
+8.16 Common VIM directory <a href="motion.txt.html#-" class="d">-</a> different architectures
+
+8.1 Backspace/delete
+
+There are backspace/delete key inconsistencies with VMS.
+<a href="options.txt.html#%3Afixdel" class="d">:fixdel</a> doesn't <a href="diff.txt.html#do" class="d">do</a> the trick, but the solution is: 
+<span class="e"></span>
+<span class="e">        :inoremap ^? ^H         " for terminal mode</span>
+<span class="e">        :inoremap &lt;Del&gt; ^H      " for gui mode</span>
+<span class="e"></span>
+Read more in ch: 8.6 (Terminal problems).
+(Bruce Hunsaker <span class="s">&lt;BNHunsaker@chq.byu.edu&gt;</span> Vim 5.3)
+
+
+8.2 Filters
+
+Vim supports filters, i.e., if you have <a href="insert.txt.html#a" class="d">a</a> sort program that can handle
+input/output redirection like <a href="os_unix.txt.html#Unix" class="d">Unix</a> (&lt;infile &gt;outfile), you could use 
+<span class="e"></span>
+<span class="e">        :map \s 0!'aqsort&lt;CR&gt;</span>
+<span class="e"></span>
+(Charles E. Campbell, Jr. <span class="s">&lt;cec@gryphon.gsfc.nasa.gov&gt;</span> Vim 5.4)
+
+
+8.3 <a href="#VMS" class="d">VMS</a> file version numbers
+
+Vim <a href="motion.txt.html#is" class="d">is</a> saving files into <a href="insert.txt.html#a" class="d">a</a> new file with the next higher file version
+number, try these settings. 
+<span class="e"></span>
+<span class="e">        :set nobackup        " does not create *.*_ backup files</span>
+<span class="e">        :set nowritebackup   " does not have any purpose on VMS.  It's the</span>
+<span class="e">                             " default.</span>
+<span class="e"></span>
+Recovery <a href="motion.txt.html#is" class="d">is</a> working perfectly <a href="motion.txt.html#as" class="d">as</a> well from the default swap file.
+Read more with <a href="helphelp.txt.html#%3Ahelp" class="d">:help</a> swapfile
+
+(Claude Marinier <span class="s">&lt;ClaudeMarinier@xwavesolutions.com&gt;</span> Vim 5.5, Zoltan Arpadffy
+Vim 5.6)
+
+
+8.4 Directory conversion
+
+Vim will internally convert any unix-style paths and even mixed unix/VMS
+paths into <a href="#VMS" class="d">VMS</a> style paths.  Some typical conversions resemble:
+
+        /abc/def/ghi            -&gt; abc:[def]ghi.
+        /abc/def/ghi.j          -&gt; abc:[def]ghi.j
+        /abc/def/ghi.j;2        -&gt; abc:[def]ghi.j;2
+        /abc/def/ghi/jkl/mno    -&gt; abc:[def.ghi.jkl]mno.
+        abc:[def.ghi]jkl/mno    -&gt; abc:[def.ghi.jkl]mno.
+          ./                    -&gt; current directory
+          ../                   -&gt; relative parent directory
+          [.def.ghi]            -&gt; relative child directory
+           ./def/ghi            -&gt; relative child directory
+
+<span class="n">Note:</span> You may use <span class="s">&lt;,&gt;</span> brackets <a href="motion.txt.html#as" class="d">as</a> well (device:&lt;path&gt;file.ext;version) <a href="motion.txt.html#as" class="d">as</a>
+rf10:&lt;user.zay.work&gt;test.c;1
+
+(David Elins <span class="s">&lt;delins@foliage.com&gt;</span>, Jerome Lauret
+<span class="s">&lt;JLAURET@mail.chem.sunysb.edu&gt;</span> Vim 5.6)
+
+
+8.5 Remote host invocation
+
+It <a href="motion.txt.html#is" class="d">is</a> possible to use Vim <a href="motion.txt.html#as" class="d">as</a> an internode editor.
+1. Edit some file from remote node: 
+<span class="e"></span>
+<span class="e">        vi "&lt;server&gt;""username passwd""::&lt;device&gt;:&lt;path&gt;&lt;filename&gt;;&lt;version&gt;"</span>
+<span class="e"></span>
+Example: 
+<span class="e">        vi "pluto""zay passwd""::RF10:&lt;USER.ZAY.WORK&gt;TEST.C;1"</span>
+<span class="e"></span>
+<span class="n">Note:</span> <a href="syntax.txt.html#syntax" class="d">syntax</a> <a href="motion.txt.html#is" class="d">is</a> very important, otherwise <a href="#VMS" class="d">VMS</a> will recognize more parameters
+instead of one (resulting with: file not found)
+
+2.  Set up Vim <a href="motion.txt.html#as" class="d">as</a> your internode editor.  If Vim <a href="motion.txt.html#is" class="d">is</a> not installed on your
+host, just set up your IP address, the full Vim path including the server name
+and run the command procedure below: 
+<span class="e"></span>
+<span class="e">        $ if (p1 .eqs. "") .OR. (p2 .eqs. "") then goto usage</span>
+<span class="e">        $ set disp/create/node=&lt;your_IP_here&gt;/trans=tcpip</span>
+<span class="e">        $ define "VIM "&lt;vim_server&gt;""''p1' ''p2'""::&lt;device&gt;:&lt;vim_path&gt;"</span>
+<span class="e">        $  vi*m :== "mcr VIM:VIM.EXE"</span>
+<span class="e">        $ gv*im :== "spawn/nowait mcr VIM:VIM.EXE -g"</span>
+<span class="e">        $ goto end</span>
+<span class="e">        $ usage:</span>
+<span class="e">        $ write sys$output " Please enter username and password as a parameter."</span>
+<span class="e">        $ write sys$output " Example: @SETVIM.COM username passwd"</span>
+<span class="e">        $ end:</span>
+<span class="e"></span>
+<span class="n">Note:</span> Never use <a href="motion.txt.html#it" class="d">it</a> in <a href="insert.txt.html#a" class="d">a</a> clustered environment (you <a href="diff.txt.html#do" class="d">do</a> not need it), loading
+could be very-very slow, but even faster than <a href="insert.txt.html#a" class="d">a</a> local Emacs. :-)
+
+(Zoltan Arpadffy, Vim 5.6)
+
+
+8.6 Terminal problems
+
+If your <a href="terminal.txt.html#terminal" class="d">terminal</a> name <a href="motion.txt.html#is" class="d">is</a> not known to Vim and <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> trying to find the default
+one you will get the following message during start-up:
+<a href="starting.txt.html#---" class="d">---</a>
+Terminal entry not found in <a href="term.txt.html#termcap" class="d">termcap</a>
+'unknown-terminal' not known.  Available built-in terminals are:
+    builtin_gui
+    builtin_riscos
+    builtin_amiga
+    builtin_beos-ansi
+    builtin_ansi
+    builtin_vt320
+    builtin_vt52
+    builtin_pcansi
+    builtin_win32
+    builtin_xterm
+    builtin_iris-ansi
+    builtin_debug
+    builtin_dumb
+defaulting to 'vt320'
+<a href="starting.txt.html#---" class="d">---</a>
+The solution <a href="motion.txt.html#is" class="d">is</a> to define the default <a href="terminal.txt.html#terminal" class="d">terminal</a> name: 
+<span class="e"></span>
+<span class="e">        $ ! unknown terminal name.  Let us use vt320 or ansi instead.</span>
+<span class="e">        $ ! Note: it's case sensitive</span>
+<span class="e">        $ define term "vt320"</span>
+<span class="e"></span>
+Terminals from VT100 to VT320 (as V300, VT220, VT200) <a href="diff.txt.html#do" class="d">do</a> not need any extra
+keyboard mappings.  They should work perfectly <a href="motion.txt.html#as" class="d">as</a> they are, including arrows,
+Ins, Del buttons etc., except Backspace in <a href="gui.txt.html#GUI" class="d">GUI</a> mode.  To solve it, add to
+.gvimrc: 
+<span class="e"></span>
+<span class="e">        inoremap &lt;Del&gt; &lt;BS&gt;</span>
+<span class="e"></span>
+Vim will also recognize that they are fast terminals.
+
+If you have some annoying line jumping on the screen between <a href="windows.txt.html#windows" class="d">windows</a> add to
+your <a href="starting.txt.html#.vimrc" class="d">.vimrc</a> file: 
+<span class="e"></span>
+<span class="e">        set ttyfast     " set fast terminal</span>
+<span class="e"></span>
+<span class="n">Note:</span> if you're using Vim on remote host or through <a href="insert.txt.html#a" class="d">a</a> very slow connection, it's
+recommended to avoid the fast <a href="terminal.txt.html#terminal" class="d">terminal</a> option with: 
+<span class="e"></span>
+<span class="e">        set nottyfast   " set terminal to slow mode</span>
+<span class="e"></span>
+(Zoltan Arpadffy, Vim 5.6)
+
+
+8.7 Hex-editing and other external tools
+
+<a href="insert.txt.html#A" class="d">A</a> very important difference between OpenVMS and other systems <a href="motion.txt.html#is" class="d">is</a> that <a href="#VMS" class="d">VMS</a> uses
+special commands to execute executables: 
+<span class="e"></span>
+<span class="e">        RUN &lt;path&gt;filename</span>
+<span class="e">        MCR &lt;path&gt;filename &lt;parameters&gt;</span>
+<span class="e"></span>
+OpenVMS users always have to be aware that the Vim command <a href="various.txt.html#%3A%21" class="d">:!</a> "just" drop them
+to DCL prompt.  This feature <a href="motion.txt.html#is" class="d">is</a> possible to use without any problem with all
+DCL commands, but if we want to execute some programs such <a href="motion.txt.html#as" class="d">as</a> XXD, CTAGS, JTAGS,
+etc.  we're running into trouble if we follow the Vim documentation (see: <a href="helphelp.txt.html#help" class="d">help</a>
+xxd).
+
+Solution: Execute with the MC command and add the full path to the executable.
+Example: Instead of :%!xxd command use: 
+<span class="e"></span>
+<span class="e">        :%!mc vim:xxd</span>
+<span class="e"></span>
+<a href="eval.txt.html#..." class="d">...</a> or in general: 
+<span class="e">        :!mc &lt;path&gt;filename &lt;parameters&gt;</span>
+<span class="e"></span>
+<span class="n">Note:</span> You can use XXD and CTAGS from <a href="gui.txt.html#GUI" class="d">GUI</a> menu.
+
+To customize <a href="tagsrch.txt.html#ctags" class="d">ctags</a> <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> possible to define the logical $CTAGS with standard
+parameters as: 
+<span class="e"></span>
+<span class="e">        define/nolog CTAGS "--totals -o sys$login:tags"</span>
+<span class="e"></span>
+For additional information, please read <a href="helphelp.txt.html#%3Ahelp" class="d">:help</a> tagsearch and CTAGS
+documentation <a href="motion.txt.html#at" class="d">at</a> <a class="u" href="http://ctags.sourceforge.net/ctags.html">http://ctags.sourceforge.net/ctags.html</a>.
+
+(Zoltan Arpadffy, Vim 5.6-70)
+
+
+8.8 Sourcing <a href="starting.txt.html#vimrc" class="d">vimrc</a> and <a href="gui.txt.html#gvimrc" class="d">gvimrc</a>
+
+If you want to use your <a href="starting.txt.html#.vimrc" class="d">.vimrc</a> and <a href="gui.txt.html#.gvimrc" class="d">.gvimrc</a> from other platforms (e.g. Windows)
+you can get in trouble if you <a href="pi_netrw.txt.html#ftp" class="d">ftp</a> that file(s): <a href="#VMS" class="d">VMS</a> has different end-of-line
+indication.
+The symptom <a href="motion.txt.html#is" class="d">is</a> that Vim <a href="motion.txt.html#is" class="d">is</a> not sourcing your .vimrc/.gvimrc, even if you say:
+
+<span class="e">        :so sys$login:.vimrc</span>
+<span class="e"></span>
+One trick <a href="motion.txt.html#is" class="d">is</a> to <a href="pi_gzip.txt.html#compress" class="d">compress</a> (e.g. zip) the files on the other platform and
+uncompress <a href="motion.txt.html#it" class="d">it</a> on VMS; if you have the same symptom, try to create the files
+with copy-paste (for this you need both op. systems reachable from one
+machine, e.g. an Xterm on Windows or telnet to Windows from VMS).
+
+(Sandor Kopanyi, <span class="s">&lt;sandor.kopanyi@mailbox.hu&gt;</span> Vim 6.0a)
+
+
+8.9 Printing from Vim
+
+To be able to print from Vim (running in <a href="gui.txt.html#GUI" class="d">GUI</a> mode) under <a href="#VMS" class="d">VMS</a> you have to set
+up $TMP logical which should point to some temporary directory and logical
+SYS$PRINT to your default print queue.
+Example: 
+<span class="e"></span>
+<span class="e">        $define SYS$PRINT HP5ANSI</span>
+<span class="e"></span>
+You can print out the whole buffer or just the marked area.
+More info under <a href="helphelp.txt.html#%3Ahelp" class="d">:help</a> hardcopy
+
+(Zoltan Arpadffy, Vim 6.0c)
+
+
+8.10 Setting up the symbols
+
+When <a href="insert.txt.html#I" class="d">I</a> use <a href="starting.txt.html#gvim" class="d">gvim</a> this way and press <a href="scroll.txt.html#CTRL-Y" class="k">CTRL-Y</a> in the parent terminal, <a href="starting.txt.html#gvim" class="d">gvim</a> exits.
+<a href="insert.txt.html#I" class="d">I</a> now use <a href="insert.txt.html#a" class="d">a</a> different symbol that seems to work OK and fixes the problem.
+<a href="insert.txt.html#I" class="d">I</a> suggest this instead: 
+<span class="e"></span>
+<span class="e">        $ GV*IM:==SPAWN/NOWAIT/INPUT=NLA0: MCR VIM:VIM.EXE -G -GEOMETRY 80X40</span>
+<span class="e"></span>
+The /INPUT=NLA0: separates the standard input of the <a href="starting.txt.html#gvim" class="d">gvim</a> process from the
+parent terminal, to block signals from the parent window.
+Without the -GEOMETRY, the <a href="starting.txt.html#gvim" class="d">gvim</a> <a href="windows.txt.html#window" class="d">window</a> size will be minimal and the menu
+will be confused after <a href="insert.txt.html#a" class="d">a</a> window-resize.
+
+(Carlo Mekenkamp, Coen Engelbarts, Vim 6.0ac)
+
+
+8.11 <a href="diff.txt.html#diff" class="d">diff</a> and other GNU programs
+
+From 6.0 <a href="diff.txt.html#diff" class="d">diff</a> functionality has been implemented, but OpenVMS does not use
+GNU/Unix like <a href="diff.txt.html#diff" class="d">diff</a> therefore built in <a href="diff.txt.html#diff" class="d">diff</a> does not work.
+There <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> simple solution to solve this anomaly.  Install <a href="insert.txt.html#a" class="d">a</a> <a href="os_unix.txt.html#Unix" class="d">Unix</a> like <a href="diff.txt.html#diff" class="d">diff</a>
+and Vim will work perfectly in <a href="diff.txt.html#diff" class="d">diff</a> mode too.  You just have to redefine your
+<a href="diff.txt.html#diff" class="d">diff</a> program as: 
+<span class="e"></span>
+<span class="e">        define /nolog diff &lt;GNU_PATH&gt;diff.exe</span>
+<span class="e"></span>
+Another, more sophisticated solution <a href="motion.txt.html#is" class="d">is</a> described below (8.12 diff-mode)
+There are other programs such <a href="motion.txt.html#as" class="d">as</a> patch, make etc that may cause the same
+problems.  At www.polarhome.com <a href="motion.txt.html#is" class="d">is</a> possible to <a href="intro.txt.html#download" class="d">download</a> an GNU package for
+Alpha and VAX boxes that <a href="motion.txt.html#is" class="d">is</a> meant to solve GNU problems on OpenVMS.
+(Zoltan Arpadffy, Vim 6.1)
+
+
+8.12 <a href="diff.txt.html#diff-mode" class="d">diff-mode</a>
+
+Vim 6.0 and higher supports Vim <a href="diff.txt.html#diff-mode" class="d">diff-mode</a> (See <a href="version6.txt.html#new-diff-mode" class="l">new-diff-mode</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="diff.txt.html#diff-mode" class="l">diff-mode</a>
+and <a href="usr_08.txt.html#08.7" class="l">08.7</a>).  This uses the external program <a href="options.txt.html#%27diff%27" class="o">'diff'</a> and expects <a href="insert.txt.html#a" class="d">a</a> Unix-like
+output format from diff.  The standard <a href="#VMS" class="d">VMS</a> <a href="diff.txt.html#diff" class="d">diff</a> has <a href="insert.txt.html#a" class="d">a</a> different output
+format.  To use Vim on <a href="#VMS" class="d">VMS</a> in diff-mode, you need to:
+    1 Install <a href="insert.txt.html#a" class="d">a</a> Unix-like <a href="diff.txt.html#diff" class="d">diff</a> program, e.g. GNU <a href="diff.txt.html#diff" class="d">diff</a>
+    2 Tell Vim to use the Unix-like <a href="diff.txt.html#diff" class="d">diff</a> for diff-mode.
+
+You can <a href="intro.txt.html#download" class="d">download</a> GNU <a href="diff.txt.html#diff" class="d">diff</a> from the VIM-VMS website, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> one of the GNU
+tools in <a class="u" href="http://www.polarhome.com/vim/files/gnu_tools.zip">http://www.polarhome.com/vim/files/gnu_tools.zip</a>.  <a href="insert.txt.html#I" class="d">I</a> suggest to
+unpack <a href="motion.txt.html#it" class="d">it</a> in <a href="insert.txt.html#a" class="d">a</a> separate directory "GNU" and create <a href="insert.txt.html#a" class="d">a</a> logical GNU: that
+points to that directory, e.g: 
+<span class="e"></span>
+<span class="e">   DEFINE GNU    &lt;DISK&gt;:[&lt;DIRECTORY&gt;.BIN.GNU]</span>
+<span class="e"></span>
+You may also want to define <a href="insert.txt.html#a" class="d">a</a> symbol GDIFF, to use the GNU <a href="diff.txt.html#diff" class="d">diff</a> from the DCL
+prompt: 
+<span class="e"></span>
+<span class="e">   GDIFF :==     $GNU:DIFF.EXE</span>
+<span class="e"></span>
+Now you need to tell Vim to use the new <a href="diff.txt.html#diff" class="d">diff</a> program.  Take the example
+settings from <a href="diff.txt.html#diff-diffexpr" class="l">diff-diffexpr</a> and change the call to the external <a href="diff.txt.html#diff" class="d">diff</a>
+program to the new <a href="diff.txt.html#diff" class="d">diff</a> on VMS.  Add this to your <a href="starting.txt.html#.vimrc" class="d">.vimrc</a> file: 
+<span class="e"></span>
+<span class="e">     " Set up vimdiff options</span>
+<span class="e">       if v:version &gt;= 600</span>
+<span class="e">        " Use GNU diff on VMS</span>
+<span class="e">        set diffexpr=MyDiff()</span>
+<span class="e">        function MyDiff()</span>
+<span class="e">           let opt = ""</span>
+<span class="e">           if &amp;diffopt =~ "icase"</span>
+<span class="e">             let opt = opt . "-i "</span>
+<span class="e">           endif</span>
+<span class="e">           if &amp;diffopt =~ "iwhite"</span>
+<span class="e">             let opt = opt . "-b "</span>
+<span class="e">           endif</span>
+<span class="e">           silent execute "!mc GNU:diff.exe -a " . opt . v:fname_in . " " .  v:fname_new .</span>
+<span class="e">                \  " &gt; " . v:fname_out</span>
+<span class="e">        endfunction</span>
+<span class="e">      endif</span>
+<span class="e"></span>
+You can now use Vim in diff-mode, e.g. to compare two files in read-only
+mode: 
+<span class="e"></span>
+<span class="e">    $ VIM -D/R &lt;FILE1&gt; &lt;FILE2&gt;</span>
+<span class="e"></span>
+You can also define new symbols for vimdiff, e.g.: 
+<span class="e"></span>
+<span class="e">    $ VIMDIFF     :== 'VIM' -D/R</span>
+<span class="e">    $ GVIMDIFF    :== 'GVIM' -D/R</span>
+<span class="e"></span>
+You can now compare files in 4 ways: 
+<span class="e"></span>
+<span class="e">    1. VMS  diff:  $ DIFF     &lt;FILE1&gt; &lt;FILE2&gt;</span>
+<span class="e">    2. GNU  diff:  $ GDIFF    &lt;FILE1&gt; &lt;FILE2&gt;</span>
+<span class="e">    3. VIM  diff:  $ VIMDIFF  &lt;FILE1&gt; &lt;FILE2&gt;</span>
+<span class="e">    4. GVIM diff:  $ GVIMDIFF &lt;FILE1&gt; &lt;FILE2&gt;</span>
+<span class="e"></span>
+(Coen Engelbarts, Vim 6.1)
+
+
+8.13 Allow '$' in <a href="change.txt.html#C" class="d">C</a> keywords
+
+DEC <a href="change.txt.html#C" class="d">C</a> uses many identifiers with '$' in them.  This <a href="motion.txt.html#is" class="d">is</a> not allowed in ANSI C,
+and Vim recognises the '$' <a href="motion.txt.html#as" class="d">as</a> the <a href="intro.txt.html#end" class="d">end</a> of the identifier.  You can change this
+with the <a href="options.txt.html#%27iskeyword%27" class="o">'iskeyword'</a> option.
+Add this command to your <a href="starting.txt.html#.vimrc" class="d">.vimrc</a> file: 
+<span class="e"></span>
+<span class="e">    autocmd FileType c,cpp,cs  set iskeyword+=$</span>
+<span class="e"></span>
+You can also create the file(s) $VIM/FTPLUGIN/C.VIM (and/or CPP.VIM and
+CS.VIM) and add this command: 
+<span class="e"></span>
+<span class="e">        set iskeyword+=$</span>
+<span class="e"></span>
+Now word-based commands, e.g. the <a href="motion.txt.html#%27" class="d">'</a>*'-search-command and the <a href="tagsrch.txt.html#CTRL-%5D" class="k">CTRL-]</a>
+tag-lookup, work on the whole identifier.  (Ctags on <a href="#VMS" class="d">VMS</a> also supports '$' in
+<a href="change.txt.html#C" class="d">C</a> keywords since <a href="tagsrch.txt.html#ctags" class="d">ctags</a> version 5.1.)
+
+(Coen Engelbarts, Vim 6.1)
+
+8.14 VIMTUTOR for beginners
+
+The VIMTUTOR.COM DCL <a href="usr_41.txt.html#script" class="d">script</a> can <a href="helphelp.txt.html#help" class="d">help</a> Vim beginners to learn/make their first
+steps with Vim on OpenVMS.  Depending of binary <a href="intro.txt.html#distribution" class="d">distribution</a> you may start <a href="motion.txt.html#it" class="d">it</a>
+with: 
+<span class="e"></span>
+<span class="e">        @vim:vimtutor</span>
+<span class="e"></span>
+(Thomas.R.Wyant III, Vim 6.1)
+
+8.16 Slow start in console mode issue
+
+As GUI/GTK Vim works equally well in console mode, many administrators
+deploy those executables system wide.
+Unfortunately, on <a href="insert.txt.html#a" class="d">a</a> remote slow connections GUI/GTK executables behave rather
+slow when user wants to run Vim just in the console mode <a href="motion.txt.html#-" class="d">-</a> because of <a href="change.txt.html#X" class="d">X</a>
+environment detection timeout.
+
+Luckily, there <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> simple solution for that. Administrators need to deploy
+both GUI/GTK build and just console build executables, like below: 
+<span class="e"></span>
+<span class="e">    |- vim73</span>
+<span class="e">    |----- doc</span>
+<span class="e">    |----- syntax</span>
+<span class="e">       vimrc    (system rc files)</span>
+<span class="e">       gvimrc</span>
+<span class="e">       gvim.exe (the renamed GUI or GTK built vim.exe)</span>
+<span class="e">       vim.exe  (the console only executable)</span>
+<span class="e"></span>
+Define system symbols like below in for <a href="starting.txt.html#ex" class="d">ex</a> in LOGIN.COM or SYLOGIN.COM: 
+<span class="e"></span>
+<span class="e">        $ define/nolog VIM RF10:[UTIL.VIM73] ! where you VIM directory is</span>
+<span class="e">        $ vi*m  :== mcr VIM:VIM.EXE</span>
+<span class="e">        $ gvi*m :== mcr VIM:GVIM.EXE</span>
+<span class="e">        $ ! or you can try to spawn with</span>
+<span class="e">        $ gv*im :== spawn/nowait/input=NLA0 mcr VIM:GVIM.EXE -g -GEOMETRY 80x40</span>
+<span class="e"></span>
+<span class="e"></span>
+Like this, users that <a href="diff.txt.html#do" class="d">do</a> not have <a href="change.txt.html#X" class="d">X</a> environment and want to use Vim just in
+console mode can avoid performance problems.
+
+(Zoltan Arpadffy, Vim 7.2)
+
+8.15 Common VIM directory <a href="motion.txt.html#-" class="d">-</a> different architectures
+
+In <a href="insert.txt.html#a" class="d">a</a> cluster that contains nodes with different architectures like below:
+
+$show cluster
+<a href="starting.txt.html#View" class="d">View</a> of Cluster from system ID 11655  node: TOR                                                                     18-AUG-2008 11:58:31
++---------------------------------+
+|        SYSTEMS        | MEMBERS |
++-----------------------+---------|
+|  NODE  |   SOFTWARE   |  STATUS |
++--------+--------------+---------|
+| TOR    | <a href="#VMS" class="d">VMS</a> V7.3-2   | MEMBER  |
+| TITAN2 | <a href="#VMS" class="d">VMS</a> V8.3     | MEMBER  |
+| ODIN   | <a href="#VMS" class="d">VMS</a> V7.3-2   | MEMBER  |
++---------------------------------+
+
+It <a href="motion.txt.html#is" class="d">is</a> convenient to have <a href="insert.txt.html#a" class="d">a</a> common VIM directory but execute different
+executables.
+There are several solutions for this problem:
+
+Solution 1.  All executables in the same directory with different names
+This <a href="motion.txt.html#is" class="d">is</a> easily done with the following <a href="usr_41.txt.html#script" class="d">script</a> that can be added
+to the login.com or sylogin.com: 
+<span class="e"></span>
+<span class="e">        $ if f$getsyi("NODE_HWTYPE") .eqs. "VAX"</span>
+<span class="e">        $ then</span>
+<span class="e">        $       say "VAX platform"</span>
+<span class="e">        $       vi*m:== mcr vim:VIM.EXE_VAX</span>
+<span class="e">        $ endif</span>
+<span class="e">        $ if f$getsyi("NODE_HWTYPE") .eqs. "ALPH"</span>
+<span class="e">        $ then</span>
+<span class="e">        $       say "ALPHA platform"</span>
+<span class="e">        $       vi*m :== mcr vim:VIM.EXE_AXP</span>
+<span class="e">        $ endif</span>
+<span class="e">        $ if f$getsyi("ARCH_NAME") .eqs. "IA64"</span>
+<span class="e">        $ then</span>
+<span class="e">        $      say "IA64 platform"</span>
+<span class="e">        $      vi*m :== mcr vim:VIM.EXE_IA64</span>
+<span class="e">        $ endif</span>
+<span class="e"></span>
+Solution 2.  Different directories: 
+<span class="e"></span>
+<span class="e">        $ if f$getsyi("NODE_HWTYPE") .eqs. "VAX"</span>
+<span class="e">        $ then</span>
+<span class="e">        $       say "VAX platform"</span>
+<span class="e">        $       define/nolog VIM RF10:[UTIL.VAX_EXE] ! VAX executables</span>
+<span class="e">        $ endif</span>
+<span class="e">        $ if f$getsyi("NODE_HWTYPE") .eqs. "ALPH"</span>
+<span class="e">        $ then</span>
+<span class="e">        $       say "ALPHA platform"</span>
+<span class="e">        $       define/nolog VIM RF10:[UTIL.AXP_EXE] ! AXP executables</span>
+<span class="e">        $ endif</span>
+<span class="e">        $ if f$getsyi("ARCH_NAME") .eqs. "IA64"</span>
+<span class="e">        $ then</span>
+<span class="e">        $      say "IA64 platform"</span>
+<span class="e">        $      define/nolog VIM RF10:[UTIL.IA64_EXE] ! IA64 executables</span>
+<span class="e">        $ endif</span>
+<span class="e">        $! VIMRUNTIME must be defined in order to find runtime files</span>
+<span class="e">        $ define/nolog VIMRUNTIME RF10:[UTIL.VIM73]</span>
+<span class="e"></span>
+<a href="insert.txt.html#A" class="d">A</a> good example for this approach <a href="motion.txt.html#is" class="d">is</a> the <span class="s">[GNU]</span>gnu_tools.com <a href="usr_41.txt.html#script" class="d">script</a> from
+GNU_TOOLS.ZIP package downloadable from <a class="u" href="http://www.polarhome.com/vim/">http://www.polarhome.com/vim/</a>
+
+(Zoltan Arpadffy, Vim 7.2)
+
+<span class="h">==============================================================================</span>
+
+9. <a href="#VMS" class="d">VMS</a> related changes                                  <a name="vms-changes" class="t">vms-changes</a>
+
+Version 7.4
+<a href="motion.txt.html#-" class="d">-</a> Undo: <a href="#VMS" class="d">VMS</a> can not handle more than one dot in the filenames use "dir/name" -&gt; "dir/_un_name"
+  add _un_ <a href="motion.txt.html#at" class="d">at</a> the beginning to keep the extension
+<a href="motion.txt.html#-" class="d">-</a> correct swap file name <a href="editing.txt.html#wildcard" class="d">wildcard</a> handling
+<a href="motion.txt.html#-" class="d">-</a> handle iconv usage correctly
+<a href="motion.txt.html#-" class="d">-</a> <a href="diff.txt.html#do" class="d">do</a> not optimize on vax <a href="motion.txt.html#-" class="d">-</a> otherwise <a href="motion.txt.html#it" class="d">it</a> hangs compiling crypto files
+<a href="motion.txt.html#-" class="d">-</a> fileio.c fix the comment
+<a href="motion.txt.html#-" class="d">-</a> correct RealWaitForChar
+<a href="motion.txt.html#-" class="d">-</a> after 7.4-119 use different <a href="eval.txt.html#functions" class="d">functions</a> lib$cvtf_to_internal_time because Alpha and VAX have
+  G_FLOAT but IA64 uses IEEE float otherwise Vim crashes
+<a href="motion.txt.html#-" class="d">-</a> guard against crashes that are caused by mixed filenames
+<a href="motion.txt.html#-" class="d">-</a> <span class="s">[TESTDIR]</span>make_vms.mms changed to see the output files
+<a href="motion.txt.html#-" class="d">-</a> Improve tests, update known issues
+<a href="motion.txt.html#-" class="d">-</a> minor compiler warnings fixed
+<a href="motion.txt.html#-" class="d">-</a> CTAGS 5.8 +regex included
+
+Version 7.3
+<a href="motion.txt.html#-" class="d">-</a> CTAGS 5.8 included
+<a href="motion.txt.html#-" class="d">-</a> <a href="#VMS" class="d">VMS</a> compile warnings fixed <a href="motion.txt.html#-" class="d">-</a> floating-point overflow warning corrected on VAX
+<a href="motion.txt.html#-" class="d">-</a> filepath completion corrected <a href="motion.txt.html#-" class="d">-</a> too many chars were escaped in filename
+  and shell commands
+<a href="motion.txt.html#-" class="d">-</a> the following plugins are included into <a href="#VMS" class="d">VMS</a> runtime:
+        genutils 2.4, multiselect 2.2, multvals 3.1, selectbuf 4.3,
+        bufexplorer 7.1.7, taglist 4.5
+<a href="motion.txt.html#-" class="d">-</a> minor changes in <a href="starting.txt.html#vimrc" class="d">vimrc</a> (just in <a href="#VMS" class="d">VMS</a> runtime)
+<a href="motion.txt.html#-" class="d">-</a> make_vms.mms <a href="motion.txt.html#-" class="d">-</a> HUGE model <a href="motion.txt.html#is" class="d">is</a> the default
+<a href="motion.txt.html#-" class="d">-</a> <span class="s">[TESTDIR]</span>make_vms.mms include <a href="motion.txt.html#as" class="d">as</a> many tests possible
+<a href="motion.txt.html#-" class="d">-</a> modify test30 and test54 for <a href="#VMS" class="d">VMS</a>
+<a href="motion.txt.html#-" class="d">-</a> enable FLOAT feature in <a href="#VMS" class="d">VMS</a> port
+<a href="motion.txt.html#-" class="d">-</a> <a href="#os_vms.txt" class="d">os_vms.txt</a> updated
+
+Version 7.2 (2008 Aug 9)
+<a href="motion.txt.html#-" class="d">-</a> VCF files write corrected
+<a href="motion.txt.html#-" class="d">-</a> CTAGS 5.7 included
+<a href="motion.txt.html#-" class="d">-</a> corrected make_vms.mms (on VAX gave <a href="syntax.txt.html#syntax" class="d">syntax</a> error)
+
+Version 7.1 (2007 Jun 15)
+<a href="motion.txt.html#-" class="d">-</a> create TAGS file from menu
+
+Version 7 (2006 May 8)
+<a href="motion.txt.html#-" class="d">-</a> Improved low level char input (affects just console mode)
+<a href="motion.txt.html#-" class="d">-</a> Fixed <a href="usr_05.txt.html#plugin" class="d">plugin</a> bug
+<a href="motion.txt.html#-" class="d">-</a> CTAGS 5.6 included
+
+Version 6.4 (2005 Oct 15)
+<a href="motion.txt.html#-" class="d">-</a> GTKLIB and Vim build on IA64
+<a href="motion.txt.html#-" class="d">-</a> colors in <a href="terminal.txt.html#terminal" class="d">terminal</a> mode
+<a href="motion.txt.html#-" class="d">-</a> <a href="syntax.txt.html#syntax" class="d">syntax</a> highlighting in <a href="terminal.txt.html#terminal" class="d">terminal</a> mode
+<a href="motion.txt.html#-" class="d">-</a> write problem fixed (extra CR)
+<a href="motion.txt.html#-" class="d">-</a> ESC and ESC sequence recognition in <a href="terminal.txt.html#terminal" class="d">terminal</a> mode
+<a href="motion.txt.html#-" class="d">-</a> make file changed to support new MMS version
+<a href="motion.txt.html#-" class="d">-</a> env variable expansion in path corrected
+<a href="motion.txt.html#-" class="d">-</a> <a href="print.txt.html#printing" class="d">printing</a> problems corrected
+<a href="motion.txt.html#-" class="d">-</a> <a href="helphelp.txt.html#help" class="d">help</a> text added for <a href="change.txt.html#case" class="d">case</a> insensitive arguments
+
+Version 6.3 (2004 May 10)
+<a href="motion.txt.html#-" class="d">-</a> Improved vms_read function
+<a href="motion.txt.html#-" class="d">-</a> CTAGS v5.5.4 included
+<a href="motion.txt.html#-" class="d">-</a> Documentation corrected and updated
+
+Version 6.2 (2003 May 7)
+<a href="motion.txt.html#-" class="d">-</a> Corrected <a href="#VMS" class="d">VMS</a> system call results
+<a href="motion.txt.html#-" class="d">-</a> Low level character input <a href="motion.txt.html#is" class="d">is</a> rewritten
+<a href="motion.txt.html#-" class="d">-</a> Correction in <a href="tagsrch.txt.html#tag" class="d">tag</a> and <a href="quickfix.txt.html#quickfix" class="d">quickfix</a> handling
+<a href="motion.txt.html#-" class="d">-</a> First <a href="gui_x11.txt.html#GTK" class="d">GTK</a> build
+<a href="motion.txt.html#-" class="d">-</a> Make file changes
+    <a href="motion.txt.html#-" class="d">-</a> <a href="gui_x11.txt.html#GTK" class="d">GTK</a> feature added
+    <a href="motion.txt.html#-" class="d">-</a> Define for OLD_VMS
+    <a href="motion.txt.html#-" class="d">-</a> OpenVMS version 6.2 or older
+<a href="motion.txt.html#-" class="d">-</a> Documentation updated with <a href="gui_x11.txt.html#GTK" class="d">GTK</a> features
+<a href="motion.txt.html#-" class="d">-</a> CTAGS v5.5 included
+<a href="motion.txt.html#-" class="d">-</a> <a href="#VMS" class="d">VMS</a> VIM <a href="usr_01.txt.html#tutor" class="d">tutor</a> created
+
+Version 6.1 (2002 Mar 25)
+<a href="motion.txt.html#-" class="d">-</a> <a href="if_tcl.txt.html#TCL" class="d">TCL</a> init_tcl() problem fixed
+<a href="motion.txt.html#-" class="d">-</a> CTAGS v5.4 included
+<a href="motion.txt.html#-" class="d">-</a> GNU tools binaries for OpenVMS
+<a href="motion.txt.html#-" class="d">-</a> Make file changes
+    <a href="motion.txt.html#-" class="d">-</a> PERL, PYTHON and <a href="if_tcl.txt.html#TCL" class="d">TCL</a> support improved
+    <a href="motion.txt.html#-" class="d">-</a> InstallVMS.txt has <a href="insert.txt.html#a" class="d">a</a> detailed description HOWTO build
+<a href="motion.txt.html#-" class="d">-</a> VMS/Unix file handling rewritten
+<a href="motion.txt.html#-" class="d">-</a> Minor casting and bug fixes
+
+Version 6.0 (2001 Sep 28)
+<a href="motion.txt.html#-" class="d">-</a> <a href="os_unix.txt.html#Unix" class="d">Unix</a> and <a href="#VMS" class="d">VMS</a> code has been merged
+        <a href="motion.txt.html#-" class="d">-</a> separated "really" <a href="#VMS" class="d">VMS</a> related code
+        <a href="motion.txt.html#-" class="d">-</a> included all possible <a href="os_unix.txt.html#Unix" class="d">Unix</a> functionality
+        <a href="motion.txt.html#-" class="d">-</a> simplified or deleted the configuration files
+        <a href="motion.txt.html#-" class="d">-</a> makefile MAKE_VMS.MMS reviewed
+<a href="motion.txt.html#-" class="d">-</a> menu changes (fixed printing, CTAGS and XXD usage)
+<a href="motion.txt.html#-" class="d">-</a> fixed variable RMS record format handling anomaly
+<a href="motion.txt.html#-" class="d">-</a> corrected syntax, <a href="usr_41.txt.html#ftplugin" class="d">ftplugin</a> etc files load
+<a href="motion.txt.html#-" class="d">-</a> changed expand_wildcards and expandpath <a href="eval.txt.html#functions" class="d">functions</a> to work more general
+<a href="motion.txt.html#-" class="d">-</a> created OS_VMS_FILTER.COM <a href="motion.txt.html#-" class="d">-</a> DECC-&gt;VAXC pre-processor directive convert
+  script.
+<a href="motion.txt.html#-" class="d">-</a> Improved code's VAXC and new DECC compilers compatibility
+<a href="motion.txt.html#-" class="d">-</a> changed <a href="quickfix.txt.html#quickfix" class="d">quickfix</a> parameters:
+        <a href="motion.txt.html#-" class="d">-</a> errormessage format to suite DECC
+        <a href="motion.txt.html#-" class="d">-</a> search, make and other commands to suite <a href="#VMS" class="d">VMS</a> system
+<a href="motion.txt.html#-" class="d">-</a> updated and renamed MMS make files for Vim and CTAGS.
+<a href="motion.txt.html#-" class="d">-</a> CTAGS has been removed from source <a href="intro.txt.html#distribution" class="d">distribution</a> of Vim but <a href="motion.txt.html#it" class="d">it</a> will remain
+  in OpenVMS binary distributions.
+<a href="motion.txt.html#-" class="d">-</a> simplified build/configuration procedure
+<a href="motion.txt.html#-" class="d">-</a> created INSTALLvms.txt <a href="motion.txt.html#-" class="d">-</a> detailed compiling instructions under VMS.
+<a href="motion.txt.html#-" class="d">-</a> updated test scripts.
+
+Version 5.8 (2001 Jun 1)
+<a href="motion.txt.html#-" class="d">-</a> OS_VMS.TXT updated with new features.
+<a href="motion.txt.html#-" class="d">-</a> other minor fixes.
+<a href="motion.txt.html#-" class="d">-</a> documentation updated
+<a href="motion.txt.html#-" class="d">-</a> this version had been tested much more than any other OpenVMS version
+  earlier
+
+Version 5.7 (2000 Jun 24)
+<a href="motion.txt.html#-" class="d">-</a> New CTAGS v5.0 in <a href="intro.txt.html#distribution" class="d">distribution</a>
+<a href="motion.txt.html#-" class="d">-</a> Documentation updated
+
+Version 5.6 (2000 Jan 17)
+<a href="motion.txt.html#-" class="d">-</a> <a href="#VMS" class="d">VMS</a> filename related changes:
+        <a href="motion.txt.html#-" class="d">-</a> version handling (open everything, save to new version)
+        <a href="motion.txt.html#-" class="d">-</a> correct file extension matching for <a href="syntax.txt.html#syntax" class="d">syntax</a> (version problem)
+        <a href="motion.txt.html#-" class="d">-</a> handle <span class="s">&lt;,&gt;</span> characters and passwords in directory definition
+        <a href="motion.txt.html#-" class="d">-</a> handle internode/remote invocation and editing with passwords
+        <a href="motion.txt.html#-" class="d">-</a> OpenVMS files will be treated <a href="change.txt.html#case" class="d">case</a> insensitive from now
+        <a href="motion.txt.html#-" class="d">-</a> corrected response of expand("<a href="cmdline.txt.html#%25%3A." class="d">%:.</a>"<a href="motion.txt.html#%29" class="d">)</a> etc path related <a href="eval.txt.html#functions" class="d">functions</a>
+        (in one word: <a href="#VMS" class="d">VMS</a> directory handling internally)
+<a href="motion.txt.html#-" class="d">-</a> version command
+        <a href="motion.txt.html#-" class="d">-</a> corrected (+,-) information data
+        <a href="motion.txt.html#-" class="d">-</a> added compiler and OS version
+        <a href="motion.txt.html#-" class="d">-</a> added user and host information
+        <a href="motion.txt.html#-" class="d">-</a> resolving <a href="starting.txt.html#%24VIM" class="d">$VIM</a> and <a href="starting.txt.html#%24VIMRUNTIME" class="d">$VIMRUNTIME</a> logicals
+<a href="motion.txt.html#-" class="d">-</a> <a href="#VMS" class="d">VMS</a> port <a href="motion.txt.html#is" class="d">is</a> in MAX_FEAT (maximum features) club with Unix, <a href="os_win32.txt.html#Win32" class="d">Win32</a> and OS/2.
+        <a href="motion.txt.html#-" class="d">-</a> enabled farsi, rightleft etc. features
+        <a href="motion.txt.html#-" class="d">-</a> <a href="undo.txt.html#undo" class="d">undo</a> level raised up to 1000
+<a href="motion.txt.html#-" class="d">-</a> Updated OS_VMS.MMS file.
+        <a href="motion.txt.html#-" class="d">-</a> maximum features ON <a href="motion.txt.html#is" class="d">is</a> default
+        <a href="motion.txt.html#-" class="d">-</a> Vim <a href="motion.txt.html#is" class="d">is</a> compilable with +perl, <a href="various.txt.html#%2Bpython" class="d">+python</a> and <a href="various.txt.html#%2Btcl" class="d">+tcl</a> features.
+        <a href="motion.txt.html#-" class="d">-</a> improved MMK compatibility
+<a href="motion.txt.html#-" class="d">-</a> Created MAKEFILE_VMS.MMS, makefile for <a href="eval.txt.html#testing" class="d">testing</a> Vim during development.
+<a href="motion.txt.html#-" class="d">-</a> Defined DEC <a href="terminal.txt.html#terminal" class="d">terminal</a> VT320
+        <a href="motion.txt.html#-" class="d">-</a> compatibility for VT3*0, VT2*<a href="motion.txt.html#0" class="d">0</a> and VT1*<a href="motion.txt.html#0" class="d">0</a> <a href="motion.txt.html#-" class="d">-</a> ANSI terminals
+          backwards, but not VT340 and newer with colour capability.
+        <a href="motion.txt.html#-" class="d">-</a> VT320 <a href="motion.txt.html#is" class="d">is</a> default <a href="terminal.txt.html#terminal" class="d">terminal</a> for OpenVMS
+        <a href="motion.txt.html#-" class="d">-</a> these new terminals are also fast ttys (default for OpenVMS).
+        <a href="motion.txt.html#-" class="d">-</a> allowed dec_mouse ttym
+<a href="motion.txt.html#-" class="d">-</a> Updated files <a href="starting.txt.html#vimrc" class="d">vimrc</a> and <a href="gui.txt.html#gvimrc" class="d">gvimrc</a> with <a href="#VMS" class="d">VMS</a> specific suggestions.
+<a href="motion.txt.html#-" class="d">-</a> OS_VMS.TXT updated with new features.
+
+Version 5.5 (1999 Dec 3)
+<a href="motion.txt.html#-" class="d">-</a> Popup menu line crash corrected.
+<a href="motion.txt.html#-" class="d">-</a> Handle full file names with version numbers.
+<a href="motion.txt.html#-" class="d">-</a> Directory handling (CD command etc.)
+<a href="motion.txt.html#-" class="d">-</a> Corrected file name conversion <a href="#VMS" class="d">VMS</a> to <a href="os_unix.txt.html#Unix" class="d">Unix</a> and v.v.
+<a href="motion.txt.html#-" class="d">-</a> Correct response of expand <a href="editing.txt.html#wildcards" class="d">wildcards</a>
+<a href="motion.txt.html#-" class="d">-</a> Recovery <a href="motion.txt.html#is" class="d">is</a> working from this version under <a href="#VMS" class="d">VMS</a> <a href="motion.txt.html#as" class="d">as</a> well.
+<a href="motion.txt.html#-" class="d">-</a> Improved <a href="terminal.txt.html#terminal" class="d">terminal</a> and signal handing.
+<a href="motion.txt.html#-" class="d">-</a> Improved OS_VMS.TXT
+
+Version 5.4 (1999 Sep 9)
+<a href="motion.txt.html#-" class="d">-</a> Cut and paste mismatch corrected.
+<a href="motion.txt.html#-" class="d">-</a> <a href="gui_x11.txt.html#Motif" class="d">Motif</a> directories during open and save are corrected.
+
+Version 5.3 (1998 Oct 12)
+<a href="motion.txt.html#-" class="d">-</a> Minor changes in the code
+<a href="motion.txt.html#-" class="d">-</a> Standard <a href="intro.txt.html#distribution" class="d">distribution</a> with +GUI option
+
+Version 5.1 (1998 Apr 21)
+<a href="motion.txt.html#-" class="d">-</a> <a href="autocmd.txt.html#Syntax" class="d">Syntax</a> and DEC <a href="change.txt.html#C" class="d">C</a> changes in the code
+<a href="motion.txt.html#-" class="d">-</a> Fixing problems with the /doc subdirectory
+<a href="motion.txt.html#-" class="d">-</a> Improve OS_VMS.MMS
+
+Version 4.5 (1996 Dec 16)
+<a href="motion.txt.html#-" class="d">-</a> First <a href="#VMS" class="d">VMS</a> port by Henk Elbers <span class="s">&lt;henk@xs4all.nl&gt;</span>
+
+<span class="h">==============================================================================</span>
+
+10. Authors                                             <a name="vms-authors" class="t">vms-authors</a>
+
+OpenVMS documentation and executables are maintained by:
+Zoltan Arpadffy <span class="s">&lt;arpadffy@polarhome.com&gt;</span>
+OpenVMS Vim page: <a class="u" href="http://www.polarhome.com/vim/">http://www.polarhome.com/vim/</a>
+
+This document uses parts and remarks from earlier authors and contributors
+of OS_VMS.TXT:
+        Charles E. Campbell, Jr. <span class="s">&lt;cec@gryphon.gsfc.nasa.gov&gt;</span>
+        Bruce Hunsaker <span class="s">&lt;BNHunsaker@chq.byu.edu&gt;</span>
+        Sandor Kopanyi <span class="s">&lt;sandor.kopanyi@mailbox.hu&gt;</span>
+
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

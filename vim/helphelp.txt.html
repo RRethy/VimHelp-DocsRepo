@@ -1,0 +1,387 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: helphelp.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="helphelp.txt" class="t">helphelp.txt</a>  For <span class="i">Vim version 8.0.</span>  Last change: 2017 Mar 19
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Bram Moolenaar</span>
+
+
+Help on <a href="#help" class="d">help</a> files                                      <a name="helphelp" class="t">helphelp</a>
+
+1. Help commands                <a href="#online-help" class="l">online-help</a>
+2. Translated <a href="#help" class="d">help</a> files        <a href="#help-translated" class="l">help-translated</a>
+3. Writing <a href="#help" class="d">help</a> files           <a href="#help-writing" class="l">help-writing</a>
+
+<span class="h">==============================================================================</span>
+1. Help commands                                        <a name="online-help" class="t">online-help</a>
+
+                        <a name="help" class="t">help</a> <a name="%3CHelp%3E" class="t">&lt;Help&gt;</a> <a name="%3Ah" class="t">:h</a> <a name="%3Ahelp" class="t">:help</a> <a name="%3CF1%3E" class="t">&lt;F1&gt;</a> <a name="i_%3CF1%3E" class="t">i_&lt;F1&gt;</a> <a name="i_%3CHelp%3E" class="t">i_&lt;Help&gt;</a>
+<a href="#%3CHelp%3E" class="s">&lt;Help&gt;</a>          or
+:h[elp]                 Open <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a> and display the <a href="#help" class="d">help</a> file in read-only
+                        mode.  If there <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> <a href="#help" class="d">help</a> <a href="windows.txt.html#window" class="d">window</a> open already, use
+                        that one.  Otherwise, if the current <a href="windows.txt.html#window" class="d">window</a> uses the
+                        full width of the screen or <a href="motion.txt.html#is" class="d">is</a> <a href="motion.txt.html#at" class="d">at</a> least 80 characters
+                        wide, the <a href="#help" class="d">help</a> <a href="windows.txt.html#window" class="d">window</a> will appear just above the
+                        current window.  Otherwise the new <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> <a href="change.txt.html#put" class="d">put</a> <a href="motion.txt.html#at" class="d">at</a>
+                        the very top.
+                        The <a href="options.txt.html#%27helplang%27" class="o">'helplang'</a> option <a href="motion.txt.html#is" class="d">is</a> used to select <a href="insert.txt.html#a" class="d">a</a> language, if
+                        the main <a href="#help" class="d">help</a> file <a href="motion.txt.html#is" class="d">is</a> available in several languages.
+                        <span class="s">{not in Vi}</span>
+
+                                                <a name="%7Bsubject%7D" class="t">{subject}</a> <a name="E149" class="t">E149</a> <a name="E661" class="t">E661</a>
+:h[elp] <a href="#%7Bsubject%7D" class="s">{subject}</a>       Like "<a href="#%3Ahelp" class="d">:help</a>"<a href="motion.txt.html#%2C" class="d">,</a> additionally jump to the <a href="tagsrch.txt.html#tag" class="d">tag</a> <a href="#%7Bsubject%7D" class="s">{subject}</a>.
+                        For example:  
+<span class="e">                                :help options</span>
+<span class="e"></span>
+                       <a href="#%7Bsubject%7D" class="s">{subject}</a> can include <a href="editing.txt.html#wildcards" class="d">wildcards</a> such <a href="motion.txt.html#as" class="d">as</a> "*"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="pattern.txt.html#%3F" class="d">?</a>" and
+                        "[a-z]"<a href="cmdline.txt.html#%3A" class="d">:</a>
+                           <a href="#%3Ahelp" class="d">:help</a> z?     jump to <a href="#help" class="d">help</a> for any "<a href="index.txt.html#z" class="d">z</a>" command
+                           <a href="#%3Ahelp" class="d">:help</a> <a href="scroll.txt.html#z." class="d">z.</a>     jump to the <a href="#help" class="d">help</a> for "<a href="scroll.txt.html#z." class="d">z.</a>"
+                        But when <a href="insert.txt.html#a" class="d">a</a> <a href="tagsrch.txt.html#tag" class="d">tag</a> exists <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> taken literally:
+                           <a href="#%3Ahelp" class="d">:help</a> <a href="cmdline.txt.html#%3A%3F" class="d">:?</a>     jump to <a href="#help" class="d">help</a> for "<a href="cmdline.txt.html#%3A%3F" class="d">:?</a>"
+
+                        If there <a href="motion.txt.html#is" class="d">is</a> no full match for the pattern, or there
+                        are several matches, the "best" match will be used.
+                        <a href="insert.txt.html#A" class="d">A</a> sophisticated algorithm <a href="motion.txt.html#is" class="d">is</a> used to decide which
+                        match <a href="motion.txt.html#is" class="d">is</a> better than another one.  These items are
+                        considered in the computation:
+                        <a href="motion.txt.html#-" class="d">-</a> <a href="insert.txt.html#A" class="d">A</a> match with same <a href="change.txt.html#case" class="d">case</a> <a href="motion.txt.html#is" class="d">is</a> much better than <a href="insert.txt.html#a" class="d">a</a> match
+                          with different case.
+                        <a href="motion.txt.html#-" class="d">-</a> <a href="insert.txt.html#A" class="d">A</a> match that starts after <a href="insert.txt.html#a" class="d">a</a> non-alphanumeric
+                          character <a href="motion.txt.html#is" class="d">is</a> better than <a href="insert.txt.html#a" class="d">a</a> match in the middle of <a href="insert.txt.html#a" class="d">a</a>
+                          word.
+                        <a href="motion.txt.html#-" class="d">-</a> <a href="insert.txt.html#A" class="d">A</a> match <a href="motion.txt.html#at" class="d">at</a> or near the beginning of the <a href="tagsrch.txt.html#tag" class="d">tag</a> <a href="motion.txt.html#is" class="d">is</a>
+                          better than <a href="insert.txt.html#a" class="d">a</a> match further on.
+                        <a href="motion.txt.html#-" class="d">-</a> The more alphanumeric characters match, the better.
+                        <a href="motion.txt.html#-" class="d">-</a> The shorter the length of the match, the better.
+
+                        The <a href="options.txt.html#%27helplang%27" class="o">'helplang'</a> option <a href="motion.txt.html#is" class="d">is</a> used to select <a href="insert.txt.html#a" class="d">a</a> language, if
+                        the <a href="#%7Bsubject%7D" class="s">{subject}</a> <a href="motion.txt.html#is" class="d">is</a> available in several languages.
+                        To find <a href="insert.txt.html#a" class="d">a</a> <a href="tagsrch.txt.html#tag" class="d">tag</a> in <a href="insert.txt.html#a" class="d">a</a> specific language, append "@ab"<a href="motion.txt.html#%2C" class="d">,</a>
+                        where "<a href="motion.txt.html#ab" class="d">ab</a>" <a href="motion.txt.html#is" class="d">is</a> the two-letter language code.  See
+                        <a href="#help-translated" class="l">help-translated</a><a href="repeat.txt.html#." class="d">.</a>
+
+                        <span class="n">Note</span> that the longer the <a href="#%7Bsubject%7D" class="s">{subject}</a> you give, the <a href="various.txt.html#less" class="d">less</a>
+                        matches will be found.  You can get an idea how this
+                        all works by using commandline completion (type <a href="scroll.txt.html#CTRL-D" class="k">CTRL-D</a>
+                        after "<a href="#%3Ahelp" class="d">:help</a> subject" <a href="cmdline.txt.html#c_CTRL-D" class="l">c_CTRL-D</a>).
+                        If there are several matches, you can have them listed
+                        by hitting <a href="scroll.txt.html#CTRL-D" class="k">CTRL-D</a>.  Example: 
+<span class="e">                                :help cont&lt;Ctrl-D&gt;</span>
+<span class="e"></span>
+                       Instead of typing "<a href="#%3Ahelp" class="d">:help</a> <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a>" to search for <a href="#help" class="d">help</a>
+                        for <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> you can type: 
+<span class="e">                                :help ^V</span>
+                       This also works together with other characters, for
+                        example to find <a href="#help" class="d">help</a> for <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> in <a href="insert.txt.html#Insert" class="d">Insert</a> mode: 
+<span class="e">                                :help i^V</span>
+
+                        It <a href="motion.txt.html#is" class="d">is</a> also possible to first <a href="diff.txt.html#do" class="d">do</a> "<a href="#%3Ahelp" class="d">:help</a>" and then
+                        use "<a href="tagsrch.txt.html#%3Atag" class="d">:tag</a> <span class="s">{pattern}</span>" in the <a href="#help" class="d">help</a> window.  The
+                        "<a href="tagsrch.txt.html#%3Atnext" class="d">:tnext</a>" command can then be used to jump to other
+                        matches, "tselect" to <a href="eval.txt.html#list" class="d">list</a> matches and choose one. 
+<span class="e">                                :help index</span>
+<span class="e">                                :tselect /.*mode</span>
+<span class="e"></span>
+                       When there <a href="motion.txt.html#is" class="d">is</a> no argument you will see matches for
+                        "<a href="#help" class="d">help</a>"<a href="motion.txt.html#%2C" class="d">,</a> to avoid listing all possible matches (that
+                        would be very slow).
+                        The number of matches displayed <a href="motion.txt.html#is" class="d">is</a> limited to 300.
+
+                        The <span class="e">:help</span> command can be followed by <a href="motion.txt.html#%27" class="d">'</a>|<a href="motion.txt.html#%27" class="d">'</a> and another
+                        command, but you don't need to <a href="intro.txt.html#escape" class="d">escape</a> the <a href="motion.txt.html#%27" class="d">'</a>|<a href="motion.txt.html#%27" class="d">'</a> inside <a href="insert.txt.html#a" class="d">a</a>
+                        <a href="#help" class="d">help</a> command.  So these both work: 
+<span class="e">                                :help |</span>
+<span class="e">                                :help k| only</span>
+                       <span class="n">Note</span> that <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#space" class="d">space</a> before the <a href="motion.txt.html#%27" class="d">'</a>|<a href="motion.txt.html#%27" class="d">'</a> <a href="motion.txt.html#is" class="d">is</a> seen <a href="motion.txt.html#as" class="d">as</a> part of
+                        the "<a href="#%3Ahelp" class="d">:help</a>" argument.
+                        You can also use <span class="s">&lt;LF&gt;</span> or <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a> to separate the <a href="#help" class="d">help</a>
+                        command from <a href="insert.txt.html#a" class="d">a</a> following command.  You need to type
+                        <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> first to <a href="insert.txt.html#insert" class="d">insert</a> the <span class="s">&lt;LF&gt;</span> or <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a>.  Example: 
+<span class="e">                                :help so&lt;C-V&gt;&lt;CR&gt;only</span>
+                       <span class="s">{not in Vi}</span>
+
+:h[elp]! <span class="s">[subject]</span>      Like "<a href="#%3Ahelp" class="d">:help</a>"<a href="motion.txt.html#%2C" class="d">,</a> but in non-English <a href="#help" class="d">help</a> files prefer to
+                        find <a href="insert.txt.html#a" class="d">a</a> <a href="tagsrch.txt.html#tag" class="d">tag</a> in <a href="insert.txt.html#a" class="d">a</a> file with the same language <a href="motion.txt.html#as" class="d">as</a> the
+                        current file.  See <a href="#help-translated" class="l">help-translated</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="%3Ahelpc" class="t">:helpc</a> <a name="%3Ahelpclose" class="t">:helpclose</a>
+:helpc[lose]            Close one <a href="#help" class="d">help</a> window, if there <a href="motion.txt.html#is" class="d">is</a> one.
+
+                                                        <a name="%3Ahelpg" class="t">:helpg</a> <a name="%3Ahelpgrep" class="t">:helpgrep</a>
+:helpg[rep] <span class="s">{pattern}</span>[@xx]
+                        Search all <a href="#help" class="d">help</a> text files and make <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of lines
+                        in which <span class="s">{pattern}</span> matches.  Jumps to the first match.
+                        The optional [@xx] specifies that only matches in the
+                        "xx" language are to be found.
+                        You can navigate through the matches with the
+                        <a href="quickfix.txt.html#quickfix" class="l">quickfix</a> commands, e.g., <a href="quickfix.txt.html#%3Acnext" class="l">:cnext</a> to jump to the
+                        next one.  Or use <a href="quickfix.txt.html#%3Acwindow" class="l">:cwindow</a> to get the <a href="eval.txt.html#list" class="d">list</a> of
+                        matches in the <a href="quickfix.txt.html#quickfix" class="d">quickfix</a> window.
+                        <span class="s">{pattern}</span> <a href="motion.txt.html#is" class="d">is</a> used <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> Vim <a href="pattern.txt.html#regexp" class="d">regexp</a> <a href="pattern.txt.html#pattern" class="l">pattern</a><a href="repeat.txt.html#." class="d">.</a>
+                        <a href="options.txt.html#%27ignorecase%27" class="o">'ignorecase'</a> <a href="motion.txt.html#is" class="d">is</a> not used, add "\c" to ignore case.
+                        Example for <a href="change.txt.html#case" class="d">case</a> sensitive search: 
+<span class="e">                                :helpgrep Uganda</span>
+                       Example for <a href="change.txt.html#case" class="d">case</a> ignoring search: 
+<span class="e">                                :helpgrep uganda\c</span>
+                       Example for searching in French help: 
+<span class="e">                                :helpgrep backspace@fr</span>
+                       The <a href="pattern.txt.html#pattern" class="d">pattern</a> does not support line breaks, <a href="motion.txt.html#it" class="d">it</a> <a href="vim_faq.txt.html#must" class="d">must</a>
+                        match within one line.  You can use <a href="quickfix.txt.html#%3Agrep" class="l">:grep</a> instead,
+                        but then you need to get the <a href="eval.txt.html#list" class="d">list</a> of <a href="#help" class="d">help</a> files in <a href="insert.txt.html#a" class="d">a</a>
+                        complicated way.
+                        Cannot be followed by another command, everything <a href="motion.txt.html#is" class="d">is</a>
+                        used <a href="motion.txt.html#as" class="d">as</a> part of the pattern.  But you can use
+                        <a href="eval.txt.html#%3Aexecute" class="l">:execute</a> when needed.
+                        Compressed <a href="#help" class="d">help</a> files will not be searched (Fedora
+                        compresses the <a href="#help" class="d">help</a> files).
+                        <span class="s">{not in Vi}</span>
+
+                                                        <a name="%3Alh" class="t">:lh</a> <a name="%3Alhelpgrep" class="t">:lhelpgrep</a>
+:lh[elpgrep] <span class="s">{pattern}</span>[@xx]
+                        Same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Ahelpgrep" class="d">:helpgrep</a>"<a href="motion.txt.html#%2C" class="d">,</a> except the location <a href="eval.txt.html#list" class="d">list</a> <a href="motion.txt.html#is" class="d">is</a> used
+                        instead of the <a href="quickfix.txt.html#quickfix" class="d">quickfix</a> list.  If the <a href="#help" class="d">help</a> <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a>
+                        already opened, then the location <a href="eval.txt.html#list" class="d">list</a> for that <a href="windows.txt.html#window" class="d">window</a>
+                        <a href="motion.txt.html#is" class="d">is</a> used.  Otherwise, <a href="insert.txt.html#a" class="d">a</a> new <a href="#help" class="d">help</a> <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> opened and
+                        the location <a href="eval.txt.html#list" class="d">list</a> for that <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> set.  The
+                        location <a href="eval.txt.html#list" class="d">list</a> for the current <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> not changed
+                        then.
+
+                                                        <a name="%3Aexu" class="t">:exu</a> <a name="%3Aexusage" class="t">:exusage</a>
+:exu[sage]              Show <a href="#help" class="d">help</a> on <a href="intro.txt.html#Ex" class="d">Ex</a> commands.  Added to simulate the <a href="intro.txt.html#Nvi" class="d">Nvi</a>
+                        command. <span class="s">{not in Vi}</span>
+
+                                                        <a name="%3Aviu" class="t">:viu</a> <a name="%3Aviusage" class="t">:viusage</a>
+:viu[sage]              Show <a href="#help" class="d">help</a> on <a href="intro.txt.html#Normal" class="d">Normal</a> mode commands.  Added to simulate
+                        the <a href="intro.txt.html#Nvi" class="d">Nvi</a> command. <span class="s">{not in Vi}</span>
+
+When no argument <a href="motion.txt.html#is" class="d">is</a> given to <a href="#%3Ahelp" class="l">:help</a> the file given with the <a href="options.txt.html#%27helpfile%27" class="o">'helpfile'</a> option
+will be opened.  Otherwise the specified <a href="tagsrch.txt.html#tag" class="d">tag</a> <a href="motion.txt.html#is" class="d">is</a> searched for in all "doc/tags"
+files in the directories specified in the <a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a> option.
+
+The initial height of the <a href="#help" class="d">help</a> <a href="windows.txt.html#window" class="d">window</a> can be set with the <a href="options.txt.html#%27helpheight%27" class="o">'helpheight'</a> option
+(default 20).
+
+Jump to specific subjects by using tags.  This can be done in two ways:
+<a href="motion.txt.html#-" class="d">-</a> Use the "<a href="tagsrch.txt.html#CTRL-%5D" class="k">CTRL-]</a>" command while standing on the name of <a href="insert.txt.html#a" class="d">a</a> command or option.
+  This only works when the <a href="tagsrch.txt.html#tag" class="d">tag</a> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> keyword.  "<span class="s">&lt;C-Leftmouse&gt;</span>" and
+  "<a href="tagsrch.txt.html#g%3CLeftMouse%3E" class="d">g&lt;LeftMouse&gt;</a>" work just like "<a href="tagsrch.txt.html#CTRL-%5D" class="k">CTRL-]</a>"<a href="repeat.txt.html#." class="d">.</a>
+<a href="motion.txt.html#-" class="d">-</a> use the "<a href="tagsrch.txt.html#%3Ata" class="d">:ta</a> <a href="#%7Bsubject%7D" class="s">{subject}</a>" command.  This also works with non-keyword
+  characters.
+
+Use <a href="tagsrch.txt.html#CTRL-T" class="k">CTRL-T</a> or <a href="motion.txt.html#CTRL-O" class="k">CTRL-O</a> to jump back.
+Use "<a href="editing.txt.html#%3Aq" class="d">:q</a>" to close the <a href="#help" class="d">help</a> window.
+
+If there are several matches for an item you are looking for, this <a href="motion.txt.html#is" class="d">is</a> how you
+can jump to each one of them:
+1. Open <a href="insert.txt.html#a" class="d">a</a> <a href="#help" class="d">help</a> <a href="windows.txt.html#window" class="d">window</a>
+2. Use the "<a href="tagsrch.txt.html#%3Atag" class="d">:tag</a>" command with <a href="insert.txt.html#a" class="d">a</a> slash prepended to the tag.  E.g.: 
+<span class="e">        :tag /min</span>
+3. Use "<a href="tagsrch.txt.html#%3Atnext" class="d">:tnext</a>" to jump to the next matching tag.
+
+It <a href="motion.txt.html#is" class="d">is</a> possible to add <a href="#help" class="d">help</a> files for plugins and other items.  You don't need
+to change the distributed <a href="#help" class="d">help</a> files for that.  See <a href="usr_05.txt.html#add-local-help" class="l">add-local-help</a><a href="repeat.txt.html#." class="d">.</a>
+
+To write <a href="insert.txt.html#a" class="d">a</a> local <a href="#help" class="d">help</a> file, see <a href="usr_41.txt.html#write-local-help" class="l">write-local-help</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="n">Note</span> that the title lines from the local <a href="#help" class="d">help</a> files are automagically added to
+the "LOCAL ADDITIONS" <a href="motion.txt.html#section" class="d">section</a> in the "<a href="/#help.txt" class="d">help.txt</a>" <a href="#help" class="d">help</a> file <a href="/#local-additions" class="l">local-additions</a><a href="repeat.txt.html#." class="d">.</a>
+This <a href="motion.txt.html#is" class="d">is</a> done when viewing the file in Vim, the file itself <a href="motion.txt.html#is" class="d">is</a> not changed.  It
+<a href="motion.txt.html#is" class="d">is</a> done by going through all <a href="#help" class="d">help</a> files and obtaining the first line of each
+file.  The files in $VIMRUNTIME/doc are skipped.
+
+                                                        <a name="help-xterm-window" class="t">help-xterm-window</a>
+If you want to have the <a href="#help" class="d">help</a> in another xterm window, you could use this
+command: 
+<span class="e">        :!xterm -e vim +help &amp;</span>
+
+
+                        <a name="%3Ahelpfind" class="t">:helpfind</a> <a name="%3Ahelpf" class="t">:helpf</a>
+:helpf[ind]             Like <a href="#%3Ahelp" class="l">:help</a><a href="motion.txt.html#%2C" class="d">,</a> but use <a href="insert.txt.html#a" class="d">a</a> <a href="gui_w32.txt.html#dialog" class="d">dialog</a> to enter the argument.
+                        Only for backwards compatibility.  It now executes the
+                        ToolBar.FindHelp menu entry instead of using <a href="insert.txt.html#a" class="d">a</a> builtin
+                        dialog.  <span class="s">{only when compiled with |+GUI_GTK|}</span>
+                        <span class="s">{not in Vi}</span>
+
+                                        <a name="%3Ahelpt" class="t">:helpt</a> <a name="%3Ahelptags" class="t">:helptags</a>
+                                <a name="E154" class="t">E154</a> <a name="E150" class="t">E150</a> <a name="E151" class="t">E151</a> <a name="E152" class="t">E152</a> <a name="E153" class="t">E153</a> <a name="E670" class="t">E670</a>
+:helpt[ags] [++t] <span class="s">{dir}</span>
+                        Generate the <a href="#help" class="d">help</a> <a href="tagsrch.txt.html#tags" class="d">tags</a> file(s) for directory <span class="s">{dir}</span>.
+                        When <span class="s">{dir}</span> <a href="motion.txt.html#is" class="d">is</a> ALL then all "doc" directories in
+                        <a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a> will be used.
+
+                        All "*.txt" and "*.??x" files in the directory and
+                        sub-directories are scanned for <a href="insert.txt.html#a" class="d">a</a> <a href="#help" class="d">help</a> <a href="tagsrch.txt.html#tag" class="d">tag</a> definition
+                        in between stars.  The "*.??x" files are for
+                        translated docs, they generate the "tags-??" file, see
+                        <a href="#help-translated" class="l">help-translated</a><a href="repeat.txt.html#." class="d">.</a>  The generated <a href="tagsrch.txt.html#tags" class="d">tags</a> files are
+                        sorted.
+                        When there are duplicates an error message <a href="motion.txt.html#is" class="d">is</a> given.
+                        An existing <a href="tagsrch.txt.html#tags" class="d">tags</a> file <a href="motion.txt.html#is" class="d">is</a> silently overwritten.
+
+                        The optional "++t" argument forces adding the
+                        "<a href="tags.html#help-tags" class="d">help-tags</a>" tag.  This <a href="motion.txt.html#is" class="d">is</a> also done when the <span class="s">{dir}</span> <a href="motion.txt.html#is" class="d">is</a>
+                        equal to $VIMRUNTIME/doc.
+
+                        To rebuild the <a href="#help" class="d">help</a> <a href="tagsrch.txt.html#tags" class="d">tags</a> in the runtime directory
+                        (requires write permission there): 
+<span class="e">                                :helptags $VIMRUNTIME/doc</span>
+                       <span class="s">{not in Vi}</span>
+
+
+<span class="h">==============================================================================</span>
+2. Translated <a href="#help" class="d">help</a> files                                <a name="help-translated" class="t">help-translated</a>
+
+It <a href="motion.txt.html#is" class="d">is</a> possible to add translated <a href="#help" class="d">help</a> files, next to the original English <a href="#help" class="d">help</a>
+files.  Vim will search for all <a href="#help" class="d">help</a> in "doc" directories in <a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a>.
+This <a href="motion.txt.html#is" class="d">is</a> only available when compiled with the <a href="various.txt.html#%2Bmulti_lang" class="l">+multi_lang</a> feature.
+
+At this moment translations are available for:
+        <a href="mbyte.txt.html#Chinese" class="d">Chinese</a>  <a href="motion.txt.html#-" class="d">-</a> multiple authors
+        French   <a href="motion.txt.html#-" class="d">-</a> translated by David Blanchet
+        Italian  <a href="motion.txt.html#-" class="d">-</a> translated by Antonio Colombo
+        <a href="mbyte.txt.html#Japanese" class="d">Japanese</a> <a href="motion.txt.html#-" class="d">-</a> multiple authors
+        Polish   <a href="motion.txt.html#-" class="d">-</a> translated by Mikolaj Machowski
+        <a href="russian.txt.html#Russian" class="d">Russian</a>  <a href="motion.txt.html#-" class="d">-</a> translated by Vassily Ragosin
+See the Vim website to find them: <a class="u" href="http://www.vim.org/translations.php">http://www.vim.org/translations.php</a>
+
+<a href="insert.txt.html#A" class="d">A</a> set of translated <a href="#help" class="d">help</a> files consists of these files:
+
+        help.abx
+        howto.abx
+        <a href="eval.txt.html#..." class="d">...</a>
+        tags-ab
+
+"<a href="motion.txt.html#ab" class="d">ab</a>" <a href="motion.txt.html#is" class="d">is</a> the two-letter language code.  Thus for Italian the names are:
+
+        help.itx
+        howto.itx
+        <a href="eval.txt.html#..." class="d">...</a>
+        tags-it
+
+The <a href="options.txt.html#%27helplang%27" class="o">'helplang'</a> option can be set to the preferred language(s).  The default <a href="motion.txt.html#is" class="d">is</a>
+set according to the environment.  Vim will first try to find <a href="insert.txt.html#a" class="d">a</a> matching <a href="tagsrch.txt.html#tag" class="d">tag</a>
+in the preferred language(s).  English <a href="motion.txt.html#is" class="d">is</a> used when <a href="motion.txt.html#it" class="d">it</a> cannot be found.
+
+To find <a href="insert.txt.html#a" class="d">a</a> <a href="tagsrch.txt.html#tag" class="d">tag</a> in <a href="insert.txt.html#a" class="d">a</a> specific language, append "@ab" to <a href="insert.txt.html#a" class="d">a</a> tag, where "<a href="motion.txt.html#ab" class="d">ab</a>" <a href="motion.txt.html#is" class="d">is</a> the
+two-letter language code.  Example: 
+<span class="e">        :he user-manual@it</span>
+<span class="e">        :he user-manual@en</span>
+The first one finds the Italian user manual, even when <a href="options.txt.html#%27helplang%27" class="o">'helplang'</a> <a href="motion.txt.html#is" class="d">is</a> empty.
+The second one finds the English user manual, even when <a href="options.txt.html#%27helplang%27" class="o">'helplang'</a> <a href="motion.txt.html#is" class="d">is</a> set to
+"<a href="motion.txt.html#it" class="d">it</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+When using command-line completion for the "<a href="#%3Ahelp" class="d">:help</a>" command, the "@en"
+extension <a href="motion.txt.html#is" class="d">is</a> only shown when <a href="insert.txt.html#a" class="d">a</a> <a href="tagsrch.txt.html#tag" class="d">tag</a> exists for multiple languages.  When the
+<a href="tagsrch.txt.html#tag" class="d">tag</a> only exists for English "@en" <a href="motion.txt.html#is" class="d">is</a> omitted.  When the first candidate has an
+"@ab" extension and <a href="motion.txt.html#it" class="d">it</a> matches the first language in <a href="options.txt.html#%27helplang%27" class="o">'helplang'</a> "@ab" <a href="motion.txt.html#is" class="d">is</a> also
+omitted.
+
+When using <a href="tagsrch.txt.html#CTRL-%5D" class="l">CTRL-]</a> or ":help!" in <a href="insert.txt.html#a" class="d">a</a> non-English <a href="#help" class="d">help</a> file Vim will try to
+find the <a href="tagsrch.txt.html#tag" class="d">tag</a> in the same language.  If not found then <a href="options.txt.html#%27helplang%27" class="o">'helplang'</a> will be used
+to select <a href="insert.txt.html#a" class="d">a</a> language.
+
+Help files <a href="vim_faq.txt.html#must" class="d">must</a> use latin1 or <a href="mbyte.txt.html#utf-8" class="d">utf-8</a> encoding.  Vim assumes the encoding <a href="motion.txt.html#is" class="d">is</a>
+<a href="mbyte.txt.html#utf-8" class="d">utf-8</a> when finding non-ASCII characters in the first line.  Thus you <a href="vim_faq.txt.html#must" class="d">must</a>
+translate the header with "For Vim version"<a href="repeat.txt.html#." class="d">.</a>
+
+The same encoding <a href="vim_faq.txt.html#must" class="d">must</a> be used for the <a href="#help" class="d">help</a> files of one language in one
+directory.  You can use <a href="insert.txt.html#a" class="d">a</a> different encoding for different languages and use
+<a href="insert.txt.html#a" class="d">a</a> different encoding for <a href="#help" class="d">help</a> files of the same language but in <a href="insert.txt.html#a" class="d">a</a> different
+directory.
+
+Hints for translators:
+<a href="motion.txt.html#-" class="d">-</a> Do not translate the tags.  This makes <a href="motion.txt.html#it" class="d">it</a> possible to use <a href="options.txt.html#%27helplang%27" class="o">'helplang'</a> to
+  specify the preferred language.  You may add new <a href="tagsrch.txt.html#tags" class="d">tags</a> in your language.
+<a href="motion.txt.html#-" class="d">-</a> When you <a href="diff.txt.html#do" class="d">do</a> not translate <a href="insert.txt.html#a" class="d">a</a> part of <a href="insert.txt.html#a" class="d">a</a> file, add <a href="tagsrch.txt.html#tags" class="d">tags</a> to the English version,
+  using the "tag@en" notation.
+<a href="motion.txt.html#-" class="d">-</a> Make <a href="insert.txt.html#a" class="d">a</a> package with all the files and the <a href="tagsrch.txt.html#tags" class="d">tags</a> file available for download.
+  Users can drop <a href="motion.txt.html#it" class="d">it</a> in one of the "doc" directories and start use it.
+  Report this to Bram, so that he can add <a href="insert.txt.html#a" class="d">a</a> link on www.vim.org.
+<a href="motion.txt.html#-" class="d">-</a> Use the <a href="#%3Ahelptags" class="l">:helptags</a> command to generate the <a href="tagsrch.txt.html#tags" class="d">tags</a> files.  It will find all
+  languages in the specified directory.
+
+<span class="h">==============================================================================</span>
+3. Writing <a href="#help" class="d">help</a> files                                   <a name="help-writing" class="t">help-writing</a>
+
+For ease of use, <a href="insert.txt.html#a" class="d">a</a> Vim <a href="#help" class="d">help</a> file for <a href="insert.txt.html#a" class="d">a</a> <a href="usr_05.txt.html#plugin" class="d">plugin</a> should follow the format of the
+standard Vim <a href="#help" class="d">help</a> files.  If you are <a href="editing.txt.html#writing" class="d">writing</a> <a href="insert.txt.html#a" class="d">a</a> new <a href="#help" class="d">help</a> file it's best to copy
+one of the existing files and use <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> template.
+
+The first line in <a href="insert.txt.html#a" class="d">a</a> <a href="#help" class="d">help</a> file should have the following format:
+
+<a name="helpfile_name.txt" class="t">helpfile_name.txt</a>     For <span class="i">Vim version 7.3</span>     Last change: 2010 June 4
+
+The first field <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> link to the <a href="#help" class="d">help</a> file name.  The second field describes
+the applicable Vim version.  The last field specifies the last modification
+date of the file.  Each field <a href="motion.txt.html#is" class="d">is</a> separated by <a href="insert.txt.html#a" class="d">a</a> tab.
+
+At the bottom of the <a href="#help" class="d">help</a> file, place <a href="insert.txt.html#a" class="d">a</a> Vim <a href="options.txt.html#modeline" class="d">modeline</a> to set the <a href="options.txt.html#%27textwidth%27" class="o">'textwidth'</a>
+and <a href="options.txt.html#%27tabstop%27" class="o">'tabstop'</a> <a href="options.txt.html#options" class="d">options</a> and the <a href="options.txt.html#%27filetype%27" class="o">'filetype'</a> to "<a href="#help" class="d">help</a>"<a href="repeat.txt.html#." class="d">.</a>  Never set <a href="insert.txt.html#a" class="d">a</a> global option
+in such <a href="insert.txt.html#a" class="d">a</a> modeline, that can have consequences undesired by whoever reads that
+help.
+
+
+TAGS
+
+To define <a href="insert.txt.html#a" class="d">a</a> <a href="#help" class="d">help</a> tag, place the name between asterisks <a href="motion.txt.html#%28" class="d">(</a>*tag-name*).  The
+tag-name should be different from all the Vim <a href="#help" class="d">help</a> <a href="tagsrch.txt.html#tag" class="d">tag</a> names and ideally
+should begin with the name of the Vim plugin.  The <a href="tagsrch.txt.html#tag" class="d">tag</a> name <a href="motion.txt.html#is" class="d">is</a> usually right
+aligned on <a href="insert.txt.html#a" class="d">a</a> line.
+
+When referring to an existing <a href="#help" class="d">help</a> <a href="tagsrch.txt.html#tag" class="d">tag</a> and to create <a href="insert.txt.html#a" class="d">a</a> hot-link, place the
+name between two <a href="/#bars" class="d">bars</a> <a href="motion.txt.html#%28" class="d">(</a>|<a href="motion.txt.html#%29" class="d">)</a> eg. <a href="#help-writing" class="l">help-writing</a><a href="repeat.txt.html#." class="d">.</a>
+
+When referring to <a href="insert.txt.html#a" class="d">a</a> Vim command and to create <a href="insert.txt.html#a" class="d">a</a> hot-link, place the
+name between two backticks, eg. inside <span class="e">:filetype</span>.  You will see this <a href="motion.txt.html#is" class="d">is</a>
+highlighted <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> command, like <a href="insert.txt.html#a" class="d">a</a> code block (see below).
+
+When referring to <a href="insert.txt.html#a" class="d">a</a> Vim option in the <a href="#help" class="d">help</a> file, place the option name between
+two single quotes, eg. <a href="options.txt.html#%27statusline%27" class="o">'statusline'</a>
+
+
+HIGHLIGHTING
+
+To define <a href="insert.txt.html#a" class="d">a</a> column heading, use <a href="insert.txt.html#a" class="d">a</a> tilde character <a href="motion.txt.html#at" class="d">at</a> the <a href="intro.txt.html#end" class="d">end</a> of the line.
+This will highlight the column heading in <a href="insert.txt.html#a" class="d">a</a> different color.  E.g.
+
+<span class="h">Column heading</span>
+
+To separate sections in <a href="insert.txt.html#a" class="d">a</a> <a href="#help" class="d">help</a> file, place <a href="insert.txt.html#a" class="d">a</a> series of '=' characters in <a href="insert.txt.html#a" class="d">a</a>
+line <a href="starting.txt.html#starting" class="d">starting</a> from the first column.  The <a href="motion.txt.html#section" class="d">section</a> separator line <a href="motion.txt.html#is" class="d">is</a> highlighted
+differently.
+
+To <a href="change.txt.html#quote" class="d">quote</a> <a href="insert.txt.html#a" class="d">a</a> block of ex-commands verbatim, place <a href="insert.txt.html#a" class="d">a</a> greater than (&gt;) character
+<a href="motion.txt.html#at" class="d">at</a> the <a href="intro.txt.html#end" class="d">end</a> of the line before the block and <a href="insert.txt.html#a" class="d">a</a> <a href="various.txt.html#less" class="d">less</a> than (&lt;) character <a href="motion.txt.html#as" class="d">as</a> the
+first non-blank on <a href="insert.txt.html#a" class="d">a</a> line following the block.  Any line <a href="starting.txt.html#starting" class="d">starting</a> in column 1
+also implicitly stops the block of ex-commands before it.  E.g. 
+<span class="e">    function Example_Func()</span>
+<span class="e">        echo "Example"</span>
+<span class="e">    endfunction</span>
+
+
+The following are highlighted differently in <a href="insert.txt.html#a" class="d">a</a> Vim <a href="#help" class="d">help</a> file:
+  <a href="motion.txt.html#-" class="d">-</a> <a href="insert.txt.html#a" class="d">a</a> special key name expressed either in <span class="s">&lt;&gt; notation as in &lt;PageDown&gt;</span>, or
+    <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> Ctrl character <a href="motion.txt.html#as" class="d">as</a> in <a href="change.txt.html#CTRL-X" class="k">CTRL-X</a>
+  <a href="motion.txt.html#-" class="d">-</a> anything between <span class="s">{braces}</span>, e.g. <a href="map.txt.html#%7Blhs%7D" class="s">{lhs}</a> and <a href="map.txt.html#%7Brhs%7D" class="s">{rhs}</a>
+
+The <a href="motion.txt.html#word" class="d">word</a> "<span class="n">Note</span>"<a href="motion.txt.html#%2C" class="d">,</a> "<span class="n">Notes</span>" and similar automagically receive distinctive
+highlighting.  So <a href="diff.txt.html#do" class="d">do</a> these:
+        *Todo   something to <a href="diff.txt.html#do" class="d">do</a>
+        *Error  something wrong
+
+You can find the details in $VIMRUNTIME/syntax/help.vim
+
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

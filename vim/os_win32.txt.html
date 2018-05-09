@@ -1,0 +1,320 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: os_win32.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="os_win32.txt" class="t">os_win32.txt</a>  For <span class="i">Vim version 8.0.</span>  Last change: 2017 Mar 21
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by George Reilly</span>
+
+
+                                                <a name="win32" class="t">win32</a> <a name="Win32" class="t">Win32</a> <a name="MS-Windows" class="t">MS-Windows</a>
+This file documents the idiosyncrasies of the <a href="#Win32" class="d">Win32</a> version of Vim.
+
+The <a href="#Win32" class="d">Win32</a> version of Vim works on Windows XP, Vista, 7, 8 and 10.  There are
+both console and <a href="gui.txt.html#GUI" class="d">GUI</a> versions.
+
+The 32 bit version also runs on 64 bit <a href="#MS-Windows" class="d">MS-Windows</a> systems.
+
+1. Known problems               <a href="#win32-problems" class="l">win32-problems</a>
+2. Startup                      <a href="#win32-startup" class="l">win32-startup</a>
+3. Restore screen contents      <a href="#win32-restore" class="l">win32-restore</a>
+4. Using the mouse              <a href="#win32-mouse" class="l">win32-mouse</a>
+5. Running under Windows 95     <a href="#win32-win95" class="l">win32-win95</a>
+6. Running under Windows 3.1    <a href="#win32-win3.1" class="l">win32-win3.1</a>
+7. <a href="#Win32" class="d">Win32</a> mini <a href="intro.txt.html#FAQ" class="d">FAQ</a>               <a href="#win32-faq" class="l">win32-faq</a>
+
+Additionally, there are <a href="insert.txt.html#a" class="d">a</a> number of common <a href="#Win32" class="d">Win32</a> and <a href="os_dos.txt.html#DOS" class="d">DOS</a> items:
+File locations                  <a href="os_dos.txt.html#dos-locations" class="l">dos-locations</a>
+Using backslashes               <a href="os_dos.txt.html#dos-backslash" class="l">dos-backslash</a>
+Standard mappings               <a href="os_dos.txt.html#dos-standard-mappings" class="l">dos-standard-mappings</a>
+Screen output and colors        <a href="os_dos.txt.html#dos-colors" class="l">dos-colors</a>
+File formats                    <a href="os_dos.txt.html#dos-file-formats" class="l">dos-file-formats</a>
+<a href="editing.txt.html#%3Acd" class="d">:cd</a> command                     <a href="os_dos.txt.html#dos-%3Acd" class="l">dos-:cd</a>
+Interrupting                    <a href="os_dos.txt.html#dos-CTRL-Break" class="l">dos-CTRL-Break</a>
+Temp files                      <a href="os_dos.txt.html#dos-temp-files" class="l">dos-temp-files</a>
+Shell option default            <a href="os_dos.txt.html#dos-shell" class="l">dos-shell</a>
+
+<a href="#Win32" class="d">Win32</a> <a href="gui.txt.html#GUI" class="d">GUI</a>                       <a href="gui_w32.txt.html#gui-w32" class="l">gui-w32</a>
+
+Credits:
+The <a href="#Win32" class="d">Win32</a> version was written by George V. Reilly <span class="s">&lt;george@reilly.org&gt;</span>.
+The original Windows NT port was done by Roger Knobbe <span class="s">&lt;RogerK@wonderware.com&gt;</span>.
+The <a href="gui.txt.html#GUI" class="d">GUI</a> version was made by George V. Reilly and Robert Webb.
+
+For compiling see "src/INSTALLpc.txt"<a href="repeat.txt.html#." class="d">.</a>                  <a name="win32-compiling" class="t">win32-compiling</a>
+
+<span class="h">==============================================================================</span>
+1. Known problems                                       <a name="win32-problems" class="t">win32-problems</a>
+
+When doing file name completion, Vim also finds matches for the short file
+name.  But Vim will still find and use the corresponding long file name.  For
+example, if you have the long file name "this_is_a_test" with the short file
+name "this_i~1"<a href="motion.txt.html#%2C" class="d">,</a> the command "<a href="editing.txt.html#%3Ae" class="d">:e</a> *1" will start editing "this_is_a_test"<a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+2. Startup                                              <a name="win32-startup" class="t">win32-startup</a>
+
+Current directory                                       <a name="win32-curdir" class="t">win32-curdir</a>
+
+If Vim <a href="motion.txt.html#is" class="d">is</a> started with <a href="insert.txt.html#a" class="d">a</a> single file name argument, and <a href="motion.txt.html#it" class="d">it</a> has <a href="insert.txt.html#a" class="d">a</a> full path
+(starts with "x:\"), Vim assumes <a href="motion.txt.html#it" class="d">it</a> was started from the file explorer and
+will set the current directory to where that file is.  To avoid this when
+typing <a href="insert.txt.html#a" class="d">a</a> command to start Vim, use <a href="insert.txt.html#a" class="d">a</a> forward slash instead of <a href="insert.txt.html#a" class="d">a</a> backslash.
+Example: 
+<span class="e"></span>
+<span class="e">        vim c:\text\files\foo.txt</span>
+<span class="e"></span>
+Will change to the "C:\text\files" directory. 
+<span class="e"></span>
+<span class="e">        vim c:/text\files\foo.txt</span>
+<span class="e"></span>
+Will use the current directory.
+
+
+Term option                                             <a name="win32-term" class="t">win32-term</a>
+
+The only kind of <a href="terminal.txt.html#terminal" class="d">terminal</a> type that the <a href="#Win32" class="d">Win32</a> version of Vim understands <a href="motion.txt.html#is" class="d">is</a>
+"<a href="#win32" class="d">win32</a>"<a href="motion.txt.html#%2C" class="d">,</a> which <a href="motion.txt.html#is" class="d">is</a> built-in.  If you set <a href="options.txt.html#%27term%27" class="o">'term'</a> to anything else, you will
+probably get very strange behavior from Vim.  Therefore Vim does not obtain
+the default value of <a href="options.txt.html#%27term%27" class="o">'term'</a> from the environment variable "<a href="starting.txt.html#TERM" class="d">TERM</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+$PATH                                                   <a name="win32-PATH" class="t">win32-PATH</a>
+
+The directory of the Vim executable <a href="motion.txt.html#is" class="d">is</a> appended to $PATH.  This <a href="motion.txt.html#is" class="d">is</a> mostly to
+make "!xxd" work, <a href="motion.txt.html#as" class="d">as</a> <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> in the Tools menu.  And <a href="motion.txt.html#it" class="d">it</a> also means that when
+<a href="eval.txt.html#executable%28%29" class="d">executable()</a> returns 1 the executable can actually be executed.
+
+Command line arguments                                  <a name="win32-cmdargs" class="t">win32-cmdargs</a>
+
+Analysis of <a href="insert.txt.html#a" class="d">a</a> command line into parameters <a href="motion.txt.html#is" class="d">is</a> not standardised in MS Windows.
+Vim and <a href="starting.txt.html#gvim" class="d">gvim</a> used to use different logic to parse <a href="motion.txt.html#it" class="d">it</a> (before 7.4.432), and the
+logic was also depended on what <a href="motion.txt.html#it" class="d">it</a> was compiled with.  Now Vim and <a href="starting.txt.html#gvim" class="d">gvim</a> both
+use the CommandLineToArgvW() <a href="#Win32" class="d">Win32</a> API, so they behave in the same way.
+
+The basic rules are:                                    <a name="win32-backslashes" class="t">win32-backslashes</a>
+      <a href="motion.txt.html#a%29" class="d">a)</a> <a href="insert.txt.html#A" class="d">A</a> parameter <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> sequence of graphic characters.
+      b) Parameters are separated by white space.
+      c) <a href="insert.txt.html#A" class="d">A</a> parameter can be enclosed in double <a href="quotes.txt.html#quotes" class="d">quotes</a> to include white space.
+      d) <a href="insert.txt.html#A" class="d">A</a> sequence of zero or more backslashes (\) and <a href="insert.txt.html#a" class="d">a</a> double <a href="change.txt.html#quote" class="d">quote</a> <a href="motion.txt.html#%28" class="d">(</a>"<a href="motion.txt.html#%29" class="d">)</a>
+        <a href="motion.txt.html#is" class="d">is</a> special.  The effective number of backslashes <a href="motion.txt.html#is" class="d">is</a> halved, rounded
+        down.  An even number of backslashes reverses the acceptability of
+        spaces and tabs, an odd number of backslashes produces <a href="insert.txt.html#a" class="d">a</a> literal
+        double <a href="change.txt.html#quote." class="d">quote.</a>
+
+So:
+        "       <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> special double <a href="change.txt.html#quote" class="d">quote</a>
+        \"      <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> literal double <a href="change.txt.html#quote" class="d">quote</a>
+        \\"     <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> literal <a href="intro.txt.html#backslash" class="d">backslash</a> and <a href="insert.txt.html#a" class="d">a</a> special double <a href="change.txt.html#quote" class="d">quote</a>
+        \\\"    <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> literal <a href="intro.txt.html#backslash" class="d">backslash</a> and <a href="insert.txt.html#a" class="d">a</a> literal double <a href="change.txt.html#quote" class="d">quote</a>
+        \\\\"   <a href="motion.txt.html#is" class="d">is</a> 2 literal backslashes and <a href="insert.txt.html#a" class="d">a</a> special double <a href="change.txt.html#quote" class="d">quote</a>
+        \\\\\"  <a href="motion.txt.html#is" class="d">is</a> 2 literal backslashes and <a href="insert.txt.html#a" class="d">a</a> literal double <a href="change.txt.html#quote" class="d">quote</a>
+        etc.
+
+Example: 
+<span class="e">        vim "C:\My Music\freude" +"set ignorecase" +/"\"foo\\" +\"bar\\\"</span>
+<span class="e"></span>
+opens "C:\My Music\freude" and executes the line mode commands: 
+<span class="e">        set ignorecase; /"foo\ and /bar\"</span>
+<span class="e"></span>
+These rules are also described in the <a href="intro.txt.html#reference" class="d">reference</a> of the CommandLineToArgvW API:
+    <a class="u" href="https://msdn.microsoft.com/en-us/library/windows/desktop/bb776391.aspx">https://msdn.microsoft.com/en-us/library/windows/desktop/bb776391.aspx</a>
+
+                                                        <a name="win32-quotes" class="t">win32-quotes</a>
+There are additional rules for <a href="quotes.txt.html#quotes" class="d">quotes</a> (which are not well documented).
+As described above, <a href="quotes.txt.html#quotes" class="d">quotes</a> inside <a href="insert.txt.html#a" class="d">a</a> file name (or any other command line
+argument) can be escaped with <a href="insert.txt.html#a" class="d">a</a> backslash.  E.g. 
+<span class="e">        vim -c "echo 'foo\"bar'"</span>
+<span class="e"></span>
+Alternatively use three <a href="quotes.txt.html#quotes" class="d">quotes</a> to get one: 
+<span class="e">        vim -c "echo 'foo"""bar'"</span>
+<span class="e"></span>
+The quotation rules are:
+
+1. <a href="insert.txt.html#A" class="d">A</a> <span class="e">"</span> starts quotation.
+2. Another <span class="e">"</span> or <span class="e">""</span> ends quotation. If the quotation ends with <span class="e">""</span>, <a href="insert.txt.html#a" class="d">a</a> <span class="e">"</span>
+   <a href="motion.txt.html#is" class="d">is</a> produced <a href="motion.txt.html#at" class="d">at</a> the <a href="intro.txt.html#end" class="d">end</a> of the quoted string.
+
+Examples, with <a href="motion.txt.html#%5B%5D" class="d">[]</a> around an argument:
+        "foo"           -&gt; <span class="s">[foo]</span>
+        "foo""          -&gt; [foo"<a href="index.txt.html#%5D" class="d">]</a>
+        "foo"<a href="motion.txt.html#bar" class="d">bar</a>        -&gt; <span class="s">[foobar]</span>
+        "foo" <a href="motion.txt.html#bar" class="d">bar</a>       -&gt; <span class="s">[foo]</span>, <span class="s">[bar]</span>
+        "foo""<a href="motion.txt.html#bar" class="d">bar</a>       -&gt; [foo"bar]
+        "foo"" <a href="motion.txt.html#bar" class="d">bar</a>      -&gt; [foo"], <span class="s">[bar]</span>
+        "foo"""<a href="motion.txt.html#bar" class="d">bar</a>"     -&gt; [foo"bar]
+
+
+<span class="h">==============================================================================</span>
+3. Restore screen contents                              <a name="win32-restore" class="t">win32-restore</a>
+
+When <a href="options.txt.html#%27restorescreen%27" class="o">'restorescreen'</a> <a href="motion.txt.html#is" class="d">is</a> set (which <a href="motion.txt.html#is" class="d">is</a> the default), Vim will restore the
+original contents of the console when <a href="starting.txt.html#exiting" class="d">exiting</a> or when executing external
+commands.  If you don't want this, use "<a href="options.txt.html#%3Aset" class="d">:set</a> nors"<a href="repeat.txt.html#." class="d">.</a>     <a href="options.txt.html#%27restorescreen%27" class="l">'restorescreen'</a>
+
+<span class="h">==============================================================================</span>
+4. Using the mouse                                      <a name="win32-mouse" class="t">win32-mouse</a>
+
+The <a href="#Win32" class="d">Win32</a> version of Vim supports using the mouse.  If you have <a href="insert.txt.html#a" class="d">a</a> two-button
+mouse, the middle button can be emulated by pressing both left and right
+buttons simultaneously <a href="motion.txt.html#-" class="d">-</a> but <span class="n">note</span> that in the <a href="#Win32" class="d">Win32</a> GUI, if you have the right
+mouse button pop-up menu enabled (see <a href="options.txt.html#%27mouse%27" class="o">'mouse'</a>), you should err on the side of
+pressing the left button first.                         <a href="term.txt.html#mouse-using" class="l">mouse-using</a>
+
+When the mouse doesn't work, try disabling the "Quick Edit Mode" feature of
+the console.
+
+<span class="h">==============================================================================</span>
+5. Running under Windows 95                             <a name="win32-win95" class="t">win32-win95</a>
+                                        <a name="windows95" class="t">windows95</a> <a name="windows98" class="t">windows98</a> <a name="windowsme" class="t">windowsme</a>
+Windows 95/98/ME support was removed in patch 8.0.0029  If you want to use <a href="motion.txt.html#it" class="d">it</a>
+you will need to get <a href="insert.txt.html#a" class="d">a</a> version older than that.
+
+<span class="h">==============================================================================</span>
+6. Running under Windows 3.1                            <a name="win32-win3.1" class="t">win32-win3.1</a>
+
+                                        <a name="win32s" class="t">win32s</a> <a name="windows-3.1" class="t">windows-3.1</a> <a name="gui-w32s" class="t">gui-w32s</a>
+There was <a href="insert.txt.html#a" class="d">a</a> special version of <a href="starting.txt.html#gvim" class="d">gvim</a> that runs under Windows 3.1 and 3.11.
+Support was removed in patch 7.4.1363.
+
+<span class="h">==============================================================================</span>
+7. <a href="#Win32" class="d">Win32</a> mini <a href="intro.txt.html#FAQ" class="d">FAQ</a>                                       <a name="win32-faq" class="t">win32-faq</a>
+
+Q. How <a href="diff.txt.html#do" class="d">do</a> <a href="insert.txt.html#I" class="d">I</a> change the font?
+A. In the <a href="gui.txt.html#GUI" class="d">GUI</a> version, you can use the <a href="options.txt.html#%27guifont%27" class="o">'guifont'</a> option.  Example: 
+<span class="e">        :set guifont=Lucida_Console:h15:cDEFAULT</span>
+  In the console version, you need to set the font of the console itself.
+   You cannot <a href="diff.txt.html#do" class="d">do</a> this from within Vim.
+
+Q. How <a href="diff.txt.html#do" class="d">do</a> <a href="insert.txt.html#I" class="d">I</a> type dead keys on Windows NT?
+A. Dead keys work on NT 3.51.  Just type them <a href="motion.txt.html#as" class="d">as</a> you would in any other
+   application.
+   On NT 4.0, you need to make sure that the default <a href="mbyte.txt.html#locale" class="d">locale</a> (set in the
+   Keyboard part of the Control Panel) <a href="motion.txt.html#is" class="d">is</a> the same <a href="motion.txt.html#as" class="d">as</a> the currently active
+   locale.  Otherwise the NT code will get confused and crash!  This <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> NT
+   4.0 problem, not really <a href="insert.txt.html#a" class="d">a</a> Vim problem.
+
+Q. I'm using Vim to edit <a href="insert.txt.html#a" class="d">a</a> symbolically linked file on <a href="insert.txt.html#a" class="d">a</a> <a href="os_unix.txt.html#Unix" class="d">Unix</a> NFS file server.
+   When <a href="insert.txt.html#I" class="d">I</a> write the file, Vim does not "write through" the symlink.  Instead,
+   <a href="motion.txt.html#it" class="d">it</a> deletes the symbolic link and creates <a href="insert.txt.html#a" class="d">a</a> new file in its place.  Why?
+A. On Unix, Vim <a href="motion.txt.html#is" class="d">is</a> prepared for links (symbolic or hard).  <a href="insert.txt.html#A" class="d">A</a> <a href="editing.txt.html#backup" class="d">backup</a> copy of
+   the original file <a href="motion.txt.html#is" class="d">is</a> made and then the original file <a href="motion.txt.html#is" class="d">is</a> overwritten.  This
+   assures that all properties of the file remain the same.  On non-Unix
+   systems, the original file <a href="motion.txt.html#is" class="d">is</a> renamed and <a href="insert.txt.html#a" class="d">a</a> new file <a href="motion.txt.html#is" class="d">is</a> written.  Only the
+   protection bits are set like the original file.  However, this doesn't work
+   properly when working on an NFS-mounted file system where links and other
+   things exist.  The only way to fix this in the current version <a href="motion.txt.html#is" class="d">is</a> not
+   making <a href="insert.txt.html#a" class="d">a</a> <a href="editing.txt.html#backup" class="d">backup</a> file, by "<a href="options.txt.html#%3Aset" class="d">:set</a> nobackup nowritebackup"     <a href="options.txt.html#%27writebackup%27" class="l">'writebackup'</a>
+
+Q. I'm using Vim to edit <a href="insert.txt.html#a" class="d">a</a> file on <a href="insert.txt.html#a" class="d">a</a> <a href="os_unix.txt.html#Unix" class="d">Unix</a> file server through Samba.  When <a href="insert.txt.html#I" class="d">I</a>
+   write the file, the owner of the file <a href="motion.txt.html#is" class="d">is</a> changed.  Why?
+A. When <a href="editing.txt.html#writing" class="d">writing</a> <a href="insert.txt.html#a" class="d">a</a> file Vim renames the original file, this <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> <a href="editing.txt.html#backup" class="d">backup</a> (in
+   <a href="change.txt.html#case" class="d">case</a> <a href="editing.txt.html#writing" class="d">writing</a> the file fails halfway).  Then the file <a href="motion.txt.html#is" class="d">is</a> written <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> new
+   file.  Samba then gives <a href="motion.txt.html#it" class="d">it</a> the default owner for the file system, which may
+   differ from the original owner.
+   To avoid this set the <a href="options.txt.html#%27backupcopy%27" class="o">'backupcopy'</a> option to "yes"<a href="repeat.txt.html#." class="d">.</a>  Vim will then make <a href="insert.txt.html#a" class="d">a</a>
+   copy of the file for the backup, and overwrite the original file.  The
+   owner isn't changed then.
+
+Q. How <a href="diff.txt.html#do" class="d">do</a> <a href="insert.txt.html#I" class="d">I</a> get to see the output of "<a href="quickfix.txt.html#%3Amake" class="d">:make</a>" while it's running?
+A. Basically what you need <a href="motion.txt.html#is" class="d">is</a> to <a href="change.txt.html#put" class="d">put</a> <a href="insert.txt.html#a" class="d">a</a> tee program that will copy its input
+   (the output from make) to both stdout and to the errorfile.  You can find <a href="insert.txt.html#a" class="d">a</a>
+   copy of tee (and <a href="insert.txt.html#a" class="d">a</a> number of other GNU tools) <a href="motion.txt.html#at" class="d">at</a>
+   <a class="u" href="http://gnuwin32.sourceforge.net">http://gnuwin32.sourceforge.net</a> or <a class="u" href="http://unxutils.sourceforge.net">http://unxutils.sourceforge.net</a>
+   Alternatively, try the more recent Cygnus version of the GNU tools <a href="motion.txt.html#at" class="d">at</a>
+   <a class="u" href="http://www.cygwin.com">http://www.cygwin.com</a>  Other Unix-style tools for <a href="#Win32" class="d">Win32</a> are listed <a href="motion.txt.html#at" class="d">at</a>
+   <a class="u" href="http://directory.google.com/Top/Computers/Software/Operating_Systems/Unix/Win32/">http://directory.google.com/Top/Computers/Software/Operating_Systems/Unix/Win32/</a>
+   When you <a href="diff.txt.html#do" class="d">do</a> get <a href="insert.txt.html#a" class="d">a</a> copy of tee, you'll need to add 
+<span class="e">        :set shellpipe=\|\ tee</span>
+  to your _vimrc.
+
+Q. I'm storing files on <a href="insert.txt.html#a" class="d">a</a> remote machine that works with VisionFS, and files
+   disappear!
+A. VisionFS can't handle certain dot (.) three <a href="print.txt.html#letter" class="d">letter</a> extension file names.
+   SCO declares this behavior required for backwards compatibility with 16bit
+   DOS/Windows environments.  The two commands below demonstrate the behavior:
+
+<span class="e">        echo Hello &gt; file.bat~ </span>
+<span class="e">        dir &gt; file.bat</span>
+
+   The result <a href="motion.txt.html#is" class="d">is</a> that the "dir" command updates the "file.bat~" file, instead
+   of creating <a href="insert.txt.html#a" class="d">a</a> new "file.bat" file.  This same behavior <a href="motion.txt.html#is" class="d">is</a> exhibited in Vim
+   when editing an existing file named "foo.bat" because the default behavior
+   of Vim <a href="motion.txt.html#is" class="d">is</a> to create <a href="insert.txt.html#a" class="d">a</a> temporary file with <a href="insert.txt.html#a" class="d">a</a> '~' character appended to the
+   name.  When the file <a href="motion.txt.html#is" class="d">is</a> written, <a href="motion.txt.html#it" class="d">it</a> winds up being deleted.
+
+   Solution: Add this command to your <a href="starting.txt.html#_vimrc" class="d">_vimrc</a> file: 
+<span class="e">        :set backupext=.temporary</span>
+<span class="e"></span>
+Q. How <a href="diff.txt.html#do" class="d">do</a> <a href="insert.txt.html#I" class="d">I</a> change the blink rate of the cursor?
+A. You can't!  This <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> limitation of the NT console.  NT 5.0 <a href="motion.txt.html#is" class="d">is</a> reported to
+   be able to set the blink rate for all console <a href="windows.txt.html#windows" class="d">windows</a> <a href="motion.txt.html#at" class="d">at</a> the same time.
+
+                                                        <a name="%3A%21start" class="t">:!start</a>
+Q. How can <a href="insert.txt.html#I" class="d">I</a> asynchronously run an external command or program, or open <a href="insert.txt.html#a" class="d">a</a>
+   document or URL with its default program?
+A. When using <a href="various.txt.html#%3A%21" class="d">:!</a> to run an external command, you can run <a href="motion.txt.html#it" class="d">it</a> with "start"<a href="repeat.txt.html#." class="d">.</a> For
+   example, to run notepad: 
+<span class="e">        :!start notepad</span>
+   To open "image.jpg" with the default image viewer: 
+<span class="e">        :!start image.jpg</span>
+   To open the folder of the current file in Windows Explorer: 
+<span class="e">        :!start %:h</span>
+   To open the Vim <a href="intro.txt.html#home" class="d">home</a> page with the default browser: 
+<span class="e">        :!start http://www.vim.org/</span>
+
+   Using "start" stops Vim switching to another screen, opening <a href="insert.txt.html#a" class="d">a</a> new console,
+   or waiting for the program to complete; <a href="motion.txt.html#it" class="d">it</a> indicates that you are running <a href="insert.txt.html#a" class="d">a</a>
+   program that does not affect the files you are editing.  Programs begun
+   with <a href="#%3A%21start" class="d">:!start</a> <a href="diff.txt.html#do" class="d">do</a> not get passed Vim's open file handles, which means they <a href="diff.txt.html#do" class="d">do</a>
+   not have to be closed before Vim.
+   To avoid this special treatment, use "<a href="various.txt.html#%3A%21" class="d">:!</a> start"<a href="repeat.txt.html#." class="d">.</a>
+   There are two optional arguments (see the next Q):
+       /min  the <a href="windows.txt.html#window" class="d">window</a> will be minimized
+       /b    no console <a href="windows.txt.html#window" class="d">window</a> will be opened
+   You can use only one of these flags <a href="motion.txt.html#at" class="d">at</a> <a href="insert.txt.html#a" class="d">a</a> time.  <a href="insert.txt.html#A" class="d">A</a> second one will be
+   treated <a href="motion.txt.html#as" class="d">as</a> the start of the command.
+
+Q. How <a href="diff.txt.html#do" class="d">do</a> <a href="insert.txt.html#I" class="d">I</a> avoid getting <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a> for programs that <a href="insert.txt.html#I" class="d">I</a> run asynchronously?
+A. You have two possible solutions depending on what you want:
+   1) You may use the /min flag in order to run program in <a href="insert.txt.html#a" class="d">a</a> minimized state
+      with no other changes. It will work equally for console and <a href="gui.txt.html#GUI" class="d">GUI</a>
+      applications.
+   2) You can use the /b flag to run console applications without creating <a href="insert.txt.html#a" class="d">a</a>
+      console <a href="windows.txt.html#window" class="d">window</a> for them (GUI applications are not affected). But you
+      should use this flag only if the application you run doesn't require any
+      input.  Otherwise <a href="motion.txt.html#it" class="d">it</a> will get an EOF error because its input stream
+      (stdin) would be redirected to \\.\NUL (stdout and stderr too).
+
+   Example for <a href="insert.txt.html#a" class="d">a</a> console application, run Exuberant ctags: 
+<span class="e">        :!start /min ctags -R .</span>
+  When <a href="motion.txt.html#it" class="d">it</a> has finished you should see file named "<a href="tagsrch.txt.html#tags" class="d">tags</a>" in your current
+   directory.  You should notice the <a href="windows.txt.html#window" class="d">window</a> title blinking on your taskbar.
+   This <a href="motion.txt.html#is" class="d">is</a> more noticeable for commands that take longer.
+   Now delete the "<a href="tagsrch.txt.html#tags" class="d">tags</a>" file and run this command: 
+<span class="e">        :!start /b ctags -R .</span>
+  You should have the same "<a href="tagsrch.txt.html#tags" class="d">tags</a>" file, but this time there will be no
+   blinking on the taskbar.
+   Example for <a href="insert.txt.html#a" class="d">a</a> <a href="gui.txt.html#GUI" class="d">GUI</a> application: 
+<span class="e">        :!start /min notepad</span>
+<span class="e">        :!start /b notepad</span>
+  The first command runs <a href="gui_w32.txt.html#notepad" class="d">notepad</a> minimized and the second one runs <a href="motion.txt.html#it" class="d">it</a>
+   normally.
+
+                                                <a name="windows-icon" class="t">windows-icon</a>
+Q. <a href="insert.txt.html#I" class="d">I</a> don't like the Vim icon, can <a href="insert.txt.html#I" class="d">I</a> change it?
+A. Yes, place your favorite icon in bitmaps/vim.ico in <a href="insert.txt.html#a" class="d">a</a> directory of
+   <a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a>.  For example ~/vimfiles/bitmaps/vim.ico.
+
+
+ vim:tw=78:fo=tcq2:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,625 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: usr_29.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="usr_29.txt" class="t">usr_29.txt</a>    For <span class="i">Vim version 8.0.</span>  Last change: 2016 Feb 27
+
+                     VIM USER MANUAL <a href="motion.txt.html#-" class="d">-</a> by <a href="intro.txt.html#Bram" class="d">Bram</a> <a href="intro.txt.html#Moolenaar" class="d">Moolenaar</a>
+
+                            Moving through programs
+
+
+The creator of Vim <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> computer programmer.  It's no surprise that Vim
+contains many features to aid in <a href="editing.txt.html#writing" class="d">writing</a> programs.  Jump around to find where
+identifiers are defined and used.  Preview declarations in <a href="insert.txt.html#a" class="d">a</a> separate window.
+There <a href="motion.txt.html#is" class="d">is</a> more in the next chapter.
+
+<a href="#29.1" class="l">29.1</a>  Using <a href="tagsrch.txt.html#tags" class="d">tags</a>
+<a href="#29.2" class="l">29.2</a>  The preview <a href="windows.txt.html#window" class="d">window</a>
+<a href="#29.3" class="l">29.3</a>  Moving through <a href="insert.txt.html#a" class="d">a</a> program
+<a href="#29.4" class="l">29.4</a>  Finding global identifiers
+<a href="#29.5" class="l">29.5</a>  Finding local identifiers
+
+     Next chapter: <a href="usr_30.txt.html#usr_30.txt" class="l">usr_30.txt</a>  Editing programs
+ Previous chapter: <a href="usr_28.txt.html#usr_28.txt" class="l">usr_28.txt</a>  <a href="fold.txt.html#Folding" class="d">Folding</a>
+Table of contents: <a href="usr_toc.txt.html#usr_toc.txt" class="l">usr_toc.txt</a>
+
+<span class="h">==============================================================================</span>
+<a name="29.1" class="t">29.1</a>  Using <a href="tagsrch.txt.html#tags" class="d">tags</a>
+
+What <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> tag?  It <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> location where an identifier <a href="motion.txt.html#is" class="d">is</a> defined.  An example
+<a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> function definition in <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#C" class="d">C</a> or C++ program.  <a href="insert.txt.html#A" class="d">A</a> <a href="eval.txt.html#list" class="d">list</a> of <a href="tagsrch.txt.html#tags" class="d">tags</a> <a href="motion.txt.html#is" class="d">is</a> kept in <a href="insert.txt.html#a" class="d">a</a>
+<a href="tagsrch.txt.html#tags" class="d">tags</a> file.  This can be used by Vim to directly jump from any place to the
+tag, the place where an identifier <a href="motion.txt.html#is" class="d">is</a> defined.
+   To generate the <a href="tagsrch.txt.html#tags" class="d">tags</a> file for all <a href="change.txt.html#C" class="d">C</a> files in the current directory, use the
+following command: 
+<span class="e"></span>
+<span class="e">        ctags *.c</span>
+<span class="e"></span>
+"<a href="tagsrch.txt.html#ctags" class="d">ctags</a>" <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> separate program.  Most <a href="os_unix.txt.html#Unix" class="d">Unix</a> systems already have <a href="motion.txt.html#it" class="d">it</a> installed.
+If you <a href="diff.txt.html#do" class="d">do</a> not have <a href="motion.txt.html#it" class="d">it</a> yet, you can find Exuberant <a href="tagsrch.txt.html#ctags" class="d">ctags</a> here:
+
+<span class="h">        http://ctags.sf.net </span>
+
+Now when you are in Vim and you want to <a href="motion.txt.html#go" class="d">go</a> to <a href="insert.txt.html#a" class="d">a</a> function definition, you can
+jump to <a href="motion.txt.html#it" class="d">it</a> by using the following command: 
+<span class="e"></span>
+<span class="e">        :tag startlist</span>
+<span class="e"></span>
+This command will find the function "startlist" even if <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> in another file.
+   The <a href="tagsrch.txt.html#CTRL-%5D" class="k">CTRL-]</a> command jumps to the <a href="tagsrch.txt.html#tag" class="d">tag</a> of the <a href="motion.txt.html#word" class="d">word</a> that <a href="motion.txt.html#is" class="d">is</a> under the cursor.
+This makes <a href="motion.txt.html#it" class="d">it</a> <a href="starting.txt.html#easy" class="d">easy</a> to explore <a href="insert.txt.html#a" class="d">a</a> tangle of <a href="change.txt.html#C" class="d">C</a> code.  Suppose, for example, that
+you are in the function "write_block"<a href="repeat.txt.html#." class="d">.</a>  You can see that <a href="motion.txt.html#it" class="d">it</a> calls
+"write_line"<a href="repeat.txt.html#." class="d">.</a>  But what does "write_line" do?  By placing the cursor on the
+call to "write_line" and pressing <a href="tagsrch.txt.html#CTRL-%5D" class="k">CTRL-]</a>, you jump to the definition of this
+function.
+   The "write_line" function calls "write_char"<a href="repeat.txt.html#." class="d">.</a>  You need to figure out what
+<a href="motion.txt.html#it" class="d">it</a> does.  So you position the cursor over the call to "write_char" and press
+<a href="tagsrch.txt.html#CTRL-%5D" class="k">CTRL-]</a>.  Now you are <a href="motion.txt.html#at" class="d">at</a> the definition of "write_char"<a href="repeat.txt.html#." class="d">.</a>
+
+        +-------------------------------------+
+        |void write_block(char **s; int cnt)  |
+        |<a href="motion.txt.html#%7B" class="d">{</a>                                    |
+        |   int i;                            |
+        |   for (i <a href="change.txt.html#%3D" class="d">=</a> 0; <a href="insert.txt.html#i" class="d">i</a> <a href="change.txt.html#%3C" class="d">&lt;</a> cnt; ++i)         |
+        |      write_line(s[i]);              |
+        |<a href="motion.txt.html#%7D" class="d">}</a>          |                         |
+        +-----------|-------------------------+
+                    |
+             <a href="tagsrch.txt.html#CTRL-%5D" class="k">CTRL-]</a> |
+                    |    +----------------------------+
+                    +--&gt; |void write_line(char *s)    |
+                         |<a href="motion.txt.html#%7B" class="d">{</a>                           |
+                         |   while <a href="motion.txt.html#%28" class="d">(</a>*<a href="change.txt.html#s" class="d">s</a> != 0)          |
+                         |      write_char(*s++);     |
+                         |<a href="motion.txt.html#%7D" class="d">}</a>       |                   |
+                         +--------|-------------------+
+                                  |
+                           <a href="tagsrch.txt.html#CTRL-%5D" class="k">CTRL-]</a> |
+                                  |    +------------------------------------+
+                                  +--&gt; |void write_char(char c)             |
+                                       |<a href="motion.txt.html#%7B" class="d">{</a>                                   |
+                                       |    putchar((int)(unsigned char)c); |
+                                       |<a href="motion.txt.html#%7D" class="d">}</a>                                   |
+                                       +------------------------------------+
+
+The "<a href="tagsrch.txt.html#%3Atags" class="d">:tags</a>" command shows the <a href="eval.txt.html#list" class="d">list</a> of <a href="tagsrch.txt.html#tags" class="d">tags</a> that you traversed through:
+
+        <a href="tagsrch.txt.html#%3Atags" class="d">:tags</a>
+<span class="h">          # TO tag         FROM line  in file/text </span>
+<span class="h">          1  1 write_line          8  write_block.c </span>
+<span class="h">          2  1 write_char          7  write_line.c </span>
+<span class="h">        &gt; </span>
+
+Now to <a href="motion.txt.html#go" class="d">go</a> back.  The <a href="tagsrch.txt.html#CTRL-T" class="k">CTRL-T</a> command goes to the preceding tag.  In the example
+above you get back to the "write_line" function, in the call to "write_char"<a href="repeat.txt.html#." class="d">.</a>
+   This command takes <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> argument that indicates how many <a href="tagsrch.txt.html#tags" class="d">tags</a> to jump
+back.  You have gone forward, and now back.  Let's <a href="motion.txt.html#go" class="d">go</a> forward again.  The
+following command goes to the <a href="tagsrch.txt.html#tag" class="d">tag</a> on top of the list: 
+<span class="e"></span>
+<span class="e">        :tag</span>
+<span class="e"></span>
+You can prefix <a href="motion.txt.html#it" class="d">it</a> with <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> and jump forward that many tags.  For example:
+":3tag"<a href="repeat.txt.html#." class="d">.</a>  <a href="tagsrch.txt.html#CTRL-T" class="k">CTRL-T</a> also can be preceded with <a href="insert.txt.html#a" class="d">a</a> count.
+   These commands thus allow you to <a href="motion.txt.html#go" class="d">go</a> down <a href="insert.txt.html#a" class="d">a</a> call tree with <a href="tagsrch.txt.html#CTRL-%5D" class="k">CTRL-]</a> and back
+up again with <a href="tagsrch.txt.html#CTRL-T" class="k">CTRL-T</a>.  Use "<a href="tagsrch.txt.html#%3Atags" class="d">:tags</a>" to find out where you are.
+
+
+SPLIT WINDOWS
+
+The "<a href="tagsrch.txt.html#%3Atag" class="d">:tag</a>" command replaces the file in the current <a href="windows.txt.html#window" class="d">window</a> with the one
+containing the new function.  But suppose you want to see not only the old
+function but also the new one?  You can split the <a href="windows.txt.html#window" class="d">window</a> using the "<a href="windows.txt.html#%3Asplit" class="d">:split</a>"
+command followed by the "<a href="tagsrch.txt.html#%3Atag" class="d">:tag</a>" command.  Vim has <a href="insert.txt.html#a" class="d">a</a> shorthand command that does
+both: 
+<span class="e">        :stag tagname</span>
+<span class="e"></span>
+To split the current <a href="windows.txt.html#window" class="d">window</a> and jump to the <a href="tagsrch.txt.html#tag" class="d">tag</a> under the cursor use this
+command: 
+<span class="e"></span>
+<span class="e">        CTRL-W ]</span>
+<span class="e"></span>
+If <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> <a href="motion.txt.html#is" class="d">is</a> specified, the new <a href="windows.txt.html#window" class="d">window</a> will be that many lines high.
+
+
+MORE TAGS FILES
+
+When you have files in many directories, you can create <a href="insert.txt.html#a" class="d">a</a> <a href="tagsrch.txt.html#tags" class="d">tags</a> file in each of
+them.  Vim will then only be able to jump to <a href="tagsrch.txt.html#tags" class="d">tags</a> within that directory.
+   To find more <a href="tagsrch.txt.html#tags" class="d">tags</a> files, set the <a href="options.txt.html#%27tags%27" class="o">'tags'</a> option to include all the relevant
+<a href="tagsrch.txt.html#tags" class="d">tags</a> files.  Example: 
+<span class="e"></span>
+<span class="e">        :set tags=./tags,./../tags,./*/tags</span>
+<span class="e"></span>
+This finds <a href="insert.txt.html#a" class="d">a</a> <a href="tagsrch.txt.html#tags" class="d">tags</a> file in the same directory <a href="motion.txt.html#as" class="d">as</a> the current file, one
+directory level higher and in all subdirectories.
+   This <a href="motion.txt.html#is" class="d">is</a> quite <a href="insert.txt.html#a" class="d">a</a> number of <a href="tagsrch.txt.html#tags" class="d">tags</a> files, but <a href="motion.txt.html#it" class="d">it</a> may still not be enough.  For
+example, when editing <a href="insert.txt.html#a" class="d">a</a> file in "~/proj/src"<a href="motion.txt.html#%2C" class="d">,</a> you will not find the <a href="tagsrch.txt.html#tags" class="d">tags</a> file
+"~/proj/sub/tags"<a href="repeat.txt.html#." class="d">.</a>  For this situation Vim offers to search <a href="insert.txt.html#a" class="d">a</a> whole directory
+tree for <a href="tagsrch.txt.html#tags" class="d">tags</a> files.  Example: 
+<span class="e"></span>
+<span class="e">        :set tags=~/proj/**/tags</span>
+<span class="e"></span>
+<span class="e"></span>
+ONE TAGS FILE
+
+When Vim has to search many places for <a href="tagsrch.txt.html#tags" class="d">tags</a> files, you can hear the disk
+rattling.  It may get <a href="insert.txt.html#a" class="d">a</a> bit slow.  In that <a href="change.txt.html#case" class="d">case</a> it's better to spend this
+time while generating one big <a href="tagsrch.txt.html#tags" class="d">tags</a> file.  You might <a href="diff.txt.html#do" class="d">do</a> this overnight.
+   This requires the Exuberant <a href="tagsrch.txt.html#ctags" class="d">ctags</a> program, mentioned above.  It offers an
+argument to search <a href="insert.txt.html#a" class="d">a</a> whole directory tree: 
+<span class="e"></span>
+<span class="e">        cd ~/proj</span>
+<span class="e">        ctags -R .</span>
+<span class="e"></span>
+The <a href="todo.txt.html#nice" class="d">nice</a> thing about this <a href="motion.txt.html#is" class="d">is</a> that Exuberant <a href="tagsrch.txt.html#ctags" class="d">ctags</a> recognizes <a href="various.txt.html#various" class="d">various</a> file
+types.  Thus this doesn't work just for <a href="change.txt.html#C" class="d">C</a> and C++ programs, also for Eiffel
+and even Vim scripts.  See the <a href="tagsrch.txt.html#ctags" class="d">ctags</a> documentation to tune this.
+   Now you only need to tell Vim where your big <a href="tagsrch.txt.html#tags" class="d">tags</a> file is: 
+<span class="e"></span>
+<span class="e">        :set tags=~/proj/tags</span>
+<span class="e"></span>
+<span class="e"></span>
+MULTIPLE MATCHES
+
+When <a href="insert.txt.html#a" class="d">a</a> function <a href="motion.txt.html#is" class="d">is</a> defined multiple times (or <a href="insert.txt.html#a" class="d">a</a> method in several classes),
+the "<a href="tagsrch.txt.html#%3Atag" class="d">:tag</a>" command will jump to the first one.  If there <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> match in the
+current file, that one <a href="motion.txt.html#is" class="d">is</a> used first.
+   You can now jump to other matches for the same <a href="tagsrch.txt.html#tag" class="d">tag</a> with: 
+<span class="e"></span>
+<span class="e">        :tnext</span>
+<span class="e"></span>
+Repeat this to find further matches.  If there are many, you can select which
+one to jump to: 
+<span class="e"></span>
+<span class="e">        :tselect tagname</span>
+<span class="e"></span>
+Vim will present you with <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of choices:
+
+<span class="h">          # pri kind tag               file </span>
+<span class="h">          1 F   f    mch_init          os_amiga.c </span>
+<span class="h">                       mch_init() </span>
+<span class="h">          2 F   f    mch_init          os_mac.c </span>
+<span class="h">                       mch_init() </span>
+<span class="h">          3 F   f    mch_init          os_msdos.c </span>
+<span class="h">                       mch_init(void) </span>
+<span class="h">          4 F   f    mch_init          os_riscos.c </span>
+<span class="h">                       mch_init() </span>
+<span class="h">        Enter nr of choice (&lt;CR&gt; to abort):  </span>
+
+You can now enter the number (in the first column) of the match that you would
+like to jump to.  The information in the other columns give you <a href="insert.txt.html#a" class="d">a</a> good idea of
+where the match <a href="motion.txt.html#is" class="d">is</a> defined.
+
+To move between the matching tags, these commands can be used:
+
+        <a href="tagsrch.txt.html#%3Atfirst" class="d">:tfirst</a>                 <a href="motion.txt.html#go" class="d">go</a> to first match
+        :[count]tprevious       <a href="motion.txt.html#go" class="d">go</a> to <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> previous match
+        :[count]tnext           <a href="motion.txt.html#go" class="d">go</a> to <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> next match
+        <a href="tagsrch.txt.html#%3Atlast" class="d">:tlast</a>                  <a href="motion.txt.html#go" class="d">go</a> to last match
+
+If <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> <a href="motion.txt.html#is" class="d">is</a> omitted then one <a href="motion.txt.html#is" class="d">is</a> used.
+
+
+GUESSING TAG NAMES
+
+Command line completion <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> good way to avoid typing <a href="insert.txt.html#a" class="d">a</a> long <a href="tagsrch.txt.html#tag" class="d">tag</a> name.  Just
+type the first bit and press <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a>: 
+<span class="e"></span>
+<span class="e">        :tag write_&lt;Tab&gt;</span>
+<span class="e"></span>
+You will get the first match.  If it's not the one you want, press <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a> until
+you find the right one.
+   Sometimes you only know part of the name of <a href="insert.txt.html#a" class="d">a</a> function.  Or you have many
+<a href="tagsrch.txt.html#tags" class="d">tags</a> that start with the same string, but <a href="intro.txt.html#end" class="d">end</a> differently.  Then you can tell
+Vim to use <a href="insert.txt.html#a" class="d">a</a> <a href="pattern.txt.html#pattern" class="d">pattern</a> to find the tag.
+   Suppose you want to jump to <a href="insert.txt.html#a" class="d">a</a> <a href="tagsrch.txt.html#tag" class="d">tag</a> that contains "block"<a href="repeat.txt.html#." class="d">.</a>  First type
+this: 
+<span class="e"></span>
+<span class="e">        :tag /block</span>
+<span class="e"></span>
+Now use command line completion: press <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a>.  Vim will find all <a href="tagsrch.txt.html#tags" class="d">tags</a> that
+contain "block" and use the first match.
+   The "<a href="pattern.txt.html#%2F" class="d">/</a>" before <a href="insert.txt.html#a" class="d">a</a> <a href="tagsrch.txt.html#tag" class="d">tag</a> name tells Vim that what follows <a href="motion.txt.html#is" class="d">is</a> not <a href="insert.txt.html#a" class="d">a</a> literal <a href="tagsrch.txt.html#tag" class="d">tag</a>
+name, but <a href="insert.txt.html#a" class="d">a</a> pattern.  You can use all the items for search patterns here.  For
+example, suppose you want to select <a href="insert.txt.html#a" class="d">a</a> <a href="tagsrch.txt.html#tag" class="d">tag</a> that starts with "write_"<a href="cmdline.txt.html#%3A" class="d">:</a> 
+<span class="e"></span>
+<span class="e">        :tselect /^write_</span>
+<span class="e"></span>
+The "<a href="motion.txt.html#%5E" class="d">^</a>" specifies that the <a href="tagsrch.txt.html#tag" class="d">tag</a> starts with "write_"<a href="repeat.txt.html#." class="d">.</a>  Otherwise <a href="motion.txt.html#it" class="d">it</a> would also
+be found halfway <a href="insert.txt.html#a" class="d">a</a> <a href="tagsrch.txt.html#tag" class="d">tag</a> name.  Similarly "<a href="motion.txt.html#%24" class="d">$</a>" <a href="motion.txt.html#at" class="d">at</a> the <a href="intro.txt.html#end" class="d">end</a> makes sure the <a href="pattern.txt.html#pattern" class="d">pattern</a>
+matches until the <a href="intro.txt.html#end" class="d">end</a> of <a href="insert.txt.html#a" class="d">a</a> tag.
+
+
+<a href="insert.txt.html#A" class="d">A</a> TAGS BROWSER
+
+Since <a href="tagsrch.txt.html#CTRL-%5D" class="k">CTRL-]</a> takes you to the definition of the identifier under the cursor,
+you can use <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of identifier names <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> table of contents.  Here <a href="motion.txt.html#is" class="d">is</a> an
+example.
+   First create <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of identifiers (this requires Exuberant ctags): 
+<span class="e"></span>
+<span class="e">        ctags --c-types=f -f functions *.c</span>
+<span class="e"></span>
+Now start Vim without <a href="insert.txt.html#a" class="d">a</a> file, and edit this file in Vim, in <a href="insert.txt.html#a" class="d">a</a> vertically split
+window: 
+<span class="e"></span>
+<span class="e">        vim</span>
+<span class="e">        :vsplit functions</span>
+<span class="e"></span>
+The <a href="windows.txt.html#window" class="d">window</a> contains <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of all the functions.  There <a href="motion.txt.html#is" class="d">is</a> some more stuff,
+but you can ignore that.  Do "<a href="options.txt.html#%3Asetlocal" class="d">:setlocal</a> ts=99" to clean <a href="motion.txt.html#it" class="d">it</a> up <a href="insert.txt.html#a" class="d">a</a> bit.
+   In this window, define <a href="insert.txt.html#a" class="d">a</a> mapping: 
+<span class="e"></span>
+<span class="e">        :nnoremap &lt;buffer&gt; &lt;CR&gt; 0ye&lt;C-W&gt;w:tag &lt;C-R&gt;"&lt;CR&gt;</span>
+<span class="e"></span>
+Move the cursor to the line that contains the function you want to <a href="motion.txt.html#go" class="d">go</a> to.
+Now press <a href="intro.txt.html#%3CEnter%3E" class="s">&lt;Enter&gt;</a>.  Vim will <a href="motion.txt.html#go" class="d">go</a> to the other <a href="windows.txt.html#window" class="d">window</a> and jump to the selected
+function.
+
+
+RELATED ITEMS
+
+To make <a href="change.txt.html#case" class="d">case</a> in <a href="tagsrch.txt.html#tag" class="d">tag</a> names be ignored, you can set <a href="options.txt.html#%27ignorecase%27" class="o">'ignorecase'</a> while leaving
+<a href="options.txt.html#%27tagcase%27" class="o">'tagcase'</a> <a href="motion.txt.html#as" class="d">as</a> "followic"<a href="motion.txt.html#%2C" class="d">,</a> or set <a href="options.txt.html#%27tagcase%27" class="o">'tagcase'</a> to "ignore"<a href="repeat.txt.html#." class="d">.</a>
+
+The <a href="options.txt.html#%27tagbsearch%27" class="o">'tagbsearch'</a> option tells if the <a href="tagsrch.txt.html#tags" class="d">tags</a> file <a href="motion.txt.html#is" class="d">is</a> sorted or not.  The default
+<a href="motion.txt.html#is" class="d">is</a> to assume <a href="insert.txt.html#a" class="d">a</a> sorted <a href="tagsrch.txt.html#tags" class="d">tags</a> file, which makes <a href="insert.txt.html#a" class="d">a</a> <a href="tagsrch.txt.html#tags" class="d">tags</a> search <a href="insert.txt.html#a" class="d">a</a> lot faster, but
+doesn't work if the <a href="tagsrch.txt.html#tags" class="d">tags</a> file isn't sorted.
+
+The <a href="options.txt.html#%27taglength%27" class="o">'taglength'</a> option can be used to tell Vim the number of significant
+characters in <a href="insert.txt.html#a" class="d">a</a> tag.
+
+<a href="if_cscop.txt.html#Cscope" class="d">Cscope</a> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> free program.  It does not only find places where an identifier <a href="motion.txt.html#is" class="d">is</a>
+declared, but also where <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> used.  See <a href="if_cscop.txt.html#cscope" class="l">cscope</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+<a name="29.2" class="t">29.2</a>  The preview <a href="windows.txt.html#window" class="d">window</a>
+
+When you edit code that contains <a href="insert.txt.html#a" class="d">a</a> function call, you need to use the correct
+arguments.  To know what values to pass you can look <a href="motion.txt.html#at" class="d">at</a> how the function <a href="motion.txt.html#is" class="d">is</a>
+defined.  The <a href="tagsrch.txt.html#tags" class="d">tags</a> mechanism works very well for this.  Preferably the
+definition <a href="motion.txt.html#is" class="d">is</a> displayed in another window.  For this the preview <a href="windows.txt.html#window" class="d">window</a> can be
+used.
+   To open <a href="insert.txt.html#a" class="d">a</a> preview <a href="windows.txt.html#window" class="d">window</a> to display the function "write_char"<a href="cmdline.txt.html#%3A" class="d">:</a> 
+<span class="e"></span>
+<span class="e">        :ptag write_char</span>
+<span class="e"></span>
+Vim will open <a href="insert.txt.html#a" class="d">a</a> window, and jumps to the <a href="tagsrch.txt.html#tag" class="d">tag</a> "write_char"<a href="repeat.txt.html#." class="d">.</a>  Then <a href="motion.txt.html#it" class="d">it</a> takes you
+back to the original position.  Thus you can continue typing without the need
+to use <a href="insert.txt.html#a" class="d">a</a> <a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> command.
+   If the name of <a href="insert.txt.html#a" class="d">a</a> function appears in the text, you can get its definition
+in the preview <a href="windows.txt.html#window" class="d">window</a> with: 
+<span class="e"></span>
+<span class="e">        CTRL-W }</span>
+<span class="e"></span>
+There <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> <a href="usr_41.txt.html#script" class="d">script</a> that automatically displays the text where the <a href="motion.txt.html#word" class="d">word</a> under
+the cursor was defined.  See <a href="windows.txt.html#CursorHold-example" class="l">CursorHold-example</a><a href="repeat.txt.html#." class="d">.</a>
+
+To close the preview <a href="windows.txt.html#window" class="d">window</a> use this command: 
+<span class="e"></span>
+<span class="e">        :pclose</span>
+<span class="e"></span>
+To edit <a href="insert.txt.html#a" class="d">a</a> specific file in the preview window, use "<a href="windows.txt.html#%3Apedit" class="d">:pedit</a>"<a href="repeat.txt.html#." class="d">.</a>  This can be
+useful to edit <a href="insert.txt.html#a" class="d">a</a> header file, for example: 
+<span class="e"></span>
+<span class="e">        :pedit defs.h</span>
+<span class="e"></span>
+Finally, "<a href="windows.txt.html#%3Apsearch" class="d">:psearch</a>" can be used to find <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> in the current file and any
+included files and display the match in the preview window.  This <a href="motion.txt.html#is" class="d">is</a>
+especially useful when using library functions, for which you <a href="diff.txt.html#do" class="d">do</a> not have <a href="insert.txt.html#a" class="d">a</a>
+<a href="tagsrch.txt.html#tags" class="d">tags</a> file.  Example: 
+<span class="e"></span>
+<span class="e">        :psearch popen</span>
+<span class="e"></span>
+This will show the "stdio.h" file in the preview window, with the function
+prototype for popen():
+
+<span class="h">        FILE    *popen __P((const char *, const char *)); </span>
+
+You can specify the height of the preview window, when <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> opened, with the
+<a href="options.txt.html#%27previewheight%27" class="o">'previewheight'</a> option.
+
+<span class="h">==============================================================================</span>
+<a name="29.3" class="t">29.3</a>  Moving through <a href="insert.txt.html#a" class="d">a</a> program
+
+Since <a href="insert.txt.html#a" class="d">a</a> program <a href="motion.txt.html#is" class="d">is</a> structured, Vim can recognize items in it.  Specific
+commands can be used to move around.
+   <a href="change.txt.html#C" class="d">C</a> programs often contain constructs like this:
+
+<span class="h">        #ifdef USE_POPEN </span>
+<span class="h">            fd = popen("ls", "r") </span>
+<span class="h">        #else </span>
+<span class="h">            fd = fopen("tmp", "w") </span>
+<span class="h">        #endif </span>
+
+But then much longer, and possibly nested.  Position the cursor on the
+"#ifdef" and press %.  Vim will jump to the "#else"<a href="repeat.txt.html#." class="d">.</a>  Pressing <a href="motion.txt.html#%25" class="d">%</a> again takes
+you to the "#endif"<a href="repeat.txt.html#." class="d">.</a>  Another <a href="motion.txt.html#%25" class="d">%</a> takes you to the "#ifdef" again.
+   When the construct <a href="motion.txt.html#is" class="d">is</a> nested, Vim will find the matching items.  This <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a>
+good way to check if you didn't forget an "#endif"<a href="repeat.txt.html#." class="d">.</a>
+   When you are somewhere inside <a href="insert.txt.html#a" class="d">a</a> "#if" <a href="motion.txt.html#-" class="d">-</a> "#endif"<a href="motion.txt.html#%2C" class="d">,</a> you can jump to the start
+of <a href="motion.txt.html#it" class="d">it</a> with: 
+<span class="e"></span>
+<span class="e">        [#</span>
+<span class="e"></span>
+If you are not after <a href="insert.txt.html#a" class="d">a</a> "#if" or "#ifdef" Vim will beep.  To jump forward to
+the next "#else" or "#endif" use: 
+<span class="e"></span>
+<span class="e">        ]#</span>
+<span class="e"></span>
+These two commands skip any "#if" <a href="motion.txt.html#-" class="d">-</a> "#endif" blocks that they encounter.
+Example:
+
+<span class="h">        #if defined(HAS_INC_H) </span>
+<span class="h">            a = a + inc(); </span>
+<span class="h">        # ifdef USE_THEME </span>
+<span class="h">            a += 3; </span>
+<span class="h">        # endif </span>
+<span class="h">            set_width(a); </span>
+
+With the cursor in the last line, "<a href="motion.txt.html#%5B%23" class="d">[#</a>" moves to the first line.  The "#ifdef"
+<a href="motion.txt.html#-" class="d">-</a> "#endif" block in the middle <a href="motion.txt.html#is" class="d">is</a> skipped.
+
+
+MOVING IN CODE BLOCKS
+
+In <a href="change.txt.html#C" class="d">C</a> code blocks are enclosed in {}.  These can get pretty long.  To move to
+the start of the outer block use the "<a href="motion.txt.html#%5B%5B" class="d">[[</a>" command.  Use "<a href="motion.txt.html#%5D%5B" class="d">][</a>" to find the end.
+This assumes that the "<span class="s">{" and "}</span>" are in the first column.
+   The "<a href="motion.txt.html#%5B%7B" class="d">[{</a>" command moves to the start of the current block.  It skips over
+pairs of <span class="s">{} at the same level.  "]}</span>" jumps to the end.
+   An overview:
+
+                        function(int <a href="motion.txt.html#a%29" class="d">a)</a>
+           +-&gt;          <a href="motion.txt.html#%7B" class="d">{</a>
+           |                if (a)
+           |       +-&gt;      <a href="motion.txt.html#%7B" class="d">{</a>
+        <a href="motion.txt.html#%5B%5B" class="d">[[</a> |       |            for (;;)               --+
+           |       |      +-&gt;   <a href="motion.txt.html#%7B" class="d">{</a>                        |
+           |    <a href="motion.txt.html#%5B%7B" class="d">[{</a> |      |         foo(32);             |     --+
+           |       |   <a href="motion.txt.html#%5B%7B" class="d">[{</a> |         if (bar(a))  --+     | <a href="motion.txt.html#%5D%7D" class="d">]}</a>    |
+           +--     |      +--           break;     | <a href="motion.txt.html#%5D%7D" class="d">]}</a>  |       |
+                   |            <a href="motion.txt.html#%7D" class="d">}</a>                &lt;-+     |       | <a href="motion.txt.html#%5D%5B" class="d">][</a>
+                   +--          foobar(a)                |       |
+                            <a href="motion.txt.html#%7D" class="d">}</a>                          &lt;-+       |
+                        <a href="motion.txt.html#%7D" class="d">}</a>                                      &lt;-+
+
+When <a href="editing.txt.html#writing" class="d">writing</a> C++ or Java, the outer <a href="intro.txt.html#%7B%7D" class="d">{}</a> block <a href="motion.txt.html#is" class="d">is</a> for the class.  The next level
+of <a href="intro.txt.html#%7B%7D" class="d">{}</a> <a href="motion.txt.html#is" class="d">is</a> for <a href="insert.txt.html#a" class="d">a</a> method.  When somewhere inside <a href="insert.txt.html#a" class="d">a</a> class use "<a href="motion.txt.html#%5Bm" class="d">[m</a>" to find the
+previous start of <a href="insert.txt.html#a" class="d">a</a> method.  "<a href="motion.txt.html#%5Dm" class="d">]m</a>" finds the next start of <a href="insert.txt.html#a" class="d">a</a> method.
+
+Additionally, "<a href="motion.txt.html#%5B%5D" class="d">[]</a>" moves backward to the <a href="intro.txt.html#end" class="d">end</a> of <a href="insert.txt.html#a" class="d">a</a> function and "<a href="motion.txt.html#%5D%5D" class="d">]]</a>" moves
+forward to the start of the next function.  The <a href="intro.txt.html#end" class="d">end</a> of <a href="insert.txt.html#a" class="d">a</a> function <a href="motion.txt.html#is" class="d">is</a> defined
+by <a href="insert.txt.html#a" class="d">a</a> "<a href="motion.txt.html#%7D" class="d">}</a>" in the first column.
+
+                                int func1(void)
+                                <a href="motion.txt.html#%7B" class="d">{</a>
+                                        return 1;
+                  +----------&gt;  <a href="motion.txt.html#%7D" class="d">}</a>
+                  |
+              <a href="motion.txt.html#%5B%5D" class="d">[]</a>  |             int func2(void)
+                  |        +-&gt;  <a href="motion.txt.html#%7B" class="d">{</a>
+                  |    <a href="motion.txt.html#%5B%5B" class="d">[[</a>  |            if (flag)
+        start     +--      +--                  return flag;
+                  |    <a href="motion.txt.html#%5D%5B" class="d">][</a>  |            return 2;
+                  |        +-&gt;  <a href="motion.txt.html#%7D" class="d">}</a>
+              <a href="motion.txt.html#%5D%5D" class="d">]]</a>  |
+                  |             int func3(void)
+                  +----------&gt;  <a href="motion.txt.html#%7B" class="d">{</a>
+                                        return 3;
+                                <a href="motion.txt.html#%7D" class="d">}</a>
+
+Don't forget you can also use "<a href="motion.txt.html#%25" class="d">%</a>" to move between matching (), <a href="intro.txt.html#%7B%7D" class="d">{}</a> and [].
+That also works when they are many lines apart.
+
+
+MOVING IN BRACES
+
+The "<a href="motion.txt.html#%5B%28" class="d">[(</a>" and "<a href="motion.txt.html#%5D%29" class="d">])</a>" commands work similar to "<a href="motion.txt.html#%5B%7B" class="d">[{</a>" and "<a href="motion.txt.html#%5D%7D" class="d">]}</a>"<a href="motion.txt.html#%2C" class="d">,</a> except that they
+work on () pairs instead of <a href="intro.txt.html#%7B%7D" class="d">{}</a> pairs.
+
+<span class="e">                                  [(</span>
+                   &lt;--------------------------------
+                              &lt;-------
+<span class="h">                if (a == b &amp;&amp; (c == d || (e &gt; f)) &amp;&amp; x &gt; y) </span>
+                                  --------------&gt;
+                          --------------------------------&gt; 
+<span class="e">                                       ])</span>
+<span class="e"></span>
+MOVING IN COMMENTS
+
+To move back to the start of <a href="insert.txt.html#a" class="d">a</a> comment use "<a href="motion.txt.html#%5B%2F" class="d">[/</a>"<a href="repeat.txt.html#." class="d">.</a>  Move forward to the <a href="intro.txt.html#end" class="d">end</a> of <a href="insert.txt.html#a" class="d">a</a>
+comment with "<a href="motion.txt.html#%5D%2F" class="d">]/</a>"<a href="repeat.txt.html#." class="d">.</a>  This only works for <a href="pattern.txt.html#%2F" class="d">/</a>* <a href="motion.txt.html#-" class="d">-</a> *<a href="pattern.txt.html#%2F" class="d">/</a> comments.
+
+          +-&gt;     +-&gt; <a href="pattern.txt.html#%2F" class="d">/</a>*
+          |    <a href="motion.txt.html#%5B%2F" class="d">[/</a> |    * <a href="insert.txt.html#A" class="d">A</a> comment about      --+
+       <a href="motion.txt.html#%5B%2F" class="d">[/</a> |       +--  * wonderful life.        | <a href="motion.txt.html#%5D%2F" class="d">]/</a>
+          |            *<a href="pattern.txt.html#%2F" class="d">/</a>                     &lt;-+
+          |
+          +--          foo <a href="change.txt.html#%3D" class="d">=</a> <a href="motion.txt.html#bar" class="d">bar</a> * 3;         --+
+                                                | <a href="motion.txt.html#%5D%2F" class="d">]/</a>
+                       <a href="pattern.txt.html#%2F" class="d">/</a>* <a href="insert.txt.html#a" class="d">a</a> short comment *<a href="pattern.txt.html#%2F" class="d">/</a>  &lt;-+
+
+<span class="h">==============================================================================</span>
+<a name="29.4" class="t">29.4</a>  Finding global identifiers
+
+You are editing <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#C" class="d">C</a> program and wonder if <a href="insert.txt.html#a" class="d">a</a> variable <a href="motion.txt.html#is" class="d">is</a> declared <a href="motion.txt.html#as" class="d">as</a> "int" or
+"unsigned"<a href="repeat.txt.html#." class="d">.</a>  <a href="insert.txt.html#A" class="d">A</a> quick way to find this <a href="motion.txt.html#is" class="d">is</a> with the "<a href="tagsrch.txt.html#%5BI" class="d">[I</a>" command.
+   Suppose the cursor <a href="motion.txt.html#is" class="d">is</a> on the <a href="motion.txt.html#word" class="d">word</a> "column"<a href="repeat.txt.html#." class="d">.</a>  Type: 
+<span class="e"></span>
+<span class="e">        [I</span>
+<span class="e"></span>
+Vim will <a href="eval.txt.html#list" class="d">list</a> the matching lines <a href="motion.txt.html#it" class="d">it</a> can find.  Not only in the current file,
+but also in all included files (and files included in them, etc.).  The result
+looks like this:
+
+<span class="h">        structs.h </span>
+<span class="h">         1:   29     unsigned     column;    /* column number */ </span>
+
+The advantage over using <a href="tagsrch.txt.html#tags" class="d">tags</a> or the preview <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> that included files are
+searched.  In most cases this results in the right declaration to be found.
+Also when the <a href="tagsrch.txt.html#tags" class="d">tags</a> file <a href="motion.txt.html#is" class="d">is</a> out of date.  Also when you don't have <a href="tagsrch.txt.html#tags" class="d">tags</a> for the
+included files.
+   However, <a href="insert.txt.html#a" class="d">a</a> few things <a href="vim_faq.txt.html#must" class="d">must</a> be right for "<a href="tagsrch.txt.html#%5BI" class="d">[I</a>" to <a href="diff.txt.html#do" class="d">do</a> its work.  First of all,
+the <a href="options.txt.html#%27include%27" class="o">'include'</a> option <a href="vim_faq.txt.html#must" class="d">must</a> specify how <a href="insert.txt.html#a" class="d">a</a> file <a href="motion.txt.html#is" class="d">is</a> included.  The default value
+works for <a href="change.txt.html#C" class="d">C</a> and C++.  For other languages you will have to change it.
+
+
+LOCATING INCLUDED FILES
+
+   Vim will find included files in the places specified with the <a href="options.txt.html#%27path%27" class="o">'path'</a>
+option.  If <a href="insert.txt.html#a" class="d">a</a> directory <a href="motion.txt.html#is" class="d">is</a> missing, some include files will not be found.  You
+can discover this with this command: 
+<span class="e"></span>
+<span class="e">        :checkpath</span>
+<span class="e"></span>
+It will <a href="eval.txt.html#list" class="d">list</a> the include files that could not be found.  Also files included
+by the files that could be found.  An example of the output:
+
+<span class="h">        --- Included files not found in path --- </span>
+<span class="h">        &lt;io.h&gt; </span>
+<span class="h">        vim.h --&gt; </span>
+<span class="h">          &lt;functions.h&gt; </span>
+<span class="h">          &lt;clib/exec_protos.h&gt; </span>
+
+The "io.h" file <a href="motion.txt.html#is" class="d">is</a> included by the current file and can't be found.  "vim.h"
+can be found, thus "<a href="tagsrch.txt.html#%3Acheckpath" class="d">:checkpath</a>" goes into this file and checks what <a href="motion.txt.html#it" class="d">it</a>
+includes.  The "functions.h" and "clib/exec_protos.h" files, included by
+"vim.h" are not found.
+
+        <span class="n">Note:</span>
+        Vim <a href="motion.txt.html#is" class="d">is</a> not <a href="insert.txt.html#a" class="d">a</a> compiler.  It does not recognize "#ifdef" statements.
+        This means every "#include" statement <a href="motion.txt.html#is" class="d">is</a> used, also when <a href="motion.txt.html#it" class="d">it</a> comes
+        after "#if NEVER"<a href="repeat.txt.html#." class="d">.</a>
+
+To fix the files that could not be found, add <a href="insert.txt.html#a" class="d">a</a> directory to the <a href="options.txt.html#%27path%27" class="o">'path'</a>
+option.  <a href="insert.txt.html#A" class="d">A</a> good place to find out about this <a href="motion.txt.html#is" class="d">is</a> the Makefile.  Look out for
+lines that contain "-I" items, like "-I/usr/local/X11"<a href="repeat.txt.html#." class="d">.</a>  To add this directory
+use: 
+<span class="e"></span>
+<span class="e">        :set path+=/usr/local/X11</span>
+<span class="e"></span>
+When there are many subdirectories, you can use the "*" wildcard.  Example: 
+<span class="e"></span>
+<span class="e">        :set path+=/usr/*/include</span>
+<span class="e"></span>
+This would find files in "/usr/local/include" <a href="motion.txt.html#as" class="d">as</a> well <a href="motion.txt.html#as" class="d">as</a> "/usr/X11/include"<a href="repeat.txt.html#." class="d">.</a>
+
+When working on <a href="insert.txt.html#a" class="d">a</a> project with <a href="insert.txt.html#a" class="d">a</a> whole nested tree of included files, the "**"
+items <a href="motion.txt.html#is" class="d">is</a> useful.  This will search down in all subdirectories.  Example: 
+<span class="e"></span>
+<span class="e">        :set path+=/projects/invent/**/include</span>
+<span class="e"></span>
+This will find files in the directories:
+
+<span class="h">        /projects/invent/include </span>
+<span class="h">        /projects/invent/main/include </span>
+<span class="h">        /projects/invent/main/os/include </span>
+        etc.
+
+There are even more possibilities.  Check out the <a href="options.txt.html#%27path%27" class="o">'path'</a> option for info.
+   If you want to see which included files are actually found, use this
+command: 
+<span class="e"></span>
+<span class="e">        :checkpath!</span>
+<span class="e"></span>
+You will get <a href="insert.txt.html#a" class="d">a</a> (very long) <a href="eval.txt.html#list" class="d">list</a> of included files, the files they include, and
+so on.  To shorten the <a href="eval.txt.html#list" class="d">list</a> <a href="insert.txt.html#a" class="d">a</a> bit, Vim shows "(Already listed)" for files that
+were found before and doesn't <a href="eval.txt.html#list" class="d">list</a> the included files in there again.
+
+
+JUMPING TO <a href="insert.txt.html#A" class="d">A</a> MATCH
+
+"<a href="tagsrch.txt.html#%5BI" class="d">[I</a>" produces <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> with only one line of text.  When you want to have <a href="insert.txt.html#a" class="d">a</a>
+closer look <a href="motion.txt.html#at" class="d">at</a> the first item, you can jump to that line with the command: 
+<span class="e"></span>
+<span class="e">        [&lt;Tab&gt;</span>
+<span class="e"></span>
+You can also use "<a href="index.txt.html#%5B" class="d">[</a> <a href="motion.txt.html#CTRL-I" class="k">CTRL-I</a>"<a href="motion.txt.html#%2C" class="d">,</a> since <a href="motion.txt.html#CTRL-I" class="k">CTRL-I</a> <a href="motion.txt.html#is" class="d">is</a> the same <a href="motion.txt.html#as" class="d">as</a> pressing <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a>.
+
+The <a href="eval.txt.html#list" class="d">list</a> that "<a href="tagsrch.txt.html#%5BI" class="d">[I</a>" produces has <a href="insert.txt.html#a" class="d">a</a> number <a href="motion.txt.html#at" class="d">at</a> the start of each line.  When you
+want to jump to another item than the first one, type the number first: 
+<span class="e"></span>
+<span class="e">        3[&lt;Tab&gt;</span>
+<span class="e"></span>
+Will jump to the third item in the list.  Remember that you can use <a href="motion.txt.html#CTRL-O" class="k">CTRL-O</a> to
+jump back to where you started from.
+
+
+RELATED COMMANDS
+
+        <a href="tagsrch.txt.html#%5Bi" class="d">[i</a>              only lists the first match
+        <a href="tagsrch.txt.html#%5DI" class="d">]I</a>              only lists items below the cursor
+        <a href="tagsrch.txt.html#%5Di" class="d">]i</a>              only lists the first item below the cursor
+
+
+FINDING DEFINED IDENTIFIERS
+
+The "<a href="tagsrch.txt.html#%5BI" class="d">[I</a>" command finds any identifier.  To find only macros, defined with
+"#define" use: 
+<span class="e"></span>
+<span class="e">        [D</span>
+<span class="e"></span>
+Again, this searches in included files.  The <a href="options.txt.html#%27define%27" class="o">'define'</a> option specifies what <a href="insert.txt.html#a" class="d">a</a>
+line looks like that defines the items for "<a href="tagsrch.txt.html#%5BD" class="d">[D</a>"<a href="repeat.txt.html#." class="d">.</a>  You could change <a href="motion.txt.html#it" class="d">it</a> to make
+<a href="motion.txt.html#it" class="d">it</a> work with other languages than <a href="change.txt.html#C" class="d">C</a> or C++.
+   The commands related to "<a href="tagsrch.txt.html#%5BD" class="d">[D</a>" are:
+
+        <a href="tagsrch.txt.html#%5Bd" class="d">[d</a>              only lists the first match
+        <a href="tagsrch.txt.html#%5DD" class="d">]D</a>              only lists items below the cursor
+        <a href="tagsrch.txt.html#%5Dd" class="d">]d</a>              only lists the first item below the cursor
+
+<span class="h">==============================================================================</span>
+<a name="29.5" class="t">29.5</a>  Finding local identifiers
+
+The "<a href="tagsrch.txt.html#%5BI" class="d">[I</a>" command searches included files.  To search in the current file only,
+and jump to the first place where the <a href="motion.txt.html#word" class="d">word</a> under the cursor <a href="motion.txt.html#is" class="d">is</a> used: 
+<span class="e"></span>
+<span class="e">        gD</span>
+<span class="e"></span>
+Hint: Goto Definition.  This command <a href="motion.txt.html#is" class="d">is</a> very useful to find <a href="insert.txt.html#a" class="d">a</a> variable or
+function that was declared locally <a href="motion.txt.html#%28" class="d">(</a>"static"<a href="motion.txt.html#%2C" class="d">,</a> in <a href="change.txt.html#C" class="d">C</a> terms).  Example (cursor on
+"counter"):
+
+           +-&gt;   static int counter <a href="change.txt.html#%3D" class="d">=</a> 0;
+           |
+           |     int get_counter(void)
+        <a href="pattern.txt.html#gD" class="d">gD</a> |     <a href="motion.txt.html#%7B" class="d">{</a>
+           |         ++counter;
+           +--       return counter;
+                 <a href="motion.txt.html#%7D" class="d">}</a>
+
+To restrict the search even further, and look only in the current function,
+use this command: 
+<span class="e"></span>
+<span class="e">        gd</span>
+<span class="e"></span>
+This will <a href="motion.txt.html#go" class="d">go</a> back to the start of the current function and find the first
+occurrence of the <a href="motion.txt.html#word" class="d">word</a> under the cursor.  Actually, <a href="motion.txt.html#it" class="d">it</a> searches backwards to
+an empty line above <a href="insert.txt.html#a" class="d">a</a> "<a href="motion.txt.html#%7B" class="d">{</a>" in the first column.  From there <a href="motion.txt.html#it" class="d">it</a> searches forward
+for the identifier.  Example (cursor on "idx"):
+
+                int find_entry(char *name)
+                <a href="motion.txt.html#%7B" class="d">{</a>
+           +-&gt;      int idx;
+           |
+        <a href="pattern.txt.html#gd" class="d">gd</a> |        for (idx <a href="change.txt.html#%3D" class="d">=</a> 0; idx <a href="change.txt.html#%3C" class="d">&lt;</a> table_len; ++idx)
+           |            if (strcmp(table[idx].name, name) <a href="change.txt.html#%3D%3D" class="d">==</a> 0)
+           +--              return idx;
+                <a href="motion.txt.html#%7D" class="d">}</a>
+
+<span class="h">==============================================================================</span>
+
+Next chapter: <a href="usr_30.txt.html#usr_30.txt" class="l">usr_30.txt</a>  Editing programs
+
+Copyright: see <a href="usr_01.txt.html#manual-copyright" class="l">manual-copyright</a>  vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

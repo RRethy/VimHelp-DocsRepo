@@ -1,0 +1,156 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: debugger.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="debugger.txt" class="t">debugger.txt</a>  For <span class="i">Vim version 8.0.</span>  Last change: 2017 Nov 21
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Gordon Prieur</span>
+
+
+Debugger Support Features                               <a name="debugger-support" class="t">debugger-support</a>
+
+1. Debugger Features            <a href="#debugger-features" class="l">debugger-features</a>
+2. Vim Compile Options          <a href="#debugger-compilation" class="l">debugger-compilation</a>
+3. Integrated Debuggers         <a href="#debugger-integration" class="l">debugger-integration</a>
+
+<span class="s">{Vi does not have any of these features}</span>
+
+<span class="h">==============================================================================</span>
+1. Debugger Features                                    <a name="debugger-features" class="t">debugger-features</a>
+
+The following features are available for an integration with <a href="insert.txt.html#a" class="d">a</a> debugger or
+an Integrated Programming Environment (IPE) or Integrated Development
+Environment (IDE):
+
+        Alternate Command Input                         <a href="#alt-input" class="l">alt-input</a>
+        Debug Signs                                     <a href="#debug-signs" class="l">debug-signs</a>
+        Debug Source Highlight                          <a href="#debug-highlight" class="l">debug-highlight</a>
+        Message Footer                                  <a href="#gui-footer" class="l">gui-footer</a>
+        Balloon Evaluation                              <a href="#balloon-eval" class="l">balloon-eval</a>
+
+These features were added specifically for use in the <a href="gui_x11.txt.html#Motif" class="d">Motif</a> version of gvim.
+However, the <a href="#alt-input" class="l">alt-input</a> and <a href="#debug-highlight" class="l">debug-highlight</a> were written to be usable in
+both vim and gvim.  Some of the other features could be used in the non-GUI
+vim with slight modifications.  However, <a href="insert.txt.html#I" class="d">I</a> did not <a href="diff.txt.html#do" class="d">do</a> this nor did <a href="insert.txt.html#I" class="d">I</a> test the
+reliability of building for vim or non <a href="gui_x11.txt.html#Motif" class="d">Motif</a> <a href="gui.txt.html#GUI" class="d">GUI</a> versions.
+
+
+1.1 Alternate Command Input                             <a name="alt-input" class="t">alt-input</a>
+
+For Vim to work with <a href="insert.txt.html#a" class="d">a</a> debugger there <a href="vim_faq.txt.html#must" class="d">must</a> be <a href="motion.txt.html#at" class="d">at</a> least an input connection
+with <a href="insert.txt.html#a" class="d">a</a> debugger or external tool.  In many cases there will also be an output
+connection but this isn't absolutely necessary.
+
+The purpose of the input connection <a href="motion.txt.html#is" class="d">is</a> to let the external debugger send
+commands to Vim.  The commands sent by the debugger should give the debugger
+enough <a href="intro.txt.html#control" class="d">control</a> to display the current debug environment and state.
+
+The current implementation <a href="motion.txt.html#is" class="d">is</a> based on the <a href="change.txt.html#X" class="d">X</a> Toolkit dispatch loop and the
+XtAddInput() function call.
+
+
+1.2 Debug Signs                                         <a name="debug-signs" class="t">debug-signs</a>
+
+Many debuggers <a href="motion.txt.html#mark" class="d">mark</a> specific lines by placing <a href="insert.txt.html#a" class="d">a</a> small sign or color highlight
+on the line.  The <a href="sign.txt.html#%3Asign" class="l">:sign</a> command lets the debugger set this graphic mark.  Some
+examples where this feature would be used would be <a href="insert.txt.html#a" class="d">a</a> debugger showing an arrow
+representing the Program Counter (PC) of the program being debugged.  Another
+example would be <a href="insert.txt.html#a" class="d">a</a> small stop sign for <a href="insert.txt.html#a" class="d">a</a> line with <a href="insert.txt.html#a" class="d">a</a> breakpoint.  These visible
+highlights let the user keep track of certain parts of the state of the
+debugger.
+
+This feature can be used with more than debuggers, too.  An IPE can use <a href="insert.txt.html#a" class="d">a</a> sign
+to highlight build errors, searched text, or other things.  The sign feature
+can also work together with the <a href="#debug-highlight" class="l">debug-highlight</a> to ensure the <a href="motion.txt.html#mark" class="d">mark</a> <a href="motion.txt.html#is" class="d">is</a>
+highly visible.
+
+Debug <a href="sign.txt.html#signs" class="d">signs</a> are defined and placed using the <a href="sign.txt.html#%3Asign" class="l">:sign</a> command.
+
+
+1.3 Debug Source Highlight                              <a name="debug-highlight" class="t">debug-highlight</a>
+
+This feature allows <a href="insert.txt.html#a" class="d">a</a> line to have <a href="insert.txt.html#a" class="d">a</a> predominant highlight.  The highlight <a href="motion.txt.html#is" class="d">is</a>
+intended to make <a href="insert.txt.html#a" class="d">a</a> specific line stand out.  The highlight could be made to
+work for both vim and gvim, whereas the debug sign is, in most cases, limited
+to gvim.  The one exception to this <a href="motion.txt.html#is" class="d">is</a> Sun Microsystem's dtterm.  The dtterm
+from Sun has <a href="insert.txt.html#a" class="d">a</a> "sign gutter" for showing signs.
+
+
+1.4 Message Footer                                      <a name="gui-footer" class="t">gui-footer</a>
+
+The message footer can be used to display <a href="message.txt.html#messages" class="d">messages</a> from <a href="insert.txt.html#a" class="d">a</a> debugger or IPE.  It
+can also be used to display menu and toolbar tips.  The footer area <a href="motion.txt.html#is" class="d">is</a> <a href="motion.txt.html#at" class="d">at</a> the
+bottom of the <a href="gui.txt.html#GUI" class="d">GUI</a> window, below the line used to display colon commands.
+
+The display of the footer <a href="motion.txt.html#is" class="d">is</a> controlled by the <a href="options.txt.html#%27guioptions%27" class="o">'guioptions'</a> <a href="print.txt.html#letter" class="d">letter</a> 'F'.
+
+
+1.5 Balloon Evaluation                                  <a name="balloon-eval" class="t">balloon-eval</a>
+
+This feature allows <a href="insert.txt.html#a" class="d">a</a> debugger, or other external tool, to display dynamic
+information based on where the mouse <a href="motion.txt.html#is" class="d">is</a> pointing.  The purpose of this feature
+was to allow Sun's <a href="visual.txt.html#Visual" class="d">Visual</a> WorkShop debugger to display <a href="eval.txt.html#expression" class="d">expression</a> evaluations.
+However, the feature was implemented in <a href="motion.txt.html#as" class="d">as</a> general <a href="insert.txt.html#a" class="d">a</a> manner <a href="motion.txt.html#as" class="d">as</a> possible and
+could be used for displaying other information <a href="motion.txt.html#as" class="d">as</a> well.
+
+The Balloon Evaluation has some settable parameters too.  For <a href="gui_x11.txt.html#Motif" class="d">Motif</a> the font
+<a href="eval.txt.html#list" class="d">list</a> and colors can be set via <a href="change.txt.html#X" class="d">X</a> resources (XmNballoonEvalFontList,
+XmNballoonEvalBackground, and XmNballoonEvalForeground).
+The <a href="options.txt.html#%27balloondelay%27" class="o">'balloondelay'</a> option sets the delay before an attempt <a href="motion.txt.html#is" class="d">is</a> made to show <a href="insert.txt.html#a" class="d">a</a>
+balloon.
+The <a href="options.txt.html#%27ballooneval%27" class="o">'ballooneval'</a> and/or the <a href="options.txt.html#%27balloonevalterm%27" class="o">'balloonevalterm'</a> option needs to be set to
+switch <a href="motion.txt.html#it" class="d">it</a> on.
+
+Balloon evaluation <a href="motion.txt.html#is" class="d">is</a> only available in the <a href="gui.txt.html#GUI" class="d">GUI</a> when compiled with the
+<a href="various.txt.html#%2Bballoon_eval" class="l">+balloon_eval</a> feature.  For the <a href="terminal.txt.html#terminal" class="d">terminal</a> the  <a href="various.txt.html#%2Bballoon_eval_term" class="l">+balloon_eval_term</a> feature
+matters.
+
+The Balloon evaluation <a href="eval.txt.html#functions" class="d">functions</a> are also used to show <a href="insert.txt.html#a" class="d">a</a> tooltip for the
+toolbar.  The <a href="options.txt.html#%27ballooneval%27" class="o">'ballooneval'</a> option does not need to be set for this.  But the
+other settings apply.
+
+Another way to use the balloon <a href="motion.txt.html#is" class="d">is</a> with the <a href="options.txt.html#%27balloonexpr%27" class="o">'balloonexpr'</a> option.  This <a href="motion.txt.html#is" class="d">is</a>
+completely user definable.
+
+<span class="h">==============================================================================</span>
+2. Vim Compile Options                                  <a name="debugger-compilation" class="t">debugger-compilation</a>
+
+The debugger features were added explicitly for use with Sun's <a href="visual.txt.html#Visual" class="d">Visual</a>
+WorkShop Integrated Programming Environment (ipe).  However, they were done
+in <a href="motion.txt.html#as" class="d">as</a> generic <a href="insert.txt.html#a" class="d">a</a> manner <a href="motion.txt.html#as" class="d">as</a> possible so that integration with other debuggers
+could also use some or all of the tools used with Sun's ipe.
+
+The following compile time preprocessor <a href="eval.txt.html#variables" class="d">variables</a> <a href="intro.txt.html#control" class="d">control</a> the features:
+
+    Alternate Command Input                     ALT_X_INPUT
+    Debug Glyphs                                FEAT_SIGNS
+    Debug Highlights                            FEAT_SIGNS
+    Message Footer                              FEAT_FOOTER
+    Balloon Evaluation                          FEAT_BEVAL
+
+The first integration with <a href="insert.txt.html#a" class="d">a</a> full IPE/IDE was with Sun <a href="visual.txt.html#Visual" class="d">Visual</a> WorkShop.  To
+compile <a href="insert.txt.html#a" class="d">a</a> <a href="starting.txt.html#gvim" class="d">gvim</a> which interfaces with VWS set the following flag, which sets
+all the above flags:
+
+    Sun <a href="visual.txt.html#Visual" class="d">Visual</a> WorkShop                         FEAT_SUN_WORKSHOP
+
+<span class="h">==============================================================================</span>
+3. Integrated Debuggers                                 <a name="debugger-integration" class="t">debugger-integration</a>
+
+One fully integrated debugger/IPE/IDE <a href="motion.txt.html#is" class="d">is</a> Sun's <a href="visual.txt.html#Visual" class="d">Visual</a> WorkShop Integrated
+Programming Environment.
+
+For Sun NetBeans support see <a href="netbeans.txt.html#netbeans" class="l">netbeans</a><a href="repeat.txt.html#." class="d">.</a>
+
+ vim:tw=78:sw=4:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

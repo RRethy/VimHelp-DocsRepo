@@ -1,0 +1,1567 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: map.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="map.txt" class="t">map.txt</a>       For <span class="i">Vim version 8.0.</span>  Last change: 2018 May 06
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Bram Moolenaar</span>
+
+
+Key mapping, <a href="#abbreviations" class="d">abbreviations</a> and user-defined commands.
+
+This subject <a href="motion.txt.html#is" class="d">is</a> introduced in sections <a href="usr_05.txt.html#05.3" class="l">05.3</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="usr_24.txt.html#24.7" class="l">24.7</a> and <a href="usr_40.txt.html#40.1" class="l">40.1</a> of the user
+manual.
+
+1. Key <a href="#mapping" class="d">mapping</a>                  <a href="#key-mapping" class="l">key-mapping</a>
+   1.1 MAP COMMANDS                     <a href="#%3Amap-commands" class="l">:map-commands</a>
+   1.2 <a href="eval.txt.html#Special" class="d">Special</a> arguments                <a href="#%3Amap-arguments" class="l">:map-arguments</a>
+   1.3 Mapping and modes                <a href="#%3Amap-modes" class="l">:map-modes</a>
+   1.4 Listing mappings                 <a href="#map-listing" class="l">map-listing</a>
+   1.5 Mapping special keys             <a href="#%3Amap-special-keys" class="l">:map-special-keys</a>
+   1.6 <a href="eval.txt.html#Special" class="d">Special</a> characters               <a href="#%3Amap-special-chars" class="l">:map-special-chars</a>
+   1.7 What keys to map                 <a href="#map-which-keys" class="l">map-which-keys</a>
+   1.8 Examples                         <a href="#map-examples" class="l">map-examples</a>
+   1.9 Using mappings                   <a href="#map-typing" class="l">map-typing</a>
+   1.10 Mapping alt-keys                <a href="#%3Amap-alt-keys" class="l">:map-alt-keys</a>
+   1.11 Mapping an <a href="motion.txt.html#operator" class="d">operator</a>             <a href="#%3Amap-operator" class="l">:map-operator</a>
+2. <a href="#Abbreviations" class="d">Abbreviations</a>                <a href="#abbreviations" class="l">abbreviations</a>
+3. Local mappings and <a href="eval.txt.html#functions" class="d">functions</a> <a href="#script-local" class="l">script-local</a>
+4. User-defined commands        <a href="#user-commands" class="l">user-commands</a>
+
+<span class="h">==============================================================================</span>
+1. Key <a href="#mapping" class="d">mapping</a>                          <a name="key-mapping" class="t">key-mapping</a> <a name="mapping" class="t">mapping</a> <a name="macro" class="t">macro</a>
+
+Key <a href="#mapping" class="d">mapping</a> <a href="motion.txt.html#is" class="d">is</a> used to change the meaning of typed keys.  The most common use
+<a href="motion.txt.html#is" class="d">is</a> to define <a href="insert.txt.html#a" class="d">a</a> sequence of commands for <a href="insert.txt.html#a" class="d">a</a> function key.  Example: 
+<span class="e"></span>
+<span class="e">        :map &lt;F2&gt; a&lt;C-R&gt;=strftime("%c")&lt;CR&gt;&lt;Esc&gt;</span>
+<span class="e"></span>
+This appends the current date and time after the cursor (in <span class="s">&lt;&gt; notation |&lt;&gt;</span>|).
+
+
+1.1 MAP COMMANDS                                        <a name="%3Amap-commands" class="t">:map-commands</a>
+
+There are commands to enter new mappings, remove mappings and <a href="eval.txt.html#list" class="d">list</a> mappings.
+See <a href="#map-overview" class="l">map-overview</a> for the <a href="various.txt.html#various" class="d">various</a> forms of "map" and their relationships with
+modes.
+
+<a href="#%7Blhs%7D" class="s">{lhs}</a>   means left-hand-side    <a name="%7Blhs%7D" class="t">{lhs}</a>
+<a href="#%7Brhs%7D" class="s">{rhs}</a>   means right-hand-side   <a name="%7Brhs%7D" class="t">{rhs}</a>
+
+<a href="#%3Amap" class="d">:map</a>    <a href="#%7Blhs%7D" class="s">{lhs}</a> <a href="#%7Brhs%7D" class="s">{rhs}</a>             <a href="#mapmode-nvo" class="l">mapmode-nvo</a>           <a name="%3Amap" class="t">:map</a>
+:nm[ap] <a href="#%7Blhs%7D" class="s">{lhs}</a> <a href="#%7Brhs%7D" class="s">{rhs}</a>             <a href="#mapmode-n" class="l">mapmode-n</a>             <a name="%3Anm" class="t">:nm</a> <a name="%3Anmap" class="t">:nmap</a>
+:vm[ap] <a href="#%7Blhs%7D" class="s">{lhs}</a> <a href="#%7Brhs%7D" class="s">{rhs}</a>             <a href="#mapmode-v" class="l">mapmode-v</a>             <a name="%3Avm" class="t">:vm</a> <a name="%3Avmap" class="t">:vmap</a>
+:xm[ap] <a href="#%7Blhs%7D" class="s">{lhs}</a> <a href="#%7Brhs%7D" class="s">{rhs}</a>             <a href="#mapmode-x" class="l">mapmode-x</a>             <a name="%3Axm" class="t">:xm</a> <a name="%3Axmap" class="t">:xmap</a>
+<a href="#%3Asmap" class="d">:smap</a>   <a href="#%7Blhs%7D" class="s">{lhs}</a> <a href="#%7Brhs%7D" class="s">{rhs}</a>             <a href="#mapmode-s" class="l">mapmode-s</a>                 <a name="%3Asmap" class="t">:smap</a>
+:om[ap] <a href="#%7Blhs%7D" class="s">{lhs}</a> <a href="#%7Brhs%7D" class="s">{rhs}</a>             <a href="#mapmode-o" class="l">mapmode-o</a>             <a name="%3Aom" class="t">:om</a> <a name="%3Aomap" class="t">:omap</a>
+<a href="#%3Amap%21" class="d">:map!</a>   <a href="#%7Blhs%7D" class="s">{lhs}</a> <a href="#%7Brhs%7D" class="s">{rhs}</a>             <a href="#mapmode-ic" class="l">mapmode-ic</a>            <a name="%3Amap%21" class="t">:map!</a>
+:im[ap] <a href="#%7Blhs%7D" class="s">{lhs}</a> <a href="#%7Brhs%7D" class="s">{rhs}</a>             <a href="#mapmode-i" class="l">mapmode-i</a>             <a name="%3Aim" class="t">:im</a> <a name="%3Aimap" class="t">:imap</a>
+:lm[ap] <a href="#%7Blhs%7D" class="s">{lhs}</a> <a href="#%7Brhs%7D" class="s">{rhs}</a>             <a href="#mapmode-l" class="l">mapmode-l</a>             <a name="%3Alm" class="t">:lm</a> <a name="%3Almap" class="t">:lmap</a>
+:cm[ap] <a href="#%7Blhs%7D" class="s">{lhs}</a> <a href="#%7Brhs%7D" class="s">{rhs}</a>             <a href="#mapmode-c" class="l">mapmode-c</a>             <a name="%3Acm" class="t">:cm</a> <a name="%3Acmap" class="t">:cmap</a>
+:tma[p] <a href="#%7Blhs%7D" class="s">{lhs}</a> <a href="#%7Brhs%7D" class="s">{rhs}</a>             <a href="#mapmode-t" class="l">mapmode-t</a>             <a name="%3Atma" class="t">:tma</a> <a name="%3Atmap" class="t">:tmap</a>
+                        Map the key sequence <a href="#%7Blhs%7D" class="s">{lhs}</a> to <a href="#%7Brhs%7D" class="s">{rhs}</a> for the modes
+                        where the map command applies.  The result, including
+                        <a href="#%7Brhs%7D" class="s">{rhs}</a>, <a href="motion.txt.html#is" class="d">is</a> then further scanned for mappings.  This
+                        allows for nested and recursive use of mappings.
+
+                                                <a name="%3Anore" class="t">:nore</a> <a name="%3Anorem" class="t">:norem</a>
+:no[remap]  <a href="#%7Blhs%7D" class="s">{lhs}</a> <a href="#%7Brhs%7D" class="s">{rhs}</a>         <a href="#mapmode-nvo" class="l">mapmode-nvo</a>   <a name="%3Ano" class="t">:no</a>  <a name="%3Anoremap" class="t">:noremap</a> <a name="%3Anor" class="t">:nor</a>
+:nn[oremap] <a href="#%7Blhs%7D" class="s">{lhs}</a> <a href="#%7Brhs%7D" class="s">{rhs}</a>         <a href="#mapmode-n" class="l">mapmode-n</a>     <a name="%3Ann" class="t">:nn</a>  <a name="%3Annoremap" class="t">:nnoremap</a>
+:vn[oremap] <a href="#%7Blhs%7D" class="s">{lhs}</a> <a href="#%7Brhs%7D" class="s">{rhs}</a>         <a href="#mapmode-v" class="l">mapmode-v</a>     <a name="%3Avn" class="t">:vn</a>  <a name="%3Avnoremap" class="t">:vnoremap</a>
+:xn[oremap] <a href="#%7Blhs%7D" class="s">{lhs}</a> <a href="#%7Brhs%7D" class="s">{rhs}</a>         <a href="#mapmode-x" class="l">mapmode-x</a>     <a name="%3Axn" class="t">:xn</a>  <a name="%3Axnoremap" class="t">:xnoremap</a>
+:snor[emap] <a href="#%7Blhs%7D" class="s">{lhs}</a> <a href="#%7Brhs%7D" class="s">{rhs}</a>         <a href="#mapmode-s" class="l">mapmode-s</a>     <a name="%3Asnor" class="t">:snor</a> <a name="%3Asnoremap" class="t">:snoremap</a>
+:ono[remap] <a href="#%7Blhs%7D" class="s">{lhs}</a> <a href="#%7Brhs%7D" class="s">{rhs}</a>         <a href="#mapmode-o" class="l">mapmode-o</a>     <a name="%3Aono" class="t">:ono</a> <a name="%3Aonoremap" class="t">:onoremap</a>
+:no[remap]! <a href="#%7Blhs%7D" class="s">{lhs}</a> <a href="#%7Brhs%7D" class="s">{rhs}</a>         <a href="#mapmode-ic" class="l">mapmode-ic</a>    <a name="%3Ano%21" class="t">:no!</a> <a name="%3Anoremap%21" class="t">:noremap!</a>
+:ino[remap] <a href="#%7Blhs%7D" class="s">{lhs}</a> <a href="#%7Brhs%7D" class="s">{rhs}</a>         <a href="#mapmode-i" class="l">mapmode-i</a>     <a name="%3Aino" class="t">:ino</a> <a name="%3Ainoremap" class="t">:inoremap</a>
+:ln[oremap] <a href="#%7Blhs%7D" class="s">{lhs}</a> <a href="#%7Brhs%7D" class="s">{rhs}</a>         <a href="#mapmode-l" class="l">mapmode-l</a>     <a name="%3Aln" class="t">:ln</a>  <a name="%3Alnoremap" class="t">:lnoremap</a>
+:cno[remap] <a href="#%7Blhs%7D" class="s">{lhs}</a> <a href="#%7Brhs%7D" class="s">{rhs}</a>         <a href="#mapmode-c" class="l">mapmode-c</a>     <a name="%3Acno" class="t">:cno</a> <a name="%3Acnoremap" class="t">:cnoremap</a>
+:tno[remap] <a href="#%7Blhs%7D" class="s">{lhs}</a> <a href="#%7Brhs%7D" class="s">{rhs}</a>         <a href="#mapmode-t" class="l">mapmode-t</a>     <a name="%3Atno" class="t">:tno</a> <a name="%3Atnoremap" class="t">:tnoremap</a>
+                        Map the key sequence <a href="#%7Blhs%7D" class="s">{lhs}</a> to <a href="#%7Brhs%7D" class="s">{rhs}</a> for the modes
+                        where the map command applies.  Disallow <a href="#mapping" class="d">mapping</a> of
+                        <a href="#%7Brhs%7D" class="s">{rhs}</a>, to avoid nested and recursive mappings.  Often
+                        used to redefine <a href="insert.txt.html#a" class="d">a</a> command.  <span class="s">{not in Vi}</span>
+
+
+:unm[ap]  <a href="#%7Blhs%7D" class="s">{lhs}</a>                 <a href="#mapmode-nvo" class="l">mapmode-nvo</a>           <a name="%3Aunm" class="t">:unm</a>  <a name="%3Aunmap" class="t">:unmap</a>
+:nun[map] <a href="#%7Blhs%7D" class="s">{lhs}</a>                 <a href="#mapmode-n" class="l">mapmode-n</a>             <a name="%3Anun" class="t">:nun</a>  <a name="%3Anunmap" class="t">:nunmap</a>
+:vu[nmap] <a href="#%7Blhs%7D" class="s">{lhs}</a>                 <a href="#mapmode-v" class="l">mapmode-v</a>             <a name="%3Avu" class="t">:vu</a>   <a name="%3Avunmap" class="t">:vunmap</a>
+:xu[nmap] <a href="#%7Blhs%7D" class="s">{lhs}</a>                 <a href="#mapmode-x" class="l">mapmode-x</a>             <a name="%3Axu" class="t">:xu</a>   <a name="%3Axunmap" class="t">:xunmap</a>
+:sunm[ap] <a href="#%7Blhs%7D" class="s">{lhs}</a>                 <a href="#mapmode-s" class="l">mapmode-s</a>             <a name="%3Asunm" class="t">:sunm</a> <a name="%3Asunmap" class="t">:sunmap</a>
+:ou[nmap] <a href="#%7Blhs%7D" class="s">{lhs}</a>                 <a href="#mapmode-o" class="l">mapmode-o</a>             <a name="%3Aou" class="t">:ou</a>   <a name="%3Aounmap" class="t">:ounmap</a>
+:unm[ap]! <a href="#%7Blhs%7D" class="s">{lhs}</a>                 <a href="#mapmode-ic" class="l">mapmode-ic</a>            <a name="%3Aunm%21" class="t">:unm!</a> <a name="%3Aunmap%21" class="t">:unmap!</a>
+:iu[nmap] <a href="#%7Blhs%7D" class="s">{lhs}</a>                 <a href="#mapmode-i" class="l">mapmode-i</a>             <a name="%3Aiu" class="t">:iu</a>   <a name="%3Aiunmap" class="t">:iunmap</a>
+:lu[nmap] <a href="#%7Blhs%7D" class="s">{lhs}</a>                 <a href="#mapmode-l" class="l">mapmode-l</a>             <a name="%3Alu" class="t">:lu</a>   <a name="%3Alunmap" class="t">:lunmap</a>
+:cu[nmap] <a href="#%7Blhs%7D" class="s">{lhs}</a>                 <a href="#mapmode-c" class="l">mapmode-c</a>             <a name="%3Acu" class="t">:cu</a>   <a name="%3Acunmap" class="t">:cunmap</a>
+:tunma[p] <a href="#%7Blhs%7D" class="s">{lhs}</a>                 <a href="#mapmode-t" class="l">mapmode-t</a>             <a name="%3Atunma" class="t">:tunma</a> <a name="%3Atunmap" class="t">:tunmap</a>
+                        Remove the <a href="#mapping" class="d">mapping</a> of <a href="#%7Blhs%7D" class="s">{lhs}</a> for the modes where the
+                        map command applies.  The <a href="#mapping" class="d">mapping</a> may remain defined
+                        for other modes where <a href="motion.txt.html#it" class="d">it</a> applies.
+                        <span class="n">Note:</span> Trailing spaces are included in the <a href="#%7Blhs%7D" class="s">{lhs}</a>.  This
+                        unmap does NOT work: 
+<span class="e">                                :map @@ foo</span>
+<span class="e">                                :unmap @@ | print</span>
+<span class="e"></span>
+:mapc[lear]                     <a href="#mapmode-nvo" class="l">mapmode-nvo</a>           <a name="%3Amapc" class="t">:mapc</a>   <a name="%3Amapclear" class="t">:mapclear</a>
+:nmapc[lear]                    <a href="#mapmode-n" class="l">mapmode-n</a>             <a name="%3Anmapc" class="t">:nmapc</a>  <a name="%3Anmapclear" class="t">:nmapclear</a>
+:vmapc[lear]                    <a href="#mapmode-v" class="l">mapmode-v</a>             <a name="%3Avmapc" class="t">:vmapc</a>  <a name="%3Avmapclear" class="t">:vmapclear</a>
+:xmapc[lear]                    <a href="#mapmode-x" class="l">mapmode-x</a>             <a name="%3Axmapc" class="t">:xmapc</a>  <a name="%3Axmapclear" class="t">:xmapclear</a>
+:smapc[lear]                    <a href="#mapmode-s" class="l">mapmode-s</a>             <a name="%3Asmapc" class="t">:smapc</a>  <a name="%3Asmapclear" class="t">:smapclear</a>
+:omapc[lear]                    <a href="#mapmode-o" class="l">mapmode-o</a>             <a name="%3Aomapc" class="t">:omapc</a>  <a name="%3Aomapclear" class="t">:omapclear</a>
+:mapc[lear]!                    <a href="#mapmode-ic" class="l">mapmode-ic</a>            <a name="%3Amapc%21" class="t">:mapc!</a>  <a name="%3Amapclear%21" class="t">:mapclear!</a>
+:imapc[lear]                    <a href="#mapmode-i" class="l">mapmode-i</a>             <a name="%3Aimapc" class="t">:imapc</a>  <a name="%3Aimapclear" class="t">:imapclear</a>
+:lmapc[lear]                    <a href="#mapmode-l" class="l">mapmode-l</a>             <a name="%3Almapc" class="t">:lmapc</a>  <a name="%3Almapclear" class="t">:lmapclear</a>
+:cmapc[lear]                    <a href="#mapmode-c" class="l">mapmode-c</a>             <a name="%3Acmapc" class="t">:cmapc</a>  <a name="%3Acmapclear" class="t">:cmapclear</a>
+:tmapc[lear]                    <a href="#mapmode-t" class="l">mapmode-t</a>             <a name="%3Atmapc" class="t">:tmapc</a>  <a name="%3Atmapclear" class="t">:tmapclear</a>
+                        Remove ALL mappings for the modes where the map
+                        command applies.  <span class="s">{not in Vi}</span>
+                        Use the <span class="s">&lt;buffer&gt;</span> argument to remove buffer-local
+                        mappings <a href="#%3Amap-%3Cbuffer%3E" class="l">:map-&lt;buffer&gt;</a>
+                        Warning: This also removes the default mappings.
+
+<a href="#%3Amap" class="d">:map</a>                            <a href="#mapmode-nvo" class="l">mapmode-nvo</a>
+:nm[ap]                         <a href="#mapmode-n" class="l">mapmode-n</a>
+:vm[ap]                         <a href="#mapmode-v" class="l">mapmode-v</a>
+:xm[ap]                         <a href="#mapmode-x" class="l">mapmode-x</a>
+:sm[ap]                         <a href="#mapmode-s" class="l">mapmode-s</a>
+:om[ap]                         <a href="#mapmode-o" class="l">mapmode-o</a>
+<a href="#%3Amap%21" class="d">:map!</a>                           <a href="#mapmode-ic" class="l">mapmode-ic</a>
+:im[ap]                         <a href="#mapmode-i" class="l">mapmode-i</a>
+:lm[ap]                         <a href="#mapmode-l" class="l">mapmode-l</a>
+:cm[ap]                         <a href="#mapmode-c" class="l">mapmode-c</a>
+:tma[p]                         <a href="#mapmode-t" class="l">mapmode-t</a>
+                        <a href="eval.txt.html#List" class="d">List</a> all key mappings for the modes where the map
+                        command applies.  <span class="n">Note</span> that "<a href="#%3Amap" class="d">:map</a>" and "<a href="#%3Amap%21" class="d">:map!</a>" are
+                        used most often, because they include the other modes.
+
+<a href="#%3Amap" class="d">:map</a>    <a href="#%7Blhs%7D" class="s">{lhs}</a>                   <a href="#mapmode-nvo" class="l">mapmode-nvo</a>           <a name="%3Amap_l" class="t">:map_l</a>
+:nm[ap] <a href="#%7Blhs%7D" class="s">{lhs}</a>                   <a href="#mapmode-n" class="l">mapmode-n</a>             <a name="%3Anmap_l" class="t">:nmap_l</a>
+:vm[ap] <a href="#%7Blhs%7D" class="s">{lhs}</a>                   <a href="#mapmode-v" class="l">mapmode-v</a>             <a name="%3Avmap_l" class="t">:vmap_l</a>
+:xm[ap] <a href="#%7Blhs%7D" class="s">{lhs}</a>                   <a href="#mapmode-x" class="l">mapmode-x</a>             <a name="%3Axmap_l" class="t">:xmap_l</a>
+:sm[ap] <a href="#%7Blhs%7D" class="s">{lhs}</a>                   <a href="#mapmode-s" class="l">mapmode-s</a>             <a name="%3Asmap_l" class="t">:smap_l</a>
+:om[ap] <a href="#%7Blhs%7D" class="s">{lhs}</a>                   <a href="#mapmode-o" class="l">mapmode-o</a>             <a name="%3Aomap_l" class="t">:omap_l</a>
+<a href="#%3Amap%21" class="d">:map!</a>   <a href="#%7Blhs%7D" class="s">{lhs}</a>                   <a href="#mapmode-ic" class="l">mapmode-ic</a>            <a name="%3Amap_l%21" class="t">:map_l!</a>
+:im[ap] <a href="#%7Blhs%7D" class="s">{lhs}</a>                   <a href="#mapmode-i" class="l">mapmode-i</a>             <a name="%3Aimap_l" class="t">:imap_l</a>
+:lm[ap] <a href="#%7Blhs%7D" class="s">{lhs}</a>                   <a href="#mapmode-l" class="l">mapmode-l</a>             <a name="%3Almap_l" class="t">:lmap_l</a>
+:cm[ap] <a href="#%7Blhs%7D" class="s">{lhs}</a>                   <a href="#mapmode-c" class="l">mapmode-c</a>             <a name="%3Acmap_l" class="t">:cmap_l</a>
+:tma[p] <a href="#%7Blhs%7D" class="s">{lhs}</a>                   <a href="#mapmode-t" class="l">mapmode-t</a>             <a name="%3Atmap_l" class="t">:tmap_l</a>
+                        <a href="eval.txt.html#List" class="d">List</a> the key mappings for the key sequences <a href="starting.txt.html#starting" class="d">starting</a>
+                        with <a href="#%7Blhs%7D" class="s">{lhs}</a> in the modes where the map command applies.
+                        <span class="s">{not in Vi}</span>
+
+These commands are used to map <a href="insert.txt.html#a" class="d">a</a> key or key sequence to <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#string" class="d">string</a> of
+characters.  You can use this to <a href="change.txt.html#put" class="d">put</a> command sequences under function keys,
+translate one key into another, etc.  See <a href="starting.txt.html#%3Amkexrc" class="l">:mkexrc</a> for how to save and
+restore the current mappings.
+
+                                                        <a name="map-ambiguous" class="t">map-ambiguous</a>
+When two mappings start with the same sequence of characters, they are
+ambiguous.  Example: 
+<span class="e">        :imap aa foo</span>
+<span class="e">        :imap aaa bar</span>
+When Vim has read "aa"<a href="motion.txt.html#%2C" class="d">,</a> <a href="motion.txt.html#it" class="d">it</a> will need to get another character to be able to
+decide if "aa" or "aaa" should be mapped.  This means that after typing "aa"
+that <a href="#mapping" class="d">mapping</a> won't get expanded yet, Vim <a href="motion.txt.html#is" class="d">is</a> waiting for another character.
+If you type <a href="insert.txt.html#a" class="d">a</a> space, then "foo" will get inserted, plus the space.  If you
+type "<a href="insert.txt.html#a" class="d">a</a>"<a href="motion.txt.html#%2C" class="d">,</a> then "<a href="motion.txt.html#bar" class="d">bar</a>" will get inserted.
+<span class="s">{Vi does not allow ambiguous mappings}</span>
+
+
+1.2 SPECIAL ARGUMENTS                                   <a name="%3Amap-arguments" class="t">:map-arguments</a>
+
+"<span class="s">&lt;buffer&gt;</span>"<a href="motion.txt.html#%2C" class="d">,</a> "<span class="s">&lt;nowait&gt;</span>"<a href="motion.txt.html#%2C" class="d">,</a> "<span class="s">&lt;silent&gt;</span>"<a href="motion.txt.html#%2C" class="d">,</a> "<span class="s">&lt;special&gt;</span>"<a href="motion.txt.html#%2C" class="d">,</a> "<span class="s">&lt;script&gt;</span>"<a href="motion.txt.html#%2C" class="d">,</a> "<span class="s">&lt;expr&gt;</span>" and
+"<span class="s">&lt;unique&gt;</span>" can be used in any order.  They <a href="vim_faq.txt.html#must" class="d">must</a> appear right after the
+command, before any other arguments.
+
+                                <a name="%3Amap-local" class="t">:map-local</a> <a name="%3Amap-%3Cbuffer%3E" class="t">:map-&lt;buffer&gt;</a> <a name="E224" class="t">E224</a> <a name="E225" class="t">E225</a>
+If the first argument to one of these commands <a href="motion.txt.html#is" class="d">is</a> "<span class="s">&lt;buffer&gt;</span>" the <a href="#mapping" class="d">mapping</a> will
+be effective in the current buffer only.  Example: 
+<span class="e">        :map &lt;buffer&gt;  ,w  /[.,;]&lt;CR&gt;</span>
+Then you can map ",w" to something else in another buffer: 
+<span class="e">        :map &lt;buffer&gt;  ,w  /[#&amp;!]&lt;CR&gt;</span>
+The local buffer mappings are used before the global ones.  See <span class="s">&lt;nowait&gt;</span> below
+to make <a href="insert.txt.html#a" class="d">a</a> short local <a href="#mapping" class="d">mapping</a> not taking effect when <a href="insert.txt.html#a" class="d">a</a> longer global one
+exists.
+The "<span class="s">&lt;buffer&gt;</span>" argument can also be used to clear mappings: 
+<span class="e">        :unmap &lt;buffer&gt; ,w</span>
+<span class="e">        :mapclear &lt;buffer&gt;</span>
+Local mappings are also cleared when <a href="insert.txt.html#a" class="d">a</a> buffer <a href="motion.txt.html#is" class="d">is</a> deleted, but not when <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a>
+unloaded.  Just like local option values.
+Also see <a href="#map-precedence" class="l">map-precedence</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                <a name="%3Amap-%3Cnowait%3E" class="t">:map-&lt;nowait&gt;</a> <a name="%3Amap-nowait" class="t">:map-nowait</a>
+When defining <a href="insert.txt.html#a" class="d">a</a> buffer-local <a href="#mapping" class="d">mapping</a> for "<a href="motion.txt.html#%2C" class="d">,</a>" there may be <a href="insert.txt.html#a" class="d">a</a> global <a href="#mapping" class="d">mapping</a>
+that starts with "<a href="motion.txt.html#%2C" class="d">,</a>"<a href="repeat.txt.html#." class="d">.</a>  Then you need to type another character for Vim to know
+whether to use the "<a href="motion.txt.html#%2C" class="d">,</a>" <a href="#mapping" class="d">mapping</a> or the longer one.  To avoid this add the
+<span class="s">&lt;nowait&gt;</span> argument.  Then the <a href="#mapping" class="d">mapping</a> will be used when <a href="motion.txt.html#it" class="d">it</a> matches, Vim does
+not wait for more characters to be typed.  However, if the characters were
+already typed they are used.
+
+                                                <a name="%3Amap-%3Csilent%3E" class="t">:map-&lt;silent&gt;</a> <a name="%3Amap-silent" class="t">:map-silent</a>
+To define <a href="insert.txt.html#a" class="d">a</a> <a href="#mapping" class="d">mapping</a> which will not be echoed on the command line, add
+"<span class="s">&lt;silent&gt;</span>" <a href="motion.txt.html#as" class="d">as</a> the first argument.  Example: 
+<span class="e">        :map &lt;silent&gt; ,h /Header&lt;CR&gt;</span>
+The search <a href="eval.txt.html#string" class="d">string</a> will not be echoed when using this mapping.  Messages from
+the executed command are still given though.  To shut them up too, add <a href="insert.txt.html#a" class="d">a</a>
+"<a href="various.txt.html#%3Asilent" class="d">:silent</a>" in the executed command: 
+<span class="e">        :map &lt;silent&gt; ,h :exe ":silent normal /Header\r"&lt;CR&gt;</span>
+Prompts will still be given, e.g., for inputdialog().
+Using "<span class="s">&lt;silent&gt;</span>" for an abbreviation <a href="motion.txt.html#is" class="d">is</a> possible, but will cause redrawing of
+the command line to fail.
+
+                                                <a name="%3Amap-%3Cspecial%3E" class="t">:map-&lt;special&gt;</a> <a name="%3Amap-special" class="t">:map-special</a>
+Define <a href="insert.txt.html#a" class="d">a</a> <a href="#mapping" class="d">mapping</a> with <a href="intro.txt.html#%3C%3E" class="d">&lt;&gt;</a> <a href="intro.txt.html#notation" class="d">notation</a> for special keys, even though the "<a href="change.txt.html#%3C" class="d">&lt;</a>" flag
+may appear in <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a>.  This <a href="motion.txt.html#is" class="d">is</a> useful if the side effect of setting
+<a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a> <a href="motion.txt.html#is" class="d">is</a> not desired.  Example: 
+<span class="e">        :map &lt;special&gt; &lt;F12&gt; /Header&lt;CR&gt;</span>
+
+                                                <a name="%3Amap-%3Cscript%3E" class="t">:map-&lt;script&gt;</a> <a name="%3Amap-script" class="t">:map-script</a>
+If the first argument to one of these commands <a href="motion.txt.html#is" class="d">is</a> "<span class="s">&lt;script&gt;</span>" and <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> used to
+define <a href="insert.txt.html#a" class="d">a</a> new <a href="#mapping" class="d">mapping</a> or abbreviation, the <a href="#mapping" class="d">mapping</a> will only remap characters
+in the <a href="#%7Brhs%7D" class="s">{rhs}</a> using mappings that were defined local to <a href="insert.txt.html#a" class="d">a</a> script, <a href="starting.txt.html#starting" class="d">starting</a> with
+"<a href="#%3CSID%3E" class="s">&lt;SID&gt;</a>"<a href="repeat.txt.html#." class="d">.</a>  This can be used to avoid that mappings from outside <a href="insert.txt.html#a" class="d">a</a> <a href="usr_41.txt.html#script" class="d">script</a>
+interfere (e.g., when <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> <a href="motion.txt.html#is" class="d">is</a> remapped in mswin.vim), but <a href="diff.txt.html#do" class="d">do</a> use other
+mappings defined in the script.
+<span class="n">Note:</span> "<a href="#%3Amap" class="d">:map</a> <span class="s">&lt;script&gt;</span>" and "<a href="#%3Anoremap" class="d">:noremap</a> <span class="s">&lt;script&gt;</span>" <a href="diff.txt.html#do" class="d">do</a> the same thing.  The
+"<span class="s">&lt;script&gt;</span>" overrules the command name.  Using "<a href="#%3Anoremap" class="d">:noremap</a> <span class="s">&lt;script&gt;</span>" <a href="motion.txt.html#is" class="d">is</a>
+preferred, because it's clearer that remapping <a href="motion.txt.html#is" class="d">is</a> (mostly) disabled.
+
+                                                <a name="%3Amap-%3Cunique%3E" class="t">:map-&lt;unique&gt;</a> <a name="E226" class="t">E226</a> <a name="E227" class="t">E227</a>
+If the first argument to one of these commands <a href="motion.txt.html#is" class="d">is</a> "<span class="s">&lt;unique&gt;</span>" and <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> used to
+define <a href="insert.txt.html#a" class="d">a</a> new <a href="#mapping" class="d">mapping</a> or abbreviation, the command will fail if the <a href="#mapping" class="d">mapping</a> or
+abbreviation already exists.  Example: 
+<span class="e">        :map &lt;unique&gt; ,w  /[#&amp;!]&lt;CR&gt;</span>
+When defining <a href="insert.txt.html#a" class="d">a</a> local mapping, there will also be <a href="insert.txt.html#a" class="d">a</a> check if <a href="insert.txt.html#a" class="d">a</a> global map
+already exists which <a href="motion.txt.html#is" class="d">is</a> equal.
+Example of what will fail: 
+<span class="e">        :map ,w  /[#&amp;!]&lt;CR&gt;</span>
+<span class="e">        :map &lt;buffer&gt; &lt;unique&gt; ,w  /[.,;]&lt;CR&gt;</span>
+If you want to map <a href="insert.txt.html#a" class="d">a</a> key and then have <a href="motion.txt.html#it" class="d">it</a> <a href="diff.txt.html#do" class="d">do</a> what <a href="motion.txt.html#it" class="d">it</a> was originally mapped to,
+have <a href="insert.txt.html#a" class="d">a</a> look <a href="motion.txt.html#at" class="d">at</a> <a href="eval.txt.html#maparg%28%29" class="l">maparg()</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                <a name="%3Amap-%3Cexpr%3E" class="t">:map-&lt;expr&gt;</a> <a name="%3Amap-expression" class="t">:map-expression</a>
+If the first argument to one of these commands <a href="motion.txt.html#is" class="d">is</a> "<span class="s">&lt;expr&gt;</span>" and <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> used to
+define <a href="insert.txt.html#a" class="d">a</a> new <a href="#mapping" class="d">mapping</a> or abbreviation, the argument <a href="motion.txt.html#is" class="d">is</a> an expression.  The
+<a href="eval.txt.html#expression" class="d">expression</a> <a href="motion.txt.html#is" class="d">is</a> evaluated to obtain the <a href="#%7Brhs%7D" class="s">{rhs}</a> that <a href="motion.txt.html#is" class="d">is</a> used.  Example: 
+<span class="e">        :inoremap &lt;expr&gt; . InsertDot()</span>
+The result of the InsertDot() function will be inserted.  It could check the
+text before the cursor and start omni completion when some condition <a href="motion.txt.html#is" class="d">is</a> met.
+
+For <a href="#abbreviations" class="d">abbreviations</a> <a href="eval.txt.html#v%3Achar" class="l">v:char</a> <a href="motion.txt.html#is" class="d">is</a> set to the character that was typed to trigger
+the abbreviation.  You can use this to decide how to expand the <a href="#%7Blhs%7D" class="s">{lhs}</a>.  You
+should not either <a href="insert.txt.html#insert" class="d">insert</a> or change the v:char.
+
+Be very careful about side effects!  The <a href="eval.txt.html#expression" class="d">expression</a> <a href="motion.txt.html#is" class="d">is</a> evaluated while
+obtaining characters, you may very well make the command dysfunctional.
+For this reason the following <a href="motion.txt.html#is" class="d">is</a> blocked:
+<a href="motion.txt.html#-" class="d">-</a> Changing the buffer text <a href="eval.txt.html#textlock" class="l">textlock</a><a href="repeat.txt.html#." class="d">.</a>
+<a href="motion.txt.html#-" class="d">-</a> Editing another buffer.
+<a href="motion.txt.html#-" class="d">-</a> The <a href="various.txt.html#%3Anormal" class="l">:normal</a> command.
+<a href="motion.txt.html#-" class="d">-</a> Moving the cursor <a href="motion.txt.html#is" class="d">is</a> allowed, but <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> restored afterwards.
+If you want the <a href="#mapping" class="d">mapping</a> to <a href="diff.txt.html#do" class="d">do</a> any of these let the returned characters <a href="diff.txt.html#do" class="d">do</a>
+that.
+
+You can use getchar(), <a href="motion.txt.html#it" class="d">it</a> consumes typeahead if there <a href="motion.txt.html#is" class="d">is</a> any. E.g., if you
+have these mappings: 
+<span class="e">  inoremap &lt;expr&gt; &lt;C-L&gt; nr2char(getchar())</span>
+<span class="e">  inoremap &lt;expr&gt; &lt;C-L&gt;x "foo"</span>
+If you now type <a href="various.txt.html#CTRL-L" class="k">CTRL-L</a> nothing happens yet, Vim needs the next character to
+decide what <a href="#mapping" class="d">mapping</a> to use.  If you type 'x' the second <a href="#mapping" class="d">mapping</a> <a href="motion.txt.html#is" class="d">is</a> used and
+"foo" <a href="motion.txt.html#is" class="d">is</a> inserted.  If you type any other key the first <a href="#mapping" class="d">mapping</a> <a href="motion.txt.html#is" class="d">is</a> used,
+<a href="eval.txt.html#getchar%28%29" class="d">getchar()</a> gets the typed key and returns it.
+
+Here <a href="motion.txt.html#is" class="d">is</a> an example that inserts <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> number that increases: 
+<span class="e">        let counter = 0</span>
+<span class="e">        inoremap &lt;expr&gt; &lt;C-L&gt; ListItem()</span>
+<span class="e">        inoremap &lt;expr&gt; &lt;C-R&gt; ListReset()</span>
+<span class="e"></span>
+<span class="e">        func ListItem()</span>
+<span class="e">          let g:counter += 1</span>
+<span class="e">          return g:counter . '. '</span>
+<span class="e">        endfunc</span>
+<span class="e"></span>
+<span class="e">        func ListReset()</span>
+<span class="e">          let g:counter = 0</span>
+<span class="e">          return ''</span>
+<span class="e">        endfunc</span>
+<span class="e"></span>
+<a href="various.txt.html#CTRL-L" class="k">CTRL-L</a> inserts the next number, <a href="undo.txt.html#CTRL-R" class="k">CTRL-R</a> resets the count.  <a href="undo.txt.html#CTRL-R" class="k">CTRL-R</a> returns an
+empty string, so that nothing <a href="motion.txt.html#is" class="d">is</a> inserted.
+
+<span class="n">Note</span> that there are some tricks to make special keys work and <a href="intro.txt.html#escape" class="d">escape</a> CSI bytes
+in the text.  The <a href="#%3Amap" class="l">:map</a> command also does this, thus you <a href="vim_faq.txt.html#must" class="d">must</a> avoid that <a href="motion.txt.html#it" class="d">it</a>
+<a href="motion.txt.html#is" class="d">is</a> done twice.  This does not work: 
+<span class="e">        :imap &lt;expr&gt; &lt;F3&gt; "&lt;Char-0x611B&gt;"</span>
+Because the &lt;Char- sequence <a href="motion.txt.html#is" class="d">is</a> escaped for being <a href="insert.txt.html#a" class="d">a</a> <a href="#%3Aimap" class="l">:imap</a> argument and then
+again for using <span class="s">&lt;expr&gt;</span>.  This does work: 
+<span class="e">        :imap &lt;expr&gt; &lt;F3&gt; "\u611B"</span>
+Using 0x80 <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> single byte before other text does not work, <a href="motion.txt.html#it" class="d">it</a> will be seen
+<a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> special key.
+
+
+1.3 MAPPING AND MODES                                   <a name="%3Amap-modes" class="t">:map-modes</a>
+                        <a name="mapmode-nvo" class="t">mapmode-nvo</a> <a name="mapmode-n" class="t">mapmode-n</a> <a name="mapmode-v" class="t">mapmode-v</a> <a name="mapmode-o" class="t">mapmode-o</a>
+
+There are six sets of mappings
+<a href="motion.txt.html#-" class="d">-</a> For <a href="intro.txt.html#Normal" class="d">Normal</a> mode: When typing commands.
+<a href="motion.txt.html#-" class="d">-</a> For <a href="visual.txt.html#Visual" class="d">Visual</a> mode: When typing commands while the <a href="visual.txt.html#Visual" class="d">Visual</a> area <a href="motion.txt.html#is" class="d">is</a> highlighted.
+<a href="motion.txt.html#-" class="d">-</a> For <a href="visual.txt.html#Select" class="d">Select</a> mode: like <a href="visual.txt.html#Visual" class="d">Visual</a> mode but typing text replaces the selection.
+<a href="motion.txt.html#-" class="d">-</a> For <a href="intro.txt.html#Operator-pending" class="d">Operator-pending</a> mode: When an <a href="motion.txt.html#operator" class="d">operator</a> <a href="motion.txt.html#is" class="d">is</a> pending (after "<a href="change.txt.html#d" class="d">d</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="change.txt.html#y" class="d">y</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="change.txt.html#c" class="d">c</a>"<a href="motion.txt.html#%2C" class="d">,</a>
+  etc.).  See below: <a href="#omap-info" class="l">omap-info</a><a href="repeat.txt.html#." class="d">.</a>
+<a href="motion.txt.html#-" class="d">-</a> For <a href="insert.txt.html#Insert" class="d">Insert</a> mode.  These are also used in <a href="insert.txt.html#Replace" class="d">Replace</a> mode.
+<a href="motion.txt.html#-" class="d">-</a> For <a href="cmdline.txt.html#Command-line" class="d">Command-line</a> mode: When entering <a href="insert.txt.html#a" class="d">a</a> "<a href="cmdline.txt.html#%3A" class="d">:</a>" or "<a href="pattern.txt.html#%2F" class="d">/</a>" command.
+
+<a href="eval.txt.html#Special" class="d">Special</a> case: While typing <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> for <a href="insert.txt.html#a" class="d">a</a> command in <a href="intro.txt.html#Normal" class="d">Normal</a> mode, <a href="#mapping" class="d">mapping</a> zero
+<a href="motion.txt.html#is" class="d">is</a> disabled.  This makes <a href="motion.txt.html#it" class="d">it</a> possible to map zero without making <a href="motion.txt.html#it" class="d">it</a> impossible
+to type <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> with <a href="insert.txt.html#a" class="d">a</a> zero.
+
+                                                <a name="map-overview" class="t">map-overview</a> <a name="map-modes" class="t">map-modes</a>
+Overview of which map command works in which mode.  More details below.
+<span class="h">     COMMANDS                    MODES </span>
+<a href="#%3Amap" class="d">:map</a>   <a href="#%3Anoremap" class="d">:noremap</a>  <a href="#%3Aunmap" class="d">:unmap</a>     Normal, Visual, Select, <a href="intro.txt.html#Operator-pending" class="d">Operator-pending</a>
+<a href="#%3Anmap" class="d">:nmap</a>  <a href="#%3Annoremap" class="d">:nnoremap</a> <a href="#%3Anunmap" class="d">:nunmap</a>    <a href="intro.txt.html#Normal" class="d">Normal</a>
+<a href="#%3Avmap" class="d">:vmap</a>  <a href="#%3Avnoremap" class="d">:vnoremap</a> <a href="#%3Avunmap" class="d">:vunmap</a>    <a href="visual.txt.html#Visual" class="d">Visual</a> and <a href="visual.txt.html#Select" class="d">Select</a>
+<a href="#%3Asmap" class="d">:smap</a>  <a href="#%3Asnoremap" class="d">:snoremap</a> <a href="#%3Asunmap" class="d">:sunmap</a>    <a href="visual.txt.html#Select" class="d">Select</a>
+<a href="#%3Axmap" class="d">:xmap</a>  <a href="#%3Axnoremap" class="d">:xnoremap</a> <a href="#%3Axunmap" class="d">:xunmap</a>    <a href="visual.txt.html#Visual" class="d">Visual</a>
+<a href="#%3Aomap" class="d">:omap</a>  <a href="#%3Aonoremap" class="d">:onoremap</a> <a href="#%3Aounmap" class="d">:ounmap</a>    <a href="intro.txt.html#Operator-pending" class="d">Operator-pending</a>
+<a href="#%3Amap%21" class="d">:map!</a>  <a href="#%3Anoremap%21" class="d">:noremap!</a> <a href="#%3Aunmap%21" class="d">:unmap!</a>    <a href="insert.txt.html#Insert" class="d">Insert</a> and <a href="cmdline.txt.html#Command-line" class="d">Command-line</a>
+<a href="#%3Aimap" class="d">:imap</a>  <a href="#%3Ainoremap" class="d">:inoremap</a> <a href="#%3Aiunmap" class="d">:iunmap</a>    <a href="insert.txt.html#Insert" class="d">Insert</a>
+<a href="#%3Almap" class="d">:lmap</a>  <a href="#%3Alnoremap" class="d">:lnoremap</a> <a href="#%3Alunmap" class="d">:lunmap</a>    Insert, Command-line, Lang-Arg
+<a href="#%3Acmap" class="d">:cmap</a>  <a href="#%3Acnoremap" class="d">:cnoremap</a> <a href="#%3Acunmap" class="d">:cunmap</a>    <a href="cmdline.txt.html#Command-line" class="d">Command-line</a>
+<a href="#%3Atmap" class="d">:tmap</a>  <a href="#%3Atnoremap" class="d">:tnoremap</a> <a href="#%3Atunmap" class="d">:tunmap</a>    <a href="terminal.txt.html#Terminal-Job" class="d">Terminal-Job</a>
+
+
+<span class="h">    COMMANDS                                  MODES </span>
+<span class="h">                                       Normal  Visual+Select  Operator-pending </span>
+<a href="#%3Amap" class="d">:map</a>   <a href="#%3Anoremap" class="d">:noremap</a>   <a href="#%3Aunmap" class="d">:unmap</a>   <a href="#%3Amapclear" class="d">:mapclear</a>     yes        yes            yes
+<a href="#%3Anmap" class="d">:nmap</a>  <a href="#%3Annoremap" class="d">:nnoremap</a>  <a href="#%3Anunmap" class="d">:nunmap</a>  <a href="#%3Anmapclear" class="d">:nmapclear</a>    yes         <a href="motion.txt.html#-" class="d">-</a>              <a href="motion.txt.html#-" class="d">-</a>
+<a href="#%3Avmap" class="d">:vmap</a>  <a href="#%3Avnoremap" class="d">:vnoremap</a>  <a href="#%3Avunmap" class="d">:vunmap</a>  <a href="#%3Avmapclear" class="d">:vmapclear</a>     <a href="motion.txt.html#-" class="d">-</a>         yes             <a href="motion.txt.html#-" class="d">-</a>
+<a href="#%3Aomap" class="d">:omap</a>  <a href="#%3Aonoremap" class="d">:onoremap</a>  <a href="#%3Aounmap" class="d">:ounmap</a>  <a href="#%3Aomapclear" class="d">:omapclear</a>     <a href="motion.txt.html#-" class="d">-</a>          <a href="motion.txt.html#-" class="d">-</a>             yes
+
+<a href="#%3Anunmap" class="d">:nunmap</a> can also be used outside of <a href="insert.txt.html#a" class="d">a</a> monastery.
+                                                <a name="mapmode-x" class="t">mapmode-x</a> <a name="mapmode-s" class="t">mapmode-s</a>
+Some commands work both in <a href="visual.txt.html#Visual" class="d">Visual</a> and <a href="visual.txt.html#Select" class="d">Select</a> mode, some in only one.  <span class="n">Note</span>
+that quite often "<a href="visual.txt.html#Visual" class="d">Visual</a>" <a href="motion.txt.html#is" class="d">is</a> mentioned where both <a href="visual.txt.html#Visual" class="d">Visual</a> and <a href="visual.txt.html#Select" class="d">Select</a> mode
+apply. <a href="visual.txt.html#Select-mode-mapping" class="l">Select-mode-mapping</a>
+<span class="n">NOTE:</span> Mapping <a href="insert.txt.html#a" class="d">a</a> printable character in <a href="visual.txt.html#Select" class="d">Select</a> mode may confuse the user.  It's
+better to explicitly use <a href="#%3Axmap" class="d">:xmap</a> and <a href="#%3Asmap" class="d">:smap</a> for printable characters.  Or use
+<a href="#%3Asunmap" class="d">:sunmap</a> after defining the mapping.
+
+<span class="h">    COMMANDS                                  MODES </span>
+<span class="h">                                          Visual    Select </span>
+<a href="#%3Avmap" class="d">:vmap</a>  <a href="#%3Avnoremap" class="d">:vnoremap</a>  <a href="#%3Avunmap" class="d">:vunmap</a>  <a href="#%3Avmapclear" class="d">:vmapclear</a>       yes      yes
+<a href="#%3Axmap" class="d">:xmap</a>  <a href="#%3Axnoremap" class="d">:xnoremap</a>  <a href="#%3Axunmap" class="d">:xunmap</a>  <a href="#%3Axmapclear" class="d">:xmapclear</a>       yes       <a href="motion.txt.html#-" class="d">-</a>
+<a href="#%3Asmap" class="d">:smap</a>  <a href="#%3Asnoremap" class="d">:snoremap</a>  <a href="#%3Asunmap" class="d">:sunmap</a>  <a href="#%3Asmapclear" class="d">:smapclear</a>       <a href="motion.txt.html#-" class="d">-</a>        yes
+
+                        <a name="mapmode-ic" class="t">mapmode-ic</a> <a name="mapmode-i" class="t">mapmode-i</a> <a name="mapmode-c" class="t">mapmode-c</a> <a name="mapmode-l" class="t">mapmode-l</a>
+Some commands work both in <a href="insert.txt.html#Insert" class="d">Insert</a> mode and <a href="cmdline.txt.html#Command-line" class="d">Command-line</a> mode, some not:
+
+<span class="h">    COMMANDS                                  MODES </span>
+<span class="h">                                          Insert  Command-line  Lang-Arg </span>
+<a href="#%3Amap%21" class="d">:map!</a>  <a href="#%3Anoremap%21" class="d">:noremap!</a>  <a href="#%3Aunmap%21" class="d">:unmap!</a>  <a href="#%3Amapclear%21" class="d">:mapclear!</a>       yes        yes         <a href="motion.txt.html#-" class="d">-</a>
+<a href="#%3Aimap" class="d">:imap</a>  <a href="#%3Ainoremap" class="d">:inoremap</a>  <a href="#%3Aiunmap" class="d">:iunmap</a>  <a href="#%3Aimapclear" class="d">:imapclear</a>       yes         <a href="motion.txt.html#-" class="d">-</a>          <a href="motion.txt.html#-" class="d">-</a>
+<a href="#%3Acmap" class="d">:cmap</a>  <a href="#%3Acnoremap" class="d">:cnoremap</a>  <a href="#%3Acunmap" class="d">:cunmap</a>  <a href="#%3Acmapclear" class="d">:cmapclear</a>        <a href="motion.txt.html#-" class="d">-</a>         yes         <a href="motion.txt.html#-" class="d">-</a>
+<a href="#%3Almap" class="d">:lmap</a>  <a href="#%3Alnoremap" class="d">:lnoremap</a>  <a href="#%3Alunmap" class="d">:lunmap</a>  <a href="#%3Almapclear" class="d">:lmapclear</a>       yes*       yes*       yes*
+
+The original <a href="intro.txt.html#Vi" class="d">Vi</a> did not have separate mappings for
+Normal/Visual/Operator-pending mode and for Insert/Command-line mode.
+Therefore the "<a href="#%3Amap" class="d">:map</a>" and "<a href="#%3Amap%21" class="d">:map!</a>" commands enter and display mappings for
+several modes.  In Vim you can use the "<a href="#%3Anmap" class="d">:nmap</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="#%3Avmap" class="d">:vmap</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="#%3Aomap" class="d">:omap</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="#%3Acmap" class="d">:cmap</a>" and
+"<a href="#%3Aimap" class="d">:imap</a>" commands to enter mappings for each mode separately.
+
+                                                        <a name="mapmode-t" class="t">mapmode-t</a>
+The <a href="terminal.txt.html#terminal" class="d">terminal</a> mappings are used in <a href="insert.txt.html#a" class="d">a</a> <a href="terminal.txt.html#terminal" class="d">terminal</a> window, when typing keys for the
+<a href="channel.txt.html#job" class="d">job</a> running in the terminal.  See <a href="terminal.txt.html#terminal-typing" class="l">terminal-typing</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="omap-info" class="t">omap-info</a>
+<a href="intro.txt.html#Operator-pending" class="d">Operator-pending</a> mappings can be used to define <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#movement" class="d">movement</a> command that can be
+used with any operator.  Simple example: "<a href="#%3Aomap" class="d">:omap</a> <a href="motion.txt.html#%7B" class="d">{</a> <a href="motion.txt.html#w" class="d">w</a>" makes "y{" work like "yw"
+and "d{" like "dw"<a href="repeat.txt.html#." class="d">.</a>
+
+To ignore the <a href="starting.txt.html#starting" class="d">starting</a> cursor position and select different text, you can have
+the omap start <a href="visual.txt.html#Visual" class="d">Visual</a> mode to select the text to be operated upon.  Example
+that operates on <a href="insert.txt.html#a" class="d">a</a> function name in the current line: 
+<span class="e">        onoremap &lt;silent&gt; F :&lt;C-U&gt;normal! 0f(hviw&lt;CR&gt;</span>
+The <a href="scroll.txt.html#CTRL-U" class="k">CTRL-U</a> (&lt;C-U&gt;) <a href="motion.txt.html#is" class="d">is</a> used to remove the range that Vim may insert.  The
+<a href="intro.txt.html#Normal" class="d">Normal</a> mode commands find the first '(' character and select the first <a href="motion.txt.html#word" class="d">word</a>
+before it.  That usually <a href="motion.txt.html#is" class="d">is</a> the function name.
+
+To enter <a href="insert.txt.html#a" class="d">a</a> <a href="#mapping" class="d">mapping</a> for <a href="intro.txt.html#Normal" class="d">Normal</a> and <a href="visual.txt.html#Visual" class="d">Visual</a> mode, but not <a href="intro.txt.html#Operator-pending" class="d">Operator-pending</a> mode,
+first define <a href="motion.txt.html#it" class="d">it</a> for all three modes, then unmap <a href="motion.txt.html#it" class="d">it</a> for <a href="intro.txt.html#Operator-pending" class="d">Operator-pending</a> mode:
+        <a href="#%3Amap" class="d">:map</a>    xx something-difficult
+        <a href="#%3Aounmap" class="d">:ounmap</a> xx
+Likewise for <a href="insert.txt.html#a" class="d">a</a> <a href="#mapping" class="d">mapping</a> for <a href="visual.txt.html#Visual" class="d">Visual</a> and <a href="intro.txt.html#Operator-pending" class="d">Operator-pending</a> mode or <a href="intro.txt.html#Normal" class="d">Normal</a> and
+<a href="intro.txt.html#Operator-pending" class="d">Operator-pending</a> mode.
+
+                                                <a name="language-mapping" class="t">language-mapping</a>
+"<a href="#%3Almap" class="d">:lmap</a>" defines <a href="insert.txt.html#a" class="d">a</a> <a href="#mapping" class="d">mapping</a> that applies to:
+<a href="motion.txt.html#-" class="d">-</a> <a href="insert.txt.html#Insert" class="d">Insert</a> mode
+<a href="motion.txt.html#-" class="d">-</a> <a href="cmdline.txt.html#Command-line" class="d">Command-line</a> mode
+<a href="motion.txt.html#-" class="d">-</a> when entering <a href="insert.txt.html#a" class="d">a</a> search <a href="pattern.txt.html#pattern" class="d">pattern</a>
+<a href="motion.txt.html#-" class="d">-</a> the argument of the commands that accept <a href="insert.txt.html#a" class="d">a</a> text character, such <a href="motion.txt.html#as" class="d">as</a> "<a href="change.txt.html#r" class="d">r</a>" and
+  "<a href="motion.txt.html#f" class="d">f</a>"
+<a href="motion.txt.html#-" class="d">-</a> for the <a href="eval.txt.html#input%28%29" class="d">input()</a> line
+Generally: Whenever <a href="insert.txt.html#a" class="d">a</a> character <a href="motion.txt.html#is" class="d">is</a> to be typed that <a href="motion.txt.html#is" class="d">is</a> part of the text in the
+buffer, not <a href="insert.txt.html#a" class="d">a</a> Vim command character.  "Lang-Arg" isn't really another mode,
+it's just used here for this situation.
+   The simplest way to load <a href="insert.txt.html#a" class="d">a</a> set of related language mappings <a href="motion.txt.html#is" class="d">is</a> by using the
+<a href="options.txt.html#%27keymap%27" class="o">'keymap'</a> option.  See <a href="usr_45.txt.html#45.5" class="l">45.5</a><a href="repeat.txt.html#." class="d">.</a>
+   In <a href="insert.txt.html#Insert" class="d">Insert</a> mode and in <a href="cmdline.txt.html#Command-line" class="d">Command-line</a> mode the mappings can be disabled with
+the <a href="editing.txt.html#CTRL-%5E" class="k">CTRL-^</a> command <a href="insert.txt.html#i_CTRL-%5E" class="l">i_CTRL-^</a> <a href="cmdline.txt.html#c_CTRL-%5E" class="l">c_CTRL-^</a><a href="repeat.txt.html#." class="d">.</a> These commands change the value of
+the <a href="options.txt.html#%27iminsert%27" class="o">'iminsert'</a> option.  When <a href="starting.txt.html#starting" class="d">starting</a> to enter <a href="insert.txt.html#a" class="d">a</a> normal command line (not <a href="insert.txt.html#a" class="d">a</a>
+search pattern) the mappings are disabled until <a href="insert.txt.html#a" class="d">a</a> <a href="editing.txt.html#CTRL-%5E" class="k">CTRL-^</a> <a href="motion.txt.html#is" class="d">is</a> typed.  The state
+last used <a href="motion.txt.html#is" class="d">is</a> remembered for <a href="insert.txt.html#Insert" class="d">Insert</a> mode and Search patterns separately.  The
+state for <a href="insert.txt.html#Insert" class="d">Insert</a> mode <a href="motion.txt.html#is" class="d">is</a> also used when typing <a href="insert.txt.html#a" class="d">a</a> character <a href="motion.txt.html#as" class="d">as</a> an argument to
+command like "<a href="motion.txt.html#f" class="d">f</a>" or "<a href="motion.txt.html#t" class="d">t</a>"<a href="repeat.txt.html#." class="d">.</a>
+   Language mappings will never be applied to already mapped characters.  They
+are only used for typed characters.  This assumes that the language <a href="#mapping" class="d">mapping</a>
+was already done when typing the mapping.
+
+
+1.4 LISTING MAPPINGS                                    <a name="map-listing" class="t">map-listing</a>
+
+When listing mappings the characters in the first two columns are:
+
+<span class="h">      CHAR      MODE    </span>
+     <a href="motion.txt.html#%3CSpace%3E" class="s">&lt;Space&gt;</a>    Normal, Visual, <a href="visual.txt.html#Select" class="d">Select</a> and <a href="intro.txt.html#Operator-pending" class="d">Operator-pending</a>
+        <a href="pattern.txt.html#n" class="d">n</a>       <a href="intro.txt.html#Normal" class="d">Normal</a>
+        <a href="visual.txt.html#v" class="d">v</a>       <a href="visual.txt.html#Visual" class="d">Visual</a> and <a href="visual.txt.html#Select" class="d">Select</a>
+        <a href="change.txt.html#s" class="d">s</a>       <a href="visual.txt.html#Select" class="d">Select</a>
+        <a href="change.txt.html#x" class="d">x</a>       <a href="visual.txt.html#Visual" class="d">Visual</a>
+        <a href="insert.txt.html#o" class="d">o</a>       <a href="intro.txt.html#Operator-pending" class="d">Operator-pending</a>
+        <a href="change.txt.html#%21" class="d">!</a>       <a href="insert.txt.html#Insert" class="d">Insert</a> and <a href="cmdline.txt.html#Command-line" class="d">Command-line</a>
+        <a href="insert.txt.html#i" class="d">i</a>       <a href="insert.txt.html#Insert" class="d">Insert</a>
+        <a href="motion.txt.html#l" class="d">l</a>       "<a href="#%3Almap" class="d">:lmap</a>" mappings for Insert, <a href="cmdline.txt.html#Command-line" class="d">Command-line</a> and Lang-Arg
+        <a href="change.txt.html#c" class="d">c</a>       <a href="cmdline.txt.html#Command-line" class="d">Command-line</a>
+        <a href="motion.txt.html#t" class="d">t</a>       <a href="terminal.txt.html#Terminal-Job" class="d">Terminal-Job</a>
+
+Just before the <a href="#%7Brhs%7D" class="s">{rhs}</a> <a href="insert.txt.html#a" class="d">a</a> special character can appear:
+        *       indicates that <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> not remappable
+        <a href="change.txt.html#%26" class="d">&amp;</a>       indicates that only <a href="#script-local" class="d">script-local</a> mappings are remappable
+        <a href="repeat.txt.html#%40" class="d">@</a>       indicates <a href="insert.txt.html#a" class="d">a</a> buffer-local <a href="#mapping" class="d">mapping</a>
+
+Everything from the first non-blank after <a href="#%7Blhs%7D" class="s">{lhs}</a> up to the <a href="intro.txt.html#end" class="d">end</a> of the line
+(or <a href="motion.txt.html#%27" class="d">'</a>|<a href="motion.txt.html#%27%29" class="d">')</a> <a href="motion.txt.html#is" class="d">is</a> considered to be part of <a href="#%7Brhs%7D" class="s">{rhs}</a>.  This allows the <a href="#%7Brhs%7D" class="s">{rhs}</a> to <a href="intro.txt.html#end" class="d">end</a>
+with <a href="insert.txt.html#a" class="d">a</a> space.
+
+<span class="n">Note:</span> When using mappings for <a href="visual.txt.html#Visual" class="d">Visual</a> mode, you can use the "<a href="motion.txt.html#%27%3C" class="d">'&lt;</a>" mark, which
+<a href="motion.txt.html#is" class="d">is</a> the start of the last selected <a href="visual.txt.html#Visual" class="d">Visual</a> area in the current buffer <a href="motion.txt.html#%27%3C" class="l">'&lt;</a><a href="repeat.txt.html#." class="d">.</a>
+
+The <a href="various.txt.html#%3Afilter" class="l">:filter</a> command can be used to select what mappings to list.  The
+<a href="pattern.txt.html#pattern" class="d">pattern</a> <a href="motion.txt.html#is" class="d">is</a> matched against the <a href="#%7Blhs%7D" class="s">{lhs}</a> and <a href="#%7Brhs%7D" class="s">{rhs}</a> in the raw form.
+
+                                                        <a name="%3Amap-verbose" class="t">:map-verbose</a>
+When <a href="options.txt.html#%27verbose%27" class="o">'verbose'</a> <a href="motion.txt.html#is" class="d">is</a> non-zero, listing <a href="insert.txt.html#a" class="d">a</a> key map will also display where <a href="motion.txt.html#it" class="d">it</a> was
+last defined.  Example: 
+<span class="e"></span>
+<span class="e">        :verbose map &lt;C-W&gt;*</span>
+<span class="e">        n  &lt;C-W&gt;*      * &lt;C-W&gt;&lt;C-S&gt;*</span>
+<span class="e">                Last set from /home/abcd/.vimrc</span>
+<span class="e"></span>
+See <a href="various.txt.html#%3Averbose-cmd" class="l">:verbose-cmd</a> for more information.
+
+
+1.5 MAPPING SPECIAL KEYS                                <a name="%3Amap-special-keys" class="t">:map-special-keys</a>
+
+There are three ways to map <a href="insert.txt.html#a" class="d">a</a> special key:
+1. The Vi-compatible method: Map the key code.  Often this <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> sequence that
+   starts with <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a>.  To enter <a href="insert.txt.html#a" class="d">a</a> <a href="#mapping" class="d">mapping</a> like this you type "<a href="#%3Amap" class="d">:map</a> " and then
+   you have to type <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> before hitting the function key.  <span class="n">Note</span> that when
+   the key code for the key <a href="motion.txt.html#is" class="d">is</a> in the <a href="term.txt.html#termcap" class="d">termcap</a> (the t_ options), <a href="motion.txt.html#it" class="d">it</a> will
+   automatically be translated into the internal code and become the second
+   way of <a href="#mapping" class="d">mapping</a> (unless the 'k' flag <a href="motion.txt.html#is" class="d">is</a> included in <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a>).
+2. The second method <a href="motion.txt.html#is" class="d">is</a> to use the internal code for the function key.  To
+   enter such <a href="insert.txt.html#a" class="d">a</a> <a href="#mapping" class="d">mapping</a> type <span class="k">CTRL-K</span> and then hit the function key, or use
+   the form "#1"<a href="motion.txt.html#%2C" class="d">,</a> "#2"<a href="motion.txt.html#%2C" class="d">,</a> .. "#9"<a href="motion.txt.html#%2C" class="d">,</a> "#0"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="motion.txt.html#%3CUp%3E" class="s">&lt;Up&gt;</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="scroll.txt.html#%3CS-Down%3E" class="s">&lt;S-Down&gt;</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="term.txt.html#%3CS-F7%3E" class="s">&lt;S-F7&gt;</a>"<a href="motion.txt.html#%2C" class="d">,</a> etc.
+   (see table of keys <a href="intro.txt.html#key-notation" class="l">key-notation</a><a href="motion.txt.html#%2C" class="d">,</a> all keys from <a href="motion.txt.html#%3CUp%3E" class="s">&lt;Up&gt;</a> can be used).  The
+   first ten function keys can be defined in two ways: Just the number, like
+   "#2"<a href="motion.txt.html#%2C" class="d">,</a> and with "<span class="s">&lt;F&gt;</span>"<a href="motion.txt.html#%2C" class="d">,</a> like "<a href="term.txt.html#%3CF2%3E" class="s">&lt;F2&gt;</a>"<a href="repeat.txt.html#." class="d">.</a>  Both stand for function key 2.  "#0"
+   refers to function key 10, defined with option 't_f10', which may be
+   function key zero on some keyboards.  The <a href="intro.txt.html#%3C%3E" class="d">&lt;&gt;</a> form cannot be used when
+   <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a> includes the '&lt;' flag.
+3. Use the <a href="term.txt.html#termcap" class="d">termcap</a> entry, with the form <span class="s">&lt;t_xx&gt;</span>, where "xx" <a href="motion.txt.html#is" class="d">is</a> the name of the
+   <a href="term.txt.html#termcap" class="d">termcap</a> entry.  Any <a href="eval.txt.html#string" class="d">string</a> entry can be used.  For example: 
+<span class="e">     :map &lt;t_F3&gt; G</span>
+  Maps function key 13 to "<a href="motion.txt.html#G" class="d">G</a>"<a href="repeat.txt.html#." class="d">.</a>  This does not work if <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a> includes
+   the '&lt;' flag.
+
+The advantage of the second and third method <a href="motion.txt.html#is" class="d">is</a> that the <a href="#mapping" class="d">mapping</a> will work on
+different terminals without modification (the function key will be
+translated into the same internal code or the actual key code, no matter what
+<a href="terminal.txt.html#terminal" class="d">terminal</a> you are using.  The <a href="term.txt.html#termcap" class="d">termcap</a> <a href="vim_faq.txt.html#must" class="d">must</a> be correct for this to work, and you
+<a href="vim_faq.txt.html#must" class="d">must</a> use the same mappings).
+
+DETAIL: Vim first checks if <a href="insert.txt.html#a" class="d">a</a> sequence from the keyboard <a href="motion.txt.html#is" class="d">is</a> mapped.  If <a href="motion.txt.html#it" class="d">it</a>
+isn't the <a href="terminal.txt.html#terminal" class="d">terminal</a> key codes are tried (see <a href="term.txt.html#terminal-options" class="l">terminal-options</a>).  If <a href="insert.txt.html#a" class="d">a</a>
+<a href="terminal.txt.html#terminal" class="d">terminal</a> code <a href="motion.txt.html#is" class="d">is</a> found <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> replaced with the internal code.  Then the check
+for <a href="insert.txt.html#a" class="d">a</a> <a href="#mapping" class="d">mapping</a> <a href="motion.txt.html#is" class="d">is</a> done again (so you can map an internal code to something
+else).  What <a href="motion.txt.html#is" class="d">is</a> written into the <a href="usr_41.txt.html#script" class="d">script</a> file depends on what <a href="motion.txt.html#is" class="d">is</a> recognized.
+If the <a href="terminal.txt.html#terminal" class="d">terminal</a> key code was recognized <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> <a href="#mapping" class="d">mapping</a> the key code itself <a href="motion.txt.html#is" class="d">is</a>
+written to the <a href="usr_41.txt.html#script" class="d">script</a> file.  If <a href="motion.txt.html#it" class="d">it</a> was recognized <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> <a href="terminal.txt.html#terminal" class="d">terminal</a> code the
+internal code <a href="motion.txt.html#is" class="d">is</a> written to the <a href="usr_41.txt.html#script" class="d">script</a> file.
+
+
+1.6 SPECIAL CHARACTERS                                  <a name="%3Amap-special-chars" class="t">:map-special-chars</a>
+                                                <a name="map_backslash" class="t">map_backslash</a> <a name="map-backslash" class="t">map-backslash</a>
+<span class="n">Note</span> that only <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> <a href="motion.txt.html#is" class="d">is</a> mentioned here <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> special character for mappings
+and abbreviations.  When <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a> does not contain 'B', <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#backslash" class="d">backslash</a> can
+also be used like <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a>.  The <span class="s">&lt;&gt; notation can be fully used then |&lt;&gt;</span>|<a href="repeat.txt.html#." class="d">.</a>  But
+you cannot use "<span class="s">&lt;C-V&gt;</span>" like <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> to <a href="intro.txt.html#escape" class="d">escape</a> the special meaning of what
+follows.
+
+To map <a href="insert.txt.html#a" class="d">a</a> backslash, or use <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#backslash" class="d">backslash</a> literally in the <a href="#%7Brhs%7D" class="s">{rhs}</a>, the special
+sequence "<a href="intro.txt.html#%3CBslash%3E" class="s">&lt;Bslash&gt;</a>" can be used.  This avoids the need to double backslashes
+when using nested mappings.
+
+                                                <a name="map_CTRL-C" class="t">map_CTRL-C</a> <a name="map-CTRL-C" class="t">map-CTRL-C</a>
+Using <a href="pattern.txt.html#CTRL-C" class="k">CTRL-C</a> in the <a href="#%7Blhs%7D" class="s">{lhs}</a> <a href="motion.txt.html#is" class="d">is</a> possible, but <a href="motion.txt.html#it" class="d">it</a> will only work when Vim <a href="motion.txt.html#is" class="d">is</a>
+waiting for <a href="insert.txt.html#a" class="d">a</a> key, not when Vim <a href="motion.txt.html#is" class="d">is</a> busy with something.  When Vim <a href="motion.txt.html#is" class="d">is</a> busy
+<a href="pattern.txt.html#CTRL-C" class="k">CTRL-C</a> interrupts/breaks the command.
+When using the <a href="gui.txt.html#GUI" class="d">GUI</a> version on <a href="os_win32.txt.html#MS-Windows" class="d">MS-Windows</a> <a href="pattern.txt.html#CTRL-C" class="k">CTRL-C</a> can be mapped to allow <a href="insert.txt.html#a" class="d">a</a> Copy
+command to the clipboard.  Use <a href="scroll.txt.html#CTRL-B" class="k">CTRL-B</a>reak to interrupt Vim.
+
+                                        <a name="map_space_in_lhs" class="t">map_space_in_lhs</a> <a name="map-space_in_lhs" class="t">map-space_in_lhs</a>
+To include <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#space" class="d">space</a> in <a href="#%7Blhs%7D" class="s">{lhs}</a> precede <a href="motion.txt.html#it" class="d">it</a> with <a href="insert.txt.html#a" class="d">a</a> <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> (type two <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a>s for
+each space).
+                                        <a name="map_space_in_rhs" class="t">map_space_in_rhs</a> <a name="map-space_in_rhs" class="t">map-space_in_rhs</a>
+If you want <a href="insert.txt.html#a" class="d">a</a> <a href="#%7Brhs%7D" class="s">{rhs}</a> that starts with <a href="insert.txt.html#a" class="d">a</a> space, use "<a href="motion.txt.html#%3CSpace%3E" class="s">&lt;Space&gt;</a>"<a href="repeat.txt.html#." class="d">.</a>  To be fully <a href="intro.txt.html#Vi" class="d">Vi</a>
+compatible (but unreadable) don't use the <a href="intro.txt.html#%3C%3E" class="l">&lt;&gt;</a> notation, precede <a href="#%7Brhs%7D" class="s">{rhs}</a> with <a href="insert.txt.html#a" class="d">a</a>
+single <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> (you have to type <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> two times).
+                                                <a name="map_empty_rhs" class="t">map_empty_rhs</a> <a name="map-empty-rhs" class="t">map-empty-rhs</a>
+You can create an empty <a href="#%7Brhs%7D" class="s">{rhs}</a> by typing nothing after <a href="insert.txt.html#a" class="d">a</a> single <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> (you
+have to type <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> two times).  Unfortunately, you cannot <a href="diff.txt.html#do" class="d">do</a> this in <a href="insert.txt.html#a" class="d">a</a> <a href="starting.txt.html#vimrc" class="d">vimrc</a>
+file.
+                                                        <a name="%3CNop%3E" class="t">&lt;Nop&gt;</a>
+An easier way to get <a href="insert.txt.html#a" class="d">a</a> <a href="#mapping" class="d">mapping</a> that doesn't produce anything, <a href="motion.txt.html#is" class="d">is</a> to use
+"<a href="#%3CNop%3E" class="s">&lt;Nop&gt;</a>" for the <a href="#%7Brhs%7D" class="s">{rhs}</a>.  This only works when the <a href="intro.txt.html#%3C%3E" class="l">&lt;&gt;</a> <a href="intro.txt.html#notation" class="d">notation</a> <a href="motion.txt.html#is" class="d">is</a> enabled.
+For example, to make sure that function key 8 does nothing <a href="motion.txt.html#at" class="d">at</a> all: 
+<span class="e">        :map  &lt;F8&gt;  &lt;Nop&gt;</span>
+<span class="e">        :map! &lt;F8&gt;  &lt;Nop&gt;</span>
+
+                                                        <a name="map-multibyte" class="t">map-multibyte</a>
+It <a href="motion.txt.html#is" class="d">is</a> possible to map <a href="mbyte.txt.html#multibyte" class="d">multibyte</a> characters, but only the whole character.  You
+cannot map the first byte only.  This was done to prevent problems in this
+scenario: 
+<span class="e">        :set encoding=latin1</span>
+<span class="e">        :imap &lt;M-C&gt; foo</span>
+<span class="e">        :set encoding=utf-8</span>
+The <a href="#mapping" class="d">mapping</a> for <span class="s">&lt;M-C&gt;</span> <a href="motion.txt.html#is" class="d">is</a> defined with the latin1 encoding, resulting in <a href="insert.txt.html#a" class="d">a</a> 0xc3
+byte.  If you type the character á (0xe1 <span class="s">&lt;M-a&gt;</span>) in <a href="mbyte.txt.html#UTF-8" class="d">UTF-8</a> encoding this <a href="motion.txt.html#is" class="d">is</a> the
+two bytes 0xc3 0xa1.  You don't want the 0xc3 byte to be mapped then or
+otherwise <a href="motion.txt.html#it" class="d">it</a> would be impossible to type the á character.
+
+                                        <a name="%3CLeader%3E" class="t">&lt;Leader&gt;</a> <a name="mapleader" class="t">mapleader</a>
+To define <a href="insert.txt.html#a" class="d">a</a> <a href="#mapping" class="d">mapping</a> which uses the "<a href="#mapleader" class="d">mapleader</a>" variable, the special <a href="eval.txt.html#string" class="d">string</a>
+"<a href="#%3CLeader%3E" class="s">&lt;Leader&gt;</a>" can be used.  It <a href="motion.txt.html#is" class="d">is</a> replaced with the <a href="eval.txt.html#string" class="d">string</a> value of "<a href="#mapleader" class="d">mapleader</a>"<a href="repeat.txt.html#." class="d">.</a>
+If "<a href="#mapleader" class="d">mapleader</a>" <a href="motion.txt.html#is" class="d">is</a> not set or empty, <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#backslash" class="d">backslash</a> <a href="motion.txt.html#is" class="d">is</a> used instead.  Example: 
+<span class="e">        :map &lt;Leader&gt;A  oanother line&lt;Esc&gt;</span>
+Works like: 
+<span class="e">        :map \A  oanother line&lt;Esc&gt;</span>
+But after: 
+<span class="e">        :let mapleader = ","</span>
+It works like: 
+<span class="e">        :map ,A  oanother line&lt;Esc&gt;</span>
+<span class="e"></span>
+<span class="n">Note</span> that the value of "<a href="#mapleader" class="d">mapleader</a>" <a href="motion.txt.html#is" class="d">is</a> used <a href="motion.txt.html#at" class="d">at</a> the moment the <a href="#mapping" class="d">mapping</a> <a href="motion.txt.html#is" class="d">is</a>
+defined.  Changing "<a href="#mapleader" class="d">mapleader</a>" after that has no effect for already defined
+mappings.
+
+                                        <a name="%3CLocalLeader%3E" class="t">&lt;LocalLeader&gt;</a> <a name="maplocalleader" class="t">maplocalleader</a>
+<a href="#%3CLocalLeader%3E" class="s">&lt;LocalLeader&gt;</a> <a href="motion.txt.html#is" class="d">is</a> just like <a href="#%3CLeader%3E" class="s">&lt;Leader&gt;</a>, except that <a href="motion.txt.html#it" class="d">it</a> uses "<a href="#maplocalleader" class="d">maplocalleader</a>"
+instead of "<a href="#mapleader" class="d">mapleader</a>"<a href="repeat.txt.html#." class="d">.</a>  <a href="#%3CLocalLeader%3E" class="s">&lt;LocalLeader&gt;</a> <a href="motion.txt.html#is" class="d">is</a> to be used for mappings which are
+local to <a href="insert.txt.html#a" class="d">a</a> buffer.  Example: 
+<span class="e">      :map &lt;buffer&gt; &lt;LocalLeader&gt;A  oanother line&lt;Esc&gt;</span>
+
+In <a href="insert.txt.html#a" class="d">a</a> global <a href="usr_05.txt.html#plugin" class="d">plugin</a> <a href="#%3CLeader%3E" class="s">&lt;Leader&gt;</a> should be used and in <a href="insert.txt.html#a" class="d">a</a> <a href="filetype.txt.html#filetype" class="d">filetype</a> <a href="usr_05.txt.html#plugin" class="d">plugin</a>
+<a href="#%3CLocalLeader%3E" class="s">&lt;LocalLeader&gt;</a>.  "<a href="#mapleader" class="d">mapleader</a>" and "<a href="#maplocalleader" class="d">maplocalleader</a>" can be equal.  Although, if
+you make them different, there <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> smaller chance of mappings from global
+plugins to clash with mappings for <a href="filetype.txt.html#filetype" class="d">filetype</a> plugins.  For example, you could
+keep "<a href="#mapleader" class="d">mapleader</a>" <a href="motion.txt.html#at" class="d">at</a> the default backslash, and set "<a href="#maplocalleader" class="d">maplocalleader</a>" to an
+underscore.
+
+                                                        <a name="map-%3CSID%3E" class="t">map-&lt;SID&gt;</a>
+In <a href="insert.txt.html#a" class="d">a</a> <a href="usr_41.txt.html#script" class="d">script</a> the special key name "<a href="#%3CSID%3E" class="s">&lt;SID&gt;</a>" can be used to define <a href="insert.txt.html#a" class="d">a</a> <a href="#mapping" class="d">mapping</a>
+that's local to the script.  See <a href="#%3CSID%3E" class="l">&lt;SID&gt;</a> for details.
+
+                                                        <a name="%3CPlug%3E" class="t">&lt;Plug&gt;</a>
+The special key name "<a href="#%3CPlug%3E" class="s">&lt;Plug&gt;</a>" can be used for an internal mapping, which <a href="motion.txt.html#is" class="d">is</a>
+not to be matched with any key sequence.  This <a href="motion.txt.html#is" class="d">is</a> useful in plugins
+<a href="usr_41.txt.html#using-%3CPlug%3E" class="l">using-&lt;Plug&gt;</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="%3CChar%3E" class="t">&lt;Char&gt;</a> <a name="%3CChar-%3E" class="t">&lt;Char-&gt;</a>
+To map <a href="insert.txt.html#a" class="d">a</a> character by its decimal, <a href="eval.txt.html#octal" class="d">octal</a> or hexadecimal number the <a href="#%3CChar%3E" class="s">&lt;Char&gt;</a>
+construct can be used:
+        <span class="s">&lt;Char-123&gt;</span>      character 123
+        <span class="s">&lt;Char-033&gt;</span>      character 27
+        <span class="s">&lt;Char-0x7f&gt;</span>     character 127
+        <span class="s">&lt;S-Char-114&gt;</span>    character 114 ('r') shifted ('R')
+This <a href="motion.txt.html#is" class="d">is</a> useful to specify <a href="insert.txt.html#a" class="d">a</a> (multi-byte) character in <a href="insert.txt.html#a" class="d">a</a> <a href="options.txt.html#%27keymap%27" class="o">'keymap'</a> file.
+Upper and <a href="change.txt.html#lowercase" class="d">lowercase</a> differences are ignored.
+
+                                                        <a name="map-comments" class="t">map-comments</a>
+It <a href="motion.txt.html#is" class="d">is</a> not possible to <a href="change.txt.html#put" class="d">put</a> <a href="insert.txt.html#a" class="d">a</a> comment after these commands, because the <a href="motion.txt.html#%27" class="d">'</a>"<a href="motion.txt.html#%27" class="d">'</a>
+character <a href="motion.txt.html#is" class="d">is</a> considered to be part of the <a href="#%7Blhs%7D" class="s">{lhs}</a> or <a href="#%7Brhs%7D" class="s">{rhs}</a>. However, one can
+use |"<a href="motion.txt.html#%2C" class="d">,</a> since this starts <a href="insert.txt.html#a" class="d">a</a> new, empty command with <a href="insert.txt.html#a" class="d">a</a> comment.
+
+                                                        <a name="map_bar" class="t">map_bar</a> <a name="map-bar" class="t">map-bar</a>
+Since the <a href="motion.txt.html#%27" class="d">'</a>|<a href="motion.txt.html#%27" class="d">'</a> character <a href="motion.txt.html#is" class="d">is</a> used to separate <a href="insert.txt.html#a" class="d">a</a> map command from the next
+command, you will have to <a href="diff.txt.html#do" class="d">do</a> something special to include  <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%27" class="d">'</a>|<a href="motion.txt.html#%27" class="d">'</a> in <a href="#%7Brhs%7D" class="s">{rhs}</a>.
+There are three methods:
+<span class="h">   use       works when                    example      </span>
+   <a href="intro.txt.html#%3CBar%3E" class="s">&lt;Bar&gt;</a>     '&lt;' <a href="motion.txt.html#is" class="d">is</a> not in <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a>     <a href="#%3Amap" class="d">:map</a> _l :!ls <a href="intro.txt.html#%3CBar%3E" class="s">&lt;Bar&gt;</a> more^M
+   \|        'b' <a href="motion.txt.html#is" class="d">is</a> not in <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a>     <a href="#%3Amap" class="d">:map</a> _l :!ls \| more^M
+   ^V|       always, in Vim and <a href="intro.txt.html#Vi" class="d">Vi</a>         <a href="#%3Amap" class="d">:map</a> _l :!ls ^V| more^M
+
+(here ^V stands for <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a>; to get one <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> you have to type <a href="motion.txt.html#it" class="d">it</a> twice; you
+cannot use the <span class="s">&lt;&gt; notation "&lt;C-V&gt;</span>" here).
+
+All three work when you use the default setting for <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a>.
+
+When 'b' <a href="motion.txt.html#is" class="d">is</a> present in <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a>, "\|" will be recognized <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> <a href="#mapping" class="d">mapping</a>
+ending in <a href="insert.txt.html#a" class="d">a</a> '\' and then another command.  This <a href="motion.txt.html#is" class="d">is</a> <a href="intro.txt.html#Vi" class="d">Vi</a> compatible, but
+illogical when compared to other commands.
+
+                                                <a name="map_return" class="t">map_return</a> <a name="map-return" class="t">map-return</a>
+When you have <a href="insert.txt.html#a" class="d">a</a> <a href="#mapping" class="d">mapping</a> that contains an <a href="intro.txt.html#Ex" class="d">Ex</a> command, you need to <a href="change.txt.html#put" class="d">put</a> <a href="insert.txt.html#a" class="d">a</a> line
+terminator after <a href="motion.txt.html#it" class="d">it</a> to have <a href="motion.txt.html#it" class="d">it</a> executed.  The use of <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a> <a href="motion.txt.html#is" class="d">is</a> recommended for
+this (see <a href="intro.txt.html#%3C%3E" class="l">&lt;&gt;</a>).  Example: 
+<span class="e">   :map  _ls  :!ls -l %:S&lt;CR&gt;:echo "the end"&lt;CR&gt;</span>
+<span class="e"></span>
+To avoid <a href="#mapping" class="d">mapping</a> of the characters you type in <a href="insert.txt.html#insert" class="d">insert</a> or <a href="cmdline.txt.html#Command-line" class="d">Command-line</a> mode,
+type <a href="insert.txt.html#a" class="d">a</a> <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> first.  The <a href="#mapping" class="d">mapping</a> in <a href="insert.txt.html#Insert" class="d">Insert</a> mode <a href="motion.txt.html#is" class="d">is</a> disabled if the <a href="options.txt.html#%27paste%27" class="o">'paste'</a>
+option <a href="motion.txt.html#is" class="d">is</a> on.
+                                                        <a name="map-error" class="t">map-error</a>
+<span class="n">Note</span> that when an error <a href="motion.txt.html#is" class="d">is</a> encountered (that causes an error message or beep)
+the rest of the <a href="#mapping" class="d">mapping</a> <a href="motion.txt.html#is" class="d">is</a> not executed.  This <a href="motion.txt.html#is" class="d">is</a> Vi-compatible.
+
+<span class="n">Note</span> that the second character (argument) of the commands @zZtTfF[]rm'`"<a href="visual.txt.html#v" class="d">v</a>
+and <a href="change.txt.html#CTRL-X" class="k">CTRL-X</a> <a href="motion.txt.html#is" class="d">is</a> not mapped.  This was done to be able to use all the named
+<a href="change.txt.html#registers" class="d">registers</a> and marks, even when the command with the same name has been
+mapped.
+
+
+1.7 WHAT KEYS TO MAP                                    <a name="map-which-keys" class="t">map-which-keys</a>
+
+If you are going to map something, you will need to choose which key(s) to use
+for the <a href="#%7Blhs%7D" class="s">{lhs}</a>.  You will have to avoid keys that are used for Vim commands,
+otherwise you would not be able to use those commands anymore.  Here are <a href="insert.txt.html#a" class="d">a</a> few
+suggestions:
+<a href="motion.txt.html#-" class="d">-</a> Function keys <a href="term.txt.html#%3CF2%3E" class="s">&lt;F2&gt;</a>, <a href="term.txt.html#%3CF3%3E" class="s">&lt;F3&gt;</a>, etc..  Also the shifted function keys <a href="intro.txt.html#%3CS-F1%3E" class="s">&lt;S-F1&gt;</a>,
+  <a href="term.txt.html#%3CS-F2%3E" class="s">&lt;S-F2&gt;</a>, etc.  <span class="n">Note</span> that <a href="helphelp.txt.html#%3CF1%3E" class="s">&lt;F1&gt;</a> <a href="motion.txt.html#is" class="d">is</a> already used for the <a href="helphelp.txt.html#help" class="d">help</a> command.
+<a href="motion.txt.html#-" class="d">-</a> Meta-keys (with the ALT key pressed).  Depending on your keyboard accented
+  characters may be used <a href="motion.txt.html#as" class="d">as</a> well. <a href="#%3Amap-alt-keys" class="l">:map-alt-keys</a>
+<a href="motion.txt.html#-" class="d">-</a> Use the '_' or ',' character and then any other character.  The "<a href="motion.txt.html#_" class="d">_</a>" and "<a href="motion.txt.html#%2C" class="d">,</a>"
+  commands <a href="diff.txt.html#do" class="d">do</a> exist in Vim (see <a href="motion.txt.html#_" class="l">_</a> and <a href="motion.txt.html#%2C" class="l">,</a>), but you probably never use them.
+<a href="motion.txt.html#-" class="d">-</a> Use <a href="insert.txt.html#a" class="d">a</a> key that <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> synonym for another command.  For example: <a href="motion.txt.html#CTRL-P" class="k">CTRL-P</a> and
+  <a href="motion.txt.html#CTRL-N" class="k">CTRL-N</a>.  Use an extra character to allow more mappings.
+<a href="motion.txt.html#-" class="d">-</a> The key defined by <a href="#%3CLeader%3E" class="s">&lt;Leader&gt;</a> and one or more other keys.  This <a href="motion.txt.html#is" class="d">is</a> especially
+  useful in scripts. <a href="#mapleader" class="l">mapleader</a>
+
+See the file "<a href="index.txt.html#index" class="d">index</a>" for keys that are not used and thus can be mapped without
+losing any builtin function.  You can also use "<a href="helphelp.txt.html#%3Ahelp" class="d">:help</a> <span class="s">{key}</span>^D" to find out if
+<a href="insert.txt.html#a" class="d">a</a> key <a href="motion.txt.html#is" class="d">is</a> used for some command.  ({key} <a href="motion.txt.html#is" class="d">is</a> the specific key you want to find
+out about, ^D <a href="motion.txt.html#is" class="d">is</a> <a href="scroll.txt.html#CTRL-D" class="k">CTRL-D</a>).
+
+
+1.8 EXAMPLES                                            <a name="map-examples" class="t">map-examples</a>
+
+<a href="insert.txt.html#A" class="d">A</a> few examples (given <a href="motion.txt.html#as" class="d">as</a> you type them, for "<a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a>" you type four characters;
+the '&lt;' flag <a href="vim_faq.txt.html#must" class="d">must</a> not be present in <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a> for this to work). 
+<span class="e"></span>
+<span class="e">   :map &lt;F3&gt;  o#include</span>
+<span class="e">   :map &lt;M-g&gt; /foo&lt;CR&gt;cwbar&lt;Esc&gt;</span>
+<span class="e">   :map _x    d/END/e&lt;CR&gt;</span>
+<span class="e">   :map! qq   quadrillion questions</span>
+<span class="e"></span>
+<span class="e"></span>
+Multiplying <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a>
+
+When you type <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> before triggering <a href="insert.txt.html#a" class="d">a</a> mapping, it's like the <a href="intro.txt.html#count" class="d">count</a> was
+typed before the <a href="#%7Blhs%7D" class="s">{lhs}</a>.  For example, with this mapping: 
+<span class="e">   :map &lt;F4&gt;  3w</span>
+Typing 2&lt;F4&gt; will result in "23w"<a href="repeat.txt.html#." class="d">.</a> Thus not moving 2 * 3 words but 23 words.
+If you want to multiply counts use the <a href="eval.txt.html#expression" class="d">expression</a> register: 
+<span class="e">   :map &lt;F4&gt;  @='3w'&lt;CR&gt;</span>
+The part between <a href="quotes.txt.html#quotes" class="d">quotes</a> <a href="motion.txt.html#is" class="d">is</a> the <a href="eval.txt.html#expression" class="d">expression</a> being executed. <a href="change.txt.html#%40%3D" class="l">@=</a>
+
+
+1.9 USING MAPPINGS                                      <a name="map-typing" class="t">map-typing</a>
+
+Vim will compare what you type with the start of <a href="insert.txt.html#a" class="d">a</a> mapped sequence.  If there
+<a href="motion.txt.html#is" class="d">is</a> an incomplete match, <a href="motion.txt.html#it" class="d">it</a> will get more characters until there either <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a>
+complete match or until there <a href="motion.txt.html#is" class="d">is</a> no match <a href="motion.txt.html#at" class="d">at</a> all.  Example: If you map! "qq"<a href="motion.txt.html#%2C" class="d">,</a>
+the first 'q' will not appear on the screen until you type another
+character.  This <a href="motion.txt.html#is" class="d">is</a> because Vim cannot know if the next character will be <a href="insert.txt.html#a" class="d">a</a>
+'q' or not.  If the <a href="options.txt.html#%27timeout%27" class="o">'timeout'</a> option <a href="motion.txt.html#is" class="d">is</a> on (which <a href="motion.txt.html#is" class="d">is</a> the default) Vim will
+only wait for one second (or <a href="motion.txt.html#as" class="d">as</a> long <a href="motion.txt.html#as" class="d">as</a> specified with the <a href="options.txt.html#%27timeoutlen%27" class="o">'timeoutlen'</a>
+option).  After that <a href="motion.txt.html#it" class="d">it</a> assumes that the 'q' <a href="motion.txt.html#is" class="d">is</a> to be interpreted <a href="motion.txt.html#as" class="d">as</a> such.  If
+you type slowly, or your system <a href="motion.txt.html#is" class="d">is</a> slow, reset the <a href="options.txt.html#%27timeout%27" class="o">'timeout'</a> option.  Then you
+might want to set the <a href="options.txt.html#%27ttimeout%27" class="o">'ttimeout'</a> option.
+
+                                                        <a name="map-precedence" class="t">map-precedence</a>
+Buffer-local mappings (defined using <a href="#%3Amap-%3Cbuffer%3E" class="l">:map-&lt;buffer&gt;</a><a href="motion.txt.html#%29" class="d">)</a> take precedence over
+global mappings.  When <a href="insert.txt.html#a" class="d">a</a> buffer-local <a href="#mapping" class="d">mapping</a> <a href="motion.txt.html#is" class="d">is</a> the same <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> global mapping,
+Vim will use the buffer-local mapping.  In addition, Vim will use <a href="insert.txt.html#a" class="d">a</a> complete
+<a href="#mapping" class="d">mapping</a> immediately if <a href="motion.txt.html#it" class="d">it</a> was defined with <span class="s">&lt;nowait&gt;</span>, even if <a href="insert.txt.html#a" class="d">a</a> longer <a href="#mapping" class="d">mapping</a>
+has the same prefix.  For example, given the following two mappings: 
+<span class="e">    :map &lt;buffer&gt; &lt;nowait&gt; \a   :echo "Local \a"&lt;CR&gt;</span>
+<span class="e">    :map                   \abc :echo "Global \abc"&lt;CR&gt;</span>
+When typing \a the buffer-local <a href="#mapping" class="d">mapping</a> will be used immediately.  Vim will
+not wait for more characters to see if the user might be typing \abc.
+
+                                                        <a name="map-keys-fails" class="t">map-keys-fails</a>
+There are situations where key codes might not be recognized:
+<a href="motion.txt.html#-" class="d">-</a> Vim can only read part of the key code.  Mostly this <a href="motion.txt.html#is" class="d">is</a> only the first
+  character.  This happens on some <a href="os_unix.txt.html#Unix" class="d">Unix</a> versions in an xterm.
+<a href="motion.txt.html#-" class="d">-</a> The key code <a href="motion.txt.html#is" class="d">is</a> after character(s) that are mapped.  E.g., "<a href="helphelp.txt.html#%3CF1%3E" class="s">&lt;F1&gt;</a><a href="helphelp.txt.html#%3CF1%3E" class="s">&lt;F1&gt;</a>" or
+  "g&lt;F1&gt;"<a href="repeat.txt.html#." class="d">.</a>
+
+The result <a href="motion.txt.html#is" class="d">is</a> that the key code <a href="motion.txt.html#is" class="d">is</a> not recognized in this situation, and the
+<a href="#mapping" class="d">mapping</a> fails.  There are two actions needed to avoid this problem:
+
+<a href="motion.txt.html#-" class="d">-</a> Remove the 'K' flag from <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a>.  This will make Vim wait for the rest
+  of the characters of the function key.
+<a href="motion.txt.html#-" class="d">-</a> When using <a href="helphelp.txt.html#%3CF1%3E" class="s">&lt;F1&gt;</a> to <a href="term.txt.html#%3CF4%3E" class="s">&lt;F4&gt;</a> the actual key code generated may correspond to
+  <a href="term.txt.html#%3CxF1%3E" class="s">&lt;xF1&gt;</a> to <a href="term.txt.html#%3CxF4%3E" class="s">&lt;xF4&gt;</a>.  There are mappings from <a href="term.txt.html#%3CxF1%3E" class="s">&lt;xF1&gt;</a> to <a href="helphelp.txt.html#%3CF1%3E" class="s">&lt;F1&gt;</a>, <a href="term.txt.html#%3CxF2%3E" class="s">&lt;xF2&gt;</a> to <a href="term.txt.html#%3CF2%3E" class="s">&lt;F2&gt;</a>, etc.,
+  but these are not recognized after another half <a href="insert.txt.html#a" class="d">a</a> mapping.  Make sure the
+  key codes for <a href="helphelp.txt.html#%3CF1%3E" class="s">&lt;F1&gt;</a> to <a href="term.txt.html#%3CF4%3E" class="s">&lt;F4&gt;</a> are correct: 
+<span class="e">        :set &lt;F1&gt;=&lt;type CTRL-V&gt;&lt;type F1&gt;</span>
+ Type the <a href="helphelp.txt.html#%3CF1%3E" class="s">&lt;F1&gt;</a> <a href="motion.txt.html#as" class="d">as</a> four characters.  The part after the "<a href="change.txt.html#%3D" class="d">=</a>" <a href="vim_faq.txt.html#must" class="d">must</a> be done with
+  the actual keys, not the literal text.
+Another solution <a href="motion.txt.html#is" class="d">is</a> to use the actual key code in the <a href="#mapping" class="d">mapping</a> for the second
+special key: 
+<span class="e">        :map &lt;F1&gt;&lt;Esc&gt;OP :echo "yes"&lt;CR&gt;</span>
+Don't type <a href="insert.txt.html#a" class="d">a</a> real <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a>, Vim will recognize the key code and replace <a href="motion.txt.html#it" class="d">it</a> with
+<a href="helphelp.txt.html#%3CF1%3E" class="s">&lt;F1&gt;</a> anyway.
+
+Another problem may be that when keeping ALT or Meta pressed the <a href="terminal.txt.html#terminal" class="d">terminal</a>
+prepends ESC instead of setting the 8th bit.  See <a href="#%3Amap-alt-keys" class="l">:map-alt-keys</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                <a name="recursive_mapping" class="t">recursive_mapping</a>
+If you include the <a href="#%7Blhs%7D" class="s">{lhs}</a> in the <a href="#%7Brhs%7D" class="s">{rhs}</a> you have <a href="insert.txt.html#a" class="d">a</a> recursive mapping.  When
+<a href="#%7Blhs%7D" class="s">{lhs}</a> <a href="motion.txt.html#is" class="d">is</a> typed, <a href="motion.txt.html#it" class="d">it</a> will be replaced with <a href="#%7Brhs%7D" class="s">{rhs}</a>.  When the <a href="#%7Blhs%7D" class="s">{lhs}</a> which <a href="motion.txt.html#is" class="d">is</a>
+included in <a href="#%7Brhs%7D" class="s">{rhs}</a> <a href="motion.txt.html#is" class="d">is</a> encountered <a href="motion.txt.html#it" class="d">it</a> will be replaced with <a href="#%7Brhs%7D" class="s">{rhs}</a>, and so on.
+This makes <a href="motion.txt.html#it" class="d">it</a> possible to repeat <a href="insert.txt.html#a" class="d">a</a> command an infinite number of times.  The
+only problem <a href="motion.txt.html#is" class="d">is</a> that the only way to stop this <a href="motion.txt.html#is" class="d">is</a> by causing an error.  The
+macros to solve <a href="insert.txt.html#a" class="d">a</a> maze uses this, look there for an example.  There <a href="motion.txt.html#is" class="d">is</a> one
+exception: If the <a href="#%7Brhs%7D" class="s">{rhs}</a> starts with <a href="#%7Blhs%7D" class="s">{lhs}</a>, the first character <a href="motion.txt.html#is" class="d">is</a> not mapped
+again (this <a href="motion.txt.html#is" class="d">is</a> <a href="intro.txt.html#Vi" class="d">Vi</a> compatible).
+For example: 
+<span class="e">   :map ab abcd</span>
+will execute the "<a href="insert.txt.html#a" class="d">a</a>" command and <a href="insert.txt.html#insert" class="d">insert</a> "bcd" in the text.  The "<a href="motion.txt.html#ab" class="d">ab</a>" in the
+<a href="#%7Brhs%7D" class="s">{rhs}</a> will not be mapped again.
+
+If you want to exchange the meaning of two keys you should use the <a href="#%3Anoremap" class="d">:noremap</a>
+command.  For example: 
+<span class="e">   :noremap k j</span>
+<span class="e">   :noremap j k</span>
+This will exchange the cursor up and down commands.
+
+With the normal <a href="#%3Amap" class="d">:map</a> command, when the <a href="options.txt.html#%27remap%27" class="o">'remap'</a> option <a href="motion.txt.html#is" class="d">is</a> on, <a href="#mapping" class="d">mapping</a> takes
+place until the text <a href="motion.txt.html#is" class="d">is</a> found not to be <a href="insert.txt.html#a" class="d">a</a> part of <a href="insert.txt.html#a" class="d">a</a> <a href="#%7Blhs%7D" class="s">{lhs}</a>.  For example, if
+you use: 
+<span class="e">   :map x y</span>
+<span class="e">   :map y x</span>
+Vim will replace <a href="change.txt.html#x" class="d">x</a> with y, and then <a href="change.txt.html#y" class="d">y</a> with x, etc.  When this has happened
+<a href="options.txt.html#%27maxmapdepth%27" class="o">'maxmapdepth'</a> times (default 1000), Vim will give the error message
+"recursive <a href="#mapping" class="d">mapping</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="%3Amap-undo" class="t">:map-undo</a>
+If you include an <a href="undo.txt.html#undo" class="d">undo</a> command inside <a href="insert.txt.html#a" class="d">a</a> mapped sequence, this will bring the
+text back in the state before executing the macro.  This <a href="motion.txt.html#is" class="d">is</a> compatible with
+the original Vi, <a href="motion.txt.html#as" class="d">as</a> long <a href="motion.txt.html#as" class="d">as</a> there <a href="motion.txt.html#is" class="d">is</a> only one <a href="undo.txt.html#undo" class="d">undo</a> command in the mapped
+sequence (having two <a href="undo.txt.html#undo" class="d">undo</a> commands in <a href="insert.txt.html#a" class="d">a</a> mapped sequence did not make sense
+in the original Vi, you would get back the text before the first undo).
+
+
+1.10 MAPPING ALT-KEYS                                   <a name="%3Amap-alt-keys" class="t">:map-alt-keys</a>
+
+In the <a href="gui.txt.html#GUI" class="d">GUI</a> Vim handles the Alt key itself, thus <a href="#mapping" class="d">mapping</a> keys with ALT should
+always work.  But in <a href="insert.txt.html#a" class="d">a</a> <a href="terminal.txt.html#terminal" class="d">terminal</a> Vim gets <a href="insert.txt.html#a" class="d">a</a> sequence of bytes and has to figure
+out whether ALT was pressed or not.
+
+By default Vim assumes that pressing the ALT key sets the 8th bit of <a href="insert.txt.html#a" class="d">a</a> typed
+character.  Most decent terminals can work that way, such <a href="motion.txt.html#as" class="d">as</a> xterm, aterm and
+rxvt.  If your <span class="s">&lt;A-k&gt;</span> mappings don't work <a href="motion.txt.html#it" class="d">it</a> might be that the <a href="terminal.txt.html#terminal" class="d">terminal</a> <a href="motion.txt.html#is" class="d">is</a>
+prefixing the character with an ESC character.  But you can just <a href="motion.txt.html#as" class="d">as</a> well type
+ESC before <a href="insert.txt.html#a" class="d">a</a> character, thus Vim doesn't know what happened (except for
+checking the delay between characters, which <a href="motion.txt.html#is" class="d">is</a> not reliable).
+
+As of this writing, some mainstream terminals like gnome-terminal and konsole
+use the ESC prefix.  There doesn't appear <a href="insert.txt.html#a" class="d">a</a> way to have them use the 8th bit
+instead.  Xterm should work well by default.  Aterm and <a href="syntax.txt.html#rxvt" class="d">rxvt</a> should work well
+when started with the "--meta8" argument.  You can also tweak resources like
+"metaSendsEscape"<a href="motion.txt.html#%2C" class="d">,</a> "eightBitInput" and "eightBitOutput"<a href="repeat.txt.html#." class="d">.</a>
+
+On the Linux console, this behavior can be toggled with the "setmetamode"
+command.  Bear in mind that not using an ESC prefix could get you in trouble
+with other programs.  You should make sure that bash has the "convert-meta"
+option set to "on" in order for your Meta keybindings to still work on <a href="motion.txt.html#it" class="d">it</a>
+(it's the default readline behavior, unless changed by specific system
+configuration).  For that, you can add the line: 
+<span class="e"></span>
+<span class="e">        set convert-meta on</span>
+<span class="e"></span>
+to your ~/.inputrc file. If you're creating the file, you might want to use: 
+<span class="e"></span>
+<span class="e">        $include /etc/inputrc</span>
+<span class="e"></span>
+<a href="motion.txt.html#as" class="d">as</a> the first line, if that file exists on your system, to keep global options.
+This may cause <a href="insert.txt.html#a" class="d">a</a> problem for entering special characters, such <a href="motion.txt.html#as" class="d">as</a> the umlaut.
+Then you should use <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> before that character.
+
+Bear in mind that convert-meta has been reported to have troubles when used in
+<a href="mbyte.txt.html#UTF-8" class="d">UTF-8</a> locales.  On terminals like xterm, the "metaSendsEscape" resource can be
+toggled on the fly through the "Main Options" menu, by pressing Ctrl-LeftClick
+on the terminal; that's <a href="insert.txt.html#a" class="d">a</a> good last resource in <a href="change.txt.html#case" class="d">case</a> you want to send ESC when
+using other applications but not when inside Vim.
+
+
+1.11 MAPPING AN OPERATOR                                <a name="%3Amap-operator" class="t">:map-operator</a>
+
+An <a href="motion.txt.html#operator" class="d">operator</a> <a href="motion.txt.html#is" class="d">is</a> used before <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#%7Bmotion%7D" class="s">{motion}</a> command.  To define your own <a href="motion.txt.html#operator" class="d">operator</a>
+you <a href="vim_faq.txt.html#must" class="d">must</a> create <a href="#mapping" class="d">mapping</a> that first sets the <a href="options.txt.html#%27operatorfunc%27" class="o">'operatorfunc'</a> option and then
+invoke the <a href="#g%40" class="l">g@</a> operator.  After the user types the <a href="intro.txt.html#%7Bmotion%7D" class="s">{motion}</a> command the
+specified function will be called.
+
+                                                        <a name="g%40" class="t">g@</a> <a name="E774" class="t">E774</a> <a name="E775" class="t">E775</a>
+g@{motion}              Call the function set by the <a href="options.txt.html#%27operatorfunc%27" class="o">'operatorfunc'</a> option.
+                        The <a href="motion.txt.html#%27%5B" class="d">'[</a> <a href="motion.txt.html#mark" class="d">mark</a> <a href="motion.txt.html#is" class="d">is</a> positioned <a href="motion.txt.html#at" class="d">at</a> the start of the text
+                        moved over by <a href="intro.txt.html#%7Bmotion%7D" class="s">{motion}</a>, the <a href="motion.txt.html#%27%5D" class="d">']</a> <a href="motion.txt.html#mark" class="d">mark</a> on the last
+                        character of the text.
+                        The function <a href="motion.txt.html#is" class="d">is</a> called with one <a href="eval.txt.html#String" class="d">String</a> argument:
+                            "line"      <a href="intro.txt.html#%7Bmotion%7D" class="s">{motion}</a> was <a href="motion.txt.html#linewise" class="l">linewise</a>
+                            "char"      <a href="intro.txt.html#%7Bmotion%7D" class="s">{motion}</a> was <a href="motion.txt.html#characterwise" class="l">characterwise</a>
+                            "block"     <a href="intro.txt.html#%7Bmotion%7D" class="s">{motion}</a> was <a href="visual.txt.html#blockwise-visual" class="l">blockwise-visual</a>
+                        Although "block" would rarely appear, since <a href="motion.txt.html#it" class="d">it</a> can
+                        only result from <a href="visual.txt.html#Visual" class="d">Visual</a> mode where "<a href="#g%40" class="d">g@</a>" <a href="motion.txt.html#is" class="d">is</a> not useful.
+                        {not available when compiled without the <a href="various.txt.html#%2Beval" class="l">+eval</a>
+                        feature}
+
+Here <a href="motion.txt.html#is" class="d">is</a> an example that counts the number of spaces with <a href="term.txt.html#%3CF4%3E" class="s">&lt;F4&gt;</a>: 
+<span class="e"></span>
+<span class="e">        nmap &lt;silent&gt; &lt;F4&gt; :set opfunc=CountSpaces&lt;CR&gt;g@</span>
+<span class="e">        vmap &lt;silent&gt; &lt;F4&gt; :&lt;C-U&gt;call CountSpaces(visualmode(), 1)&lt;CR&gt;</span>
+<span class="e"></span>
+<span class="e">        function! CountSpaces(type, ...)</span>
+<span class="e">          let sel_save = &amp;selection</span>
+<span class="e">          let &amp;selection = "inclusive"</span>
+<span class="e">          let reg_save = @@</span>
+<span class="e"></span>
+<span class="e">          if a:0  " Invoked from Visual mode, use gv command.</span>
+<span class="e">            silent exe "normal! gvy"</span>
+<span class="e">          elseif a:type == 'line'</span>
+<span class="e">            silent exe "normal! '[V']y"</span>
+<span class="e">          else</span>
+<span class="e">            silent exe "normal! `[v`]y"</span>
+<span class="e">          endif</span>
+<span class="e"></span>
+<span class="e">          echomsg strlen(substitute(@@, '[^ ]', '', 'g'))</span>
+<span class="e"></span>
+<span class="e">          let &amp;selection = sel_save</span>
+<span class="e">          let @@ = reg_save</span>
+<span class="e">        endfunction</span>
+<span class="e"></span>
+<span class="n">Note</span> that the <a href="options.txt.html#%27selection%27" class="o">'selection'</a> option <a href="motion.txt.html#is" class="d">is</a> temporarily set to "<a href="motion.txt.html#inclusive" class="d">inclusive</a>" to be able
+to <a href="change.txt.html#yank" class="d">yank</a> exactly the right text by using <a href="visual.txt.html#Visual" class="d">Visual</a> mode from the <a href="motion.txt.html#%27%5B" class="d">'[</a> to the <a href="motion.txt.html#%27%5D" class="d">']</a>
+mark.
+
+Also <span class="n">note</span> that there <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> separate <a href="#mapping" class="d">mapping</a> for <a href="visual.txt.html#Visual" class="d">Visual</a> mode.  It removes the
+"'&lt;,'&gt;" range that "<a href="cmdline.txt.html#%3A" class="d">:</a>" inserts in <a href="visual.txt.html#Visual" class="d">Visual</a> mode and invokes the function with
+<a href="eval.txt.html#visualmode%28%29" class="d">visualmode()</a> and an extra argument.
+
+<span class="h">==============================================================================</span>
+2. <a href="#Abbreviations" class="d">Abbreviations</a>                        <a name="abbreviations" class="t">abbreviations</a> <a name="Abbreviations" class="t">Abbreviations</a>
+
+<a href="#Abbreviations" class="d">Abbreviations</a> are used in <a href="insert.txt.html#Insert" class="d">Insert</a> mode, <a href="insert.txt.html#Replace" class="d">Replace</a> mode and <a href="cmdline.txt.html#Command-line" class="d">Command-line</a> mode.
+If you enter <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> that <a href="motion.txt.html#is" class="d">is</a> an abbreviation, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> replaced with the <a href="motion.txt.html#word" class="d">word</a> <a href="motion.txt.html#it" class="d">it</a>
+stands for.  This can be used to save typing for often used long words.  And
+you can use <a href="motion.txt.html#it" class="d">it</a> to automatically correct obvious spelling errors.
+Examples:
+
+        :iab ms Microsoft
+        :iab tihs this
+
+There are three types of abbreviations:
+
+full-id   The "full-id" type consists entirely of keyword characters (letters
+          and characters from <a href="options.txt.html#%27iskeyword%27" class="o">'iskeyword'</a> option).  This <a href="motion.txt.html#is" class="d">is</a> the most common
+          abbreviation.
+
+          Examples: "foo"<a href="motion.txt.html#%2C" class="d">,</a> "g3"<a href="motion.txt.html#%2C" class="d">,</a> "-1"
+
+end-id    The "end-id" type ends in <a href="insert.txt.html#a" class="d">a</a> keyword character, but all the other
+          characters are not keyword characters.
+
+          Examples: "#i"<a href="motion.txt.html#%2C" class="d">,</a> "..f"<a href="motion.txt.html#%2C" class="d">,</a> "$/7"
+
+non-id    The "non-id" type ends in <a href="insert.txt.html#a" class="d">a</a> non-keyword character, the other
+          characters may be of any type, excluding <a href="intro.txt.html#space" class="d">space</a> and tab.  {this type
+          <a href="motion.txt.html#is" class="d">is</a> not supported by Vi}
+
+          Examples: "def#"<a href="motion.txt.html#%2C" class="d">,</a> "4/7$"
+
+Examples of strings that cannot be abbreviations: "a.b"<a href="motion.txt.html#%2C" class="d">,</a> "#def"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#b" class="d">b</a>"<a href="motion.txt.html#%2C" class="d">,</a> "_$r"
+
+An abbreviation <a href="motion.txt.html#is" class="d">is</a> only recognized when you type <a href="insert.txt.html#a" class="d">a</a> non-keyword character.
+This can also be the <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a> that ends <a href="insert.txt.html#insert" class="d">insert</a> mode or the <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a> that ends <a href="insert.txt.html#a" class="d">a</a>
+command.  The non-keyword character which ends the abbreviation <a href="motion.txt.html#is" class="d">is</a> inserted
+after the expanded abbreviation.  An exception to this <a href="motion.txt.html#is" class="d">is</a> the character <span class="s">&lt;C-]&gt;</span>,
+which <a href="motion.txt.html#is" class="d">is</a> used to expand an abbreviation without <a href="insert.txt.html#inserting" class="d">inserting</a> any extra
+characters.
+
+Example: 
+<span class="e">   :ab hh       hello</span>
+           "hh&lt;Space&gt;" <a href="motion.txt.html#is" class="d">is</a> expanded to "hello&lt;Space&gt;"
+            "hh&lt;C-]&gt;" <a href="motion.txt.html#is" class="d">is</a> expanded to "hello"
+
+The characters before the cursor <a href="vim_faq.txt.html#must" class="d">must</a> match the abbreviation.  Each type has
+an additional rule:
+
+full-id   In front of the match <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> non-keyword character, or this <a href="motion.txt.html#is" class="d">is</a> where
+          the line or insertion starts.  Exception: When the abbreviation <a href="motion.txt.html#is" class="d">is</a>
+          only one character, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> not recognized if there <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> non-keyword
+          character in front of it, other than <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#space" class="d">space</a> or <a href="insert.txt.html#a" class="d">a</a> tab.
+
+end-id    In front of the match <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> keyword character, or <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#space" class="d">space</a> or <a href="insert.txt.html#a" class="d">a</a> tab,
+          or this <a href="motion.txt.html#is" class="d">is</a> where the line or insertion starts.
+
+non-id    In front of the match <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> space, <a href="intro.txt.html#tab" class="d">tab</a> or the start of the line or
+          the insertion.
+
+Examples: ({CURSOR} <a href="motion.txt.html#is" class="d">is</a> where you type <a href="insert.txt.html#a" class="d">a</a> non-keyword character) 
+<span class="e">   :ab foo   four old otters</span>
+               " foo{CURSOR}"    <a href="motion.txt.html#is" class="d">is</a> expanded to " four old otters"
+                " foobar{CURSOR}" <a href="motion.txt.html#is" class="d">is</a> not expanded
+                "barfoo{CURSOR}"  <a href="motion.txt.html#is" class="d">is</a> not expanded
+
+<span class="e">   :ab #i #include</span>
+               "#i{CURSOR}"      <a href="motion.txt.html#is" class="d">is</a> expanded to "#include"
+                "&gt;#i{CURSOR}"     <a href="motion.txt.html#is" class="d">is</a> not expanded
+
+<span class="e">   :ab ;; &lt;endofline&gt;</span>
+               "test;;"          <a href="motion.txt.html#is" class="d">is</a> not expanded
+                "test ;;"         <a href="motion.txt.html#is" class="d">is</a> expanded to "test <span class="s">&lt;endofline&gt;</span>"
+
+To avoid the abbreviation in <a href="insert.txt.html#Insert" class="d">Insert</a> mode: Type <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> before the character
+that would trigger the abbreviation.  E.g. <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> <a href="motion.txt.html#%3CSpace%3E" class="s">&lt;Space&gt;</a>.  Or type part of
+the abbreviation, exit <a href="insert.txt.html#insert" class="d">insert</a> mode with <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a>, re-enter <a href="insert.txt.html#insert" class="d">insert</a> mode with "<a href="insert.txt.html#a" class="d">a</a>"
+and type the rest.
+
+To avoid the abbreviation in <a href="cmdline.txt.html#Command-line" class="d">Command-line</a> mode: Type <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> <a href="if_cscop.txt.html#twice" class="d">twice</a> somewhere in
+the abbreviation to avoid <a href="motion.txt.html#it" class="d">it</a> to be replaced.  <a href="insert.txt.html#A" class="d">A</a> <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> in front of <a href="insert.txt.html#a" class="d">a</a> normal
+character <a href="motion.txt.html#is" class="d">is</a> mostly ignored otherwise.
+
+It <a href="motion.txt.html#is" class="d">is</a> possible to move the cursor after an abbreviation: 
+<span class="e">   :iab if if ()&lt;Left&gt;</span>
+This does not work if <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a> includes the '&lt;' flag. <a href="intro.txt.html#%3C%3E" class="l">&lt;&gt;</a>
+
+You can even <a href="diff.txt.html#do" class="d">do</a> more complicated things.  For example, to consume the <a href="intro.txt.html#space" class="d">space</a>
+typed after an abbreviation: 
+<span class="e">   func Eatchar(pat)</span>
+<span class="e">      let c = nr2char(getchar(0))</span>
+<span class="e">      return (c =~ a:pat) ? '' : c</span>
+<span class="e">   endfunc</span>
+<span class="e">   iabbr &lt;silent&gt; if if ()&lt;Left&gt;&lt;C-R&gt;=Eatchar('\s')&lt;CR&gt;</span>
+<span class="e"></span>
+There are no default abbreviations.
+
+<a href="#Abbreviations" class="d">Abbreviations</a> are never recursive.  You can use "<a href="#%3Aab" class="d">:ab</a> <a href="motion.txt.html#f" class="d">f</a> f-o-o" without any
+problem.  But <a href="#abbreviations" class="d">abbreviations</a> can be mapped.  {some versions of <a href="intro.txt.html#Vi" class="d">Vi</a> support
+recursive abbreviations, for no apparent reason}
+
+<a href="#Abbreviations" class="d">Abbreviations</a> are disabled if the <a href="options.txt.html#%27paste%27" class="o">'paste'</a> option <a href="motion.txt.html#is" class="d">is</a> on.
+
+                                <a name="%3Aabbreviate-local" class="t">:abbreviate-local</a> <a name="%3Aabbreviate-%3Cbuffer%3E" class="t">:abbreviate-&lt;buffer&gt;</a>
+Just like mappings, <a href="#abbreviations" class="d">abbreviations</a> can be local to <a href="insert.txt.html#a" class="d">a</a> buffer.  This <a href="motion.txt.html#is" class="d">is</a> mostly
+used in <a href="insert.txt.html#a" class="d">a</a> <a href="usr_43.txt.html#filetype-plugin" class="l">filetype-plugin</a> file.  Example for <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#C" class="d">C</a> <a href="usr_05.txt.html#plugin" class="d">plugin</a> file: 
+<span class="e">        :abb &lt;buffer&gt; FF  for (i = 0; i &lt; ; ++i)</span>
+
+                                                <a name="%3Aab" class="t">:ab</a> <a name="%3Aabbreviate" class="t">:abbreviate</a>
+:ab[breviate]           <a href="eval.txt.html#list" class="d">list</a> all abbreviations.  The character in the first
+                        column indicates the mode where the abbreviation <a href="motion.txt.html#is" class="d">is</a>
+                        used: 'i' for <a href="insert.txt.html#insert" class="d">insert</a> mode, 'c' for <a href="cmdline.txt.html#Command-line" class="d">Command-line</a>
+                        mode, '!' for both.  These are the same <a href="motion.txt.html#as" class="d">as</a> for
+                        mappings, see <a href="#map-listing" class="l">map-listing</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                <a name="%3Aabbreviate-verbose" class="t">:abbreviate-verbose</a>
+When <a href="options.txt.html#%27verbose%27" class="o">'verbose'</a> <a href="motion.txt.html#is" class="d">is</a> non-zero, listing an abbreviation will also display where <a href="motion.txt.html#it" class="d">it</a>
+was last defined.  Example: 
+<span class="e"></span>
+<span class="e">        :verbose abbreviate</span>
+<span class="e">        !  teh           the</span>
+<span class="e">                Last set from /home/abcd/vim/abbr.vim</span>
+<span class="e"></span>
+See <a href="various.txt.html#%3Averbose-cmd" class="l">:verbose-cmd</a> for more information.
+
+:ab[breviate] <a href="#%7Blhs%7D" class="s">{lhs}</a>     <a href="eval.txt.html#list" class="d">list</a> the <a href="#abbreviations" class="d">abbreviations</a> that start with <a href="#%7Blhs%7D" class="s">{lhs}</a>
+                        You may need to <a href="insert.txt.html#insert" class="d">insert</a> <a href="insert.txt.html#a" class="d">a</a> <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> (type <a href="motion.txt.html#it" class="d">it</a> twice) to
+                        avoid that <a href="insert.txt.html#a" class="d">a</a> typed <a href="#%7Blhs%7D" class="s">{lhs}</a> <a href="motion.txt.html#is" class="d">is</a> expanded, since
+                        command-line <a href="#abbreviations" class="d">abbreviations</a> apply here.
+
+:ab[breviate] [&lt;expr&gt;] [&lt;buffer&gt;] <a href="#%7Blhs%7D" class="s">{lhs}</a> <a href="#%7Brhs%7D" class="s">{rhs}</a>
+                        add abbreviation for <a href="#%7Blhs%7D" class="s">{lhs}</a> to <a href="#%7Brhs%7D" class="s">{rhs}</a>.  If <a href="#%7Blhs%7D" class="s">{lhs}</a> already
+                        existed <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> replaced with the new <a href="#%7Brhs%7D" class="s">{rhs}</a>.  <a href="#%7Brhs%7D" class="s">{rhs}</a> may
+                        contain spaces.
+                        See <a href="#%3Amap-%3Cexpr%3E" class="l">:map-&lt;expr&gt;</a> for the optional <span class="s">&lt;expr&gt;</span> argument.
+                        See <a href="#%3Amap-%3Cbuffer%3E" class="l">:map-&lt;buffer&gt;</a> for the optional <span class="s">&lt;buffer&gt;</span> argument.
+
+                                                <a name="%3Auna" class="t">:una</a> <a name="%3Aunabbreviate" class="t">:unabbreviate</a>
+:una[bbreviate] <a href="#%7Blhs%7D" class="s">{lhs}</a>   Remove abbreviation for <a href="#%7Blhs%7D" class="s">{lhs}</a> from the list.  If none
+                        <a href="motion.txt.html#is" class="d">is</a> found, remove <a href="#abbreviations" class="d">abbreviations</a> in which <a href="#%7Blhs%7D" class="s">{lhs}</a> matches
+                        with the <a href="#%7Brhs%7D" class="s">{rhs}</a>.  This <a href="motion.txt.html#is" class="d">is</a> done so that you can even
+                        remove <a href="#abbreviations" class="d">abbreviations</a> after expansion.  To avoid
+                        expansion <a href="insert.txt.html#insert" class="d">insert</a> <a href="insert.txt.html#a" class="d">a</a> <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> (type <a href="motion.txt.html#it" class="d">it</a> twice).
+
+                                                <a name="%3Anorea" class="t">:norea</a> <a name="%3Anoreabbrev" class="t">:noreabbrev</a>
+:norea[bbrev] [&lt;expr&gt;] [&lt;buffer&gt;] <span class="s">[lhs]</span> <span class="s">[rhs]</span>
+                        same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Aab" class="d">:ab</a>"<a href="motion.txt.html#%2C" class="d">,</a> but no remapping for this <a href="#%7Brhs%7D" class="s">{rhs}</a> {not
+                        in Vi}
+
+                                                <a name="%3Aca" class="t">:ca</a> <a name="%3Acabbrev" class="t">:cabbrev</a>
+:ca[bbrev] [&lt;expr&gt;] [&lt;buffer&gt;] <span class="s">[lhs]</span> <span class="s">[rhs]</span>
+                        same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Aab" class="d">:ab</a>"<a href="motion.txt.html#%2C" class="d">,</a> but for <a href="cmdline.txt.html#Command-line" class="d">Command-line</a> mode only.  {not
+                        in Vi}
+
+                                                <a name="%3Acuna" class="t">:cuna</a> <a name="%3Acunabbrev" class="t">:cunabbrev</a>
+:cuna[bbrev] <a href="#%7Blhs%7D" class="s">{lhs}</a>      same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Auna" class="d">:una</a>"<a href="motion.txt.html#%2C" class="d">,</a> but for <a href="cmdline.txt.html#Command-line" class="d">Command-line</a> mode only.  {not
+                        in Vi}
+
+                                                <a name="%3Acnorea" class="t">:cnorea</a> <a name="%3Acnoreabbrev" class="t">:cnoreabbrev</a>
+:cnorea[bbrev] [&lt;expr&gt;] [&lt;buffer&gt;] <span class="s">[lhs]</span> <span class="s">[rhs]</span>
+                        same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Aab" class="d">:ab</a>"<a href="motion.txt.html#%2C" class="d">,</a> but for <a href="cmdline.txt.html#Command-line" class="d">Command-line</a> mode only and no
+                        remapping for this <a href="#%7Brhs%7D" class="s">{rhs}</a> <span class="s">{not in Vi}</span>
+
+                                                <a name="%3Aia" class="t">:ia</a> <a name="%3Aiabbrev" class="t">:iabbrev</a>
+:ia[bbrev] [&lt;expr&gt;] [&lt;buffer&gt;] <span class="s">[lhs]</span> <span class="s">[rhs]</span>
+                        same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Aab" class="d">:ab</a>"<a href="motion.txt.html#%2C" class="d">,</a> but for <a href="insert.txt.html#Insert" class="d">Insert</a> mode only.  <span class="s">{not in Vi}</span>
+
+                                                <a name="%3Aiuna" class="t">:iuna</a> <a name="%3Aiunabbrev" class="t">:iunabbrev</a>
+:iuna[bbrev] <a href="#%7Blhs%7D" class="s">{lhs}</a>      same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Auna" class="d">:una</a>"<a href="motion.txt.html#%2C" class="d">,</a> but for <a href="insert.txt.html#insert" class="d">insert</a> mode only.  {not in
+                        Vi}
+
+                                                <a name="%3Ainorea" class="t">:inorea</a> <a name="%3Ainoreabbrev" class="t">:inoreabbrev</a>
+:inorea[bbrev] [&lt;expr&gt;] [&lt;buffer&gt;] <span class="s">[lhs]</span> <span class="s">[rhs]</span>
+                        same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Aab" class="d">:ab</a>"<a href="motion.txt.html#%2C" class="d">,</a> but for <a href="insert.txt.html#Insert" class="d">Insert</a> mode only and no
+                        remapping for this <a href="#%7Brhs%7D" class="s">{rhs}</a> <span class="s">{not in Vi}</span>
+
+                                                        <a name="%3Aabc" class="t">:abc</a> <a name="%3Aabclear" class="t">:abclear</a>
+:abc[lear] [&lt;buffer&gt;]   Remove all abbreviations.  <span class="s">{not in Vi}</span>
+
+                                                        <a name="%3Aiabc" class="t">:iabc</a> <a name="%3Aiabclear" class="t">:iabclear</a>
+:iabc[lear] [&lt;buffer&gt;]  Remove all <a href="#abbreviations" class="d">abbreviations</a> for <a href="insert.txt.html#Insert" class="d">Insert</a> mode.  <span class="s">{not in Vi}</span>
+
+                                                        <a name="%3Acabc" class="t">:cabc</a> <a name="%3Acabclear" class="t">:cabclear</a>
+:cabc[lear] [&lt;buffer&gt;]  Remove all <a href="#abbreviations" class="d">abbreviations</a> for <a href="cmdline.txt.html#Command-line" class="d">Command-line</a> mode.  {not
+                        in Vi}
+
+                                                        <a name="using_CTRL-V" class="t">using_CTRL-V</a>
+It <a href="motion.txt.html#is" class="d">is</a> possible to use special characters in the rhs of an abbreviation.
+<a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> has to be used to avoid the special meaning of most non printable
+characters.  How many <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a>s need to be typed depends on how you enter the
+abbreviation.  This also applies to mappings.  Let's use an example here.
+
+Suppose you want to abbreviate "esc" to enter an <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a> character.  When you
+type the "<a href="#%3Aab" class="d">:ab</a>" command in Vim, you have to enter this: (here ^V <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a>
+and ^[ <a href="motion.txt.html#is" class="d">is</a> <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a>)
+
+You type:   <a href="motion.txt.html#ab" class="d">ab</a> esc ^V^V^V^V^V^[
+
+        All keyboard input <a href="motion.txt.html#is" class="d">is</a> subjected to ^V <a href="change.txt.html#quote" class="d">quote</a> interpretation, so
+        the first, third, and fifth ^V  characters simply allow the second,
+        and fourth ^Vs, and the ^[, to be entered into the command-line.
+
+You see:    <a href="motion.txt.html#ab" class="d">ab</a> esc ^V^V^[
+
+        The command-line contains two actual ^Vs before the ^[.  This <a href="motion.txt.html#is" class="d">is</a>
+        how <a href="motion.txt.html#it" class="d">it</a> should appear in your <a href="starting.txt.html#.exrc" class="d">.exrc</a> file, if you choose to <a href="motion.txt.html#go" class="d">go</a> that
+        route.  The first ^V <a href="motion.txt.html#is" class="d">is</a> there to <a href="change.txt.html#quote" class="d">quote</a> the second ^V; the <a href="#%3Aab" class="d">:ab</a>
+        command uses ^V <a href="motion.txt.html#as" class="d">as</a> its own <a href="change.txt.html#quote" class="d">quote</a> character, so you can include quoted
+        <a href="pattern.txt.html#whitespace" class="d">whitespace</a> or the | character in the abbreviation.  The <a href="#%3Aab" class="d">:ab</a> command
+        doesn't <a href="diff.txt.html#do" class="d">do</a> anything special with the ^[ character, so <a href="motion.txt.html#it" class="d">it</a> doesn't need
+        to be quoted.  (Although quoting isn't harmful; that's why typing 7
+        [but not 8!] ^Vs works.)
+
+Stored as:  esc     ^V^[
+
+        After parsing, the abbreviation's short form <a href="motion.txt.html#%28" class="d">(</a>"esc"<a href="motion.txt.html#%29" class="d">)</a> and long form
+        (the two characters "^V^["<a href="motion.txt.html#%29" class="d">)</a> are stored in the abbreviation table.
+        If you give the <a href="#%3Aab" class="d">:ab</a> command with no arguments, this <a href="motion.txt.html#is" class="d">is</a> how the
+        abbreviation will be displayed.
+
+        Later, when the abbreviation <a href="motion.txt.html#is" class="d">is</a> expanded because the user typed in
+        the <a href="motion.txt.html#word" class="d">word</a> "esc"<a href="motion.txt.html#%2C" class="d">,</a> the long form <a href="motion.txt.html#is" class="d">is</a> subjected to the same type of
+        ^V interpretation <a href="motion.txt.html#as" class="d">as</a> keyboard input.  So the ^V protects the ^[
+        character from being interpreted <a href="motion.txt.html#as" class="d">as</a> the "exit <a href="insert.txt.html#Insert" class="d">Insert</a> mode" character.
+        Instead, the ^[ <a href="motion.txt.html#is" class="d">is</a> inserted into the text.
+
+Expands to: ^[
+
+[example given by Steve Kirkendall]
+
+<span class="h">==============================================================================</span>
+3. Local mappings and <a href="eval.txt.html#functions" class="d">functions</a>                         <a name="script-local" class="t">script-local</a>
+
+When using several Vim <a href="usr_41.txt.html#script" class="d">script</a> files, there <a href="motion.txt.html#is" class="d">is</a> the danger that mappings and
+<a href="eval.txt.html#functions" class="d">functions</a> used in one <a href="usr_41.txt.html#script" class="d">script</a> use the same name <a href="motion.txt.html#as" class="d">as</a> in other scripts.  To avoid
+this, they can be made local to the script.
+
+                                                <a name="%3CSID%3E" class="t">&lt;SID&gt;</a> <a name="%3CSNR%3E" class="t">&lt;SNR&gt;</a> <a name="E81" class="t">E81</a>
+The <a href="eval.txt.html#string" class="d">string</a> "<a href="#%3CSID%3E" class="s">&lt;SID&gt;</a>" can be used in <a href="insert.txt.html#a" class="d">a</a> <a href="#mapping" class="d">mapping</a> or menu.  This requires that the
+'&lt;' flag <a href="motion.txt.html#is" class="d">is</a> not present in <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a>.
+   When executing the map command, Vim will replace "<a href="#%3CSID%3E" class="s">&lt;SID&gt;</a>" with the special
+key code <a href="#%3CSNR%3E" class="s">&lt;SNR&gt;</a>, followed by <a href="insert.txt.html#a" class="d">a</a> number that's unique for the script, and an
+underscore.  Example: 
+<span class="e">        :map &lt;SID&gt;Add</span>
+could define <a href="insert.txt.html#a" class="d">a</a> <a href="#mapping" class="d">mapping</a> "<a href="#%3CSNR%3E" class="s">&lt;SNR&gt;</a>23_Add"<a href="repeat.txt.html#." class="d">.</a>
+
+When defining <a href="insert.txt.html#a" class="d">a</a> function in <a href="insert.txt.html#a" class="d">a</a> script, "s:" can be prepended to the name to
+make <a href="motion.txt.html#it" class="d">it</a> local to the script.  But when <a href="insert.txt.html#a" class="d">a</a> <a href="#mapping" class="d">mapping</a> <a href="motion.txt.html#is" class="d">is</a> executed from outside of
+the script, <a href="motion.txt.html#it" class="d">it</a> doesn't know in which <a href="usr_41.txt.html#script" class="d">script</a> the function was defined.  To
+avoid this problem, use "<a href="#%3CSID%3E" class="s">&lt;SID&gt;</a>" instead of "s:"<a href="repeat.txt.html#." class="d">.</a>  The same translation <a href="motion.txt.html#is" class="d">is</a> done
+<a href="motion.txt.html#as" class="d">as</a> for mappings.  This makes <a href="motion.txt.html#it" class="d">it</a> possible to define <a href="insert.txt.html#a" class="d">a</a> call to the function in
+<a href="insert.txt.html#a" class="d">a</a> mapping.
+
+When <a href="insert.txt.html#a" class="d">a</a> local function <a href="motion.txt.html#is" class="d">is</a> executed, <a href="motion.txt.html#it" class="d">it</a> runs in the context of the <a href="usr_41.txt.html#script" class="d">script</a> <a href="motion.txt.html#it" class="d">it</a> was
+defined in.  This means that new <a href="eval.txt.html#functions" class="d">functions</a> and mappings <a href="motion.txt.html#it" class="d">it</a> defines can also
+use "s:" or "<a href="#%3CSID%3E" class="s">&lt;SID&gt;</a>" and <a href="motion.txt.html#it" class="d">it</a> will use the same unique number <a href="motion.txt.html#as" class="d">as</a> when the
+function itself was defined.  Also, the "<a href="eval.txt.html#s%3Avar" class="d">s:var</a>" local <a href="usr_41.txt.html#script" class="d">script</a> <a href="eval.txt.html#variables" class="d">variables</a> can be
+used.
+
+When executing an <a href="autocmd.txt.html#autocommand" class="d">autocommand</a> or <a href="insert.txt.html#a" class="d">a</a> user command, <a href="motion.txt.html#it" class="d">it</a> will run in the context of
+the <a href="usr_41.txt.html#script" class="d">script</a> <a href="motion.txt.html#it" class="d">it</a> was defined in.  This makes <a href="motion.txt.html#it" class="d">it</a> possible that the command calls <a href="insert.txt.html#a" class="d">a</a>
+local function or uses <a href="insert.txt.html#a" class="d">a</a> local mapping.
+
+Otherwise, using "<a href="#%3CSID%3E" class="s">&lt;SID&gt;</a>" outside of <a href="insert.txt.html#a" class="d">a</a> <a href="usr_41.txt.html#script" class="d">script</a> context <a href="motion.txt.html#is" class="d">is</a> an error.
+
+If you need to get the <a href="usr_41.txt.html#script" class="d">script</a> number to use in <a href="insert.txt.html#a" class="d">a</a> complicated script, you can
+use this function: 
+<span class="e">        function s:SID()</span>
+<span class="e">          return matchstr(expand('&lt;sfile&gt;'), '&lt;SNR&gt;\zs\d\+\ze_SID$')</span>
+<span class="e">        endfun</span>
+<span class="e"></span>
+The "<a href="#%3CSNR%3E" class="s">&lt;SNR&gt;</a>" will be shown when listing <a href="eval.txt.html#functions" class="d">functions</a> and mappings.  This <a href="motion.txt.html#is" class="d">is</a> useful
+to find out what they are defined to.
+
+The <a href="repeat.txt.html#%3Ascriptnames" class="l">:scriptnames</a> command can be used to see which scripts have been sourced
+and what their <a href="#%3CSNR%3E" class="s">&lt;SNR&gt;</a> number is.
+
+This <a href="motion.txt.html#is" class="d">is</a> all <span class="s">{not in Vi}</span> and {not available when compiled without the <a href="various.txt.html#%2Beval" class="l">+eval</a>
+feature}.
+
+<span class="h">==============================================================================</span>
+4. User-defined commands                                <a name="user-commands" class="t">user-commands</a>
+
+It <a href="motion.txt.html#is" class="d">is</a> possible to define your own <a href="intro.txt.html#Ex" class="d">Ex</a> commands.  <a href="insert.txt.html#A" class="d">A</a> user-defined command can act
+just like <a href="insert.txt.html#a" class="d">a</a> built-in command (it can have <a href="insert.txt.html#a" class="d">a</a> range or arguments, arguments can
+be completed <a href="motion.txt.html#as" class="d">as</a> filenames or buffer names, etc), except that when the command
+<a href="motion.txt.html#is" class="d">is</a> executed, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> transformed into <a href="insert.txt.html#a" class="d">a</a> normal <a href="intro.txt.html#Ex" class="d">Ex</a> command and then executed.
+
+For starters: See <a href="motion.txt.html#section" class="d">section</a> <a href="usr_40.txt.html#40.2" class="l">40.2</a> in the user manual.
+
+                                        <a name="E183" class="t">E183</a> <a name="E841" class="t">E841</a> <a name="user-cmd-ambiguous" class="t">user-cmd-ambiguous</a>
+All user defined commands <a href="vim_faq.txt.html#must" class="d">must</a> start with an <a href="change.txt.html#uppercase" class="d">uppercase</a> letter, to avoid
+confusion with builtin commands.  Exceptions are these builtin commands:
+        <a href="editing.txt.html#%3ANext" class="d">:Next</a>
+        <a href="editing.txt.html#%3AX" class="d">:X</a>
+They cannot be used for <a href="insert.txt.html#a" class="d">a</a> user defined command.  "<a href="various.txt.html#%3APrint" class="d">:Print</a>" <a href="motion.txt.html#is" class="d">is</a> also an existing
+command, but <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> deprecated and can be overruled.
+
+The other characters of the user command can be <a href="change.txt.html#uppercase" class="d">uppercase</a> letters, <a href="change.txt.html#lowercase" class="d">lowercase</a>
+letters or digits.  When using digits, <span class="n">note</span> that other commands that take <a href="insert.txt.html#a" class="d">a</a>
+numeric argument may become ambiguous.  For example, the command ":Cc2" could
+be the user command ":Cc2" without an argument, or the command ":Cc" with
+argument "2"<a href="repeat.txt.html#." class="d">.</a>  It <a href="motion.txt.html#is" class="d">is</a> advised to <a href="change.txt.html#put" class="d">put</a> <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#space" class="d">space</a> between the command name and the
+argument to avoid these problems.
+
+When using <a href="insert.txt.html#a" class="d">a</a> user-defined command, the command can be abbreviated.  However, if
+an abbreviation <a href="motion.txt.html#is" class="d">is</a> not unique, an error will be issued.  Furthermore, <a href="insert.txt.html#a" class="d">a</a>
+built-in command will always take precedence.
+
+Example: 
+<span class="e">        :command Rename ...</span>
+<span class="e">        :command Renumber ...</span>
+<span class="e">        :Rena                           " Means "Rename"</span>
+<span class="e">        :Renu                           " Means "Renumber"</span>
+<span class="e">        :Ren                            " Error - ambiguous</span>
+<span class="e">        :command Paste ...</span>
+<span class="e">        :P                              " The built-in :Print</span>
+<span class="e"></span>
+It <a href="motion.txt.html#is" class="d">is</a> recommended that full names for user-defined commands are used in
+scripts.
+
+:com[mand]                                              <a name="%3Acom" class="t">:com</a> <a name="%3Acommand" class="t">:command</a>
+                        <a href="eval.txt.html#List" class="d">List</a> all user-defined commands.  When listing commands,
+                        the characters in the first two columns are
+                            <a href="change.txt.html#%21" class="d">!</a>   Command has the -bang attribute
+                            "   Command has the <a href="if_ole.txt.html#-register" class="d">-register</a> attribute
+                            <a href="motion.txt.html#b" class="d">b</a>   Command <a href="motion.txt.html#is" class="d">is</a> local to current buffer
+                        (see below for details on attributes)
+                        The <a href="eval.txt.html#list" class="d">list</a> can be filtered on command name with
+                        <a href="various.txt.html#%3Afilter" class="l">:filter</a><a href="motion.txt.html#%2C" class="d">,</a> e.g., to <a href="eval.txt.html#list" class="d">list</a> all commands with "Pyth" in
+                        the name: 
+<span class="e">                                filter Pyth command</span>
+<span class="e"></span>
+:com[mand] <span class="s">{cmd}</span>        <a href="eval.txt.html#List" class="d">List</a> the user-defined commands that start with <span class="s">{cmd}</span>
+
+                                                        <a name="%3Acommand-verbose" class="t">:command-verbose</a>
+When <a href="options.txt.html#%27verbose%27" class="o">'verbose'</a> <a href="motion.txt.html#is" class="d">is</a> non-zero, listing <a href="insert.txt.html#a" class="d">a</a> command will also display where <a href="motion.txt.html#it" class="d">it</a> was
+last defined. Example: 
+<span class="e"></span>
+<span class="e">    :verbose command TOhtml</span>
+<span class="h">       Name        Args Range Complete  Definition </span>
+<span class="h">        TOhtml      0    %               :call Convert2HTML(&lt;line1&gt;, &lt;line2&gt;) </span>
+<span class="h">            Last set from /usr/share/vim/vim-7.0/plugin/tohtml.vim </span>
+
+See <a href="various.txt.html#%3Averbose-cmd" class="l">:verbose-cmd</a> for more information.
+
+                                                        <a name="E174" class="t">E174</a> <a name="E182" class="t">E182</a>
+:com[mand][!] [{attr}...] <span class="s">{cmd}</span> <span class="s">{rep}</span>
+                        Define <a href="insert.txt.html#a" class="d">a</a> user command.  The name of the command <a href="motion.txt.html#is" class="d">is</a>
+                        <span class="s">{cmd}</span> and its replacement text <a href="motion.txt.html#is" class="d">is</a> <span class="s">{rep}</span>.  The command's
+                        attributes (see below) are <span class="s">{attr}</span>.  If the command
+                        already exists, an error <a href="motion.txt.html#is" class="d">is</a> reported, unless <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#%21" class="d">!</a> <a href="motion.txt.html#is" class="d">is</a>
+                        specified, in which <a href="change.txt.html#case" class="d">case</a> the command <a href="motion.txt.html#is" class="d">is</a> redefined.
+
+:delc[ommand] <span class="s">{cmd}</span>                             <a name="%3Adelc" class="t">:delc</a> <a name="%3Adelcommand" class="t">:delcommand</a> <a name="E184" class="t">E184</a>
+                        Delete the user-defined command <span class="s">{cmd}</span>.
+
+:comc[lear]                                             <a name="%3Acomc" class="t">:comc</a> <a name="%3Acomclear" class="t">:comclear</a>
+                        Delete all user-defined commands.
+
+Command attributes
+
+User-defined commands are treated by Vim just like any other <a href="intro.txt.html#Ex" class="d">Ex</a> commands.  They
+can have arguments, or have <a href="insert.txt.html#a" class="d">a</a> range specified.  Arguments are subject to
+completion <a href="motion.txt.html#as" class="d">as</a> filenames, buffers, etc.  Exactly how this works depends upon the
+command's attributes, which are specified when the command <a href="motion.txt.html#is" class="d">is</a> defined.
+
+There are <a href="insert.txt.html#a" class="d">a</a> number of attributes, split into four categories: argument
+handling, completion behavior, range handling, and special cases.  The
+attributes are described below, by category.
+
+Argument handling                               <a name="E175" class="t">E175</a> <a name="E176" class="t">E176</a> <a name="%3Acommand-nargs" class="t">:command-nargs</a>
+
+By default, <a href="insert.txt.html#a" class="d">a</a> user defined command will take no arguments (and an error <a href="motion.txt.html#is" class="d">is</a>
+reported if any are supplied).  However, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> possible to specify that the
+command can take arguments, using the -nargs attribute.  Valid cases are:
+
+        -nargs=0    No arguments are allowed (the default)
+        -nargs=1    Exactly one argument <a href="motion.txt.html#is" class="d">is</a> required, <a href="motion.txt.html#it" class="d">it</a> includes spaces 
+        -nargs=*    Any number of arguments are allowed (0, 1, or many),
+                    separated by white <a href="intro.txt.html#space" class="d">space</a>
+        -nargs=?    <a href="motion.txt.html#0" class="d">0</a> or 1 arguments are allowed
+        -nargs=+    Arguments <a href="vim_faq.txt.html#must" class="d">must</a> be supplied, but any number are allowed
+
+Arguments are considered to be separated by (unescaped) spaces or tabs in this
+context, except when there <a href="motion.txt.html#is" class="d">is</a> one argument, then the white <a href="intro.txt.html#space" class="d">space</a> <a href="motion.txt.html#is" class="d">is</a> part of
+the argument.
+
+<span class="n">Note</span> that arguments are used <a href="motion.txt.html#as" class="d">as</a> text, not <a href="motion.txt.html#as" class="d">as</a> expressions.  Specifically,
+"<a href="eval.txt.html#s%3Avar" class="d">s:var</a>" will use the <a href="#script-local" class="d">script-local</a> variable in the <a href="usr_41.txt.html#script" class="d">script</a> where the command was
+defined, not where <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> invoked!  Example:
+    script1.vim: 
+<span class="e">        :let s:error = "None"</span>
+<span class="e">        :command -nargs=1 Error echoerr &lt;args&gt;</span>
+   script2.vim: 
+<span class="e">        :source script1.vim</span>
+<span class="e">        :let s:error = "Wrong!"</span>
+<span class="e">        :Error s:error</span>
+Executing script2.vim will result in "None" being echoed.  Not what you
+intended!  Calling <a href="insert.txt.html#a" class="d">a</a> function may be an alternative.
+
+Completion behavior                             <a name="%3Acommand-completion" class="t">:command-completion</a> <a name="E179" class="t">E179</a>
+                                        <a name="E180" class="t">E180</a> <a name="E181" class="t">E181</a> <a name="%3Acommand-complete" class="t">:command-complete</a>
+By default, the arguments of user defined commands <a href="diff.txt.html#do" class="d">do</a> not undergo completion.
+However, by specifying one or the other of the following attributes, argument
+completion can be enabled:
+
+        -complete=arglist       file names in argument <a href="eval.txt.html#list" class="d">list</a>
+        -complete=augroup       autocmd groups
+        -complete=buffer        buffer names
+        -complete=behave        <a href="gui.txt.html#%3Abehave" class="d">:behave</a> suboptions
+        -complete=color         color schemes
+        -complete=command       <a href="intro.txt.html#Ex" class="d">Ex</a> command (and arguments)
+        -complete=compiler      compilers
+        -complete=cscope        <a href="if_cscop.txt.html#%3Acscope" class="l">:cscope</a> suboptions
+        -complete=dir           directory names
+        -complete=environment   environment variable names
+        -complete=event         <a href="autocmd.txt.html#autocommand" class="d">autocommand</a> events
+        -complete=expression    Vim <a href="eval.txt.html#expression" class="d">expression</a>
+        -complete=file          file and directory names
+        -complete=file_in_path  file and directory names in <a href="options.txt.html#%27path%27" class="l">'path'</a>
+        -complete=filetype      <a href="filetype.txt.html#filetype" class="d">filetype</a> names <a href="options.txt.html#%27filetype%27" class="l">'filetype'</a>
+        -complete=function      function name
+        -complete=help          <a href="helphelp.txt.html#help" class="d">help</a> subjects
+        -complete=highlight     highlight groups
+        -complete=history       <a href="cmdline.txt.html#%3Ahistory" class="d">:history</a> suboptions
+        -complete=locale        <a href="mbyte.txt.html#locale" class="d">locale</a> names (as output of <a href="mbyte.txt.html#locale" class="d">locale</a> -a)
+        -complete=mapclear      buffer argument
+        -complete=mapping       <a href="#mapping" class="d">mapping</a> name
+        -complete=menu          <a href="gui.txt.html#menus" class="d">menus</a>
+        -complete=messages      <a href="message.txt.html#%3Amessages" class="l">:messages</a> suboptions
+        -complete=option        <a href="options.txt.html#options" class="d">options</a>
+        -complete=packadd       optional package <a href="repeat.txt.html#pack-add" class="l">pack-add</a> names
+        -complete=shellcmd      Shell command
+        -complete=sign          <a href="sign.txt.html#%3Asign" class="l">:sign</a> suboptions
+        -complete=syntax        <a href="syntax.txt.html#syntax" class="d">syntax</a> file names <a href="options.txt.html#%27syntax%27" class="l">'syntax'</a>
+        -complete=syntime       <a href="syntax.txt.html#%3Asyntime" class="l">:syntime</a> suboptions
+        -complete=tag           <a href="tagsrch.txt.html#tags" class="d">tags</a>
+        -complete=tag_listfiles tags, file names are shown when <a href="scroll.txt.html#CTRL-D" class="k">CTRL-D</a> <a href="motion.txt.html#is" class="d">is</a> hit
+        -complete=user          user names
+        -complete=var           user <a href="eval.txt.html#variables" class="d">variables</a>
+        -complete=custom,{func} custom completion, defined via <span class="s">{func}</span>
+        -complete=customlist,{func} custom completion, defined via <span class="s">{func}</span>
+
+<span class="n">Note:</span> That some completion methods might expand environment variables.
+
+
+Custom completion                       <a name="%3Acommand-completion-custom" class="t">:command-completion-custom</a>
+                                        <a name="%3Acommand-completion-customlist" class="t">:command-completion-customlist</a>
+                                        <a name="E467" class="t">E467</a> <a name="E468" class="t">E468</a>
+It <a href="motion.txt.html#is" class="d">is</a> possible to define customized completion schemes via the "custom,{func}"
+or the "customlist,{func}" completion argument.  The <span class="s">{func}</span> part should be <a href="insert.txt.html#a" class="d">a</a>
+function with the following signature: 
+<span class="e"></span>
+<span class="e">        :function {func}(ArgLead, CmdLine, CursorPos)</span>
+<span class="e"></span>
+The function need not use all these arguments. The function should provide the
+completion candidates <a href="motion.txt.html#as" class="d">as</a> the return value.
+
+For the "custom" argument, the function should return the completion
+candidates one per line in <a href="insert.txt.html#a" class="d">a</a> newline separated string.
+
+For the "customlist" argument, the function should return the completion
+candidates <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> Vim List.  Non-string items in the <a href="eval.txt.html#list" class="d">list</a> are ignored.
+
+The function arguments are:
+        ArgLead         the leading portion of the argument currently being
+                        completed on
+        CmdLine         the entire command line
+        CursorPos       the cursor position in <a href="motion.txt.html#it" class="d">it</a> (byte index)
+The function may use these for determining context.  For the "custom"
+argument, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> not necessary to <a href="change.txt.html#filter" class="d">filter</a> candidates against the (implicit
+<a href="pattern.txt.html#pattern" class="d">pattern</a> in) ArgLead.  Vim will <a href="change.txt.html#filter" class="d">filter</a> the candidates with its <a href="pattern.txt.html#regexp" class="d">regexp</a> engine
+after function return, and this <a href="motion.txt.html#is" class="d">is</a> probably more efficient in most cases. For
+the "customlist" argument, Vim will not <a href="change.txt.html#filter" class="d">filter</a> the returned completion
+candidates and the user supplied function should <a href="change.txt.html#filter" class="d">filter</a> the candidates.
+
+The following example lists user names to <a href="insert.txt.html#a" class="d">a</a> Finger command 
+<span class="e">    :com -complete=custom,ListUsers -nargs=1 Finger !finger &lt;args&gt;</span>
+<span class="e">    :fun ListUsers(A,L,P)</span>
+<span class="e">    :    return system("cut -d: -f1 /etc/passwd")</span>
+<span class="e">    :endfun</span>
+<span class="e"></span>
+The following example completes filenames from the directories specified in
+the <a href="options.txt.html#%27path%27" class="o">'path'</a> option: 
+<span class="e">    :com -nargs=1 -bang -complete=customlist,EditFileComplete</span>
+<span class="e">                        \ EditFile edit&lt;bang&gt; &lt;args&gt;</span>
+<span class="e">    :fun EditFileComplete(A,L,P)</span>
+<span class="e">    :    return split(globpath(&amp;path, a:A), "\n")</span>
+<span class="e">    :endfun</span>
+
+This example does not work for file names with spaces!
+
+
+Range handling                          <a name="E177" class="t">E177</a> <a name="E178" class="t">E178</a> <a name="%3Acommand-range" class="t">:command-range</a>
+                                                        <a name="%3Acommand-count" class="t">:command-count</a>
+By default, user-defined commands <a href="diff.txt.html#do" class="d">do</a> not accept <a href="insert.txt.html#a" class="d">a</a> line number range.  However,
+<a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> possible to specify that the command does take <a href="insert.txt.html#a" class="d">a</a> range (the -range
+attribute), or that <a href="motion.txt.html#it" class="d">it</a> takes an arbitrary <a href="intro.txt.html#count" class="d">count</a> value, either in the line
+number position (-range=N, like the <a href="windows.txt.html#%3Asplit" class="l">:split</a> command) or <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> "<a href="intro.txt.html#count" class="d">count</a>"
+argument (-count=N, like the <a href="editing.txt.html#%3ANext" class="l">:Next</a> command).  The <a href="intro.txt.html#count" class="d">count</a> will then be
+available in the argument with <a href="#%3Ccount%3E" class="l">&lt;count&gt;</a><a href="repeat.txt.html#." class="d">.</a>
+
+Possible attributes are:
+
+        -range      Range allowed, default <a href="motion.txt.html#is" class="d">is</a> current line
+        -range=%    Range allowed, default <a href="motion.txt.html#is" class="d">is</a> whole file (1,$)
+        -range=N    <a href="insert.txt.html#A" class="d">A</a> <a href="intro.txt.html#count" class="d">count</a> (default N) which <a href="motion.txt.html#is" class="d">is</a> specified in the line
+                    number position (like <a href="windows.txt.html#%3Asplit" class="l">:split</a>); allows for zero line
+                    number.
+        -count=N    <a href="insert.txt.html#A" class="d">A</a> <a href="intro.txt.html#count" class="d">count</a> (default N) which <a href="motion.txt.html#is" class="d">is</a> specified either in the line
+                    number position, or <a href="motion.txt.html#as" class="d">as</a> an initial argument (like <a href="editing.txt.html#%3ANext" class="l">:Next</a>).
+                    Specifying -count (without <a href="insert.txt.html#a" class="d">a</a> default) acts like -count=0
+
+<span class="n">Note</span> that -range=N and -count=N are mutually <a href="motion.txt.html#exclusive" class="d">exclusive</a> <a href="motion.txt.html#-" class="d">-</a> only one should be
+specified.
+
+                                        <a name="%3Acommand-addr" class="t">:command-addr</a>
+It <a href="motion.txt.html#is" class="d">is</a> possible that the special characters in the range like ., <a href="motion.txt.html#%24" class="d">$</a> or <a href="motion.txt.html#%25" class="d">%</a> which
+by default correspond to the current line, last line and the whole buffer,
+relate to arguments, (loaded) buffers, <a href="windows.txt.html#windows" class="d">windows</a> or <a href="intro.txt.html#tab" class="d">tab</a> pages.
+
+Possible values are:
+        -addr=lines             Range of lines (this <a href="motion.txt.html#is" class="d">is</a> the default)
+        -addr=arguments         Range for arguments
+        -addr=buffers           Range for <a href="windows.txt.html#buffers" class="d">buffers</a> (also not loaded buffers)
+        -addr=loaded_buffers    Range for loaded <a href="windows.txt.html#buffers" class="d">buffers</a>
+        -addr=windows           Range for <a href="windows.txt.html#windows" class="d">windows</a>
+        -addr=tabs              Range for <a href="intro.txt.html#tab" class="d">tab</a> pages
+
+<a href="eval.txt.html#Special" class="d">Special</a> cases                           <a name="%3Acommand-bang" class="t">:command-bang</a> <a name="%3Acommand-bar" class="t">:command-bar</a>
+                                        <a name="%3Acommand-register" class="t">:command-register</a> <a name="%3Acommand-buffer" class="t">:command-buffer</a>
+There are some special cases <a href="motion.txt.html#as" class="d">as</a> well:
+
+        -bang       The command can take <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#%21" class="d">!</a> modifier (like <a href="editing.txt.html#%3Aq" class="d">:q</a> or :w)
+        -bar        The command can be followed by <a href="insert.txt.html#a" class="d">a</a> "|" and another command.
+                    <a href="insert.txt.html#A" class="d">A</a> "|" inside the command argument <a href="motion.txt.html#is" class="d">is</a> not allowed then.
+                    Also checks for <a href="insert.txt.html#a" class="d">a</a> " to start <a href="insert.txt.html#a" class="d">a</a> comment.
+        <a href="if_ole.txt.html#-register" class="d">-register</a>   The first argument to the command can be an optional
+                    <a href="sponsor.txt.html#register" class="d">register</a> name (like :del, :put, :yank).
+        -buffer     The command will only be available in the current buffer.
+
+In the cases of the -count and <a href="if_ole.txt.html#-register" class="d">-register</a> attributes, if the optional argument
+<a href="motion.txt.html#is" class="d">is</a> supplied, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> removed from the argument <a href="eval.txt.html#list" class="d">list</a> and <a href="motion.txt.html#is" class="d">is</a> available to the
+replacement text separately.
+<span class="n">Note</span> that these arguments can be abbreviated, but that <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> deprecated
+feature.  Use the full name for new scripts.
+
+Replacement text
+
+The replacement text for <a href="insert.txt.html#a" class="d">a</a> user defined command <a href="motion.txt.html#is" class="d">is</a> scanned for special <a href="intro.txt.html#escape" class="d">escape</a>
+sequences, using <span class="s">&lt;...&gt;</span> notation.  Escape sequences are replaced with values
+from the entered command line, and all other text <a href="motion.txt.html#is" class="d">is</a> copied unchanged.  The
+resulting <a href="eval.txt.html#string" class="d">string</a> <a href="motion.txt.html#is" class="d">is</a> executed <a href="motion.txt.html#as" class="d">as</a> an <a href="intro.txt.html#Ex" class="d">Ex</a> command.  To avoid the replacement use
+<a href="intro.txt.html#%3Clt%3E" class="s">&lt;lt&gt;</a> in place of the initial <span class="s">&lt;.  Thus to include "&lt;bang&gt;</span>" literally use
+"<a href="intro.txt.html#%3Clt%3E" class="s">&lt;lt&gt;</a>bang&gt;"<a href="repeat.txt.html#." class="d">.</a>
+
+The valid <a href="intro.txt.html#escape" class="d">escape</a> sequences are
+
+                                                <a name="%3Cline1%3E" class="t">&lt;line1&gt;</a>
+        <a href="#%3Cline1%3E" class="s">&lt;line1&gt;</a> The <a href="starting.txt.html#starting" class="d">starting</a> line of the command range.
+                                                <a name="%3Cline2%3E" class="t">&lt;line2&gt;</a>
+        <a href="#%3Cline2%3E" class="s">&lt;line2&gt;</a> The final line of the command range.
+                                                <a name="%3Crange%3E" class="t">&lt;range&gt;</a>
+        <a href="#%3Crange%3E" class="s">&lt;range&gt;</a> The number of items in the command range: 0, 1 or 2
+                                                <a name="%3Ccount%3E" class="t">&lt;count&gt;</a>
+        <a href="#%3Ccount%3E" class="s">&lt;count&gt;</a> Any <a href="intro.txt.html#count" class="d">count</a> supplied (as described for the '-range'
+                and '-count' attributes).
+                                                <a name="%3Cbang%3E" class="t">&lt;bang&gt;</a>
+        <a href="#%3Cbang%3E" class="s">&lt;bang&gt;</a>  (See the '-bang' attribute) Expands to <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#%21" class="d">!</a> if the
+                command was executed with <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#%21" class="d">!</a> modifier, otherwise
+                expands to nothing.
+                                                <a name="%3Cmods%3E" class="t">&lt;mods&gt;</a>
+        <a href="#%3Cmods%3E" class="s">&lt;mods&gt;</a>  The command modifiers, if specified. Otherwise, expands to
+                nothing. Supported modifiers are <a href="windows.txt.html#%3Aaboveleft" class="l">:aboveleft</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="windows.txt.html#%3Abelowright" class="l">:belowright</a><a href="motion.txt.html#%2C" class="d">,</a>
+                <a href="windows.txt.html#%3Abotright" class="l">:botright</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="editing.txt.html#%3Abrowse" class="l">:browse</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="editing.txt.html#%3Aconfirm" class="l">:confirm</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="windows.txt.html#%3Ahide" class="l">:hide</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="editing.txt.html#%3Akeepalt" class="l">:keepalt</a><a href="motion.txt.html#%2C" class="d">,</a>
+                <a href="motion.txt.html#%3Akeepjumps" class="l">:keepjumps</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="motion.txt.html#%3Akeepmarks" class="l">:keepmarks</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="cmdline.txt.html#%3Akeeppatterns" class="l">:keeppatterns</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="windows.txt.html#%3Aleftabove" class="l">:leftabove</a><a href="motion.txt.html#%2C" class="d">,</a>
+                <a href="motion.txt.html#%3Alockmarks" class="l">:lockmarks</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="recover.txt.html#%3Anoswapfile" class="l">:noswapfile</a> <a href="windows.txt.html#%3Arightbelow" class="l">:rightbelow</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="various.txt.html#%3Asilent" class="l">:silent</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="tabpage.txt.html#%3Atab" class="l">:tab</a><a href="motion.txt.html#%2C" class="d">,</a>
+                <a href="windows.txt.html#%3Atopleft" class="l">:topleft</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="various.txt.html#%3Averbose" class="l">:verbose</a><a href="motion.txt.html#%2C" class="d">,</a> and <a href="windows.txt.html#%3Avertical" class="l">:vertical</a><a href="repeat.txt.html#." class="d">.</a>
+                <span class="n">Note</span> that these are not yet supported: <a href="autocmd.txt.html#%3Anoautocmd" class="l">:noautocmd</a><a href="motion.txt.html#%2C" class="d">,</a>
+                <a href="eval.txt.html#%3Asandbox" class="l">:sandbox</a> and <a href="various.txt.html#%3Aunsilent" class="l">:unsilent</a><a href="repeat.txt.html#." class="d">.</a>
+                Examples: 
+<span class="e">                    command! -nargs=+ -complete=file MyEdit</span>
+<span class="e">                                \ for f in expand(&lt;q-args&gt;, 0, 1) |</span>
+<span class="e">                                \ exe '&lt;mods&gt; split ' . f |</span>
+<span class="e">                                \ endfor</span>
+<span class="e"></span>
+<span class="e">                    function! SpecialEdit(files, mods)</span>
+<span class="e">                        for f in expand(a:files, 0, 1)</span>
+<span class="e">                            exe a:mods . ' split ' . f</span>
+<span class="e">                        endfor</span>
+<span class="e">                    endfunction</span>
+<span class="e">                    command! -nargs=+ -complete=file Sedit</span>
+<span class="e">                                \ call SpecialEdit(&lt;q-args&gt;, &lt;q-mods&gt;)</span>
+
+                                                <a name="%3Creg%3E" class="t">&lt;reg&gt;</a> <a name="%3Cregister%3E" class="t">&lt;register&gt;</a>
+        <a href="#%3Creg%3E" class="s">&lt;reg&gt;</a>   (See the '-register' attribute) The optional register,
+                if specified.  Otherwise, expands to nothing.  <a href="#%3Cregister%3E" class="s">&lt;register&gt;</a>
+                <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> synonym for this.
+                                                <a name="%3Cargs%3E" class="t">&lt;args&gt;</a>
+        <a href="#%3Cargs%3E" class="s">&lt;args&gt;</a>  The command arguments, exactly <a href="motion.txt.html#as" class="d">as</a> supplied (but <a href="motion.txt.html#as" class="d">as</a>
+                noted above, any <a href="intro.txt.html#count" class="d">count</a> or <a href="sponsor.txt.html#register" class="d">register</a> can consume some
+                of the arguments, which are then not part of <a href="#%3Cargs%3E" class="s">&lt;args&gt;</a>).
+        <a href="intro.txt.html#%3Clt%3E" class="s">&lt;lt&gt;</a>    <a href="insert.txt.html#A" class="d">A</a> single '&lt;' (Less-Than) character.  This <a href="motion.txt.html#is" class="d">is</a> needed if you
+                want to get <a href="insert.txt.html#a" class="d">a</a> literal copy of one of these <a href="intro.txt.html#escape" class="d">escape</a> sequences
+                into the expansion <a href="motion.txt.html#-" class="d">-</a> for example, to get <a href="#%3Cbang%3E" class="s">&lt;bang&gt;</a>, use
+                <a href="intro.txt.html#%3Clt%3E" class="s">&lt;lt&gt;</a>bang&gt;.
+
+                                                        <a name="%3Cq-args%3E" class="t">&lt;q-args&gt;</a>
+If the first two characters of an <a href="intro.txt.html#escape" class="d">escape</a> sequence are "q-" (for example,
+<a href="#%3Cq-args%3E" class="s">&lt;q-args&gt;</a>) then the value <a href="motion.txt.html#is" class="d">is</a> quoted in such <a href="insert.txt.html#a" class="d">a</a> way <a href="motion.txt.html#as" class="d">as</a> to make <a href="motion.txt.html#it" class="d">it</a> <a href="insert.txt.html#a" class="d">a</a> valid value
+for use in an expression.  This uses the argument <a href="motion.txt.html#as" class="d">as</a> one single value.
+When there <a href="motion.txt.html#is" class="d">is</a> no argument <a href="#%3Cq-args%3E" class="s">&lt;q-args&gt;</a> <a href="motion.txt.html#is" class="d">is</a> an empty string.
+                                                        <a name="%3Cf-args%3E" class="t">&lt;f-args&gt;</a>
+To allow commands to pass their arguments on to <a href="insert.txt.html#a" class="d">a</a> user-defined function, there
+<a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> special form <a href="#%3Cf-args%3E" class="s">&lt;f-args&gt;</a> <a href="motion.txt.html#%28" class="d">(</a>"function args").  This splits the command
+arguments <a href="motion.txt.html#at" class="d">at</a> spaces and tabs, <a href="quotes.txt.html#quotes" class="d">quotes</a> each argument individually, and the
+<a href="#%3Cf-args%3E" class="s">&lt;f-args&gt;</a> sequence <a href="motion.txt.html#is" class="d">is</a> replaced by the comma-separated <a href="eval.txt.html#list" class="d">list</a> of quoted arguments.
+See the Mycmd example below.  If no arguments are given <a href="#%3Cf-args%3E" class="s">&lt;f-args&gt;</a> <a href="motion.txt.html#is" class="d">is</a> removed.
+   To embed <a href="pattern.txt.html#whitespace" class="d">whitespace</a> into an argument of <a href="#%3Cf-args%3E" class="s">&lt;f-args&gt;</a>, prepend <a href="insert.txt.html#a" class="d">a</a> backslash.
+<a href="#%3Cf-args%3E" class="s">&lt;f-args&gt;</a> replaces every pair of backslashes (\\) with one backslash.  <a href="insert.txt.html#A" class="d">A</a>
+<a href="intro.txt.html#backslash" class="d">backslash</a> followed by <a href="insert.txt.html#a" class="d">a</a> character other than white <a href="intro.txt.html#space" class="d">space</a> or <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#backslash" class="d">backslash</a>
+remains unmodified.  Overview:
+
+<span class="h">        command            &lt;f-args&gt; </span>
+        XX <a href="motion.txt.html#ab" class="d">ab</a>              <span class="o">'ab'</span>
+        XX a\b             'a\b'
+        XX a\ <a href="motion.txt.html#b" class="d">b</a>            <a href="motion.txt.html#%27a" class="d">'a</a> b'
+        XX a\  <a href="motion.txt.html#b" class="d">b</a>           <a href="motion.txt.html#%27a" class="d">'a</a> ', 'b'
+        XX a\\b            'a\b'
+        XX a\\ <a href="motion.txt.html#b" class="d">b</a>           'a\', 'b'
+        XX a\\\b           'a\\b'
+        XX a\\\ <a href="motion.txt.html#b" class="d">b</a>          'a\ b'
+        XX a\\\\b          'a\\b'
+        XX a\\\\ <a href="motion.txt.html#b" class="d">b</a>         'a\\', 'b'
+
+Examples 
+<span class="e"></span>
+<span class="e">   " Delete everything after here to the end</span>
+<span class="e">   :com Ddel +,$d</span>
+<span class="e"></span>
+<span class="e">   " Rename the current buffer</span>
+<span class="e">   :com -nargs=1 -bang -complete=file Ren f &lt;args&gt;|w&lt;bang&gt;</span>
+<span class="e"></span>
+<span class="e">   " Replace a range with the contents of a file</span>
+<span class="e">   " (Enter this all as one line)</span>
+<span class="e">   :com -range -nargs=1 -complete=file</span>
+<span class="e">         Replace &lt;line1&gt;-pu_|&lt;line1&gt;,&lt;line2&gt;d|r &lt;args&gt;|&lt;line1&gt;d</span>
+<span class="e"></span>
+<span class="e">   " Count the number of lines in the range</span>
+<span class="e">   :com! -range -nargs=0 Lines  echo &lt;line2&gt; - &lt;line1&gt; + 1 "lines"</span>
+<span class="e"></span>
+<span class="e">   " Call a user function (example of &lt;f-args&gt;)</span>
+<span class="e">   :com -nargs=* Mycmd call Myfunc(&lt;f-args&gt;)</span>
+<span class="e"></span>
+When executed as: 
+<span class="e">        :Mycmd arg1 arg2</span>
+This will invoke: 
+<span class="e">        :call Myfunc("arg1","arg2")</span>
+<span class="e"></span>
+<span class="e">   :" A more substantial example</span>
+<span class="e">   :function Allargs(command)</span>
+<span class="e">   :   let i = 0</span>
+<span class="e">   :   while i &lt; argc()</span>
+<span class="e">   :      if filereadable(argv(i))</span>
+<span class="e">   :         execute "e " . argv(i)</span>
+<span class="e">   :         execute a:command</span>
+<span class="e">   :      endif</span>
+<span class="e">   :      let i = i + 1</span>
+<span class="e">   :   endwhile</span>
+<span class="e">   :endfunction</span>
+<span class="e">   :command -nargs=+ -complete=command Allargs call Allargs(&lt;q-args&gt;)</span>
+<span class="e"></span>
+The command Allargs takes any Vim command(s) <a href="motion.txt.html#as" class="d">as</a> argument and executes <a href="motion.txt.html#it" class="d">it</a> on all
+files in the argument list.  Usage example (note use of the "<a href="motion.txt.html#e" class="d">e</a>" flag to ignore
+<a href="message.txt.html#errors" class="d">errors</a> and the "update" command to write modified buffers): 
+<span class="e">        :Allargs %s/foo/bar/ge|update</span>
+This will invoke: 
+<span class="e">        :call Allargs("%s/foo/bar/ge|update")</span>
+
+When defining <a href="insert.txt.html#a" class="d">a</a> user command in <a href="insert.txt.html#a" class="d">a</a> script, <a href="motion.txt.html#it" class="d">it</a> will be able to call <a href="eval.txt.html#functions" class="d">functions</a>
+local to the <a href="usr_41.txt.html#script" class="d">script</a> and use mappings local to the script.  When the user
+invokes the user command, <a href="motion.txt.html#it" class="d">it</a> will run in the context of the <a href="usr_41.txt.html#script" class="d">script</a> <a href="motion.txt.html#it" class="d">it</a> was
+defined in.  This matters if <a href="#%3CSID%3E" class="l">&lt;SID&gt;</a> <a href="motion.txt.html#is" class="d">is</a> used in <a href="insert.txt.html#a" class="d">a</a> command.
+
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

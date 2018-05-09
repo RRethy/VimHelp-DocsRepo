@@ -1,0 +1,321 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: usr_11.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="usr_11.txt" class="t">usr_11.txt</a>    For <span class="i">Vim version 8.0.</span>  Last change: 2018 Apr 13
+
+                     VIM USER MANUAL <a href="motion.txt.html#-" class="d">-</a> by <a href="intro.txt.html#Bram" class="d">Bram</a> <a href="intro.txt.html#Moolenaar" class="d">Moolenaar</a>
+
+                           Recovering from <a href="insert.txt.html#a" class="d">a</a> crash
+
+
+Did your computer crash?  And you just spent hours editing?  Don't panic!  Vim
+stores enough information to be able to restore most of your work.  This
+chapter shows you how to get your work back and explains how the swap file <a href="motion.txt.html#is" class="d">is</a>
+used.
+
+<a href="#11.1" class="l">11.1</a>  Basic <a href="recover.txt.html#recovery" class="d">recovery</a>
+<a href="#11.2" class="l">11.2</a>  Where <a href="motion.txt.html#is" class="d">is</a> the swap file?
+<a href="#11.3" class="l">11.3</a>  Crashed or not?
+<a href="#11.4" class="l">11.4</a>  Further reading
+
+     Next chapter: <a href="usr_12.txt.html#usr_12.txt" class="l">usr_12.txt</a>  Clever tricks
+ Previous chapter: <a href="usr_10.txt.html#usr_10.txt" class="l">usr_10.txt</a>  Making big changes
+Table of contents: <a href="usr_toc.txt.html#usr_toc.txt" class="l">usr_toc.txt</a>
+
+<span class="h">==============================================================================</span>
+<a name="11.1" class="t">11.1</a>  Basic <a href="recover.txt.html#recovery" class="d">recovery</a>
+
+In most cases recovering <a href="insert.txt.html#a" class="d">a</a> file <a href="motion.txt.html#is" class="d">is</a> quite simple, assuming you know which file
+you were editing (and the harddisk <a href="motion.txt.html#is" class="d">is</a> still working).  Start Vim on the file,
+with the "<a href="starting.txt.html#-r" class="d">-r</a>" argument added: 
+<span class="e"></span>
+<span class="e">        vim -r help.txt</span>
+<span class="e"></span>
+Vim will read the swap file (used to store text you were editing) and may read
+bits and pieces of the original file.  If Vim recovered your changes you will
+see these <a href="message.txt.html#messages" class="d">messages</a> (with different file names, of course):
+
+<span class="h">        Using swap file ".help.txt.swp" </span>
+<span class="h">        Original file "~/vim/runtime/doc/help.txt" </span>
+<span class="h">        Recovery completed. You should check if everything is OK. </span>
+<span class="h">        (You might want to write out this file under another name </span>
+<span class="h">        and run diff with the original file to check for changes) </span>
+<span class="h">        You may want to delete the .swp file now. </span>
+
+To be on the safe side, write this file under another name: 
+<span class="e"></span>
+<span class="e">        :write help.txt.recovered</span>
+<span class="e"></span>
+Compare the file with the original file to check if you ended up with what you
+expected.  Vimdiff <a href="motion.txt.html#is" class="d">is</a> very useful for this <a href="usr_08.txt.html#08.7" class="l">08.7</a><a href="repeat.txt.html#." class="d">.</a>  For example: 
+<span class="e"></span>
+<span class="e">        :write help.txt.recovered</span>
+<span class="e">        :edit #</span>
+<span class="e">        :diffsp help.txt</span>
+<span class="e"></span>
+Watch out for the original file to contain <a href="insert.txt.html#a" class="d">a</a> more recent version (you saved
+the file just before the computer crashed).  And check that no lines are
+missing (something went wrong that Vim could not recover).
+   If Vim produces warning <a href="message.txt.html#messages" class="d">messages</a> when recovering, read them carefully.
+This <a href="motion.txt.html#is" class="d">is</a> rare though.
+
+If the <a href="recover.txt.html#recovery" class="d">recovery</a> resulted in text that <a href="motion.txt.html#is" class="d">is</a> exactly the same <a href="motion.txt.html#as" class="d">as</a> the file
+contents, you will get this message:
+
+<span class="h">        Using swap file ".help.txt.swp" </span>
+<span class="h">        Original file "~/vim/runtime/doc/help.txt" </span>
+<span class="h">        Recovery completed. Buffer contents equals file contents. </span>
+<span class="h">        You may want to delete the .swp file now. </span>
+
+This usually happens if you already recovered your changes, or you wrote the
+file after making changes.  It <a href="motion.txt.html#is" class="d">is</a> safe to delete the swap file now.
+
+It <a href="motion.txt.html#is" class="d">is</a> normal that the last few changes can not be recovered.  Vim flushes the
+changes to disk when you don't type for about four seconds, or after typing
+about two hundred characters.  This <a href="motion.txt.html#is" class="d">is</a> set with the <a href="options.txt.html#%27updatetime%27" class="o">'updatetime'</a> and
+<a href="options.txt.html#%27updatecount%27" class="o">'updatecount'</a> options.  Thus when Vim didn't get <a href="insert.txt.html#a" class="d">a</a> chance to save itself when
+the system went down, the changes after the last flush will be lost.
+
+If you were editing without <a href="insert.txt.html#a" class="d">a</a> file name, give an empty <a href="eval.txt.html#string" class="d">string</a> <a href="motion.txt.html#as" class="d">as</a> argument: 
+<span class="e"></span>
+<span class="e">        vim -r ""</span>
+<span class="e"></span>
+You <a href="vim_faq.txt.html#must" class="d">must</a> be in the right directory, otherwise Vim can't find the swap file.
+
+<span class="h">==============================================================================</span>
+<a name="11.2" class="t">11.2</a>  Where <a href="motion.txt.html#is" class="d">is</a> the swap file?
+
+Vim can store the swap file in several places.  Normally <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> in the same
+directory <a href="motion.txt.html#as" class="d">as</a> the original file.  To find it, change to the directory of the
+file, and use: 
+<span class="e"></span>
+<span class="e">        vim -r</span>
+<span class="e"></span>
+Vim will <a href="eval.txt.html#list" class="d">list</a> the swap files that <a href="motion.txt.html#it" class="d">it</a> can find.  It will also look in other
+directories where the swap file for files in the current directory may be
+located.  It will not find swap files in any other directories though, <a href="motion.txt.html#it" class="d">it</a>
+doesn't search the directory tree.
+   The output could look like this:
+
+<span class="h">        Swap files found: </span>
+<span class="h">           In current directory: </span>
+<span class="h">        1.    .main.c.swp </span>
+<span class="h">                  owned by: mool   dated: Tue May 29 21:00:25 2001 </span>
+<span class="h">                 file name: ~mool/vim/vim6/src/main.c </span>
+<span class="h">                  modified: YES </span>
+<span class="h">                 user name: mool   host name: masaka.moolenaar.net </span>
+<span class="h">                process ID: 12525 </span>
+<span class="h">           In directory ~/tmp: </span>
+<span class="h">              -- none -- </span>
+<span class="h">           In directory /var/tmp: </span>
+<span class="h">              -- none -- </span>
+<span class="h">           In directory /tmp: </span>
+<span class="h">              -- none -- </span>
+
+If there are several swap files that look like they may be the one you want to
+use, <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> <a href="motion.txt.html#is" class="d">is</a> given of these swap files and you are requested to enter the
+number of the one you want to use.  Carefully look <a href="motion.txt.html#at" class="d">at</a> the dates to decide
+which one you want to use.
+   In <a href="change.txt.html#case" class="d">case</a> you don't know which one to use, just try them one by one and check
+the resulting files if they are what you expected.
+
+
+USING <a href="insert.txt.html#A" class="d">A</a> SPECIFIC SWAP FILE
+
+If you know which swap file needs to be used, you can recover by giving the
+swap file name.  Vim will then finds out the name of the original file from
+the swap file.
+
+Example: 
+<span class="e">        vim -r .help.txt.swo</span>
+<span class="e"></span>
+This <a href="motion.txt.html#is" class="d">is</a> also handy when the swap file <a href="motion.txt.html#is" class="d">is</a> in another directory than expected.
+Vim recognizes files with the <a href="pattern.txt.html#pattern" class="d">pattern</a> *.s[uvw][a-z] <a href="motion.txt.html#as" class="d">as</a> swap files.
+
+If this still does not work, see what file names Vim reports and rename the
+files accordingly.  Check the <a href="options.txt.html#%27directory%27" class="o">'directory'</a> option to see where Vim may have
+<a href="change.txt.html#put" class="d">put</a> the swap file.
+
+        <span class="n">Note:</span>
+        Vim tries to find the swap file by searching the directories in the
+        <a href="options.txt.html#%27dir%27" class="o">'dir'</a> option, looking for files that match "filename.sw?"<a href="repeat.txt.html#." class="d">.</a>  If
+        <a href="editing.txt.html#wildcard" class="d">wildcard</a> expansion doesn't work (e.g., when the <a href="options.txt.html#%27shell%27" class="o">'shell'</a> option <a href="motion.txt.html#is" class="d">is</a>
+        invalid), Vim does <a href="insert.txt.html#a" class="d">a</a> desperate try to find the file "filename.swp"<a href="repeat.txt.html#." class="d">.</a>
+        If that fails too, you will have to give the name of the swapfile
+        itself to be able to recover the file.
+
+<span class="h">==============================================================================</span>
+<a name="11.3" class="t">11.3</a>  Crashed or not?                                 <a name="ATTENTION" class="t">ATTENTION</a> <a name="E325" class="t">E325</a>
+
+Vim tries to protect you from doing stupid things.  Suppose you innocently
+start editing <a href="insert.txt.html#a" class="d">a</a> file, expecting the contents of the file to show up.  Instead,
+Vim produces <a href="insert.txt.html#a" class="d">a</a> very long message:
+
+<span class="h">                E325: ATTENTION </span>
+<span class="h">        Found a swap file by the name ".main.c.swp" </span>
+<span class="h">                  owned by: mool   dated: Tue May 29 21:09:28 2001 </span>
+<span class="h">                 file name: ~mool/vim/vim6/src/main.c </span>
+<span class="h">                  modified: no </span>
+<span class="h">                 user name: mool   host name: masaka.moolenaar.net </span>
+<span class="h">                process ID: 12559 (still running) </span>
+<span class="h">        While opening file "main.c" </span>
+<span class="h">                     dated: Tue May 29 19:46:12 2001 </span>
+<span class="h"> </span>
+<span class="h">        (1) Another program may be editing the same file. </span>
+<span class="h">            If this is the case, be careful not to end up with two </span>
+<span class="h">            different instances of the same file when making changes. </span>
+<span class="h">            Quit, or continue with caution. </span>
+<span class="h"> </span>
+<span class="h">        (2) An edit session for this file crashed. </span>
+<span class="h">            If this is the case, use ":recover" or "vim -r main.c" </span>
+<span class="h">            to recover the changes (see ":help recovery"). </span>
+<span class="h">            If you did this already, delete the swap file ".main.c.swp" </span>
+<span class="h">            to avoid this message. </span>
+
+You get this message, because, when <a href="starting.txt.html#starting" class="d">starting</a> to edit <a href="insert.txt.html#a" class="d">a</a> file, Vim checks if <a href="insert.txt.html#a" class="d">a</a>
+swap file already exists for that file.  If there <a href="motion.txt.html#is" class="d">is</a> one, there <a href="vim_faq.txt.html#must" class="d">must</a> be
+something wrong.  It may be one of these two situations.
+
+1. Another edit session <a href="motion.txt.html#is" class="d">is</a> active on this file.  Look in the message for the
+   line with "process ID"<a href="repeat.txt.html#." class="d">.</a>  It might look like this:
+
+<span class="h">                process ID: 12559 (still running) </span>
+
+   The text "(still running)" indicates that the process editing this file
+   runs on the same computer.  When working on <a href="insert.txt.html#a" class="d">a</a> non-Unix system you will not
+   get this extra hint.  When editing <a href="insert.txt.html#a" class="d">a</a> file over <a href="insert.txt.html#a" class="d">a</a> network, you may not see
+   the hint, because the process might be running on another computer.  In
+   those two cases you <a href="vim_faq.txt.html#must" class="d">must</a> find out what the situation <a href="motion.txt.html#is" class="d">is</a> yourself.
+      If there <a href="motion.txt.html#is" class="d">is</a> another Vim editing the same file, continuing to edit will
+   result in two versions of the same file.  The one that <a href="motion.txt.html#is" class="d">is</a> written last will
+   overwrite the other one, resulting in loss of changes.  You better quit
+   this Vim.
+
+2. The swap file might be the result from <a href="insert.txt.html#a" class="d">a</a> previous crash of Vim or the
+   computer.  Check the dates mentioned in the message.  If the date of the
+   swap file <a href="motion.txt.html#is" class="d">is</a> newer than the file you were editing, and this line appears:
+
+<span class="h">                modified: YES </span>
+
+   Then you very likely have <a href="insert.txt.html#a" class="d">a</a> crashed edit session that <a href="motion.txt.html#is" class="d">is</a> worth recovering.
+      If the date of the file <a href="motion.txt.html#is" class="d">is</a> newer than the date of the swap file, then
+   either <a href="motion.txt.html#it" class="d">it</a> was changed after the crash (perhaps you recovered <a href="motion.txt.html#it" class="d">it</a> earlier,
+   but didn't delete the swap file?), or else the file was saved before the
+   crash but after the last write of the swap file (then you're lucky: you
+   don't even need that old swap file).  Vim will warn you for this with this
+   extra line:
+
+<span class="h">      NEWER than swap file! </span>
+
+
+UNREADABLE SWAP FILE
+
+Sometimes the line
+
+<span class="h">        [cannot be read] </span>
+
+will appear under the name of the swap file.  This can be good or bad,
+depending on circumstances.
+
+It <a href="motion.txt.html#is" class="d">is</a> good if <a href="insert.txt.html#a" class="d">a</a> previous editing session crashed without having made any
+changes to the file.  Then <a href="insert.txt.html#a" class="d">a</a> directory listing of the swap file will show
+that <a href="motion.txt.html#it" class="d">it</a> has zero bytes.  You may delete <a href="motion.txt.html#it" class="d">it</a> and proceed.
+
+It <a href="motion.txt.html#is" class="d">is</a> slightly bad if you don't have read permission for the swap file.  You
+may want to <a href="starting.txt.html#view" class="d">view</a> the file read-only, or quit.  On multi-user systems, if you
+yourself did the last changes under <a href="insert.txt.html#a" class="d">a</a> different login name, <a href="insert.txt.html#a" class="d">a</a> logout
+followed by <a href="insert.txt.html#a" class="d">a</a> login under that other name might cure the "read error"<a href="repeat.txt.html#." class="d">.</a>  Or
+else you might want to find out who last edited (or <a href="motion.txt.html#is" class="d">is</a> editing) the file and
+have <a href="insert.txt.html#a" class="d">a</a> talk with them.
+
+It <a href="motion.txt.html#is" class="d">is</a> very bad if <a href="motion.txt.html#it" class="d">it</a> means there <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> physical read error on the disk
+containing the swap file.  Fortunately, this almost never happens.
+You may want to <a href="starting.txt.html#view" class="d">view</a> the file read-only <a href="motion.txt.html#at" class="d">at</a> first (if you can), to see the
+extent of the changes that were "forgotten"<a href="repeat.txt.html#." class="d">.</a>  If you are the one in charge of
+that file, be prepared to <a href="undo.txt.html#redo" class="d">redo</a> your last changes.
+
+
+WHAT TO DO?                                     <a name="swap-exists-choices" class="t">swap-exists-choices</a>
+
+If dialogs are supported you will be asked to select one of six choices:
+
+<span class="h">  Swap file ".main.c.swp" already exists! </span>
+<span class="h">  [O]pen Read-Only, (E)dit anyway, (R)ecover, (Q)uit, (A)bort, (D)elete it: </span>
+
+<a href="insert.txt.html#O" class="d">O</a>  Open the file readonly.  Use this when you just want to <a href="starting.txt.html#view" class="d">view</a> the file and
+   don't need to recover it.  You might want to use this when you know someone
+   else <a href="motion.txt.html#is" class="d">is</a> editing the file, but you just want to look in <a href="motion.txt.html#it" class="d">it</a> and not make
+   changes.
+
+<a href="motion.txt.html#E" class="d">E</a>  Edit the file anyway.  Use this with caution!  If the file <a href="motion.txt.html#is" class="d">is</a> being edited
+   in another Vim, you might <a href="intro.txt.html#end" class="d">end</a> up with two versions of the file.  Vim will
+   try to warn you when this happens, but better be safe then sorry.
+
+<a href="change.txt.html#R" class="d">R</a>  Recover the file from the swap file.  Use this if you know that the swap
+   file contains changes that you want to recover.
+
+<a href="intro.txt.html#Q" class="d">Q</a>  Quit.  This avoids <a href="starting.txt.html#starting" class="d">starting</a> to edit the file.  Use this if there <a href="motion.txt.html#is" class="d">is</a> another
+   Vim editing the same file.
+      When you just started Vim, this will exit Vim.  When <a href="starting.txt.html#starting" class="d">starting</a> Vim with
+   files in several windows, Vim quits only if there <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> swap file for the
+   first one.  When using an edit command, the file will not be loaded and you
+   are taken back to the previously edited file.
+
+<a href="insert.txt.html#A" class="d">A</a>  Abort.  Like Quit, but also abort further commands.  This <a href="motion.txt.html#is" class="d">is</a> useful when
+   loading <a href="insert.txt.html#a" class="d">a</a> <a href="usr_41.txt.html#script" class="d">script</a> that edits several files, such <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> session with multiple
+   windows.
+
+<a href="change.txt.html#D" class="d">D</a>  Delete the swap file.  Use this when you are sure you no longer need it.
+   For example, when <a href="motion.txt.html#it" class="d">it</a> doesn't contain changes, or when the file itself <a href="motion.txt.html#is" class="d">is</a>
+   newer than the swap file.
+      On <a href="os_unix.txt.html#Unix" class="d">Unix</a> this choice <a href="motion.txt.html#is" class="d">is</a> only offered when the process that created the
+   swap file does not appear to be running.
+
+If you <a href="diff.txt.html#do" class="d">do</a> not get the <a href="gui_w32.txt.html#dialog" class="d">dialog</a> (you are running <a href="insert.txt.html#a" class="d">a</a> version of Vim that does not
+support it), you will have to <a href="diff.txt.html#do" class="d">do</a> <a href="motion.txt.html#it" class="d">it</a> manually.  To recover the file, use this
+command: 
+<span class="e"></span>
+<span class="e">        :recover</span>
+<span class="e"></span>
+<span class="e"></span>
+Vim cannot always detect that <a href="insert.txt.html#a" class="d">a</a> swap file already exists for <a href="insert.txt.html#a" class="d">a</a> file.  This <a href="motion.txt.html#is" class="d">is</a>
+the <a href="change.txt.html#case" class="d">case</a> when the other edit session puts the swap files in another directory
+or when the path name for the file <a href="motion.txt.html#is" class="d">is</a> different when editing <a href="motion.txt.html#it" class="d">it</a> on different
+machines.  Therefore, don't rely on Vim always warning you.
+
+If you really don't want to see this message, you can add the 'A' flag to the
+<a href="options.txt.html#%27shortmess%27" class="o">'shortmess'</a> option.  But it's very unusual that you need this.
+
+For remarks about <a href="editing.txt.html#encryption" class="d">encryption</a> and the swap file, see <a href="recover.txt.html#%3Arecover-crypt" class="l">:recover-crypt</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+<a name="11.4" class="t">11.4</a>  Further reading
+
+<a href="recover.txt.html#swap-file" class="l">swap-file</a>     An explanation about where the swap file will be created and
+                what its name is.
+<a href="recover.txt.html#%3Apreserve" class="l">:preserve</a>     Manually flushing the swap file to disk.
+<a href="recover.txt.html#%3Aswapname" class="l">:swapname</a>     See the name of the swap file for the current file.
+<a href="options.txt.html#%27updatecount%27" class="o">'updatecount'</a>   <a href="eval.txt.html#Number" class="d">Number</a> of key strokes after which the swap file <a href="motion.txt.html#is" class="d">is</a> flushed to
+                disk.
+<a href="options.txt.html#%27updatetime%27" class="o">'updatetime'</a>    Timeout after which the swap file <a href="motion.txt.html#is" class="d">is</a> flushed to disk.
+<a href="options.txt.html#%27swapsync%27" class="o">'swapsync'</a>      Whether the disk <a href="motion.txt.html#is" class="d">is</a> synced when the swap file <a href="motion.txt.html#is" class="d">is</a> flushed.
+<a href="options.txt.html#%27directory%27" class="o">'directory'</a>     <a href="eval.txt.html#List" class="d">List</a> of directory names where to store the swap file.
+<a href="options.txt.html#%27maxmem%27" class="o">'maxmem'</a>        Limit for memory usage before <a href="editing.txt.html#writing" class="d">writing</a> text to the swap file.
+<a href="options.txt.html#%27maxmemtot%27" class="o">'maxmemtot'</a>     Same, but for all files in total.
+
+<span class="h">==============================================================================</span>
+
+Next chapter: <a href="usr_12.txt.html#usr_12.txt" class="l">usr_12.txt</a>  Clever tricks
+
+Copyright: see <a href="usr_01.txt.html#manual-copyright" class="l">manual-copyright</a>  vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

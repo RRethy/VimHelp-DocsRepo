@@ -1,0 +1,1173 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: cmdline.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="cmdline.txt" class="t">cmdline.txt</a>   For <span class="i">Vim version 8.0.</span>  Last change: 2017 Oct 19
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Bram Moolenaar</span>
+
+
+                                <a name="Cmdline-mode" class="t">Cmdline-mode</a> <a name="Command-line-mode" class="t">Command-line-mode</a>
+<a href="#Command-line" class="d">Command-line</a> mode               <a name="Cmdline" class="t">Cmdline</a> <a name="Command-line" class="t">Command-line</a> <a name="mode-cmdline" class="t">mode-cmdline</a> <a name="%3A" class="t">:</a>
+
+<a href="#Command-line" class="d">Command-line</a> mode <a href="motion.txt.html#is" class="d">is</a> used to enter <a href="intro.txt.html#Ex" class="d">Ex</a> commands <a href="motion.txt.html#%28" class="d">(</a>"<a href="#%3A" class="d">:</a>"), search patterns
+<a href="motion.txt.html#%28" class="d">(</a>"<a href="pattern.txt.html#%2F" class="d">/</a>" and "<a href="pattern.txt.html#%3F" class="d">?</a>"), and <a href="change.txt.html#filter" class="d">filter</a> commands <a href="motion.txt.html#%28" class="d">(</a>"<a href="change.txt.html#%21" class="d">!</a>").
+
+Basic command line editing <a href="motion.txt.html#is" class="d">is</a> explained in chapter 20 of the user manual
+<a href="usr_20.txt.html#usr_20.txt" class="l">usr_20.txt</a><a href="repeat.txt.html#." class="d">.</a>
+
+1. <a href="#Command-line" class="d">Command-line</a> editing         <a href="#cmdline-editing" class="l">cmdline-editing</a>
+2. <a href="#Command-line" class="d">Command-line</a> completion      <a href="#cmdline-completion" class="l">cmdline-completion</a>
+3. <a href="intro.txt.html#Ex" class="d">Ex</a> command-lines             <a href="#cmdline-lines" class="l">cmdline-lines</a>
+4. <a href="intro.txt.html#Ex" class="d">Ex</a> command-line ranges       <a href="#cmdline-ranges" class="l">cmdline-ranges</a>
+5. <a href="intro.txt.html#Ex" class="d">Ex</a> command-line flags        <a href="#ex-flags" class="l">ex-flags</a>
+6. <a href="intro.txt.html#Ex" class="d">Ex</a> special characters        <a href="#cmdline-special" class="l">cmdline-special</a>
+7. <a href="#Command-line" class="d">Command-line</a> <a href="windows.txt.html#window" class="d">window</a>          <a href="#cmdline-window" class="l">cmdline-window</a>
+
+<span class="h">==============================================================================</span>
+1. <a href="#Command-line" class="d">Command-line</a> editing                                 <a name="cmdline-editing" class="t">cmdline-editing</a>
+
+Normally characters are inserted in front of the cursor position.  You can
+move around in the command-line with the left and right cursor keys.  With the
+<a href="insert.txt.html#%3CInsert%3E" class="s">&lt;Insert&gt;</a> key, you can <a href="options.txt.html#toggle" class="d">toggle</a> between <a href="insert.txt.html#inserting" class="d">inserting</a> and overstriking characters.
+<span class="s">{Vi: can only alter the last character in the line}</span>
+
+<span class="n">Note</span> that if your keyboard does not have working cursor keys or any of the
+other special keys, you can use "<a href="map.txt.html#%3Acnoremap" class="d">:cnoremap</a>" to define another key for them.
+For example, to define tcsh style editing keys:         <a name="tcsh-style" class="t">tcsh-style</a>  
+<span class="e">        :cnoremap &lt;C-A&gt; &lt;Home&gt;</span>
+<span class="e">        :cnoremap &lt;C-F&gt; &lt;Right&gt;</span>
+<span class="e">        :cnoremap &lt;C-B&gt; &lt;Left&gt;</span>
+<span class="e">        :cnoremap &lt;Esc&gt;b &lt;S-Left&gt;</span>
+<span class="e">        :cnoremap &lt;Esc&gt;f &lt;S-Right&gt;</span>
+(&lt;&gt; <a href="intro.txt.html#notation" class="d">notation</a> <a href="intro.txt.html#%3C%3E" class="l">&lt;&gt;</a><a href="motion.txt.html#%3B" class="d">;</a> type all this literally)
+
+                                                        <a name="cmdline-too-long" class="t">cmdline-too-long</a>
+When the command line <a href="motion.txt.html#is" class="d">is</a> getting longer than what fits on the screen, only the
+part that fits will be shown.  The cursor can only move in this visible part,
+thus you cannot edit beyond that.
+
+                                                <a name="cmdline-history" class="t">cmdline-history</a> <a name="history" class="t">history</a>
+The command-lines that you enter are remembered in <a href="insert.txt.html#a" class="d">a</a> <a href="#history" class="d">history</a> table.  You can
+recall them with the up and down cursor keys.  There are actually five
+<a href="#history" class="d">history</a> tables:
+<a href="motion.txt.html#-" class="d">-</a> one for ':' commands
+<a href="motion.txt.html#-" class="d">-</a> one for search strings
+<a href="motion.txt.html#-" class="d">-</a> one for expressions
+<a href="motion.txt.html#-" class="d">-</a> one for input lines, typed for the <a href="eval.txt.html#input%28%29" class="l">input()</a> function.
+<a href="motion.txt.html#-" class="d">-</a> one for debug mode commands
+These are completely separate.  Each <a href="#history" class="d">history</a> can only be accessed when
+entering the same type of line.
+Use the <a href="options.txt.html#%27history%27" class="o">'history'</a> option to set the number of lines that are remembered
+(default: 50).
+<span class="n">Notes:</span>
+<a href="motion.txt.html#-" class="d">-</a> When you enter <a href="insert.txt.html#a" class="d">a</a> command-line that <a href="motion.txt.html#is" class="d">is</a> exactly the same <a href="motion.txt.html#as" class="d">as</a> an older one, the
+  old one <a href="motion.txt.html#is" class="d">is</a> removed (to avoid repeated commands moving older commands out of
+  the history).
+<a href="motion.txt.html#-" class="d">-</a> Only commands that are typed are remembered.  Ones that completely come from
+  mappings are not <a href="change.txt.html#put" class="d">put</a> in the history.
+<a href="motion.txt.html#-" class="d">-</a> All searches are <a href="change.txt.html#put" class="d">put</a> in the search history, including the ones that come
+  from commands like "*" and "<a href="pattern.txt.html#%23" class="d">#</a>"<a href="repeat.txt.html#." class="d">.</a>  But for <a href="insert.txt.html#a" class="d">a</a> mapping, only the last search <a href="motion.txt.html#is" class="d">is</a>
+  remembered (to avoid that long mappings trash the history).
+<span class="s">{Vi: no history}</span>
+<span class="s">{not available when compiled without the |+cmdline_hist| feature}</span>
+
+There <a href="motion.txt.html#is" class="d">is</a> an automatic completion of names on the command-line; see
+<a href="#cmdline-completion" class="l">cmdline-completion</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="c_CTRL-V" class="t">c_CTRL-V</a>
+<a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a>          <a href="insert.txt.html#Insert" class="d">Insert</a> next non-digit literally.  Up to three digits form the
+                decimal value of <a href="insert.txt.html#a" class="d">a</a> single byte.  The non-digit and the three
+                digits are not considered for mapping.  This works the same
+                way <a href="motion.txt.html#as" class="d">as</a> in <a href="insert.txt.html#Insert" class="d">Insert</a> mode (see above, <a href="insert.txt.html#i_CTRL-V" class="l">i_CTRL-V</a>).
+                <span class="n">Note:</span> Under Windows <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> <a href="motion.txt.html#is" class="d">is</a> often mapped to paste text.
+                Use <a href="gui_w32.txt.html#CTRL-Q" class="k">CTRL-Q</a> instead then.
+                                                        <a name="c_CTRL-Q" class="t">c_CTRL-Q</a>
+<a href="gui_w32.txt.html#CTRL-Q" class="k">CTRL-Q</a>          Same <a href="motion.txt.html#as" class="d">as</a> <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a>.  But with some terminals <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> used for
+                <a href="intro.txt.html#control" class="d">control</a> flow, <a href="motion.txt.html#it" class="d">it</a> doesn't work then.
+
+                                                        <a name="c_%3CLeft%3E" class="t">c_&lt;Left&gt;</a> <a name="c_Left" class="t">c_Left</a>
+<a href="motion.txt.html#%3CLeft%3E" class="s">&lt;Left&gt;</a>          cursor left
+                                                        <a name="c_%3CRight%3E" class="t">c_&lt;Right&gt;</a> <a name="c_Right" class="t">c_Right</a>
+<a href="motion.txt.html#%3CRight%3E" class="s">&lt;Right&gt;</a>         cursor right
+                                                        <a name="c_%3CS-Left%3E" class="t">c_&lt;S-Left&gt;</a>
+<a href="motion.txt.html#%3CS-Left%3E" class="s">&lt;S-Left&gt;</a> or <a href="motion.txt.html#%3CC-Left%3E" class="s">&lt;C-Left&gt;</a>                                    <a name="c_%3CC-Left%3E" class="t">c_&lt;C-Left&gt;</a>
+                cursor one <a href="motion.txt.html#WORD" class="d">WORD</a> left
+                                                        <a name="c_%3CS-Right%3E" class="t">c_&lt;S-Right&gt;</a>
+<a href="motion.txt.html#%3CS-Right%3E" class="s">&lt;S-Right&gt;</a> or <a href="motion.txt.html#%3CC-Right%3E" class="s">&lt;C-Right&gt;</a>                                  <a name="c_%3CC-Right%3E" class="t">c_&lt;C-Right&gt;</a>
+                cursor one <a href="motion.txt.html#WORD" class="d">WORD</a> right
+<a href="scroll.txt.html#CTRL-B" class="k">CTRL-B</a> or <a href="motion.txt.html#%3CHome%3E" class="s">&lt;Home&gt;</a>                                <a name="c_CTRL-B" class="t">c_CTRL-B</a> <a name="c_%3CHome%3E" class="t">c_&lt;Home&gt;</a> <a name="c_Home" class="t">c_Home</a>
+                cursor to beginning of command-line
+<a href="scroll.txt.html#CTRL-E" class="k">CTRL-E</a> or <a href="motion.txt.html#%3CEnd%3E" class="s">&lt;End&gt;</a>                                 <a name="c_CTRL-E" class="t">c_CTRL-E</a> <a name="c_%3CEnd%3E" class="t">c_&lt;End&gt;</a> <a name="c_End" class="t">c_End</a>
+                cursor to <a href="intro.txt.html#end" class="d">end</a> of command-line
+
+                                                        <a name="c_%3CLeftMouse%3E" class="t">c_&lt;LeftMouse&gt;</a>
+<a href="visual.txt.html#%3CLeftMouse%3E" class="s">&lt;LeftMouse&gt;</a>     Move the cursor to the position of the mouse click.
+
+                                                        <a name="c_%3CMiddleMouse%3E" class="t">c_&lt;MiddleMouse&gt;</a>
+<a href="change.txt.html#%3CMiddleMouse%3E" class="s">&lt;MiddleMouse&gt;</a>   Paste the contents of the <a href="gui.txt.html#clipboard" class="d">clipboard</a> (for <a href="options.txt.html#X11" class="d">X11</a> the primary
+                selection).  This <a href="motion.txt.html#is" class="d">is</a> similar to using <a href="undo.txt.html#CTRL-R" class="k">CTRL-R</a> *<a href="motion.txt.html#%2C" class="d">,</a> but no CR
+                characters are inserted between lines.
+
+<span class="c">CTRL-H                                         </span> <a name="c_%3CBS%3E" class="t">c_&lt;BS&gt;</a> <a name="c_CTRL-H" class="t">c_CTRL-H</a> <a name="c_BS" class="t">c_BS</a>
+<a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a>            Delete the character in front of the cursor (see <a href="options.txt.html#%3Afixdel" class="l">:fixdel</a> if
+                your <a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a> key does not <a href="diff.txt.html#do" class="d">do</a> what you want).
+                                                        <a name="c_%3CDel%3E" class="t">c_&lt;Del&gt;</a> <a name="c_Del" class="t">c_Del</a>
+<a href="change.txt.html#%3CDel%3E" class="s">&lt;Del&gt;</a>           Delete the character under the cursor (at <a href="intro.txt.html#end" class="d">end</a> of line:
+                character before the cursor) (see <a href="options.txt.html#%3Afixdel" class="l">:fixdel</a> if your <a href="change.txt.html#%3CDel%3E" class="s">&lt;Del&gt;</a>
+                key does not <a href="diff.txt.html#do" class="d">do</a> what you want).
+                                                        <a name="c_CTRL-W" class="t">c_CTRL-W</a>
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a>          Delete the <a href="motion.txt.html#word" class="l">word</a> before the cursor.  This depends on the
+                <a href="options.txt.html#%27iskeyword%27" class="o">'iskeyword'</a> option.
+                                                        <a name="c_CTRL-U" class="t">c_CTRL-U</a>
+<a href="scroll.txt.html#CTRL-U" class="k">CTRL-U</a>          Remove all characters between the cursor position and
+                the beginning of the line.  Previous versions of vim
+                deleted all characters on the line.  If that <a href="motion.txt.html#is" class="d">is</a> the
+                preferred behavior, add the following to your .vimrc: 
+<span class="e">                        :cnoremap &lt;C-U&gt; &lt;C-E&gt;&lt;C-U&gt;</span>
+
+                                                <a name="c_%3CInsert%3E" class="t">c_&lt;Insert&gt;</a> <a name="c_Insert" class="t">c_Insert</a>
+<a href="insert.txt.html#%3CInsert%3E" class="s">&lt;Insert&gt;</a>        Toggle between <a href="insert.txt.html#insert" class="d">insert</a> and overstrike.  <span class="s">{not in Vi}</span>
+
+<span class="s">{char1}</span> <a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a> <span class="s">{char2}</span>    or                              <a name="c_digraph" class="t">c_digraph</a>
+<span class="k">CTRL-K</span> <span class="s">{char1}</span> <span class="s">{char2}</span>                                  <a name="c_CTRL-K" class="t">c_CTRL-K</a>
+                enter <a href="digraph.txt.html#digraph" class="d">digraph</a> (see <a href="digraph.txt.html#digraphs" class="l">digraphs</a>).  When <span class="s">{char1}</span> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> special
+                key, the code for that key <a href="motion.txt.html#is" class="d">is</a> inserted in <a href="intro.txt.html#%3C%3E" class="d">&lt;&gt;</a> form.  <span class="s">{not in Vi}</span>
+
+<a href="undo.txt.html#CTRL-R" class="k">CTRL-R</a> <span class="s">{0-9a-z"%#:-=.}</span>                                  <a name="c_CTRL-R" class="t">c_CTRL-R</a> <a name="c_%3CC-R%3E" class="t">c_&lt;C-R&gt;</a>
+                <a href="insert.txt.html#Insert" class="d">Insert</a> the contents of <a href="insert.txt.html#a" class="d">a</a> numbered or named register.  Between
+                typing <a href="undo.txt.html#CTRL-R" class="k">CTRL-R</a> and the second character <a href="motion.txt.html#%27" class="d">'</a>"<a href="motion.txt.html#%27" class="d">'</a> will be displayed
+                to indicate that you are expected to enter the name of <a href="insert.txt.html#a" class="d">a</a>
+                register.
+                The text <a href="motion.txt.html#is" class="d">is</a> inserted <a href="motion.txt.html#as" class="d">as</a> if you typed it, but mappings and
+                <a href="map.txt.html#abbreviations" class="d">abbreviations</a> are not used.  <a href="#Command-line" class="d">Command-line</a> completion through
+                <a href="options.txt.html#%27wildchar%27" class="o">'wildchar'</a> <a href="motion.txt.html#is" class="d">is</a> not triggered though.  And characters that <a href="intro.txt.html#end" class="d">end</a>
+                the command line are inserted literally (&lt;Esc&gt;, <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a>, <a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a>,
+                <span class="s">&lt;C-C&gt;</span>).  <a href="insert.txt.html#A" class="d">A</a> <a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a> or <a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> could still <a href="intro.txt.html#end" class="d">end</a> the command line
+                though, and remaining characters will then be interpreted in
+                another mode, which might not be what you intended.
+                <a href="eval.txt.html#Special" class="d">Special</a> registers:
+                        <a href="motion.txt.html#%27" class="d">'</a>"<a href="motion.txt.html#%27" class="d">'</a>     the unnamed register, containing the text of
+                                the last delete or <a href="change.txt.html#yank" class="d">yank</a>
+                        '%'     the current file name
+                        '#'     the alternate file name
+                        <a href="motion.txt.html#%27" class="d">'</a>*<a href="motion.txt.html#%27" class="d">'</a>     the <a href="gui.txt.html#clipboard" class="d">clipboard</a> contents (X11: primary selection)
+                        '+'     the <a href="gui.txt.html#clipboard" class="d">clipboard</a> contents
+                        '/'     the last search <a href="pattern.txt.html#pattern" class="d">pattern</a>
+                        ':'     the last command-line
+                        '-'     the last small (less than <a href="insert.txt.html#a" class="d">a</a> line) delete
+                        '.'     the last inserted text
+                                                        <a name="c_CTRL-R_%3D" class="t">c_CTRL-R_=</a>
+                        '='     the <a href="eval.txt.html#expression" class="d">expression</a> register: you are prompted to
+                                enter an <a href="eval.txt.html#expression" class="d">expression</a> (see <a href="eval.txt.html#expression" class="l">expression</a><a href="motion.txt.html#%29" class="d">)</a>
+                                (doesn't work <a href="motion.txt.html#at" class="d">at</a> the <a href="eval.txt.html#expression" class="d">expression</a> prompt; some
+                                things such <a href="motion.txt.html#as" class="d">as</a> <a href="change.txt.html#changing" class="d">changing</a> the buffer or current
+                                <a href="windows.txt.html#window" class="d">window</a> are not allowed to avoid side effects)
+                                When the result <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#List" class="l">List</a> the items are used
+                                <a href="motion.txt.html#as" class="d">as</a> lines.  They can have line breaks inside
+                                too.
+                                When the result <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#Float" class="d">Float</a> it's automatically
+                                converted to <a href="insert.txt.html#a" class="d">a</a> String.
+                See <a href="change.txt.html#registers" class="l">registers</a> about registers.  <span class="s">{not in Vi}</span>
+                Implementation detail: When using the <a href="eval.txt.html#expression" class="l">expression</a> <a href="sponsor.txt.html#register" class="d">register</a>
+                and invoking setcmdpos(), this sets the position before
+                <a href="insert.txt.html#inserting" class="d">inserting</a> the resulting string.  Use <a href="undo.txt.html#CTRL-R" class="k">CTRL-R</a> <a href="undo.txt.html#CTRL-R" class="k">CTRL-R</a> to set the
+                position afterwards.
+
+<span class="c">CTRL-R CTRL-F                          </span> <a name="c_CTRL-R_CTRL-F" class="t">c_CTRL-R_CTRL-F</a> <a name="c_%3CC-R%3E_%3CC-F%3E" class="t">c_&lt;C-R&gt;_&lt;C-F&gt;</a>
+<span class="c">CTRL-R CTRL-P                          </span> <a name="c_CTRL-R_CTRL-P" class="t">c_CTRL-R_CTRL-P</a> <a name="c_%3CC-R%3E_%3CC-P%3E" class="t">c_&lt;C-R&gt;_&lt;C-P&gt;</a>
+<span class="c">CTRL-R CTRL-W                          </span> <a name="c_CTRL-R_CTRL-W" class="t">c_CTRL-R_CTRL-W</a> <a name="c_%3CC-R%3E_%3CC-W%3E" class="t">c_&lt;C-R&gt;_&lt;C-W&gt;</a>
+<span class="c">CTRL-R CTRL-A                          </span> <a name="c_CTRL-R_CTRL-A" class="t">c_CTRL-R_CTRL-A</a> <a name="c_%3CC-R%3E_%3CC-A%3E" class="t">c_&lt;C-R&gt;_&lt;C-A&gt;</a>
+<span class="c">CTRL-R CTRL-L                          </span> <a name="c_CTRL-R_CTRL-L" class="t">c_CTRL-R_CTRL-L</a> <a name="c_%3CC-R%3E_%3CC-L%3E" class="t">c_&lt;C-R&gt;_&lt;C-L&gt;</a>
+                <a href="insert.txt.html#Insert" class="d">Insert</a> the object under the cursor:
+                        <a href="scroll.txt.html#CTRL-F" class="k">CTRL-F</a>  the Filename under the cursor
+                        <a href="motion.txt.html#CTRL-P" class="k">CTRL-P</a>  the Filename under the cursor, expanded with
+                                <a href="options.txt.html#%27path%27" class="o">'path'</a> <a href="motion.txt.html#as" class="d">as</a> in <a href="editing.txt.html#gf" class="l">gf</a>
+                        <a href="index.txt.html#CTRL-W" class="k">CTRL-W</a>  the Word under the cursor
+                        <a href="change.txt.html#CTRL-A" class="k">CTRL-A</a>  the <a href="motion.txt.html#WORD" class="d">WORD</a> under the cursor; see <a href="motion.txt.html#WORD" class="l">WORD</a>
+                        <a href="various.txt.html#CTRL-L" class="k">CTRL-L</a>  the line under the cursor
+
+                When <a href="options.txt.html#%27incsearch%27" class="o">'incsearch'</a> <a href="motion.txt.html#is" class="d">is</a> set the cursor position <a href="motion.txt.html#at" class="d">at</a> the <a href="intro.txt.html#end" class="d">end</a> of the
+                currently displayed match <a href="motion.txt.html#is" class="d">is</a> used.  With <a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> the part of
+                the <a href="motion.txt.html#word" class="d">word</a> that was already typed <a href="motion.txt.html#is" class="d">is</a> not inserted again.
+
+                <span class="s">{not in Vi}</span>
+                <a href="scroll.txt.html#CTRL-F" class="k">CTRL-F</a> and <a href="motion.txt.html#CTRL-P" class="k">CTRL-P</a>: {only when <a href="various.txt.html#%2Bfile_in_path" class="l">+file_in_path</a> feature <a href="motion.txt.html#is" class="d">is</a>
+                included}
+
+                                        <a name="c_CTRL-R_CTRL-R" class="t">c_CTRL-R_CTRL-R</a> <a name="c_%3CC-R%3E_%3CC-R%3E" class="t">c_&lt;C-R&gt;_&lt;C-R&gt;</a>
+                                        <a name="c_CTRL-R_CTRL-O" class="t">c_CTRL-R_CTRL-O</a> <a name="c_%3CC-R%3E_%3CC-O%3E" class="t">c_&lt;C-R&gt;_&lt;C-O&gt;</a>
+<a href="undo.txt.html#CTRL-R" class="k">CTRL-R</a> <a href="undo.txt.html#CTRL-R" class="k">CTRL-R</a> <span class="s">{0-9a-z"%#:-=. CTRL-F CTRL-P CTRL-W CTRL-A CTRL-L}</span>
+<a href="undo.txt.html#CTRL-R" class="k">CTRL-R</a> <a href="motion.txt.html#CTRL-O" class="k">CTRL-O</a> <span class="s">{0-9a-z"%#:-=. CTRL-F CTRL-P CTRL-W CTRL-A CTRL-L}</span>
+                <a href="insert.txt.html#Insert" class="d">Insert</a> <a href="sponsor.txt.html#register" class="d">register</a> or object under the cursor.  Works like
+                <a href="#c_CTRL-R" class="l">c_CTRL-R</a> but inserts the text literally.  For example, if
+                <a href="sponsor.txt.html#register" class="d">register</a> <a href="insert.txt.html#a" class="d">a</a> contains "xy^Hz" (where ^H <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> backspace),
+                "<a href="undo.txt.html#CTRL-R" class="k">CTRL-R</a> <a href="insert.txt.html#a" class="d">a</a>" will <a href="insert.txt.html#insert" class="d">insert</a> "xz" while "<a href="undo.txt.html#CTRL-R" class="k">CTRL-R</a> <a href="undo.txt.html#CTRL-R" class="k">CTRL-R</a> <a href="insert.txt.html#a" class="d">a</a>" will
+                <a href="insert.txt.html#insert" class="d">insert</a> "xy^Hz"<a href="repeat.txt.html#." class="d">.</a>
+
+<span class="k">CTRL-\</span> <a href="motion.txt.html#e" class="d">e</a> <span class="s">{expr}</span>                                         <a name="c_CTRL-%5C_e" class="t">c_CTRL-\_e</a>
+                Evaluate <span class="s">{expr}</span> and replace the whole command line with the
+                result.  You will be prompted for the expression, type <a href="intro.txt.html#%3CEnter%3E" class="s">&lt;Enter&gt;</a>
+                to finish it.  It's most useful in mappings though.  See
+                <a href="eval.txt.html#expression" class="l">expression</a><a href="repeat.txt.html#." class="d">.</a>
+                See <a href="#c_CTRL-R_%3D" class="l">c_CTRL-R_=</a> for <a href="insert.txt.html#inserting" class="d">inserting</a> the result of an expression.
+                Useful <a href="eval.txt.html#functions" class="d">functions</a> are <a href="eval.txt.html#getcmdtype%28%29" class="l">getcmdtype()</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="eval.txt.html#getcmdline%28%29" class="l">getcmdline()</a> and
+                <a href="eval.txt.html#getcmdpos%28%29" class="l">getcmdpos()</a><a href="repeat.txt.html#." class="d">.</a>
+                The cursor position <a href="motion.txt.html#is" class="d">is</a> unchanged, except when the cursor was
+                <a href="motion.txt.html#at" class="d">at</a> the <a href="intro.txt.html#end" class="d">end</a> of the line, then <a href="motion.txt.html#it" class="d">it</a> stays <a href="motion.txt.html#at" class="d">at</a> the end.
+                <a href="eval.txt.html#setcmdpos%28%29" class="l">setcmdpos()</a> can be used to set the cursor position.
+                The <a href="eval.txt.html#sandbox" class="l">sandbox</a> <a href="motion.txt.html#is" class="d">is</a> used for evaluating the <a href="eval.txt.html#expression" class="d">expression</a> to avoid
+                nasty side effects.
+                Example: 
+<span class="e">                        :cmap &lt;F7&gt; &lt;C-\&gt;eAppendSome()&lt;CR&gt;</span>
+<span class="e">                        :func AppendSome()</span>
+<span class="e">                           :let cmd = getcmdline() . " Some()"</span>
+<span class="e">                           :" place the cursor on the )</span>
+<span class="e">                           :call setcmdpos(strlen(cmd))</span>
+<span class="e">                           :return cmd</span>
+<span class="e">                        :endfunc</span>
+               This doesn't work recursively, thus not when already editing
+                an expression.  But <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> possible to use in <a href="insert.txt.html#a" class="d">a</a> mapping.
+
+                                                        <a name="c_CTRL-Y" class="t">c_CTRL-Y</a>
+<a href="scroll.txt.html#CTRL-Y" class="k">CTRL-Y</a>          When there <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> modeless selection, copy the selection into
+                the clipboard. <a href="gui.txt.html#modeless-selection" class="l">modeless-selection</a>
+                If there <a href="motion.txt.html#is" class="d">is</a> no selection <a href="scroll.txt.html#CTRL-Y" class="k">CTRL-Y</a> <a href="motion.txt.html#is" class="d">is</a> inserted <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> character.
+
+<a href="motion.txt.html#CTRL-M" class="k">CTRL-M</a> or <a href="motion.txt.html#CTRL-J" class="k">CTRL-J</a>                <a name="c_CTRL-M" class="t">c_CTRL-M</a> <a name="c_CTRL-J" class="t">c_CTRL-J</a> <a name="c_%3CNL%3E" class="t">c_&lt;NL&gt;</a> <a name="c_%3CCR%3E" class="t">c_&lt;CR&gt;</a> <a name="c_CR" class="t">c_CR</a>
+<a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a> or <a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a>    start entered command
+
+<span class="k">CTRL-[</span>                                          <a name="c_CTRL-%5B" class="t">c_CTRL-[</a> <a name="c_%3CEsc%3E" class="t">c_&lt;Esc&gt;</a> <a name="c_Esc" class="t">c_Esc</a>
+<a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a>           When typed and 'x' not present in <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a>, quit
+                <a href="#Command-line" class="d">Command-line</a> mode without executing.  In macros or when 'x'
+                present in <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a>, start entered command.
+                <span class="n">Note:</span> If your <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a> key <a href="motion.txt.html#is" class="d">is</a> hard to hit on your keyboard, train
+                yourself to use <span class="k">CTRL-[</span>.
+                                                        <a name="c_CTRL-C" class="t">c_CTRL-C</a>
+<a href="pattern.txt.html#CTRL-C" class="k">CTRL-C</a>          quit command-line without executing
+
+                                                        <a name="c_%3CUp%3E" class="t">c_&lt;Up&gt;</a> <a name="c_Up" class="t">c_Up</a>
+<a href="motion.txt.html#%3CUp%3E" class="s">&lt;Up&gt;</a>            recall older command-line from history, whose beginning
+                matches the current command-line (see below).
+                {not available when compiled without the <a href="various.txt.html#%2Bcmdline_hist" class="l">+cmdline_hist</a>
+                feature}
+                                                        <a name="c_%3CDown%3E" class="t">c_&lt;Down&gt;</a> <a name="c_Down" class="t">c_Down</a>
+<a href="motion.txt.html#%3CDown%3E" class="s">&lt;Down&gt;</a>          recall more recent command-line from history, whose beginning
+                matches the current command-line (see below).
+                {not available when compiled without the <a href="various.txt.html#%2Bcmdline_hist" class="l">+cmdline_hist</a>
+                feature}
+
+                                                        <a name="c_%3CS-Up%3E" class="t">c_&lt;S-Up&gt;</a> <a name="c_%3CPageUp%3E" class="t">c_&lt;PageUp&gt;</a>
+<a href="scroll.txt.html#%3CS-Up%3E" class="s">&lt;S-Up&gt;</a> or <a href="scroll.txt.html#%3CPageUp%3E" class="s">&lt;PageUp&gt;</a>
+                recall older command-line from <a href="#history" class="d">history</a>
+                {not available when compiled without the <a href="various.txt.html#%2Bcmdline_hist" class="l">+cmdline_hist</a>
+                feature}
+                                                <a name="c_%3CS-Down%3E" class="t">c_&lt;S-Down&gt;</a> <a name="c_%3CPageDown%3E" class="t">c_&lt;PageDown&gt;</a>
+<a href="scroll.txt.html#%3CS-Down%3E" class="s">&lt;S-Down&gt;</a> or <a href="scroll.txt.html#%3CPageDown%3E" class="s">&lt;PageDown&gt;</a>
+                recall more recent command-line from <a href="#history" class="d">history</a>
+                {not available when compiled without the <a href="various.txt.html#%2Bcmdline_hist" class="l">+cmdline_hist</a>
+                feature}
+
+<a href="scroll.txt.html#CTRL-D" class="k">CTRL-D</a>          command-line completion (see <a href="#cmdline-completion" class="l">cmdline-completion</a><a href="motion.txt.html#%29" class="d">)</a>
+<a href="options.txt.html#%27wildchar%27" class="o">'wildchar'</a> option
+                command-line completion (see <a href="#cmdline-completion" class="l">cmdline-completion</a><a href="motion.txt.html#%29" class="d">)</a>
+<a href="motion.txt.html#CTRL-N" class="k">CTRL-N</a>          command-line completion (see <a href="#cmdline-completion" class="l">cmdline-completion</a><a href="motion.txt.html#%29" class="d">)</a>
+<a href="motion.txt.html#CTRL-P" class="k">CTRL-P</a>          command-line completion (see <a href="#cmdline-completion" class="l">cmdline-completion</a><a href="motion.txt.html#%29" class="d">)</a>
+<a href="change.txt.html#CTRL-A" class="k">CTRL-A</a>          command-line completion (see <a href="#cmdline-completion" class="l">cmdline-completion</a><a href="motion.txt.html#%29" class="d">)</a>
+<a href="various.txt.html#CTRL-L" class="k">CTRL-L</a>          command-line completion (see <a href="#cmdline-completion" class="l">cmdline-completion</a><a href="motion.txt.html#%29" class="d">)</a>
+
+                                                        <a name="c_CTRL-_" class="t">c_CTRL-_</a>
+<span class="k">CTRL-_</span>          <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#-" class="d">-</a> switch between Hebrew and English keyboard mode, which <a href="motion.txt.html#is" class="d">is</a>
+                private to the command-line and not related to hkmap.
+                This <a href="motion.txt.html#is" class="d">is</a> useful when Hebrew text entry <a href="motion.txt.html#is" class="d">is</a> required in the
+                command-line, searches, abbreviations, etc.  Applies only if
+                Vim <a href="motion.txt.html#is" class="d">is</a> compiled with the <a href="various.txt.html#%2Brightleft" class="l">+rightleft</a> feature and the
+                <a href="options.txt.html#%27allowrevins%27" class="o">'allowrevins'</a> option <a href="motion.txt.html#is" class="d">is</a> set.
+                See <a href="rileft.txt.html#rileft.txt" class="l">rileft.txt</a><a href="repeat.txt.html#." class="d">.</a>
+
+                <a href="motion.txt.html#b" class="d">b</a> <a href="motion.txt.html#-" class="d">-</a> switch between <a href="farsi.txt.html#Farsi" class="d">Farsi</a> and English keyboard mode, which <a href="motion.txt.html#is" class="d">is</a>
+                private to the command-line and not related to fkmap.  In
+                <a href="farsi.txt.html#Farsi" class="d">Farsi</a> keyboard mode the characters are inserted in reverse
+                <a href="insert.txt.html#insert" class="d">insert</a> manner.  This <a href="motion.txt.html#is" class="d">is</a> useful when <a href="farsi.txt.html#Farsi" class="d">Farsi</a> text entry <a href="motion.txt.html#is" class="d">is</a>
+                required in the command-line, searches, abbreviations, etc.
+                Applies only if Vim <a href="motion.txt.html#is" class="d">is</a> compiled with the <a href="various.txt.html#%2Bfarsi" class="l">+farsi</a> feature.
+                See <a href="farsi.txt.html#farsi.txt" class="l">farsi.txt</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="c_CTRL-%5E" class="t">c_CTRL-^</a>
+<a href="editing.txt.html#CTRL-%5E" class="k">CTRL-^</a>          Toggle the use of language <a href="map.txt.html#%3Almap" class="l">:lmap</a> mappings and/or Input
+                Method.
+                When typing <a href="insert.txt.html#a" class="d">a</a> <a href="pattern.txt.html#pattern" class="d">pattern</a> for <a href="insert.txt.html#a" class="d">a</a> search command and <a href="options.txt.html#%27imsearch%27" class="o">'imsearch'</a> <a href="motion.txt.html#is" class="d">is</a>
+                not -1, VAL <a href="motion.txt.html#is" class="d">is</a> the value of <a href="options.txt.html#%27imsearch%27" class="o">'imsearch'</a>, otherwise VAL <a href="motion.txt.html#is" class="d">is</a> the
+                value of <a href="options.txt.html#%27iminsert%27" class="o">'iminsert'</a>.
+                When language mappings are defined:
+                <a href="motion.txt.html#-" class="d">-</a> If VAL <a href="motion.txt.html#is" class="d">is</a> 1 (langmap mappings used) <a href="motion.txt.html#it" class="d">it</a> becomes <a href="motion.txt.html#0" class="d">0</a> (no langmap
+                  mappings used).
+                <a href="motion.txt.html#-" class="d">-</a> If VAL was not 1 <a href="motion.txt.html#it" class="d">it</a> becomes 1, thus langmap mappings are
+                  enabled.
+                When no language mappings are defined:
+                <a href="motion.txt.html#-" class="d">-</a> If VAL <a href="motion.txt.html#is" class="d">is</a> 2 (Input Method <a href="motion.txt.html#is" class="d">is</a> used) <a href="motion.txt.html#it" class="d">it</a> becomes <a href="motion.txt.html#0" class="d">0</a> (no input
+                  method used)
+                <a href="motion.txt.html#-" class="d">-</a> If VAL has another value <a href="motion.txt.html#it" class="d">it</a> becomes 2, thus the Input Method
+                  <a href="motion.txt.html#is" class="d">is</a> enabled.
+                These language mappings are normally used to type characters
+                that are different from what the keyboard produces.  The
+                <a href="options.txt.html#%27keymap%27" class="o">'keymap'</a> option can be used to <a href="usr_90.txt.html#install" class="d">install</a> <a href="insert.txt.html#a" class="d">a</a> whole number of them.
+                When entering <a href="insert.txt.html#a" class="d">a</a> command line, langmap mappings are switched
+                off, since you are expected to type <a href="insert.txt.html#a" class="d">a</a> command.  After
+                switching <a href="motion.txt.html#it" class="d">it</a> on with <a href="editing.txt.html#CTRL-%5E" class="k">CTRL-^</a>, the new state <a href="motion.txt.html#is" class="d">is</a> not used again
+                for the next command or Search pattern.
+                <span class="s">{not in Vi}</span>
+
+                                                <a name="c_CTRL-%5D" class="t">c_CTRL-]</a>
+<a href="tagsrch.txt.html#CTRL-%5D" class="k">CTRL-]</a>          Trigger abbreviation, without <a href="insert.txt.html#inserting" class="d">inserting</a> <a href="insert.txt.html#a" class="d">a</a> character.  {not in
+                Vi}
+
+For Emacs-style editing on the command-line see <a href="tips.txt.html#emacs-keys" class="l">emacs-keys</a><a href="repeat.txt.html#." class="d">.</a>
+
+The <a href="motion.txt.html#%3CUp%3E" class="s">&lt;Up&gt;</a> and <a href="motion.txt.html#%3CDown%3E" class="s">&lt;Down&gt;</a> keys take the current command-line <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> search string.
+The beginning of the next/previous command-lines are compared with this
+string.  The first line that matches <a href="motion.txt.html#is" class="d">is</a> the new command-line.  When typing
+these two keys repeatedly, the same <a href="eval.txt.html#string" class="d">string</a> <a href="motion.txt.html#is" class="d">is</a> used again.  For example, this
+can be used to find the previous substitute command: Type "<a href="change.txt.html#%3As" class="d">:s</a>" and then <a href="motion.txt.html#%3CUp%3E" class="s">&lt;Up&gt;</a>.
+The same could be done by typing <a href="scroll.txt.html#%3CS-Up%3E" class="s">&lt;S-Up&gt;</a> <a href="insert.txt.html#a" class="d">a</a> number of times until the desired
+command-line <a href="motion.txt.html#is" class="d">is</a> shown.  (Note: the shifted arrow keys <a href="diff.txt.html#do" class="d">do</a> not work on all
+terminals)
+
+                                                        <a name="%3Ahis" class="t">:his</a> <a name="%3Ahistory" class="t">:history</a>
+:his[tory]      Print the <a href="#history" class="d">history</a> of last entered commands.
+                <span class="s">{not in Vi}</span>
+                {not available when compiled without the <a href="various.txt.html#%2Bcmdline_hist" class="l">+cmdline_hist</a>
+                feature}
+
+:his[tory] [{name}] [{first}][, [{last}]]
+                <a href="eval.txt.html#List" class="d">List</a> the contents of <a href="#history" class="d">history</a> <span class="s">{name}</span> which can be:
+                c[md]    or <a href="#%3A" class="d">:</a>           command-line <a href="#history" class="d">history</a>
+                s[earch] or <a href="pattern.txt.html#%2F" class="d">/</a> or <a href="pattern.txt.html#%3F" class="d">?</a>      search <a href="eval.txt.html#string" class="d">string</a> <a href="#history" class="d">history</a>
+                e[xpr]   or <a href="change.txt.html#%3D" class="d">=</a>           <a href="eval.txt.html#expression" class="d">expression</a> <a href="sponsor.txt.html#register" class="d">register</a> <a href="#history" class="d">history</a>
+                i[nput]  or <a href="repeat.txt.html#%40" class="d">@</a>           input line <a href="#history" class="d">history</a>
+                d[ebug]  or <a href="change.txt.html#%3E" class="d">&gt;</a>           debug command <a href="#history" class="d">history</a>
+                a[ll]                   all of the above
+                <span class="s">{not in Vi}</span>
+
+                If the numbers <span class="s">{first}</span> and/or <span class="s">{last}</span> are given, the respective
+                range of entries from <a href="insert.txt.html#a" class="d">a</a> <a href="#history" class="d">history</a> <a href="motion.txt.html#is" class="d">is</a> listed.  These numbers can
+                be specified in the following form:
+                                                        <a name="%3Ahistory-indexing" class="t">:history-indexing</a>
+                <a href="insert.txt.html#A" class="d">A</a> positive number represents the absolute <a href="index.txt.html#index" class="d">index</a> of an entry
+                <a href="motion.txt.html#as" class="d">as</a> <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> given in the first column of <a href="insert.txt.html#a" class="d">a</a> <a href="#%3Ahistory" class="d">:history</a> listing.
+                This number remains fixed even if other entries are deleted.
+
+                <a href="insert.txt.html#A" class="d">A</a> negative number means the relative position of an entry,
+                counted from the newest entry (which has <a href="index.txt.html#index" class="d">index</a> -1) backwards.
+
+                Examples:
+                <a href="eval.txt.html#List" class="d">List</a> entries 6 to 12 from the search history: 
+<span class="e">                        :history / 6,12</span>
+
+                <a href="eval.txt.html#List" class="d">List</a> the penultimate entry from all histories: 
+<span class="e">                        :history all -2</span>
+
+                <a href="eval.txt.html#List" class="d">List</a> the most recent two entries from all histories: 
+<span class="e">                        :history all -2,</span>
+<span class="e"></span>
+:keepp[atterns] <span class="s">{command}</span>                       <a name="%3Akeepp" class="t">:keepp</a> <a name="%3Akeeppatterns" class="t">:keeppatterns</a>
+                Execute <span class="s">{command}</span>, without adding anything to the search
+                <a href="#history" class="d">history</a>
+
+<span class="h">==============================================================================</span>
+2. <a href="#Command-line" class="d">Command-line</a> completion                              <a name="cmdline-completion" class="t">cmdline-completion</a>
+
+When editing the command-line, <a href="insert.txt.html#a" class="d">a</a> few commands can be used to complete the
+<a href="motion.txt.html#word" class="d">word</a> before the cursor.  This <a href="motion.txt.html#is" class="d">is</a> available for:
+
+<a href="motion.txt.html#-" class="d">-</a> Command names: At the start of the command-line.
+<a href="motion.txt.html#-" class="d">-</a> Tags: Only after the "<a href="tagsrch.txt.html#%3Atag" class="d">:tag</a>" command.
+<a href="motion.txt.html#-" class="d">-</a> File names: Only after <a href="insert.txt.html#a" class="d">a</a> command that accepts <a href="insert.txt.html#a" class="d">a</a> file name or <a href="insert.txt.html#a" class="d">a</a> setting for
+  an option that can be set to <a href="insert.txt.html#a" class="d">a</a> file name.  This <a href="motion.txt.html#is" class="d">is</a> called file name
+  completion.
+<a href="motion.txt.html#-" class="d">-</a> Shell command names: After "<a href="various.txt.html#%3A%21cmd" class="d">:!cmd</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="insert.txt.html#%3Ar" class="d">:r</a> !cmd" and "<a href="editing.txt.html#%3Aw" class="d">:w</a> !cmd"<a href="repeat.txt.html#." class="d">.</a>  $PATH <a href="motion.txt.html#is" class="d">is</a> used.
+<a href="motion.txt.html#-" class="d">-</a> Options: Only after the "<a href="options.txt.html#%3Aset" class="d">:set</a>" command.
+<a href="motion.txt.html#-" class="d">-</a> Mappings: Only after <a href="insert.txt.html#a" class="d">a</a> "<a href="map.txt.html#%3Amap" class="d">:map</a>" or similar command.
+<a href="motion.txt.html#-" class="d">-</a> Variable and function names: Only after <a href="insert.txt.html#a" class="d">a</a> "<a href="eval.txt.html#%3Aif" class="d">:if</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="eval.txt.html#%3Acall" class="d">:call</a>" or similar command.
+
+When Vim was compiled without the <a href="various.txt.html#%2Bcmdline_compl" class="l">+cmdline_compl</a> feature only file names,
+directories and <a href="helphelp.txt.html#help" class="d">help</a> items can be completed.  The number of <a href="helphelp.txt.html#help" class="d">help</a> item matches
+<a href="motion.txt.html#is" class="d">is</a> limited (currently to 300) to avoid <a href="insert.txt.html#a" class="d">a</a> long delay when there are very many
+matches.
+
+These are the commands that can be used:
+
+                                                        <a name="c_CTRL-D" class="t">c_CTRL-D</a>
+<a href="scroll.txt.html#CTRL-D" class="k">CTRL-D</a>          <a href="eval.txt.html#List" class="d">List</a> names that match the <a href="pattern.txt.html#pattern" class="d">pattern</a> in front of the cursor.
+                When showing file names, directories are highlighted (see
+                <a href="options.txt.html#%27highlight%27" class="o">'highlight'</a> option).  Names where <a href="options.txt.html#%27suffixes%27" class="o">'suffixes'</a> matches are moved
+                to the end.
+                The <a href="options.txt.html#%27wildoptions%27" class="o">'wildoptions'</a> option can be set to "tagfile" to <a href="eval.txt.html#list" class="d">list</a> the
+                file of matching tags.
+                                        <a name="c_CTRL-I" class="t">c_CTRL-I</a> <a name="c_wildchar" class="t">c_wildchar</a> <a name="c_%3CTab%3E" class="t">c_&lt;Tab&gt;</a>
+<a href="options.txt.html#%27wildchar%27" class="o">'wildchar'</a> option
+                <a href="insert.txt.html#A" class="d">A</a> match <a href="motion.txt.html#is" class="d">is</a> done on the <a href="pattern.txt.html#pattern" class="d">pattern</a> in front of the cursor.  The
+                match (if there are several, the first match) <a href="motion.txt.html#is" class="d">is</a> inserted
+                in place of the pattern.  (Note: does not work inside <a href="insert.txt.html#a" class="d">a</a>
+                macro, because <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a> or <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a> are mostly used <a href="motion.txt.html#as" class="d">as</a> <a href="options.txt.html#%27wildchar%27" class="o">'wildchar'</a>,
+                and these have <a href="insert.txt.html#a" class="d">a</a> special meaning in some macros.) When typed
+                again and there were multiple matches, the next
+                match <a href="motion.txt.html#is" class="d">is</a> inserted.  After the last match, the first <a href="motion.txt.html#is" class="d">is</a> used
+                again (wrap around).
+                The behavior can be changed with the <a href="options.txt.html#%27wildmode%27" class="o">'wildmode'</a> option.
+                                                        <a name="c_CTRL-N" class="t">c_CTRL-N</a>
+<a href="motion.txt.html#CTRL-N" class="k">CTRL-N</a>          After using <a href="options.txt.html#%27wildchar%27" class="o">'wildchar'</a> which got multiple matches, <a href="motion.txt.html#go" class="d">go</a> to next
+                match.  Otherwise recall more recent command-line from history.
+<a href="term.txt.html#%3CS-Tab%3E" class="s">&lt;S-Tab&gt;</a>                                                 <a name="c_CTRL-P" class="t">c_CTRL-P</a> <a name="c_%3CS-Tab%3E" class="t">c_&lt;S-Tab&gt;</a>
+<a href="motion.txt.html#CTRL-P" class="k">CTRL-P</a>          After using <a href="options.txt.html#%27wildchar%27" class="o">'wildchar'</a> which got multiple matches, <a href="motion.txt.html#go" class="d">go</a> to
+                previous match.  Otherwise recall older command-line from
+                history.  <a href="term.txt.html#%3CS-Tab%3E" class="s">&lt;S-Tab&gt;</a> only works with the GUI, on the <a href="os_amiga.txt.html#Amiga" class="d">Amiga</a> and
+                with MS-DOS.
+                                                        <a name="c_CTRL-A" class="t">c_CTRL-A</a>
+<a href="change.txt.html#CTRL-A" class="k">CTRL-A</a>          All names that match the <a href="pattern.txt.html#pattern" class="d">pattern</a> in front of the cursor are
+                inserted.
+                                                        <a name="c_CTRL-L" class="t">c_CTRL-L</a>
+<a href="various.txt.html#CTRL-L" class="k">CTRL-L</a>          <a href="insert.txt.html#A" class="d">A</a> match <a href="motion.txt.html#is" class="d">is</a> done on the <a href="pattern.txt.html#pattern" class="d">pattern</a> in front of the cursor.  If
+                there <a href="motion.txt.html#is" class="d">is</a> one match, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> inserted in place of the pattern.
+                If there are multiple matches the longest common part <a href="motion.txt.html#is" class="d">is</a>
+                inserted in place of the pattern.  If the result <a href="motion.txt.html#is" class="d">is</a> shorter
+                than the pattern, no completion <a href="motion.txt.html#is" class="d">is</a> done.
+                                                        <a name="%2F_CTRL-L" class="t">/_CTRL-L</a>
+                When <a href="options.txt.html#%27incsearch%27" class="o">'incsearch'</a> <a href="motion.txt.html#is" class="d">is</a> set, entering <a href="insert.txt.html#a" class="d">a</a> search <a href="pattern.txt.html#pattern" class="d">pattern</a> for "<a href="pattern.txt.html#%2F" class="d">/</a>" or
+                "<a href="pattern.txt.html#%3F" class="d">?</a>" and the current match <a href="motion.txt.html#is" class="d">is</a> displayed then <a href="various.txt.html#CTRL-L" class="k">CTRL-L</a> will add
+                one character from the <a href="intro.txt.html#end" class="d">end</a> of the current match.  If
+                <a href="options.txt.html#%27ignorecase%27" class="o">'ignorecase'</a> and <a href="options.txt.html#%27smartcase%27" class="o">'smartcase'</a> are set and the command line has
+                no <a href="change.txt.html#uppercase" class="d">uppercase</a> characters, the added character <a href="motion.txt.html#is" class="d">is</a> converted to
+                lowercase.
+                                                    <a name="c_CTRL-G" class="t">c_CTRL-G</a> <a name="%2F_CTRL-G" class="t">/_CTRL-G</a>
+<a href="editing.txt.html#CTRL-G" class="k">CTRL-G</a>          When <a href="options.txt.html#%27incsearch%27" class="o">'incsearch'</a> <a href="motion.txt.html#is" class="d">is</a> set, entering <a href="insert.txt.html#a" class="d">a</a> search <a href="pattern.txt.html#pattern" class="d">pattern</a> for "<a href="pattern.txt.html#%2F" class="d">/</a>" or
+                "<a href="pattern.txt.html#%3F" class="d">?</a>" and the current match <a href="motion.txt.html#is" class="d">is</a> displayed then <a href="editing.txt.html#CTRL-G" class="k">CTRL-G</a> will move
+                to the next match (does not take <a href="pattern.txt.html#search-offset" class="l">search-offset</a> into account)
+                Use <a href="tagsrch.txt.html#CTRL-T" class="k">CTRL-T</a> to move to the previous match.  Hint: on <a href="insert.txt.html#a" class="d">a</a> regular
+                keyboard <a href="motion.txt.html#T" class="d">T</a> <a href="motion.txt.html#is" class="d">is</a> above G.
+                                                    <a name="c_CTRL-T" class="t">c_CTRL-T</a> <a name="%2F_CTRL-T" class="t">/_CTRL-T</a>
+<a href="tagsrch.txt.html#CTRL-T" class="k">CTRL-T</a>          When <a href="options.txt.html#%27incsearch%27" class="o">'incsearch'</a> <a href="motion.txt.html#is" class="d">is</a> set, entering <a href="insert.txt.html#a" class="d">a</a> search <a href="pattern.txt.html#pattern" class="d">pattern</a> for "<a href="pattern.txt.html#%2F" class="d">/</a>" or
+                "<a href="pattern.txt.html#%3F" class="d">?</a>" and the current match <a href="motion.txt.html#is" class="d">is</a> displayed then <a href="tagsrch.txt.html#CTRL-T" class="k">CTRL-T</a> will move
+                to the previous match (does not take <a href="pattern.txt.html#search-offset" class="l">search-offset</a> into
+                account).
+                Use <a href="editing.txt.html#CTRL-G" class="k">CTRL-G</a> to move to the next match.  Hint: on <a href="insert.txt.html#a" class="d">a</a> regular
+                keyboard <a href="motion.txt.html#T" class="d">T</a> <a href="motion.txt.html#is" class="d">is</a> above G.
+
+The <a href="options.txt.html#%27wildchar%27" class="o">'wildchar'</a> option defaults to <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a> (CTRL-E when in <a href="intro.txt.html#Vi" class="d">Vi</a> compatible mode; in
+<a href="insert.txt.html#a" class="d">a</a> previous version <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a> was used).  In the <a href="pattern.txt.html#pattern" class="d">pattern</a> standard <a href="editing.txt.html#wildcards" class="d">wildcards</a> <a href="motion.txt.html#%27" class="d">'</a>*<a href="motion.txt.html#%27" class="d">'</a> and
+'?' are accepted when matching file names.  <a href="motion.txt.html#%27" class="d">'</a>*<a href="motion.txt.html#%27" class="d">'</a> matches any string, '?'
+matches exactly one character.
+
+The <a href="options.txt.html#%27wildignorecase%27" class="o">'wildignorecase'</a> option can be set to ignore <a href="change.txt.html#case" class="d">case</a> in filenames.
+
+The <a href="options.txt.html#%27wildmenu%27" class="o">'wildmenu'</a> option can be set to show the matches just above the command
+line.
+
+If you like tcsh's autolist completion, you can use this mapping:
+        <a href="map.txt.html#%3Acnoremap" class="d">:cnoremap</a> <a href="change.txt.html#X" class="d">X</a> <span class="s">&lt;C-L&gt;</span><span class="s">&lt;C-D&gt;</span>
+(Where <a href="change.txt.html#X" class="d">X</a> <a href="motion.txt.html#is" class="d">is</a> the command key to use, <span class="s">&lt;C-L&gt;</span> <a href="motion.txt.html#is" class="d">is</a> <a href="various.txt.html#CTRL-L" class="k">CTRL-L</a> and <span class="s">&lt;C-D&gt;</span> <a href="motion.txt.html#is" class="d">is</a> <a href="scroll.txt.html#CTRL-D" class="k">CTRL-D</a>)
+This will find the longest match and then <a href="eval.txt.html#list" class="d">list</a> all matching files.
+
+If you like tcsh's autolist completion, you can use the <a href="options.txt.html#%27wildmode%27" class="o">'wildmode'</a> option to
+emulate it.  For example, this mimics autolist=ambiguous:
+        <a href="options.txt.html#%3Aset" class="d">:set</a> wildmode=longest,list
+This will find the longest match with the first <a href="options.txt.html#%27wildchar%27" class="o">'wildchar'</a>, then <a href="eval.txt.html#list" class="d">list</a> all
+matching files with the next.
+
+                                                        <a name="suffixes" class="t">suffixes</a>
+For file name completion you can use the <a href="options.txt.html#%27suffixes%27" class="o">'suffixes'</a> option to set <a href="insert.txt.html#a" class="d">a</a> priority
+between files with almost the same name.  If there are multiple matches,
+those files with an extension that <a href="motion.txt.html#is" class="d">is</a> in the <a href="options.txt.html#%27suffixes%27" class="o">'suffixes'</a> option are ignored.
+The default <a href="motion.txt.html#is" class="d">is</a> ".bak,~,.o,.h,.info,.swp,.obj"<a href="motion.txt.html#%2C" class="d">,</a> which means that files ending
+in ".bak"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="change.txt.html#%7E" class="d">~</a>"<a href="motion.txt.html#%2C" class="d">,</a> ".o"<a href="motion.txt.html#%2C" class="d">,</a> ".h"<a href="motion.txt.html#%2C" class="d">,</a> ".info"<a href="motion.txt.html#%2C" class="d">,</a> ".swp" and ".obj" are sometimes ignored.
+
+An empty entry, two consecutive commas, match <a href="insert.txt.html#a" class="d">a</a> file name that does not
+contain <a href="insert.txt.html#a" class="d">a</a> "<a href="repeat.txt.html#." class="d">.</a>"<a href="motion.txt.html#%2C" class="d">,</a> thus has no suffix.  This <a href="motion.txt.html#is" class="d">is</a> useful to ignore "prog" and prefer
+"prog.c"<a href="repeat.txt.html#." class="d">.</a>
+
+Examples:
+
+<span class="h">  pattern:      files:                          match:  </span>
+   test*        test.c test.h test.o            test.c
+   test*        test.h test.o                   test.h and test.o
+   test*        test.i test.h test.c            test.i and test.c
+
+It <a href="motion.txt.html#is" class="d">is</a> impossible to ignore <a href="#suffixes" class="d">suffixes</a> with two dots.
+
+If there <a href="motion.txt.html#is" class="d">is</a> more than one matching file (after ignoring the ones matching
+the <a href="options.txt.html#%27suffixes%27" class="o">'suffixes'</a> option) the first file name <a href="motion.txt.html#is" class="d">is</a> inserted.  You can see that
+there <a href="motion.txt.html#is" class="d">is</a> only one match when you type <a href="options.txt.html#%27wildchar%27" class="o">'wildchar'</a> <a href="if_cscop.txt.html#twice" class="d">twice</a> and the completed
+match stays the same.  You can get to the other matches by entering
+<a href="options.txt.html#%27wildchar%27" class="o">'wildchar'</a>, <a href="motion.txt.html#CTRL-N" class="k">CTRL-N</a> or <a href="motion.txt.html#CTRL-P" class="k">CTRL-P</a>.  All files are included, also the ones with
+extensions matching the <a href="options.txt.html#%27suffixes%27" class="o">'suffixes'</a> option.
+
+To completely ignore files with some extension use <a href="options.txt.html#%27wildignore%27" class="o">'wildignore'</a>.
+
+To match only files that <a href="intro.txt.html#end" class="d">end</a> <a href="motion.txt.html#at" class="d">at</a> the <a href="intro.txt.html#end" class="d">end</a> of the typed text append <a href="insert.txt.html#a" class="d">a</a> "<a href="motion.txt.html#%24" class="d">$</a>"<a href="repeat.txt.html#." class="d">.</a>  For
+example, to match only files that <a href="intro.txt.html#end" class="d">end</a> in ".c"<a href="#%3A" class="d">:</a> 
+<span class="e">        :e *.c$</span>
+This will not match <a href="insert.txt.html#a" class="d">a</a> file ending in ".cpp"<a href="repeat.txt.html#." class="d">.</a>  Without the "<a href="motion.txt.html#%24" class="d">$</a>" <a href="motion.txt.html#it" class="d">it</a> does match.
+
+The old value of an option can be obtained by hitting <a href="options.txt.html#%27wildchar%27" class="o">'wildchar'</a> just after
+the '='.  For example, typing <a href="options.txt.html#%27wildchar%27" class="o">'wildchar'</a> after "<a href="options.txt.html#%3Aset" class="d">:set</a> dir=" will <a href="insert.txt.html#insert" class="d">insert</a> the
+current value of <a href="options.txt.html#%27dir%27" class="o">'dir'</a>.  This overrules file name completion for the <a href="options.txt.html#options" class="d">options</a>
+that take <a href="insert.txt.html#a" class="d">a</a> file name.
+
+If you would like using <a href="term.txt.html#%3CS-Tab%3E" class="s">&lt;S-Tab&gt;</a> for <a href="motion.txt.html#CTRL-P" class="k">CTRL-P</a> in an xterm, <a href="change.txt.html#put" class="d">put</a> this command in
+your .cshrc: 
+<span class="e">        xmodmap -e "keysym Tab = Tab Find"</span>
+And this in your .vimrc: 
+<span class="e">        :cmap &lt;Esc&gt;[1~ &lt;C-P&gt;</span>
+<span class="e"></span>
+<span class="h">==============================================================================</span>
+3. <a href="intro.txt.html#Ex" class="d">Ex</a> command-lines                                     <a name="cmdline-lines" class="t">cmdline-lines</a>
+
+The <a href="intro.txt.html#Ex" class="d">Ex</a> commands have <a href="insert.txt.html#a" class="d">a</a> few specialties:
+
+                                                        <a name="%3Aquote" class="t">:quote</a> <a name="%3Acomment" class="t">:comment</a>
+<a href="motion.txt.html#%27" class="d">'</a>"<a href="motion.txt.html#%27" class="d">'</a> <a href="motion.txt.html#at" class="d">at</a> the start of <a href="insert.txt.html#a" class="d">a</a> line causes the whole line to be ignored.  <a href="motion.txt.html#%27" class="d">'</a>"<a href="motion.txt.html#%27" class="d">'</a>
+after <a href="insert.txt.html#a" class="d">a</a> command causes the rest of the line to be ignored.  This can be used
+to add comments.  Example: 
+<span class="e">        :set ai         "set 'autoindent' option</span>
+It <a href="motion.txt.html#is" class="d">is</a> not possible to add <a href="insert.txt.html#a" class="d">a</a> comment to <a href="insert.txt.html#a" class="d">a</a> shell command "<a href="various.txt.html#%3A%21cmd" class="d">:!cmd</a>" or to the
+"<a href="map.txt.html#%3Amap" class="d">:map</a>" command and <a href="insert.txt.html#a" class="d">a</a> few others, because they see the <a href="motion.txt.html#%27" class="d">'</a>"<a href="motion.txt.html#%27" class="d">'</a> <a href="motion.txt.html#as" class="d">as</a> part of their
+argument.  This <a href="motion.txt.html#is" class="d">is</a> mentioned where the command <a href="motion.txt.html#is" class="d">is</a> explained.
+
+                                                        <a name="%3Abar" class="t">:bar</a> <a name="%3A%5Cbar" class="t">:\bar</a>
+<a href="motion.txt.html#%27" class="d">'</a>|<a href="motion.txt.html#%27" class="d">'</a> can be used to separate commands, so you can give multiple commands in one
+line.  If you want to use <a href="motion.txt.html#%27" class="d">'</a>|<a href="motion.txt.html#%27" class="d">'</a> in an argument, precede <a href="motion.txt.html#it" class="d">it</a> with '\'.
+
+These commands see the <a href="motion.txt.html#%27" class="d">'</a>|<a href="motion.txt.html#%27" class="d">'</a> <a href="motion.txt.html#as" class="d">as</a> their argument, and can therefore not be
+followed by another Vim command:
+    <a href="editing.txt.html#%3Aargdo" class="d">:argdo</a>
+    <a href="autocmd.txt.html#%3Aautocmd" class="d">:autocmd</a>
+    <a href="windows.txt.html#%3Abufdo" class="d">:bufdo</a>
+    <a href="quickfix.txt.html#%3Acdo" class="d">:cdo</a>
+    <a href="quickfix.txt.html#%3Acfdo" class="d">:cfdo</a>
+    <a href="map.txt.html#%3Acommand" class="d">:command</a>
+    <a href="if_cscop.txt.html#%3Acscope" class="d">:cscope</a>
+    <a href="repeat.txt.html#%3Adebug" class="d">:debug</a>
+    <a href="fold.txt.html#%3Afolddoopen" class="d">:folddoopen</a>
+    <a href="fold.txt.html#%3Afolddoclosed" class="d">:folddoclosed</a>
+    <a href="eval.txt.html#%3Afunction" class="d">:function</a>
+    <a href="repeat.txt.html#%3Aglobal" class="d">:global</a>
+    <a href="helphelp.txt.html#%3Ahelp" class="d">:help</a>
+    <a href="helphelp.txt.html#%3Ahelpfind" class="d">:helpfind</a>
+    <a href="if_cscop.txt.html#%3Alcscope" class="d">:lcscope</a>
+    <a href="quickfix.txt.html#%3Aldo" class="d">:ldo</a>
+    <a href="quickfix.txt.html#%3Alfdo" class="d">:lfdo</a>
+    <a href="quickfix.txt.html#%3Amake" class="d">:make</a>
+    <a href="various.txt.html#%3Anormal" class="d">:normal</a>
+    <a href="if_perl.txt.html#%3Aperl" class="d">:perl</a>
+    <a href="if_perl.txt.html#%3Aperldo" class="d">:perldo</a>
+    <a href="change.txt.html#%3Apromptfind" class="d">:promptfind</a>
+    <a href="change.txt.html#%3Apromptrepl" class="d">:promptrepl</a>
+    <a href="if_pyth.txt.html#%3Apyfile" class="d">:pyfile</a>
+    <a href="if_pyth.txt.html#%3Apython" class="d">:python</a>
+    <a href="change.txt.html#%3Aregisters" class="d">:registers</a>
+    <a href="insert.txt.html#%3Aread" class="d">:read</a> <a href="change.txt.html#%21" class="d">!</a>
+    <a href="if_cscop.txt.html#%3Ascscope" class="d">:scscope</a>
+    <a href="sign.txt.html#%3Asign" class="d">:sign</a>
+    <a href="if_tcl.txt.html#%3Atcl" class="d">:tcl</a>
+    <a href="if_tcl.txt.html#%3Atcldo" class="d">:tcldo</a>
+    <a href="if_tcl.txt.html#%3Atclfile" class="d">:tclfile</a>
+    <a href="repeat.txt.html#%3Avglobal" class="d">:vglobal</a>
+    <a href="windows.txt.html#%3Awindo" class="d">:windo</a>
+    <a href="editing.txt.html#%3Awrite" class="d">:write</a> <a href="change.txt.html#%21" class="d">!</a>
+    :[range]!
+    <a href="insert.txt.html#a" class="d">a</a> user defined command without the "-bar" argument <a href="map.txt.html#%3Acommand" class="l">:command</a>
+
+<span class="n">Note</span> that this <a href="motion.txt.html#is" class="d">is</a> confusing (inherited from Vi): With "<a href="repeat.txt.html#%3Ag" class="d">:g</a>" the <a href="motion.txt.html#%27" class="d">'</a>|<a href="motion.txt.html#%27" class="d">'</a> <a href="motion.txt.html#is" class="d">is</a> included
+in the command, with "<a href="change.txt.html#%3As" class="d">:s</a>" <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> not.
+
+To be able to use another command anyway, use the "<a href="eval.txt.html#%3Aexecute" class="d">:execute</a>" command.
+Example (append the output of "ls" and jump to the first line): 
+<span class="e">        :execute 'r !ls' | '[</span>
+<span class="e"></span>
+There <a href="motion.txt.html#is" class="d">is</a> one exception: When the 'b' flag <a href="motion.txt.html#is" class="d">is</a> present in <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a>, with the
+"<a href="map.txt.html#%3Amap" class="d">:map</a>" and ":abbr" commands and friends <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> needs to be used instead of
+'\'.  You can also use "<a href="intro.txt.html#%3CBar%3E" class="s">&lt;Bar&gt;</a>" instead.  See also <a href="map.txt.html#map_bar" class="l">map_bar</a><a href="repeat.txt.html#." class="d">.</a>
+
+Examples: 
+<span class="e">        :!ls | wc               view the output of two commands</span>
+<span class="e">        :r !ls | wc             insert the same output in the text</span>
+<span class="e">        :%g/foo/p|&gt;             moves all matching lines one shiftwidth</span>
+<span class="e">        :%s/foo/bar/|&gt;          moves one line one shiftwidth</span>
+<span class="e">        :map q 10^V|            map "q" to "10|"</span>
+<span class="e">        :map q 10\| map \ l     map "q" to "10\" and map "\" to "l"</span>
+<span class="e">                                        (when 'b' is present in 'cpoptions')</span>
+<span class="e"></span>
+You can also use <a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a> to separate commands in the same way <a href="motion.txt.html#as" class="d">as</a> with <a href="motion.txt.html#%27" class="d">'</a>|<a href="motion.txt.html#%27." class="d">'.</a>  To
+<a href="insert.txt.html#insert" class="d">insert</a> <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a> use <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> <a href="motion.txt.html#CTRL-J" class="k">CTRL-J</a>.  "^@" will be shown.  Using <a href="motion.txt.html#%27" class="d">'</a>|<a href="motion.txt.html#%27" class="d">'</a> <a href="motion.txt.html#is" class="d">is</a> the
+preferred method.  But for external commands <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a> <a href="vim_faq.txt.html#must" class="d">must</a> be used, because <a href="insert.txt.html#a" class="d">a</a>
+<a href="motion.txt.html#%27" class="d">'</a>|<a href="motion.txt.html#%27" class="d">'</a> <a href="motion.txt.html#is" class="d">is</a> included in the external command.  To avoid the special meaning of <a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a>
+<a href="motion.txt.html#it" class="d">it</a> <a href="vim_faq.txt.html#must" class="d">must</a> be preceded with <a href="insert.txt.html#a" class="d">a</a> backslash.  Example: 
+<span class="e">        :r !date&lt;NL&gt;-join</span>
+This reads the current date into the file and joins <a href="motion.txt.html#it" class="d">it</a> with the previous line.
+
+<span class="n">Note</span> that when the command before the <a href="motion.txt.html#%27" class="d">'</a>|<a href="motion.txt.html#%27" class="d">'</a> generates an error, the following
+commands will not be executed.
+
+
+Because of <a href="intro.txt.html#Vi" class="d">Vi</a> compatibility the following strange commands are supported: 
+<span class="e">        :|                      print current line (like ":p")</span>
+<span class="e">        :3|                     print line 3 (like ":3p")</span>
+<span class="e">        :3                      goto line 3</span>
+<span class="e"></span>
+<a href="insert.txt.html#A" class="d">A</a> colon <a href="motion.txt.html#is" class="d">is</a> allowed between the range and the command name.  It <a href="motion.txt.html#is" class="d">is</a> ignored
+(this <a href="motion.txt.html#is" class="d">is</a> <a href="intro.txt.html#Vi" class="d">Vi</a> compatible).  For example: 
+<span class="e">        :1,$:s/pat/string</span>
+<span class="e"></span>
+When the character '%' or '#' <a href="motion.txt.html#is" class="d">is</a> used where <a href="insert.txt.html#a" class="d">a</a> file name <a href="motion.txt.html#is" class="d">is</a> expected, they are
+expanded to the current and alternate file name (see the chapter "editing
+files" <a href="#%3A_%25" class="l">:_%</a> <a href="#%3A_%23" class="l">:_#</a>).
+
+Embedded spaces in file names are allowed on the <a href="os_amiga.txt.html#Amiga" class="d">Amiga</a> if one file name <a href="motion.txt.html#is" class="d">is</a>
+expected <a href="motion.txt.html#as" class="d">as</a> argument.  Trailing spaces will be ignored, unless escaped with <a href="insert.txt.html#a" class="d">a</a>
+<a href="intro.txt.html#backslash" class="d">backslash</a> or <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a>.  <span class="n">Note</span> that the "<a href="editing.txt.html#%3Anext" class="d">:next</a>" command uses spaces to separate
+file names.  Escape the spaces to include them in <a href="insert.txt.html#a" class="d">a</a> file name.  Example: 
+<span class="e">        :next foo\ bar goes\ to school\</span>
+starts editing the three files "foo <a href="motion.txt.html#bar" class="d">bar</a>"<a href="motion.txt.html#%2C" class="d">,</a> "goes to" and "school "<a href="repeat.txt.html#." class="d">.</a>
+
+When you want to use the special characters <a href="motion.txt.html#%27" class="d">'</a>"<a href="motion.txt.html#%27" class="d">'</a> or <a href="motion.txt.html#%27" class="d">'</a>|<a href="motion.txt.html#%27" class="d">'</a> in <a href="insert.txt.html#a" class="d">a</a> command, or want
+to use '%' or '#' in <a href="insert.txt.html#a" class="d">a</a> file name, precede them with <a href="insert.txt.html#a" class="d">a</a> backslash.  The
+<a href="intro.txt.html#backslash" class="d">backslash</a> <a href="motion.txt.html#is" class="d">is</a> not required in <a href="insert.txt.html#a" class="d">a</a> range and in the "<a href="change.txt.html#%3Asubstitute" class="d">:substitute</a>" command.
+See also <a href="editing.txt.html#%60%3D" class="l">`=</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="%3A_%21" class="t">:_!</a>
+The '!' (bang) character after an <a href="intro.txt.html#Ex" class="d">Ex</a> command makes the command behave in <a href="insert.txt.html#a" class="d">a</a>
+different way.  The '!' should be placed immediately after the command, without
+any blanks in between.  If you <a href="insert.txt.html#insert" class="d">insert</a> blanks the '!' will be seen <a href="motion.txt.html#as" class="d">as</a> an
+argument for the command, which has <a href="insert.txt.html#a" class="d">a</a> different meaning.  For example:
+        <a href="editing.txt.html#%3Aw%21" class="d">:w!</a> name        write the current buffer to file "name"<a href="motion.txt.html#%2C" class="d">,</a> overwriting
+                        any existing file
+        <a href="editing.txt.html#%3Aw" class="d">:w</a> !name        send the current buffer <a href="motion.txt.html#as" class="d">as</a> standard input to command
+                        "name"
+
+<span class="h">==============================================================================</span>
+4. <a href="intro.txt.html#Ex" class="d">Ex</a> command-line ranges       <a name="cmdline-ranges" class="t">cmdline-ranges</a> <a name="%5Brange%5D" class="t">[range]</a> <a name="E16" class="t">E16</a>
+
+Some <a href="intro.txt.html#Ex" class="d">Ex</a> commands accept <a href="insert.txt.html#a" class="d">a</a> line range in front of them.  This <a href="motion.txt.html#is" class="d">is</a> noted <a href="motion.txt.html#as" class="d">as</a>
+<a href="#%5Brange%5D" class="s">[range]</a>.  It consists of one or more line specifiers, separated with ',' or
+';'.
+
+The basics are explained in <a href="motion.txt.html#section" class="d">section</a> <a href="usr_10.txt.html#10.3" class="l">10.3</a> of the user manual.
+
+                                                <a name="%3A%2C" class="t">:,</a> <a name="%3A%3B" class="t">:;</a>
+When separated with ';' the cursor position will be set to that line
+before interpreting the next line specifier.  This doesn't happen for ','.
+Examples: 
+<span class="e">   4,/this line/</span>
+       from line 4 till match with "this line" after the cursor line. 
+<span class="e">   5;/that line/</span>
+       from line 5 till match with "that line" after line 5.
+
+The default line specifier for most commands <a href="motion.txt.html#is" class="d">is</a> the cursor position, but the
+commands "<a href="editing.txt.html#%3Awrite" class="d">:write</a>" and "<a href="repeat.txt.html#%3Aglobal" class="d">:global</a>" have the whole file (1,$) <a href="motion.txt.html#as" class="d">as</a> default.
+
+If more line specifiers are given than required for the command, the first
+one(s) will be ignored.
+
+Line numbers may be specified with:             <a name="%3Arange" class="t">:range</a> <a name="E14" class="t">E14</a> <a name="%7Baddress%7D" class="t">{address}</a>
+        <span class="s">{number}</span>        an absolute line number
+        <a href="repeat.txt.html#." class="d">.</a>               the current line                          <a name="%3A." class="t">:.</a>
+        <a href="motion.txt.html#%24" class="d">$</a>               the last line in the file                 <a name="%3A%24" class="t">:$</a>
+        <a href="motion.txt.html#%25" class="d">%</a>               equal to 1,$ (the entire file)            <a name="%3A%25" class="t">:%</a>
+        't              position of <a href="motion.txt.html#mark" class="d">mark</a> <a href="motion.txt.html#t" class="d">t</a> (lowercase)            <a name="%3A%27" class="t">:'</a>
+        'T              position of <a href="motion.txt.html#mark" class="d">mark</a> <a href="motion.txt.html#T" class="d">T</a> (uppercase); when the <a href="motion.txt.html#mark" class="d">mark</a> <a href="motion.txt.html#is" class="d">is</a> in
+                        another file <a href="motion.txt.html#it" class="d">it</a> cannot be used in <a href="insert.txt.html#a" class="d">a</a> range
+        /{pattern}[/]   the next line where <span class="s">{pattern}</span> matches     <a name="%3A%2F" class="t">:/</a>
+        ?{pattern}[?]   the previous line where <span class="s">{pattern}</span> matches <a name="%3A%3F" class="t">:?</a>
+        \/              the next line where the previously used search
+                        <a href="pattern.txt.html#pattern" class="d">pattern</a> matches
+        \?              the previous line where the previously used search
+                        <a href="pattern.txt.html#pattern" class="d">pattern</a> matches
+        \&amp;              the next line where the previously used substitute
+                        <a href="pattern.txt.html#pattern" class="d">pattern</a> matches
+
+Each may be followed (several times) by '+' or '-' and an optional number.
+This number <a href="motion.txt.html#is" class="d">is</a> added or subtracted from the preceding line number.  If the
+number <a href="motion.txt.html#is" class="d">is</a> omitted, 1 <a href="motion.txt.html#is" class="d">is</a> used.
+
+The "<a href="pattern.txt.html#%2F" class="d">/</a>" and "<a href="pattern.txt.html#%3F" class="d">?</a>" after <span class="s">{pattern}</span> are required to separate the <a href="pattern.txt.html#pattern" class="d">pattern</a> from
+anything that follows.
+
+The "<a href="pattern.txt.html#%2F" class="d">/</a>" and "<a href="pattern.txt.html#%3F" class="d">?</a>" may be preceded with another address.  The search starts from
+there.  The difference from using ';' <a href="motion.txt.html#is" class="d">is</a> that the cursor isn't moved.
+Examples: 
+<span class="e">        /pat1//pat2/    Find line containing "pat2" after line containing</span>
+<span class="e">                        "pat1", without moving the cursor.</span>
+<span class="e">        7;/pat2/        Find line containing "pat2", after line 7, leaving</span>
+<span class="e">                        the cursor in line 7.</span>
+<span class="e"></span>
+The <span class="s">{number}</span> <a href="vim_faq.txt.html#must" class="d">must</a> be between <a href="motion.txt.html#0" class="d">0</a> and the number of lines in the file.  When
+using <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#0" class="d">0</a> (zero) this <a href="motion.txt.html#is" class="d">is</a> interpreted <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> 1 by most commands.  Commands that
+use <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> <a href="diff.txt.html#do" class="d">do</a> use <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> zero <a href="motion.txt.html#%28" class="d">(</a><a href="tagsrch.txt.html#%3Atag" class="l">:tag</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="tagsrch.txt.html#%3Apop" class="l">:pop</a><a href="motion.txt.html#%2C" class="d">,</a> etc).  Some commands
+interpret the zero <a href="motion.txt.html#as" class="d">as</a> "before the first line" <a href="motion.txt.html#%28" class="d">(</a><a href="insert.txt.html#%3Aread" class="l">:read</a><a href="motion.txt.html#%2C" class="d">,</a> search pattern, etc).
+
+Examples: 
+<span class="e">        .+3             three lines below the cursor</span>
+<span class="e">        /that/+1        the line below the next line containing "that"</span>
+<span class="e">        .,$             from current line until end of file</span>
+<span class="e">        0;/that         the first line containing "that", also matches in the</span>
+<span class="e">                        first line.</span>
+<span class="e">        1;/that         the first line after line 1 containing "that"</span>
+<span class="e"></span>
+Some commands allow for <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> after the command.  This <a href="intro.txt.html#count" class="d">count</a> <a href="motion.txt.html#is" class="d">is</a> used <a href="motion.txt.html#as" class="d">as</a> the
+number of lines to be used, <a href="starting.txt.html#starting" class="d">starting</a> with the line given in the last line
+specifier (the default <a href="motion.txt.html#is" class="d">is</a> the cursor line).  The commands that accept <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a>
+are the ones that use <a href="insert.txt.html#a" class="d">a</a> range but <a href="diff.txt.html#do" class="d">do</a> not have <a href="insert.txt.html#a" class="d">a</a> file name argument (because
+<a href="insert.txt.html#a" class="d">a</a> file name can also be <a href="insert.txt.html#a" class="d">a</a> number).
+
+Examples: 
+<span class="e">        :s/x/X/g 5      substitute 'x' by 'X' in the current line and four</span>
+<span class="e">                        following lines</span>
+<span class="e">        :23d 4          delete lines 23, 24, 25 and 26</span>
+<span class="e"></span>
+<span class="e"></span>
+Folds and Range
+
+When <a href="fold.txt.html#folds" class="d">folds</a> are active the line numbers are rounded off to include the whole
+closed fold.  See <a href="fold.txt.html#fold-behavior" class="l">fold-behavior</a><a href="repeat.txt.html#." class="d">.</a>
+
+
+Reverse Range                                           <a name="E493" class="t">E493</a>
+
+<a href="insert.txt.html#A" class="d">A</a> range should have the lower line number first.  If this <a href="motion.txt.html#is" class="d">is</a> not the case, Vim
+will ask you if <a href="motion.txt.html#it" class="d">it</a> should swap the line numbers.
+<span class="h">        Backwards range given, OK to swap </span>
+This <a href="motion.txt.html#is" class="d">is</a> not done within the global command "<a href="repeat.txt.html#%3Ag" class="d">:g</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+You can use "<a href="various.txt.html#%3Asilent" class="d">:silent</a>" before <a href="insert.txt.html#a" class="d">a</a> command to avoid the question, the range will
+always be swapped then.
+
+
+Count and Range                                         <a name="N%3A" class="t">N:</a>
+
+When giving <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> before entering "<a href="#%3A" class="d">:</a>"<a href="motion.txt.html#%2C" class="d">,</a> this <a href="motion.txt.html#is" class="d">is</a> translated into:
+                :.,.+(count <a href="motion.txt.html#-" class="d">-</a> 1)
+In words: The <span class="o">'count'</span> lines <a href="motion.txt.html#at" class="d">at</a> and after the cursor.  Example: To delete
+three lines: 
+<span class="e">                3:d&lt;CR&gt;         is translated into: .,.+2d&lt;CR&gt;</span>
+
+
+<a href="visual.txt.html#Visual" class="d">Visual</a> Mode and Range                                   <a name="v_%3A" class="t">v_:</a>
+
+<a href="intro.txt.html#%7BVisual%7D" class="s">{Visual}</a>:       Starts <a href="insert.txt.html#a" class="d">a</a> command-line with the <a href="visual.txt.html#Visual" class="d">Visual</a> selected lines <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a>
+                range.  The code <span class="e">:'&lt;,'&gt;</span> <a href="motion.txt.html#is" class="d">is</a> used for this range, which makes
+                <a href="motion.txt.html#it" class="d">it</a> possible to select <a href="insert.txt.html#a" class="d">a</a> similar line from the command-line
+                <a href="#history" class="d">history</a> for <a href="repeat.txt.html#repeating" class="d">repeating</a> <a href="insert.txt.html#a" class="d">a</a> command on different Visually selected
+                lines.
+                When <a href="visual.txt.html#Visual" class="d">Visual</a> mode was already ended, <a href="insert.txt.html#a" class="d">a</a> short way to use the
+                <a href="visual.txt.html#Visual" class="d">Visual</a> area for <a href="insert.txt.html#a" class="d">a</a> range <a href="motion.txt.html#is" class="d">is</a> <span class="e">:*</span>.  This requires that "*" does
+                not appear in <a href="options.txt.html#%27cpo%27" class="o">'cpo'</a>, see <a href="options.txt.html#cpo-star" class="l">cpo-star</a><a href="repeat.txt.html#." class="d">.</a>  Otherwise you will have
+                to type <span class="e">:'&lt;,'&gt;</span>
+
+
+<span class="h">==============================================================================</span>
+5. <a href="intro.txt.html#Ex" class="d">Ex</a> command-line flags                                <a name="ex-flags" class="t">ex-flags</a>
+
+These flags are supported by <a href="insert.txt.html#a" class="d">a</a> selection of <a href="intro.txt.html#Ex" class="d">Ex</a> commands.  They print the line
+that the cursor ends up after executing the command:
+
+        <a href="motion.txt.html#l" class="d">l</a>       output like for <a href="various.txt.html#%3Alist" class="l">:list</a>
+        <a href="pattern.txt.html#%23" class="d">#</a>       add line number
+        <a href="change.txt.html#p" class="d">p</a>       output like for <a href="various.txt.html#%3Aprint" class="l">:print</a>
+
+The flags can be combined, thus "l#" uses both <a href="insert.txt.html#a" class="d">a</a> line number and <a href="various.txt.html#%3Alist" class="l">:list</a> style
+output.
+
+<span class="h">==============================================================================</span>
+6. <a href="intro.txt.html#Ex" class="d">Ex</a> special characters                                <a name="cmdline-special" class="t">cmdline-special</a>
+
+<span class="n">Note:</span> These are special characters in the executed command line.  If you want
+to <a href="insert.txt.html#insert" class="d">insert</a> special things while typing you can use the <a href="undo.txt.html#CTRL-R" class="k">CTRL-R</a> command.  For
+example, "<a href="motion.txt.html#%25" class="d">%</a>" stands for the current file name, while <a href="undo.txt.html#CTRL-R" class="k">CTRL-R</a> <a href="motion.txt.html#%25" class="d">%</a> inserts the
+current file name right away.  See <a href="#c_CTRL-R" class="l">c_CTRL-R</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="n">Note:</span>  If you want to avoid the effects of special characters in <a href="insert.txt.html#a" class="d">a</a> Vim <a href="usr_41.txt.html#script" class="d">script</a>
+you may want to use <a href="eval.txt.html#fnameescape%28%29" class="l">fnameescape()</a><a href="repeat.txt.html#." class="d">.</a>  Also see <a href="editing.txt.html#%60%3D" class="l">`=</a><a href="repeat.txt.html#." class="d">.</a>
+
+
+In <a href="intro.txt.html#Ex" class="d">Ex</a> commands, <a href="motion.txt.html#at" class="d">at</a> places where <a href="insert.txt.html#a" class="d">a</a> file name can be used, the following
+characters have <a href="insert.txt.html#a" class="d">a</a> special meaning.  These can also be used in the <a href="eval.txt.html#expression" class="d">expression</a>
+function <a href="eval.txt.html#expand%28%29" class="l">expand()</a><a href="repeat.txt.html#." class="d">.</a>
+        <a href="motion.txt.html#%25" class="d">%</a>       Is replaced with the current file name.           <a name="%3A_%25" class="t">:_%</a> <a name="c_%25" class="t">c_%</a>
+        <a href="pattern.txt.html#%23" class="d">#</a>       Is replaced with the alternate file name.         <a name="%3A_%23" class="t">:_#</a> <a name="c_%23" class="t">c_#</a>
+                This <a href="motion.txt.html#is" class="d">is</a> remembered for every window.
+        #n      (where <a href="pattern.txt.html#n" class="d">n</a> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> number) <a href="motion.txt.html#is" class="d">is</a> replaced with            <a name="%3A_%230" class="t">:_#0</a> <a name="%3A_%23n" class="t">:_#n</a>
+                the file name of buffer n.  "#0" <a href="motion.txt.html#is" class="d">is</a> the same <a href="motion.txt.html#as" class="d">as</a> "<a href="pattern.txt.html#%23" class="d">#</a>"<a href="repeat.txt.html#." class="d">.</a>     <a name="c_%23n" class="t">c_#n</a>
+        ##      Is replaced with all names in the argument <a href="eval.txt.html#list" class="d">list</a>   <a name="%3A_%23%23" class="t">:_##</a> <a name="c_%23%23" class="t">c_##</a>
+                concatenated, separated by spaces.  Each <a href="intro.txt.html#space" class="d">space</a> in <a href="insert.txt.html#a" class="d">a</a> name
+                <a href="motion.txt.html#is" class="d">is</a> preceded with <a href="insert.txt.html#a" class="d">a</a> backslash.
+        #&lt;n     (where <a href="pattern.txt.html#n" class="d">n</a> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> number <a href="change.txt.html#%3E" class="d">&gt;</a> 0) <a href="motion.txt.html#is" class="d">is</a> replaced with old    <a name="%3A_%23%3C" class="t">:_#&lt;</a> <a name="c_%23%3C" class="t">c_#&lt;</a>
+                file name n.  See <a href="starting.txt.html#%3Aoldfiles" class="l">:oldfiles</a> or <a href="eval.txt.html#v%3Aoldfiles" class="l">v:oldfiles</a> to get the
+                number.                                                 <a name="E809" class="t">E809</a>
+                <span class="s">{only when compiled with the |+eval| and |+viminfo| features}</span>
+
+<span class="n">Note</span> that these, except "#&lt;n"<a href="motion.txt.html#%2C" class="d">,</a> give the file name <a href="motion.txt.html#as" class="d">as</a> <a href="motion.txt.html#it" class="d">it</a> was typed.  If an
+absolute path <a href="motion.txt.html#is" class="d">is</a> needed (when using the file name from <a href="insert.txt.html#a" class="d">a</a> different directory),
+you need to add "<a href="various.txt.html#%3Ap" class="d">:p</a>"<a href="repeat.txt.html#." class="d">.</a>  See <a href="#filename-modifiers" class="l">filename-modifiers</a><a href="repeat.txt.html#." class="d">.</a>
+
+The "#&lt;n" item returns an absolute path, but <a href="motion.txt.html#it" class="d">it</a> will start with "~/" for files
+below your <a href="intro.txt.html#home" class="d">home</a> directory.
+
+<span class="n">Note</span> that backslashes are inserted before spaces, so that the command will
+correctly interpret the file name.  But this doesn't happen for shell
+commands.  For those you probably have to use <a href="quotes.txt.html#quotes" class="d">quotes</a> (this fails for files
+that contain <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#quote" class="d">quote</a> and wildcards): 
+<span class="e">        :!ls "%"</span>
+<span class="e">        :r !spell "%"</span>
+<span class="e"></span>
+To avoid the special meaning of '%' and '#' <a href="insert.txt.html#insert" class="d">insert</a> <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#backslash" class="d">backslash</a> before it.
+Detail: The special meaning <a href="motion.txt.html#is" class="d">is</a> always escaped when there <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#backslash" class="d">backslash</a> before
+it, no matter how many backslashes.
+<span class="h">        you type:               result  </span>
+           <a href="pattern.txt.html#%23" class="d">#</a>                    alternate.file
+           \#                   <a href="pattern.txt.html#%23" class="d">#</a>
+           \\#                  \#
+Also see <a href="editing.txt.html#%60%3D" class="l">`=</a><a href="repeat.txt.html#." class="d">.</a>
+
+                               <a name="%3A%3Ccword%3E" class="t">:&lt;cword&gt;</a> <a name="%3A%3CcWORD%3E" class="t">:&lt;cWORD&gt;</a> <a name="%3A%3Ccfile%3E" class="t">:&lt;cfile&gt;</a> <a name="%3Ccfile%3E" class="t">&lt;cfile&gt;</a>
+                               <a name="%3A%3Csfile%3E" class="t">:&lt;sfile&gt;</a> <a name="%3Csfile%3E" class="t">&lt;sfile&gt;</a> <a name="%3A%3Cafile%3E" class="t">:&lt;afile&gt;</a> <a name="%3Cafile%3E" class="t">&lt;afile&gt;</a>
+                               <a name="%3A%3Cabuf%3E" class="t">:&lt;abuf&gt;</a> <a name="%3Cabuf%3E" class="t">&lt;abuf&gt;</a> <a name="%3A%3Camatch%3E" class="t">:&lt;amatch&gt;</a> <a name="%3Camatch%3E" class="t">&lt;amatch&gt;</a>
+                               <a name="%3A%3Ccexpr%3E" class="t">:&lt;cexpr&gt;</a> <a name="%3Ccexpr%3E" class="t">&lt;cexpr&gt;</a>
+                               <a name="%3Cslnum%3E" class="t">&lt;slnum&gt;</a> <a name="E495" class="t">E495</a> <a name="E496" class="t">E496</a> <a name="E497" class="t">E497</a> <a name="E499" class="t">E499</a> <a name="E500" class="t">E500</a>
+<span class="n">Note:</span> these are typed literally, they are not special keys!
+        <span class="s">&lt;cword&gt;</span>    <a href="motion.txt.html#is" class="d">is</a> replaced with the <a href="motion.txt.html#word" class="d">word</a> under the cursor (like <a href="pattern.txt.html#star" class="l">star</a><a href="motion.txt.html#%29" class="d">)</a>
+        <span class="s">&lt;cWORD&gt;</span>    <a href="motion.txt.html#is" class="d">is</a> replaced with the <a href="motion.txt.html#WORD" class="d">WORD</a> under the cursor (see <a href="motion.txt.html#WORD" class="l">WORD</a><a href="motion.txt.html#%29" class="d">)</a>
+        <a href="#%3Ccexpr%3E" class="s">&lt;cexpr&gt;</a>    <a href="motion.txt.html#is" class="d">is</a> replaced with the <a href="motion.txt.html#word" class="d">word</a> under the cursor, including more
+                   to form <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#C" class="d">C</a> expression.  E.g., when the cursor <a href="motion.txt.html#is" class="d">is</a> on "arg"
+                   of "ptr-&gt;arg" then the result <a href="motion.txt.html#is" class="d">is</a> "ptr-&gt;arg"<a href="motion.txt.html#%3B" class="d">;</a> when the
+                   cursor <a href="motion.txt.html#is" class="d">is</a> on "<a href="index.txt.html#%5D" class="d">]</a>" of "list[idx]" then the result <a href="motion.txt.html#is" class="d">is</a>
+                   "list[idx]"<a href="repeat.txt.html#." class="d">.</a>  This <a href="motion.txt.html#is" class="d">is</a> used for <a href="eval.txt.html#v%3Abeval_text" class="l">v:beval_text</a><a href="repeat.txt.html#." class="d">.</a>
+        <a href="#%3Ccfile%3E" class="s">&lt;cfile&gt;</a>    <a href="motion.txt.html#is" class="d">is</a> replaced with the path name under the cursor (like what
+                   <a href="editing.txt.html#gf" class="l">gf</a> uses)
+        <a href="#%3Cafile%3E" class="s">&lt;afile&gt;</a>    When executing autocommands, <a href="motion.txt.html#is" class="d">is</a> replaced with the file name
+                   of the buffer being manipulated, or the file for <a href="insert.txt.html#a" class="d">a</a> read or
+                   write.
+        <a href="#%3Cabuf%3E" class="s">&lt;abuf&gt;</a>     When executing autocommands, <a href="motion.txt.html#is" class="d">is</a> replaced with the currently
+                   effective buffer number (for "<a href="insert.txt.html#%3Ar" class="d">:r</a> file" and "<a href="repeat.txt.html#%3Aso" class="d">:so</a> file" <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a>
+                   the current buffer, the file being read/sourced <a href="motion.txt.html#is" class="d">is</a> not in <a href="insert.txt.html#a" class="d">a</a>
+                   buffer).
+        <a href="#%3Camatch%3E" class="s">&lt;amatch&gt;</a>   When executing autocommands, <a href="motion.txt.html#is" class="d">is</a> replaced with the match for
+                   which this <a href="autocmd.txt.html#autocommand" class="d">autocommand</a> was executed.  It differs from
+                   <a href="#%3Cafile%3E" class="s">&lt;afile&gt;</a> only when the file name isn't used to match with
+                   (for FileType, <a href="autocmd.txt.html#Syntax" class="d">Syntax</a> and <a href="autocmd.txt.html#SpellFileMissing" class="d">SpellFileMissing</a> events).
+        <a href="#%3Csfile%3E" class="s">&lt;sfile&gt;</a>    When executing <a href="insert.txt.html#a" class="d">a</a> "<a href="repeat.txt.html#%3Asource" class="d">:source</a>" command, <a href="motion.txt.html#is" class="d">is</a> replaced with the
+                   file name of the sourced file.  <a name="E498" class="t">E498</a>
+                   When executing <a href="insert.txt.html#a" class="d">a</a> function, <a href="motion.txt.html#is" class="d">is</a> replaced with:
+                   "function <span class="s">{function-name}</span>[<span class="s">{lnum}</span>]"
+                   function call nesting <a href="motion.txt.html#is" class="d">is</a> indicated like this:
+                   "function <span class="s">{function-name1}</span>[<span class="s">{lnum}</span>]..<span class="s">{function-name2}</span>[<span class="s">{lnum}</span>]"
+                   <span class="n">Note</span> that <a href="#filename-modifiers" class="d">filename-modifiers</a> are useless when <a href="#%3Csfile%3E" class="s">&lt;sfile&gt;</a> <a href="motion.txt.html#is" class="d">is</a>
+                   used inside <a href="insert.txt.html#a" class="d">a</a> function.
+        <a href="#%3Cslnum%3E" class="s">&lt;slnum&gt;</a>    When executing <a href="insert.txt.html#a" class="d">a</a> "<a href="repeat.txt.html#%3Asource" class="d">:source</a>" command, <a href="motion.txt.html#is" class="d">is</a> replaced with the
+                   line number.  <a name="E842" class="t">E842</a>
+                   When executing <a href="insert.txt.html#a" class="d">a</a> function it's the line number relative to
+                   the start of the function.
+
+                                                         <a name="filename-modifiers" class="t">filename-modifiers</a>
+<a name="%3A_%25%3A" class="t">:_%:</a> <a name="%3A%3A8" class="t">::8</a> <a name="%3A%3Ap" class="t">::p</a> <a name="%3A%3A." class="t">::.</a> <a name="%3A%3A%7E" class="t">::~</a> <a name="%3A%3Ah" class="t">::h</a> <a name="%3A%3At" class="t">::t</a> <a name="%3A%3Ar" class="t">::r</a> <a name="%3A%3Ae" class="t">::e</a> <a name="%3A%3As" class="t">::s</a> <a name="%3A%3Ags" class="t">::gs</a> <a name="%3A%3AS" class="t">::S</a>
+<span class="c">    </span> <a name="%25%3A8" class="t">%:8</a> <a name="%25%3Ap" class="t">%:p</a> <a name="%25%3A." class="t">%:.</a> <a name="%25%3A%7E" class="t">%:~</a> <a name="%25%3Ah" class="t">%:h</a> <a name="%25%3At" class="t">%:t</a> <a name="%25%3Ar" class="t">%:r</a> <a name="%25%3Ae" class="t">%:e</a> <a name="%25%3As" class="t">%:s</a> <a name="%25%3Ags" class="t">%:gs</a> <a name="%25%3AS" class="t">%:S</a>
+The file name modifiers can be used after "<a href="motion.txt.html#%25" class="d">%</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="pattern.txt.html#%23" class="d">#</a>"<a href="motion.txt.html#%2C" class="d">,</a> "#n"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="#%3Ccfile%3E" class="s">&lt;cfile&gt;</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="#%3Csfile%3E" class="s">&lt;sfile&gt;</a>"<a href="motion.txt.html#%2C" class="d">,</a>
+"<a href="#%3Cafile%3E" class="s">&lt;afile&gt;</a>" or "<a href="#%3Cabuf%3E" class="s">&lt;abuf&gt;</a>"<a href="repeat.txt.html#." class="d">.</a>  They are also used with the <a href="eval.txt.html#fnamemodify%28%29" class="l">fnamemodify()</a> function.
+These are not available when Vim has been compiled without the <a href="various.txt.html#%2Bmodify_fname" class="l">+modify_fname</a>
+feature.
+These modifiers can be given, in this order:
+        <a href="various.txt.html#%3Ap" class="d">:p</a>      Make file name <a href="insert.txt.html#a" class="d">a</a> full path.  Must be the first modifier.  Also
+                changes "~/" (and "~user/" for <a href="os_unix.txt.html#Unix" class="d">Unix</a> and VMS) to the path for
+                the <a href="intro.txt.html#home" class="d">home</a> directory.  If the name <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> directory <a href="insert.txt.html#a" class="d">a</a> path
+                separator <a href="motion.txt.html#is" class="d">is</a> added <a href="motion.txt.html#at" class="d">at</a> the end.  For <a href="insert.txt.html#a" class="d">a</a> file name that does not
+                exist and does not have an absolute path the result <a href="motion.txt.html#is" class="d">is</a>
+                unpredictable.  On <a href="os_win32.txt.html#MS-Windows" class="d">MS-Windows</a> an 8.3 filename <a href="motion.txt.html#is" class="d">is</a> expanded to
+                the long name.
+        :8      Converts the path to 8.3 short format (currently only on
+                MS-Windows).  Will act on <a href="motion.txt.html#as" class="d">as</a> much of <a href="insert.txt.html#a" class="d">a</a> path that <a href="motion.txt.html#is" class="d">is</a> an
+                existing path.
+        <a href="change.txt.html#%3A%7E" class="d">:~</a>      Reduce file name to be relative to the <a href="intro.txt.html#home" class="d">home</a> directory, if
+                possible.  File name <a href="motion.txt.html#is" class="d">is</a> unmodified if <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> not below the <a href="intro.txt.html#home" class="d">home</a>
+                directory.
+        <a href="#%3A." class="d">:.</a>      Reduce file name to be relative to current directory, if
+                possible.  File name <a href="motion.txt.html#is" class="d">is</a> unmodified if <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> not below the
+                current directory.
+                For maximum shortness, use ":~:."<a href="repeat.txt.html#." class="d">.</a>
+        <a href="helphelp.txt.html#%3Ah" class="d">:h</a>      Head of the file name (the last component and any separators
+                removed).  Cannot be used with :e, <a href="insert.txt.html#%3Ar" class="d">:r</a> or :t.
+                Can be repeated to remove several components <a href="motion.txt.html#at" class="d">at</a> the end.
+                When the file name ends in <a href="insert.txt.html#a" class="d">a</a> path separator, only the path
+                separator <a href="motion.txt.html#is" class="d">is</a> removed.  Thus ":p:h" on <a href="insert.txt.html#a" class="d">a</a> directory name results
+                on the directory name itself (without trailing slash).
+                When the file name <a href="motion.txt.html#is" class="d">is</a> an absolute path (starts with "<a href="pattern.txt.html#%2F" class="d">/</a>" for
+                Unix; "x:\" for MS-DOS, WIN32, OS/2; "drive:" for Amiga), that
+                part <a href="motion.txt.html#is" class="d">is</a> not removed.  When there <a href="motion.txt.html#is" class="d">is</a> no head (path <a href="motion.txt.html#is" class="d">is</a> relative
+                to current directory) the result <a href="motion.txt.html#is" class="d">is</a> empty.
+        <a href="change.txt.html#%3At" class="d">:t</a>      Tail of the file name (last component of the name).  Must
+                precede any <a href="insert.txt.html#%3Ar" class="d">:r</a> or :e.
+        <a href="insert.txt.html#%3Ar" class="d">:r</a>      <a href="mbyte.txt.html#Root" class="d">Root</a> of the file name (the last extension removed).  When
+                there <a href="motion.txt.html#is" class="d">is</a> only an extension (file name that starts with '.',
+                e.g., "<a href="starting.txt.html#.vimrc" class="d">.vimrc</a>"), <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> not removed.  Can be repeated to remove
+                several extensions (last one first).
+        <a href="editing.txt.html#%3Ae" class="d">:e</a>      Extension of the file name.  Only makes sense when used alone.
+                When there <a href="motion.txt.html#is" class="d">is</a> no extension the result <a href="motion.txt.html#is" class="d">is</a> empty.
+                When there <a href="motion.txt.html#is" class="d">is</a> only an extension (file name that starts with
+                '.'), the result <a href="motion.txt.html#is" class="d">is</a> empty.  Can be repeated to include more
+                extensions.  If there are not enough extensions (but <a href="motion.txt.html#at" class="d">at</a> least
+                one) <a href="motion.txt.html#as" class="d">as</a> much <a href="motion.txt.html#as" class="d">as</a> possible are included.
+        :s?pat?sub?
+                Substitute the first occurrence of "pat" with "sub"<a href="repeat.txt.html#." class="d">.</a>  This
+                works like the <a href="change.txt.html#%3As" class="l">:s</a> command.  "pat" <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> regular expression.
+                Any character can be used for '?', but <a href="motion.txt.html#it" class="d">it</a> <a href="vim_faq.txt.html#must" class="d">must</a> not occur in
+                "pat" or "sub"<a href="repeat.txt.html#." class="d">.</a>
+                After this, the previous modifiers can be used again.  For
+                example "<a href="various.txt.html#%3Ap" class="d">:p</a>"<a href="motion.txt.html#%2C" class="d">,</a> to make <a href="insert.txt.html#a" class="d">a</a> full path after the substitution.
+        :gs?pat?sub?
+                Substitute all occurrences of "pat" with "sub"<a href="repeat.txt.html#." class="d">.</a>  Otherwise
+                this works like "<a href="change.txt.html#%3As" class="d">:s</a>"<a href="repeat.txt.html#." class="d">.</a>
+        :S      Escape special characters for use with <a href="insert.txt.html#a" class="d">a</a> shell command (see
+                <a href="eval.txt.html#shellescape%28%29" class="l">shellescape()</a>). Must be the last one. Examples: 
+<span class="e">                    :!dir &lt;cfile&gt;:S</span>
+<span class="e">                    :call system('chmod +w -- ' . expand('%:S'))</span>
+<span class="e"></span>
+Examples, when the file name <a href="motion.txt.html#is" class="d">is</a> "src/version.c"<a href="motion.txt.html#%2C" class="d">,</a> current dir
+"/home/mool/vim"<a href="#%3A" class="d">:</a> 
+<span class="e">  :p                    /home/mool/vim/src/version.c</span>
+<span class="e">  :p:.                                 src/version.c</span>
+<span class="e">  :p:~                           ~/vim/src/version.c</span>
+<span class="e">  :h                                   src</span>
+<span class="e">  :p:h                  /home/mool/vim/src</span>
+<span class="e">  :p:h:h                /home/mool/vim</span>
+<span class="e">  :t                                       version.c</span>
+<span class="e">  :p:t                                     version.c</span>
+<span class="e">  :r                                   src/version</span>
+<span class="e">  :p:r                  /home/mool/vim/src/version</span>
+<span class="e">  :t:r                                     version</span>
+<span class="e">  :e                                               c</span>
+<span class="e">  :s?version?main?                     src/main.c</span>
+<span class="e">  :s?version?main?:p    /home/mool/vim/src/main.c</span>
+<span class="e">  :p:gs?/?\\?           \home\mool\vim\src\version.c</span>
+<span class="e"></span>
+Examples, when the file name <a href="motion.txt.html#is" class="d">is</a> "src/version.c.gz"<a href="#%3A" class="d">:</a> 
+<span class="e">  :p                    /home/mool/vim/src/version.c.gz</span>
+<span class="e">  :e                                                 gz</span>
+<span class="e">  :e:e                                             c.gz</span>
+<span class="e">  :e:e:e                                           c.gz</span>
+<span class="e">  :e:e:r                                           c</span>
+<span class="e">  :r                                   src/version.c</span>
+<span class="e">  :r:e                                             c</span>
+<span class="e">  :r:r                                 src/version</span>
+<span class="e">  :r:r:r                               src/version</span>
+
+                                        <a name="extension-removal" class="t">extension-removal</a> <a name="%3A_%25%3C" class="t">:_%&lt;</a>
+If <a href="insert.txt.html#a" class="d">a</a> "<a href="change.txt.html#%3C" class="d">&lt;</a>" <a href="motion.txt.html#is" class="d">is</a> appended to "<a href="motion.txt.html#%25" class="d">%</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="pattern.txt.html#%23" class="d">#</a>"<a href="motion.txt.html#%2C" class="d">,</a> "#n" or "<a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> <a href="change.txt.html#p" class="d">p</a>" the extension of the file
+name <a href="motion.txt.html#is" class="d">is</a> removed (everything after and including the last '.' in the file
+name).  This <a href="motion.txt.html#is" class="d">is</a> included for backwards compatibility with version 3.0, the
+"<a href="insert.txt.html#%3Ar" class="d">:r</a>" form <a href="motion.txt.html#is" class="d">is</a> preferred.  Examples: 
+<span class="e"></span>
+<span class="e">        %               current file name</span>
+<span class="e">        %&lt;              current file name without extension</span>
+<span class="e">        #               alternate file name for current window</span>
+<span class="e">        #&lt;              idem, without extension</span>
+<span class="e">        #31             alternate file number 31</span>
+<span class="e">        #31&lt;            idem, without extension</span>
+<span class="e">        &lt;cword&gt;         word under the cursor</span>
+<span class="e">        &lt;cWORD&gt;         WORD under the cursor (see |WORD|)</span>
+<span class="e">        &lt;cfile&gt;         path name under the cursor</span>
+<span class="e">        &lt;cfile&gt;&lt;        idem, without extension</span>
+<span class="e"></span>
+<span class="n">Note:</span> Where <a href="insert.txt.html#a" class="d">a</a> file name <a href="motion.txt.html#is" class="d">is</a> expected <a href="editing.txt.html#wildcards" class="d">wildcards</a> expansion <a href="motion.txt.html#is" class="d">is</a> done.  On <a href="os_unix.txt.html#Unix" class="d">Unix</a> the
+shell <a href="motion.txt.html#is" class="d">is</a> used for this, unless <a href="motion.txt.html#it" class="d">it</a> can be done internally (for speed).
+Unless in <a href="starting.txt.html#restricted-mode" class="l">restricted-mode</a><a href="motion.txt.html#%2C" class="d">,</a> backticks work also, like in 
+<span class="e">        :n `echo *.c`</span>
+But expansion <a href="motion.txt.html#is" class="d">is</a> only done if there are any <a href="editing.txt.html#wildcards" class="d">wildcards</a> before expanding the
+'%', '#', etc..  This avoids expanding <a href="editing.txt.html#wildcards" class="d">wildcards</a> inside <a href="insert.txt.html#a" class="d">a</a> file name.  If you
+want to expand the result of <a href="#%3Ccfile%3E" class="s">&lt;cfile&gt;</a>, add <a href="insert.txt.html#a" class="d">a</a> <a href="editing.txt.html#wildcard" class="d">wildcard</a> character to it.
+Examples: (alternate file name <a href="motion.txt.html#is" class="d">is</a> "?readme?"<a href="motion.txt.html#%29" class="d">)</a>
+<span class="h">        command         expands to  </span>
+        <a href="editing.txt.html#%3Ae" class="d">:e</a> <a href="pattern.txt.html#%23" class="d">#</a>            <a href="editing.txt.html#%3Ae" class="d">:e</a> ?readme?
+        <a href="editing.txt.html#%3Ae" class="d">:e</a> `ls #`       <a href="editing.txt.html#%3Ae" class="d">:e</a> <span class="s">{files matching "?readme?"}</span>
+        <a href="editing.txt.html#%3Ae" class="d">:e</a> #.*          <a href="editing.txt.html#%3Ae" class="d">:e</a> <span class="s">{files matching "?readme?.*"}</span>
+        <a href="editing.txt.html#%3Acd" class="d">:cd</a> <a href="#%3Ccfile%3E" class="s">&lt;cfile&gt;</a>     <a href="editing.txt.html#%3Acd" class="d">:cd</a> <span class="s">{file name under cursor}</span>
+        <a href="editing.txt.html#%3Acd" class="d">:cd</a> <a href="#%3Ccfile%3E" class="s">&lt;cfile&gt;</a>*    <a href="editing.txt.html#%3Acd" class="d">:cd</a> <span class="s">{file name under cursor plus "*" and then expanded}</span>
+Also see <a href="editing.txt.html#%60%3D" class="l">`=</a><a href="repeat.txt.html#." class="d">.</a>
+
+When the expanded argument contains <a href="insert.txt.html#a" class="d">a</a> "<a href="change.txt.html#%21" class="d">!</a>" and <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> used for <a href="insert.txt.html#a" class="d">a</a> shell command
+<a href="motion.txt.html#%28" class="d">(</a>"<a href="various.txt.html#%3A%21cmd" class="d">:!cmd</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="insert.txt.html#%3Ar" class="d">:r</a> !cmd" or "<a href="editing.txt.html#%3Aw" class="d">:w</a> !cmd"), the "<a href="change.txt.html#%21" class="d">!</a>" <a href="motion.txt.html#is" class="d">is</a> escaped with <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#backslash" class="d">backslash</a> to
+avoid <a href="motion.txt.html#it" class="d">it</a> being expanded into <a href="insert.txt.html#a" class="d">a</a> previously used command.  When the <a href="options.txt.html#%27shell%27" class="o">'shell'</a>
+option contains "sh"<a href="motion.txt.html#%2C" class="d">,</a> this <a href="motion.txt.html#is" class="d">is</a> done twice, to avoid the shell trying to expand
+the "<a href="change.txt.html#%21" class="d">!</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="filename-backslash" class="t">filename-backslash</a>
+For filesystems that use <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#backslash" class="d">backslash</a> <a href="motion.txt.html#as" class="d">as</a> directory separator (MS-DOS, Windows,
+OS/2), it's <a href="insert.txt.html#a" class="d">a</a> bit difficult to recognize <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#backslash" class="d">backslash</a> that <a href="motion.txt.html#is" class="d">is</a> used to <a href="intro.txt.html#escape" class="d">escape</a>
+the special meaning of the next character.  The general rule is: If the
+<a href="intro.txt.html#backslash" class="d">backslash</a> <a href="motion.txt.html#is" class="d">is</a> followed by <a href="insert.txt.html#a" class="d">a</a> normal file name character, <a href="motion.txt.html#it" class="d">it</a> does not have <a href="insert.txt.html#a" class="d">a</a>
+special meaning.  Therefore "\file\foo" <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> valid file name, you don't have
+to type the <a href="intro.txt.html#backslash" class="d">backslash</a> twice.
+
+An exception <a href="motion.txt.html#is" class="d">is</a> the '$' sign.  It <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> valid character in <a href="insert.txt.html#a" class="d">a</a> file name.  But
+to avoid <a href="insert.txt.html#a" class="d">a</a> file name like "$home" to be interpreted <a href="motion.txt.html#as" class="d">as</a> an environment variable,
+<a href="motion.txt.html#it" class="d">it</a> needs to be preceded by <a href="insert.txt.html#a" class="d">a</a> backslash.  Therefore you need to use "/\$home"
+for the file "$home" in the root directory.  <a href="insert.txt.html#A" class="d">A</a> few examples:
+
+<span class="h">        FILE NAME       INTERPRETED AS  </span>
+        $home           expanded to value of environment var $home
+        \$home          file "$home" in current directory
+        /\$home         file "$home" in root directory
+        \\$home         file "\\"<a href="motion.txt.html#%2C" class="d">,</a> followed by expanded $home
+
+Also see <a href="editing.txt.html#%60%3D" class="l">`=</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+7. <a href="#Command-line" class="d">Command-line</a> <a href="windows.txt.html#window" class="d">window</a>                          <a name="cmdline-window" class="t">cmdline-window</a> <a name="cmdwin" class="t">cmdwin</a>
+                                                        <a name="command-line-window" class="t">command-line-window</a>
+In the command-line <a href="windows.txt.html#window" class="d">window</a> the command line can be edited just like editing
+text in any window.  It <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> special kind of window, because you cannot leave
+<a href="motion.txt.html#it" class="d">it</a> in <a href="insert.txt.html#a" class="d">a</a> normal way.
+{not available when compiled without the <a href="various.txt.html#%2Bcmdline_hist" class="l">+cmdline_hist</a> or <a href="various.txt.html#%2Bvertsplit" class="l">+vertsplit</a>
+feature}
+
+
+<span class="c">OPEN                                           </span> <a name="c_CTRL-F" class="t">c_CTRL-F</a> <a name="q%3A" class="t">q:</a> <a name="q%2F" class="t">q/</a> <a name="q%3F" class="t">q?</a>
+
+There are two ways to open the command-line window:
+1. From <a href="#Command-line" class="d">Command-line</a> mode, use the key specified with the <a href="options.txt.html#%27cedit%27" class="o">'cedit'</a> option.
+   The default <a href="motion.txt.html#is" class="d">is</a> <a href="scroll.txt.html#CTRL-F" class="k">CTRL-F</a> when <a href="options.txt.html#%27compatible%27" class="o">'compatible'</a> <a href="motion.txt.html#is" class="d">is</a> not set.
+2. From <a href="intro.txt.html#Normal" class="d">Normal</a> mode, use the "<a href="#q%3A" class="d">q:</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="#q%2F" class="d">q/</a>" or "<a href="#q%3F" class="d">q?</a>" command.
+   This starts editing an <a href="intro.txt.html#Ex" class="d">Ex</a> command-line <a href="motion.txt.html#%28" class="d">(</a>"<a href="#q%3A" class="d">q:</a>"<a href="motion.txt.html#%29" class="d">)</a> or search <a href="eval.txt.html#string" class="d">string</a> <a href="motion.txt.html#%28" class="d">(</a>"<a href="#q%2F" class="d">q/</a>" or
+   "<a href="#q%3F" class="d">q?</a>").  <span class="n">Note</span> that this <a href="motion.txt.html#is" class="d">is</a> not possible while <a href="repeat.txt.html#recording" class="d">recording</a> <a href="motion.txt.html#is" class="d">is</a> in progress (the
+   "<a href="repeat.txt.html#q" class="d">q</a>" stops <a href="repeat.txt.html#recording" class="d">recording</a> then).
+
+When the <a href="windows.txt.html#window" class="d">window</a> opens <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> filled with the command-line history.  The last
+line contains the command <a href="motion.txt.html#as" class="d">as</a> typed so far.  The left column will show <a href="insert.txt.html#a" class="d">a</a>
+character that indicates the type of command-line being edited, see
+<a href="#cmdwin-char" class="l">cmdwin-char</a><a href="repeat.txt.html#." class="d">.</a>
+
+Vim will be in <a href="intro.txt.html#Normal" class="d">Normal</a> mode when the editor <a href="motion.txt.html#is" class="d">is</a> opened, except when <a href="options.txt.html#%27insertmode%27" class="o">'insertmode'</a>
+<a href="motion.txt.html#is" class="d">is</a> set.
+
+The height of the <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> specified with <a href="options.txt.html#%27cmdwinheight%27" class="o">'cmdwinheight'</a> (or smaller if there
+<a href="motion.txt.html#is" class="d">is</a> no room).  The <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> always full width and <a href="motion.txt.html#is" class="d">is</a> positioned just above the
+command-line.
+
+
+EDIT
+
+You can now use commands to move around and edit the text in the window.  Both
+in <a href="intro.txt.html#Normal" class="d">Normal</a> mode and <a href="insert.txt.html#Insert" class="d">Insert</a> mode.
+
+It <a href="motion.txt.html#is" class="d">is</a> possible to use "<a href="#%3A" class="d">:</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="pattern.txt.html#%2F" class="d">/</a>" and other commands that use the command-line,
+but it's not possible to open another command-line <a href="windows.txt.html#window" class="d">window</a> then.  There <a href="motion.txt.html#is" class="d">is</a> no
+nesting.
+                                                        <a name="E11" class="t">E11</a>
+The command-line <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> not <a href="insert.txt.html#a" class="d">a</a> normal window.  It <a href="motion.txt.html#is" class="d">is</a> not possible to move to
+another <a href="windows.txt.html#window" class="d">window</a> or edit another buffer.  All commands that would <a href="diff.txt.html#do" class="d">do</a> this are
+disabled in the command-line window.  Of course <a href="motion.txt.html#it" class="d">it</a> _is_ possible to execute
+any command that you entered in the command-line window.  Other text edits are
+discarded when closing the window.
+
+
+<span class="c">CLOSE                                                  </span> <a name="E199" class="t">E199</a>
+
+There are several ways to leave the command-line window:
+
+<a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a>            Execute the command-line under the cursor.  Works both in
+                <a href="insert.txt.html#Insert" class="d">Insert</a> and in <a href="intro.txt.html#Normal" class="d">Normal</a> mode.
+<a href="pattern.txt.html#CTRL-C" class="k">CTRL-C</a>          Continue in <a href="#Command-line" class="d">Command-line</a> mode.  The command-line under the
+                cursor <a href="motion.txt.html#is" class="d">is</a> used <a href="motion.txt.html#as" class="d">as</a> the command-line.  Works both in <a href="insert.txt.html#Insert" class="d">Insert</a> and
+                in <a href="intro.txt.html#Normal" class="d">Normal</a> mode.  There <a href="motion.txt.html#is" class="d">is</a> no redraw, thus the <a href="windows.txt.html#window" class="d">window</a> will
+                remain visible.
+<a href="editing.txt.html#%3Aquit" class="d">:quit</a>           Discard the command line and <a href="motion.txt.html#go" class="d">go</a> back to <a href="intro.txt.html#Normal" class="d">Normal</a> mode.
+                "<a href="windows.txt.html#%3Aclose" class="d">:close</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="editing.txt.html#%3Aexit" class="d">:exit</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="editing.txt.html#%3Axit" class="d">:xit</a>" and <span class="k">CTRL-\</span> <a href="motion.txt.html#CTRL-N" class="k">CTRL-N</a> also work.
+<a href="editing.txt.html#%3Aqall" class="d">:qall</a>           Quit Vim, unless there are changes in some buffer.
+:qall!          Quit Vim, discarding changes to any buffer.
+
+Once the command-line <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> closed the old <a href="windows.txt.html#window" class="d">window</a> sizes are restored.  The
+executed command applies to the <a href="windows.txt.html#window" class="d">window</a> and buffer where the command-line was
+started from.  This works <a href="motion.txt.html#as" class="d">as</a> if the command-line <a href="windows.txt.html#window" class="d">window</a> was not there, except
+that there will be an extra screen redraw.
+The buffer used for the command-line <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> deleted.  Any changes to lines
+other than the one that <a href="motion.txt.html#is" class="d">is</a> executed with <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a> are lost.
+
+If you would like to execute the command under the cursor and then have the
+command-line <a href="windows.txt.html#window" class="d">window</a> open again, you may find this <a href="map.txt.html#mapping" class="d">mapping</a> useful: 
+<span class="e"></span>
+<span class="e">        :autocmd CmdwinEnter * map &lt;buffer&gt; &lt;F5&gt; &lt;CR&gt;q:</span>
+<span class="e"></span>
+<span class="e"></span>
+VARIOUS
+
+The command-line <a href="windows.txt.html#window" class="d">window</a> cannot be used:
+<a href="motion.txt.html#-" class="d">-</a> when there already <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> command-line <a href="windows.txt.html#window" class="d">window</a> (no nesting)
+<a href="motion.txt.html#-" class="d">-</a> for entering an <a href="editing.txt.html#encryption" class="d">encryption</a> key or when using <a href="eval.txt.html#inputsecret%28%29" class="d">inputsecret()</a>
+<a href="motion.txt.html#-" class="d">-</a> when Vim was not compiled with the <a href="various.txt.html#%2Bvertsplit" class="l">+vertsplit</a> feature
+
+Some <a href="options.txt.html#options" class="d">options</a> are set when the command-line <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> opened:
+<a href="options.txt.html#%27filetype%27" class="o">'filetype'</a>      "vim"<a href="motion.txt.html#%2C" class="d">,</a> when editing an <a href="intro.txt.html#Ex" class="d">Ex</a> command-line; this starts Vim <a href="syntax.txt.html#syntax" class="d">syntax</a>
+                highlighting if <a href="motion.txt.html#it" class="d">it</a> was enabled
+<a href="options.txt.html#%27rightleft%27" class="o">'rightleft'</a>     off
+<a href="options.txt.html#%27modifiable%27" class="o">'modifiable'</a>    on
+<a href="options.txt.html#%27buftype%27" class="o">'buftype'</a>       "nofile"
+<a href="options.txt.html#%27swapfile%27" class="o">'swapfile'</a>      off
+
+It <a href="motion.txt.html#is" class="d">is</a> allowed to write the buffer contents to <a href="insert.txt.html#a" class="d">a</a> file.  This <a href="motion.txt.html#is" class="d">is</a> an <a href="starting.txt.html#easy" class="d">easy</a> way to
+save the command-line <a href="#history" class="d">history</a> and read <a href="motion.txt.html#it" class="d">it</a> back later.
+
+If the <a href="options.txt.html#%27wildchar%27" class="o">'wildchar'</a> option <a href="motion.txt.html#is" class="d">is</a> set to <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a>, and the command-line <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> used
+for an <a href="intro.txt.html#Ex" class="d">Ex</a> command, then two mappings will be added to use <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a> for completion
+in the command-line window, like this: 
+<span class="e">        :imap &lt;buffer&gt; &lt;Tab&gt; &lt;C-X&gt;&lt;C-V&gt;</span>
+<span class="e">        :nmap &lt;buffer&gt; &lt;Tab&gt; a&lt;C-X&gt;&lt;C-V&gt;</span>
+<span class="n">Note</span> that hitting <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a> in <a href="intro.txt.html#Normal" class="d">Normal</a> mode will <a href="diff.txt.html#do" class="d">do</a> completion on the next
+character.  That way <a href="motion.txt.html#it" class="d">it</a> works <a href="motion.txt.html#at" class="d">at</a> the <a href="intro.txt.html#end" class="d">end</a> of the line.
+If you don't want these mappings, disable them with: 
+<span class="e">        au CmdwinEnter [:&gt;] iunmap &lt;Tab&gt;</span>
+<span class="e">        au CmdwinEnter [:&gt;] nunmap &lt;Tab&gt;</span>
+You could <a href="change.txt.html#put" class="d">put</a> these lines in your <a href="starting.txt.html#vimrc" class="d">vimrc</a> file.
+
+While in the command-line <a href="windows.txt.html#window" class="d">window</a> you cannot use the mouse to <a href="change.txt.html#put" class="d">put</a> the cursor in
+another window, or drag statuslines of other windows.  You can drag the
+statusline of the command-line <a href="windows.txt.html#window" class="d">window</a> itself and the statusline above it.
+Thus you can resize the command-line window, but not others.
+
+The <a href="eval.txt.html#getcmdwintype%28%29" class="l">getcmdwintype()</a> function returns the type of the command-line being
+edited <a href="motion.txt.html#as" class="d">as</a> described in <a href="#cmdwin-char" class="l">cmdwin-char</a><a href="repeat.txt.html#." class="d">.</a>
+
+
+AUTOCOMMANDS
+
+Two <a href="autocmd.txt.html#autocommand" class="d">autocommand</a> events are used: <a href="autocmd.txt.html#CmdwinEnter" class="l">CmdwinEnter</a> and <a href="autocmd.txt.html#CmdwinLeave" class="l">CmdwinLeave</a><a href="repeat.txt.html#." class="d">.</a>  Since this
+<a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> of <a href="insert.txt.html#a" class="d">a</a> special type, the WinEnter, WinLeave, <a href="autocmd.txt.html#BufEnter" class="d">BufEnter</a> and <a href="autocmd.txt.html#BufLeave" class="d">BufLeave</a>
+events are not triggered.  You can use the Cmdwin events to <a href="diff.txt.html#do" class="d">do</a> settings
+specifically for the command-line window.  Be careful not to cause side
+effects!
+Example: 
+<span class="e">        :au CmdwinEnter :  let b:cpt_save = &amp;cpt | set cpt=.</span>
+<span class="e">        :au CmdwinLeave :  let &amp;cpt = b:cpt_save</span>
+This sets <a href="options.txt.html#%27complete%27" class="o">'complete'</a> to use completion in the current <a href="windows.txt.html#window" class="d">window</a> for <a href="insert.txt.html#i_CTRL-N" class="l">i_CTRL-N</a><a href="repeat.txt.html#." class="d">.</a>
+Another example: 
+<span class="e">        :au CmdwinEnter [/?]  startinsert</span>
+This will make Vim start in <a href="insert.txt.html#Insert" class="d">Insert</a> mode in the command-line window.
+
+                                                <a name="cmdwin-char" class="t">cmdwin-char</a>
+The character used for the <a href="pattern.txt.html#pattern" class="d">pattern</a> indicates the type of command-line:
+        <a href="#%3A" class="d">:</a>       normal <a href="intro.txt.html#Ex" class="d">Ex</a> command
+        <a href="change.txt.html#%3E" class="d">&gt;</a>       debug mode command <a href="repeat.txt.html#debug-mode" class="l">debug-mode</a>
+        <a href="pattern.txt.html#%2F" class="d">/</a>       forward search <a href="eval.txt.html#string" class="d">string</a>
+        <a href="pattern.txt.html#%3F" class="d">?</a>       backward search <a href="eval.txt.html#string" class="d">string</a>
+        <a href="change.txt.html#%3D" class="d">=</a>       <a href="eval.txt.html#expression" class="d">expression</a> for "<a href="change.txt.html#%3D" class="d">=</a> <a href="eval.txt.html#expr-register" class="l">expr-register</a>
+        <a href="repeat.txt.html#%40" class="d">@</a>       <a href="eval.txt.html#string" class="d">string</a> for <a href="eval.txt.html#input%28%29" class="l">input()</a>
+        <a href="motion.txt.html#-" class="d">-</a>       text for <a href="insert.txt.html#%3Ainsert" class="l">:insert</a> or <a href="insert.txt.html#%3Aappend" class="l">:append</a>
+
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

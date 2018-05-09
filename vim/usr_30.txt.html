@@ -1,0 +1,657 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: usr_30.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="usr_30.txt" class="t">usr_30.txt</a>    For <span class="i">Vim version 8.0.</span>  Last change: 2007 Nov 10
+
+                     VIM USER MANUAL <a href="motion.txt.html#-" class="d">-</a> by <a href="intro.txt.html#Bram" class="d">Bram</a> <a href="intro.txt.html#Moolenaar" class="d">Moolenaar</a>
+
+                              Editing programs
+
+
+Vim has <a href="various.txt.html#various" class="d">various</a> commands that aid in <a href="editing.txt.html#writing" class="d">writing</a> computer programs.  Compile <a href="insert.txt.html#a" class="d">a</a>
+program and directly jump to reported errors.  Automatically set the indent
+for many languages and format comments.
+
+<a href="#30.1" class="l">30.1</a>  Compiling
+<a href="#30.2" class="l">30.2</a>  Indenting <a href="change.txt.html#C" class="d">C</a> files
+<a href="#30.3" class="l">30.3</a>  Automatic indenting
+<a href="#30.4" class="l">30.4</a>  Other indenting
+<a href="#30.5" class="l">30.5</a>  Tabs and spaces
+<a href="#30.6" class="l">30.6</a>  Formatting comments
+
+     Next chapter: <a href="usr_31.txt.html#usr_31.txt" class="l">usr_31.txt</a>  Exploiting the <a href="gui.txt.html#GUI" class="d">GUI</a>
+ Previous chapter: <a href="usr_29.txt.html#usr_29.txt" class="l">usr_29.txt</a>  Moving through programs
+Table of contents: <a href="usr_toc.txt.html#usr_toc.txt" class="l">usr_toc.txt</a>
+
+<span class="h">==============================================================================</span>
+<a name="30.1" class="t">30.1</a>  Compiling
+
+Vim has <a href="insert.txt.html#a" class="d">a</a> set of so called "<a href="quickfix.txt.html#quickfix" class="d">quickfix</a>" commands.  They enable you to compile <a href="insert.txt.html#a" class="d">a</a>
+program from within Vim and then <a href="motion.txt.html#go" class="d">go</a> through the <a href="message.txt.html#errors" class="d">errors</a> generated and fix them
+(hopefully).  You can then recompile and fix any new <a href="message.txt.html#errors" class="d">errors</a> that are found
+until finally your program compiles without any error.
+
+The following command runs the program "make" (supplying <a href="motion.txt.html#it" class="d">it</a> with any argument
+you give) and captures the results: 
+<span class="e"></span>
+<span class="e">        :make {arguments}</span>
+<span class="e"></span>
+If <a href="message.txt.html#errors" class="d">errors</a> were generated, they are captured and the editor positions you where
+the first error occurred.
+   Take <a href="insert.txt.html#a" class="d">a</a> look <a href="motion.txt.html#at" class="d">at</a> an example "<a href="quickfix.txt.html#%3Amake" class="d">:make</a>" session.  (Typical <a href="quickfix.txt.html#%3Amake" class="d">:make</a> sessions generate
+far more <a href="message.txt.html#errors" class="d">errors</a> and fewer stupid ones.)  After typing "<a href="quickfix.txt.html#%3Amake" class="d">:make</a>" the screen looks
+like this:
+
+<span class="h">        :!make | &amp;tee /tmp/vim215953.err </span>
+<span class="h">        gcc -g -Wall -o prog main.c sub.c </span>
+<span class="h">        main.c: In function 'main': </span>
+<span class="h">        main.c:6: too many arguments to function 'do_sub' </span>
+<span class="h">        main.c: At top level: </span>
+<span class="h">        main.c:10: parse error before '}' </span>
+<span class="h">        make: *** [prog] Error 1 </span>
+
+<span class="h">        2 returned </span>
+<span class="h">        "main.c" 11L, 111C </span>
+<span class="h">        (3 of 6): too many arguments to function 'do_sub' </span>
+<span class="h">        Press ENTER or type command to continue </span>
+
+From this you can see that you have <a href="message.txt.html#errors" class="d">errors</a> in the file "main.c"<a href="repeat.txt.html#." class="d">.</a>  When you
+press <a href="intro.txt.html#%3CEnter%3E" class="s">&lt;Enter&gt;</a>, Vim displays the file "main.c"<a href="motion.txt.html#%2C" class="d">,</a> with the cursor positioned on
+line 6, the first line with an error.  You did not need to specify the file or
+the line number, Vim knew where to <a href="motion.txt.html#go" class="d">go</a> by looking in the error messages.
+
+                +---------------------------------------------------+
+                |int main()                                         |
+                |<a href="motion.txt.html#%7B" class="d">{</a>                                                  |
+                |       int i=3;                                    |
+      cursor -&gt; |       do_sub("foo");                              |
+                |       ++i;                                        |
+                |       return (0);                                 |
+                |<a href="motion.txt.html#%7D" class="d">}</a>                                                  |
+                |<a href="motion.txt.html#%7D" class="d">}</a>                                                  |
+                | <a href="change.txt.html#%7E" class="d">~</a>                                                 |
+                |(3 of 12): too many arguments to function 'do_sub' |
+                +---------------------------------------------------+
+
+The following command goes to where the next error occurs: 
+<span class="e"></span>
+<span class="e">        :cnext</span>
+<span class="e"></span>
+Vim jumps to line 10, the last line in the file, where there <a href="motion.txt.html#is" class="d">is</a> an extra '}'.
+   When there <a href="motion.txt.html#is" class="d">is</a> not enough room, Vim will shorten the error message.  To see
+the whole message use: 
+<span class="e"></span>
+<span class="e">        :cc</span>
+<span class="e"></span>
+You can get an overview of all the error <a href="message.txt.html#messages" class="d">messages</a> with the "<a href="quickfix.txt.html#%3Aclist" class="d">:clist</a>" command.
+The output looks like this: 
+<span class="e"></span>
+<span class="e">        :clist</span>
+<span class="h">       3 main.c: 6:too many arguments to function 'do_sub' </span>
+<span class="h">        5 main.c: 10:parse error before '}' </span>
+
+Only the lines where Vim recognized <a href="insert.txt.html#a" class="d">a</a> file name and line number are listed
+here.  It assumes those are the interesting lines and the rest <a href="motion.txt.html#is" class="d">is</a> just boring
+messages.  However, sometimes unrecognized lines <a href="diff.txt.html#do" class="d">do</a> contain something you want
+to see.  Output from the linker, for example, about an undefined function.
+To see all the <a href="message.txt.html#messages" class="d">messages</a> add <a href="insert.txt.html#a" class="d">a</a> "<a href="change.txt.html#%21" class="d">!</a>" to the command: 
+<span class="e"></span>
+<span class="e">        :clist!</span>
+<span class="h">       1 gcc -g -Wall -o prog main.c sub.c </span>
+<span class="h">        2 main.c: In function 'main': </span>
+<span class="h">        3 main.c:6: too many arguments to function 'do_sub' </span>
+<span class="h">        4 main.c: At top level: </span>
+<span class="h">        5 main.c:10: parse error before '}' </span>
+<span class="h">        6 make: *** [prog] Error 1 </span>
+
+Vim will highlight the current error.  To <a href="motion.txt.html#go" class="d">go</a> back to the previous error, use:
+
+<span class="e">        :cprevious</span>
+<span class="e"></span>
+Other commands to move around in the error list:
+
+        <a href="quickfix.txt.html#%3Acfirst" class="d">:cfirst</a>         to first error
+        <a href="quickfix.txt.html#%3Aclast" class="d">:clast</a>          to last error
+        <a href="quickfix.txt.html#%3Acc" class="d">:cc</a> 3           to error nr 3
+
+
+USING ANOTHER COMPILER
+
+The name of the program to run when the "<a href="quickfix.txt.html#%3Amake" class="d">:make</a>" command <a href="motion.txt.html#is" class="d">is</a> executed <a href="motion.txt.html#is" class="d">is</a> defined
+by the <a href="options.txt.html#%27makeprg%27" class="o">'makeprg'</a> option.  Usually this <a href="motion.txt.html#is" class="d">is</a> set to "make"<a href="motion.txt.html#%2C" class="d">,</a> but <a href="visual.txt.html#Visual" class="d">Visual</a> C++ users
+should set this to "nmake" by executing the following command: 
+<span class="e"></span>
+<span class="e">        :set makeprg=nmake</span>
+<span class="e"></span>
+You can also include arguments in this option.  <a href="eval.txt.html#Special" class="d">Special</a> characters need to
+be escaped with <a href="insert.txt.html#a" class="d">a</a> backslash.  Example: 
+<span class="e"></span>
+<span class="e">        :set makeprg=nmake\ -f\ project.mak</span>
+<span class="e"></span>
+You can include special Vim keywords in the command specification.  The <a href="motion.txt.html#%25" class="d">%</a>
+character expands to the name of the current file.  So if you execute the
+command: 
+<span class="e">        :set makeprg=make\ %:S</span>
+<span class="e"></span>
+When you are editing main.c, then "<a href="quickfix.txt.html#%3Amake" class="d">:make</a>" executes the following command: 
+<span class="e"></span>
+<span class="e">        make main.c</span>
+<span class="e"></span>
+This <a href="motion.txt.html#is" class="d">is</a> not too useful, so you will refine the command <a href="insert.txt.html#a" class="d">a</a> little and use the <a href="insert.txt.html#%3Ar" class="d">:r</a>
+(root) modifier: 
+<span class="e"></span>
+<span class="e">        :set makeprg=make\ %:r:S.o</span>
+<span class="e"></span>
+Now the command executed <a href="motion.txt.html#is" class="d">is</a> <a href="motion.txt.html#as" class="d">as</a> follows: 
+<span class="e"></span>
+<span class="e">        make main.o</span>
+<span class="e"></span>
+More about these modifiers here: <a href="cmdline.txt.html#filename-modifiers" class="l">filename-modifiers</a><a href="repeat.txt.html#." class="d">.</a>
+
+
+OLD ERROR LISTS
+
+Suppose you "<a href="quickfix.txt.html#%3Amake" class="d">:make</a>" <a href="insert.txt.html#a" class="d">a</a> program.  There <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> warning message in one file and an
+error message in another.  You fix the error and use "<a href="quickfix.txt.html#%3Amake" class="d">:make</a>" again to check if
+<a href="motion.txt.html#it" class="d">it</a> was really fixed.  Now you want to look <a href="motion.txt.html#at" class="d">at</a> the warning message.  It doesn't
+show up in the last error list, since the file with the warning wasn't
+compiled again.  You can <a href="motion.txt.html#go" class="d">go</a> back to the previous error <a href="eval.txt.html#list" class="d">list</a> with: 
+<span class="e"></span>
+<span class="e">        :colder</span>
+<span class="e"></span>
+Then use "<a href="quickfix.txt.html#%3Aclist" class="d">:clist</a>" and "<a href="quickfix.txt.html#%3Acc" class="d">:cc</a> <span class="s">{nr}</span>" to jump to the place with the warning.
+   To <a href="motion.txt.html#go" class="d">go</a> forward to the next error list: 
+<span class="e"></span>
+<span class="e">        :cnewer</span>
+<span class="e"></span>
+Vim remembers ten error lists.
+
+
+SWITCHING COMPILERS
+
+You have to tell Vim what format the error <a href="message.txt.html#messages" class="d">messages</a> are that your compiler
+produces.  This <a href="motion.txt.html#is" class="d">is</a> done with the <a href="options.txt.html#%27errorformat%27" class="o">'errorformat'</a> option.  The <a href="syntax.txt.html#syntax" class="d">syntax</a> of this
+option <a href="motion.txt.html#is" class="d">is</a> quite complicated and <a href="motion.txt.html#it" class="d">it</a> can be made to fit almost any compiler.
+You can find the explanation here: <a href="quickfix.txt.html#errorformat" class="l">errorformat</a><a href="repeat.txt.html#." class="d">.</a>
+
+You might be using <a href="various.txt.html#various" class="d">various</a> different compilers.  Setting the <a href="options.txt.html#%27makeprg%27" class="o">'makeprg'</a> option,
+and especially the <a href="options.txt.html#%27errorformat%27" class="o">'errorformat'</a> each time <a href="motion.txt.html#is" class="d">is</a> not easy.  Vim offers <a href="insert.txt.html#a" class="d">a</a> simple
+method for this.  For example, to switch to using the Microsoft <a href="visual.txt.html#Visual" class="d">Visual</a> C++
+compiler: 
+<span class="e"></span>
+<span class="e">        :compiler msvc</span>
+<span class="e"></span>
+This will find the Vim <a href="usr_41.txt.html#script" class="d">script</a> for the "msvc" compiler and set the appropriate
+options.
+   You can write your own compiler files.  See <a href="usr_41.txt.html#write-compiler-plugin" class="l">write-compiler-plugin</a><a href="repeat.txt.html#." class="d">.</a>
+
+
+OUTPUT REDIRECTION
+
+The "<a href="quickfix.txt.html#%3Amake" class="d">:make</a>" command redirects the output of the executed program to an error
+file.  How this works depends on <a href="various.txt.html#various" class="d">various</a> things, such <a href="motion.txt.html#as" class="d">as</a> the <a href="options.txt.html#%27shell%27" class="o">'shell'</a>.  If your
+"<a href="quickfix.txt.html#%3Amake" class="d">:make</a>" command doesn't capture the output, check the <a href="options.txt.html#%27makeef%27" class="o">'makeef'</a> and
+<a href="options.txt.html#%27shellpipe%27" class="o">'shellpipe'</a> options.  The <a href="options.txt.html#%27shellquote%27" class="o">'shellquote'</a> and <a href="options.txt.html#%27shellxquote%27" class="o">'shellxquote'</a> <a href="options.txt.html#options" class="d">options</a> might also
+matter.
+
+In <a href="change.txt.html#case" class="d">case</a> you can't get "<a href="quickfix.txt.html#%3Amake" class="d">:make</a>" to redirect the file for you, an alternative <a href="motion.txt.html#is" class="d">is</a>
+to compile the program in another <a href="windows.txt.html#window" class="d">window</a> and redirect the output into <a href="insert.txt.html#a" class="d">a</a> file.
+Then have Vim read this file with: 
+<span class="e"></span>
+<span class="e">        :cfile {filename}</span>
+<span class="e"></span>
+Jumping to <a href="message.txt.html#errors" class="d">errors</a> will work like with the "<a href="quickfix.txt.html#%3Amake" class="d">:make</a>" command.
+
+<span class="h">==============================================================================</span>
+<a name="30.2" class="t">30.2</a>  Indenting <a href="change.txt.html#C" class="d">C</a> style text
+
+<a href="insert.txt.html#A" class="d">A</a> program <a href="motion.txt.html#is" class="d">is</a> much easier to understand when the lines have been properly
+indented.  Vim offers <a href="various.txt.html#various" class="d">various</a> ways to make this <a href="various.txt.html#less" class="d">less</a> work.  For <a href="change.txt.html#C" class="d">C</a> or <a href="change.txt.html#C" class="d">C</a> style
+programs like Java or C++, set the <a href="options.txt.html#%27cindent%27" class="o">'cindent'</a> option.  Vim knows <a href="insert.txt.html#a" class="d">a</a> lot about <a href="change.txt.html#C" class="d">C</a>
+programs and will try very hard to automatically set the indent for you.  Set
+the <a href="options.txt.html#%27shiftwidth%27" class="o">'shiftwidth'</a> option to the amount of spaces you want for <a href="insert.txt.html#a" class="d">a</a> deeper level.
+Four spaces will work fine.  One "<a href="options.txt.html#%3Aset" class="d">:set</a>" command will <a href="diff.txt.html#do" class="d">do</a> it: 
+<span class="e"></span>
+<span class="e">        :set cindent shiftwidth=4</span>
+<span class="e"></span>
+With this option enabled, when you type something such <a href="motion.txt.html#as" class="d">as</a> "if (x)"<a href="motion.txt.html#%2C" class="d">,</a> the next
+line will automatically be indented an additional level.
+
+                                    if (flag)
+        Automatic indent   ---&gt;         do_the_work();
+        Automatic unindent &lt;--      if (other_flag) <a href="motion.txt.html#%7B" class="d">{</a>
+        Automatic indent   ---&gt;         do_file();
+        keep indent                     do_some_more();
+        Automatic unindent &lt;--      <a href="motion.txt.html#%7D" class="d">}</a>
+
+When you type something in curly braces ({}), the text will be indented <a href="motion.txt.html#at" class="d">at</a> the
+start and unindented <a href="motion.txt.html#at" class="d">at</a> the end.  The unindenting will happen after typing the
+'}', since Vim can't guess what you are going to type.
+
+One side effect of automatic indentation <a href="motion.txt.html#is" class="d">is</a> that <a href="motion.txt.html#it" class="d">it</a> helps you catch <a href="message.txt.html#errors" class="d">errors</a> in
+your code early.  When you type <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%7D" class="d">}</a> to finish <a href="insert.txt.html#a" class="d">a</a> function, only to find that
+the automatic indentation gives <a href="motion.txt.html#it" class="d">it</a> more indent than what you expected, there
+<a href="motion.txt.html#is" class="d">is</a> probably <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%7D" class="d">}</a> missing.  Use the "<a href="motion.txt.html#%25" class="d">%</a>" command to find out which <a href="motion.txt.html#%7B" class="d">{</a> matches the
+<a href="motion.txt.html#%7D" class="d">}</a> you typed.
+   <a href="insert.txt.html#A" class="d">A</a> missing <a href="motion.txt.html#%29" class="d">)</a> and <a href="motion.txt.html#%3B" class="d">;</a> also cause extra indent.  Thus if you get more white
+<a href="intro.txt.html#space" class="d">space</a> than you would expect, check the preceding lines.
+
+When you have code that <a href="motion.txt.html#is" class="d">is</a> badly formatted, or you inserted and deleted lines,
+you need to re-indent the lines.  The "<a href="change.txt.html#%3D" class="d">=</a>" <a href="motion.txt.html#operator" class="d">operator</a> does this.  The simplest
+form is: 
+<span class="e"></span>
+<span class="e">        ==</span>
+<span class="e"></span>
+This indents the current line.  Like with all operators, there are three ways
+to use it.  In <a href="visual.txt.html#Visual" class="d">Visual</a> mode "<a href="change.txt.html#%3D" class="d">=</a>" indents the selected lines.  <a href="insert.txt.html#A" class="d">A</a> useful text
+object <a href="motion.txt.html#is" class="d">is</a> "<a href="motion.txt.html#a%7B" class="d">a{</a>"<a href="repeat.txt.html#." class="d">.</a>  This selects the current <a href="intro.txt.html#%7B%7D" class="d">{}</a> block.  Thus, to re-indent the
+code block the cursor <a href="motion.txt.html#is" class="d">is</a> in: 
+<span class="e"></span>
+<span class="e">        =a{</span>
+<span class="e"></span>
+<a href="insert.txt.html#I" class="d">I</a> you have really badly indented code, you can re-indent the whole file with:
+
+<span class="e">        gg=G</span>
+<span class="e"></span>
+However, don't <a href="diff.txt.html#do" class="d">do</a> this in files that have been carefully indented manually.
+The automatic indenting does <a href="insert.txt.html#a" class="d">a</a> good job, but in some situations you might want
+to overrule it.
+
+
+SETTING INDENT STYLE
+
+Different people have different styles of indentation.  By default Vim does <a href="insert.txt.html#a" class="d">a</a>
+pretty good <a href="channel.txt.html#job" class="d">job</a> of indenting in <a href="insert.txt.html#a" class="d">a</a> way that 90% of programmers do.  There are
+different styles, however; so if you want to, you can customize the
+indentation style with the <a href="options.txt.html#%27cinoptions%27" class="o">'cinoptions'</a> option.
+   By default <a href="options.txt.html#%27cinoptions%27" class="o">'cinoptions'</a> <a href="motion.txt.html#is" class="d">is</a> empty and Vim uses the default style.  You can
+add <a href="various.txt.html#various" class="d">various</a> items where you want something different.  For example, to make
+curly braces be placed like this:
+
+<span class="h">        if (flag) </span>
+<span class="h">          { </span>
+<span class="h">            i = 8; </span>
+<span class="h">            j = 0; </span>
+<span class="h">          } </span>
+
+Use this command: 
+<span class="e"></span>
+<span class="e">        :set cinoptions+={2</span>
+<span class="e"></span>
+There are many of these items.  See <a href="indent.txt.html#cinoptions-values" class="l">cinoptions-values</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+<a name="30.3" class="t">30.3</a>  Automatic indenting
+
+You don't want to switch on the <a href="options.txt.html#%27cindent%27" class="o">'cindent'</a> option manually every time you edit
+<a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#C" class="d">C</a> file.  This <a href="motion.txt.html#is" class="d">is</a> how you make <a href="motion.txt.html#it" class="d">it</a> work automatically: 
+<span class="e"></span>
+<span class="e">        :filetype indent on</span>
+<span class="e"></span>
+Actually, this does <a href="insert.txt.html#a" class="d">a</a> lot more than switching on <a href="options.txt.html#%27cindent%27" class="o">'cindent'</a> for <a href="change.txt.html#C" class="d">C</a> files.  First
+of all, <a href="motion.txt.html#it" class="d">it</a> enables detecting the type of <a href="insert.txt.html#a" class="d">a</a> file.  That's the same <a href="motion.txt.html#as" class="d">as</a> what <a href="motion.txt.html#is" class="d">is</a>
+used for <a href="syntax.txt.html#syntax" class="d">syntax</a> highlighting.
+   When the <a href="filetype.txt.html#filetype" class="d">filetype</a> <a href="motion.txt.html#is" class="d">is</a> known, Vim will search for an indent file for this
+type of file.  The Vim <a href="intro.txt.html#distribution" class="d">distribution</a> includes <a href="insert.txt.html#a" class="d">a</a> number of these for <a href="various.txt.html#various" class="d">various</a>
+programming languages.  This indent file will then prepare for automatic
+indenting specifically for this file.
+
+If you don't like the automatic indenting, you can switch <a href="motion.txt.html#it" class="d">it</a> off again: 
+<span class="e"></span>
+<span class="e">        :filetype indent off</span>
+<span class="e"></span>
+If you don't like the indenting for one specific type of file, this <a href="motion.txt.html#is" class="d">is</a> how you
+avoid it.  Create <a href="insert.txt.html#a" class="d">a</a> file with just this one line: 
+<span class="e"></span>
+<span class="e">        :let b:did_indent = 1</span>
+<span class="e"></span>
+Now you need to write this in <a href="insert.txt.html#a" class="d">a</a> file with <a href="insert.txt.html#a" class="d">a</a> specific name:
+
+        <span class="s">{directory}</span>/indent/<span class="s">{filetype}</span>.vim
+
+The <span class="s">{filetype}</span> <a href="motion.txt.html#is" class="d">is</a> the name of the file type, such <a href="motion.txt.html#as" class="d">as</a> "cpp" or "java"<a href="repeat.txt.html#." class="d">.</a>  You can
+see the exact name that Vim detected with this command: 
+<span class="e"></span>
+<span class="e">        :set filetype</span>
+<span class="e"></span>
+In this file the output is:
+
+<span class="h">        filetype=help </span>
+
+Thus you would use "<a href="helphelp.txt.html#help" class="d">help</a>" for <span class="s">{filetype}</span>.
+   For the <span class="s">{directory}</span> part you need to use your runtime directory.  Look <a href="motion.txt.html#at" class="d">at</a>
+the output of this command: 
+<span class="e"></span>
+<span class="e">        set runtimepath</span>
+<span class="e"></span>
+Now use the first item, the name before the first comma.  Thus if the output
+looks like this:
+
+<span class="h">        runtimepath=~/.vim,/usr/local/share/vim/vim60/runtime,~/.vim/after </span>
+
+You use "~/.vim" for <span class="s">{directory}</span>.  Then the resulting file name is:
+
+<span class="h">        ~/.vim/indent/help.vim </span>
+
+Instead of switching the indenting off, you could write your own indent file.
+How to <a href="diff.txt.html#do" class="d">do</a> that <a href="motion.txt.html#is" class="d">is</a> explained here: <a href="indent.txt.html#indent-expression" class="l">indent-expression</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+<a name="30.4" class="t">30.4</a>  Other indenting
+
+The most simple form of automatic indenting <a href="motion.txt.html#is" class="d">is</a> with the <a href="options.txt.html#%27autoindent%27" class="o">'autoindent'</a> option.
+It uses the indent from the previous line.  <a href="insert.txt.html#A" class="d">A</a> bit smarter <a href="motion.txt.html#is" class="d">is</a> the <a href="options.txt.html#%27smartindent%27" class="o">'smartindent'</a>
+option.  This <a href="motion.txt.html#is" class="d">is</a> useful for languages where no indent file <a href="motion.txt.html#is" class="d">is</a> available.
+<a href="options.txt.html#%27smartindent%27" class="o">'smartindent'</a> <a href="motion.txt.html#is" class="d">is</a> not <a href="motion.txt.html#as" class="d">as</a> smart <a href="motion.txt.html#as" class="d">as</a> <a href="options.txt.html#%27cindent%27" class="o">'cindent'</a>, but smarter than <a href="options.txt.html#%27autoindent%27" class="o">'autoindent'</a>.
+   With <a href="options.txt.html#%27smartindent%27" class="o">'smartindent'</a> set, an extra level of indentation <a href="motion.txt.html#is" class="d">is</a> added for each <a href="motion.txt.html#%7B" class="d">{</a>
+and removed for each }.  An extra level of indentation will also be added for
+any of the words in the <a href="options.txt.html#%27cinwords%27" class="o">'cinwords'</a> option.  Lines that begin with <a href="pattern.txt.html#%23" class="d">#</a> are
+treated specially: all indentation <a href="motion.txt.html#is" class="d">is</a> removed.  This <a href="motion.txt.html#is" class="d">is</a> done so that
+preprocessor directives will all start in column 1.  The indentation <a href="motion.txt.html#is" class="d">is</a>
+restored for the next line.
+
+
+CORRECTING INDENTS
+
+When you are using <a href="options.txt.html#%27autoindent%27" class="o">'autoindent'</a> or <a href="options.txt.html#%27smartindent%27" class="o">'smartindent'</a> to get the indent of the
+previous line, there will be many times when you need to add or remove one
+<a href="options.txt.html#%27shiftwidth%27" class="o">'shiftwidth'</a> worth of indent.  <a href="insert.txt.html#A" class="d">A</a> quick way to <a href="diff.txt.html#do" class="d">do</a> this <a href="motion.txt.html#is" class="d">is</a> using the <a href="scroll.txt.html#CTRL-D" class="k">CTRL-D</a> and
+<a href="tagsrch.txt.html#CTRL-T" class="k">CTRL-T</a> commands in <a href="insert.txt.html#Insert" class="d">Insert</a> mode.
+   For example, you are typing <a href="insert.txt.html#a" class="d">a</a> shell <a href="usr_41.txt.html#script" class="d">script</a> that <a href="motion.txt.html#is" class="d">is</a> supposed to look like
+this:
+
+<span class="h">        if test -n a; then </span>
+<span class="h">           echo a </span>
+<span class="h">           echo "-------" </span>
+<span class="h">        fi </span>
+
+Start off by setting these options: 
+<span class="e"></span>
+<span class="e">        :set autoindent shiftwidth=3</span>
+<span class="e"></span>
+You start by typing the first line, <a href="intro.txt.html#%3CEnter%3E" class="s">&lt;Enter&gt;</a> and the start of the second line:
+
+<span class="h">        if test -n a; then </span>
+<span class="h">        echo </span>
+
+Now you see that you need an extra indent.  Type <a href="tagsrch.txt.html#CTRL-T" class="k">CTRL-T</a>.  The result:
+
+<span class="h">        if test -n a; then </span>
+<span class="h">           echo </span>
+
+The <a href="tagsrch.txt.html#CTRL-T" class="k">CTRL-T</a> command, in <a href="insert.txt.html#Insert" class="d">Insert</a> mode, adds one <a href="options.txt.html#%27shiftwidth%27" class="o">'shiftwidth'</a> to the indent, no
+matter where in the line you are.
+   You continue typing the second line, <a href="intro.txt.html#%3CEnter%3E" class="s">&lt;Enter&gt;</a> and the third line.  This time
+the indent <a href="motion.txt.html#is" class="d">is</a> OK.  Then <a href="intro.txt.html#%3CEnter%3E" class="s">&lt;Enter&gt;</a> and the last line.  Now you have this:
+
+<span class="h">        if test -n a; then </span>
+<span class="h">           echo a </span>
+<span class="h">           echo "-------" </span>
+<span class="h">           fi </span>
+
+To remove the superfluous indent in the last line press <a href="scroll.txt.html#CTRL-D" class="k">CTRL-D</a>.  This deletes
+one <a href="options.txt.html#%27shiftwidth%27" class="o">'shiftwidth'</a> worth of indent, no matter where you are in the line.
+   When you are in <a href="intro.txt.html#Normal" class="d">Normal</a> mode, you can use the "<a href="change.txt.html#%3E%3E" class="d">&gt;&gt;</a>" and "<a href="change.txt.html#%3C%3C" class="d">&lt;&lt;</a>" commands to
+<a href="intro.txt.html#shift" class="d">shift</a> lines.  "<a href="change.txt.html#%3E" class="d">&gt;</a>" and "<a href="change.txt.html#%3C" class="d">&lt;</a>" are operators, thus you have the usual three ways to
+specify the lines you want to indent.  <a href="insert.txt.html#A" class="d">A</a> useful combination is: 
+<span class="e"></span>
+<span class="e">        &gt;i{</span>
+<span class="e"></span>
+This adds one indent to the current block of lines, inside <span class="s">{}.  The { and }</span>
+lines themselves are left unmodified.  "&gt;a{" includes them.  In this example
+the cursor <a href="motion.txt.html#is" class="d">is</a> on "printf"<a href="cmdline.txt.html#%3A" class="d">:</a>
+
+        original text           after "&gt;i{"             after "&gt;a{"
+
+<span class="h">        if (flag)               if (flag)               if (flag) </span>
+<span class="h">        {                       {                           { </span>
+<span class="h">        printf("yes");              printf("yes");          printf("yes"); </span>
+<span class="h">        flag = 0;                   flag = 0;               flag = 0;  </span>
+<span class="h">        }                       }                           } </span>
+
+<span class="h">==============================================================================</span>
+<a name="30.5" class="t">30.5</a>  Tabs and spaces
+
+<a href="options.txt.html#%27tabstop%27" class="o">'tabstop'</a> <a href="motion.txt.html#is" class="d">is</a> set to eight by default.  Although you can change it, you quickly
+run into trouble later.  Other programs won't know what tabstop value you
+used.  They probably use the default value of eight, and your text suddenly
+looks very different.  Also, most printers use <a href="insert.txt.html#a" class="d">a</a> fixed tabstop value of eight.
+Thus it's best to keep <a href="options.txt.html#%27tabstop%27" class="o">'tabstop'</a> alone.  (If you edit <a href="insert.txt.html#a" class="d">a</a> file which was written
+with <a href="insert.txt.html#a" class="d">a</a> different tabstop setting, see <a href="usr_25.txt.html#25.3" class="l">25.3</a> for how to fix that.)
+   For indenting lines in <a href="insert.txt.html#a" class="d">a</a> program, using <a href="insert.txt.html#a" class="d">a</a> multiple of eight spaces makes
+you quickly run into the right border of the window.  Using <a href="insert.txt.html#a" class="d">a</a> single <a href="intro.txt.html#space" class="d">space</a>
+doesn't provide enough visual difference.  Many people prefer to use four
+spaces, <a href="insert.txt.html#a" class="d">a</a> good compromise.
+   Since <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a> <a href="motion.txt.html#is" class="d">is</a> eight spaces and you want to use an indent of four spaces,
+you can't use <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a> character to make your indent.  There are two ways to
+handle this:
+
+1.  Use <a href="insert.txt.html#a" class="d">a</a> mix of <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a> and <a href="intro.txt.html#space" class="d">space</a> characters.  Since <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a> takes the place of
+    eight spaces, you have fewer characters in your file.  Inserting <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a>
+    <a href="motion.txt.html#is" class="d">is</a> quicker than eight spaces.  Backspacing works faster <a href="motion.txt.html#as" class="d">as</a> well.
+
+2.  Use spaces only.  This avoids the trouble with programs that use <a href="insert.txt.html#a" class="d">a</a>
+    different tabstop value.
+
+Fortunately, Vim supports both methods quite well.
+
+
+SPACES AND TABS
+
+If you are using <a href="insert.txt.html#a" class="d">a</a> combination of tabs and spaces, you just edit normally.
+The Vim defaults <a href="diff.txt.html#do" class="d">do</a> <a href="insert.txt.html#a" class="d">a</a> fine <a href="channel.txt.html#job" class="d">job</a> of handling things.
+   You can make life <a href="insert.txt.html#a" class="d">a</a> little easier by setting the <a href="options.txt.html#%27softtabstop%27" class="o">'softtabstop'</a> option.
+This option tells Vim to make the <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a> key look and feel <a href="motion.txt.html#as" class="d">as</a> if tabs were set
+<a href="motion.txt.html#at" class="d">at</a> the value of <a href="options.txt.html#%27softtabstop%27" class="o">'softtabstop'</a>, but actually use <a href="insert.txt.html#a" class="d">a</a> combination of tabs and
+spaces.
+   After you execute the following command, every time you press the <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a> key
+the cursor moves to the next 4-column boundary: 
+<span class="e"></span>
+<span class="e">        :set softtabstop=4</span>
+<span class="e"></span>
+When you start in the first column and press <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a>, you get 4 spaces inserted
+in your text.  The second time, Vim takes out the 4 spaces and puts in <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a>
+(thus taking you to column 8).  Thus Vim uses <a href="motion.txt.html#as" class="d">as</a> many <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a>s <a href="motion.txt.html#as" class="d">as</a> possible, and
+then fills up with spaces.
+   When backspacing <a href="motion.txt.html#it" class="d">it</a> works the other way around.  <a href="insert.txt.html#A" class="d">A</a> <a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a> will always delete
+the amount specified with <a href="options.txt.html#%27softtabstop%27" class="o">'softtabstop'</a>.  Then <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a>s are used <a href="motion.txt.html#as" class="d">as</a> many <a href="motion.txt.html#as" class="d">as</a>
+possible and spaces to fill the gap.
+   The following shows what happens pressing <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a> <a href="insert.txt.html#a" class="d">a</a> few times, and then using
+<a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a>.  <a href="insert.txt.html#A" class="d">A</a> "<a href="repeat.txt.html#." class="d">.</a>" stands for <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#space" class="d">space</a> and "-------&gt;" for <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a>.
+
+<span class="h">        type                      result </span>
+        <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a>                     ....
+        <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a><a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a>                -------&gt;
+        <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a><a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a><a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a>           -------&gt;....
+        <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a><a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a><a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a><a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a>       -------&gt;
+        <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a><a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a><a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a><a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a><a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a>   ....
+
+An alternative <a href="motion.txt.html#is" class="d">is</a> to use the <a href="options.txt.html#%27smarttab%27" class="o">'smarttab'</a> option.  When it's set, Vim uses
+<a href="options.txt.html#%27shiftwidth%27" class="o">'shiftwidth'</a> for <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a> typed in the indent of <a href="insert.txt.html#a" class="d">a</a> line, and <a href="insert.txt.html#a" class="d">a</a> real <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a> when
+typed after the first non-blank character.  However, <a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a> doesn't work like
+with <a href="options.txt.html#%27softtabstop%27" class="o">'softtabstop'</a>.
+
+
+JUST SPACES
+
+If you want absolutely no tabs in your file, you can set the <a href="options.txt.html#%27expandtab%27" class="o">'expandtab'</a>
+option: 
+<span class="e"></span>
+<span class="e">        :set expandtab</span>
+<span class="e"></span>
+When this option <a href="motion.txt.html#is" class="d">is</a> set, the <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a> key inserts <a href="insert.txt.html#a" class="d">a</a> series of spaces.  Thus you
+get the same amount of white <a href="intro.txt.html#space" class="d">space</a> <a href="motion.txt.html#as" class="d">as</a> if <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a> character was inserted, but
+there isn't <a href="insert.txt.html#a" class="d">a</a> real <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a> character in your file.
+   The <a href="intro.txt.html#backspace" class="d">backspace</a> key will delete each <a href="intro.txt.html#space" class="d">space</a> by itself.  Thus after typing one
+<a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a> you have to press the <a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a> key up to eight times to <a href="undo.txt.html#undo" class="d">undo</a> it.  If you are
+in the indent, pressing <a href="scroll.txt.html#CTRL-D" class="k">CTRL-D</a> will be <a href="insert.txt.html#a" class="d">a</a> lot quicker.
+
+
+CHANGING TABS IN SPACES (AND BACK)
+
+Setting <a href="options.txt.html#%27expandtab%27" class="o">'expandtab'</a> does not affect any existing tabs.  In other words, any
+tabs in the document remain tabs.  If you want to convert tabs to spaces, use
+the "<a href="change.txt.html#%3Aretab" class="d">:retab</a>" command.  Use these commands: 
+<span class="e"></span>
+<span class="e">        :set expandtab</span>
+<span class="e">        :%retab</span>
+<span class="e"></span>
+Now Vim will have changed all indents to use spaces instead of tabs.  However,
+all tabs that come after <a href="insert.txt.html#a" class="d">a</a> non-blank character are kept.  If you want these to
+be converted <a href="motion.txt.html#as" class="d">as</a> well, add <a href="insert.txt.html#a" class="d">a</a> !: 
+<span class="e"></span>
+<span class="e">        :%retab!</span>
+<span class="e"></span>
+This <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> little bit dangerous, because <a href="motion.txt.html#it" class="d">it</a> can also change tabs inside <a href="insert.txt.html#a" class="d">a</a>
+string.  To check if these exist, you could use this: 
+<span class="e"></span>
+<span class="e">        /"[^"\t]*\t[^"]*"</span>
+<span class="e"></span>
+It's recommended not to use hard tabs inside <a href="insert.txt.html#a" class="d">a</a> string.  <a href="insert.txt.html#Replace" class="d">Replace</a> them with
+"\t" to avoid trouble.
+
+The other way around works just <a href="motion.txt.html#as" class="d">as</a> well: 
+<span class="e"></span>
+<span class="e">        :set noexpandtab</span>
+<span class="e">        :%retab!</span>
+<span class="e"></span>
+<span class="h">==============================================================================</span>
+<a name="30.6" class="t">30.6</a>  Formatting comments
+
+One of the great things about Vim <a href="motion.txt.html#is" class="d">is</a> that <a href="motion.txt.html#it" class="d">it</a> understands comments.  You can
+ask Vim to format <a href="insert.txt.html#a" class="d">a</a> comment and <a href="motion.txt.html#it" class="d">it</a> will <a href="diff.txt.html#do" class="d">do</a> the right thing.
+   Suppose, for example, that you have the following comment:
+
+<span class="h">        /* </span>
+<span class="h">         * This is a test </span>
+<span class="h">         * of the text formatting. </span>
+<span class="h">         */ </span>
+
+You then ask Vim to format <a href="motion.txt.html#it" class="d">it</a> by positioning the cursor <a href="motion.txt.html#at" class="d">at</a> the start of the
+comment and type: 
+<span class="e"></span>
+<span class="e">        gq]/</span>
+<span class="e"></span>
+"<a href="change.txt.html#gq" class="d">gq</a>" <a href="motion.txt.html#is" class="d">is</a> the <a href="motion.txt.html#operator" class="d">operator</a> to format text.  "<a href="motion.txt.html#%5D%2F" class="d">]/</a>" <a href="motion.txt.html#is" class="d">is</a> the motion that takes you to the
+<a href="intro.txt.html#end" class="d">end</a> of <a href="insert.txt.html#a" class="d">a</a> comment.  The result is:
+
+<span class="h">        /* </span>
+<span class="h">         * This is a test of the text formatting. </span>
+<span class="h">         */ </span>
+
+Notice that Vim properly handled the beginning of each line.
+  An alternative <a href="motion.txt.html#is" class="d">is</a> to select the text that <a href="motion.txt.html#is" class="d">is</a> to be formatted in <a href="visual.txt.html#Visual" class="d">Visual</a> mode
+and type "<a href="change.txt.html#gq" class="d">gq</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+To add <a href="insert.txt.html#a" class="d">a</a> new line to the comment, position the cursor on the middle line and
+press "<a href="insert.txt.html#o" class="d">o</a>"<a href="repeat.txt.html#." class="d">.</a>  The result looks like this:
+
+<span class="h">        /* </span>
+<span class="h">         * This is a test of the text formatting. </span>
+<span class="h">         * </span>
+<span class="h">         */ </span>
+
+Vim has automatically inserted <a href="insert.txt.html#a" class="d">a</a> <a href="pattern.txt.html#star" class="d">star</a> and <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#space" class="d">space</a> for you.  Now you can type
+the comment text.  When <a href="motion.txt.html#it" class="d">it</a> gets longer than <a href="options.txt.html#%27textwidth%27" class="o">'textwidth'</a>, Vim will break the
+line.  Again, the <a href="pattern.txt.html#star" class="d">star</a> <a href="motion.txt.html#is" class="d">is</a> inserted automatically:
+
+<span class="h">        /* </span>
+<span class="h">         * This is a test of the text formatting. </span>
+<span class="h">         * Typing a lot of text here will make Vim </span>
+<span class="h">         * break </span>
+<span class="h">         */ </span>
+
+For this to work some flags <a href="vim_faq.txt.html#must" class="d">must</a> be present in <a href="options.txt.html#%27formatoptions%27" class="o">'formatoptions'</a>:
+
+        <a href="change.txt.html#r" class="d">r</a>       <a href="insert.txt.html#insert" class="d">insert</a> the <a href="pattern.txt.html#star" class="d">star</a> when typing <a href="intro.txt.html#%3CEnter%3E" class="s">&lt;Enter&gt;</a> in <a href="insert.txt.html#Insert" class="d">Insert</a> mode
+        <a href="insert.txt.html#o" class="d">o</a>       <a href="insert.txt.html#insert" class="d">insert</a> the <a href="pattern.txt.html#star" class="d">star</a> when using "<a href="insert.txt.html#o" class="d">o</a>" or "<a href="insert.txt.html#O" class="d">O</a>" in <a href="intro.txt.html#Normal" class="d">Normal</a> mode
+        <a href="change.txt.html#c" class="d">c</a>       break comment text according to <a href="options.txt.html#%27textwidth%27" class="o">'textwidth'</a>
+
+See <a href="change.txt.html#fo-table" class="l">fo-table</a> for more flags.
+
+
+DEFINING <a href="insert.txt.html#A" class="d">A</a> COMMENT
+
+The <a href="options.txt.html#%27comments%27" class="o">'comments'</a> option defines what <a href="insert.txt.html#a" class="d">a</a> comment looks like.  Vim distinguishes
+between <a href="insert.txt.html#a" class="d">a</a> single-line comment and <a href="insert.txt.html#a" class="d">a</a> comment that has <a href="insert.txt.html#a" class="d">a</a> different start, <a href="intro.txt.html#end" class="d">end</a>
+and middle part.
+   Many single-line comments start with <a href="insert.txt.html#a" class="d">a</a> specific character.  In C++ <a href="version7.txt.html#%2F%2F" class="d">//</a> <a href="motion.txt.html#is" class="d">is</a>
+used, in Makefiles #, in Vim scripts "<a href="repeat.txt.html#." class="d">.</a>  For example, to make Vim understand
+C++ comments: 
+<span class="e"></span>
+<span class="e">        :set comments=://</span>
+<span class="e"></span>
+The colon separates the flags of an item from the text by which the comment <a href="motion.txt.html#is" class="d">is</a>
+recognized.  The general form of an item in <a href="options.txt.html#%27comments%27" class="o">'comments'</a> is:
+
+        <span class="s">{flags}</span>:<span class="s">{text}</span>
+
+The <span class="s">{flags}</span> part can be empty, <a href="motion.txt.html#as" class="d">as</a> in this case.
+   Several of these items can be concatenated, separated by commas.  This
+allows recognizing different types of comments <a href="motion.txt.html#at" class="d">at</a> the same time.  For example,
+let's edit an e-mail message.  When replying, the text that others wrote <a href="motion.txt.html#is" class="d">is</a>
+preceded with "<a href="change.txt.html#%3E" class="d">&gt;</a>" and "<a href="change.txt.html#%21" class="d">!</a>" characters.  This command would work: 
+<span class="e"></span>
+<span class="e">        :set comments=n:&gt;,n:!</span>
+<span class="e"></span>
+There are two items, one for comments <a href="starting.txt.html#starting" class="d">starting</a> with "<a href="change.txt.html#%3E" class="d">&gt;</a>" and one for comments
+that start with "<a href="change.txt.html#%21" class="d">!</a>"<a href="repeat.txt.html#." class="d">.</a>  Both use the flag "<a href="pattern.txt.html#n" class="d">n</a>"<a href="repeat.txt.html#." class="d">.</a>  This means that these comments
+nest.  Thus <a href="insert.txt.html#a" class="d">a</a> line <a href="starting.txt.html#starting" class="d">starting</a> with "<a href="change.txt.html#%3E" class="d">&gt;</a>" may have another comment after the "<a href="change.txt.html#%3E" class="d">&gt;</a>"<a href="repeat.txt.html#." class="d">.</a>
+This allows <a href="change.txt.html#formatting" class="d">formatting</a> <a href="insert.txt.html#a" class="d">a</a> message like this:
+
+<span class="h">        &gt; ! Did you see that site? </span>
+<span class="h">        &gt; ! It looks really great. </span>
+<span class="h">        &gt; I don't like it.  The </span>
+<span class="h">        &gt; colors are terrible. </span>
+<span class="h">        What is the URL of that </span>
+<span class="h">        site? </span>
+
+Try setting <a href="options.txt.html#%27textwidth%27" class="o">'textwidth'</a> to <a href="insert.txt.html#a" class="d">a</a> different value, e.g., 80, and format the text by
+Visually selecting <a href="motion.txt.html#it" class="d">it</a> and typing "<a href="change.txt.html#gq" class="d">gq</a>"<a href="repeat.txt.html#." class="d">.</a>  The result is:
+
+<span class="h">        &gt; ! Did you see that site?  It looks really great. </span>
+<span class="h">        &gt; I don't like it.  The colors are terrible. </span>
+<span class="h">        What is the URL of that site? </span>
+
+You will notice that Vim did not move text from one type of comment to
+another.  The "<a href="insert.txt.html#I" class="d">I</a>" in the second line would have fit <a href="motion.txt.html#at" class="d">at</a> the <a href="intro.txt.html#end" class="d">end</a> of the first
+line, but since that line starts with "<a href="change.txt.html#%3E" class="d">&gt;</a> <a href="change.txt.html#%21" class="d">!</a>" and the second line with "<a href="change.txt.html#%3E" class="d">&gt;</a>"<a href="motion.txt.html#%2C" class="d">,</a> Vim
+knows that this <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> different kind of comment.
+
+
+<a href="insert.txt.html#A" class="d">A</a> THREE PART COMMENT
+
+<a href="insert.txt.html#A" class="d">A</a> <a href="change.txt.html#C" class="d">C</a> comment starts with "<a href="pattern.txt.html#%2F" class="d">/</a>*"<a href="motion.txt.html#%2C" class="d">,</a> has "*" in the middle and "*<a href="pattern.txt.html#%2F" class="d">/</a>" <a href="motion.txt.html#at" class="d">at</a> the end.  The
+entry in <a href="options.txt.html#%27comments%27" class="o">'comments'</a> for this looks like this: 
+<span class="e"></span>
+<span class="e">        :set comments=s1:/*,mb:*,ex:*/</span>
+<span class="e"></span>
+The start <a href="motion.txt.html#is" class="d">is</a> defined with "s1:/*"<a href="repeat.txt.html#." class="d">.</a>  The "<a href="change.txt.html#s" class="d">s</a>" indicates the start of <a href="insert.txt.html#a" class="d">a</a>
+three-piece comment.  The colon separates the flags from the text by which the
+comment <a href="motion.txt.html#is" class="d">is</a> recognized: "<a href="pattern.txt.html#%2F" class="d">/</a>*"<a href="repeat.txt.html#." class="d">.</a>  There <a href="motion.txt.html#is" class="d">is</a> one flag: "1"<a href="repeat.txt.html#." class="d">.</a>  This tells Vim that the
+middle part has an offset of one space.
+   The middle part "mb:*" starts with "<a href="motion.txt.html#m" class="d">m</a>"<a href="motion.txt.html#%2C" class="d">,</a> which indicates <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> middle
+part.  The "<a href="motion.txt.html#b" class="d">b</a>" flag means that <a href="insert.txt.html#a" class="d">a</a> blank <a href="vim_faq.txt.html#must" class="d">must</a> follow the text.  Otherwise Vim
+would consider text like "*pointer" also to be the middle of <a href="insert.txt.html#a" class="d">a</a> comment.
+   The <a href="intro.txt.html#end" class="d">end</a> part "<a href="options.txt.html#ex%3A" class="d">ex:</a>*<a href="pattern.txt.html#%2F" class="d">/</a>" has the "<a href="motion.txt.html#e" class="d">e</a>" for identification.  The "<a href="change.txt.html#x" class="d">x</a>" flag has <a href="insert.txt.html#a" class="d">a</a>
+special meaning.  It means that after Vim automatically inserted <a href="insert.txt.html#a" class="d">a</a> star,
+typing <a href="pattern.txt.html#%2F" class="d">/</a> will remove the extra space.
+
+For more details see <a href="change.txt.html#format-comments" class="l">format-comments</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+
+Next chapter: <a href="usr_31.txt.html#usr_31.txt" class="l">usr_31.txt</a>  Exploiting the <a href="gui.txt.html#GUI" class="d">GUI</a>
+
+Copyright: see <a href="usr_01.txt.html#manual-copyright" class="l">manual-copyright</a>  vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

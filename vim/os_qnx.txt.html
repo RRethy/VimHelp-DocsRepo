@@ -1,0 +1,152 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: os_qnx.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="os_qnx.txt" class="t">os_qnx.txt</a>    For <span class="i">Vim version 8.0.</span>  Last change: 2005 Mar 29
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Julian Kinraid</span>
+
+
+                                                        <a name="QNX" class="t">QNX</a> <a name="qnx" class="t">qnx</a>
+
+1. General                      <a href="#qnx-general" class="l">qnx-general</a>
+2. Compiling Vim                <a href="#qnx-compiling" class="l">qnx-compiling</a>
+3. Terminal support             <a href="#qnx-terminal" class="l">qnx-terminal</a>
+4. Photon <a href="gui.txt.html#GUI" class="d">GUI</a>                   <a href="#photon-gui" class="l">photon-gui</a>
+5. Photon fonts                 <a href="#photon-fonts" class="l">photon-fonts</a>
+6. Bugs <a href="change.txt.html#%26" class="d">&amp;</a> things To Do
+
+<span class="h">==============================================================================</span>
+
+1. General                                              <a name="qnx-general" class="t">qnx-general</a>
+
+Vim on <a href="#QNX" class="d">QNX</a> behaves much like other <a href="os_unix.txt.html#unix" class="d">unix</a> versions. <a href="os_unix.txt.html#os_unix.txt" class="l">os_unix.txt</a>
+
+
+2. Compiling Vim                                        <a name="qnx-compiling" class="t">qnx-compiling</a>
+
+Vim can be compiled using the standard configure/make approach.  If you want to
+compile for X11, pass the --with-x option to configure.  Otherwise, running
+./configure without any arguments or passing --enable-gui=photon, will compile
+vim with the Photon <a href="gui.txt.html#gui" class="d">gui</a> support.  Run ./configure <a href="starting.txt.html#--help" class="d">--help</a> <a href="motion.txt.html#%2C" class="d">,</a> to find out other
+features you can enable/disable.
+
+
+3. Terminal support                                     <a name="qnx-terminal" class="t">qnx-terminal</a>
+
+Vim has support for the mouse and <a href="gui.txt.html#clipboard" class="d">clipboard</a> in <a href="insert.txt.html#a" class="d">a</a> pterm, if those <a href="options.txt.html#options" class="d">options</a>
+are compiled in, which they are normally.
+
+The <a href="options.txt.html#options" class="d">options</a> that affect mouse support are <a href="options.txt.html#%27mouse%27" class="l">'mouse'</a> and <a href="options.txt.html#%27ttymouse%27" class="l">'ttymouse'</a><a href="repeat.txt.html#." class="d">.</a>  When
+using the mouse, only simple left and right mouse clicking/dragging <a href="motion.txt.html#is" class="d">is</a>
+supported.  If you hold down shift, ctrl, or <a href="intro.txt.html#alt" class="d">alt</a> while using the mouse, pterm
+will handle the mouse itself.  It will make <a href="insert.txt.html#a" class="d">a</a> selection, separate from what
+vim's doing.
+
+When the mouse <a href="motion.txt.html#is" class="d">is</a> in use, you can press Alt-RightMouse to open the pterm menu.
+To turn the mouse off in vim, set the mouse option to nothing, set mouse=
+
+
+4. Photon <a href="gui.txt.html#GUI" class="d">GUI</a>                                           <a name="photon-gui" class="t">photon-gui</a>
+
+To start the <a href="gui.txt.html#gui" class="d">gui</a> for vim, you need to run either <a href="starting.txt.html#gvim" class="d">gvim</a> or vim -g, otherwise
+the terminal version will run.  For more info <a href="motion.txt.html#-" class="d">-</a> <a href="gui_x11.txt.html#gui-x11-start" class="l">gui-x11-start</a>
+
+Supported features:
+        <a href="editing.txt.html#%3Abrowse" class="d">:browse</a> command                                 <a href="editing.txt.html#%3Abrowse" class="l">:browse</a>
+        <a href="editing.txt.html#%3Aconfirm" class="d">:confirm</a> command                                <a href="editing.txt.html#%3Aconfirm" class="l">:confirm</a>
+        Cursor blinking                                 <a href="options.txt.html#%27guicursor%27" class="l">'guicursor'</a>
+        Menus, popup <a href="gui.txt.html#menus" class="d">menus</a> and menu priorities          <a href="gui.txt.html#%3Amenu" class="l">:menu</a>
+                                                        <a href="gui.txt.html#popup-menu" class="l">popup-menu</a>
+                                                        <a href="gui.txt.html#menu-priority" class="l">menu-priority</a>
+        Toolbar                                         <a href="gui.txt.html#gui-toolbar" class="l">gui-toolbar</a>
+                                                        <a href="options.txt.html#%27toolbar%27" class="l">'toolbar'</a>
+        Font selector (:set guifont=*<a href="motion.txt.html#%29" class="d">)</a>                  <a href="#photon-fonts" class="l">photon-fonts</a>
+        Mouse focus                                     <a href="options.txt.html#%27mousefocus%27" class="l">'mousefocus'</a>
+        Mouse hide                                      <a href="options.txt.html#%27mousehide%27" class="l">'mousehide'</a>
+        Mouse cursor shapes                             <a href="options.txt.html#%27mouseshape%27" class="l">'mouseshape'</a>
+        Clipboard                                       <a href="gui_w32.txt.html#gui-clipboard" class="l">gui-clipboard</a>
+
+Unfinished features:
+        Various international support, such <a href="motion.txt.html#as" class="d">as</a> <a href="farsi.txt.html#Farsi" class="d">Farsi</a> <a href="change.txt.html#%26" class="d">&amp;</a> Hebrew support,
+        different encodings, etc.
+
+        This <a href="helphelp.txt.html#help" class="d">help</a> file
+
+Unsupported features:
+        Find <a href="change.txt.html#%26" class="d">&amp;</a> <a href="insert.txt.html#Replace" class="d">Replace</a> <a href="windows.txt.html#window" class="d">window</a>                           <a href="change.txt.html#%3Apromptfind" class="l">:promptfind</a>
+        Tearoff <a href="gui.txt.html#menus" class="d">menus</a>
+
+        Other things which <a href="insert.txt.html#I" class="d">I</a> can't think of so <a href="insert.txt.html#I" class="d">I</a> can't <a href="eval.txt.html#list" class="d">list</a> them
+
+
+5. Fonts                                                <a name="photon-fonts" class="t">photon-fonts</a>
+
+You set fonts in the <a href="gui.txt.html#gui" class="d">gui</a> with the guifont option 
+<span class="e">        :set guifont=Lucida\ Terminal</span>
+
+The font <a href="vim_faq.txt.html#must" class="d">must</a> be <a href="insert.txt.html#a" class="d">a</a> monospace font, and any spaces in the font name <a href="vim_faq.txt.html#must" class="d">must</a> be
+escaped with <a href="insert.txt.html#a" class="d">a</a> '\'.  The default font used <a href="motion.txt.html#is" class="d">is</a> PC Terminal, size 8.  Using
+<a href="motion.txt.html#%27" class="d">'</a>*<a href="motion.txt.html#%27" class="d">'</a> <a href="motion.txt.html#as" class="d">as</a> the font name will open <a href="insert.txt.html#a" class="d">a</a> standard Photon font selector where you can
+select <a href="insert.txt.html#a" class="d">a</a> font.
+
+Following the name, you can include optional settings to <a href="intro.txt.html#control" class="d">control</a> the size and
+style of the font, each setting separated by <a href="insert.txt.html#a" class="d">a</a> ':'.  Not all fonts support the
+<a href="various.txt.html#various" class="d">various</a> styles.
+
+The <a href="options.txt.html#options" class="d">options</a> are,
+    s{size}     Set the size of the font to <span class="s">{size}</span>
+    <a href="motion.txt.html#b" class="d">b</a>           Bold style
+    <a href="insert.txt.html#a" class="d">a</a>           Use antialiasing
+    <a href="insert.txt.html#i" class="d">i</a>           Italic style
+
+Examples:
+
+Set the font to monospace size 10 with antialiasing 
+<span class="e">        :set guifont=monospace:s10:a</span>
+
+Set the font to Courier size 12, with <a href="syntax.txt.html#bold" class="d">bold</a> and italics 
+<span class="e">        :set guifont=Courier:s12:b:i</span>
+
+<a href="visual.txt.html#Select" class="d">Select</a> <a href="insert.txt.html#a" class="d">a</a> font with the requester 
+<span class="e">        :set guifont=*</span>
+
+
+
+6. Bugs <a href="change.txt.html#%26" class="d">&amp;</a> things To Do
+
+Known problems:
+        <a href="motion.txt.html#-" class="d">-</a> Vim hangs sometimes when running an external program.  Workaround:
+          <a href="change.txt.html#put" class="d">put</a> this line in your <a href="starting.txt.html#vimrc" class="l">vimrc</a> file: 
+<span class="e">                set noguipty</span>
+<span class="e"></span>
+Bugs:
+        <a href="motion.txt.html#-" class="d">-</a> Still <a href="insert.txt.html#a" class="d">a</a> slight problem with menu highlighting.
+        <a href="motion.txt.html#-" class="d">-</a> When using phditto/phinows/etc., if you are using <a href="insert.txt.html#a" class="d">a</a> font that
+          doesn't support the <a href="syntax.txt.html#bold" class="d">bold</a> attribute, when vim attempts to draw
+          <a href="syntax.txt.html#bold" class="d">bold</a> text <a href="motion.txt.html#it" class="d">it</a> will be all messed up.
+        <a href="motion.txt.html#-" class="d">-</a> The cursor can sometimes be hard to see.
+        <a href="motion.txt.html#-" class="d">-</a> <a href="insert.txt.html#A" class="d">A</a> number of minor problems that can fixed. :)
+
+Todo:
+        <a href="motion.txt.html#-" class="d">-</a> Improve multi-language support.
+        <a href="motion.txt.html#-" class="d">-</a> Options for setting the fonts used in the menu and toolbar.
+        <a href="motion.txt.html#-" class="d">-</a> Find <a href="change.txt.html#%26" class="d">&amp;</a> <a href="insert.txt.html#Replace" class="d">Replace</a> dialog.
+        <a href="motion.txt.html#-" class="d">-</a> The <a href="remote.txt.html#clientserver" class="d">clientserver</a> features.
+        <a href="motion.txt.html#-" class="d">-</a> Maybe tearoff menus.
+
+        <a href="motion.txt.html#-" class="d">-</a> <a href="insert.txt.html#Replace" class="d">Replace</a> usage of fork() with spawn() when launching external
+          programs.
+
+ vim:tw=78:sw=4:ts=8:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

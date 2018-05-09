@@ -1,0 +1,290 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: pi_vimball.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="pi_vimball.txt" class="t">pi_vimball.txt</a>        For <span class="i">Vim version 8.0.</span>  Last change: 2016 Apr 11
+
+                               ----------------
+                               Vimball Archiver
+                               ----------------
+
+Author:  Charles E. Campbell  <span class="s">&lt;NdrOchip@ScampbellPfamily.AbizM&gt;</span>
+          (remove NOSPAM from Campbell's email first)
+Copyright: (c) 2004-2015 by Charles E. Campbell         <a name="Vimball-copyright" class="t">Vimball-copyright</a>
+        The VIM LICENSE (see <a href="uganda.txt.html#copyright" class="l">copyright</a><a href="motion.txt.html#%29" class="d">)</a> applies to the files in this
+        package, including vimballPlugin.vim, vimball.vim, and pi_vimball.txt.
+        except use "<a href="#vimball" class="d">vimball</a>" instead of "VIM"<a href="repeat.txt.html#." class="d">.</a>  Like anything else that's free,
+        vimball.vim and its associated files are provided *<a href="motion.txt.html#as" class="d">as</a> <a href="motion.txt.html#is" class="d">is</a>* and comes with
+        no warranty of any kind, either expressed or implied.  No guarantees
+        of merchantability.  No guarantees of suitability for any purpose.  By
+        using this plugin, you agree that in no event will the <a href="uganda.txt.html#copyright" class="d">copyright</a>
+        holder be liable for any damages resulting from the use of this
+        software. Use <a href="motion.txt.html#at" class="d">at</a> your own risk!
+
+<span class="h">==============================================================================</span>
+1. <a href="quickref.txt.html#Contents" class="d">Contents</a>                             <a name="vba" class="t">vba</a> <a name="vimball" class="t">vimball</a> <a name="vimball-contents" class="t">vimball-contents</a>
+
+        1. Contents......................................: <a href="#vimball-contents" class="l">vimball-contents</a>
+        2. Vimball Introduction..........................: <a href="#vimball-intro" class="l">vimball-intro</a>
+        3. Vimball Manual................................: <a href="#vimball-manual" class="l">vimball-manual</a>
+           MkVimball.....................................: <a href="#%3AMkVimball" class="l">:MkVimball</a>
+           UseVimball....................................: <a href="#%3AUseVimball" class="l">:UseVimball</a>
+           RmVimball.....................................: <a href="#%3ARmVimball" class="l">:RmVimball</a>
+        4. Vimball History...............................: <a href="#vimball-history" class="l">vimball-history</a>
+
+
+<span class="h">==============================================================================</span>
+2. Vimball Introduction                                         <a name="vimball-intro" class="t">vimball-intro</a>
+
+        Vimball <a href="motion.txt.html#is" class="d">is</a> intended to make life simpler for users of plugins.  All
+        <a href="insert.txt.html#a" class="d">a</a> user needs to <a href="diff.txt.html#do" class="d">do</a> with <a href="insert.txt.html#a" class="d">a</a> <a href="#vimball" class="d">vimball</a> is: 
+<span class="e">                vim someplugin.vba</span>
+<span class="e">                :so %</span>
+<span class="e">                :q</span>
+       and the <a href="usr_05.txt.html#plugin" class="d">plugin</a> and all its components will be installed into their
+        appropriate directories.  <span class="n">Note</span> that one doesn't need to be in any
+        particular directory when one does this.  Plus, any <a href="helphelp.txt.html#help" class="d">help</a> for the
+        <a href="usr_05.txt.html#plugin" class="d">plugin</a> will also be automatically installed.
+
+        If <a href="insert.txt.html#a" class="d">a</a> user has decided to use the AsNeeded plugin, <a href="#vimball" class="d">vimball</a> <a href="motion.txt.html#is" class="d">is</a> smart
+        enough to <a href="change.txt.html#put" class="d">put</a> scripts nominally intended for .vim/plugin/ into
+        .vim/AsNeeded/ instead.
+
+        Removing <a href="insert.txt.html#a" class="d">a</a> <a href="usr_05.txt.html#plugin" class="d">plugin</a> that was installed with <a href="#vimball" class="d">vimball</a> <a href="motion.txt.html#is" class="d">is</a> really easy: 
+<span class="e">                vim</span>
+<span class="e">                :RmVimball someplugin</span>
+       This operation <a href="motion.txt.html#is" class="d">is</a> not <a href="motion.txt.html#at" class="d">at</a> all <a href="starting.txt.html#easy" class="d">easy</a> for zips and tarballs, for example.
+
+        Vimball examines the user's <a href="options.txt.html#%27runtimepath%27" class="l">'runtimepath'</a> to determine where to <a href="change.txt.html#put" class="d">put</a>
+        the scripts.  The first directory mentioned on the runtimepath <a href="motion.txt.html#is" class="d">is</a>
+        usually used if possible.  Use 
+<span class="e">                :echo &amp;rtp</span>
+       to see that directory.
+
+
+<span class="h">==============================================================================</span>
+3. Vimball Manual                                       <a name="vimball-manual" class="t">vimball-manual</a>
+
+<span class="c">MAKING A VIMBALL                                               </span> <a name="%3AMkVimball" class="t">:MkVimball</a>
+                :[range]MkVimball[!] filename <span class="s">[path]</span>
+
+        The range <a href="motion.txt.html#is" class="d">is</a> composed of lines holding paths to files to be included
+        in your new vimball, omitting the portion of the paths that <a href="motion.txt.html#is" class="d">is</a>
+        normally specified by the runtimepath <a href="motion.txt.html#%28" class="d">(</a><a href="options.txt.html#%27rtp%27" class="l">'rtp'</a>).  As an example: 
+<span class="e">                plugin/something.vim</span>
+<span class="e">                doc/something.txt</span>
+       using 
+<span class="e">                :[range]MkVimball filename</span>
+
+        on this range of lines will create <a href="insert.txt.html#a" class="d">a</a> file called "filename.vba" which
+        can be used by Vimball.vim to re-create these files.  If the
+        "filename.vba" file already exists, then MkVimball will issue <a href="insert.txt.html#a" class="d">a</a>
+        warning and not create the file.  <span class="n">Note</span> that these paths are relative
+        to your .vim (vimfiles) directory, and the files should be in that
+        directory.  The <a href="#vimball" class="d">vimball</a> <a href="usr_05.txt.html#plugin" class="d">plugin</a> normally uses the first <a href="options.txt.html#%27runtimepath%27" class="l">'runtimepath'</a>
+        directory that exists <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> prefix; don't use absolute paths, unless
+        the user has specified such <a href="insert.txt.html#a" class="d">a</a> path.
+
+        If you use the exclamation point (!), then MkVimball will create the
+        "filename.vba" file, overwriting <a href="motion.txt.html#it" class="d">it</a> if <a href="motion.txt.html#it" class="d">it</a> already exists.  This
+        behavior resembles that for <a href="editing.txt.html#%3Aw" class="l">:w</a><a href="repeat.txt.html#." class="d">.</a>
+
+        If you wish to force slashes into the filename, that can also be done
+        by using the exclamation <a href="motion.txt.html#mark" class="d">mark</a> (ie. :MkVimball! path/filename).
+
+        The tip <a href="motion.txt.html#at" class="d">at</a> <a class="u" href="http://vim.wikia.com/wiki/Using_VimBall_with_%27Make%27">http://vim.wikia.com/wiki/Using_VimBall_with_%27Make%27</a>
+        has <a href="insert.txt.html#a" class="d">a</a> good idea on how to automate the production of vimballs using
+        make.
+
+
+<span class="c">MAKING DIRECTORIES VIA VIMBALLS                        </span> <a name="g%3Avimball_mkdir" class="t">g:vimball_mkdir</a>
+
+        First, the <a href="eval.txt.html#mkdir%28%29" class="l">mkdir()</a> command <a href="motion.txt.html#is" class="d">is</a> tried (not all systems support it).
+
+        If <a href="motion.txt.html#it" class="d">it</a> doesn't exist, then if <a href="#g%3Avimball_mkdir" class="d">g:vimball_mkdir</a> doesn't exist, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> set
+        <a href="motion.txt.html#as" class="d">as</a> follows: 
+<span class="e">          |g:netrw_localmkdir|, if it exists</span>
+<span class="e">          "mkdir"             , if it is executable</span>
+<span class="e">          "makedir"           , if it is executable</span>
+<span class="e">          Otherwise           , it is undefined.</span>
+       One may explicitly specify the directory making command using
+        g:vimball_mkdir.  This command <a href="motion.txt.html#is" class="d">is</a> used to make directories that
+        are needed <a href="motion.txt.html#as" class="d">as</a> indicated by the vimball.
+
+
+<span class="c">CONTROLLING THE VIMBALL EXTRACTION DIRECTORY           </span> <a name="g%3Avimball_home" class="t">g:vimball_home</a>
+
+        You may override the use of the <a href="options.txt.html#%27runtimepath%27" class="l">'runtimepath'</a> by specifying <a href="insert.txt.html#a" class="d">a</a>
+        variable, g:vimball_home.
+
+                                                        <a name="vimball-extract" class="t">vimball-extract</a>
+                vim filename.vba
+
+        Simply editing <a href="insert.txt.html#a" class="d">a</a> Vimball will cause Vimball.vim to tell the user to
+        source the file to extract its contents.
+
+        Extraction will only proceed if the first line of <a href="insert.txt.html#a" class="d">a</a> putative <a href="#vimball" class="d">vimball</a>
+        file holds the "Vimball Archiver by Charles E. Campbell" line.
+
+<span class="c">LISTING FILES IN A VIMBALL                                     </span> <a name="%3AVimballList" class="t">:VimballList</a>
+
+                <a href="#%3AVimballList" class="d">:VimballList</a>
+
+        This command will tell Vimball to <a href="eval.txt.html#list" class="d">list</a> the files in the archive, along
+        with their lengths in lines.
+
+<span class="c">MANUALLY INVOKING VIMBALL EXTRACTION                           </span> <a name="%3AUseVimball" class="t">:UseVimball</a>
+
+                <a href="#%3AUseVimball" class="d">:UseVimball</a> <span class="s">[path]</span>
+
+        This command <a href="motion.txt.html#is" class="d">is</a> contained within the <a href="#vimball" class="d">vimball</a> itself; <a href="motion.txt.html#it" class="d">it</a> invokes the
+        vimball#Vimball() routine which <a href="motion.txt.html#is" class="d">is</a> responsible for unpacking the
+        vimball.  One may choose to execute <a href="motion.txt.html#it" class="d">it</a> by hand instead of sourcing
+        the vimball; one may also choose to specify <a href="insert.txt.html#a" class="d">a</a> path for the
+        installation, thereby overriding the automatic choice of the first
+        existing directory on the <a href="options.txt.html#%27runtimepath%27" class="l">'runtimepath'</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="c">REMOVING A VIMBALL                                             </span> <a name="%3ARmVimball" class="t">:RmVimball</a>
+
+                <a href="#%3ARmVimball" class="d">:RmVimball</a> vimballfile <span class="s">[path]</span>
+
+        This command removes all files generated by the specified <a href="#vimball" class="d">vimball</a>
+        (but not any directories <a href="motion.txt.html#it" class="d">it</a> may have made).  One may choose <a href="insert.txt.html#a" class="d">a</a> path
+        for de-installation, too (see <a href="options.txt.html#%27runtimepath%27" class="l">'runtimepath'</a>); otherwise, the
+        default <a href="motion.txt.html#is" class="d">is</a> the first existing directory on the <a href="options.txt.html#%27runtimepath%27" class="l">'runtimepath'</a><a href="repeat.txt.html#." class="d">.</a>
+        To implement this, <a href="insert.txt.html#a" class="d">a</a> file (.VimballRecord) <a href="motion.txt.html#is" class="d">is</a> made in that directory
+        containing <a href="insert.txt.html#a" class="d">a</a> record of what files need to be removed for all vimballs
+        used thus far.
+
+PREVENTING LOADING
+
+        If for some reason you don't want to be able to extract plugins
+        using vimballs: you may prevent the loading of vimball.vim by
+        putting the following two <a href="eval.txt.html#variables" class="d">variables</a> in your <span class="s">&lt;.vimrc&gt;</span>: 
+<span class="e"></span>
+<span class="e">                let g:loaded_vimballPlugin= 1</span>
+<span class="e">                let g:loaded_vimball      = 1</span>
+
+<span class="c">WINDOWS                                                </span> <a name="vimball-windows" class="t">vimball-windows</a>
+
+        Many <a href="#vimball" class="d">vimball</a> files are compressed with gzip.  Windows, unfortunately,
+        does not come provided with <a href="insert.txt.html#a" class="d">a</a> tool to decompress gzip'ped files.
+        Fortunately, there are <a href="insert.txt.html#a" class="d">a</a> number of tools available for Windows users
+        to un-gzip files:
+
+<span class="e">            Item     Tool/Suite   Free   Website</span>
+<span class="e">            ----     ----------   ----   -------</span>
+<span class="e">            7zip        tool       y     http://www.7-zip.org/</span>
+<span class="e">            Winzip      tool       n     http://www.winzip.com/downwz.htm</span>
+<span class="e">            unxutils    suite      y     http://unxutils.sourceforge.net/</span>
+<span class="e">            cygwin      suite      y     http://www.cygwin.com/</span>
+<span class="e">            GnuWin32    suite      y     http://gnuwin32.sourceforge.net/</span>
+<span class="e">            MinGW       suite      y     http://www.mingw.org/</span>
+
+
+<span class="h">==============================================================================</span>
+4. Vimball History                                      <a name="vimball-history" class="t">vimball-history</a> {{{1
+
+        37 <a href="cmdline.txt.html#%3A" class="d">:</a> Jul 18, 2014 * (by request of T. Miedema) added augroup around
+                            the autocmds in vimballPlugin.vim
+             Jul 06, 2015 * there are two uses of tabc; changed to tabc!
+        34 <a href="cmdline.txt.html#%3A" class="d">:</a> Sep 22, 2011 * "UseVimball path" now supports <a href="insert.txt.html#a" class="d">a</a> non-full path by
+                            prepending the current directory to it.
+        33 <a href="cmdline.txt.html#%3A" class="d">:</a> Apr 02, 2011 * Gave priority to *.vmb over *.vba
+                          * Changed silent! to sil! (shorter)
+                          * Safed <a href="options.txt.html#%27swf%27" class="l">'swf'</a> setting (during <a href="#vimball" class="d">vimball</a> extraction,
+                            its now turned off)
+        32 <a href="cmdline.txt.html#%3A" class="d">:</a> May 19, 2010 * (Christian Brabrandt) <a href="repeat.txt.html#%3Aso" class="d">:so</a> someplugin.vba and
+                            <a href="repeat.txt.html#%3Aso" class="d">:so</a> someplugin.vba.gz (and the other supported
+                            compression types) now works
+                          * (Jan Steffens) added support for xz compression
+                          * fenc extraction was erroneously picking up the
+                            <a href="intro.txt.html#end" class="d">end</a> of the line number when no file encoding
+                            was present.  Fixed.
+                          * By request, beginning the switchover from the <a href="#vba" class="d">vba</a>
+                            extension to vmb.  Currently both are supported;
+                            MkVimball, however, now will create *.vmb files.
+             Feb 11, 2011 * motoyakurotsu reported an error with vimball's
+                            handling of zero-length files
+             Feb 18, 2016 * Changed =~ to =~# where appropriate
+        30 <a href="cmdline.txt.html#%3A" class="d">:</a> Dec 08, 2008 * <a href="eval.txt.html#fnameescape%28%29" class="d">fnameescape()</a> inserted to protect error
+                            messaging using corrupted filenames from
+                            causing problems
+                          * RmVimball supports filenames that would
+                            otherwise be considered to have "magic"
+                            characters (ie. Abc[1].vba)
+             Feb 18, 2009 * s:Escape(), g:vimball_shq, and g:netrw_shq
+                            removed (shellescape() used directly)
+             Oct 05, 2009 * (Nikolai Weibull) suggested that MkVimball
+                            be allowed to use slashes in the filename.
+        26 <a href="cmdline.txt.html#%3A" class="d">:</a> May 27, 2008 * <a href="#g%3Avimball_mkdir" class="d">g:vimball_mkdir</a> usage installed.  Makes the
+                            $HOME/.vim (or $HOME\vimfiles) directory if
+                            necessary.
+             May 30, 2008 * (tnx to Bill McCarthy) found and fixed <a href="insert.txt.html#a" class="d">a</a> bug:
+                            <a href="#vimball" class="d">vimball</a> wasn't updating plugins to AsNeeded/
+                            when <a href="motion.txt.html#it" class="d">it</a> should
+        25 <a href="cmdline.txt.html#%3A" class="d">:</a> Mar 24, 2008 * changed vimball#Vimball() to recognize doc/*.??x
+                            files <a href="motion.txt.html#as" class="d">as</a> <a href="helphelp.txt.html#help" class="d">help</a> files, too.
+             Apr 18, 2008 * RmVimball command <a href="motion.txt.html#is" class="d">is</a> now protected by saving and
+                            restoring settings <a href="starting.txt.html#--" class="d">--</a> in particular, acd was
+                            causing problems <a href="motion.txt.html#as" class="d">as</a> reported by Zhang Shuhan
+        24 <a href="cmdline.txt.html#%3A" class="d">:</a> Nov 15, 2007 * g:vimball_path_escape used by s:Path() to
+                            prevent certain characters from causing trouble
+                            (defunct: <a href="eval.txt.html#fnameescape%28%29" class="l">fnameescape()</a> and <a href="eval.txt.html#shellescape%28%29" class="l">shellescape()</a>
+                            now used instead)
+        22 <a href="cmdline.txt.html#%3A" class="d">:</a> Mar 21, 2007 * uses setlocal instead of set during <a href="autocmd.txt.html#BufEnter" class="d">BufEnter</a>
+        21 <a href="cmdline.txt.html#%3A" class="d">:</a> Nov 27, 2006 * (tnx to Bill McCarthy) <a href="#vimball" class="d">vimball</a> had <a href="insert.txt.html#a" class="d">a</a> header
+                            handling problem and <a href="motion.txt.html#it" class="d">it</a> now changes \s to /s
+        20 <a href="cmdline.txt.html#%3A" class="d">:</a> Nov 20, 2006 * <a href="eval.txt.html#substitute%28%29" class="d">substitute()</a> calls have all had the 'e' flag
+                            removed.
+        18 <a href="cmdline.txt.html#%3A" class="d">:</a> Aug 01, 2006 * vimballs now use <a href="fold.txt.html#folding" class="d">folding</a> to easily display their
+                            contents.
+                          * if <a href="insert.txt.html#a" class="d">a</a> user has AsNeeded/somefile, then <a href="#vimball" class="d">vimball</a>
+                            will extract plugin/somefile to the AsNeeded/
+                            directory
+        17 <a href="cmdline.txt.html#%3A" class="d">:</a> Jun 28, 2006 * changes all \s to /s internally for Windows
+        16 <a href="cmdline.txt.html#%3A" class="d">:</a> Jun 15, 2006 * A. Mechelynck's idea to allow users to specify
+                            installation root paths implemented for
+                            UseVimball, MkVimball, and RmVimball.
+                          * RmVimball implemented
+        15 <a href="cmdline.txt.html#%3A" class="d">:</a> Jun 13, 2006 * bugfix
+        14 <a href="cmdline.txt.html#%3A" class="d">:</a> May 26, 2006 * bugfixes
+        13 <a href="cmdline.txt.html#%3A" class="d">:</a> May 01, 2006 * exists("&amp;acd"<a href="motion.txt.html#%29" class="d">)</a> used to determine if the acd
+                            option exists
+        12 <a href="cmdline.txt.html#%3A" class="d">:</a> May 01, 2006 * bugfix <a href="motion.txt.html#-" class="d">-</a> the <a href="options.txt.html#%27acd%27" class="l">'acd'</a> option <a href="motion.txt.html#is" class="d">is</a> not always defined
+        11 <a href="cmdline.txt.html#%3A" class="d">:</a> Apr 27, 2006 * VimballList would create missing subdirectories that
+                            the <a href="#vimball" class="d">vimball</a> specified were needed.  Fixed.
+        10 <a href="cmdline.txt.html#%3A" class="d">:</a> Apr 27, 2006 * moved all setting saving/restoration to <a href="insert.txt.html#a" class="d">a</a> pair of
+                            functions.  Included some more settings in them
+                            which frequently cause trouble.
+        9  <a href="cmdline.txt.html#%3A" class="d">:</a> Apr 26, 2006 * <a href="various.txt.html#various" class="d">various</a> changes to support Windows' predilection
+                            for backslashes and spaces in file and directory
+                            names.
+        7  <a href="cmdline.txt.html#%3A" class="d">:</a> Apr 25, 2006 * bypasses foldenable
+                          * uses more exe and <a href="various.txt.html#less" class="d">less</a> norm! (:yank <a href="change.txt.html#%3Aput" class="d">:put</a> etc)
+                          * does better <a href="motion.txt.html#at" class="d">at</a> insuring <a href="insert.txt.html#a" class="d">a</a> "Press ENTER" prompt
+                            appears to keep its <a href="message.txt.html#messages" class="d">messages</a> visible
+        4  <a href="cmdline.txt.html#%3A" class="d">:</a> Mar 31, 2006 * <a href="autocmd.txt.html#BufReadPost" class="d">BufReadPost</a> seems to fire twice; BufReadEnter
+                            only fires once, so the "Source this file..."
+                            message <a href="motion.txt.html#is" class="d">is</a> now issued only once.
+        3  <a href="cmdline.txt.html#%3A" class="d">:</a> Mar 20, 2006 * removed query, now requires sourcing to be
+                            extracted (:so %).  Message to that effect
+                            included.
+                          * <a href="#%3AVimballList" class="d">:VimballList</a>  now shows files that would be
+                            extracted.
+        2  <a href="cmdline.txt.html#%3A" class="d">:</a> Mar 20, 2006 * query, <a href="#%3AUseVimball" class="d">:UseVimball</a> included
+        1  <a href="cmdline.txt.html#%3A" class="d">:</a> Mar 20, 2006 * initial release
+
+
+<span class="h">==============================================================================</span>
+vim:tw=78:ts=8:ft=help:fdm=marker
+
+</pre>
+</div>
+</div>
+</body>
+</html>

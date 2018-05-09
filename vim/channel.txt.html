@@ -1,0 +1,788 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: channel.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="channel.txt" class="t">channel.txt</a>      For <span class="i">Vim version 8.0.</span>  Last change: 2018 Apr 18
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Bram Moolenaar</span>
+
+
+                      Inter-process communication               <a name="channel" class="t">channel</a>
+
+Vim uses channels to communicate with other processes.
+<a href="insert.txt.html#A" class="d">A</a> <a href="#channel" class="d">channel</a> uses <a href="insert.txt.html#a" class="d">a</a> socket or pipes.                       <a name="socket-interface" class="t">socket-interface</a>
+<a href="eval.txt.html#Jobs" class="d">Jobs</a> can be used to start processes and communicate with them.
+The Netbeans interface also uses <a href="insert.txt.html#a" class="d">a</a> channel. <a href="netbeans.txt.html#netbeans" class="l">netbeans</a>
+
+1. Overview                             <a href="#job-channel-overview" class="l">job-channel-overview</a>
+2. <a href="eval.txt.html#Channel" class="d">Channel</a> demo                         <a href="#channel-demo" class="l">channel-demo</a>
+3. Opening <a href="insert.txt.html#a" class="d">a</a> <a href="#channel" class="d">channel</a>                    <a href="#channel-open" class="l">channel-open</a>
+4. Using <a href="insert.txt.html#a" class="d">a</a> JSON or JS <a href="#channel" class="d">channel</a>           <a href="#channel-use" class="l">channel-use</a>
+5. <a href="eval.txt.html#Channel" class="d">Channel</a> commands                     <a href="#channel-commands" class="l">channel-commands</a>
+6. Using <a href="insert.txt.html#a" class="d">a</a> RAW or NL <a href="#channel" class="d">channel</a>            <a href="#channel-raw" class="l">channel-raw</a>
+7. More <a href="#channel" class="d">channel</a> <a href="eval.txt.html#functions" class="d">functions</a>               <a href="#channel-more" class="l">channel-more</a>
+8. Starting <a href="insert.txt.html#a" class="d">a</a> <a href="#job" class="d">job</a> with <a href="insert.txt.html#a" class="d">a</a> <a href="#channel" class="d">channel</a>        <a href="#job-start" class="l">job-start</a>
+9. Starting <a href="insert.txt.html#a" class="d">a</a> <a href="#job" class="d">job</a> without <a href="insert.txt.html#a" class="d">a</a> <a href="#channel" class="d">channel</a>     <a href="#job-start-nochannel" class="l">job-start-nochannel</a>
+10. <a href="eval.txt.html#Job" class="d">Job</a> <a href="options.txt.html#options" class="d">options</a>                         <a href="#job-options" class="l">job-options</a>
+11. Controlling <a href="insert.txt.html#a" class="d">a</a> <a href="#job" class="d">job</a>                   <a href="#job-control" class="l">job-control</a>
+
+<span class="s">{Vi does not have any of these features}</span>
+<span class="s">{only when compiled with the |+channel| feature for channel stuff}</span>
+        You can check this with: <span class="e">has('channel')</span>
+<span class="s">{only when compiled with the |+job| feature for job stuff}</span>
+        You can check this with: <span class="e">has('job')</span>
+
+<span class="h">==============================================================================</span>
+1. Overview                                             <a name="job-channel-overview" class="t">job-channel-overview</a>
+
+There are four main types of jobs:
+1. <a href="insert.txt.html#A" class="d">A</a> daemon, serving several Vim instances.
+   Vim connects to <a href="motion.txt.html#it" class="d">it</a> with <a href="insert.txt.html#a" class="d">a</a> socket.
+2. One <a href="#job" class="d">job</a> working with one Vim instance, asynchronously.
+   Uses <a href="insert.txt.html#a" class="d">a</a> socket or pipes.
+3. <a href="insert.txt.html#A" class="d">A</a> <a href="#job" class="d">job</a> performing some work for <a href="insert.txt.html#a" class="d">a</a> short time, asynchronously.
+   Uses <a href="insert.txt.html#a" class="d">a</a> socket or pipes.
+4. Running <a href="insert.txt.html#a" class="d">a</a> filter, synchronously.
+   Uses pipes.
+
+For when using sockets See <a href="#job-start" class="l">job-start</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="#job-start-nochannel" class="l">job-start-nochannel</a> and
+<a href="#channel-open" class="l">channel-open</a><a href="repeat.txt.html#." class="d">.</a>  For 2 and 3, one or more jobs using pipes, see <a href="#job-start" class="l">job-start</a><a href="repeat.txt.html#." class="d">.</a>
+For 4 use the ":{range}!cmd" command, see <a href="change.txt.html#filter" class="l">filter</a><a href="repeat.txt.html#." class="d">.</a>
+
+Over the socket and pipes these protocols are available:
+RAW     nothing known, Vim cannot tell where <a href="insert.txt.html#a" class="d">a</a> message ends
+NL      every message ends in <a href="insert.txt.html#a" class="d">a</a> NL (newline) character
+JSON    JSON encoding <a href="eval.txt.html#json_encode%28%29" class="l">json_encode()</a>
+JS      JavaScript style JSON-like encoding <a href="eval.txt.html#js_encode%28%29" class="l">js_encode()</a>
+
+Common combination are:
+<a href="motion.txt.html#-" class="d">-</a> Using <a href="insert.txt.html#a" class="d">a</a> <a href="#job" class="d">job</a> connected through pipes in NL mode.  E.g., to run <a href="insert.txt.html#a" class="d">a</a> style
+  checker and receive <a href="message.txt.html#errors" class="d">errors</a> and warnings.
+<a href="motion.txt.html#-" class="d">-</a> Using <a href="insert.txt.html#a" class="d">a</a> daemon, connecting over <a href="insert.txt.html#a" class="d">a</a> socket in JSON mode.  E.g. to lookup
+  cross-references in <a href="insert.txt.html#a" class="d">a</a> database.
+
+<span class="h">==============================================================================</span>
+2. <a href="eval.txt.html#Channel" class="d">Channel</a> demo                         <a name="channel-demo" class="t">channel-demo</a> <a name="demoserver.py" class="t">demoserver.py</a>
+
+This requires Python.  The demo program can be found in
+$VIMRUNTIME/tools/demoserver.py
+Run <a href="motion.txt.html#it" class="d">it</a> in one terminal.  We will call this T1.
+
+Run Vim in another terminal.  Connect to the demo server with: 
+<span class="e">        let channel = ch_open('localhost:8765')</span>
+<span class="e"></span>
+In T1 you should see:
+<span class="h">        === socket opened === </span>
+
+You can now send <a href="insert.txt.html#a" class="d">a</a> message to the server: 
+<span class="e">        echo ch_evalexpr(channel, 'hello!')</span>
+<span class="e"></span>
+The message <a href="motion.txt.html#is" class="d">is</a> received in T1 and <a href="insert.txt.html#a" class="d">a</a> response <a href="motion.txt.html#is" class="d">is</a> sent back to Vim.
+You can see the raw <a href="message.txt.html#messages" class="d">messages</a> in T1.  What Vim sends is:
+<span class="h">        [1,"hello!"] </span>
+And the response is:
+<span class="h">        [1,"got it"] </span>
+The number will increase every time you send <a href="insert.txt.html#a" class="d">a</a> message.
+
+The server can send <a href="insert.txt.html#a" class="d">a</a> command to Vim.  Type this on T1 (literally, including
+the quotes):
+<span class="h">        ["ex","echo 'hi there'"] </span>
+And you should see the message in Vim. You can move the cursor <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> forward:
+<span class="h">        ["normal","w"] </span>
+
+To handle asynchronous communication <a href="insert.txt.html#a" class="d">a</a> callback needs to be used: 
+<span class="e">        func MyHandler(channel, msg)</span>
+<span class="e">          echo "from the handler: " . a:msg</span>
+<span class="e">        endfunc</span>
+<span class="e">        call ch_sendexpr(channel, 'hello!', {'callback': "MyHandler"})</span>
+Vim will not wait for <a href="insert.txt.html#a" class="d">a</a> response.  Now the server can send the response later
+and MyHandler will be invoked.
+
+Instead of giving <a href="insert.txt.html#a" class="d">a</a> callback with every send call, <a href="motion.txt.html#it" class="d">it</a> can also be specified
+when opening the channel: 
+<span class="e">        call ch_close(channel)</span>
+<span class="e">        let channel = ch_open('localhost:8765', {'callback': "MyHandler"})</span>
+<span class="e">        call ch_sendexpr(channel, 'hello!')</span>
+<span class="e"></span>
+When trying out channels it's useful to see what <a href="motion.txt.html#is" class="d">is</a> going on.  You can tell
+Vim to write lines in log file: 
+<span class="e">        call ch_logfile('channellog', 'w')</span>
+See <a href="eval.txt.html#ch_logfile%28%29" class="l">ch_logfile()</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+3. Opening <a href="insert.txt.html#a" class="d">a</a> <a href="#channel" class="d">channel</a>                                    <a name="channel-open" class="t">channel-open</a>
+
+To open <a href="insert.txt.html#a" class="d">a</a> channel: 
+<span class="e">    let channel = ch_open({address} [, {options}])</span>
+<span class="e">    if ch_status(channel) == "open"</span>
+<span class="e">      " use the channel</span>
+<span class="e"></span>
+Use <a href="eval.txt.html#ch_status%28%29" class="l">ch_status()</a> to see if the <a href="#channel" class="d">channel</a> could be opened.
+
+<a href="cmdline.txt.html#%7Baddress%7D" class="s">{address}</a> has the form "hostname:port"<a href="repeat.txt.html#." class="d">.</a>  E.g., "localhost:8765"<a href="repeat.txt.html#." class="d">.</a>
+
+<span class="s">{options}</span> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> dictionary with optional entries:        <a name="channel-open-options" class="t">channel-open-options</a>
+
+"mode" can be:                                          <a name="channel-mode" class="t">channel-mode</a>
+        "json" <a href="motion.txt.html#-" class="d">-</a> Use JSON, see below; most convenient way. Default.
+        "js"   <a href="motion.txt.html#-" class="d">-</a> Use JS (JavaScript) encoding, more efficient than JSON.
+        "nl"   <a href="motion.txt.html#-" class="d">-</a> Use <a href="message.txt.html#messages" class="d">messages</a> that <a href="intro.txt.html#end" class="d">end</a> in <a href="insert.txt.html#a" class="d">a</a> NL character
+        "raw"  <a href="motion.txt.html#-" class="d">-</a> Use raw <a href="message.txt.html#messages" class="d">messages</a>
+                                                <a name="channel-callback" class="t">channel-callback</a> <a name="E921" class="t">E921</a>
+"callback"      <a href="insert.txt.html#A" class="d">A</a> function that <a href="motion.txt.html#is" class="d">is</a> called when <a href="insert.txt.html#a" class="d">a</a> message <a href="motion.txt.html#is" class="d">is</a> received that <a href="motion.txt.html#is" class="d">is</a>
+                not handled otherwise.  It gets two arguments: the <a href="#channel" class="d">channel</a>
+                and the received message. Example: 
+<span class="e">        func Handle(channel, msg)</span>
+<span class="e">          echo 'Received: ' . a:msg</span>
+<span class="e">        endfunc</span>
+<span class="e">        let channel = ch_open("localhost:8765", {"callback": "Handle"})</span>
+
+                When "mode" <a href="motion.txt.html#is" class="d">is</a> "json" or "js" the "msg" argument <a href="motion.txt.html#is" class="d">is</a> the body
+                of the received message, converted to Vim types.
+                When "mode" <a href="motion.txt.html#is" class="d">is</a> "nl" the "msg" argument <a href="motion.txt.html#is" class="d">is</a> one message,
+                excluding the NL.
+                When "mode" <a href="motion.txt.html#is" class="d">is</a> "raw" the "msg" argument <a href="motion.txt.html#is" class="d">is</a> the whole message
+                <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> string.
+
+                For all callbacks: Use <a href="eval.txt.html#function%28%29" class="l">function()</a> to bind <a href="motion.txt.html#it" class="d">it</a> to arguments
+                and/or <a href="insert.txt.html#a" class="d">a</a> Dictionary.  Or use the form "dict.function" to bind
+                the Dictionary.
+
+                Callbacks are only called <a href="motion.txt.html#at" class="d">at</a> <a href="insert.txt.html#a" class="d">a</a> "safe" moment, usually when Vim
+                <a href="motion.txt.html#is" class="d">is</a> waiting for the user to type <a href="insert.txt.html#a" class="d">a</a> character.  Vim does not use
+                multi-threading.
+
+                                                        <a name="close_cb" class="t">close_cb</a>
+"<a href="#close_cb" class="d">close_cb</a>"      <a href="insert.txt.html#A" class="d">A</a> function that <a href="motion.txt.html#is" class="d">is</a> called when the <a href="#channel" class="d">channel</a> gets closed, other
+                than by calling ch_close().  It should be defined like this: 
+<span class="e">        func MyCloseHandler(channel)</span>
+               Vim will invoke callbacks that handle data before invoking
+                close_cb, thus when this function <a href="motion.txt.html#is" class="d">is</a> called no more data will
+                be passed to the callbacks.
+                                                        <a name="channel-drop" class="t">channel-drop</a>
+"drop"          Specifies when to drop messages:
+                    "auto"      When there <a href="motion.txt.html#is" class="d">is</a> no callback to handle <a href="insert.txt.html#a" class="d">a</a> message.
+                                The "<a href="#close_cb" class="d">close_cb</a>" <a href="motion.txt.html#is" class="d">is</a> also considered for this.
+                    "never"     All <a href="message.txt.html#messages" class="d">messages</a> will be kept.
+
+                                                        <a name="waittime" class="t">waittime</a>
+"<a href="#waittime" class="d">waittime</a>"      The time to wait for the connection to be made in
+                milliseconds.  <a href="insert.txt.html#A" class="d">A</a> negative number waits forever.
+
+                The default <a href="motion.txt.html#is" class="d">is</a> zero, don't wait, which <a href="motion.txt.html#is" class="d">is</a> useful if <a href="insert.txt.html#a" class="d">a</a> local
+                server <a href="motion.txt.html#is" class="d">is</a> supposed to be running already.  On <a href="os_unix.txt.html#Unix" class="d">Unix</a> Vim
+                actually uses <a href="insert.txt.html#a" class="d">a</a> 1 msec timeout, that <a href="motion.txt.html#is" class="d">is</a> required on many
+                systems.  Use <a href="insert.txt.html#a" class="d">a</a> larger value for <a href="insert.txt.html#a" class="d">a</a> remote server, e.g.  10
+                msec <a href="motion.txt.html#at" class="d">at</a> least.
+                                                        <a name="channel-timeout" class="t">channel-timeout</a>
+"timeout"       The time to wait for <a href="insert.txt.html#a" class="d">a</a> request when blocking, E.g. when using
+                ch_evalexpr().  In milliseconds.  The default <a href="motion.txt.html#is" class="d">is</a> 2000 (2
+                seconds).
+
+When "mode" <a href="motion.txt.html#is" class="d">is</a> "json" or "js" the "callback" <a href="motion.txt.html#is" class="d">is</a> optional.  When omitted <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a>
+only possible to receive <a href="insert.txt.html#a" class="d">a</a> message after sending one.
+
+To change the <a href="#channel" class="d">channel</a> <a href="options.txt.html#options" class="d">options</a> after opening <a href="motion.txt.html#it" class="d">it</a> use <a href="eval.txt.html#ch_setoptions%28%29" class="l">ch_setoptions()</a><a href="repeat.txt.html#." class="d">.</a>  The
+arguments are similar to what <a href="motion.txt.html#is" class="d">is</a> passed to <a href="eval.txt.html#ch_open%28%29" class="l">ch_open()</a><a href="motion.txt.html#%2C" class="d">,</a> but "<a href="#waittime" class="d">waittime</a>" cannot
+be given, since that only applies to opening the channel.
+
+For example, the handler can be added or changed: 
+<span class="e">    call ch_setoptions(channel, {'callback': callback})</span>
+When "callback" <a href="motion.txt.html#is" class="d">is</a> empty (zero or an empty string) the handler <a href="motion.txt.html#is" class="d">is</a> removed.
+
+After <a href="insert.txt.html#a" class="d">a</a> callback has been invoked Vim will update the screen and <a href="change.txt.html#put" class="d">put</a> the
+cursor back where <a href="motion.txt.html#it" class="d">it</a> belongs.  Thus the callback should not need to <a href="diff.txt.html#do" class="d">do</a>
+<span class="e">:redraw</span>.
+
+The timeout can be changed: 
+<span class="e">    call ch_setoptions(channel, {'timeout': msec})</span>
+
+                                                          <a name="channel-close" class="t">channel-close</a> <a name="E906" class="t">E906</a>
+Once done with the channel, disconnect <a href="motion.txt.html#it" class="d">it</a> like this: 
+<span class="e">    call ch_close(channel)</span>
+When <a href="insert.txt.html#a" class="d">a</a> socket <a href="motion.txt.html#is" class="d">is</a> used this will close the socket for both directions.  When
+pipes are used (stdin/stdout/stderr) they are all closed.  This might not be
+what you want!  Stopping the <a href="#job" class="d">job</a> with <a href="eval.txt.html#job_stop%28%29" class="d">job_stop()</a> might be better.
+All readahead <a href="motion.txt.html#is" class="d">is</a> discarded, callbacks will no longer be invoked.
+
+<span class="n">Note</span> that <a href="insert.txt.html#a" class="d">a</a> <a href="#channel" class="d">channel</a> <a href="motion.txt.html#is" class="d">is</a> closed in three stages:
+  <a href="motion.txt.html#-" class="d">-</a> The I/O ends, log message: "Closing <a href="#channel" class="d">channel</a>"<a href="repeat.txt.html#." class="d">.</a> There can still be queued
+    <a href="message.txt.html#messages" class="d">messages</a> to read or callbacks to invoke.
+  <a href="motion.txt.html#-" class="d">-</a> The readahead <a href="motion.txt.html#is" class="d">is</a> cleared, log message: "Clearing <a href="#channel" class="d">channel</a>"<a href="repeat.txt.html#." class="d">.</a>  Some <a href="eval.txt.html#variables" class="d">variables</a>
+    may still <a href="intro.txt.html#reference" class="d">reference</a> the channel.
+  <a href="motion.txt.html#-" class="d">-</a> The <a href="#channel" class="d">channel</a> <a href="motion.txt.html#is" class="d">is</a> freed, log message: "Freeing <a href="#channel" class="d">channel</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+When the <a href="#channel" class="d">channel</a> can't be opened you will get an error message.  There <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a>
+difference between <a href="os_win32.txt.html#MS-Windows" class="d">MS-Windows</a> and Unix: On <a href="os_unix.txt.html#Unix" class="d">Unix</a> when the port doesn't exist
+<a href="eval.txt.html#ch_open%28%29" class="d">ch_open()</a> fails quickly.  On <a href="os_win32.txt.html#MS-Windows" class="d">MS-Windows</a> "<a href="#waittime" class="d">waittime</a>" applies.
+<a name="E898" class="t">E898</a> <a name="E901" class="t">E901</a> <a name="E902" class="t">E902</a>
+
+If there <a href="motion.txt.html#is" class="d">is</a> an error reading or <a href="editing.txt.html#writing" class="d">writing</a> <a href="insert.txt.html#a" class="d">a</a> <a href="#channel" class="d">channel</a> <a href="motion.txt.html#it" class="d">it</a> will be closed.
+<a name="E630" class="t">E630</a> <a name="E631" class="t">E631</a> 
+
+<span class="h">==============================================================================</span>
+4. Using <a href="insert.txt.html#a" class="d">a</a> JSON or JS <a href="#channel" class="d">channel</a>                                   <a name="channel-use" class="t">channel-use</a>
+
+If mode <a href="motion.txt.html#is" class="d">is</a> JSON then <a href="insert.txt.html#a" class="d">a</a> message can be sent synchronously like this: 
+<span class="e">    let response = ch_evalexpr(channel, {expr})</span>
+This awaits <a href="insert.txt.html#a" class="d">a</a> response from the other side.
+
+When mode <a href="motion.txt.html#is" class="d">is</a> JS this works the same, except that the <a href="message.txt.html#messages" class="d">messages</a> use
+JavaScript encoding.  See <a href="eval.txt.html#js_encode%28%29" class="l">js_encode()</a> for the difference.
+
+To send <a href="insert.txt.html#a" class="d">a</a> message, without handling <a href="insert.txt.html#a" class="d">a</a> response or letting the <a href="#channel" class="d">channel</a> callback
+handle the response: 
+<span class="e">    call ch_sendexpr(channel, {expr})</span>
+<span class="e"></span>
+To send <a href="insert.txt.html#a" class="d">a</a> message and letting the response handled by <a href="insert.txt.html#a" class="d">a</a> specific function,
+asynchronously: 
+<span class="e">    call ch_sendexpr(channel, {expr}, {'callback': Handler})</span>
+<span class="e"></span>
+Vim will match the response with the request using the message ID.  Once the
+response <a href="motion.txt.html#is" class="d">is</a> received the callback will be invoked.  Further responses with the
+same ID will be ignored.  If your server sends back multiple responses you
+need to send them with ID zero, they will be passed to the <a href="#channel" class="d">channel</a> callback.
+
+The <span class="s">{expr}</span> <a href="motion.txt.html#is" class="d">is</a> converted to JSON and wrapped in an array.  An example of the
+message that the receiver will get when <span class="s">{expr}</span> <a href="motion.txt.html#is" class="d">is</a> the <a href="eval.txt.html#string" class="d">string</a> "hello"<a href="cmdline.txt.html#%3A" class="d">:</a>
+<span class="h">        [12,"hello"] </span>
+
+The format of the JSON sent is:
+    [{number},{expr}]
+
+In which <span class="s">{number}</span> <a href="motion.txt.html#is" class="d">is</a> different every time.  It <a href="vim_faq.txt.html#must" class="d">must</a> be used in the response
+(if any):
+
+    [{number},{response}]
+
+This way Vim knows which sent message matches with which received message and
+can call the right handler.  Also when the <a href="message.txt.html#messages" class="d">messages</a> arrive out of order.
+
+<a href="insert.txt.html#A" class="d">A</a> newline character <a href="motion.txt.html#is" class="d">is</a> terminating the JSON text.  This can be used to
+separate the read text.  For example, in Python:
+        splitidx <a href="change.txt.html#%3D" class="d">=</a> read_text.find('\n')
+        message <a href="change.txt.html#%3D" class="d">=</a> read_text[:splitidx]
+        rest <a href="change.txt.html#%3D" class="d">=</a> read_text[splitidx <a href="motion.txt.html#%2B" class="d">+</a> 1:]
+
+The sender <a href="vim_faq.txt.html#must" class="d">must</a> always send valid JSON to Vim.  Vim can check for the <a href="intro.txt.html#end" class="d">end</a> of
+the message by parsing the JSON.  It will only accept the message if the <a href="intro.txt.html#end" class="d">end</a>
+was received.  <a href="insert.txt.html#A" class="d">A</a> newline after the message <a href="motion.txt.html#is" class="d">is</a> optional.
+
+When the process wants to send <a href="insert.txt.html#a" class="d">a</a> message to Vim without first receiving <a href="insert.txt.html#a" class="d">a</a>
+message, <a href="motion.txt.html#it" class="d">it</a> <a href="vim_faq.txt.html#must" class="d">must</a> use the number zero:
+    [0,{response}]
+
+Then <a href="#channel" class="d">channel</a> handler will then get <span class="s">{response}</span> converted to Vim types.  If the
+<a href="#channel" class="d">channel</a> does not have <a href="insert.txt.html#a" class="d">a</a> handler the message <a href="motion.txt.html#is" class="d">is</a> dropped.
+
+It <a href="motion.txt.html#is" class="d">is</a> also possible to use <a href="eval.txt.html#ch_sendraw%28%29" class="d">ch_sendraw()</a> and <a href="eval.txt.html#ch_evalraw%28%29" class="d">ch_evalraw()</a> on <a href="insert.txt.html#a" class="d">a</a> JSON or JS
+channel.  The caller <a href="motion.txt.html#is" class="d">is</a> then completely responsible for correct encoding and
+decoding.
+
+<span class="h">==============================================================================</span>
+5. <a href="eval.txt.html#Channel" class="d">Channel</a> commands                                     <a name="channel-commands" class="t">channel-commands</a>
+
+With <a href="insert.txt.html#a" class="d">a</a> JSON <a href="#channel" class="d">channel</a> the process can send commands to Vim that will be
+handled by Vim internally, <a href="motion.txt.html#it" class="d">it</a> does not require <a href="insert.txt.html#a" class="d">a</a> handler for the channel.
+
+Possible commands are:                          <a name="E903" class="t">E903</a> <a name="E904" class="t">E904</a> <a name="E905" class="t">E905</a>
+    <a href="index.txt.html#%5B" class="d">[</a>"redraw"<a href="motion.txt.html#%2C" class="d">,</a> <span class="s">{forced}</span>]
+    <a href="index.txt.html#%5B" class="d">[</a>"<a href="starting.txt.html#ex" class="d">ex</a>"<a href="motion.txt.html#%2C" class="d">,</a>     <span class="s">{Ex command}</span>]
+    <a href="index.txt.html#%5B" class="d">[</a>"normal"<a href="motion.txt.html#%2C" class="d">,</a> <span class="s">{Normal mode command}</span>]
+    <a href="index.txt.html#%5B" class="d">[</a>"<a href="eval.txt.html#expr" class="d">expr</a>"<a href="motion.txt.html#%2C" class="d">,</a>   <span class="s">{expression}</span>, <span class="s">{number}</span>]
+    <a href="index.txt.html#%5B" class="d">[</a>"<a href="eval.txt.html#expr" class="d">expr</a>"<a href="motion.txt.html#%2C" class="d">,</a>   <span class="s">{expression}</span>]
+    <a href="index.txt.html#%5B" class="d">[</a>"call"<a href="motion.txt.html#%2C" class="d">,</a>   <span class="s">{func name}</span>, <span class="s">{argument list}</span>, <span class="s">{number}</span>]
+    <a href="index.txt.html#%5B" class="d">[</a>"call"<a href="motion.txt.html#%2C" class="d">,</a>   <span class="s">{func name}</span>, <span class="s">{argument list}</span>]
+
+With all of these: Be careful what these commands do!  You can easily
+interfere with what the user <a href="motion.txt.html#is" class="d">is</a> doing.  To avoid trouble use <a href="eval.txt.html#mode%28%29" class="l">mode()</a> to check
+that the editor <a href="motion.txt.html#is" class="d">is</a> in the expected state.  E.g., to send keys that <a href="vim_faq.txt.html#must" class="d">must</a> be
+inserted <a href="motion.txt.html#as" class="d">as</a> text, not executed <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> command:
+<span class="h">    ["ex","if mode() == 'i' | call feedkeys('ClassName') | endif"] </span>
+
+Errors in these commands are normally not reported to avoid them messing up
+the display.  If you <a href="diff.txt.html#do" class="d">do</a> want to see them, set the <a href="options.txt.html#%27verbose%27" class="o">'verbose'</a> option to 3 or
+higher.
+
+
+<span class="h">Command "redraw" </span>
+
+The other commands <a href="diff.txt.html#do" class="d">do</a> not update the screen, so that you can send <a href="insert.txt.html#a" class="d">a</a> sequence
+of commands without the cursor moving around.  You <a href="vim_faq.txt.html#must" class="d">must</a> <a href="intro.txt.html#end" class="d">end</a> with the "redraw"
+command to show any changed text and show the cursor where <a href="motion.txt.html#it" class="d">it</a> belongs.
+
+The argument <a href="motion.txt.html#is" class="d">is</a> normally an empty string:
+<span class="h">        ["redraw", ""] </span>
+To first clear the screen pass "force"<a href="cmdline.txt.html#%3A" class="d">:</a>
+<span class="h">        ["redraw", "force"] </span>
+
+
+<span class="h">Command "ex" </span>
+
+The "<a href="starting.txt.html#ex" class="d">ex</a>" command <a href="motion.txt.html#is" class="d">is</a> executed <a href="motion.txt.html#as" class="d">as</a> any <a href="intro.txt.html#Ex" class="d">Ex</a> command.  There <a href="motion.txt.html#is" class="d">is</a> no response for
+completion or error.  You could use <a href="eval.txt.html#functions" class="d">functions</a> in an <a href="eval.txt.html#autoload" class="l">autoload</a> script:
+        <a href="index.txt.html#%5B" class="d">[</a>"<a href="starting.txt.html#ex" class="d">ex</a>"<a href="motion.txt.html#%2C" class="d">,</a>"call myscript#MyFunc(arg)"<a href="index.txt.html#%5D" class="d">]</a>
+
+You can also use "call <a href="eval.txt.html#feedkeys%28%29" class="l">feedkeys()</a>" to <a href="insert.txt.html#insert" class="d">insert</a> any key sequence.
+
+When there <a href="motion.txt.html#is" class="d">is</a> an error <a href="insert.txt.html#a" class="d">a</a> message <a href="motion.txt.html#is" class="d">is</a> written to the <a href="#channel" class="d">channel</a> log, if <a href="motion.txt.html#it" class="d">it</a> exists,
+and <a href="eval.txt.html#v%3Aerrmsg" class="d">v:errmsg</a> <a href="motion.txt.html#is" class="d">is</a> set to the error.
+
+
+<span class="h">Command "normal" </span>
+
+The "normal" command <a href="motion.txt.html#is" class="d">is</a> executed like with ":normal!"<a href="motion.txt.html#%2C" class="d">,</a> commands are not
+mapped.  Example to open the <a href="fold.txt.html#folds" class="d">folds</a> under the cursor:
+        <a href="index.txt.html#%5B" class="d">[</a>"normal" "<a href="fold.txt.html#zO" class="d">zO</a>"<a href="index.txt.html#%5D" class="d">]</a>
+
+
+<span class="h">Command "expr"  with response </span>
+
+The "<a href="eval.txt.html#expr" class="d">expr</a>" command can be used to get the result of an expression.  For
+example, to get the number of lines in the current buffer:
+<span class="h">        ["expr","line('$')", -2] </span>
+
+It will send back the result of the expression:
+<span class="h">        [-2, "last line"] </span>
+The format is:
+        [{number}, <span class="s">{result}</span>]
+
+Here <span class="s">{number}</span> <a href="motion.txt.html#is" class="d">is</a> the same <a href="motion.txt.html#as" class="d">as</a> what was in the request.  Use <a href="insert.txt.html#a" class="d">a</a> negative number
+to avoid confusion with message that Vim sends.  Use <a href="insert.txt.html#a" class="d">a</a> different number on
+every request to be able to match the request with the response.
+
+<span class="s">{result}</span> <a href="motion.txt.html#is" class="d">is</a> the result of the evaluation and <a href="motion.txt.html#is" class="d">is</a> JSON encoded.  If the
+evaluation fails or the result can't be encoded in JSON <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> the <a href="eval.txt.html#string" class="d">string</a>
+"ERROR"<a href="repeat.txt.html#." class="d">.</a>
+
+
+<span class="h">Command "expr" without a response </span>
+
+This command <a href="motion.txt.html#is" class="d">is</a> similar to "<a href="eval.txt.html#expr" class="d">expr</a>" above, but does not send back any response.
+Example:
+<span class="h">        ["expr","setline('$', ['one', 'two', 'three'])"] </span>
+There <a href="motion.txt.html#is" class="d">is</a> no third argument in the request.
+
+
+<span class="h">Command "call" </span>
+
+This <a href="motion.txt.html#is" class="d">is</a> similar to "<a href="eval.txt.html#expr" class="d">expr</a>"<a href="motion.txt.html#%2C" class="d">,</a> but instead of passing the whole <a href="eval.txt.html#expression" class="d">expression</a> <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a>
+<a href="eval.txt.html#string" class="d">string</a> this passes the name of <a href="insert.txt.html#a" class="d">a</a> function and <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of arguments.  This
+avoids the conversion of the arguments to <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#string" class="d">string</a> and escaping and
+concatenating them.  Example:
+<span class="h">        ["call", "line", ["$"], -2] </span>
+
+Leave out the fourth argument if no response <a href="motion.txt.html#is" class="d">is</a> to be sent:
+<span class="h">        ["call", "setline", ["$", ["one", "two", "three"]]] </span>
+
+<span class="h">==============================================================================</span>
+6. Using <a href="insert.txt.html#a" class="d">a</a> RAW or NL <a href="#channel" class="d">channel</a>                            <a name="channel-raw" class="t">channel-raw</a>
+
+If mode <a href="motion.txt.html#is" class="d">is</a> RAW or NL then <a href="insert.txt.html#a" class="d">a</a> message can be sent like this: 
+<span class="e">    let response = ch_evalraw(channel, {string})</span>
+<span class="e"></span>
+The <span class="s">{string}</span> <a href="motion.txt.html#is" class="d">is</a> sent as-is.  The response will be what can be read from the
+<a href="#channel" class="d">channel</a> right away.  Since Vim doesn't know how to recognize the <a href="intro.txt.html#end" class="d">end</a> of the
+message you need to take care of <a href="motion.txt.html#it" class="d">it</a> yourself.  The timeout applies for reading
+the first byte, after that <a href="motion.txt.html#it" class="d">it</a> will not wait for anything more.
+
+If mode <a href="motion.txt.html#is" class="d">is</a> "nl" you can send <a href="insert.txt.html#a" class="d">a</a> message in <a href="insert.txt.html#a" class="d">a</a> similar way.  You are expected
+to <a href="change.txt.html#put" class="d">put</a> in the NL after each message.  Thus you can also send several <a href="message.txt.html#messages" class="d">messages</a>
+ending in <a href="insert.txt.html#a" class="d">a</a> NL <a href="motion.txt.html#at" class="d">at</a> once.  The response will be the text up to and including the
+first NL.  This can also be just the NL for an empty response.
+If no NL was read before the <a href="#channel" class="d">channel</a> timeout an empty <a href="eval.txt.html#string" class="d">string</a> <a href="motion.txt.html#is" class="d">is</a> returned.
+
+To send <a href="insert.txt.html#a" class="d">a</a> message, without expecting <a href="insert.txt.html#a" class="d">a</a> response: 
+<span class="e">    call ch_sendraw(channel, {string})</span>
+The process can send back <a href="insert.txt.html#a" class="d">a</a> response, the <a href="#channel" class="d">channel</a> handler will be called with
+it.
+
+To send <a href="insert.txt.html#a" class="d">a</a> message and letting the response handled by <a href="insert.txt.html#a" class="d">a</a> specific function,
+asynchronously: 
+<span class="e">    call ch_sendraw(channel, {string}, {'callback': 'MyHandler'})</span>
+<span class="e"></span>
+This <span class="s">{string}</span> can also be JSON, use <a href="eval.txt.html#json_encode%28%29" class="l">json_encode()</a> to create <a href="motion.txt.html#it" class="d">it</a> and
+<a href="eval.txt.html#json_decode%28%29" class="l">json_decode()</a> to handle <a href="insert.txt.html#a" class="d">a</a> received JSON message.
+
+It <a href="motion.txt.html#is" class="d">is</a> not possible to use <a href="eval.txt.html#ch_evalexpr%28%29" class="l">ch_evalexpr()</a> or <a href="eval.txt.html#ch_sendexpr%28%29" class="l">ch_sendexpr()</a> on <a href="insert.txt.html#a" class="d">a</a> raw channel.
+
+<a href="insert.txt.html#A" class="d">A</a> <a href="eval.txt.html#String" class="d">String</a> in Vim cannot contain NUL bytes.  To send or receive NUL bytes read
+or write from <a href="insert.txt.html#a" class="d">a</a> buffer.  See <a href="#in_io-buffer" class="l">in_io-buffer</a> and <a href="#out_io-buffer" class="l">out_io-buffer</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+7. More <a href="#channel" class="d">channel</a> <a href="eval.txt.html#functions" class="d">functions</a>                               <a name="channel-more" class="t">channel-more</a>
+
+To obtain the status of <a href="insert.txt.html#a" class="d">a</a> channel: ch_status(channel).  The possible results
+are:
+        "fail"          Failed to open the channel.
+        "open"          The <a href="#channel" class="d">channel</a> can be used.
+        "buffered"      The <a href="#channel" class="d">channel</a> was closed but there <a href="motion.txt.html#is" class="d">is</a> data to read.
+        "closed"        The <a href="#channel" class="d">channel</a> was closed.
+
+To obtain the <a href="#job" class="d">job</a> associated with <a href="insert.txt.html#a" class="d">a</a> channel: ch_getjob(channel)
+
+To read one message from <a href="insert.txt.html#a" class="d">a</a> channel: 
+<span class="e">        let output = ch_read(channel)</span>
+This uses the <a href="#channel" class="d">channel</a> timeout.  To read without <a href="insert.txt.html#a" class="d">a</a> timeout, just get any
+message that <a href="motion.txt.html#is" class="d">is</a> available: 
+<span class="e">        let output = ch_read(channel, {'timeout': 0})</span>
+When no message was available then the result <a href="motion.txt.html#is" class="d">is</a> <a href="eval.txt.html#v%3Anone" class="d">v:none</a> for <a href="insert.txt.html#a" class="d">a</a> JSON or JS mode
+channels, an empty <a href="eval.txt.html#string" class="d">string</a> for <a href="insert.txt.html#a" class="d">a</a> RAW or NL channel.  You can use <a href="eval.txt.html#ch_canread%28%29" class="l">ch_canread()</a>
+to check if there <a href="motion.txt.html#is" class="d">is</a> something to read.
+
+<span class="n">Note</span> that when there <a href="motion.txt.html#is" class="d">is</a> no callback, <a href="message.txt.html#messages" class="d">messages</a> are dropped.  To avoid that add
+<a href="insert.txt.html#a" class="d">a</a> close callback to the channel.
+
+To read all output from <a href="insert.txt.html#a" class="d">a</a> RAW <a href="#channel" class="d">channel</a> that <a href="motion.txt.html#is" class="d">is</a> available: 
+<span class="e">        let output = ch_readraw(channel)</span>
+To read the error output: 
+<span class="e">        let output = ch_readraw(channel, {"part": "err"})</span>
+<span class="e"></span>
+<a href="eval.txt.html#ch_read%28%29" class="d">ch_read()</a> and <a href="eval.txt.html#ch_readraw%28%29" class="d">ch_readraw()</a> use the <a href="#channel" class="d">channel</a> timeout.  When there <a href="motion.txt.html#is" class="d">is</a> nothing to
+read within that time an empty <a href="eval.txt.html#string" class="d">string</a> <a href="motion.txt.html#is" class="d">is</a> returned.  To specify <a href="insert.txt.html#a" class="d">a</a> different
+timeout in msec use the "timeout" option:
+<span class="h">        {"timeout": 123} </span>
+To read from the error output use the "part" option:
+<span class="h">        {"part": "err"} </span>
+To read <a href="insert.txt.html#a" class="d">a</a> message with <a href="insert.txt.html#a" class="d">a</a> specific ID, on <a href="insert.txt.html#a" class="d">a</a> JS or JSON channel:
+<span class="h">        {"id": 99} </span>
+When no ID <a href="motion.txt.html#is" class="d">is</a> specified or the ID <a href="motion.txt.html#is" class="d">is</a> -1, the first message <a href="motion.txt.html#is" class="d">is</a> returned. This
+overrules any callback waiting for this message.
+
+For <a href="insert.txt.html#a" class="d">a</a> RAW <a href="#channel" class="d">channel</a> this returns whatever <a href="motion.txt.html#is" class="d">is</a> available, since Vim does not know
+where <a href="insert.txt.html#a" class="d">a</a> message ends.
+For <a href="insert.txt.html#a" class="d">a</a> NL <a href="#channel" class="d">channel</a> this returns one message.
+For <a href="insert.txt.html#a" class="d">a</a> JS or JSON <a href="#channel" class="d">channel</a> this returns one decoded message.
+This includes any sequence number.
+
+<span class="h">==============================================================================</span>
+8. Starting <a href="insert.txt.html#a" class="d">a</a> <a href="#job" class="d">job</a> with <a href="insert.txt.html#a" class="d">a</a> <a href="#channel" class="d">channel</a>                        <a name="job-start" class="t">job-start</a> <a name="job" class="t">job</a>
+
+To start <a href="insert.txt.html#a" class="d">a</a> <a href="#job" class="d">job</a> and open <a href="insert.txt.html#a" class="d">a</a> <a href="#channel" class="d">channel</a> for stdin/stdout/stderr: 
+<span class="e">    let job = job_start(command, {options})</span>
+<span class="e"></span>
+You can get the <a href="#channel" class="d">channel</a> with: 
+<span class="e">    let channel = job_getchannel(job)</span>
+<span class="e"></span>
+The <a href="#channel" class="d">channel</a> will use NL mode.  If you want another mode it's best to specify
+this in <span class="s">{options}</span>.  When <a href="change.txt.html#changing" class="d">changing</a> the mode later some text may have already
+been received and not parsed correctly.
+
+If the command produces <a href="insert.txt.html#a" class="d">a</a> line of output that you want to deal with, specify
+<a href="insert.txt.html#a" class="d">a</a> handler for stdout: 
+<span class="e">    let job = job_start(command, {"out_cb": "MyHandler"})</span>
+The function will be called with the <a href="#channel" class="d">channel</a> and <a href="insert.txt.html#a" class="d">a</a> message. You would define
+<a href="motion.txt.html#it" class="d">it</a> like this: 
+<span class="e">    func MyHandler(channel, msg)</span>
+<span class="e"></span>
+Without the handler you need to read the output with <a href="eval.txt.html#ch_read%28%29" class="l">ch_read()</a> or
+<a href="eval.txt.html#ch_readraw%28%29" class="l">ch_readraw()</a><a href="repeat.txt.html#." class="d">.</a> You can <a href="diff.txt.html#do" class="d">do</a> this in the close callback, see <a href="#read-in-close-cb" class="l">read-in-close-cb</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="n">Note</span> that if the <a href="#job" class="d">job</a> exits before you read the output, the output may be lost.
+This depends on the system (on <a href="os_unix.txt.html#Unix" class="d">Unix</a> this happens because closing the write <a href="intro.txt.html#end" class="d">end</a>
+of <a href="insert.txt.html#a" class="d">a</a> pipe causes the read <a href="intro.txt.html#end" class="d">end</a> to get EOF).  To avoid this make the <a href="#job" class="d">job</a> sleep
+for <a href="insert.txt.html#a" class="d">a</a> short while before <a href="motion.txt.html#it" class="d">it</a> exits.
+
+The handler defined for "<a href="#out_cb" class="d">out_cb</a>" will not receive stderr.  If you want to
+handle that separately, add an "<a href="#err_cb" class="d">err_cb</a>" handler: 
+<span class="e">    let job = job_start(command, {"out_cb": "MyHandler",</span>
+<span class="e">            \                     "err_cb": "ErrHandler"})</span>
+<span class="e"></span>
+If you want to handle both stderr and stdout with one handler use the
+"callback" option: 
+<span class="e">    let job = job_start(command, {"callback": "MyHandler"}) </span>
+<span class="e"></span>
+Depending on the system, <a href="starting.txt.html#starting" class="d">starting</a> <a href="insert.txt.html#a" class="d">a</a> <a href="#job" class="d">job</a> can <a href="change.txt.html#put" class="d">put</a> Vim in the background, the
+started <a href="#job" class="d">job</a> gets the focus.  To avoid that, use the <span class="e">foreground()</span> function.
+This might not always work when called early, <a href="change.txt.html#put" class="d">put</a> in the callback handler or
+use <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#timer" class="d">timer</a> to call <a href="motion.txt.html#it" class="d">it</a> after the <a href="#job" class="d">job</a> has started.
+
+You can send <a href="insert.txt.html#a" class="d">a</a> message to the command with ch_evalraw().  If the <a href="#channel" class="d">channel</a> <a href="motion.txt.html#is" class="d">is</a> in
+JSON or JS mode you can use ch_evalexpr().
+
+There are several <a href="options.txt.html#options" class="d">options</a> you can use, see <a href="#job-options" class="l">job-options</a><a href="repeat.txt.html#." class="d">.</a>
+For example, to start <a href="insert.txt.html#a" class="d">a</a> <a href="#job" class="d">job</a> and write its output in buffer "dummy"<a href="cmdline.txt.html#%3A" class="d">:</a> 
+<span class="e">        let logjob = job_start("tail -f /tmp/log",</span>
+<span class="e">                             \ {'out_io': 'buffer', 'out_name': 'dummy'})</span>
+<span class="e">        sbuf dummy</span>
+<span class="e"></span>
+<span class="e"></span>
+<span class="h">Job input from a buffer </span>
+                                                        <a name="in_io-buffer" class="t">in_io-buffer</a>
+To run <a href="insert.txt.html#a" class="d">a</a> <a href="#job" class="d">job</a> that reads from <a href="insert.txt.html#a" class="d">a</a> buffer: 
+<span class="e">        let job = job_start({command},</span>
+<span class="e">            \ {'in_io': 'buffer', 'in_name': 'mybuffer'})</span>
+
+                                                        <a name="E915" class="t">E915</a> <a name="E918" class="t">E918</a>
+The buffer <a href="motion.txt.html#is" class="d">is</a> found by name, similar to <a href="eval.txt.html#bufnr%28%29" class="l">bufnr()</a><a href="repeat.txt.html#." class="d">.</a> The buffer <a href="vim_faq.txt.html#must" class="d">must</a> exist and
+be loaded when <a href="eval.txt.html#job_start%28%29" class="d">job_start()</a> <a href="motion.txt.html#is" class="d">is</a> called.
+
+By default this reads the whole buffer.  This can be changed with the "<a href="#in_top" class="d">in_top</a>"
+and "<a href="#in_bot" class="d">in_bot</a>" options.
+
+<a href="insert.txt.html#A" class="d">A</a> special mode <a href="motion.txt.html#is" class="d">is</a> when "<a href="#in_top" class="d">in_top</a>" <a href="motion.txt.html#is" class="d">is</a> set to zero and "<a href="#in_bot" class="d">in_bot</a>" <a href="motion.txt.html#is" class="d">is</a> not set: Every
+time <a href="insert.txt.html#a" class="d">a</a> line <a href="motion.txt.html#is" class="d">is</a> added to the buffer, the last-but-one line will be sent to the
+<a href="#job" class="d">job</a> stdin.  This allows for editing the last line and sending <a href="motion.txt.html#it" class="d">it</a> when pressing
+Enter.
+                                                        <a name="channel-close-in" class="t">channel-close-in</a>
+When not using the special mode the pipe or socket will be closed after the
+last line has been written.  This signals the reading <a href="intro.txt.html#end" class="d">end</a> that the input
+finished.  You can also use <a href="eval.txt.html#ch_close_in%28%29" class="l">ch_close_in()</a> to close <a href="motion.txt.html#it" class="d">it</a> sooner.
+
+NUL bytes in the text will be passed to the <a href="#job" class="d">job</a> (internally Vim stores these
+<a href="motion.txt.html#as" class="d">as</a> NL bytes).
+
+
+<span class="h">Reading job output in the close callback </span>
+                                                        <a name="read-in-close-cb" class="t">read-in-close-cb</a>
+If the <a href="#job" class="d">job</a> can take some time and you don't need intermediate results, you can
+add <a href="insert.txt.html#a" class="d">a</a> close callback and read the output there: 
+<span class="e"></span>
+<span class="e">        func! CloseHandler(channel)</span>
+<span class="e">          while ch_status(a:channel, {'part': 'out'}) == 'buffered'</span>
+<span class="e">            echomsg ch_read(a:channel)</span>
+<span class="e">          endwhile</span>
+<span class="e">        endfunc</span>
+<span class="e">        let job = job_start(command, {'close_cb': 'CloseHandler'})</span>
+<span class="e"></span>
+You will want to <a href="diff.txt.html#do" class="d">do</a> something more useful than "echomsg"<a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+9. Starting <a href="insert.txt.html#a" class="d">a</a> <a href="#job" class="d">job</a> without <a href="insert.txt.html#a" class="d">a</a> <a href="#channel" class="d">channel</a>                     <a name="job-start-nochannel" class="t">job-start-nochannel</a>
+
+To start another process without creating <a href="insert.txt.html#a" class="d">a</a> channel: 
+<span class="e">    let job = job_start(command,</span>
+<span class="e">        \ {"in_io": "null", "out_io": "null", "err_io": "null"})</span>
+<span class="e"></span>
+This starts <span class="s">{command}</span> in the background, Vim does not wait for <a href="motion.txt.html#it" class="d">it</a> to finish.
+
+When Vim sees that neither stdin, stdout or stderr are connected, no <a href="#channel" class="d">channel</a>
+will be created.  Often you will want to include redirection in the command to
+avoid <a href="motion.txt.html#it" class="d">it</a> getting stuck.
+
+There are several <a href="options.txt.html#options" class="d">options</a> you can use, see <a href="#job-options" class="l">job-options</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="job-start-if-needed" class="t">job-start-if-needed</a>
+To start <a href="insert.txt.html#a" class="d">a</a> <a href="#job" class="d">job</a> only when connecting to an address does not work, <a href="diff.txt.html#do" class="d">do</a> something
+like this: 
+<span class="e">        let channel = ch_open(address, {"waittime": 0})</span>
+<span class="e">        if ch_status(channel) == "fail"</span>
+<span class="e">          let job = job_start(command)</span>
+<span class="e">          let channel = ch_open(address, {"waittime": 1000})</span>
+<span class="e">        endif</span>
+<span class="e"></span>
+<span class="n">Note</span> that the <a href="#waittime" class="d">waittime</a> for <a href="eval.txt.html#ch_open%28%29" class="d">ch_open()</a> gives the <a href="#job" class="d">job</a> one second to make the port
+available.
+
+<span class="h">==============================================================================</span>
+10. <a href="eval.txt.html#Job" class="d">Job</a> <a href="options.txt.html#options" class="d">options</a>                                         <a name="job-options" class="t">job-options</a>
+
+The <span class="s">{options}</span> argument in <a href="eval.txt.html#job_start%28%29" class="d">job_start()</a> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> dictionary.  All entries are
+optional.  Some <a href="options.txt.html#options" class="d">options</a> can be used after the <a href="#job" class="d">job</a> has started, using
+job_setoptions(job, <span class="s">{options}</span>).  Many <a href="options.txt.html#options" class="d">options</a> can be used with the <a href="#channel" class="d">channel</a>
+related to the job, using ch_setoptions(channel, <span class="s">{options}</span>).
+See <a href="eval.txt.html#job_setoptions%28%29" class="l">job_setoptions()</a> and <a href="eval.txt.html#ch_setoptions%28%29" class="l">ch_setoptions()</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                <a name="in_mode" class="t">in_mode</a> <a name="out_mode" class="t">out_mode</a> <a name="err_mode" class="t">err_mode</a>
+"<a href="#in_mode" class="d">in_mode</a>"               mode specifically for stdin, only when using pipes
+"<a href="#out_mode" class="d">out_mode</a>"              mode specifically for stdout, only when using pipes
+"<a href="#err_mode" class="d">err_mode</a>"              mode specifically for stderr, only when using pipes
+                        See <a href="#channel-mode" class="l">channel-mode</a> for the values.
+
+                        <span class="n">Note:</span> when setting "mode" the part specific mode <a href="motion.txt.html#is" class="d">is</a>
+                        overwritten.  Therefore set "mode" first and the part
+                        specific mode later.
+
+                        <span class="n">Note:</span> when <a href="editing.txt.html#writing" class="d">writing</a> to <a href="insert.txt.html#a" class="d">a</a> file or buffer and when
+                        reading from <a href="insert.txt.html#a" class="d">a</a> buffer NL mode <a href="motion.txt.html#is" class="d">is</a> used by default.
+
+                                                <a name="job-callback" class="t">job-callback</a>
+"callback"<a href="cmdline.txt.html#%3A" class="d">:</a> handler     Callback for something to read on any part of the
+                        channel.
+                                                <a name="job-out_cb" class="t">job-out_cb</a> <a name="out_cb" class="t">out_cb</a>
+"<a href="#out_cb" class="d">out_cb</a>"<a href="cmdline.txt.html#%3A" class="d">:</a> handler       Callback for when there <a href="motion.txt.html#is" class="d">is</a> something to read on
+                        stdout.  Only for when the <a href="#channel" class="d">channel</a> uses pipes.  When
+                        "<a href="#out_cb" class="d">out_cb</a>" wasn't set the <a href="#channel" class="d">channel</a> callback <a href="motion.txt.html#is" class="d">is</a> used.
+                        The two arguments are the <a href="#channel" class="d">channel</a> and the message.
+
+                                                <a name="job-err_cb" class="t">job-err_cb</a> <a name="err_cb" class="t">err_cb</a>
+"<a href="#err_cb" class="d">err_cb</a>"<a href="cmdline.txt.html#%3A" class="d">:</a> handler       Callback for when there <a href="motion.txt.html#is" class="d">is</a> something to read on
+                        stderr.  Only for when the <a href="#channel" class="d">channel</a> uses pipes.  When
+                        "<a href="#err_cb" class="d">err_cb</a>" wasn't set the <a href="#channel" class="d">channel</a> callback <a href="motion.txt.html#is" class="d">is</a> used.
+                        The two arguments are the <a href="#channel" class="d">channel</a> and the message.
+                                                <a name="job-close_cb" class="t">job-close_cb</a>
+"<a href="#close_cb" class="d">close_cb</a>"<a href="cmdline.txt.html#%3A" class="d">:</a> handler     Callback for when the <a href="#channel" class="d">channel</a> <a href="motion.txt.html#is" class="d">is</a> closed.  Same <a href="motion.txt.html#as" class="d">as</a>
+                        "<a href="#close_cb" class="d">close_cb</a>" on <a href="eval.txt.html#ch_open%28%29" class="l">ch_open()</a><a href="motion.txt.html#%2C" class="d">,</a> see <a href="#close_cb" class="l">close_cb</a><a href="repeat.txt.html#." class="d">.</a>
+                                                <a name="job-drop" class="t">job-drop</a>
+"drop"<a href="cmdline.txt.html#%3A" class="d">:</a> when            Specifies when to drop messages.  Same <a href="motion.txt.html#as" class="d">as</a> "drop" on
+                        <a href="eval.txt.html#ch_open%28%29" class="l">ch_open()</a><a href="motion.txt.html#%2C" class="d">,</a> see <a href="#channel-drop" class="l">channel-drop</a><a href="repeat.txt.html#." class="d">.</a>  For "auto" the
+                        exit_cb <a href="motion.txt.html#is" class="d">is</a> not considered.
+                                                <a name="job-exit_cb" class="t">job-exit_cb</a>
+"exit_cb"<a href="cmdline.txt.html#%3A" class="d">:</a> handler      Callback for when the <a href="#job" class="d">job</a> ends.  The arguments are the
+                        <a href="#job" class="d">job</a> and the exit status.
+                        Vim checks up to 10 times per second for jobs that
+                        ended.  The check can also be triggered by calling
+                        <a href="eval.txt.html#job_status%28%29" class="l">job_status()</a><a href="motion.txt.html#%2C" class="d">,</a> which may then invoke the exit_cb
+                        handler.
+                        <span class="n">Note</span> that data can be buffered, callbacks may still be
+                        called after the process ends.
+                                                        <a name="job-timeout" class="t">job-timeout</a>
+"timeout"<a href="cmdline.txt.html#%3A" class="d">:</a> time         The time to wait for <a href="insert.txt.html#a" class="d">a</a> request when blocking, E.g.
+                        when using ch_evalexpr().  In milliseconds.  The
+                        default <a href="motion.txt.html#is" class="d">is</a> 2000 (2 seconds).
+                                                <a name="out_timeout" class="t">out_timeout</a> <a name="err_timeout" class="t">err_timeout</a>
+"<a href="#out_timeout" class="d">out_timeout</a>"<a href="cmdline.txt.html#%3A" class="d">:</a> time     Timeout for stdout.  Only when using pipes.
+"<a href="#err_timeout" class="d">err_timeout</a>"<a href="cmdline.txt.html#%3A" class="d">:</a> time     Timeout for stderr.  Only when using pipes.
+                        <span class="n">Note:</span> when setting "timeout" the part specific mode <a href="motion.txt.html#is" class="d">is</a>
+                        overwritten.  Therefore set "timeout" first and the
+                        part specific mode later.
+
+                                                <a name="job-stoponexit" class="t">job-stoponexit</a>
+"stoponexit"<a href="cmdline.txt.html#%3A" class="d">:</a> <span class="s">{signal}</span>  Send <span class="s">{signal}</span> to the <a href="#job" class="d">job</a> when Vim exits.  See
+                        <a href="eval.txt.html#job_stop%28%29" class="l">job_stop()</a> for possible values.
+"stoponexit"<a href="cmdline.txt.html#%3A" class="d">:</a> ""        Do not stop the <a href="#job" class="d">job</a> when Vim exits.
+                        The default <a href="motion.txt.html#is" class="d">is</a> "term"<a href="repeat.txt.html#." class="d">.</a>
+
+                                                <a name="job-term" class="t">job-term</a>
+"term"<a href="cmdline.txt.html#%3A" class="d">:</a> "open"          Start <a href="insert.txt.html#a" class="d">a</a> <a href="terminal.txt.html#terminal" class="d">terminal</a> in <a href="insert.txt.html#a" class="d">a</a> new <a href="windows.txt.html#window" class="d">window</a> and connect the <a href="#job" class="d">job</a>
+                        stdin/stdout/stderr to it.  Similar to using
+                        <span class="e">:terminal</span>.
+                        <span class="n">NOTE:</span> Not implemented yet!
+
+"<a href="#channel" class="d">channel</a>"<a href="cmdline.txt.html#%3A" class="d">:</a> <span class="s">{channel}</span>    Use an existing <a href="#channel" class="d">channel</a> instead of creating <a href="insert.txt.html#a" class="d">a</a> new one.
+                        The parts of the <a href="#channel" class="d">channel</a> that get used for the new <a href="#job" class="d">job</a>
+                        will be disconnected from what they were used before.
+                        If the <a href="#channel" class="d">channel</a> was still used by another <a href="#job" class="d">job</a> this may
+                        cause I/O errors.
+                        Existing callbacks and other settings remain.
+
+"pty"<a href="cmdline.txt.html#%3A" class="d">:</a> 1                Use <a href="insert.txt.html#a" class="d">a</a> pty (pseudo-tty) instead of <a href="insert.txt.html#a" class="d">a</a> pipe when
+                        possible.  This <a href="motion.txt.html#is" class="d">is</a> most useful in combination with <a href="insert.txt.html#a" class="d">a</a>
+                        <a href="terminal.txt.html#terminal" class="d">terminal</a> window, see <a href="terminal.txt.html#terminal" class="l">terminal</a><a href="repeat.txt.html#." class="d">.</a>
+                        <span class="s">{only on Unix and Unix-like systems}</span>
+
+                                <a name="job-in_io" class="t">job-in_io</a> <a name="in_top" class="t">in_top</a> <a name="in_bot" class="t">in_bot</a> <a name="in_name" class="t">in_name</a> <a name="in_buf" class="t">in_buf</a>
+"in_io"<a href="cmdline.txt.html#%3A" class="d">:</a> "null"         disconnect stdin (read from /dev/null)
+"in_io"<a href="cmdline.txt.html#%3A" class="d">:</a> "pipe"         stdin <a href="motion.txt.html#is" class="d">is</a> connected to the <a href="#channel" class="d">channel</a> (default)
+"in_io"<a href="cmdline.txt.html#%3A" class="d">:</a> "file"         stdin reads from <a href="insert.txt.html#a" class="d">a</a> file
+"in_io"<a href="cmdline.txt.html#%3A" class="d">:</a> "buffer"       stdin reads from <a href="insert.txt.html#a" class="d">a</a> buffer
+"<a href="#in_top" class="d">in_top</a>"<a href="cmdline.txt.html#%3A" class="d">:</a> number        when using "buffer"<a href="cmdline.txt.html#%3A" class="d">:</a> first line to send (default: 1)
+"<a href="#in_bot" class="d">in_bot</a>"<a href="cmdline.txt.html#%3A" class="d">:</a> number        when using "buffer"<a href="cmdline.txt.html#%3A" class="d">:</a> last line to send (default: last)
+"<a href="#in_name" class="d">in_name</a>"<a href="cmdline.txt.html#%3A" class="d">:</a> "/path/file" the name of the file or buffer to read from
+"<a href="#in_buf" class="d">in_buf</a>"<a href="cmdline.txt.html#%3A" class="d">:</a> number        the number of the buffer to read from
+
+                                <a name="job-out_io" class="t">job-out_io</a> <a name="out_name" class="t">out_name</a> <a name="out_buf" class="t">out_buf</a>
+"out_io"<a href="cmdline.txt.html#%3A" class="d">:</a> "null"        disconnect stdout (goes to /dev/null)
+"out_io"<a href="cmdline.txt.html#%3A" class="d">:</a> "pipe"        stdout <a href="motion.txt.html#is" class="d">is</a> connected to the <a href="#channel" class="d">channel</a> (default)
+"out_io"<a href="cmdline.txt.html#%3A" class="d">:</a> "file"        stdout writes to <a href="insert.txt.html#a" class="d">a</a> file
+"out_io"<a href="cmdline.txt.html#%3A" class="d">:</a> "buffer"      stdout appends to <a href="insert.txt.html#a" class="d">a</a> buffer (see below)
+"<a href="#out_name" class="d">out_name</a>"<a href="cmdline.txt.html#%3A" class="d">:</a> "/path/file" the name of the file or buffer to write to
+"<a href="#out_buf" class="d">out_buf</a>"<a href="cmdline.txt.html#%3A" class="d">:</a> number       the number of the buffer to write to
+"<a href="#out_modifiable" class="d">out_modifiable</a>"<a href="cmdline.txt.html#%3A" class="d">:</a> <a href="motion.txt.html#0" class="d">0</a>     when <a href="editing.txt.html#writing" class="d">writing</a> to <a href="insert.txt.html#a" class="d">a</a> buffer, <a href="options.txt.html#%27modifiable%27" class="o">'modifiable'</a> will be off
+                        (see below)
+"<a href="#out_msg" class="d">out_msg</a>"<a href="cmdline.txt.html#%3A" class="d">:</a> <a href="motion.txt.html#0" class="d">0</a>            when <a href="editing.txt.html#writing" class="d">writing</a> to <a href="insert.txt.html#a" class="d">a</a> new buffer, the first line will be
+                        set to "Reading from <a href="#channel" class="d">channel</a> output..."
+
+                                <a name="job-err_io" class="t">job-err_io</a> <a name="err_name" class="t">err_name</a> <a name="err_buf" class="t">err_buf</a>
+"err_io"<a href="cmdline.txt.html#%3A" class="d">:</a> "out"         stderr <a href="message.txt.html#messages" class="d">messages</a> to <a href="motion.txt.html#go" class="d">go</a> to stdout
+"err_io"<a href="cmdline.txt.html#%3A" class="d">:</a> "null"        disconnect stderr  (goes to /dev/null)
+"err_io"<a href="cmdline.txt.html#%3A" class="d">:</a> "pipe"        stderr <a href="motion.txt.html#is" class="d">is</a> connected to the <a href="#channel" class="d">channel</a> (default)
+"err_io"<a href="cmdline.txt.html#%3A" class="d">:</a> "file"        stderr writes to <a href="insert.txt.html#a" class="d">a</a> file
+"err_io"<a href="cmdline.txt.html#%3A" class="d">:</a> "buffer"      stderr appends to <a href="insert.txt.html#a" class="d">a</a> buffer (see below)
+"<a href="#err_name" class="d">err_name</a>"<a href="cmdline.txt.html#%3A" class="d">:</a> "/path/file" the name of the file or buffer to write to
+"<a href="#err_buf" class="d">err_buf</a>"<a href="cmdline.txt.html#%3A" class="d">:</a> number       the number of the buffer to write to
+"<a href="#err_modifiable" class="d">err_modifiable</a>"<a href="cmdline.txt.html#%3A" class="d">:</a> <a href="motion.txt.html#0" class="d">0</a>     when <a href="editing.txt.html#writing" class="d">writing</a> to <a href="insert.txt.html#a" class="d">a</a> buffer, <a href="options.txt.html#%27modifiable%27" class="o">'modifiable'</a> will be off
+                        (see below)
+"<a href="#err_msg" class="d">err_msg</a>"<a href="cmdline.txt.html#%3A" class="d">:</a> <a href="motion.txt.html#0" class="d">0</a>            when <a href="editing.txt.html#writing" class="d">writing</a> to <a href="insert.txt.html#a" class="d">a</a> new buffer, the first line will be
+                        set to "Reading from <a href="#channel" class="d">channel</a> error..."
+
+"block_write"<a href="cmdline.txt.html#%3A" class="d">:</a> number   only for testing: pretend every other write to stdin
+                        will block
+
+"env"<a href="cmdline.txt.html#%3A" class="d">:</a> <a href="eval.txt.html#dict" class="d">dict</a>             environment <a href="eval.txt.html#variables" class="d">variables</a> for the new process
+"cwd"<a href="cmdline.txt.html#%3A" class="d">:</a> "/path/to/dir"   current working directory for the new process;
+                        if the directory does not exist an error <a href="motion.txt.html#is" class="d">is</a> given
+
+
+<span class="h">Writing to a buffer </span>
+                                                        <a name="out_io-buffer" class="t">out_io-buffer</a>
+When the out_io or err_io mode <a href="motion.txt.html#is" class="d">is</a> "buffer" and there <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> callback, the text
+<a href="motion.txt.html#is" class="d">is</a> appended to the buffer before invoking the callback.
+
+When <a href="insert.txt.html#a" class="d">a</a> buffer <a href="motion.txt.html#is" class="d">is</a> used both for input and output, the output lines are <a href="change.txt.html#put" class="d">put</a>
+above the last line, since the last line <a href="motion.txt.html#is" class="d">is</a> what <a href="motion.txt.html#is" class="d">is</a> written to the <a href="#channel" class="d">channel</a>
+input.  Otherwise lines are appended below the last line.
+
+When using JS or JSON mode with "buffer"<a href="motion.txt.html#%2C" class="d">,</a> only <a href="message.txt.html#messages" class="d">messages</a> with zero or negative
+ID will be added to the buffer, after decoding <a href="motion.txt.html#%2B" class="d">+</a> encoding.  Messages with <a href="insert.txt.html#a" class="d">a</a>
+positive number will be handled by <a href="insert.txt.html#a" class="d">a</a> callback, commands are handled <a href="motion.txt.html#as" class="d">as</a> usual.
+
+The name of the buffer from "<a href="#out_name" class="d">out_name</a>" or "<a href="#err_name" class="d">err_name</a>" <a href="motion.txt.html#is" class="d">is</a> compared the full name
+of existing buffers, also after expanding the name for the current directory.
+E.g., when <a href="insert.txt.html#a" class="d">a</a> buffer was created with "<a href="editing.txt.html#%3Aedit" class="d">:edit</a> somename" and the buffer name <a href="motion.txt.html#is" class="d">is</a>
+"somename" <a href="motion.txt.html#it" class="d">it</a> will use that buffer.
+
+If there <a href="motion.txt.html#is" class="d">is</a> no matching buffer <a href="insert.txt.html#a" class="d">a</a> new buffer <a href="motion.txt.html#is" class="d">is</a> created.  Use an empty name to
+always create <a href="insert.txt.html#a" class="d">a</a> new buffer.  <a href="eval.txt.html#ch_getbufnr%28%29" class="l">ch_getbufnr()</a> can then be used to get the
+buffer number.
+
+For <a href="insert.txt.html#a" class="d">a</a> new buffer <a href="options.txt.html#%27buftype%27" class="o">'buftype'</a> <a href="motion.txt.html#is" class="d">is</a> set to "nofile" and <a href="options.txt.html#%27bufhidden%27" class="o">'bufhidden'</a> to "hide"<a href="repeat.txt.html#." class="d">.</a>  If
+you prefer other settings, create the buffer first and pass the buffer number.
+                                        <a name="out_modifiable" class="t">out_modifiable</a> <a name="err_modifiable" class="t">err_modifiable</a>
+The "<a href="#out_modifiable" class="d">out_modifiable</a>" and "<a href="#err_modifiable" class="d">err_modifiable</a>" <a href="options.txt.html#options" class="d">options</a> can be used to set the
+<a href="options.txt.html#%27modifiable%27" class="o">'modifiable'</a> option off, or write to <a href="insert.txt.html#a" class="d">a</a> buffer that has <a href="options.txt.html#%27modifiable%27" class="o">'modifiable'</a> off.  That
+means that lines will be appended to the buffer, but the user can't easily
+change the buffer.
+                                        <a name="out_msg" class="t">out_msg</a> <a name="err_msg" class="t">err_msg</a>
+The "<a href="#out_msg" class="d">out_msg</a>" option can be used to specify whether <a href="insert.txt.html#a" class="d">a</a> new buffer will have the
+first line set to "Reading from <a href="#channel" class="d">channel</a> output..."<a href="repeat.txt.html#." class="d">.</a>  The default <a href="motion.txt.html#is" class="d">is</a> to add the
+message.  "<a href="#err_msg" class="d">err_msg</a>" does the same for <a href="#channel" class="d">channel</a> error.
+
+When an existing buffer <a href="motion.txt.html#is" class="d">is</a> to be written where <a href="options.txt.html#%27modifiable%27" class="o">'modifiable'</a> <a href="motion.txt.html#is" class="d">is</a> off and the
+"<a href="#out_modifiable" class="d">out_modifiable</a>" or "<a href="#err_modifiable" class="d">err_modifiable</a>" <a href="options.txt.html#options" class="d">options</a> <a href="motion.txt.html#is" class="d">is</a> not zero, an error <a href="motion.txt.html#is" class="d">is</a> given
+and the buffer will not be written to.
+
+When the buffer written to <a href="motion.txt.html#is" class="d">is</a> displayed in <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a> and the cursor <a href="motion.txt.html#is" class="d">is</a> in the
+first column of the last line, the cursor will be moved to the newly added
+line and the <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> scrolled up to show the cursor if needed.
+
+Undo <a href="motion.txt.html#is" class="d">is</a> synced for every added line.  NUL bytes are accepted (internally Vim
+stores these <a href="motion.txt.html#as" class="d">as</a> NL bytes).
+
+
+<span class="h">Writing to a file </span>
+                                                        <a name="E920" class="t">E920</a>
+The file <a href="motion.txt.html#is" class="d">is</a> created with permissions 600 (read-write for the user, not
+accessible for others).  Use <a href="eval.txt.html#setfperm%28%29" class="l">setfperm()</a> to change this.
+
+If the file already exists <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> truncated.
+
+<span class="h">==============================================================================</span>
+11. Controlling <a href="insert.txt.html#a" class="d">a</a> <a href="#job" class="d">job</a>                                   <a name="job-control" class="t">job-control</a>
+
+To get the status of <a href="insert.txt.html#a" class="d">a</a> job: 
+<span class="e">        echo job_status(job)</span>
+<span class="e"></span>
+To make <a href="insert.txt.html#a" class="d">a</a> <a href="#job" class="d">job</a> stop running: 
+<span class="e">        job_stop(job)</span>
+<span class="e"></span>
+This <a href="motion.txt.html#is" class="d">is</a> the normal way to <a href="intro.txt.html#end" class="d">end</a> <a href="insert.txt.html#a" class="d">a</a> job. On <a href="os_unix.txt.html#Unix" class="d">Unix</a> <a href="motion.txt.html#it" class="d">it</a> sends <a href="insert.txt.html#a" class="d">a</a> SIGTERM to the job.
+It <a href="motion.txt.html#is" class="d">is</a> possible to use other ways to stop the job, or even send arbitrary
+signals.  E.g. to force <a href="insert.txt.html#a" class="d">a</a> <a href="#job" class="d">job</a> to stop, "kill <a href="motion.txt.html#it" class="d">it</a>"<a href="cmdline.txt.html#%3A" class="d">:</a> 
+<span class="e">        job_stop(job, "kill")</span>
+<span class="e"></span>
+For more <a href="options.txt.html#options" class="d">options</a> see <a href="eval.txt.html#job_stop%28%29" class="l">job_stop()</a><a href="repeat.txt.html#." class="d">.</a>
+
+
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

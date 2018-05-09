@@ -1,0 +1,414 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: usr_22.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="usr_22.txt" class="t">usr_22.txt</a>    For <span class="i">Vim version 8.0.</span>  Last change: 2016 Dec 13
+
+                     VIM USER MANUAL <a href="motion.txt.html#-" class="d">-</a> by <a href="intro.txt.html#Bram" class="d">Bram</a> <a href="intro.txt.html#Moolenaar" class="d">Moolenaar</a>
+
+                           Finding the file to edit
+
+
+Files can be found everywhere.  So how <a href="diff.txt.html#do" class="d">do</a> you find them?  Vim offers <a href="various.txt.html#various" class="d">various</a>
+ways to browse the directory tree.  There are commands to jump to <a href="insert.txt.html#a" class="d">a</a> file that
+<a href="motion.txt.html#is" class="d">is</a> mentioned in another.  And Vim remembers which files have been edited
+before.
+
+<a href="#22.1" class="l">22.1</a>  The file browser
+<a href="#22.2" class="l">22.2</a>  The current directory
+<a href="#22.3" class="l">22.3</a>  Finding <a href="insert.txt.html#a" class="d">a</a> file
+<a href="#22.4" class="l">22.4</a>  The buffer <a href="eval.txt.html#list" class="d">list</a>
+
+     Next chapter: <a href="usr_23.txt.html#usr_23.txt" class="l">usr_23.txt</a>  Editing other files
+ Previous chapter: <a href="usr_21.txt.html#usr_21.txt" class="l">usr_21.txt</a>  Go away and come back
+Table of contents: <a href="usr_toc.txt.html#usr_toc.txt" class="l">usr_toc.txt</a>
+
+<span class="h">==============================================================================</span>
+<a name="22.1" class="t">22.1</a>  The file browser
+
+Vim has <a href="insert.txt.html#a" class="d">a</a> <a href="usr_05.txt.html#plugin" class="d">plugin</a> that makes <a href="motion.txt.html#it" class="d">it</a> possible to edit <a href="insert.txt.html#a" class="d">a</a> directory.  Try this: 
+<span class="e"></span>
+<span class="e">        :edit .</span>
+<span class="e"></span>
+Through the magic of autocommands and Vim scripts, the <a href="windows.txt.html#window" class="d">window</a> will be filled
+with the contents of the directory.  It looks like this:
+
+<span class="h">" ============================================================================ </span>
+<span class="h">" Netrw Directory Listing                                        (netrw v109) </span>
+<span class="h">"   Sorted by      name </span>
+<span class="h">"   Sort sequence: [\/]$,\.h$,\.c$,\.cpp$,*,\.info$,\.swp$,\.o$\.obj$,\.bak$ </span>
+<span class="h">"   Quick Help: &lt;F1&gt;:help  -:go up dir  D:delete  R:rename  s:sort-by  x:exec </span>
+<span class="h">" ============================================================================ </span>
+<span class="h">../ </span>
+<span class="h">./ </span>
+<span class="h">check/ </span>
+<span class="h">Makefile </span>
+<span class="h">autocmd.txt </span>
+<span class="h">change.txt </span>
+<span class="h">eval.txt~ </span>
+<span class="h">filetype.txt~ </span>
+<span class="h">help.txt.info </span>
+
+You can see these items:
+
+1.  The name of the browsing tool and its version number
+2.  The name of the browsing directory
+3.  The method of <a href="change.txt.html#sorting" class="d">sorting</a> (may be by name, time, or size)
+4.  How names are to be sorted (directories first, then *.h files,
+<span class="c">   </span> *.c files, etc)
+5.  How to get <a href="helphelp.txt.html#help" class="d">help</a> (use the <a href="helphelp.txt.html#%3CF1%3E" class="s">&lt;F1&gt;</a> key), and an abbreviated listing
+    of available commands
+6.  <a href="insert.txt.html#A" class="d">A</a> listing of files, including "../"<a href="motion.txt.html#%2C" class="d">,</a> which allows one to <a href="eval.txt.html#list" class="d">list</a>
+    the parent directory.
+
+If you have <a href="syntax.txt.html#syntax" class="d">syntax</a> highlighting enabled, the different parts are highlighted
+so <a href="motion.txt.html#as" class="d">as</a> to make <a href="motion.txt.html#it" class="d">it</a> easier to spot them.
+
+You can use <a href="intro.txt.html#Normal" class="d">Normal</a> mode Vim commands to move around in the text.  For example,
+move the cursor atop <a href="insert.txt.html#a" class="d">a</a> file and press <a href="intro.txt.html#%3CEnter%3E" class="s">&lt;Enter&gt;</a>; you will then be editing that
+file.  To <a href="motion.txt.html#go" class="d">go</a> back to the browser use "<a href="editing.txt.html#%3Aedit" class="d">:edit</a> <a href="repeat.txt.html#." class="d">.</a>" again, or use "<a href="pi_netrw.txt.html#%3AExplore" class="d">:Explore</a>"<a href="repeat.txt.html#." class="d">.</a>
+<a href="motion.txt.html#CTRL-O" class="k">CTRL-O</a> also works.
+
+Try using <a href="intro.txt.html#%3CEnter%3E" class="s">&lt;Enter&gt;</a> while the cursor <a href="motion.txt.html#is" class="d">is</a> atop <a href="insert.txt.html#a" class="d">a</a> directory name.  The result <a href="motion.txt.html#is" class="d">is</a>
+that the file browser moves into that directory and displays the items found
+there.  Pressing <a href="intro.txt.html#%3CEnter%3E" class="s">&lt;Enter&gt;</a> on the first directory "../" moves you one level
+higher.  Pressing "<a href="motion.txt.html#-" class="d">-</a>" does the same thing, without the need to move to the
+"../" item first.
+
+You can press <a href="helphelp.txt.html#%3CF1%3E" class="s">&lt;F1&gt;</a> to get <a href="helphelp.txt.html#help" class="d">help</a> on the things you can <a href="diff.txt.html#do" class="d">do</a> in the <a href="pi_netrw.txt.html#netrw" class="d">netrw</a> file
+browser.  This <a href="motion.txt.html#is" class="d">is</a> what you get: 
+<span class="e"></span>
+<span class="e">    9. Directory Browsing        netrw-browse   netrw-dir   netrw-list   netrw-help </span>
+<span class="e"></span>
+<span class="e">    MAPS                                                                 netrw-maps </span>
+<span class="e">         &lt;F1&gt;.............Help.......................................|netrw-help|</span>
+<span class="e">         &lt;cr&gt;.............Browsing...................................|netrw-cr|</span>
+<span class="e">         &lt;del&gt;............Deleting Files or Directories..............|netrw-delete|</span>
+<span class="e">         -................Going Up...................................|netrw--|</span>
+<span class="e">         a................Hiding Files or Directories................|netrw-a|</span>
+<span class="e">         mb...............Bookmarking a Directory....................|netrw-mb|</span>
+<span class="e">         gb...............Changing to a Bookmarked Directory.........|netrw-gb|</span>
+<span class="e">         c................Make Browsing Directory The Current Dir....|netrw-c|</span>
+<span class="e">         d................Make A New Directory.......................|netrw-d|</span>
+<span class="e">         D................Deleting Files or Directories..............|netrw-D|</span>
+<span class="e">         &lt;c-h&gt;............Edit File/Directory Hiding List............|netrw-ctrl-h|</span>
+<span class="e">         i................Change Listing Style.......................|netrw-i|</span>
+<span class="e">         &lt;c-l&gt;............Refreshing the Listing.....................|netrw-ctrl-l|</span>
+<span class="e">         o................Browsing with a Horizontal Split...........|netrw-o|</span>
+<span class="e">         p................Use Preview Window.........................|netrw-p|</span>
+<span class="e">         P................Edit in Previous Window....................|netrw-p|</span>
+<span class="e">         q................Listing Bookmarks and History..............|netrw-qb|</span>
+<span class="e">         r................Reversing Sorting Order....................|netrw-r|</span>
+       (etc)
+
+The <a href="helphelp.txt.html#%3CF1%3E" class="s">&lt;F1&gt;</a> key thus brings you to <a href="insert.txt.html#a" class="d">a</a> <a href="pi_netrw.txt.html#netrw" class="d">netrw</a> directory browsing contents <a href="helphelp.txt.html#help" class="d">help</a> page.
+It's <a href="insert.txt.html#a" class="d">a</a> regular <a href="helphelp.txt.html#help" class="d">help</a> page; use the usual <a href="tagsrch.txt.html#CTRL-%5D" class="l">CTRL-]</a> to jump to tagged <a href="helphelp.txt.html#help" class="d">help</a> items
+and <a href="motion.txt.html#CTRL-O" class="l">CTRL-O</a> to jump back.
+
+To select files for display and editing: (with the cursor <a href="motion.txt.html#is" class="d">is</a> atop <a href="insert.txt.html#a" class="d">a</a> filename)
+
+        <span class="s">&lt;enter&gt;</span>         Open the file in the current window.       <a href="pi_netrw.txt.html#netrw-cr" class="l">netrw-cr</a>
+        <a href="insert.txt.html#o" class="d">o</a>               Horizontally split <a href="windows.txt.html#window" class="d">window</a> and display file <a href="pi_netrw.txt.html#netrw-o" class="l">netrw-o</a>
+        <a href="visual.txt.html#v" class="d">v</a>               Vertically split <a href="windows.txt.html#window" class="d">window</a> and display file   <a href="pi_netrw.txt.html#netrw-v" class="l">netrw-v</a>
+        <a href="change.txt.html#p" class="d">p</a>               Use the <a href="windows.txt.html#preview-window" class="l">preview-window</a>                   <a href="pi_netrw.txt.html#netrw-p" class="l">netrw-p</a>
+        <a href="change.txt.html#P" class="d">P</a>               Edit in the previous <a href="windows.txt.html#window" class="d">window</a>                <a href="pi_netrw.txt.html#netrw-P" class="l">netrw-P</a>
+        <a href="motion.txt.html#t" class="d">t</a>               Open file in <a href="insert.txt.html#a" class="d">a</a> new <a href="intro.txt.html#tab" class="d">tab</a>                     <a href="pi_netrw.txt.html#netrw-t" class="l">netrw-t</a>
+
+The following normal-mode commands may be used to <a href="intro.txt.html#control" class="d">control</a> the browser display:
+
+        <a href="insert.txt.html#i" class="d">i</a>               Controls listing style (thin, long, wide, and tree).
+                        The long listing includes size and date information.
+        <a href="change.txt.html#s" class="d">s</a>               Repeatedly pressing <a href="change.txt.html#s" class="d">s</a> will change the way the files
+                        are sorted; one may sort on name, modification time,
+                        or size.
+        <a href="change.txt.html#r" class="d">r</a>               Reverse the <a href="change.txt.html#sorting" class="d">sorting</a> order.
+
+As <a href="insert.txt.html#a" class="d">a</a> sampling of extra normal-mode commands:
+
+        <a href="change.txt.html#c" class="d">c</a>               Change Vim's notion of the current directory to be
+                        the same <a href="motion.txt.html#as" class="d">as</a> the browser directory.  (see
+                        <a href="pi_netrw.txt.html#g%3Anetrw_keepdir" class="l">g:netrw_keepdir</a> to <a href="intro.txt.html#control" class="d">control</a> this, too)
+        <a href="change.txt.html#R" class="d">R</a>               Rename the file or directory under the cursor; <a href="insert.txt.html#a" class="d">a</a>
+                        prompt will be issued for the new name.
+        <a href="change.txt.html#D" class="d">D</a>               Delete the file or directory under the cursor; <a href="insert.txt.html#a" class="d">a</a>
+                        confirmation request will be issued.
+        mb gb           Make bookmark/goto <a href="usr_03.txt.html#bookmark" class="d">bookmark</a>
+
+
+One may also use command mode; again, just <a href="insert.txt.html#a" class="d">a</a> sampling:
+
+        <a href="pi_netrw.txt.html#%3AExplore" class="d">:Explore</a> <span class="s">[directory]</span>    Browse specified/current directory
+        :NetrwSettings          <a href="insert.txt.html#A" class="d">A</a> comprehensive <a href="eval.txt.html#list" class="d">list</a> of your current <a href="pi_netrw.txt.html#netrw" class="d">netrw</a>
+                                settings with <a href="helphelp.txt.html#help" class="d">help</a> linkage.
+
+The <a href="pi_netrw.txt.html#netrw" class="d">netrw</a> browser <a href="motion.txt.html#is" class="d">is</a> not limited to just your local machine; one may use
+urls such as:    (that trailing <a href="pattern.txt.html#%2F" class="d">/</a> <a href="motion.txt.html#is" class="d">is</a> important)
+
+        <a href="pi_netrw.txt.html#%3AExplore" class="d">:Explore</a> <a class="u" href="ftp://somehost/path/to/dir/">ftp://somehost/path/to/dir/</a>
+        <a href="editing.txt.html#%3Ae" class="d">:e</a> scp://somehost/path/to/dir/
+
+See <a href="pi_netrw.txt.html#netrw-browse" class="l">netrw-browse</a> for more.
+
+<span class="h">==============================================================================</span>
+<a name="22.2" class="t">22.2</a>  The current directory
+
+Just like the shell, Vim has the concept of <a href="insert.txt.html#a" class="d">a</a> current directory.  Suppose you
+are in your <a href="intro.txt.html#home" class="d">home</a> directory and want to edit several files in <a href="insert.txt.html#a" class="d">a</a> directory
+"VeryLongFileName"<a href="repeat.txt.html#." class="d">.</a>  You could do: 
+<span class="e"></span>
+<span class="e">        :edit VeryLongFileName/file1.txt</span>
+<span class="e">        :edit VeryLongFileName/file2.txt</span>
+<span class="e">        :edit VeryLongFileName/file3.txt</span>
+<span class="e"></span>
+To avoid much of the typing, <a href="diff.txt.html#do" class="d">do</a> this: 
+<span class="e"></span>
+<span class="e">        :cd VeryLongFileName</span>
+<span class="e">        :edit file1.txt</span>
+<span class="e">        :edit file2.txt</span>
+<span class="e">        :edit file3.txt</span>
+<span class="e"></span>
+The "<a href="editing.txt.html#%3Acd" class="d">:cd</a>" command changes the current directory.  You can see what the current
+directory <a href="motion.txt.html#is" class="d">is</a> with the "<a href="editing.txt.html#%3Apwd" class="d">:pwd</a>" command: 
+<span class="e"></span>
+<span class="e">        :pwd</span>
+<span class="e">        /home/Bram/VeryLongFileName</span>
+<span class="e"></span>
+Vim remembers the last directory that you used.  Use "cd <a href="motion.txt.html#-" class="d">-</a>" to <a href="motion.txt.html#go" class="d">go</a> back to it.
+Example: 
+<span class="e"></span>
+<span class="e">        :pwd</span>
+<span class="e">        /home/Bram/VeryLongFileName</span>
+<span class="e">        :cd /etc</span>
+<span class="e">        :pwd</span>
+<span class="e">        /etc</span>
+<span class="e">        :cd -</span>
+<span class="e">        :pwd</span>
+<span class="e">        /home/Bram/VeryLongFileName</span>
+<span class="e">        :cd -</span>
+<span class="e">        :pwd</span>
+<span class="e">        /etc</span>
+<span class="e"></span>
+<span class="e"></span>
+WINDOW LOCAL DIRECTORY
+
+When you split <a href="insert.txt.html#a" class="d">a</a> window, both <a href="windows.txt.html#windows" class="d">windows</a> use the same current directory.  When
+you want to edit <a href="insert.txt.html#a" class="d">a</a> number of files somewhere else in the new window, you can
+make <a href="motion.txt.html#it" class="d">it</a> use <a href="insert.txt.html#a" class="d">a</a> different directory, without <a href="change.txt.html#changing" class="d">changing</a> the current directory in
+the other window.  This <a href="motion.txt.html#is" class="d">is</a> called <a href="insert.txt.html#a" class="d">a</a> local directory. 
+<span class="e"></span>
+<span class="e">        :pwd</span>
+<span class="e">        /home/Bram/VeryLongFileName</span>
+<span class="e">        :split</span>
+<span class="e">        :lcd /etc</span>
+<span class="e">        :pwd</span>
+<span class="e">        /etc</span>
+<span class="e">        CTRL-W w</span>
+<span class="e">        :pwd</span>
+<span class="e">        /home/Bram/VeryLongFileName</span>
+<span class="e"></span>
+So long <a href="motion.txt.html#as" class="d">as</a> no "<a href="editing.txt.html#%3Alcd" class="d">:lcd</a>" command has been used, all <a href="windows.txt.html#windows" class="d">windows</a> share the same current
+directory.  Doing <a href="insert.txt.html#a" class="d">a</a> "<a href="editing.txt.html#%3Acd" class="d">:cd</a>" command in one <a href="windows.txt.html#window" class="d">window</a> will also change the current
+directory of the other window.
+   For <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a> where "<a href="editing.txt.html#%3Alcd" class="d">:lcd</a>" has been used <a href="insert.txt.html#a" class="d">a</a> different current directory <a href="motion.txt.html#is" class="d">is</a>
+remembered.  Using "<a href="editing.txt.html#%3Acd" class="d">:cd</a>" or "<a href="editing.txt.html#%3Alcd" class="d">:lcd</a>" in other <a href="windows.txt.html#windows" class="d">windows</a> will not change it.
+   When using <a href="insert.txt.html#a" class="d">a</a> "<a href="editing.txt.html#%3Acd" class="d">:cd</a>" command in <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a> that uses <a href="insert.txt.html#a" class="d">a</a> different current
+directory, <a href="motion.txt.html#it" class="d">it</a> will <a href="motion.txt.html#go" class="d">go</a> back to using the shared directory.
+
+<span class="h">==============================================================================</span>
+<a name="22.3" class="t">22.3</a>  Finding <a href="insert.txt.html#a" class="d">a</a> file
+
+You are editing <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#C" class="d">C</a> program that contains this line:
+
+<span class="h">        #include "inits.h" </span>
+
+You want to see what <a href="motion.txt.html#is" class="d">is</a> in that "inits.h" file.  Move the cursor on the name
+of the file and type: 
+<span class="e"></span>
+<span class="e">        gf</span>
+<span class="e"></span>
+Vim will find the file and edit it.
+   What if the file <a href="motion.txt.html#is" class="d">is</a> not in the current directory?  Vim will use the <a href="options.txt.html#%27path%27" class="o">'path'</a>
+option to find the file.  This option <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of directory names where to
+look for your file.
+   Suppose you have your include files located in "c:/prog/include"<a href="repeat.txt.html#." class="d">.</a>  This
+command will add <a href="motion.txt.html#it" class="d">it</a> to the <a href="options.txt.html#%27path%27" class="o">'path'</a> option: 
+<span class="e"></span>
+<span class="e">        :set path+=c:/prog/include</span>
+<span class="e"></span>
+This directory <a href="motion.txt.html#is" class="d">is</a> an absolute path.  No matter where you are, <a href="motion.txt.html#it" class="d">it</a> will be the
+same place.  What if you have located files in <a href="insert.txt.html#a" class="d">a</a> subdirectory, below where the
+file is?  Then you can specify <a href="insert.txt.html#a" class="d">a</a> relative path name.  This starts with <a href="insert.txt.html#a" class="d">a</a> dot:
+
+<span class="e">        :set path+=./proto</span>
+<span class="e"></span>
+This tells Vim to look in the directory "proto"<a href="motion.txt.html#%2C" class="d">,</a> below the directory where the
+file in which you use "<a href="editing.txt.html#gf" class="d">gf</a>" is.  Thus using "<a href="editing.txt.html#gf" class="d">gf</a>" on "inits.h" will make Vim
+look for "proto/inits.h"<a href="motion.txt.html#%2C" class="d">,</a> <a href="starting.txt.html#starting" class="d">starting</a> in the directory of the file.
+   Without the "./"<a href="motion.txt.html#%2C" class="d">,</a> thus "proto"<a href="motion.txt.html#%2C" class="d">,</a> Vim would look in the "proto" directory
+below the current directory.  And the current directory might not be where the
+file that you are editing <a href="motion.txt.html#is" class="d">is</a> located.
+
+The <a href="options.txt.html#%27path%27" class="o">'path'</a> option allows specifying the directories where to search for files
+in many more ways.  See the <a href="helphelp.txt.html#help" class="d">help</a> on the <a href="options.txt.html#%27path%27" class="o">'path'</a> option.
+   The <a href="options.txt.html#%27isfname%27" class="o">'isfname'</a> option <a href="motion.txt.html#is" class="d">is</a> used to decide which characters are included in the
+file name, and which ones are not (e.g., the " character in the example
+above).
+
+When you know the file name, but it's not to be found in the file, you can
+type it: 
+<span class="e"></span>
+<span class="e">        :find inits.h</span>
+<span class="e"></span>
+Vim will then use the <a href="options.txt.html#%27path%27" class="o">'path'</a> option to try and locate the file.  This <a href="motion.txt.html#is" class="d">is</a> the
+same <a href="motion.txt.html#as" class="d">as</a> the "<a href="editing.txt.html#%3Aedit" class="d">:edit</a>" command, except for the use of <a href="options.txt.html#%27path%27" class="o">'path'</a>.
+
+To open the found file in <a href="insert.txt.html#a" class="d">a</a> new <a href="windows.txt.html#window" class="d">window</a> use <a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="motion.txt.html#f" class="d">f</a> instead of "<a href="editing.txt.html#gf" class="d">gf</a>"<a href="motion.txt.html#%2C" class="d">,</a> or use
+"<a href="windows.txt.html#%3Asfind" class="d">:sfind</a>" instead of "<a href="editing.txt.html#%3Afind" class="d">:find</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+
+<a href="insert.txt.html#A" class="d">A</a> <a href="todo.txt.html#nice" class="d">nice</a> way to directly start Vim to edit <a href="insert.txt.html#a" class="d">a</a> file somewhere in the <a href="options.txt.html#%27path%27" class="o">'path'</a>: 
+<span class="e"></span>
+<span class="e">        vim "+find stdio.h"</span>
+<span class="e"></span>
+This finds the file "stdio.h" in your value of <a href="options.txt.html#%27path%27" class="o">'path'</a>.  The <a href="quotes.txt.html#quotes" class="d">quotes</a> are
+necessary to have one argument <a href="starting.txt.html#-%2Bc" class="l">-+c</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+<a name="22.4" class="t">22.4</a>  The buffer <a href="eval.txt.html#list" class="d">list</a>
+
+The Vim editor uses the term buffer to describe <a href="insert.txt.html#a" class="d">a</a> file being edited.
+Actually, <a href="insert.txt.html#a" class="d">a</a> buffer <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> copy of the file that you edit.  When you finish
+<a href="change.txt.html#changing" class="d">changing</a> the buffer, you write the contents of the buffer to the file.
+Buffers not only contain file contents, but also all the marks, settings, and
+other stuff that goes with it.
+
+
+HIDDEN BUFFERS
+
+Suppose you are editing the file one.txt and need to edit the file two.txt.
+You could simply use "<a href="editing.txt.html#%3Aedit" class="d">:edit</a> two.txt"<a href="motion.txt.html#%2C" class="d">,</a> but since you made changes to one.txt
+that won't work.  You also don't want to write one.txt yet.  Vim has <a href="insert.txt.html#a" class="d">a</a>
+solution for you: 
+<span class="e"></span>
+<span class="e">        :hide edit two.txt</span>
+<span class="e"></span>
+The buffer "one.txt" disappears from the screen, but Vim still knows that you
+are editing this buffer, so <a href="motion.txt.html#it" class="d">it</a> keeps the modified text.  This <a href="motion.txt.html#is" class="d">is</a> called <a href="insert.txt.html#a" class="d">a</a>
+hidden buffer: The buffer contains text, but you can't see it.
+   The argument of "<a href="windows.txt.html#%3Ahide" class="d">:hide</a>" <a href="motion.txt.html#is" class="d">is</a> another command.  "<a href="windows.txt.html#%3Ahide" class="d">:hide</a>" makes that command
+behave <a href="motion.txt.html#as" class="d">as</a> if the <a href="options.txt.html#%27hidden%27" class="o">'hidden'</a> option was set.  You could also set this option
+yourself.  The effect <a href="motion.txt.html#is" class="d">is</a> that when any buffer <a href="motion.txt.html#is" class="d">is</a> abandoned, <a href="motion.txt.html#it" class="d">it</a> becomes hidden.
+   Be careful!  When you have hidden <a href="windows.txt.html#buffers" class="d">buffers</a> with changes, don't exit Vim
+without making sure you have saved all the buffers.
+
+
+INACTIVE BUFFERS
+
+   When <a href="insert.txt.html#a" class="d">a</a> buffer has been used once, Vim remembers some information about it.
+When <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> not displayed in <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a> and <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> not hidden, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> still in the
+buffer list.  This <a href="motion.txt.html#is" class="d">is</a> called an inactive buffer.  Overview:
+
+   Active               Appears in <a href="insert.txt.html#a" class="d">a</a> window, text loaded.
+   Hidden               Not in <a href="insert.txt.html#a" class="d">a</a> window, text loaded.
+   Inactive             Not in <a href="insert.txt.html#a" class="d">a</a> window, no text loaded.
+
+The inactive <a href="windows.txt.html#buffers" class="d">buffers</a> are remembered, because Vim keeps information about them,
+like marks.  And remembering the file name <a href="motion.txt.html#is" class="d">is</a> useful too, so that you can see
+which files you have edited.  And edit them again.
+
+
+LISTING BUFFERS
+
+<a href="starting.txt.html#View" class="d">View</a> the buffer <a href="eval.txt.html#list" class="d">list</a> with this command: 
+<span class="e"></span>
+<span class="e">        :buffers</span>
+<span class="e"></span>
+<a href="insert.txt.html#A" class="d">A</a> command which does the same, <a href="motion.txt.html#is" class="d">is</a> not so obvious to <a href="eval.txt.html#list" class="d">list</a> buffers, but <a href="motion.txt.html#is" class="d">is</a> much
+shorter to type: 
+<span class="e"></span>
+<span class="e">        :ls</span>
+<span class="e"></span>
+The output could look like this:
+
+<span class="h">  1 #h   "help.txt"                     line 62 </span>
+<span class="h">  2 %a + "usr_21.txt"                   line 1 </span>
+<span class="h">  3      "usr_toc.txt"                  line 1 </span>
+
+The first column contains the buffer number.  You can use this to edit the
+buffer without having to type the name, see below.
+   After the buffer number come the flags.  Then the name of the file
+and the line number where the cursor was the last time.
+   The flags that can appear are these (from left to right):
+
+        <a href="undo.txt.html#u" class="d">u</a>       Buffer <a href="motion.txt.html#is" class="d">is</a> unlisted <a href="windows.txt.html#unlisted-buffer" class="l">unlisted-buffer</a><a href="repeat.txt.html#." class="d">.</a>
+         <a href="motion.txt.html#%25" class="d">%</a>      Current buffer.
+         <a href="pattern.txt.html#%23" class="d">#</a>      Alternate buffer.
+          <a href="insert.txt.html#a" class="d">a</a>     Buffer <a href="motion.txt.html#is" class="d">is</a> loaded and displayed.
+          <a href="motion.txt.html#h" class="d">h</a>     Buffer <a href="motion.txt.html#is" class="d">is</a> loaded but hidden.
+           <a href="change.txt.html#%3D" class="d">=</a>    Buffer <a href="motion.txt.html#is" class="d">is</a> read-only.
+           <a href="motion.txt.html#-" class="d">-</a>    Buffer <a href="motion.txt.html#is" class="d">is</a> not modifiable, the <a href="options.txt.html#%27modifiable%27" class="o">'modifiable'</a> option <a href="motion.txt.html#is" class="d">is</a> off.
+            <a href="motion.txt.html#%2B" class="d">+</a>   Buffer has been modified.
+
+
+EDITING <a href="insert.txt.html#A" class="d">A</a> BUFFER
+
+You can edit <a href="insert.txt.html#a" class="d">a</a> buffer by its number.  That avoids having to type the file
+name: 
+<span class="e"></span>
+<span class="e">        :buffer 2</span>
+<span class="e"></span>
+But the only way to know the number <a href="motion.txt.html#is" class="d">is</a> by looking in the buffer list.  You can
+use the name, or part of it, instead: 
+<span class="e"></span>
+<span class="e">        :buffer help</span>
+<span class="e"></span>
+Vim will find the best match for the name you type.  If there <a href="motion.txt.html#is" class="d">is</a> only one
+buffer that matches the name, <a href="motion.txt.html#it" class="d">it</a> will be used.  In this <a href="change.txt.html#case" class="d">case</a> "<a href="/#help.txt" class="d">help.txt</a>"<a href="repeat.txt.html#." class="d">.</a>
+   To open <a href="insert.txt.html#a" class="d">a</a> buffer in <a href="insert.txt.html#a" class="d">a</a> new window: 
+<span class="e"></span>
+<span class="e">        :sbuffer 3</span>
+<span class="e"></span>
+This works with <a href="insert.txt.html#a" class="d">a</a> name <a href="motion.txt.html#as" class="d">as</a> well.
+
+
+USING THE BUFFER LIST
+
+You can move around in the buffer <a href="eval.txt.html#list" class="d">list</a> with these commands:
+
+        <a href="windows.txt.html#%3Abnext" class="d">:bnext</a>          <a href="motion.txt.html#go" class="d">go</a> to next buffer
+        <a href="windows.txt.html#%3Abprevious" class="d">:bprevious</a>      <a href="motion.txt.html#go" class="d">go</a> to previous buffer
+        <a href="windows.txt.html#%3Abfirst" class="d">:bfirst</a>         <a href="motion.txt.html#go" class="d">go</a> to the first buffer
+        <a href="windows.txt.html#%3Ablast" class="d">:blast</a>          <a href="motion.txt.html#go" class="d">go</a> to the last buffer
+
+To remove <a href="insert.txt.html#a" class="d">a</a> buffer from the list, use this command: 
+<span class="e"></span>
+<span class="e">        :bdelete 3</span>
+<span class="e"></span>
+Again, this also works with <a href="insert.txt.html#a" class="d">a</a> name.
+   If you delete <a href="insert.txt.html#a" class="d">a</a> buffer that was active (visible in <a href="insert.txt.html#a" class="d">a</a> window), that <a href="windows.txt.html#window" class="d">window</a>
+will be closed.  If you delete the current buffer, the current <a href="windows.txt.html#window" class="d">window</a> will be
+closed.  If <a href="motion.txt.html#it" class="d">it</a> was the last window, Vim will find another buffer to edit.  You
+can't be editing nothing!
+
+        <span class="n">Note:</span>
+        Even after removing the buffer with "<a href="windows.txt.html#%3Abdelete" class="d">:bdelete</a>" Vim still remembers it.
+        It's actually made "unlisted"<a href="motion.txt.html#%2C" class="d">,</a> <a href="motion.txt.html#it" class="d">it</a> no longer appears in the <a href="eval.txt.html#list" class="d">list</a> from
+        "<a href="windows.txt.html#%3Abuffers" class="d">:buffers</a>"<a href="repeat.txt.html#." class="d">.</a>  The ":buffers!" command will <a href="eval.txt.html#list" class="d">list</a> unlisted <a href="windows.txt.html#buffers" class="d">buffers</a> (yes,
+        Vim can <a href="diff.txt.html#do" class="d">do</a> the impossible).  To really make Vim forget about <a href="insert.txt.html#a" class="d">a</a> buffer,
+        use "<a href="windows.txt.html#%3Abwipe" class="d">:bwipe</a>"<a href="repeat.txt.html#." class="d">.</a>  Also see the <a href="options.txt.html#%27buflisted%27" class="o">'buflisted'</a> option.
+
+<span class="h">==============================================================================</span>
+
+Next chapter: <a href="usr_23.txt.html#usr_23.txt" class="l">usr_23.txt</a>  Editing other files
+
+Copyright: see <a href="usr_01.txt.html#manual-copyright" class="l">manual-copyright</a>  vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

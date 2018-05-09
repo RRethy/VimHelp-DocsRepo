@@ -1,0 +1,1154 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: indent.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="indent.txt" class="t">indent.txt</a>    For <span class="i">Vim version 8.0.</span>  Last change: 2018 Apr 04
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Bram Moolenaar</span>
+
+
+This file <a href="motion.txt.html#is" class="d">is</a> about indenting <a href="change.txt.html#C" class="d">C</a> programs and other files.
+
+1. Indenting <a href="change.txt.html#C" class="d">C</a> style programs   <a href="#C-indenting" class="l">C-indenting</a>
+2. Indenting by <a href="eval.txt.html#expression" class="d">expression</a>      <a href="#indent-expression" class="l">indent-expression</a>
+
+<span class="h">==============================================================================</span>
+1. Indenting <a href="change.txt.html#C" class="d">C</a> style programs                           <a name="C-indenting" class="t">C-indenting</a>
+
+The basics for <a href="change.txt.html#C" class="d">C</a> style indenting are explained in <a href="motion.txt.html#section" class="d">section</a> <a href="usr_30.txt.html#30.2" class="l">30.2</a> of the user
+manual.
+
+Vim has <a href="options.txt.html#options" class="d">options</a> for automatically indenting <a href="change.txt.html#C" class="d">C</a> style program files. Many
+programming languages including Java and C++ follow very closely the
+<a href="change.txt.html#formatting" class="d">formatting</a> conventions established with C.  These <a href="options.txt.html#options" class="d">options</a> affect only the
+indent and <a href="diff.txt.html#do" class="d">do</a> not perform other formatting.  There are additional <a href="options.txt.html#options" class="d">options</a> that
+affect other kinds of <a href="change.txt.html#formatting" class="d">formatting</a> <a href="motion.txt.html#as" class="d">as</a> well <a href="motion.txt.html#as" class="d">as</a> indenting, see <a href="change.txt.html#format-comments" class="l">format-comments</a><a href="motion.txt.html#%2C" class="d">,</a>
+<a href="change.txt.html#fo-table" class="l">fo-table</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="change.txt.html#gq" class="l">gq</a> and <a href="change.txt.html#formatting" class="l">formatting</a> for the main ones.
+
+<span class="n">Note</span> that this will not work when the <a href="various.txt.html#%2Bsmartindent" class="l">+smartindent</a> or <a href="various.txt.html#%2Bcindent" class="l">+cindent</a> features
+have been disabled <a href="motion.txt.html#at" class="d">at</a> compile time.
+
+There are in fact four main methods available for indentation, each one
+overrides the previous if <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> enabled, or non-empty for <a href="options.txt.html#%27indentexpr%27" class="o">'indentexpr'</a>:
+<a href="options.txt.html#%27autoindent%27" class="o">'autoindent'</a>    uses the indent from the previous line.
+<a href="options.txt.html#%27smartindent%27" class="o">'smartindent'</a>   <a href="motion.txt.html#is" class="d">is</a> like <a href="options.txt.html#%27autoindent%27" class="o">'autoindent'</a> but also recognizes some <a href="change.txt.html#C" class="d">C</a> <a href="syntax.txt.html#syntax" class="d">syntax</a> to
+                increase/reduce the indent where appropriate.
+<a href="options.txt.html#%27cindent%27" class="o">'cindent'</a>       Works more cleverly than the other two and <a href="motion.txt.html#is" class="d">is</a> configurable to
+                different indenting styles.
+<a href="options.txt.html#%27indentexpr%27" class="o">'indentexpr'</a>    The most flexible of all: Evaluates an <a href="eval.txt.html#expression" class="d">expression</a> to compute
+                the indent of <a href="insert.txt.html#a" class="d">a</a> line.  When non-empty this method overrides
+                the other ones.  See <a href="#indent-expression" class="l">indent-expression</a><a href="repeat.txt.html#." class="d">.</a>
+The rest of this <a href="motion.txt.html#section" class="d">section</a> describes the <a href="options.txt.html#%27cindent%27" class="o">'cindent'</a> option.
+
+<span class="n">Note</span> that <a href="options.txt.html#%27cindent%27" class="o">'cindent'</a> indenting does not work for every code scenario.  Vim
+<a href="motion.txt.html#is" class="d">is</a> not <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#C" class="d">C</a> compiler: <a href="motion.txt.html#it" class="d">it</a> does not recognize all syntax.  One requirement <a href="motion.txt.html#is" class="d">is</a>
+that toplevel <a href="eval.txt.html#functions" class="d">functions</a> have <a href="insert.txt.html#a" class="d">a</a> '{' in the first column.  Otherwise they are
+easily confused with declarations.
+
+These four <a href="options.txt.html#options" class="d">options</a> <a href="intro.txt.html#control" class="d">control</a> <a href="change.txt.html#C" class="d">C</a> program indenting:
+<a href="options.txt.html#%27cindent%27" class="o">'cindent'</a>       Enables Vim to perform <a href="change.txt.html#C" class="d">C</a> program indenting automatically.
+<a href="options.txt.html#%27cinkeys%27" class="o">'cinkeys'</a>       Specifies which keys trigger reindenting in <a href="insert.txt.html#insert" class="d">insert</a> mode.
+<a href="options.txt.html#%27cinoptions%27" class="o">'cinoptions'</a>    Sets your preferred indent style.
+<a href="options.txt.html#%27cinwords%27" class="o">'cinwords'</a>      Defines keywords that start an extra indent in the next line.
+
+If <a href="options.txt.html#%27lisp%27" class="o">'lisp'</a> <a href="motion.txt.html#is" class="d">is</a> not on and <a href="options.txt.html#%27equalprg%27" class="o">'equalprg'</a> <a href="motion.txt.html#is" class="d">is</a> empty, the "<a href="change.txt.html#%3D" class="d">=</a>" <a href="motion.txt.html#operator" class="d">operator</a> indents using
+Vim's built-in algorithm rather than calling an external program.
+
+See <a href="autocmd.txt.html#autocommand" class="l">autocommand</a> for how to set the <a href="options.txt.html#%27cindent%27" class="o">'cindent'</a> option automatically for <a href="change.txt.html#C" class="d">C</a> code
+files and reset <a href="motion.txt.html#it" class="d">it</a> for others.
+
+                                        <a name="cinkeys-format" class="t">cinkeys-format</a> <a name="indentkeys-format" class="t">indentkeys-format</a>
+The <a href="options.txt.html#%27cinkeys%27" class="o">'cinkeys'</a> option <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#string" class="d">string</a> that controls Vim's indenting in response to
+typing certain characters or commands in certain contexts.  <span class="n">Note</span> that this not
+only triggers C-indenting.  When <a href="options.txt.html#%27indentexpr%27" class="o">'indentexpr'</a> <a href="motion.txt.html#is" class="d">is</a> not empty <a href="options.txt.html#%27indentkeys%27" class="o">'indentkeys'</a> <a href="motion.txt.html#is" class="d">is</a>
+used instead.  The format of <a href="options.txt.html#%27cinkeys%27" class="o">'cinkeys'</a> and <a href="options.txt.html#%27indentkeys%27" class="o">'indentkeys'</a> <a href="motion.txt.html#is" class="d">is</a> equal.
+
+The default <a href="motion.txt.html#is" class="d">is</a> "0{,0},0),:,0#,!^F,o,O,e" which specifies that indenting occurs
+<a href="motion.txt.html#as" class="d">as</a> follows:
+
+        "0{"    if you type '{' <a href="motion.txt.html#as" class="d">as</a> the first character in <a href="insert.txt.html#a" class="d">a</a> line
+        "0}"    if you type '}' <a href="motion.txt.html#as" class="d">as</a> the first character in <a href="insert.txt.html#a" class="d">a</a> line
+        "0)"    if you type ')' <a href="motion.txt.html#as" class="d">as</a> the first character in <a href="insert.txt.html#a" class="d">a</a> line
+        "<a href="cmdline.txt.html#%3A" class="d">:</a>"     if you type ':' after <a href="insert.txt.html#a" class="d">a</a> label or <a href="change.txt.html#case" class="d">case</a> statement
+        "0#"    if you type '#' <a href="motion.txt.html#as" class="d">as</a> the first character in <a href="insert.txt.html#a" class="d">a</a> line
+        "!^F"   if you type <a href="scroll.txt.html#CTRL-F" class="k">CTRL-F</a> (which <a href="motion.txt.html#is" class="d">is</a> not inserted)
+        "<a href="insert.txt.html#o" class="d">o</a>"     if you type <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a> anywhere or use the "<a href="insert.txt.html#o" class="d">o</a>" command (not in
+                <a href="insert.txt.html#insert" class="d">insert</a> mode!)
+        "<a href="insert.txt.html#O" class="d">O</a>"     if you use the "<a href="insert.txt.html#O" class="d">O</a>" command (not in <a href="insert.txt.html#insert" class="d">insert</a> mode!)
+        "<a href="motion.txt.html#e" class="d">e</a>"     if you type the second 'e' for an "else" <a href="motion.txt.html#at" class="d">at</a> the start of <a href="insert.txt.html#a" class="d">a</a>
+                line
+
+Characters that can precede each key:                           <a name="i_CTRL-F" class="t">i_CTRL-F</a>
+<a href="change.txt.html#%21" class="d">!</a>       When <a href="insert.txt.html#a" class="d">a</a> '!' precedes the key, Vim will not <a href="insert.txt.html#insert" class="d">insert</a> the key but will
+        instead reindent the current line.  This allows you to define <a href="insert.txt.html#a" class="d">a</a>
+        command key for reindenting the current line.  <a href="scroll.txt.html#CTRL-F" class="k">CTRL-F</a> <a href="motion.txt.html#is" class="d">is</a> the default
+        key for this.  Be careful if you define <a href="motion.txt.html#CTRL-I" class="k">CTRL-I</a> for this because <a href="motion.txt.html#CTRL-I" class="k">CTRL-I</a>
+        <a href="motion.txt.html#is" class="d">is</a> the ASCII code for <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a>.
+*       When <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%27" class="d">'</a>*<a href="motion.txt.html#%27" class="d">'</a> precedes the key, Vim will reindent the line before
+        <a href="insert.txt.html#inserting" class="d">inserting</a> the key.  If <a href="options.txt.html#%27cinkeys%27" class="o">'cinkeys'</a> contains "*<a href="intro.txt.html#%3CReturn%3E" class="s">&lt;Return&gt;</a>"<a href="motion.txt.html#%2C" class="d">,</a> Vim reindents
+        the current line before opening <a href="insert.txt.html#a" class="d">a</a> new line.
+<a href="motion.txt.html#0" class="d">0</a>       When <a href="insert.txt.html#a" class="d">a</a> zero precedes the key (but appears after '!' or <a href="motion.txt.html#%27" class="d">'</a>*<a href="motion.txt.html#%27%29" class="d">')</a> Vim will
+        reindent the line only if the key <a href="motion.txt.html#is" class="d">is</a> the first character you type in
+        the line.  When used before "<a href="change.txt.html#%3D" class="d">=</a>" Vim will only reindent the line if
+        there <a href="motion.txt.html#is" class="d">is</a> only white <a href="intro.txt.html#space" class="d">space</a> before the word.
+
+When neither '!' nor <a href="motion.txt.html#%27" class="d">'</a>*<a href="motion.txt.html#%27" class="d">'</a> precedes the key, Vim reindents the line after you
+type the key.  So ';' sets the indentation of <a href="insert.txt.html#a" class="d">a</a> line which includes the ';'.
+
+<a href="eval.txt.html#Special" class="d">Special</a> key names:
+<span class="s">&lt;&gt;      Angle brackets mean spelled-out names of keys.  For example: "&lt;Up&gt;</span>"<a href="motion.txt.html#%2C" class="d">,</a>
+        "<span class="s">&lt;Ins&gt;</span>" (see <a href="intro.txt.html#key-notation" class="l">key-notation</a>).
+<a href="motion.txt.html#%5E" class="d">^</a>       Letters preceded by <a href="insert.txt.html#a" class="d">a</a> caret (^) are <a href="intro.txt.html#control" class="d">control</a> characters.  For example:
+        "^F" <a href="motion.txt.html#is" class="d">is</a> <a href="scroll.txt.html#CTRL-F" class="k">CTRL-F</a>.
+<a href="insert.txt.html#o" class="d">o</a>       Reindent <a href="insert.txt.html#a" class="d">a</a> line when you use the "<a href="insert.txt.html#o" class="d">o</a>" command or when Vim opens <a href="insert.txt.html#a" class="d">a</a> new
+        line below the current one (e.g., when you type <a href="intro.txt.html#%3CEnter%3E" class="s">&lt;Enter&gt;</a> in <a href="insert.txt.html#insert" class="d">insert</a>
+        mode).
+<a href="insert.txt.html#O" class="d">O</a>       Reindent <a href="insert.txt.html#a" class="d">a</a> line when you use the "<a href="insert.txt.html#O" class="d">O</a>" command.
+<a href="motion.txt.html#e" class="d">e</a>       Reindent <a href="insert.txt.html#a" class="d">a</a> line that starts with "else" when you type the second 'e'.
+<a href="cmdline.txt.html#%3A" class="d">:</a>       Reindent <a href="insert.txt.html#a" class="d">a</a> line when <a href="insert.txt.html#a" class="d">a</a> ':' <a href="motion.txt.html#is" class="d">is</a> typed which <a href="motion.txt.html#is" class="d">is</a> after <a href="insert.txt.html#a" class="d">a</a> label or <a href="change.txt.html#case" class="d">case</a>
+        statement.  Don't reindent for <a href="insert.txt.html#a" class="d">a</a> "<a href="cmdline.txt.html#%3A" class="d">:</a>" in "class::method" for C++.  To
+        Reindent for any "<a href="cmdline.txt.html#%3A" class="d">:</a>"<a href="motion.txt.html#%2C" class="d">,</a> use "<span class="s">&lt;:&gt;</span>"<a href="repeat.txt.html#." class="d">.</a>
+=word   Reindent when typing the last character of "<a href="motion.txt.html#word" class="d">word</a>"<a href="repeat.txt.html#." class="d">.</a>  "<a href="motion.txt.html#word" class="d">word</a>" may
+        actually be part of another word.  Thus "=end" would cause reindenting
+        when typing the "<a href="change.txt.html#d" class="d">d</a>" in "endif" or "endwhile"<a href="repeat.txt.html#." class="d">.</a>  But not when typing
+        "bend"<a href="repeat.txt.html#." class="d">.</a>  Also reindent when completion produces <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> that starts
+        with "<a href="motion.txt.html#word" class="d">word</a>"<a href="repeat.txt.html#." class="d">.</a>  "0=word" reindents when there <a href="motion.txt.html#is" class="d">is</a> only white <a href="intro.txt.html#space" class="d">space</a> before
+        the word.
+=~word  Like =word, but ignore case.
+
+If you really want to reindent when you type 'o', 'O', 'e', '0', '&lt;', '&gt;',
+<a href="motion.txt.html#%27" class="d">'</a>*', ':' or '!', use "<span class="s">&lt;o&gt;</span>"<a href="motion.txt.html#%2C" class="d">,</a> "<span class="s">&lt;O&gt;</span>"<a href="motion.txt.html#%2C" class="d">,</a> "<span class="s">&lt;e&gt;</span>"<a href="motion.txt.html#%2C" class="d">,</a> "<span class="s">&lt;0&gt;</span>"<a href="motion.txt.html#%2C" class="d">,</a> "<span class="s">&lt;&lt;&gt;</span>"<a href="motion.txt.html#%2C" class="d">,</a> "<span class="s">&lt;&gt;&gt;</span>"<a href="motion.txt.html#%2C" class="d">,</a> "<span class="s">&lt;*&gt;</span>"<a href="motion.txt.html#%2C" class="d">,</a> "<span class="s">&lt;:&gt;</span>" or
+"<span class="s">&lt;!&gt;</span>"<a href="motion.txt.html#%2C" class="d">,</a> respectively, for those keys.
+
+For an emacs-style indent mode where lines aren't indented every time you
+press <a href="intro.txt.html#%3CEnter%3E" class="s">&lt;Enter&gt;</a> but only if you press <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a>, <a href="insert.txt.html#I" class="d">I</a> suggest:
+        <a href="options.txt.html#%3Aset" class="d">:set</a> cinkeys=0{,0},:,0#,!&lt;Tab&gt;,!^F
+You might also want to switch off <a href="options.txt.html#%27autoindent%27" class="o">'autoindent'</a> then.
+
+<span class="n">Note:</span> If you change the current line's indentation manually, Vim ignores the
+cindent settings for that line.  This prevents vim from reindenting after you
+have changed the indent by typing <a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a>, <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a>, or <a href="motion.txt.html#%3CSpace%3E" class="s">&lt;Space&gt;</a> in the indent or
+used <a href="tagsrch.txt.html#CTRL-T" class="k">CTRL-T</a> or <a href="scroll.txt.html#CTRL-D" class="k">CTRL-D</a>.
+
+                                                <a name="cinoptions-values" class="t">cinoptions-values</a>
+The <a href="options.txt.html#%27cinoptions%27" class="o">'cinoptions'</a> option sets how Vim performs indentation.  The value after
+the option character can be one of these (N <a href="motion.txt.html#is" class="d">is</a> any number):
+        <a href="pattern.txt.html#N" class="d">N</a>       indent <a href="pattern.txt.html#N" class="d">N</a> spaces
+        <a href="starting.txt.html#-N" class="d">-N</a>      indent <a href="pattern.txt.html#N" class="d">N</a> spaces to the left
+        Ns      <a href="pattern.txt.html#N" class="d">N</a> times <a href="options.txt.html#%27shiftwidth%27" class="o">'shiftwidth'</a> spaces
+        -Ns     <a href="pattern.txt.html#N" class="d">N</a> times <a href="options.txt.html#%27shiftwidth%27" class="o">'shiftwidth'</a> spaces to the left
+
+In the <a href="eval.txt.html#list" class="d">list</a> below,
+"<a href="pattern.txt.html#N" class="d">N</a>" represents <a href="insert.txt.html#a" class="d">a</a> number of your choice (the number can be negative).  When
+there <a href="motion.txt.html#is" class="d">is</a> an 's' after the number, Vim multiplies the number by <a href="options.txt.html#%27shiftwidth%27" class="o">'shiftwidth'</a>:
+"1s" <a href="motion.txt.html#is" class="d">is</a> <a href="options.txt.html#%27shiftwidth%27" class="o">'shiftwidth'</a>, "2s" <a href="motion.txt.html#is" class="d">is</a> two times <a href="options.txt.html#%27shiftwidth%27" class="o">'shiftwidth'</a>, etc.  You can use <a href="insert.txt.html#a" class="d">a</a>
+decimal point, too: "-0.5s" <a href="motion.txt.html#is" class="d">is</a> minus half <a href="insert.txt.html#a" class="d">a</a> <a href="options.txt.html#%27shiftwidth%27" class="o">'shiftwidth'</a>.
+The examples below assume <a href="insert.txt.html#a" class="d">a</a> <a href="options.txt.html#%27shiftwidth%27" class="o">'shiftwidth'</a> of 4.
+                                                        <a name="cino-%3E" class="t">cino-&gt;</a>
+        &gt;N    Amount added for "normal" indent.  Used after <a href="insert.txt.html#a" class="d">a</a> line that should
+              increase the indent (lines <a href="starting.txt.html#starting" class="d">starting</a> with "if"<a href="motion.txt.html#%2C" class="d">,</a> an opening brace,
+              etc.).  (default <a href="options.txt.html#%27shiftwidth%27" class="o">'shiftwidth'</a>).
+
+                cino=               cino=&gt;2             cino=&gt;2s 
+<span class="e">                  if (cond)           if (cond)           if (cond)</span>
+<span class="e">                  {                   {                   {</span>
+<span class="e">                      foo;              foo;                      foo;</span>
+<span class="e">                  }                   }                   }</span>
+
+                                                        <a name="cino-e" class="t">cino-e</a>
+        eN    Add <a href="pattern.txt.html#N" class="d">N</a> to the prevailing indent inside <a href="insert.txt.html#a" class="d">a</a> set of braces if the
+              opening brace <a href="motion.txt.html#at" class="d">at</a> the End of the line (more precise: <a href="motion.txt.html#is" class="d">is</a> not the
+              first character in <a href="insert.txt.html#a" class="d">a</a> line).  This <a href="motion.txt.html#is" class="d">is</a> useful if you want <a href="insert.txt.html#a" class="d">a</a>
+              different indent when the '{' <a href="motion.txt.html#is" class="d">is</a> <a href="motion.txt.html#at" class="d">at</a> the start of the line from
+              when '{' <a href="motion.txt.html#is" class="d">is</a> <a href="motion.txt.html#at" class="d">at</a> the <a href="intro.txt.html#end" class="d">end</a> of the line.  (default 0).
+
+                cino=               cino=e2             cino=e-2 
+<span class="e">                  if (cond) {         if (cond) {         if (cond) {</span>
+<span class="e">                      foo;                  foo;            foo;</span>
+<span class="e">                  }                   }                   }</span>
+<span class="e">                  else                else                else</span>
+<span class="e">                  {                   {                   {</span>
+<span class="e">                      bar;                bar;                bar;</span>
+<span class="e">                  }                   }                   }</span>
+
+                                                        <a name="cino-n" class="t">cino-n</a>
+        nN    Add <a href="pattern.txt.html#N" class="d">N</a> to the prevailing indent for <a href="insert.txt.html#a" class="d">a</a> statement after an "if"<a href="motion.txt.html#%2C" class="d">,</a>
+              "while"<a href="motion.txt.html#%2C" class="d">,</a> etc., if <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> NOT inside <a href="insert.txt.html#a" class="d">a</a> set of braces.  This <a href="motion.txt.html#is" class="d">is</a>
+              useful if you want <a href="insert.txt.html#a" class="d">a</a> different indent when there <a href="motion.txt.html#is" class="d">is</a> no '{'
+              before the statement from when there <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> '{' before it.
+              (default 0).
+
+                cino=               cino=n2             cino=n-2 
+<span class="e">                  if (cond)           if (cond)           if (cond)</span>
+<span class="e">                      foo;                  foo;            foo;</span>
+<span class="e">                  else                else                else</span>
+<span class="e">                  {                   {                   {</span>
+<span class="e">                      bar;                bar;                bar;</span>
+<span class="e">                  }                   }                   }</span>
+
+                                                        <a name="cino-f" class="t">cino-f</a>
+        fN    Place the first opening brace of <a href="insert.txt.html#a" class="d">a</a> function or other block in
+              column N.  This applies only for an opening brace that <a href="motion.txt.html#is" class="d">is</a> not
+              inside other braces and <a href="motion.txt.html#is" class="d">is</a> <a href="motion.txt.html#at" class="d">at</a> the start of the line.  What comes
+              after the brace <a href="motion.txt.html#is" class="d">is</a> <a href="change.txt.html#put" class="d">put</a> relative to this brace.  (default 0).
+
+                cino=               cino=f.5s           cino=f1s 
+<span class="e">                  func()              func()              func()</span>
+<span class="e">                  {                     {                     {</span>
+<span class="e">                      int foo;              int foo;              int foo;</span>
+
+                                                        <a name="cino-%7B" class="t">cino-{</a>
+        {N    Place opening braces <a href="pattern.txt.html#N" class="d">N</a> characters from the prevailing indent.
+              This applies only for opening braces that are inside other
+              braces.  (default 0).
+
+                cino=               cino={.5s           cino={1s 
+<span class="e">                  if (cond)           if (cond)           if (cond)</span>
+<span class="e">                  {                     {                     {</span>
+<span class="e">                      foo;                foo;                foo;</span>
+
+                                                        <a name="cino-%7D" class="t">cino-}</a>
+        }N    Place closing braces <a href="pattern.txt.html#N" class="d">N</a> characters from the matching opening
+              brace.  (default 0).
+
+                cino=               cino={2,}-0.5s      cino=}2 
+<span class="e">                  if (cond)           if (cond)           if (cond)</span>
+<span class="e">                  {                     {                 {</span>
+<span class="e">                      foo;                foo;                foo;</span>
+<span class="e">                  }                   }                     }</span>
+
+                                                        <a name="cino-%5E" class="t">cino-^</a>
+        ^N    Add <a href="pattern.txt.html#N" class="d">N</a> to the prevailing indent inside <a href="insert.txt.html#a" class="d">a</a> set of braces if the
+              opening brace <a href="motion.txt.html#is" class="d">is</a> in column 0.  This can specify <a href="insert.txt.html#a" class="d">a</a> different
+              indent for whole of <a href="insert.txt.html#a" class="d">a</a> function (some may like to set <a href="motion.txt.html#it" class="d">it</a> to <a href="insert.txt.html#a" class="d">a</a>
+              negative number).  (default 0).
+
+                cino=               cino=^-2            cino=^-s 
+<span class="e">                  func()              func()              func()</span>
+<span class="e">                  {                   {                   {</span>
+<span class="e">                      if (cond)         if (cond)         if (cond)</span>
+<span class="e">                      {                 {                 {</span>
+<span class="e">                          a = b;            a = b;            a = b;</span>
+<span class="e">                      }                 }                 }</span>
+<span class="e">                  }                   }                   }</span>
+
+                                                        <a name="cino-L" class="t">cino-L</a>
+        LN    Controls placement of jump labels. If <a href="pattern.txt.html#N" class="d">N</a> <a href="motion.txt.html#is" class="d">is</a> negative, the label
+              will be placed <a href="motion.txt.html#at" class="d">at</a> column 1. If <a href="pattern.txt.html#N" class="d">N</a> <a href="motion.txt.html#is" class="d">is</a> non-negative, the indent of
+              the label will be the prevailing indent minus N.  (default -1).
+
+                cino=               cino=L2             cino=Ls 
+<span class="e">                  func()              func()              func()</span>
+<span class="e">                  {                   {                   {</span>
+<span class="e">                      {                   {                   {</span>
+<span class="e">                          stmt;               stmt;               stmt;</span>
+<span class="e">                  LABEL:                    LABEL:            LABEL:</span>
+<span class="e">                      }                   }                   }</span>
+<span class="e">                  }                   }                   }</span>
+
+                                                        <a name="cino-%3A" class="t">cino-:</a>
+        <a href="editing.txt.html#%3AN" class="d">:N</a>    Place <a href="change.txt.html#case" class="d">case</a> labels <a href="pattern.txt.html#N" class="d">N</a> characters from the indent of the switch().
+              (default <a href="options.txt.html#%27shiftwidth%27" class="o">'shiftwidth'</a>).
+
+                cino=               cino=:0 
+<span class="e">                  switch (x)          switch(x)</span>
+<span class="e">                  {                   {</span>
+<span class="e">                      case 1:         case 1:</span>
+<span class="e">                          a = b;          a = b;</span>
+<span class="e">                      default:        default:</span>
+<span class="e">                  }                   }</span>
+
+                                                        <a name="cino-%3D" class="t">cino-=</a>
+        =N    Place statements occurring after <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#case" class="d">case</a> label <a href="pattern.txt.html#N" class="d">N</a> characters from
+              the indent of the label.  (default <a href="options.txt.html#%27shiftwidth%27" class="o">'shiftwidth'</a>).
+
+                cino=               cino==10 
+<span class="e">                   case 11:             case 11:  a = a + 1;</span>
+<span class="e">                       a = a + 1;                 b = b + 1;</span>
+
+                                                        <a name="cino-l" class="t">cino-l</a>
+        lN    If <a href="pattern.txt.html#N" class="d">N</a> != <a href="motion.txt.html#0" class="d">0</a> Vim will align with <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#case" class="d">case</a> label instead of the
+              statement after <a href="motion.txt.html#it" class="d">it</a> in the same line.
+
+                cino=                       cino=l1 
+<span class="e">                    switch (a) {              switch (a) {</span>
+<span class="e">                        case 1: {                 case 1: {</span>
+<span class="e">                                    break;            break;</span>
+<span class="e">                                }                 }</span>
+
+                                                        <a name="cino-b" class="t">cino-b</a>
+        bN    If <a href="pattern.txt.html#N" class="d">N</a> != <a href="motion.txt.html#0" class="d">0</a> Vim will align <a href="insert.txt.html#a" class="d">a</a> final "break" with the <a href="change.txt.html#case" class="d">case</a> label,
+              so that case..break looks like <a href="insert.txt.html#a" class="d">a</a> sort of block.  (default: 0).
+              When using 1, consider adding "0=break" to <a href="options.txt.html#%27cinkeys%27" class="o">'cinkeys'</a>.
+
+                cino=               cino=b1 
+<span class="e">                  switch (x)          switch(x)</span>
+<span class="e">                  {                   {</span>
+<span class="e">                      case 1:             case 1:</span>
+<span class="e">                          a = b;              a = b;</span>
+<span class="e">                          break;          break;</span>
+<span class="e"></span>
+<span class="e">                      default:            default:</span>
+<span class="e">                          a = 0;              a = 0;</span>
+<span class="e">                          break;          break;</span>
+<span class="e">                  }                   }</span>
+
+                                                        <a name="cino-g" class="t">cino-g</a>
+        <a href="visual.txt.html#gN" class="d">gN</a>    Place C++ scope declarations <a href="pattern.txt.html#N" class="d">N</a> characters from the indent of the
+              block they are in.  (default <a href="options.txt.html#%27shiftwidth%27" class="o">'shiftwidth'</a>).  <a href="insert.txt.html#A" class="d">A</a> scope declaration
+              can be "public:"<a href="motion.txt.html#%2C" class="d">,</a> "protected:" or "private:"<a href="repeat.txt.html#." class="d">.</a>
+
+                cino=               cino=g0 
+<span class="e">                  {                   {</span>
+<span class="e">                      public:         public:</span>
+<span class="e">                          a = b;          a = b;</span>
+<span class="e">                      private:        private:</span>
+<span class="e">                  }                   }</span>
+
+                                                        <a name="cino-h" class="t">cino-h</a>
+        hN    Place statements occurring after <a href="insert.txt.html#a" class="d">a</a> C++ scope declaration <a href="pattern.txt.html#N" class="d">N</a>
+              characters from the indent of the label.  (default
+              <a href="options.txt.html#%27shiftwidth%27" class="o">'shiftwidth'</a>).
+
+                cino=               cino=h10 
+<span class="e">                   public:              public:   a = a + 1;</span>
+<span class="e">                       a = a + 1;                 b = b + 1;</span>
+
+                                                        <a name="cino-N" class="t">cino-N</a>
+        NN    Indent inside C++ namespace <a href="pattern.txt.html#N" class="d">N</a> characters extra compared to <a href="insert.txt.html#a" class="d">a</a>
+              normal block.  (default 0).
+
+                cino=                      cino=N-s 
+<span class="e">                  namespace {                namespace {</span>
+<span class="e">                      void function();       void function();</span>
+<span class="e">                  }                          }</span>
+<span class="e"></span>
+<span class="e">                  namespace my               namespace my</span>
+<span class="e">                  {                          {</span>
+<span class="e">                      void function();       void function();</span>
+<span class="e">                  }                          }</span>
+
+                                                        <a name="cino-E" class="t">cino-E</a>
+        EN    Indent inside C++ linkage specifications (extern "<a href="change.txt.html#C" class="d">C</a>" or
+              extern "C++"<a href="motion.txt.html#%29" class="d">)</a> <a href="pattern.txt.html#N" class="d">N</a> characters extra compared to <a href="insert.txt.html#a" class="d">a</a> normal block.
+              (default 0).
+
+                cino=                      cino=E-s 
+<span class="e">                  extern "C" {               extern "C" {</span>
+<span class="e">                      void function();       void function();</span>
+<span class="e">                  }                          }</span>
+<span class="e"></span>
+<span class="e">                  extern "C"                 extern "C"</span>
+<span class="e">                  {                          {</span>
+<span class="e">                      void function();       void function();</span>
+<span class="e">                  }                          }</span>
+
+                                                        <a name="cino-p" class="t">cino-p</a>
+        pN    Parameter declarations for K&amp;R-style function declarations will
+              be indented <a href="pattern.txt.html#N" class="d">N</a> characters from the margin.  (default
+              <a href="options.txt.html#%27shiftwidth%27" class="o">'shiftwidth'</a>).
+
+                cino=               cino=p0             cino=p2s 
+<span class="e">                  func(a, b)          func(a, b)          func(a, b)</span>
+<span class="e">                      int a;          int a;                      int a;</span>
+<span class="e">                      char b;         char b;                     char b;</span>
+
+                                                        <a name="cino-t" class="t">cino-t</a>
+        tN    Indent <a href="insert.txt.html#a" class="d">a</a> function return type declaration <a href="pattern.txt.html#N" class="d">N</a> characters from the
+              margin.  (default <a href="options.txt.html#%27shiftwidth%27" class="o">'shiftwidth'</a>).
+
+                cino=               cino=t0             cino=t7 
+<span class="e">                      int             int                        int</span>
+<span class="e">                  func()              func()              func()</span>
+
+                                                        <a name="cino-i" class="t">cino-i</a>
+        iN    Indent C++ base class declarations and constructor
+              initializations, if they start in <a href="insert.txt.html#a" class="d">a</a> new line (otherwise they
+              are aligned <a href="motion.txt.html#at" class="d">at</a> the right side of the ':').
+              (default <a href="options.txt.html#%27shiftwidth%27" class="o">'shiftwidth'</a>).
+
+                cino=                     cino=i0 
+<span class="e">                  class MyClass :           class MyClass :</span>
+<span class="e">                      public BaseClass      public BaseClass</span>
+<span class="e">                  {}                        {}</span>
+<span class="e">                  MyClass::MyClass() :      MyClass::MyClass() :</span>
+<span class="e">                      BaseClass(3)          BaseClass(3)</span>
+<span class="e">                  {}                        {}</span>
+
+                                                        <a name="cino-%2B" class="t">cino-+</a>
+        +N    Indent <a href="insert.txt.html#a" class="d">a</a> continuation line (a line that spills onto the next)
+              inside <a href="insert.txt.html#a" class="d">a</a> function <a href="pattern.txt.html#N" class="d">N</a> additional characters.  (default
+              <a href="options.txt.html#%27shiftwidth%27" class="o">'shiftwidth'</a>).
+              Outside of <a href="insert.txt.html#a" class="d">a</a> function, when the previous line ended in <a href="insert.txt.html#a" class="d">a</a>
+              backslash, the 2 * <a href="pattern.txt.html#N" class="d">N</a> <a href="motion.txt.html#is" class="d">is</a> used.
+
+                cino=                     cino=+10 
+<span class="e">                  a = b + 9 *               a = b + 9 *</span>
+<span class="e">                      c;                              c;</span>
+
+                                                        <a name="cino-c" class="t">cino-c</a>
+        cN    Indent comment lines after the comment opener, when there <a href="motion.txt.html#is" class="d">is</a> no
+              other text with which to align, <a href="pattern.txt.html#N" class="d">N</a> characters from the comment
+              opener.  (default 3).  See also <a href="change.txt.html#format-comments" class="l">format-comments</a><a href="repeat.txt.html#." class="d">.</a>
+
+                cino=                     cino=c5 
+<span class="e">                  /*                        /*</span>
+<span class="e">                     text.                       text.</span>
+<span class="e">                   */                        */</span>
+
+                                                        <a name="cino-C" class="t">cino-C</a>
+        CN    When <a href="pattern.txt.html#N" class="d">N</a> <a href="motion.txt.html#is" class="d">is</a> non-zero, indent comment lines by the amount specified
+              with the <a href="change.txt.html#c" class="d">c</a> flag above even if there <a href="motion.txt.html#is" class="d">is</a> other text behind the
+              comment opener.  (default 0).
+
+                cino=c0                   cino=c0,C1 
+<span class="e">                  /********                 /********</span>
+<span class="e">                    text.                   text.</span>
+<span class="e">                  ********/                 ********/</span>
+             (Example uses "<a href="options.txt.html#%3Aset" class="d">:set</a> comments&amp; comments-=s1:/* comments^=s0:/*"<a href="motion.txt.html#%29" class="d">)</a>
+
+                                                        <a name="cino-%2F" class="t">cino-/</a>
+        /N    Indent comment lines <a href="pattern.txt.html#N" class="d">N</a> characters extra.  (default 0).
+                cino=                     cino=/4 
+<span class="e">                  a = b;                    a = b;</span>
+<span class="e">                  /* comment */                 /* comment */</span>
+<span class="e">                  c = d;                    c = d;</span>
+
+                                                        <a name="cino-%28" class="t">cino-(</a>
+        (N    When in unclosed parentheses, indent <a href="pattern.txt.html#N" class="d">N</a> characters from the line
+              with the unclosed parentheses.  Add <a href="insert.txt.html#a" class="d">a</a> <a href="options.txt.html#%27shiftwidth%27" class="o">'shiftwidth'</a> for every
+              extra unclosed parentheses.  When <a href="pattern.txt.html#N" class="d">N</a> <a href="motion.txt.html#is" class="d">is</a> <a href="motion.txt.html#0" class="d">0</a> or the unclosed
+              parentheses <a href="motion.txt.html#is" class="d">is</a> the first non-white character in its line, line
+              up with the next non-white character after the unclosed
+              parentheses.  (default <a href="options.txt.html#%27shiftwidth%27" class="o">'shiftwidth'</a> * 2).
+
+                cino=                     cino=(0 
+<span class="e">                  if (c1 &amp;&amp; (c2 ||          if (c1 &amp;&amp; (c2 ||</span>
+<span class="e">                              c3))                     c3))</span>
+<span class="e">                      foo;                      foo;</span>
+<span class="e">                  if (c1 &amp;&amp;                 if (c1 &amp;&amp;</span>
+<span class="e">                          (c2 || c3))           (c2 || c3))</span>
+<span class="e">                     {                         {</span>
+
+                                                        <a name="cino-u" class="t">cino-u</a>
+        uN    Same <a href="motion.txt.html#as" class="d">as</a> (N, but for one nesting level deeper.
+              (default <a href="options.txt.html#%27shiftwidth%27" class="o">'shiftwidth'</a>).
+
+                cino=                     cino=u2 
+<span class="e">                  if (c123456789            if (c123456789</span>
+<span class="e">                          &amp;&amp; (c22345                &amp;&amp; (c22345</span>
+<span class="e">                              || c3))                 || c3))</span>
+
+                                                        <a name="cino-U" class="t">cino-U</a>
+        UN    When <a href="pattern.txt.html#N" class="d">N</a> <a href="motion.txt.html#is" class="d">is</a> non-zero, <a href="diff.txt.html#do" class="d">do</a> not ignore the indenting specified by
+              <a href="motion.txt.html#%28" class="d">(</a> or <a href="undo.txt.html#u" class="d">u</a> in <a href="change.txt.html#case" class="d">case</a> that the unclosed parentheses <a href="motion.txt.html#is" class="d">is</a> the first
+              non-white character in its line.  (default 0).
+
+                cino= or cino=(s          cino=(s,U1 
+<span class="e">                  c = c1 &amp;&amp;                 c = c1 &amp;&amp;</span>
+<span class="e">                      (                         (</span>
+<span class="e">                       c2 ||                        c2 ||</span>
+<span class="e">                       c3                           c3</span>
+<span class="e">                      ) &amp;&amp; c4;                  ) &amp;&amp; c4;</span>
+
+                                                        <a name="cino-w" class="t">cino-w</a>
+        wN    When in unclosed parentheses and <a href="pattern.txt.html#N" class="d">N</a> <a href="motion.txt.html#is" class="d">is</a> non-zero and either
+              using "(0" or "u0"<a href="motion.txt.html#%2C" class="d">,</a> respectively, or using "U0" and the unclosed
+              parentheses <a href="motion.txt.html#is" class="d">is</a> the first non-white character in its line, line
+              up with the character immediately after the unclosed parentheses
+              rather than the first non-white character.  (default 0).
+
+                cino=(0                   cino=(0,w1 
+<span class="e">                  if (   c1                 if (   c1</span>
+<span class="e">                         &amp;&amp; (   c2              &amp;&amp; (   c2</span>
+<span class="e">                                || c3))             || c3))</span>
+<span class="e">                      foo;                      foo;</span>
+
+                                                        <a name="cino-W" class="t">cino-W</a>
+        WN    When in unclosed parentheses and <a href="pattern.txt.html#N" class="d">N</a> <a href="motion.txt.html#is" class="d">is</a> non-zero and either
+              using "(0" or "u0"<a href="motion.txt.html#%2C" class="d">,</a> respectively and the unclosed parentheses <a href="motion.txt.html#is" class="d">is</a>
+              the last non-white character in its line and <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> not the
+              closing parentheses, indent the following line <a href="pattern.txt.html#N" class="d">N</a> characters
+              relative to the outer context (i.e. start of the line or the
+              next unclosed parentheses).  (default: 0).
+
+                cino=(0                    cino=(0,W4 
+<span class="e">                  a_long_line(              a_long_line(</span>
+<span class="e">                              argument,         argument,</span>
+<span class="e">                              argument);        argument);</span>
+<span class="e">                  a_short_line(argument,    a_short_line(argument,</span>
+<span class="e">                               argument);                argument);</span>
+
+                                                        <a name="cino-k" class="t">cino-k</a>
+        kN    When in unclosed parentheses which follow "if"<a href="motion.txt.html#%2C" class="d">,</a> "for" or
+              "while" and <a href="pattern.txt.html#N" class="d">N</a> <a href="motion.txt.html#is" class="d">is</a> non-zero, overrides the behaviour defined by
+              "(N"<a href="cmdline.txt.html#%3A" class="d">:</a> causes the indent to be <a href="pattern.txt.html#N" class="d">N</a> characters relative to the outer
+              context (i.e. the line where "if"<a href="motion.txt.html#%2C" class="d">,</a> "for" or "while" is).  Has
+              no effect on deeper levels of nesting.  Affects flags like "wN"
+              only for the "if"<a href="motion.txt.html#%2C" class="d">,</a> "for" and "while" conditions.  If 0, defaults
+              to behaviour defined by the "(N" flag.  (default: 0).
+
+                cino=(0                    cino=(0,ks 
+<span class="e">                  if (condition1            if (condition1</span>
+<span class="e">                      &amp;&amp; condition2)                &amp;&amp; condition2)</span>
+<span class="e">                      action();                 action();</span>
+<span class="e">                  function(argument1        function(argument1</span>
+<span class="e">                           &amp;&amp; argument2);            &amp;&amp; argument2);</span>
+
+                                                        <a name="cino-m" class="t">cino-m</a>
+        mN    When <a href="pattern.txt.html#N" class="d">N</a> <a href="motion.txt.html#is" class="d">is</a> non-zero, line up <a href="insert.txt.html#a" class="d">a</a> line <a href="starting.txt.html#starting" class="d">starting</a> with <a href="insert.txt.html#a" class="d">a</a> closing
+              parentheses with the first character of the line with the
+              matching opening parentheses.  (default 0).
+
+                cino=(s                   cino=(s,m1 
+<span class="e">                  c = c1 &amp;&amp; (               c = c1 &amp;&amp; (</span>
+<span class="e">                      c2 ||                     c2 ||</span>
+<span class="e">                      c3                        c3</span>
+<span class="e">                      ) &amp;&amp; c4;              ) &amp;&amp; c4;</span>
+<span class="e">                  if (                      if (</span>
+<span class="e">                      c1 &amp;&amp; c2                  c1 &amp;&amp; c2</span>
+<span class="e">                     )                      )</span>
+<span class="e">                      foo;                      foo;</span>
+
+                                                        <a name="cino-M" class="t">cino-M</a>
+        MN    When <a href="pattern.txt.html#N" class="d">N</a> <a href="motion.txt.html#is" class="d">is</a> non-zero, line up <a href="insert.txt.html#a" class="d">a</a> line <a href="starting.txt.html#starting" class="d">starting</a> with <a href="insert.txt.html#a" class="d">a</a> closing
+              parentheses with the first character of the previous line.
+              (default 0).
+
+                cino=                     cino=M1 
+<span class="e">                  if (cond1 &amp;&amp;              if (cond1 &amp;&amp;</span>
+<span class="e">                         cond2                     cond2</span>
+<span class="e">                     )                             )</span>
+
+                                <a name="java-cinoptions" class="t">java-cinoptions</a> <a name="java-indenting" class="t">java-indenting</a> <a name="cino-j" class="t">cino-j</a>
+        jN    Indent Java anonymous classes correctly.  Also works well for
+              Javascript.  The value 'N' <a href="motion.txt.html#is" class="d">is</a> currently unused but <a href="vim_faq.txt.html#must" class="d">must</a> be
+              non-zero (e.g. 'j1').  'j1' will indent for example the
+              following code snippet correctly: 
+<span class="e"></span>
+<span class="e">                object.add(new ChangeListener() {</span>
+<span class="e">                    public void stateChanged(ChangeEvent e) {</span>
+<span class="e">                        do_something();</span>
+<span class="e">                    }</span>
+<span class="e">                });</span>
+
+                        <a name="javascript-cinoptions" class="t">javascript-cinoptions</a> <a name="javascript-indenting" class="t">javascript-indenting</a> <a name="cino-J" class="t">cino-J</a>
+        JN    Indent JavaScript object declarations correctly by not confusing
+              them with labels.  The value 'N' <a href="motion.txt.html#is" class="d">is</a> currently unused but <a href="vim_faq.txt.html#must" class="d">must</a> be 
+              non-zero (e.g. 'J1').  If you enable this you probably also want
+              to set <a href="#cino-j" class="l">cino-j</a><a href="repeat.txt.html#." class="d">.</a> 
+<span class="e"></span>
+<span class="e">                var bar = {</span>
+<span class="e">                    foo: {</span>
+<span class="e">                        that: this,</span>
+<span class="e">                        some: ok,</span>
+<span class="e">                    },</span>
+<span class="e">                    "bar":{ </span>
+<span class="e">                        a : 2,</span>
+<span class="e">                        b: "123abc",</span>
+<span class="e">                        x: 4,</span>
+<span class="e">                        "y": 5</span>
+<span class="e">                    }</span>
+<span class="e">                }</span>
+
+                                                                <a name="cino-%29" class="t">cino-)</a>
+        )N    Vim searches for unclosed parentheses <a href="motion.txt.html#at" class="d">at</a> most <a href="pattern.txt.html#N" class="d">N</a> lines away.
+              This <a href="vi_diff.txt.html#limits" class="d">limits</a> the time needed to search for parentheses.  (default
+              20 lines).
+
+                                                                <a name="cino-star" class="t">cino-star</a>
+        *<a href="pattern.txt.html#N" class="d">N</a>    Vim searches for unclosed comments <a href="motion.txt.html#at" class="d">at</a> most <a href="pattern.txt.html#N" class="d">N</a> lines away.  This
+              <a href="vi_diff.txt.html#limits" class="d">limits</a> the time needed to search for the start of <a href="insert.txt.html#a" class="d">a</a> comment.
+              If your <a href="pattern.txt.html#%2F" class="d">/</a>* *<a href="pattern.txt.html#%2F" class="d">/</a> comments stop indenting after <a href="pattern.txt.html#N" class="d">N</a> lines this <a href="motion.txt.html#is" class="d">is</a> the
+              value you will want to change.
+              (default 70 lines).
+
+                                                                <a name="cino-%23" class="t">cino-#</a>
+        #N    When <a href="pattern.txt.html#N" class="d">N</a> <a href="motion.txt.html#is" class="d">is</a> non-zero recognize shell/Perl comments <a href="starting.txt.html#starting" class="d">starting</a> with
+              '#', <a href="diff.txt.html#do" class="d">do</a> not recognize preprocessor lines; allow right-shifting
+              lines that start with "<a href="pattern.txt.html#%23" class="d">#</a>"<a href="repeat.txt.html#." class="d">.</a>
+              When <a href="pattern.txt.html#N" class="d">N</a> <a href="motion.txt.html#is" class="d">is</a> zero (default): don't recognize '#' comments, <a href="diff.txt.html#do" class="d">do</a>
+              recognize preprocessor lines; right-shifting lines that start
+              with "<a href="pattern.txt.html#%23" class="d">#</a>" does not work.
+
+
+The defaults, spelled out in full, are:
+        cinoptions=&gt;s,e0,n0,f0,{0,}0,^0,L-1,:s,=s,l0,b0,gs,hs,N0,E0,ps,ts,is,+s,
+                        c3,C0,/0,(2s,us,U0,w0,W0,k0,m0,j0,J0,)20,*70,#0
+
+Vim puts <a href="insert.txt.html#a" class="d">a</a> line in column 1 if:
+<a href="motion.txt.html#-" class="d">-</a> It starts with '#' (preprocessor directives), if <a href="options.txt.html#%27cinkeys%27" class="o">'cinkeys'</a> contains '#0'.
+<a href="motion.txt.html#-" class="d">-</a> It starts with <a href="insert.txt.html#a" class="d">a</a> label (a keyword followed by ':', other than "<a href="change.txt.html#case" class="d">case</a>" and
+  "default"<a href="motion.txt.html#%29" class="d">)</a> and <a href="options.txt.html#%27cinoptions%27" class="o">'cinoptions'</a> does not contain an 'L' entry with <a href="insert.txt.html#a" class="d">a</a> positive
+  value.
+<a href="motion.txt.html#-" class="d">-</a> Any combination of indentations causes the line to have <a href="various.txt.html#less" class="d">less</a> than <a href="motion.txt.html#0" class="d">0</a>
+  indentation.
+
+<span class="h">==============================================================================</span>
+2. Indenting by <a href="eval.txt.html#expression" class="d">expression</a>                              <a name="indent-expression" class="t">indent-expression</a>
+
+The basics for using flexible indenting are explained in <a href="motion.txt.html#section" class="d">section</a> <a href="usr_30.txt.html#30.3" class="l">30.3</a> of the
+user manual.
+
+If you want to write your own indent file, <a href="motion.txt.html#it" class="d">it</a> <a href="vim_faq.txt.html#must" class="d">must</a> set the <a href="options.txt.html#%27indentexpr%27" class="o">'indentexpr'</a>
+option.  Setting the <a href="options.txt.html#%27indentkeys%27" class="o">'indentkeys'</a> option <a href="motion.txt.html#is" class="d">is</a> often useful.  See the
+$VIMRUNTIME/indent directory for examples.
+
+
+<span class="h">REMARKS ABOUT SPECIFIC INDENT FILES </span>
+
+
+<span class="c">CLOJURE                                </span> <a name="ft-clojure-indent" class="t">ft-clojure-indent</a> <a name="clojure-indent" class="t">clojure-indent</a>
+
+Clojure indentation differs somewhat from traditional Lisps, due in part to
+the use of square and curly brackets, and otherwise by community convention.
+These conventions are not universally followed, so the Clojure indent <a href="usr_41.txt.html#script" class="d">script</a>
+offers <a href="insert.txt.html#a" class="d">a</a> few configurable options, listed below.
+
+If the current vim does not include searchpairpos(), the indent <a href="usr_41.txt.html#script" class="d">script</a> falls
+back to normal <a href="options.txt.html#%27lisp%27" class="o">'lisp'</a> indenting, and the following <a href="options.txt.html#options" class="d">options</a> are ignored.
+
+                                                        <a name="g%3Aclojure_maxlines" class="t">g:clojure_maxlines</a>
+
+Set maximum scan distance of searchpairpos(). Larger values trade performance
+for correctness when dealing with very long forms. <a href="insert.txt.html#A" class="d">A</a> value of <a href="motion.txt.html#0" class="d">0</a> will scan
+without limits.
+
+<span class="e">        " Default</span>
+<span class="e">        let g:clojure_maxlines = 100</span>
+
+                                                <a name="g%3Aclojure_fuzzy_indent" class="t">g:clojure_fuzzy_indent</a>
+                                        <a name="g%3Aclojure_fuzzy_indent_patterns" class="t">g:clojure_fuzzy_indent_patterns</a>
+                                        <a name="g%3Aclojure_fuzzy_indent_blacklist" class="t">g:clojure_fuzzy_indent_blacklist</a>
+
+The <a href="options.txt.html#%27lispwords%27" class="o">'lispwords'</a> option <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of comma-separated words that <a href="motion.txt.html#mark" class="d">mark</a> special
+forms whose subforms <a href="vim_faq.txt.html#must" class="d">must</a> be indented with two spaces.
+
+For example:
+
+<span class="e">        (defn bad []</span>
+<span class="e">              "Incorrect indentation")</span>
+<span class="e"></span>
+<span class="e">        (defn good []</span>
+<span class="e">          "Correct indentation")</span>
+
+If you would like to specify <a href="options.txt.html#%27lispwords%27" class="o">'lispwords'</a> with <a href="insert.txt.html#a" class="d">a</a> <a href="pattern.txt.html#pattern" class="l">pattern</a> instead, you can use
+the fuzzy indent feature:
+
+<span class="e">        " Default</span>
+<span class="e">        let g:clojure_fuzzy_indent = 1</span>
+<span class="e">        let g:clojure_fuzzy_indent_patterns = ['^with', '^def', '^let']</span>
+<span class="e">        let g:clojure_fuzzy_indent_blacklist =</span>
+<span class="e">                \ ['-fn$', '\v^with-%(meta|out-str|loading-context)$']</span>
+<span class="e"></span>
+<span class="e">        " Legacy comma-delimited string version; the list format above is</span>
+<span class="e">        " recommended. Note that patterns are implicitly anchored with ^ and $</span>
+<span class="e">        let g:clojure_fuzzy_indent_patterns = 'with.*,def.*,let.*'</span>
+
+<a href="#g%3Aclojure_fuzzy_indent_patterns" class="l">g:clojure_fuzzy_indent_patterns</a> and <a href="#g%3Aclojure_fuzzy_indent_blacklist" class="l">g:clojure_fuzzy_indent_blacklist</a> are
+<a href="eval.txt.html#Lists" class="l">Lists</a> of patterns that will be matched against the unquoted, unqualified
+symbol <a href="motion.txt.html#at" class="d">at</a> the head of <a href="insert.txt.html#a" class="d">a</a> list. This means that <a href="insert.txt.html#a" class="d">a</a> <a href="pattern.txt.html#pattern" class="d">pattern</a> like "^foo" will match
+all these candidates: "foobar"<a href="motion.txt.html#%2C" class="d">,</a> "my.ns/foobar"<a href="motion.txt.html#%2C" class="d">,</a> and "#'foobar"<a href="repeat.txt.html#." class="d">.</a>
+
+Each candidate <a href="motion.txt.html#word" class="d">word</a> <a href="motion.txt.html#is" class="d">is</a> tested for special treatment in this order:
+
+        1. Return true if <a href="motion.txt.html#word" class="d">word</a> <a href="motion.txt.html#is" class="d">is</a> literally in <a href="options.txt.html#%27lispwords%27" class="o">'lispwords'</a>
+        2. Return false if <a href="motion.txt.html#word" class="d">word</a> matches <a href="insert.txt.html#a" class="d">a</a> <a href="pattern.txt.html#pattern" class="d">pattern</a> in
+           <a href="#g%3Aclojure_fuzzy_indent_blacklist" class="l">g:clojure_fuzzy_indent_blacklist</a>
+        3. Return true if <a href="motion.txt.html#word" class="d">word</a> matches <a href="insert.txt.html#a" class="d">a</a> <a href="pattern.txt.html#pattern" class="d">pattern</a> in
+           <a href="#g%3Aclojure_fuzzy_indent_patterns" class="l">g:clojure_fuzzy_indent_patterns</a>
+        4. Return false and indent normally otherwise
+
+                                        <a name="g%3Aclojure_special_indent_words" class="t">g:clojure_special_indent_words</a>
+
+Some forms in Clojure are indented so that every subform <a href="motion.txt.html#is" class="d">is</a> indented only two
+spaces, regardless of <a href="options.txt.html#%27lispwords%27" class="o">'lispwords'</a>. If you have <a href="insert.txt.html#a" class="d">a</a> custom construct that should
+be indented in this idiosyncratic fashion, you can add your symbols to the
+default <a href="eval.txt.html#list" class="d">list</a> below.
+
+<span class="e">        " Default</span>
+<span class="e">        let g:clojure_special_indent_words =</span>
+<span class="e">           \ 'deftype,defrecord,reify,proxy,extend-type,extend-protocol,letfn'</span>
+
+                                        <a name="g%3Aclojure_align_multiline_strings" class="t">g:clojure_align_multiline_strings</a>
+
+Align subsequent lines in multiline strings to the column after the opening
+quote, instead of the same column.
+
+For example:
+
+<span class="e">        (def default</span>
+<span class="e">          "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do</span>
+<span class="e">          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut</span>
+<span class="e">          enim ad minim veniam, quis nostrud exercitation ullamco laboris</span>
+<span class="e">          nisi ut aliquip ex ea commodo consequat.")</span>
+<span class="e"></span>
+<span class="e">        (def aligned</span>
+<span class="e">          "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do</span>
+<span class="e">           eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut</span>
+<span class="e">           enim ad minim veniam, quis nostrud exercitation ullamco laboris</span>
+<span class="e">           nisi ut aliquip ex ea commodo consequat.")</span>
+
+This option <a href="motion.txt.html#is" class="d">is</a> off by default.
+
+<span class="e">        " Default</span>
+<span class="e">        let g:clojure_align_multiline_strings = 0</span>
+
+                                                <a name="g%3Aclojure_align_subforms" class="t">g:clojure_align_subforms</a>
+
+By default, parenthesized compound forms that look like function calls and
+whose head subform <a href="motion.txt.html#is" class="d">is</a> on its own line have subsequent subforms indented by
+two spaces relative to the opening paren:
+
+<span class="e">        (foo</span>
+<span class="e">          bar</span>
+<span class="e">          baz)</span>
+
+Setting this option changes this behavior so that all subforms are aligned to
+the same column, emulating the default behavior of clojure-mode.el:
+
+<span class="e">        (foo</span>
+<span class="e">         bar</span>
+<span class="e">         baz)</span>
+
+This option <a href="motion.txt.html#is" class="d">is</a> off by default.
+
+<span class="e">        " Default</span>
+<span class="e">        let g:clojure_align_subforms = 0</span>
+
+
+<span class="c">FORTRAN                                                </span> <a name="ft-fortran-indent" class="t">ft-fortran-indent</a>
+
+Block if, select case, where, and forall constructs are indented.  So are
+type, interface, associate, block, and enum constructs.  The indenting of
+subroutines, functions, modules, and program blocks <a href="motion.txt.html#is" class="d">is</a> optional.  Comments,
+labelled statements and continuation lines are indented if the Fortran <a href="motion.txt.html#is" class="d">is</a> in
+free source form, whereas they are not indented if the Fortran <a href="motion.txt.html#is" class="d">is</a> in fixed
+source form because of the left margin requirements.  Hence manual indent
+corrections will be necessary for labelled statements and continuation lines
+when fixed source form <a href="motion.txt.html#is" class="d">is</a> being used.  For further discussion of the method
+used for the detection of source format see <a href="syntax.txt.html#ft-fortran-syntax" class="l">ft-fortran-syntax</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">Do loops </span>
+All <a href="diff.txt.html#do" class="d">do</a> loops are left unindented by default.  Do loops can be unstructured in
+Fortran with (possibly multiple) loops ending on <a href="insert.txt.html#a" class="d">a</a> labelled executable
+statement of almost arbitrary type.  Correct indentation requires
+compiler-quality parsing.  Old code with <a href="diff.txt.html#do" class="d">do</a> loops ending on labelled statements
+of arbitrary type can be indented with elaborate programs such <a href="motion.txt.html#as" class="d">as</a> Tidy
+(http://www.unb.ca/chem/ajit/f_tidy.htm).  Structured do/continue loops are
+also left unindented because continue statements are also used for purposes
+other than ending <a href="insert.txt.html#a" class="d">a</a> <a href="diff.txt.html#do" class="d">do</a> loop.  Programs such <a href="motion.txt.html#as" class="d">as</a> Tidy can convert structured
+do/continue loops to the do/enddo form.  Do loops of the do/enddo variety can
+be indented.  If you use only structured loops of the do/enddo form, you should
+declare this by setting the fortran_do_enddo variable in your <a href="starting.txt.html#.vimrc" class="d">.vimrc</a> <a href="motion.txt.html#as" class="d">as</a>
+follows 
+<span class="e"></span>
+<span class="e">   let fortran_do_enddo=1</span>
+<span class="e"></span>
+in which <a href="change.txt.html#case" class="d">case</a> <a href="diff.txt.html#do" class="d">do</a> loops will be indented.  If all your loops are of do/enddo
+type only in, say, .f90 files, then you should set <a href="insert.txt.html#a" class="d">a</a> buffer flag with an
+<a href="autocmd.txt.html#autocommand" class="d">autocommand</a> such <a href="motion.txt.html#as" class="d">as</a> 
+<span class="e"></span>
+<span class="e">  au! BufRead,BufNewFile *.f90 let b:fortran_do_enddo=1</span>
+<span class="e"></span>
+to get <a href="diff.txt.html#do" class="d">do</a> loops indented in .f90 files and left alone in Fortran files with
+other extensions such <a href="motion.txt.html#as" class="d">as</a> .for.
+
+<span class="h">Program units </span>
+The indenting of program units (subroutines, functions, modules, and program
+blocks) <a href="motion.txt.html#is" class="d">is</a> enabled by default but can be suppressed if <a href="insert.txt.html#a" class="d">a</a> lighter, screen-width
+preserving indent style <a href="motion.txt.html#is" class="d">is</a> desired.  To suppress the indenting of program
+units for all fortran files set the global fortran_indent_less variable in
+your <a href="starting.txt.html#.vimrc" class="d">.vimrc</a> <a href="motion.txt.html#as" class="d">as</a> follows 
+<span class="e"></span>
+<span class="e">  let fortran_indent_less=1</span>
+<span class="e"></span>
+<a href="insert.txt.html#A" class="d">A</a> finer level of suppression can be achieved by setting the corresponding
+buffer-local variable <a href="motion.txt.html#as" class="d">as</a> follows 
+<span class="e"></span>
+<span class="e">  let b:fortran_indent_less=1</span>
+<span class="e"></span>
+<span class="e"></span>
+<span class="c">HTML                           </span> <a name="ft-html-indent" class="t">ft-html-indent</a> <a name="html-indent" class="t">html-indent</a> <a name="html-indenting" class="t">html-indenting</a>
+
+This <a href="motion.txt.html#is" class="d">is</a> about <a href="eval.txt.html#variables" class="d">variables</a> you can set in your <a href="starting.txt.html#vimrc" class="d">vimrc</a> to customize HTML indenting.
+
+You can set the indent for the first line after <span class="s">&lt;script&gt;</span> and <span class="s">&lt;style&gt;</span>
+"blocktags" (default "zero"): 
+<span class="e"></span>
+<span class="e">      :let g:html_indent_script1 = "inc"</span>
+<span class="e">      :let g:html_indent_style1 = "inc"</span>
+
+<span class="h">      VALUE     MEANING </span>
+      "zero"    zero indent
+      "auto"    auto indent (same indent <a href="motion.txt.html#as" class="d">as</a> the blocktag)
+      "inc"     auto indent <a href="motion.txt.html#%2B" class="d">+</a> one indent step
+
+Many <a href="tagsrch.txt.html#tags" class="d">tags</a> increase the indent for what follows per default (see "Add Indent
+Tags" in the script).  You can add further <a href="tagsrch.txt.html#tags" class="d">tags</a> with: 
+<span class="e"></span>
+<span class="e">      :let g:html_indent_inctags = "html,body,head,tbody"</span>
+<span class="e"></span>
+You can also remove such <a href="tagsrch.txt.html#tags" class="d">tags</a> with: 
+<span class="e"></span>
+<span class="e">      :let g:html_indent_autotags = "th,td,tr,tfoot,thead"</span>
+<span class="e"></span>
+Default value <a href="motion.txt.html#is" class="d">is</a> empty for both variables.  <span class="n">Note:</span> the initial "inctags" are
+only defined once per Vim session.
+
+<a href="autocmd.txt.html#User" class="d">User</a> <a href="eval.txt.html#variables" class="d">variables</a> are only read when the <a href="usr_41.txt.html#script" class="d">script</a> <a href="motion.txt.html#is" class="d">is</a> sourced.  To enable your
+changes during <a href="insert.txt.html#a" class="d">a</a> session, without reloading the HTML file, you can manually
+do: 
+<span class="e"></span>
+<span class="e">      :call HtmlIndent_CheckUserSettings()</span>
+<span class="e"></span>
+Detail:
+  Calculation of indent inside "blocktags" with "alien" content:
+<span class="h">      BLOCKTAG   INDENT EXPR        WHEN APPLICABLE </span>
+      <span class="s">&lt;script&gt;</span> <a href="cmdline.txt.html#%3A" class="d">:</a> <span class="s">{customizable}</span>     if first line of block
+               <a href="cmdline.txt.html#%3A" class="d">:</a> cindent(v:lnum)    if attributes empty or contain "java"
+               <a href="cmdline.txt.html#%3A" class="d">:</a> -1                 else (vbscript, tcl, ...)
+      <span class="s">&lt;style&gt;</span>  <a href="cmdline.txt.html#%3A" class="d">:</a> <span class="s">{customizable}</span>     if first line of block
+               <a href="cmdline.txt.html#%3A" class="d">:</a> GetCSSIndent()     else
+      <span class="s">&lt;!-- --&gt;</span> <a href="cmdline.txt.html#%3A" class="d">:</a> -1
+
+
+<span class="c">PHP                            </span> <a name="ft-php-indent" class="t">ft-php-indent</a> <a name="php-indent" class="t">php-indent</a> <a name="php-indenting" class="t">php-indenting</a>
+
+<span class="n">NOTE:</span>   PHP files will be indented correctly only if PHP <a href="syntax.txt.html#syntax" class="l">syntax</a> <a href="motion.txt.html#is" class="d">is</a> active.
+
+If you are editing <a href="insert.txt.html#a" class="d">a</a> file in <a href="os_unix.txt.html#Unix" class="d">Unix</a> <a href="options.txt.html#%27fileformat%27" class="o">'fileformat'</a> and '\r' characters are present
+before new lines, indentation won't proceed correctly <a href="motion.txt.html#%3B" class="d">;</a> you have to remove
+those useless characters first with <a href="insert.txt.html#a" class="d">a</a> command like: 
+<span class="e"></span>
+<span class="e">    :%s /\r$//g</span>
+<span class="e"></span>
+Or, you can simply <a href="eval.txt.html#%3Alet" class="l">:let</a> the variable <a href="#PHP_removeCRwhenUnix" class="d">PHP_removeCRwhenUnix</a> to 1 and the
+<a href="usr_41.txt.html#script" class="d">script</a> will silently remove them when Vim loads <a href="insert.txt.html#a" class="d">a</a> PHP file (at each <a href="autocmd.txt.html#BufRead" class="l">BufRead</a>).
+
+<span class="h">OPTIONS: </span>
+
+PHP indenting can be altered in several ways by modifying the values of some
+global variables:
+
+                                        <a name="php-comment" class="t">php-comment</a> <a name="PHP_autoformatcomment" class="t">PHP_autoformatcomment</a>
+To not enable auto-formatting of comments by default (if you want to use your
+own <a href="options.txt.html#%27formatoptions%27" class="o">'formatoptions'</a>): 
+<span class="e">    :let g:PHP_autoformatcomment = 0</span>
+<span class="e"></span>
+Else, 't' will be removed from the <a href="options.txt.html#%27formatoptions%27" class="o">'formatoptions'</a> <a href="eval.txt.html#string" class="d">string</a> and "qrowcb" will be
+added, see <a href="change.txt.html#fo-table" class="l">fo-table</a> for more information.
+<span class="h">-------------</span>
+
+                                                        <a name="PHP_outdentSLComments" class="t">PHP_outdentSLComments</a>
+To add extra indentation to single-line comments: 
+<span class="e">    :let g:PHP_outdentSLComments = N</span>
+<span class="e"></span>
+With <a href="pattern.txt.html#N" class="d">N</a> being the number of <a href="options.txt.html#%27shiftwidth%27" class="o">'shiftwidth'</a> to add.
+
+Only single-line comments will be affected such as: 
+<span class="e">    # Comment</span>
+<span class="e">    // Comment</span>
+<span class="e">    /* Comment */</span>
+<span class="h">-------------</span>
+<span class="e"></span>
+<span class="e">                                                        *PHP_default_indenting*</span>
+To add extra indentation to every PHP lines with <a href="pattern.txt.html#N" class="d">N</a> being the number of
+<a href="options.txt.html#%27shiftwidth%27" class="o">'shiftwidth'</a> to add: 
+<span class="e">    :let g:PHP_default_indenting = N</span>
+<span class="e"></span>
+For example, with <a href="pattern.txt.html#N" class="d">N</a> <a href="change.txt.html#%3D" class="d">=</a> 1, this will give:
+
+<span class="e">    &lt;?php</span>
+<span class="e">        if (!isset($History_lst_sel))</span>
+<span class="e">            if (!isset($History_lst_sel))</span>
+<span class="e">                if (!isset($History_lst_sel)) {</span>
+<span class="e">                    $History_lst_sel=0;</span>
+<span class="e">                } else</span>
+<span class="e">                    $foo="bar";</span>
+<span class="e"></span>
+<span class="e">        $command_hist = TRUE;</span>
+<span class="e">    ?&gt;</span>
+(Notice the extra indentation between the PHP container markers and the code)
+<span class="h">-------------</span>
+
+                                                        <a name="PHP_outdentphpescape" class="t">PHP_outdentphpescape</a>
+To indent PHP <a href="intro.txt.html#escape" class="d">escape</a> <a href="tagsrch.txt.html#tags" class="d">tags</a> <a href="motion.txt.html#as" class="d">as</a> the surrounding non-PHP code (only affects the
+PHP <a href="intro.txt.html#escape" class="d">escape</a> tags): 
+<a href="eval.txt.html#%3Alet" class="d">:let</a> g:PHP_outdentphpescape <a href="change.txt.html#%3D" class="d">=</a> <a href="motion.txt.html#0" class="d">0</a>
+<span class="h">-------------</span>
+
+                                                        <a name="PHP_removeCRwhenUnix" class="t">PHP_removeCRwhenUnix</a>
+To automatically remove '\r' characters when the <a href="options.txt.html#%27fileformat%27" class="o">'fileformat'</a> <a href="motion.txt.html#is" class="d">is</a> set to Unix: 
+<span class="e">    :let g:PHP_removeCRwhenUnix = 1</span>
+<span class="h">-------------</span>
+<span class="e"></span>
+<span class="e">                                                        *PHP_BracesAtCodeLevel*</span>
+To indent braces <a href="motion.txt.html#at" class="d">at</a> the same level than the code they contain: 
+<span class="e">    :let g:PHP_BracesAtCodeLevel = 1</span>
+<span class="e">    </span>
+This will give the following result: 
+<span class="e">    if ($foo)</span>
+<span class="e">        {</span>
+<span class="e">        foo();</span>
+<span class="e">        }</span>
+Instead of: 
+<span class="e">    if ($foo)</span>
+<span class="e">    {</span>
+<span class="e">        foo();</span>
+<span class="e">    }</span>
+<span class="e"></span>
+<span class="n">NOTE:</span>   Indenting will be <a href="insert.txt.html#a" class="d">a</a> bit slower if this option <a href="motion.txt.html#is" class="d">is</a> used because some
+        optimizations won't be available.
+<span class="h">-------------</span>
+
+                                                        <a name="PHP_vintage_case_default_indent" class="t">PHP_vintage_case_default_indent</a>
+To indent 'case:' and 'default:' statements in switch() blocks: 
+<span class="e">    :let g:PHP_vintage_case_default_indent = 1</span>
+<span class="e"></span>
+In PHP braces are not required inside 'case/default' blocks therefore 'case:'
+and 'default:' are indented <a href="motion.txt.html#at" class="d">at</a> the same level than the 'switch()' to avoid
+meaningless indentation. You can use the above option to return to the
+traditional way.
+
+
+<span class="c">PYTHON                                                 </span> <a name="ft-python-indent" class="t">ft-python-indent</a>
+
+The amount of indent can be set for the following situations.  The examples
+given are the defaults.  <span class="n">Note</span> that the <a href="eval.txt.html#variables" class="d">variables</a> are set to an expression, so
+that you can change the value of <a href="options.txt.html#%27shiftwidth%27" class="o">'shiftwidth'</a> later.
+
+Indent after an open paren: 
+<span class="e">        let g:pyindent_open_paren = '&amp;sw * 2'</span>
+Indent after <a href="insert.txt.html#a" class="d">a</a> nested paren: 
+<span class="e">        let g:pyindent_nested_paren = '&amp;sw'</span>
+Indent for <a href="insert.txt.html#a" class="d">a</a> continuation line: 
+<span class="e">        let g:pyindent_continue = '&amp;sw * 2'</span>
+<span class="e"></span>
+<span class="e"></span>
+<span class="c">R                                                              </span> <a name="ft-r-indent" class="t">ft-r-indent</a>
+
+Function arguments are aligned if they span for multiple lines. If you prefer
+<a href="diff.txt.html#do" class="d">do</a> not have the arguments of <a href="eval.txt.html#functions" class="d">functions</a> aligned, <a href="change.txt.html#put" class="d">put</a> in your <a href="starting.txt.html#vimrc" class="l">vimrc</a><a href="cmdline.txt.html#%3A" class="d">:</a>
+
+<span class="e">   let r_indent_align_args = 0</span>
+
+All lines beginning with <a href="insert.txt.html#a" class="d">a</a> comment character, #, get the same indentation
+level of the normal <a href="change.txt.html#R" class="d">R</a> code. Users of Emacs/ESS may be used to have lines
+beginning with <a href="insert.txt.html#a" class="d">a</a> single <a href="pattern.txt.html#%23" class="d">#</a> indented in the 40th column, ## indented <a href="motion.txt.html#as" class="d">as</a> <a href="change.txt.html#R" class="d">R</a> code,
+and ### not indented. If you prefer that lines beginning with comment
+characters are aligned <a href="motion.txt.html#as" class="d">as</a> they are by Emacs/ESS, <a href="change.txt.html#put" class="d">put</a> in your <a href="starting.txt.html#vimrc" class="l">vimrc</a><a href="cmdline.txt.html#%3A" class="d">:</a>
+
+<span class="e">   let r_indent_ess_comments = 1</span>
+
+If you prefer that lines beginning with <a href="insert.txt.html#a" class="d">a</a> single <a href="pattern.txt.html#%23" class="d">#</a> are aligned <a href="motion.txt.html#at" class="d">at</a> <a href="insert.txt.html#a" class="d">a</a> column
+different from the 40th one, you should set <a href="insert.txt.html#a" class="d">a</a> new value to the variable
+r_indent_comment_column, <a href="motion.txt.html#as" class="d">as</a> in the example below:
+
+<span class="e">   let r_indent_comment_column = 30</span>
+
+Any code after <a href="insert.txt.html#a" class="d">a</a> line that ends with "&lt;-" <a href="motion.txt.html#is" class="d">is</a> indented. Emacs/ESS does not
+indent the code if <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> top level function. If you prefer that the
+Vim-R-plugin behaves like Emacs/ESS in this regard, <a href="change.txt.html#put" class="d">put</a> in your <a href="starting.txt.html#vimrc" class="l">vimrc</a><a href="cmdline.txt.html#%3A" class="d">:</a>
+
+<span class="e">   let r_indent_ess_compatible = 1</span>
+
+Below <a href="motion.txt.html#is" class="d">is</a> an example of indentation with and without this option enabled:
+
+<span class="e">   ### r_indent_ess_compatible = 1           ### r_indent_ess_compatible = 0</span>
+<span class="e">   foo &lt;-                                    foo &lt;-</span>
+<span class="e">       function(x)                               function(x)</span>
+<span class="e">   {                                             {</span>
+<span class="e">       paste(x)                                      paste(x)</span>
+<span class="e">   }                                             }</span>
+
+
+<span class="c">SHELL                                                  </span> <a name="ft-sh-indent" class="t">ft-sh-indent</a>
+
+The amount of indent applied under <a href="various.txt.html#various" class="d">various</a> circumstances in <a href="insert.txt.html#a" class="d">a</a> shell file can
+be configured by setting the following keys in the <a href="eval.txt.html#Dictionary" class="l">Dictionary</a>
+b:sh_indent_defaults to <a href="insert.txt.html#a" class="d">a</a> specific amount or to <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#Funcref" class="l">Funcref</a> that references <a href="insert.txt.html#a" class="d">a</a>
+function that will return the amount desired:
+
+b:sh_indent_options['default']  Default amount of indent.
+
+b:sh_indent_options['continuation-line']
+                                Amount of indent to add to <a href="insert.txt.html#a" class="d">a</a> continued line.
+
+b:sh_indent_options['case-labels']
+                                Amount of indent to add for <a href="change.txt.html#case" class="d">case</a> labels.
+                                (not actually implemented)
+
+b:sh_indent_options['case-statements']
+                                Amount of indent to add for <a href="change.txt.html#case" class="d">case</a> statements.
+
+b:sh_indent_options['case-breaks']
+                                Amount of indent to add (or more likely
+                                remove) for <a href="change.txt.html#case" class="d">case</a> breaks.
+
+<span class="c">VERILOG                                                </span> <a name="ft-verilog-indent" class="t">ft-verilog-indent</a>
+
+General block statements such <a href="motion.txt.html#as" class="d">as</a> if, for, case, always, initial, function,
+specify and begin, etc., are indented.  The module block statements (first
+level blocks) are not indented by default.  you can turn on the indent with
+setting <a href="insert.txt.html#a" class="d">a</a> variable in the <a href="starting.txt.html#.vimrc" class="d">.vimrc</a> <a href="motion.txt.html#as" class="d">as</a> follows: 
+<span class="e"></span>
+<span class="e">  let b:verilog_indent_modules = 1</span>
+<span class="e"></span>
+then the module blocks will be indented.  To stop this, remove the variable: 
+<span class="e"></span>
+<span class="e">  :unlet b:verilog_indent_modules</span>
+<span class="e"></span>
+To set the variable only for Verilog file.  The following statements can be
+used: 
+<span class="e"></span>
+<span class="e">  au BufReadPost * if exists("b:current_syntax")</span>
+<span class="e">  au BufReadPost *   if b:current_syntax == "verilog"</span>
+<span class="e">  au BufReadPost *     let b:verilog_indent_modules = 1</span>
+<span class="e">  au BufReadPost *   endif</span>
+<span class="e">  au BufReadPost * endif</span>
+<span class="e"></span>
+Furthermore, setting the variable b:verilog_indent_width to change the
+indenting width (default <a href="motion.txt.html#is" class="d">is</a> <a href="options.txt.html#%27shiftwidth%27" class="o">'shiftwidth'</a>): 
+<span class="e"></span>
+<span class="e">  let b:verilog_indent_width = 4</span>
+<span class="e">  let b:verilog_indent_width = &amp;sw * 2</span>
+<span class="e"></span>
+In addition, you can turn the <a href="starting.txt.html#verbose" class="d">verbose</a> mode for debug issue: 
+<span class="e"></span>
+<span class="e">  let b:verilog_indent_verbose = 1</span>
+<span class="e"></span>
+Make sure to <a href="diff.txt.html#do" class="d">do</a> "<a href="options.txt.html#%3Aset" class="d">:set</a> cmdheight=2" first to allow the display of the message.
+
+
+<span class="c">VHDL                                                   </span> <a name="ft-vhdl-indent" class="t">ft-vhdl-indent</a>
+
+Alignment of generic/port <a href="map.txt.html#mapping" class="d">mapping</a> statements are performed by default. This
+causes the following alignment example: 
+<span class="e"></span>
+<span class="e">  ENTITY sync IS</span>
+<span class="e">  PORT (</span>
+<span class="e">         clk        : IN  STD_LOGIC;</span>
+<span class="e">         reset_n    : IN  STD_LOGIC;</span>
+<span class="e">         data_input : IN  STD_LOGIC;</span>
+<span class="e">         data_out   : OUT STD_LOGIC</span>
+<span class="e">       );</span>
+<span class="e">  END ENTITY sync;</span>
+<span class="e"></span>
+To turn this off, add 
+<span class="e"></span>
+<span class="e">  let g:vhdl_indent_genportmap = 0</span>
+<span class="e"></span>
+to the <a href="starting.txt.html#.vimrc" class="d">.vimrc</a> file, which causes the previous alignment example to change: 
+<span class="e"></span>
+<span class="e">  ENTITY sync IS</span>
+<span class="e">  PORT (</span>
+<span class="e">    clk        : IN  STD_LOGIC;</span>
+<span class="e">    reset_n    : IN  STD_LOGIC;</span>
+<span class="e">    data_input : IN  STD_LOGIC;</span>
+<span class="e">    data_out   : OUT STD_LOGIC</span>
+<span class="e">  );</span>
+<span class="e">  END ENTITY sync;</span>
+<span class="e"></span>
+<span class="h">----------------------------------------</span>
+<span class="e"></span>
+Alignment of right-hand side assignment "&lt;=" statements are performed by
+default. This causes the following alignment example: 
+<span class="e"></span>
+<span class="e">  sig_out &lt;= (bus_a(1) AND</span>
+<span class="e">             (sig_b OR sig_c)) OR</span>
+<span class="e">             (bus_a(0) AND sig_d);</span>
+<span class="e"></span>
+To turn this off, add 
+<span class="e"></span>
+<span class="e">  let g:vhdl_indent_rhsassign = 0</span>
+<span class="e"></span>
+to the <a href="starting.txt.html#.vimrc" class="d">.vimrc</a> file, which causes the previous alignment example to change: 
+<span class="e"></span>
+<span class="e">  sig_out &lt;= (bus_a(1) AND</span>
+<span class="e">    (sig_b OR sig_c)) OR</span>
+<span class="e">    (bus_a(0) AND sig_d);</span>
+<span class="e"></span>
+<span class="h">----------------------------------------</span>
+<span class="e"></span>
+Full-line comments (lines that begin with "<a href="starting.txt.html#--" class="d">--</a>"<a href="motion.txt.html#%29" class="d">)</a> are indented to be aligned with
+the very previous line's comment, PROVIDED that <a href="insert.txt.html#a" class="d">a</a> <a href="pattern.txt.html#whitespace" class="d">whitespace</a> follows after
+"<a href="starting.txt.html#--" class="d">--</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+For example: 
+<span class="e"></span>
+<span class="e">  sig_a &lt;= sig_b; -- start of a comment</span>
+<span class="e">                  -- continuation of the comment</span>
+<span class="e">                  -- more of the same comment</span>
+<span class="e"></span>
+While in <a href="insert.txt.html#Insert" class="d">Insert</a> mode, after typing "<a href="starting.txt.html#--" class="d">--</a> " (note the <a href="intro.txt.html#space" class="d">space</a> " "), hitting <a href="scroll.txt.html#CTRL-F" class="k">CTRL-F</a>
+will align the current "<a href="starting.txt.html#--" class="d">--</a> " with the previous line's "<a href="starting.txt.html#--" class="d">--</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+If the very previous line does not contain "<a href="starting.txt.html#--" class="d">--</a>"<a href="motion.txt.html#%2C" class="d">,</a> THEN the full-line comment
+will be aligned with the start of the next non-blank line that <a href="motion.txt.html#is" class="d">is</a> NOT <a href="insert.txt.html#a" class="d">a</a>
+full-line comment.
+
+Indenting the following code: 
+<span class="e"></span>
+<span class="e">  sig_c &lt;= sig_d; -- comment 0</span>
+<span class="e">         -- comment 1</span>
+<span class="e">               -- comment 2</span>
+<span class="e">    --debug_code:</span>
+<span class="e">    --PROCESS(debug_in)</span>
+<span class="e">         --BEGIN</span>
+<span class="e">            --  FOR i IN 15 DOWNTO 0 LOOP</span>
+<span class="e">             --    debug_out(8*i+7 DOWNTO 8*i) &lt;= debug_in(15-i);</span>
+<span class="e">            --  END LOOP;</span>
+<span class="e">     --END PROCESS debug_code;</span>
+<span class="e"></span>
+<span class="e">      -- comment 3</span>
+<span class="e">  sig_e &lt;= sig_f; -- comment 4</span>
+<span class="e">           -- comment 5</span>
+<span class="e"></span>
+results in: 
+<span class="e"></span>
+<span class="e">  sig_c &lt;= sig_d; -- comment 0</span>
+<span class="e">                  -- comment 1</span>
+<span class="e">                  -- comment 2</span>
+<span class="e">  --debug_code:</span>
+<span class="e">  --PROCESS(debug_in)</span>
+<span class="e">  --BEGIN</span>
+<span class="e">  --  FOR i IN 15 DOWNTO 0 LOOP</span>
+<span class="e">  --    debug_out(8*i+7 DOWNTO 8*i) &lt;= debug_in(15-i);</span>
+<span class="e">  --  END LOOP;</span>
+<span class="e">  --END PROCESS debug_code;</span>
+<span class="e"></span>
+<span class="e">  -- comment 3</span>
+<span class="e">  sig_e &lt;= sig_f; -- comment 4</span>
+<span class="e">                  -- comment 5</span>
+<span class="e"></span>
+Notice that "--debug_code:" does not align with "<a href="starting.txt.html#--" class="d">--</a> comment 2"
+because there <a href="motion.txt.html#is" class="d">is</a> no <a href="pattern.txt.html#whitespace" class="d">whitespace</a> that follows after "<a href="starting.txt.html#--" class="d">--</a>" in "--debug_code:"<a href="repeat.txt.html#." class="d">.</a>
+
+Given the dynamic nature of indenting comments, indenting should be done TWICE.
+On the first pass, code will be indented. On the second pass, full-line
+comments will be indented according to the correctly indented code.
+
+
+<span class="c">VIM                                                    </span> <a name="ft-vim-indent" class="t">ft-vim-indent</a>
+
+For indenting Vim scripts there <a href="motion.txt.html#is" class="d">is</a> one variable that specifies the amount of
+indent for <a href="insert.txt.html#a" class="d">a</a> continuation line, <a href="insert.txt.html#a" class="d">a</a> line that starts with <a href="insert.txt.html#a" class="d">a</a> backslash: 
+<span class="e"></span>
+<span class="e">        :let g:vim_indent_cont = &amp;sw * 3</span>
+<span class="e"></span>
+Three times shiftwidth <a href="motion.txt.html#is" class="d">is</a> the default value.
+
+
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

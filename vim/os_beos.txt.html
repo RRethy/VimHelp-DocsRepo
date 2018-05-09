@@ -1,0 +1,334 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: os_beos.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="os_beos.txt" class="t">os_beos.txt</a>   For <span class="i">Vim version 8.0.</span>  Last change: 2016 Mar 28
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Bram Moolenaar</span>
+
+
+                                                        <a name="BeOS" class="t">BeOS</a> <a name="BeBox" class="t">BeBox</a>
+This <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> port of Vim 5.1 to the <a href="#BeOS" class="d">BeOS</a> Preview Release 2 (also known <a href="motion.txt.html#as" class="d">as</a> PR2)
+or later.
+
+This file contains the particularities for the BeBox/BeOS version of Vim.  For
+matters not discussed in this file, Vim behaves very much like the <a href="os_unix.txt.html#Unix" class="d">Unix</a>
+<a href="os_unix.txt.html#os_unix.txt" class="l">os_unix.txt</a> version.
+
+ 1. General                     <a href="#beos-general" class="l">beos-general</a>
+ 2. Compiling Vim               <a href="#beos-compiling" class="l">beos-compiling</a>
+ 3. Timeout in the Terminal     <a href="#beos-timeout" class="l">beos-timeout</a>
+ 4. <a href="mbyte.txt.html#Unicode" class="d">Unicode</a> vs. Latin1          <a href="#beos-unicode" class="l">beos-unicode</a>
+ 5. The <a href="#BeOS" class="d">BeOS</a> <a href="gui.txt.html#GUI" class="d">GUI</a>                <a href="#beos-gui" class="l">beos-gui</a>
+ 6. The <a href="starting.txt.html#%24VIM" class="d">$VIM</a> directory          <a href="#beos-vimdir" class="l">beos-vimdir</a>
+ 7. Drag <a href="change.txt.html#%26" class="d">&amp;</a> Drop                 <a href="#beos-dragndrop" class="l">beos-dragndrop</a>
+ 8. Single Launch vs. Multiple
+    Launch                      <a href="#beos-launch" class="l">beos-launch</a>
+ 9. Fonts                       <a href="#beos-fonts" class="l">beos-fonts</a>
+10. The <a href="intro.txt.html#meta" class="d">meta</a> key modifier       <a href="#beos-meta" class="l">beos-meta</a>
+11. Mouse key mappings          <a href="#beos-mouse" class="l">beos-mouse</a>
+12. Color names                 <a href="#beos-colors" class="l">beos-colors</a>
+13. Compiling with <a href="if_perl.txt.html#Perl" class="d">Perl</a>         <a href="#beos-perl" class="l">beos-perl</a>
+
+
+1. General                                              <a name="beos-general" class="t">beos-general</a>
+
+The default <a href="syntax.txt.html#syntax" class="d">syntax</a> highlighting mostly works with different foreground colors
+to highlight items.  This works best if you set your Terminal <a href="windows.txt.html#window" class="d">window</a> to <a href="insert.txt.html#a" class="d">a</a>
+darkish background and light letters.  Some middle-grey background (for
+instance (r,g,b)=(168,168,168)) with black letters also works nicely.  If you
+use the default light background and dark letters, <a href="motion.txt.html#it" class="d">it</a> may look better to
+simply reverse the notion of foreground and background color settings.  To <a href="diff.txt.html#do" class="d">do</a>
+this, add this to your <a href="starting.txt.html#.vimrc" class="d">.vimrc</a> file (where <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a> may need to be replaced with
+the <a href="intro.txt.html#escape" class="d">escape</a> character): 
+<span class="e"></span>
+<span class="e">  :if &amp;term == "beos-ansi"</span>
+<span class="e">  :    set t_AB=&lt;Esc&gt;[3%dm</span>
+<span class="e">  :    set t_AF=&lt;Esc&gt;[4%dm</span>
+<span class="e">  :endif</span>
+<span class="e"></span>
+<span class="e"></span>
+2. Compiling Vim                                        <a name="beos-compiling" class="t">beos-compiling</a>
+
+From the Advanced Access Preview Release (AAPR) on, Vim can be configured with
+the standard configure script.  To get the compiler and its flags right, use
+the following command-line in the shell (you can cut and paste <a href="motion.txt.html#it" class="d">it</a> in one go):
+
+CC=$BE_C_COMPILER CFLAGS="$BE_DEFAULT_C_FLAGS -O7" \
+    ./configure --prefix=/boot/home/config
+
+$BE_C_COMPILER <a href="motion.txt.html#is" class="d">is</a> usually "mwcc"<a href="motion.txt.html#%2C" class="d">,</a> $BE_DEFAULT_C_FLAGS <a href="motion.txt.html#is" class="d">is</a> usually "-I- -I."
+
+When configure has run, and you wish to enable <a href="gui.txt.html#GUI" class="d">GUI</a> support, you <a href="vim_faq.txt.html#must" class="d">must</a> edit the
+config.mk file so that the lines with GUI_xxx refer to $(BEOSGUI_xxx) instead
+of $(NONE_xxx).
+Alternatively you can make this change in the Makefile; <a href="motion.txt.html#it" class="d">it</a> will have <a href="insert.txt.html#a" class="d">a</a>
+more permanent effect.  Search for "NONE_"<a href="repeat.txt.html#." class="d">.</a>
+
+After compilation you need to add the resources to the binary.  Add the
+following few lines near the <a href="intro.txt.html#end" class="d">end</a> (before the line with "exit $exit_value"<a href="motion.txt.html#%29" class="d">)</a> of
+the link.sh <a href="usr_41.txt.html#script" class="d">script</a> to <a href="diff.txt.html#do" class="d">do</a> this automatically.
+
+    rmattr BEOS:TYPE vim
+    copyres os_beos.rsrc vim
+    mimeset vim
+
+Also, create <a href="insert.txt.html#a" class="d">a</a> dummy file "strip"<a href="cmdline.txt.html#%3A" class="d">:</a>
+
+    #!/bin/sh
+    mimeset $1
+    exit <a href="motion.txt.html#0" class="d">0</a>
+
+You will need <a href="motion.txt.html#it" class="d">it</a> when using "make <a href="usr_90.txt.html#install" class="d">install</a>" to <a href="usr_90.txt.html#install" class="d">install</a> Vim.
+
+Now type "make" to compile Vim, then "make <a href="usr_90.txt.html#install" class="d">install</a>" to <a href="usr_90.txt.html#install" class="d">install</a> it.
+
+If you want to <a href="usr_90.txt.html#install" class="d">install</a> Vim by hand, you <a href="vim_faq.txt.html#must" class="d">must</a> copy Vim to $HOME/config/bin, and
+create <a href="insert.txt.html#a" class="d">a</a> bunch of symlinks to <a href="motion.txt.html#it" class="d">it</a> ({g,r,rg}{vim,ex,view}).  Furthermore you <a href="vim_faq.txt.html#must" class="d">must</a>
+copy Vim's configuration files to $HOME/config/share/vim:
+vim-5.0s/{*.vim,doc,syntax}.  For completeness, you should also copy the nroff
+manual pages to $HOME/config/man/man1.  Don't forget ctags/ctags and xxd/xxd!
+
+Obviously, you need the unlimited linker to actually link Vim.  See
+<a class="u" href="http://www.metrowerks.com">http://www.metrowerks.com</a> for purchasing the CodeWarrior compiler for BeOS.
+There are currently no other linkers that can <a href="diff.txt.html#do" class="d">do</a> the job.
+
+This won't be able to include the <a href="if_perl.txt.html#Perl" class="d">Perl</a> or <a href="if_pyth.txt.html#Python" class="d">Python</a> interfaces even if
+you have the appropriate files installed. <a href="#beos-perl" class="l">beos-perl</a>
+
+
+3. Timeout in the Terminal                              <a name="beos-timeout" class="t">beos-timeout</a>
+
+Because some POSIX/UNIX features are still missing[1], there <a href="motion.txt.html#is" class="d">is</a> no direct OS
+support for read-with-timeout in the Terminal.  This would mean that you cannot
+use :mappings of more than one character, unless you also <a href="options.txt.html#%3Aset" class="d">:set</a> notimeout.
+<a href="options.txt.html#%27timeout%27" class="l">'timeout'</a>
+
+To circumvent this problem, <a href="insert.txt.html#I" class="d">I</a> added <a href="insert.txt.html#a" class="d">a</a> workaround to provide the necessary
+input with timeout by using an extra thread which reads ahead one character.
+As <a href="insert.txt.html#a" class="d">a</a> side effect, <a href="motion.txt.html#it" class="d">it</a> also makes Vim recognize when the Terminal <a href="windows.txt.html#window" class="d">window</a>
+resizes.
+
+Function keys are not supported in the Terminal since they produce very
+indistinctive character sequences.
+
+These problems <a href="diff.txt.html#do" class="d">do</a> not exist in the GUI.
+
+[1]: there <a href="motion.txt.html#is" class="d">is</a> no select() on file descriptors; also the termios VMIN and VTIME
+settings <a href="diff.txt.html#do" class="d">do</a> not seem to work properly.  This has been the <a href="change.txt.html#case" class="d">case</a> since DR7 <a href="motion.txt.html#at" class="d">at</a>
+least and still has not been fixed <a href="motion.txt.html#as" class="d">as</a> of PR2.
+
+                                                        <a name="beos-unicode" class="t">beos-unicode</a>
+4. <a href="mbyte.txt.html#Unicode" class="d">Unicode</a> vs. Latin1                                   <a name="beos-utf8" class="t">beos-utf8</a>
+
+<a href="#BeOS" class="d">BeOS</a> uses <a href="mbyte.txt.html#Unicode" class="d">Unicode</a> and <a href="mbyte.txt.html#UTF-8" class="d">UTF-8</a> for text strings (16-bit characters encoded to
+8-bit characters).  Vim assumes ISO-Latin1 or other 8-bit character codes.
+This does not produce the desired results for non-ASCII characters.  Try the
+command <a href="digraph.txt.html#%3Adigraphs" class="d">:digraphs</a> to see.  If they look messed up, use <a href="options.txt.html#%3Aset" class="d">:set</a> isprint=@ to
+(slightly) improve the display of ISO-Latin1 characters 128-255.  This works
+better in the GUI, depending on which font you use (below).
+
+You may also use the /boot/bin/xtou command to convert <a href="mbyte.txt.html#UTF-8" class="d">UTF-8</a> files from (xtou
+<a href="starting.txt.html#-f" class="d">-f</a> iso1 filename) or to (xtou <a href="starting.txt.html#-t" class="d">-t</a> iso1 filename) ISO-Latin1 characters.
+
+
+5. The <a href="#BeOS" class="d">BeOS</a> <a href="gui.txt.html#GUI" class="d">GUI</a>                                         <a name="beos-gui" class="t">beos-gui</a>
+
+The <a href="#BeOS" class="d">BeOS</a> <a href="gui.txt.html#GUI" class="d">GUI</a> <a href="motion.txt.html#is" class="d">is</a> no longer included.  It was not maintained for <a href="insert.txt.html#a" class="d">a</a> while and
+most likely didn't work.  If you want to work on this: get the Vim 6.x version
+and <a href="diff.txt.html#merge" class="d">merge</a> <a href="motion.txt.html#it" class="d">it</a> back in.
+
+
+6. The <a href="starting.txt.html#%24VIM" class="d">$VIM</a> directory                                   <a name="beos-vimdir" class="t">beos-vimdir</a>
+
+<a href="starting.txt.html#%24VIM" class="d">$VIM</a> <a href="motion.txt.html#is" class="d">is</a> the symbolic name for the place where Vims support files are stored.
+The default value for <a href="starting.txt.html#%24VIM" class="d">$VIM</a> <a href="motion.txt.html#is" class="d">is</a> set <a href="motion.txt.html#at" class="d">at</a> compile time and can be determined with 
+<span class="e"></span>
+<span class="e">  :version</span>
+<span class="e"></span>
+The normal value <a href="motion.txt.html#is" class="d">is</a> /boot/home/config/share/vim.  If you don't like <a href="motion.txt.html#it" class="d">it</a> you can
+set the Vim environment variable to override this, or set <a href="options.txt.html#%27helpfile%27" class="o">'helpfile'</a> in your
+.vimrc: 
+<span class="e"></span>
+<span class="e">  :if version &gt;= 500</span>
+<span class="e">  :    set helpfile=~/vim/vim54/doc/help.txt</span>
+<span class="e">  :    syntax on</span>
+<span class="e">  :endif</span>
+<span class="e"></span>
+<span class="e"></span>
+7. Drag <a href="change.txt.html#%26" class="d">&amp;</a> Drop                                          <a name="beos-dragndrop" class="t">beos-dragndrop</a>
+
+You can drop files and directories on either the Vim icon (starts <a href="insert.txt.html#a" class="d">a</a> new Vim
+session, unless you use the File Types application to set Vim to be "Single
+Launch"<a href="motion.txt.html#%29" class="d">)</a> or on the Vim <a href="windows.txt.html#window" class="d">window</a> (starts editing the files).  Dropping <a href="insert.txt.html#a" class="d">a</a> folder
+sets Vim's current working directory. <a href="editing.txt.html#%3Acd" class="l">:cd</a> <a href="editing.txt.html#%3Apwd" class="l">:pwd</a> If you drop files or
+folders with either SHIFT key pressed, Vim changes directory to the folder
+that contains the first item dropped.  When <a href="starting.txt.html#starting" class="d">starting</a> Vim, there <a href="motion.txt.html#is" class="d">is</a> no need to
+press shift: Vim behaves <a href="motion.txt.html#as" class="d">as</a> if you do.
+
+Files dropped set the current argument list. <a href="editing.txt.html#argument-list" class="l">argument-list</a>
+
+
+8. Single Launch vs. Multiple Launch                    <a name="beos-launch" class="t">beos-launch</a>
+
+As distributed Vim's Application Flags (as seen in the FileTypes preference)
+are set to Multiple Launch.  If you prefer, you can set them to Single Launch
+instead.  Attempts to start <a href="insert.txt.html#a" class="d">a</a> second copy of Vim will cause the first Vim to
+open the files instead.  This works from the Tracker but also from the command
+line.  In the latter case, non-file (option) arguments are not supported.
+
+NB: Only the <a href="gui.txt.html#GUI" class="d">GUI</a> version has <a href="insert.txt.html#a" class="d">a</a> BApplication (and hence Application Flags).
+This <a href="motion.txt.html#section" class="d">section</a> does not apply to the GUI-less version, should you compile one.
+
+
+9. Fonts                                                <a name="beos-fonts" class="t">beos-fonts</a>
+
+Set fonts with 
+<span class="e"></span>
+<span class="e">  :set guifont=Courier10_BT/Roman/10</span>
+<span class="e"></span>
+where the first part <a href="motion.txt.html#is" class="d">is</a> the font family, the second part the style, and the
+third part the size.  You can use underscores instead of spaces in family and
+style.
+
+Best results are obtained with monospaced fonts (such <a href="motion.txt.html#as" class="d">as</a> Courier).  Vim
+attempts to use all fonts in B_FIXED_SPACING mode but apparently this does not
+work for proportional fonts (despite what the BeBook says).
+
+Vim also tries to use the B_ISO8859_1 encoding, also known <a href="motion.txt.html#as" class="d">as</a> ISO Latin 1.
+This also does not work for all fonts.  It does work for Courier, but not for
+ProFontISOLatin1/Regular (strangely enough).  You can verify this by giving the 
+<span class="e"></span>
+<span class="e">  :digraphs</span>
+<span class="e"></span>
+command, which lists <a href="insert.txt.html#a" class="d">a</a> bunch of characters with their ISO Latin 1 encoding.
+If, for instance, there are "box" characters among them, or the last character
+isn't <a href="insert.txt.html#a" class="d">a</a> dotted-y, then for this font the encoding does not work.
+
+If the font you specify <a href="motion.txt.html#is" class="d">is</a> unavailable, you get the system fixed font.
+
+Standard fixed-width system fonts are:
+
+              ProFontISOLatin1/Regular
+                  Courier10_BT/Roman
+                  Courier10_BT/Italic
+                  Courier10_BT/Bold
+                  Courier10_BT/Bold_Italic
+
+Standard proportional system fonts are:
+
+                    Swis721_BT/Roman
+                    Swis721_BT/Italic
+                    Swis721_BT/Bold
+                    Swis721_BT/Bold_Italic
+                Dutch801_Rm_BT/Roman
+                Dutch801_Rm_BT/Italic
+                Dutch801_Rm_BT/Bold
+                Dutch801_Rm_BT/Bold_Italic
+                   Baskerville/Roman
+                   Baskerville/Italic
+                   Baskerville/Bold
+                   Baskerville/Bold_Italic
+                 SymbolProp_BT/Regular
+
+Try some of them, just for fun.
+
+
+10. The <a href="intro.txt.html#meta" class="d">meta</a> key modifier                               <a name="beos-meta" class="t">beos-meta</a>
+
+The META key modifier <a href="motion.txt.html#is" class="d">is</a> obtained by the left or right OPTION keys.  This <a href="motion.txt.html#is" class="d">is</a>
+because the ALT (aka COMMAND) keys are not passed to applications.
+
+
+11. Mouse key mappings                                  <a name="beos-mouse" class="t">beos-mouse</a>
+
+Vim calls the <a href="various.txt.html#various" class="d">various</a> mouse buttons LeftMouse, MiddleMouse and RightMouse.  If
+you use the default Mouse preference settings these names indeed correspond to
+reality.  Vim uses this mapping:
+
+    Button 1 -&gt; LeftMouse,
+    Button 2 -&gt; RightMouse,
+    Button 3 -&gt; MiddleMouse.
+
+If your mouse has fewer than 3 buttons you can provide your own <a href="map.txt.html#mapping" class="d">mapping</a> from
+mouse clicks with modifier(s) to other mouse buttons.  See the swapmouse
+package for an example:                                  <a href="gui.txt.html#gui-mouse-mapping" class="l">gui-mouse-mapping</a>
+$VIMRUNTIME/pack/dist/opt/swapmouse/plugin/swapmouse.vim
+
+
+12. Color names                                         <a name="beos-colors" class="t">beos-colors</a>
+
+Vim has <a href="insert.txt.html#a" class="d">a</a> number of color names built-in.  Additional names are read from the
+file $VIMRUNTIME/rgb.txt, if present.  This file <a href="motion.txt.html#is" class="d">is</a> basically the color
+database from X.  Names used from this file are cached for efficiency.
+
+
+13. Compiling with <a href="if_perl.txt.html#Perl" class="d">Perl</a>                                 <a name="beos-perl" class="t">beos-perl</a>
+
+Compiling with <a href="if_perl.txt.html#Perl" class="d">Perl</a> support enabled <a href="motion.txt.html#is" class="d">is</a> slightly tricky.  The Metrowerks
+compiler has some strange ideas where to search for include files.  Since
+several include files with <a href="if_perl.txt.html#Perl" class="d">Perl</a> have the same names <a href="motion.txt.html#as" class="d">as</a> some Vim header
+files, the wrong ones get included.  To fix this, run the following <a href="if_perl.txt.html#Perl" class="d">Perl</a>
+<a href="usr_41.txt.html#script" class="d">script</a> while in the vim-5.0/src directory: 
+<span class="e"></span>
+<span class="e">   preproc.pl &gt; perl.h</span>
+<span class="e"></span>
+<span class="e">    #!/bin/env perl</span>
+<span class="e">    # Simple #include expander, just good enough for the Perl header files.</span>
+<span class="e"></span>
+<span class="e">    use strict;</span>
+<span class="e">    use IO::File;</span>
+<span class="e">    use Config;</span>
+<span class="e"></span>
+<span class="e">    sub doinclude</span>
+<span class="e">    {</span>
+<span class="e">        my $filename = $_[0];</span>
+<span class="e">        my $fh = new IO::File($filename, "r");</span>
+<span class="e">        if (defined $fh) {</span>
+<span class="e">            print "/* Start of $filename */\n";</span>
+<span class="e"></span>
+<span class="e">            while (&lt;$fh&gt;) {</span>
+<span class="e">                if (/^#include "(.*)"/) {</span>
+<span class="e">                    doinclude($1);</span>
+<span class="e">                    print "/* Back in $filename */\n";</span>
+<span class="e">                } else {</span>
+<span class="e">                    print $_;</span>
+<span class="e">                }</span>
+<span class="e">            }</span>
+<span class="e">            print "/* End of $filename */\n";</span>
+<span class="e"></span>
+<span class="e">            undef $fh;</span>
+<span class="e">        } else {</span>
+<span class="e">            print "/* Cannot open $filename */\n";</span>
+<span class="e">            print "#include \"$filename\"\n";</span>
+<span class="e">        }</span>
+<span class="e">    }</span>
+<span class="e"></span>
+<span class="e">    chdir     $Config{installarchlib}."/CORE";</span>
+<span class="e">    doinclude "perl.h";</span>
+<span class="e"></span>
+It expands the "perl.h" header file, using only other <a href="if_perl.txt.html#Perl" class="d">Perl</a> header files.
+
+Now you can configure <a href="change.txt.html#%26" class="d">&amp;</a> make Vim with the --enable-perlinterp option.
+Be warned though that this adds about 616 kilobytes to the size of Vim!
+Without Perl, Vim with default features and <a href="gui.txt.html#GUI" class="d">GUI</a> <a href="motion.txt.html#is" class="d">is</a> about 575K, with <a href="if_perl.txt.html#Perl" class="d">Perl</a>
+<a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> about 1191K.
+
+-Olaf Seibert
+
+[Note: these addresses no longer work:]
+<span class="s">&lt;rhialto@polder.ubc.kun.nl&gt;</span>
+<a class="u" href="http://polder.ubc.kun.nl/~rhialto/be">http://polder.ubc.kun.nl/~rhialto/be</a>
+
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

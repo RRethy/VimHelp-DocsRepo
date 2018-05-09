@@ -1,0 +1,196 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: os_mac.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="os_mac.txt" class="t">os_mac.txt</a>    For <span class="i">Vim version 8.0.</span>  Last change: 2018 Jan 21
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Bram Moolenaar et al.</span>
+
+
+                                        <a name="mac" class="t">mac</a> <a name="Mac" class="t">Mac</a> <a name="macintosh" class="t">macintosh</a> <a name="Macintosh" class="t">Macintosh</a>
+
+This file documents the particularities of the <a href="#Macintosh" class="d">Macintosh</a> version of Vim.
+
+<span class="n">NOTE:</span> This file <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> bit outdated.  You might find more useful info here:
+        <a class="u" href="http://macvim.org/">http://macvim.org/</a>
+
+1. Filename Convention          <a href="#mac-filename" class="l">mac-filename</a>
+2. <a href="starting.txt.html#.vimrc" class="d">.vimrc</a> and .vim files        <a href="#mac-vimfile" class="l">mac-vimfile</a>
+3. Standard mappings            <a href="#mac-standard-mappings" class="l">mac-standard-mappings</a>
+4. <a href="intro.txt.html#FAQ" class="d">FAQ</a>                          <a href="#mac-faq" class="l">mac-faq</a>
+5. Known Lack                   <a href="#mac-lack" class="l">mac-lack</a>
+6. <a href="#Mac" class="d">Mac</a> Bug Report               <a href="#mac-bug" class="l">mac-bug</a>
+7. Compiling Vim                <a href="#mac-compile" class="l">mac-compile</a>
+8. The darwin feature           <a href="#mac-darwin-feature" class="l">mac-darwin-feature</a>
+
+There was <a href="insert.txt.html#a" class="d">a</a> <a href="#Mac" class="d">Mac</a> port for version 3.0 of Vim.  Here are the first few lines
+from the old file:
+
+VIM Release <span class="n">Notes</span>
+Initial <a href="#Macintosh" class="d">Macintosh</a> release, VIM version 3.0
+19 October 1994
+
+Eric Fischer
+<span class="s">&lt;enf1@midway.uchicago.edu&gt;</span>, <span class="s">&lt;eric@jcp.uchicago.edu&gt;</span>, <span class="s">&lt;etaoin@uchicago.edu&gt;</span>
+5759 N. Guilford Ave
+Indianapolis IN 46220 USA
+
+<span class="h">==============================================================================</span>
+1. Filename Convention                                  <a name="mac-filename" class="t">mac-filename</a>
+
+Starting with <span class="i">Vim version 7</span> you can just use the <a href="os_unix.txt.html#unix" class="d">unix</a> path separators with
+Vim. In order to determine if the specified filename <a href="motion.txt.html#is" class="d">is</a> relative to the
+current folder or absolute (i.e. relative to the "Desktop"), the following
+algorithm <a href="motion.txt.html#is" class="d">is</a> used:
+
+        If the path start by <a href="insert.txt.html#a" class="d">a</a> "<a href="pattern.txt.html#%2F" class="d">/</a>"<a href="motion.txt.html#%2C" class="d">,</a> the path <a href="motion.txt.html#is" class="d">is</a> absolute
+        If the path start by <a href="insert.txt.html#a" class="d">a</a> "<a href="cmdline.txt.html#%3A" class="d">:</a>"<a href="motion.txt.html#%2C" class="d">,</a> the path <a href="motion.txt.html#is" class="d">is</a> relative
+        If the path doesn't start by neither <a href="insert.txt.html#a" class="d">a</a> "<a href="pattern.txt.html#%2F" class="d">/</a>" nor "<a href="cmdline.txt.html#%3A" class="d">:</a>"<a href="motion.txt.html#%2C" class="d">,</a>
+          and <a href="insert.txt.html#a" class="d">a</a> "<a href="cmdline.txt.html#%3A" class="d">:</a>" <a href="motion.txt.html#is" class="d">is</a> found before <a href="insert.txt.html#a" class="d">a</a> "<a href="pattern.txt.html#%2F" class="d">/</a>" then the path <a href="motion.txt.html#is" class="d">is</a> absolute
+
+<span class="e">                :e /HD/text</span>
+<span class="e">                :e HD:text</span>
+       Edit the file "text" of the disk "HD" 
+<span class="e">                :e :src:main.c</span>
+<span class="e">                :e src/main.c</span>
+       Edit the file "main.c" in the folder "src" in the current folder 
+<span class="e">                :e os_mac.c</span>
+       Edit the file "os_mac.c" in the current folder.
+
+You can use the <a href="starting.txt.html#%24VIM" class="l">$VIM</a> and <a href="starting.txt.html#%24VIMRUNTIME" class="l">$VIMRUNTIME</a>  variable. 
+<span class="e"></span>
+<span class="e">                :so $VIMRUNTIME:syntax:syntax.vim</span>
+<span class="e"></span>
+<span class="h">==============================================================================</span>
+2. <a href="starting.txt.html#.vimrc" class="d">.vimrc</a> and .vim files                                <a name="mac-vimfile" class="t">mac-vimfile</a>
+
+It <a href="motion.txt.html#is" class="d">is</a> recommended to use <a href="os_unix.txt.html#Unix" class="d">Unix</a> style line separators for Vim scripts, thus <a href="insert.txt.html#a" class="d">a</a>
+single newline character.
+
+When <a href="starting.txt.html#starting" class="d">starting</a> up Vim will load the $VIMRUNTIME/macmap.vim <a href="usr_41.txt.html#script" class="d">script</a> to define
+default command-key mappings.
+
+On older systems files <a href="starting.txt.html#starting" class="d">starting</a> with <a href="insert.txt.html#a" class="d">a</a> dot "<a href="repeat.txt.html#." class="d">.</a>" are discouraged, thus the rc
+files are named "<a href="starting.txt.html#vimrc" class="d">vimrc</a>" or "<a href="starting.txt.html#_vimrc" class="d">_vimrc</a>" and "<a href="gui.txt.html#gvimrc" class="d">gvimrc</a>" or "<a href="gui.txt.html#_gvimrc" class="d">_gvimrc</a>"<a href="repeat.txt.html#." class="d">.</a>  These files
+can be in any format (mac, <a href="os_dos.txt.html#dos" class="d">dos</a> or unix).  Vim can handle any file format when
+the <a href="options.txt.html#%27nocompatible%27" class="l">'nocompatible'</a> option <a href="motion.txt.html#is" class="d">is</a> set, otherwise <a href="motion.txt.html#it" class="d">it</a> will only handle <a href="#mac" class="d">mac</a> format
+files.
+
+<span class="h">==============================================================================</span>
+3. Standard mappings                            <a name="mac-standard-mappings" class="t">mac-standard-mappings</a>
+
+The following mappings are available for cut/copy/paste from/to clipboard.
+
+<span class="h">key             Normal  Visual    Insert        Description </span>
+Command-v       "*<a href="change.txt.html#P" class="d">P</a>     "<a href="starting.txt.html#-d" class="d">-d</a>"*<a href="change.txt.html#P" class="d">P</a>    <span class="s">&lt;C-R&gt;</span>*        paste text       <a name="%3CD-v%3E" class="t">&lt;D-v&gt;</a>
+Command-c               "*<a href="change.txt.html#y" class="d">y</a>                     copy <a href="visual.txt.html#Visual" class="d">Visual</a> text <a name="%3CD-c%3E" class="t">&lt;D-c&gt;</a>
+Command-x               "*<a href="change.txt.html#d" class="d">d</a>                     cut <a href="visual.txt.html#Visual" class="d">Visual</a> text  <a name="%3CD-x%3E" class="t">&lt;D-x&gt;</a>
+Backspace               "*<a href="change.txt.html#d" class="d">d</a>                     cut <a href="visual.txt.html#Visual" class="d">Visual</a> text
+
+<span class="h">==============================================================================</span>
+4. <a href="#Mac" class="d">Mac</a> <a href="intro.txt.html#FAQ" class="d">FAQ</a>                                              <a name="mac-faq" class="t">mac-faq</a>
+
+On the internet:  <a class="u" href="http://macvim.org/OSX/index.php#FAQ">http://macvim.org/OSX/index.php#FAQ</a>
+
+Q: <a href="insert.txt.html#I" class="d">I</a> can't enter non-ASCII character in Apple Terminal.
+A: Under Window Settings, Emulation, make sure that "Escape non-ASCII
+   characters" <a href="motion.txt.html#is" class="d">is</a> not checked.
+
+Q: How <a href="diff.txt.html#do" class="d">do</a> <a href="insert.txt.html#I" class="d">I</a> start the <a href="gui.txt.html#GUI" class="d">GUI</a> from the command line?
+A: Assuming that Vim.app <a href="motion.txt.html#is" class="d">is</a> located in /Applications:
+        open /Applications/Vim.app
+   Or:
+        /Applications/Vim.app/Contents/MacOS/Vim <a href="starting.txt.html#-g" class="d">-g</a>  <span class="s">{arguments}</span>
+
+Q: How can <a href="insert.txt.html#I" class="d">I</a> set $PATH to something reasonable when <a href="insert.txt.html#I" class="d">I</a> start Vim.app from the
+   <a href="gui.txt.html#GUI" class="d">GUI</a> or with open?
+A: The following trick works with most shells.  Put <a href="motion.txt.html#it" class="d">it</a> in your <a href="starting.txt.html#vimrc" class="d">vimrc</a> file.
+   This <a href="motion.txt.html#is" class="d">is</a> included in the system <a href="starting.txt.html#vimrc" class="d">vimrc</a> file included with the binaries
+   distributed <a href="motion.txt.html#at" class="d">at</a> macvim.org <a href="repeat.txt.html#." class="d">.</a> 
+<span class="e">        let s:path = system("echo echo VIMPATH'${PATH}' | $SHELL -l")</span>
+<span class="e">        let $PATH = matchstr(s:path, 'VIMPATH\zs.\{-}\ze\n')</span>
+<span class="e"></span>
+<span class="h">==============================================================================</span>
+5. <a href="#Mac" class="d">Mac</a> Lack                                             <a name="mac-lack" class="t">mac-lack</a>
+
+In <a href="insert.txt.html#a" class="d">a</a> <a href="terminal.txt.html#terminal" class="d">terminal</a> <a href="editing.txt.html#CTRL-%5E" class="k">CTRL-^</a> needs to be entered <a href="motion.txt.html#as" class="d">as</a> Shift-Control-6.  <span class="k">CTRL-@</span> <a href="motion.txt.html#as" class="d">as</a>
+Shift-Control-2.
+
+<span class="h">==============================================================================</span>
+6. <a href="#Mac" class="d">Mac</a> Bug Report                                       <a name="mac-bug" class="t">mac-bug</a>
+
+When reporting any <a href="#Mac" class="d">Mac</a> specific bug or feature change, please use the <a href="intro.txt.html#vim-mac" class="d">vim-mac</a>
+<a href="intro.txt.html#maillist" class="d">maillist</a> <a href="intro.txt.html#vim-mac" class="l">vim-mac</a><a href="repeat.txt.html#." class="d">.</a>  However, you need to be subscribed.  An alternative <a href="motion.txt.html#is" class="d">is</a> to
+send <a href="insert.txt.html#a" class="d">a</a> message to the current MacVim maintainers:
+
+        mac@vim.org
+
+<span class="h">==============================================================================</span>
+7. Compiling Vim                                        <a name="mac-compile" class="t">mac-compile</a>
+
+See the file "src/INSTALLmac.txt" that comes with the source files.
+
+<span class="h">==============================================================================</span>
+8. The Darwin Feature                                   <a name="mac-darwin-feature" class="t">mac-darwin-feature</a>
+
+If you have <a href="insert.txt.html#a" class="d">a</a> <a href="#Mac" class="d">Mac</a> that isn't very old, you will be running OS X, also called
+Darwin.  The last pre-Darwin OS was <a href="#Mac" class="d">Mac</a> OS 9.  The darwin feature makes Vim
+use Darwin-specific properties.
+
+What <a href="motion.txt.html#is" class="d">is</a> accomplished with this feature <a href="motion.txt.html#is" class="d">is</a> two-fold:
+
+<a href="motion.txt.html#-" class="d">-</a> Make Vim interoperable with the system clipboard.
+<a href="motion.txt.html#-" class="d">-</a> Incorporate into Vim <a href="insert.txt.html#a" class="d">a</a> converter module that bridges the gap between some
+  character encodings specific to the platform and those known to Vim.
+
+Needless to say, both are not to be missed for any decent text editor to work
+nicely with other applications running on the same desktop environment.
+
+As Vim <a href="motion.txt.html#is" class="d">is</a> not an application dedicated only to macOS, we need an extra feature
+to add in order for <a href="motion.txt.html#it" class="d">it</a> to offer the same user experience that our users on
+other platforms enjoy to people on macOS.
+
+For brevity, the feature <a href="motion.txt.html#is" class="d">is</a> referred to <a href="motion.txt.html#as" class="d">as</a> "darwin" to signify <a href="motion.txt.html#it" class="d">it</a> one of the
+Vim features that are specific to that particular platform.
+
+The feature <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> configuration option.  Accordingly, whether <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> enabled or
+not <a href="motion.txt.html#is" class="d">is</a> determined <a href="motion.txt.html#at" class="d">at</a> build time; once <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> selected to be enabled, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a>
+compiled in and hence cannot be disabled <a href="motion.txt.html#at" class="d">at</a> runtime.
+
+The feature <a href="motion.txt.html#is" class="d">is</a> enabled by default.  For most macOS users, that should be
+sufficient unless they have specific needs mentioned briefly below.
+
+If you want to disable it, pass <span class="e">--disable-darwin</span> to the configure script: 
+<span class="e"></span>
+<span class="e">    ./configure --disable-darwin &lt;other options&gt;</span>
+<span class="e"></span>
+and then run <span class="e">make</span> to build Vim.  The order of the <a href="options.txt.html#options" class="d">options</a> doesn't matter.
+
+To make sure <a href="motion.txt.html#at" class="d">at</a> runtime whether or not the darwin feature <a href="motion.txt.html#is" class="d">is</a> compiled in, you
+can use <span class="e">has('osxdarwin')</span> which returns 1 if the feature <a href="motion.txt.html#is" class="d">is</a> compiled in; <a href="motion.txt.html#0" class="d">0</a>
+otherwise.  For backward compatibility, you can still use <span class="e">macunix</span> instead of
+<span class="e">osxdarwin</span>.
+
+Notable use cases where <span class="e">--disable-darwin</span> <a href="motion.txt.html#is" class="d">is</a> turned out to be useful are:
+
+<a href="motion.txt.html#-" class="d">-</a> When you want to use <a href="gui_x11.txt.html#x11-selection" class="l">x11-selection</a> instead of the system clipboard.
+<a href="motion.txt.html#-" class="d">-</a> When you want to use <a href="remote.txt.html#x11-clientserver" class="l">x11-clientserver</a><a href="repeat.txt.html#." class="d">.</a>
+
+Since both have to make use of <a href="options.txt.html#X11" class="d">X11</a> inter-client communication for them to work
+properly, and since the communication mechanism can come into conflict with
+the system clipboard, the darwin feature should be disabled to prevent Vim
+from hanging <a href="motion.txt.html#at" class="d">at</a> runtime.
+
+
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

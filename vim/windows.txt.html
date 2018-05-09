@@ -1,0 +1,1328 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: windows.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="windows.txt" class="t">windows.txt</a>   For <span class="i">Vim version 8.0.</span>  Last change: 2018 Apr 24
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Bram Moolenaar</span>
+
+
+Editing with multiple <a href="#windows" class="d">windows</a> and buffers.              <a name="windows" class="t">windows</a> <a name="buffers" class="t">buffers</a>
+
+The commands which have been added to use multiple <a href="#windows" class="d">windows</a> and <a href="#buffers" class="d">buffers</a> are
+explained here.  Additionally, there are explanations for commands that work
+differently when used in combination with more than one window.
+
+The basics are explained in chapter 7 and 8 of the user manual <a href="usr_07.txt.html#usr_07.txt" class="l">usr_07.txt</a>
+<a href="usr_08.txt.html#usr_08.txt" class="l">usr_08.txt</a><a href="repeat.txt.html#." class="d">.</a>
+
+1.  Introduction                                <a href="#windows-intro" class="l">windows-intro</a>
+2.  Starting Vim                                <a href="#windows-starting" class="l">windows-starting</a>
+3.  Opening and closing <a href="insert.txt.html#a" class="d">a</a> <a href="#window" class="d">window</a>                <a href="#opening-window" class="l">opening-window</a>
+4.  Moving cursor to other <a href="#windows" class="d">windows</a>              <a href="#window-move-cursor" class="l">window-move-cursor</a>
+5.  Moving <a href="#windows" class="d">windows</a> around                       <a href="#window-moving" class="l">window-moving</a>
+6.  Window resizing                             <a href="#window-resize" class="l">window-resize</a>
+7.  Argument and buffer <a href="eval.txt.html#list" class="d">list</a> commands           <a href="#buffer-list" class="l">buffer-list</a>
+8.  Do <a href="insert.txt.html#a" class="d">a</a> command in all <a href="#buffers" class="d">buffers</a> or <a href="#windows" class="d">windows</a>      <a href="#list-repeat" class="l">list-repeat</a>
+9.  Tag or file name under the cursor           <a href="#window-tag" class="l">window-tag</a>
+10. The preview <a href="#window" class="d">window</a>                          <a href="#preview-window" class="l">preview-window</a>
+11. Using hidden <a href="#buffers" class="d">buffers</a>                        <a href="#buffer-hidden" class="l">buffer-hidden</a>
+12. <a href="eval.txt.html#Special" class="d">Special</a> kinds of <a href="#buffers" class="d">buffers</a>                    <a href="#special-buffers" class="l">special-buffers</a>
+
+<span class="s">{Vi does not have any of these commands}</span>
+{not able to use multiple <a href="#windows" class="d">windows</a> when the <a href="various.txt.html#%2Bwindows" class="l">+windows</a> feature was disabled <a href="motion.txt.html#at" class="d">at</a>
+compile time}
+{not able to use vertically split <a href="#windows" class="d">windows</a> when the <a href="various.txt.html#%2Bvertsplit" class="l">+vertsplit</a> feature was
+disabled <a href="motion.txt.html#at" class="d">at</a> compile time}
+
+<span class="h">==============================================================================</span>
+1. Introduction                                 <a name="windows-intro" class="t">windows-intro</a> <a name="window" class="t">window</a>
+
+Summary:
+   <a href="insert.txt.html#A" class="d">A</a> buffer <a href="motion.txt.html#is" class="d">is</a> the in-memory text of <a href="insert.txt.html#a" class="d">a</a> file.
+   <a href="insert.txt.html#A" class="d">A</a> <a href="#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> viewport on <a href="insert.txt.html#a" class="d">a</a> buffer.
+   <a href="insert.txt.html#A" class="d">A</a> <a href="intro.txt.html#tab" class="d">tab</a> page <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> collection of windows.
+
+<a href="insert.txt.html#A" class="d">A</a> <a href="#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> viewport onto <a href="insert.txt.html#a" class="d">a</a> buffer.  You can use multiple <a href="#windows" class="d">windows</a> on one
+buffer, or several <a href="#windows" class="d">windows</a> on different buffers.
+
+<a href="insert.txt.html#A" class="d">A</a> buffer <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> file loaded into memory for editing.  The original file remains
+unchanged until you write the buffer to the file.
+
+<a href="insert.txt.html#A" class="d">A</a> buffer can be in one of three states:
+
+                                                        <a name="active-buffer" class="t">active-buffer</a>
+active:   The buffer <a href="motion.txt.html#is" class="d">is</a> displayed in <a href="insert.txt.html#a" class="d">a</a> window.  If there <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> file for this
+          buffer, <a href="motion.txt.html#it" class="d">it</a> has been read into the buffer.  The buffer may have been
+          modified since then and thus be different from the file.
+                                                        <a name="hidden-buffer" class="t">hidden-buffer</a>
+hidden:   The buffer <a href="motion.txt.html#is" class="d">is</a> not displayed.  If there <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> file for this buffer, <a href="motion.txt.html#it" class="d">it</a>
+          has been read into the buffer.  Otherwise it's the same <a href="motion.txt.html#as" class="d">as</a> an active
+          buffer, you just can't see it.
+                                                        <a name="inactive-buffer" class="t">inactive-buffer</a>
+inactive: The buffer <a href="motion.txt.html#is" class="d">is</a> not displayed and does not contain anything.  Options
+          for the buffer are remembered if the file was once loaded.  It can
+          contain marks from the <a href="starting.txt.html#viminfo" class="l">viminfo</a> file.  But the buffer doesn't
+          contain text.
+
+In <a href="insert.txt.html#a" class="d">a</a> table:
+
+<span class="h">state           displayed       loaded          ":buffers"  </span>
+<span class="h">                in window                       shows       </span>
+active            yes            yes              'a'
+hidden            no             yes              'h'
+inactive          no             no               <a href="motion.txt.html#%27" class="d">'</a> <a href="motion.txt.html#%27" class="d">'</a>
+
+<span class="n">Note:</span> All <a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> commands can also be executed with <a href="#%3Awincmd" class="l">:wincmd</a><a href="motion.txt.html#%2C" class="d">,</a> for those
+places where <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#Normal" class="d">Normal</a> mode command can't be used or <a href="motion.txt.html#is" class="d">is</a> inconvenient.
+
+The main Vim <a href="#window" class="d">window</a> can hold several split windows.  There are also <a href="intro.txt.html#tab" class="d">tab</a> pages
+<a href="tabpage.txt.html#tab-page" class="l">tab-page</a><a href="motion.txt.html#%2C" class="d">,</a> each of which can hold multiple windows.
+                                        <a name="window-ID" class="t">window-ID</a> <a name="winid" class="t">winid</a> <a name="windowid" class="t">windowid</a>
+Each <a href="#window" class="d">window</a> has <a href="insert.txt.html#a" class="d">a</a> unique identifier called the <a href="#window" class="d">window</a> ID.  This identifier
+will not change within <a href="insert.txt.html#a" class="d">a</a> Vim session. The <a href="eval.txt.html#win_getid%28%29" class="l">win_getid()</a> and <a href="eval.txt.html#win_id2tabwin%28%29" class="l">win_id2tabwin()</a>
+<a href="eval.txt.html#functions" class="d">functions</a> can be used to convert between the window/tab number and the
+identifier.  There <a href="motion.txt.html#is" class="d">is</a> also the <a href="#window" class="d">window</a> number, which may change whenever
+<a href="#windows" class="d">windows</a> are opened or closed, see <a href="eval.txt.html#winnr%28%29" class="l">winnr()</a><a href="repeat.txt.html#." class="d">.</a>
+
+Each buffer has <a href="insert.txt.html#a" class="d">a</a> unique number and the number will not change within <a href="insert.txt.html#a" class="d">a</a> Vim
+session.  The <a href="eval.txt.html#bufnr%28%29" class="l">bufnr()</a> and <a href="eval.txt.html#bufname%28%29" class="l">bufname()</a> <a href="eval.txt.html#functions" class="d">functions</a> can be used to convert
+between <a href="insert.txt.html#a" class="d">a</a> buffer name and the buffer number.
+
+<span class="h">==============================================================================</span>
+2. Starting Vim                                         <a name="windows-starting" class="t">windows-starting</a>
+
+By default, Vim starts with one window, just like Vi.
+
+The "<a href="starting.txt.html#-o" class="d">-o</a>" and "<a href="starting.txt.html#-O" class="d">-O</a>" arguments to Vim can be used to open <a href="insert.txt.html#a" class="d">a</a> <a href="#window" class="d">window</a> for each file
+in the argument list.  The "<a href="starting.txt.html#-o" class="d">-o</a>" argument will split the <a href="#windows" class="d">windows</a> horizontally;
+the "<a href="starting.txt.html#-O" class="d">-O</a>" argument will split the <a href="#windows" class="d">windows</a> vertically.  If both "<a href="starting.txt.html#-o" class="d">-o</a>" and "<a href="starting.txt.html#-O" class="d">-O</a>"
+are given, the last one encountered will be used to determine the split
+orientation.  For example, this will open three windows, split horizontally: 
+<span class="e">        vim -o file1 file2 file3</span>
+<span class="e"></span>
+"-oN"<a href="motion.txt.html#%2C" class="d">,</a> where <a href="pattern.txt.html#N" class="d">N</a> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> decimal number, opens <a href="pattern.txt.html#N" class="d">N</a> <a href="#windows" class="d">windows</a> split horizontally.  If
+there are more file names than windows, only <a href="pattern.txt.html#N" class="d">N</a> <a href="#windows" class="d">windows</a> are opened and some
+files <a href="diff.txt.html#do" class="d">do</a> not get <a href="insert.txt.html#a" class="d">a</a> window.  If there are more <a href="#windows" class="d">windows</a> than file names, the
+last few <a href="#windows" class="d">windows</a> will be editing empty buffers.  Similarly, "-ON" opens <a href="pattern.txt.html#N" class="d">N</a>
+<a href="#windows" class="d">windows</a> split vertically, with the same restrictions.
+
+If there are many file names, the <a href="#windows" class="d">windows</a> will become very small.  You might
+want to set the <a href="options.txt.html#%27winheight%27" class="o">'winheight'</a> and/or <a href="options.txt.html#%27winwidth%27" class="o">'winwidth'</a> <a href="options.txt.html#options" class="d">options</a> to create <a href="insert.txt.html#a" class="d">a</a> workable
+situation.
+
+Buf/Win Enter/Leave <a href="autocmd.txt.html#autocommand" class="l">autocommand</a><a href="change.txt.html#s" class="d">s</a> are not executed when opening the new
+<a href="#windows" class="d">windows</a> and reading the files, that's only done when they are really entered.
+
+                                                        <a name="status-line" class="t">status-line</a>
+<a href="insert.txt.html#A" class="d">A</a> status line will be used to separate windows.  The <a href="options.txt.html#%27laststatus%27" class="o">'laststatus'</a> option tells
+when the last <a href="#window" class="d">window</a> also has <a href="insert.txt.html#a" class="d">a</a> status line:
+        <a href="options.txt.html#%27laststatus%27" class="o">'laststatus'</a> <a href="change.txt.html#%3D" class="d">=</a> <a href="motion.txt.html#0" class="d">0</a>        never <a href="insert.txt.html#a" class="d">a</a> status line
+        <a href="options.txt.html#%27laststatus%27" class="o">'laststatus'</a> <a href="change.txt.html#%3D" class="d">=</a> 1        status line if there <a href="motion.txt.html#is" class="d">is</a> more than one <a href="#window" class="d">window</a>
+        <a href="options.txt.html#%27laststatus%27" class="o">'laststatus'</a> <a href="change.txt.html#%3D" class="d">=</a> 2        always <a href="insert.txt.html#a" class="d">a</a> status line
+
+You can change the contents of the status line with the <a href="options.txt.html#%27statusline%27" class="o">'statusline'</a> option.
+This option can be local to the window, so that you can have <a href="insert.txt.html#a" class="d">a</a> different
+status line in each window.
+
+Normally, inversion <a href="motion.txt.html#is" class="d">is</a> used to display the status line.  This can be changed
+with the 's' character in the <a href="options.txt.html#%27highlight%27" class="o">'highlight'</a> option.  For example, "sb" sets <a href="motion.txt.html#it" class="d">it</a> to
+<a href="syntax.txt.html#bold" class="d">bold</a> characters.  If no highlighting <a href="motion.txt.html#is" class="d">is</a> used for the status line <a href="motion.txt.html#%28" class="d">(</a>"sn"), the
+'^' character <a href="motion.txt.html#is" class="d">is</a> used for the current window, and '=' for other windows.  If
+the mouse <a href="motion.txt.html#is" class="d">is</a> supported and enabled with the <a href="options.txt.html#%27mouse%27" class="o">'mouse'</a> option, <a href="insert.txt.html#a" class="d">a</a> status line can
+be dragged to resize windows.
+
+<span class="n">Note:</span> If you expect your status line to be in reverse video and <a href="motion.txt.html#it" class="d">it</a> isn't,
+check if the <a href="options.txt.html#%27highlight%27" class="o">'highlight'</a> option contains "si"<a href="repeat.txt.html#." class="d">.</a>  In version 3.0, this meant to
+invert the status line.  Now <a href="motion.txt.html#it" class="d">it</a> should be "sr"<a href="motion.txt.html#%2C" class="d">,</a> reverse the status line, <a href="motion.txt.html#as" class="d">as</a>
+"si" now stands for italic!  If <a href="syntax.txt.html#italic" class="d">italic</a> <a href="motion.txt.html#is" class="d">is</a> not available on your terminal, the
+status line <a href="motion.txt.html#is" class="d">is</a> inverted anyway; you will only see this problem on terminals
+that have <a href="term.txt.html#termcap" class="d">termcap</a> codes for italics.
+
+<span class="h">==============================================================================</span>
+3. Opening and closing <a href="insert.txt.html#a" class="d">a</a> <a href="#window" class="d">window</a>                         <a name="opening-window" class="t">opening-window</a> <a name="E36" class="t">E36</a>
+
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="change.txt.html#s" class="d">s</a>                                                <a name="CTRL-W_s" class="t">CTRL-W_s</a>
+<span class="c">CTRL-W S                                               </span> <a name="CTRL-W_S" class="t">CTRL-W_S</a>
+<span class="c">CTRL-W CTRL-S                                          </span> <a name="CTRL-W_CTRL-S" class="t">CTRL-W_CTRL-S</a>
+:[N]sp[lit] <a href="editing.txt.html#%5B%2B%2Bopt%5D" class="s">[++opt]</a> <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a> <span class="s">[file]</span>                       <a name="%3Asp" class="t">:sp</a> <a name="%3Asplit" class="t">:split</a>
+                Split current <a href="#window" class="d">window</a> in two.  The result <a href="motion.txt.html#is" class="d">is</a> two viewports on
+                the same file.
+                
+                Make the new <a href="#window" class="d">window</a> <a href="pattern.txt.html#N" class="d">N</a> high (default <a href="motion.txt.html#is" class="d">is</a> to use half the height
+                of the current window).  Reduces the current <a href="#window" class="d">window</a> height to
+                create room (and others, if the <a href="options.txt.html#%27equalalways%27" class="o">'equalalways'</a> option <a href="motion.txt.html#is" class="d">is</a> set,
+                <a href="options.txt.html#%27eadirection%27" class="o">'eadirection'</a> isn't "hor"<a href="motion.txt.html#%2C" class="d">,</a> and one of them <a href="motion.txt.html#is" class="d">is</a> higher than the
+                current or the new window).
+
+                If <span class="s">[file]</span> <a href="motion.txt.html#is" class="d">is</a> given <a href="motion.txt.html#it" class="d">it</a> will be edited in the new window.  If <a href="motion.txt.html#it" class="d">it</a>
+                <a href="motion.txt.html#is" class="d">is</a> not loaded in any buffer, <a href="motion.txt.html#it" class="d">it</a> will be read.  Else the new
+                <a href="#window" class="d">window</a> will use the already loaded buffer.
+
+                <span class="n">Note:</span> <span class="k">CTRL-S</span> does not work on all terminals and might block
+                further input, use <a href="gui_w32.txt.html#CTRL-Q" class="k">CTRL-Q</a> to get going again.
+                Also see <a href="editing.txt.html#%2B%2Bopt" class="l">++opt</a> and <a href="editing.txt.html#%2Bcmd" class="l">+cmd</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="c">CTRL-W CTRL-V                                          </span> <a name="CTRL-W_CTRL-V" class="t">CTRL-W_CTRL-V</a>
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="visual.txt.html#v" class="d">v</a>                                                <a name="CTRL-W_v" class="t">CTRL-W_v</a>
+:[N]vs[plit] <a href="editing.txt.html#%5B%2B%2Bopt%5D" class="s">[++opt]</a> <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a> <span class="s">[file]</span>                      <a name="%3Avs" class="t">:vs</a> <a name="%3Avsplit" class="t">:vsplit</a>
+                Like <a href="#%3Asplit" class="l">:split</a><a href="motion.txt.html#%2C" class="d">,</a> but split vertically.  The <a href="#windows" class="d">windows</a> will be
+                spread out horizontally if
+                1. <a href="insert.txt.html#a" class="d">a</a> width was not specified,
+                2. <a href="options.txt.html#%27equalalways%27" class="o">'equalalways'</a> <a href="motion.txt.html#is" class="d">is</a> set,
+                3. <a href="options.txt.html#%27eadirection%27" class="o">'eadirection'</a> isn't "ver"<a href="motion.txt.html#%2C" class="d">,</a> and
+                4. one of the other <a href="#windows" class="d">windows</a> <a href="motion.txt.html#is" class="d">is</a> wider than the current or new
+                   window.
+                <span class="n">Note:</span> In other places <a href="gui_w32.txt.html#CTRL-Q" class="k">CTRL-Q</a> does the same <a href="motion.txt.html#as" class="d">as</a> <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a>, but here
+                <a href="motion.txt.html#it" class="d">it</a> doesn't!
+
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="pattern.txt.html#n" class="d">n</a>                                                <a name="CTRL-W_n" class="t">CTRL-W_n</a>
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> CTRL_N                                           <a name="CTRL-W_CTRL-N" class="t">CTRL-W_CTRL-N</a>
+:[N]new <a href="editing.txt.html#%5B%2B%2Bopt%5D" class="s">[++opt]</a> <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a>                                  <a name="%3Anew" class="t">:new</a>
+                Create <a href="insert.txt.html#a" class="d">a</a> new <a href="#window" class="d">window</a> and start editing an empty file in it.
+                Make new <a href="#window" class="d">window</a> <a href="pattern.txt.html#N" class="d">N</a> high (default <a href="motion.txt.html#is" class="d">is</a> to use half the existing
+                height).  Reduces the current <a href="#window" class="d">window</a> height to create room (and
+                others, if the <a href="options.txt.html#%27equalalways%27" class="o">'equalalways'</a> option <a href="motion.txt.html#is" class="d">is</a> set and <a href="options.txt.html#%27eadirection%27" class="o">'eadirection'</a>
+                isn't "hor").
+                Also see <a href="editing.txt.html#%2B%2Bopt" class="l">++opt</a> and <a href="editing.txt.html#%2Bcmd" class="l">+cmd</a><a href="repeat.txt.html#." class="d">.</a>
+                If <a href="options.txt.html#%27fileformats%27" class="o">'fileformats'</a> <a href="motion.txt.html#is" class="d">is</a> not empty, the first format given will be
+                used for the new buffer.  If <a href="options.txt.html#%27fileformats%27" class="o">'fileformats'</a> <a href="motion.txt.html#is" class="d">is</a> empty, the
+                <a href="options.txt.html#%27fileformat%27" class="o">'fileformat'</a> of the current buffer <a href="motion.txt.html#is" class="d">is</a> used.  This can be
+                overridden with the <a href="editing.txt.html#%2B%2Bopt" class="l">++opt</a> argument.
+                Autocommands are executed in this order:
+                1. <a href="autocmd.txt.html#WinLeave" class="d">WinLeave</a> for the current <a href="#window" class="d">window</a>
+                2. <a href="autocmd.txt.html#WinEnter" class="d">WinEnter</a> for the new <a href="#window" class="d">window</a>
+                3. <a href="autocmd.txt.html#BufLeave" class="d">BufLeave</a> for the current buffer
+                4. <a href="autocmd.txt.html#BufEnter" class="d">BufEnter</a> for the new buffer
+                This behaves like <a href="insert.txt.html#a" class="d">a</a> "<a href="#%3Asplit" class="d">:split</a>" first, and then an "<a href="editing.txt.html#%3Aenew" class="d">:enew</a>"
+                command.
+
+:[N]vne[w] <a href="editing.txt.html#%5B%2B%2Bopt%5D" class="s">[++opt]</a> <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a> <span class="s">[file]</span>                        <a name="%3Avne" class="t">:vne</a> <a name="%3Avnew" class="t">:vnew</a>
+                Like <a href="#%3Anew" class="l">:new</a><a href="motion.txt.html#%2C" class="d">,</a> but split vertically.  If <a href="options.txt.html#%27equalalways%27" class="o">'equalalways'</a> <a href="motion.txt.html#is" class="d">is</a> set
+                and <a href="options.txt.html#%27eadirection%27" class="o">'eadirection'</a> isn't "ver" the <a href="#windows" class="d">windows</a> will be spread out
+                horizontally, unless <a href="insert.txt.html#a" class="d">a</a> width was specified.
+
+:[N]new <a href="editing.txt.html#%5B%2B%2Bopt%5D" class="s">[++opt]</a> <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a> <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a>
+:[N]sp[lit] <a href="editing.txt.html#%5B%2B%2Bopt%5D" class="s">[++opt]</a> <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a> <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a>                       <a name="%3Asplit_f" class="t">:split_f</a>
+                Create <a href="insert.txt.html#a" class="d">a</a> new <a href="#window" class="d">window</a> and start editing file <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a> in it.  This
+                behaves like <a href="insert.txt.html#a" class="d">a</a> "<a href="#%3Asplit" class="d">:split</a>" first, and then an "<a href="editing.txt.html#%3Ae" class="d">:e</a>" command.
+                If <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a> <a href="motion.txt.html#is" class="d">is</a> given, execute the command when the file has been
+                loaded <a href="editing.txt.html#%2Bcmd" class="l">+cmd</a><a href="repeat.txt.html#." class="d">.</a>
+                Also see <a href="editing.txt.html#%2B%2Bopt" class="l">++opt</a><a href="repeat.txt.html#." class="d">.</a>
+                Make new <a href="#window" class="d">window</a> <a href="pattern.txt.html#N" class="d">N</a> high (default <a href="motion.txt.html#is" class="d">is</a> to use half the existing
+                height).  Reduces the current <a href="#window" class="d">window</a> height to create room
+                (and others, if the <a href="options.txt.html#%27equalalways%27" class="o">'equalalways'</a> option <a href="motion.txt.html#is" class="d">is</a> set).
+
+:[N]sv[iew] <a href="editing.txt.html#%5B%2B%2Bopt%5D" class="s">[++opt]</a> <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a> <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a>               <a name="%3Asv" class="t">:sv</a> <a name="%3Asview" class="t">:sview</a> <a name="splitview" class="t">splitview</a>
+                Same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Asplit" class="d">:split</a>"<a href="motion.txt.html#%2C" class="d">,</a> but set <a href="options.txt.html#%27readonly%27" class="o">'readonly'</a> option for this buffer.
+
+:[N]sf[ind] <a href="editing.txt.html#%5B%2B%2Bopt%5D" class="s">[++opt]</a> <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a> <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a>               <a name="%3Asf" class="t">:sf</a> <a name="%3Asfind" class="t">:sfind</a> <a name="splitfind" class="t">splitfind</a>
+                Same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Asplit" class="d">:split</a>"<a href="motion.txt.html#%2C" class="d">,</a> but search for <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a> in <a href="options.txt.html#%27path%27" class="o">'path'</a> like in
+                <a href="editing.txt.html#%3Afind" class="l">:find</a><a href="repeat.txt.html#." class="d">.</a>  Doesn't split if <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a> <a href="motion.txt.html#is" class="d">is</a> not found.
+
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="editing.txt.html#CTRL-%5E" class="k">CTRL-^</a>                                   <a name="CTRL-W_CTRL-%5E" class="t">CTRL-W_CTRL-^</a> <a name="CTRL-W_%5E" class="t">CTRL-W_^</a>
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="motion.txt.html#%5E" class="d">^</a>        Does "<a href="#%3Asplit" class="d">:split</a> <a href="pattern.txt.html#%23" class="d">#</a>"<a href="motion.txt.html#%2C" class="d">,</a> split <a href="#window" class="d">window</a> in two and edit alternate file.
+                When <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> <a href="motion.txt.html#is" class="d">is</a> given, <a href="motion.txt.html#it" class="d">it</a> becomes "<a href="#%3Asplit" class="d">:split</a> #N"<a href="motion.txt.html#%2C" class="d">,</a> split <a href="#window" class="d">window</a>
+                and edit buffer N.
+
+                                                <a name="CTRL-W_%3A" class="t">CTRL-W_:</a>
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="cmdline.txt.html#%3A" class="d">:</a>        Does the same <a href="motion.txt.html#as" class="d">as</a> typing <a href="cmdline.txt.html#%3A" class="l">:</a> <a href="cmdline.txt.html#%3A" class="d">:</a> edit <a href="insert.txt.html#a" class="d">a</a> command line.  Useful in <a href="insert.txt.html#a" class="d">a</a>
+                <a href="terminal.txt.html#terminal" class="d">terminal</a> window, where all Vim commands <a href="vim_faq.txt.html#must" class="d">must</a> be preceded with
+                <a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> or <span class="o">'termkey'</span>.
+
+<span class="n">Note</span> that the <a href="options.txt.html#%27splitbelow%27" class="o">'splitbelow'</a> and <a href="options.txt.html#%27splitright%27" class="o">'splitright'</a> <a href="options.txt.html#options" class="d">options</a> influence where <a href="insert.txt.html#a" class="d">a</a> new
+<a href="#window" class="d">window</a> will appear.
+
+                                                <a name="%3Avert" class="t">:vert</a> <a name="%3Avertical" class="t">:vertical</a>
+:vert[ical] <span class="s">{cmd}</span>
+                Execute <span class="s">{cmd}</span>.  If <a href="motion.txt.html#it" class="d">it</a> contains <a href="insert.txt.html#a" class="d">a</a> command that splits <a href="insert.txt.html#a" class="d">a</a> window,
+                <a href="motion.txt.html#it" class="d">it</a> will be split vertically.
+                Doesn't work for <a href="eval.txt.html#%3Aexecute" class="l">:execute</a> and <a href="various.txt.html#%3Anormal" class="l">:normal</a><a href="repeat.txt.html#." class="d">.</a>
+
+:lefta[bove] <span class="s">{cmd}</span>                              <a name="%3Alefta" class="t">:lefta</a> <a name="%3Aleftabove" class="t">:leftabove</a>
+:abo[veleft] <span class="s">{cmd}</span>                              <a name="%3Aabo" class="t">:abo</a> <a name="%3Aaboveleft" class="t">:aboveleft</a>
+                Execute <span class="s">{cmd}</span>.  If <a href="motion.txt.html#it" class="d">it</a> contains <a href="insert.txt.html#a" class="d">a</a> command that splits <a href="insert.txt.html#a" class="d">a</a> window,
+                <a href="motion.txt.html#it" class="d">it</a> will be opened left (vertical split) or above (horizontal
+                split) the current window.  Overrules <a href="options.txt.html#%27splitbelow%27" class="o">'splitbelow'</a> and
+                <a href="options.txt.html#%27splitright%27" class="o">'splitright'</a>.
+                Doesn't work for <a href="eval.txt.html#%3Aexecute" class="l">:execute</a> and <a href="various.txt.html#%3Anormal" class="l">:normal</a><a href="repeat.txt.html#." class="d">.</a>
+
+:rightb[elow] <span class="s">{cmd}</span>                             <a name="%3Arightb" class="t">:rightb</a> <a name="%3Arightbelow" class="t">:rightbelow</a>
+:bel[owright] <span class="s">{cmd}</span>                             <a name="%3Abel" class="t">:bel</a> <a name="%3Abelowright" class="t">:belowright</a>
+                Execute <span class="s">{cmd}</span>.  If <a href="motion.txt.html#it" class="d">it</a> contains <a href="insert.txt.html#a" class="d">a</a> command that splits <a href="insert.txt.html#a" class="d">a</a> window,
+                <a href="motion.txt.html#it" class="d">it</a> will be opened right (vertical split) or below (horizontal
+                split) the current window.  Overrules <a href="options.txt.html#%27splitbelow%27" class="o">'splitbelow'</a> and
+                <a href="options.txt.html#%27splitright%27" class="o">'splitright'</a>.
+                Doesn't work for <a href="eval.txt.html#%3Aexecute" class="l">:execute</a> and <a href="various.txt.html#%3Anormal" class="l">:normal</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                <a name="%3Atopleft" class="t">:topleft</a> <a name="E442" class="t">E442</a>
+:to[pleft] <span class="s">{cmd}</span>
+                Execute <span class="s">{cmd}</span>.  If <a href="motion.txt.html#it" class="d">it</a> contains <a href="insert.txt.html#a" class="d">a</a> command that splits <a href="insert.txt.html#a" class="d">a</a> window,
+                <a href="motion.txt.html#it" class="d">it</a> will appear <a href="motion.txt.html#at" class="d">at</a> the top and occupy the full width of the Vim
+                window.  When the split <a href="motion.txt.html#is" class="d">is</a> vertical the <a href="#window" class="d">window</a> appears <a href="motion.txt.html#at" class="d">at</a> the
+                far left and occupies the full height of the Vim window.
+                Doesn't work for <a href="eval.txt.html#%3Aexecute" class="l">:execute</a> and <a href="various.txt.html#%3Anormal" class="l">:normal</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                <a name="%3Abo" class="t">:bo</a> <a name="%3Abotright" class="t">:botright</a>
+:bo[tright] <span class="s">{cmd}</span>
+                Execute <span class="s">{cmd}</span>.  If <a href="motion.txt.html#it" class="d">it</a> contains <a href="insert.txt.html#a" class="d">a</a> command that splits <a href="insert.txt.html#a" class="d">a</a> window,
+                <a href="motion.txt.html#it" class="d">it</a> will appear <a href="motion.txt.html#at" class="d">at</a> the bottom and occupy the full width of the
+                Vim window.  When the split <a href="motion.txt.html#is" class="d">is</a> vertical the <a href="#window" class="d">window</a> appears <a href="motion.txt.html#at" class="d">at</a>
+                the far right and occupies the full height of the Vim window.
+                Doesn't work for <a href="eval.txt.html#%3Aexecute" class="l">:execute</a> and <a href="various.txt.html#%3Anormal" class="l">:normal</a><a href="repeat.txt.html#." class="d">.</a>
+
+These command modifiers can be combined to make <a href="insert.txt.html#a" class="d">a</a> vertically split <a href="#window" class="d">window</a>
+occupy the full height.  Example: 
+<span class="e">        :vertical topleft split tags</span>
+Opens <a href="insert.txt.html#a" class="d">a</a> vertically split, full-height <a href="#window" class="d">window</a> on the "<a href="tagsrch.txt.html#tags" class="d">tags</a>" file <a href="motion.txt.html#at" class="d">at</a> the far
+left of the Vim window.
+
+
+Closing <a href="insert.txt.html#a" class="d">a</a> <a href="#window" class="d">window</a>
+<span class="h">----------------</span>
+
+:q[uit]
+:{count}q[uit]
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="repeat.txt.html#q" class="d">q</a>                                                <a name="CTRL-W_q" class="t">CTRL-W_q</a>
+<span class="c">CTRL-W CTRL-Q                                          </span> <a name="CTRL-W_CTRL-Q" class="t">CTRL-W_CTRL-Q</a>
+                Without <span class="s">{count}</span>: Quit the current window.  If <span class="s">{count}</span> <a href="motion.txt.html#is" class="d">is</a>
+                given quit the <span class="s">{count}</span> window.
+
+                When quitting the last <a href="#window" class="d">window</a> (not counting <a href="insert.txt.html#a" class="d">a</a> <a href="helphelp.txt.html#help" class="d">help</a> window),
+                exit Vim.
+                
+                When <a href="options.txt.html#%27hidden%27" class="o">'hidden'</a> <a href="motion.txt.html#is" class="d">is</a> set, and there <a href="motion.txt.html#is" class="d">is</a> only one <a href="#window" class="d">window</a> for the
+                current buffer, <a href="motion.txt.html#it" class="d">it</a> becomes hidden.  When <a href="options.txt.html#%27hidden%27" class="o">'hidden'</a> <a href="motion.txt.html#is" class="d">is</a> not set,
+                and there <a href="motion.txt.html#is" class="d">is</a> only one <a href="#window" class="d">window</a> for the current buffer, and the
+                buffer was changed, the command fails.
+                
+                (Note: <a href="gui_w32.txt.html#CTRL-Q" class="k">CTRL-Q</a> does not work on all terminals).
+                
+                If <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> <a href="motion.txt.html#is" class="d">is</a> greater than the last <a href="#window" class="d">window</a> number the last
+                <a href="#window" class="d">window</a> will be closed: 
+<span class="e">                    :1quit  " quit the first window</span>
+<span class="e">                    :$quit  " quit the last window</span>
+<span class="e">                    :9quit  " quit the last window</span>
+<span class="e">                            " if there are fewer than 9 windows opened</span>
+<span class="e">                    :-quit  " quit the previous window</span>
+<span class="e">                    :+quit  " quit the next window</span>
+<span class="e">                    :+2quit " quit the second next window</span>
+
+:q[uit]!
+:{count}q[uit]!
+                Without <span class="s">{count}</span>: Quit the current window.  If <span class="s">{count}</span> <a href="motion.txt.html#is" class="d">is</a>
+                given quit the <span class="s">{count}</span> window.
+
+                If this was the last <a href="#window" class="d">window</a> for <a href="insert.txt.html#a" class="d">a</a> buffer, any changes to that
+                buffer are lost.  When quitting the last <a href="#window" class="d">window</a> (not counting
+                <a href="helphelp.txt.html#help" class="d">help</a> windows), exit Vim.  The contents of the buffer are lost,
+                even when <a href="options.txt.html#%27hidden%27" class="o">'hidden'</a> <a href="motion.txt.html#is" class="d">is</a> set.
+
+:clo[se][!]
+:{count}clo[se][!]
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="change.txt.html#c" class="d">c</a>                                        <a name="CTRL-W_c" class="t">CTRL-W_c</a> <a name="%3Aclo" class="t">:clo</a> <a name="%3Aclose" class="t">:close</a>
+                Without <span class="s">{count}</span>: Close the current window.  If <span class="s">{count}</span> <a href="motion.txt.html#is" class="d">is</a>
+                given close the <span class="s">{count}</span> window.
+
+                When the <a href="options.txt.html#%27hidden%27" class="o">'hidden'</a> option <a href="motion.txt.html#is" class="d">is</a> set, or when the buffer was
+                changed and the [!] <a href="motion.txt.html#is" class="d">is</a> used, the buffer becomes hidden (unless
+                there <a href="motion.txt.html#is" class="d">is</a> another <a href="#window" class="d">window</a> editing it).
+                
+                When there <a href="motion.txt.html#is" class="d">is</a> only one <a href="#window" class="d">window</a> in the current <a href="intro.txt.html#tab" class="d">tab</a> page and
+                there <a href="motion.txt.html#is" class="d">is</a> another <a href="intro.txt.html#tab" class="d">tab</a> page, this closes the current <a href="intro.txt.html#tab" class="d">tab</a> page.
+                <a href="tabpage.txt.html#tab-page" class="l">tab-page</a><a href="repeat.txt.html#." class="d">.</a>
+
+                This command fails when:                        <a name="E444" class="t">E444</a>
+                <a href="motion.txt.html#-" class="d">-</a> There <a href="motion.txt.html#is" class="d">is</a> only one <a href="#window" class="d">window</a> on the screen.
+                <a href="motion.txt.html#-" class="d">-</a> When <a href="options.txt.html#%27hidden%27" class="o">'hidden'</a> <a href="motion.txt.html#is" class="d">is</a> not set, [!] <a href="motion.txt.html#is" class="d">is</a> not used, the buffer has
+                  changes, and there <a href="motion.txt.html#is" class="d">is</a> no other <a href="#window" class="d">window</a> on this buffer.
+                Changes to the buffer are not written and won't get lost, so
+                this <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> "safe" command.
+
+<span class="c">CTRL-W CTRL-C                                          </span> <a name="CTRL-W_CTRL-C" class="t">CTRL-W_CTRL-C</a>
+                You might have expected that <a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="pattern.txt.html#CTRL-C" class="k">CTRL-C</a> closes the current
+                window, but that does not work, because the <a href="pattern.txt.html#CTRL-C" class="k">CTRL-C</a> cancels the
+                command.
+
+                                                        <a name="%3Ahide" class="t">:hide</a>
+:hid[e]
+:{count}hid[e]
+                Without <span class="s">{count}</span>: Quit the current window, unless <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> the
+                last <a href="#window" class="d">window</a> on the screen.
+                If <span class="s">{count}</span> <a href="motion.txt.html#is" class="d">is</a> given quit the <span class="s">{count}</span> window.
+                
+                The buffer becomes hidden (unless there <a href="motion.txt.html#is" class="d">is</a> another <a href="#window" class="d">window</a>
+                editing <a href="motion.txt.html#it" class="d">it</a> or <a href="options.txt.html#%27bufhidden%27" class="o">'bufhidden'</a> <a href="motion.txt.html#is" class="d">is</a> "unload"<a href="motion.txt.html#%2C" class="d">,</a> "delete" or "wipe").
+                If the <a href="#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> the last one in the current <a href="intro.txt.html#tab" class="d">tab</a> page the <a href="intro.txt.html#tab" class="d">tab</a>
+                page <a href="motion.txt.html#is" class="d">is</a> closed.  <a href="tabpage.txt.html#tab-page" class="l">tab-page</a> 
+                
+                The value of <a href="options.txt.html#%27hidden%27" class="o">'hidden'</a> <a href="motion.txt.html#is" class="d">is</a> irrelevant for this command.  Changes
+                to the buffer are not written and won't get lost, so this <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a>
+                "safe" command.
+
+:hid[e] <span class="s">{cmd}</span>   Execute <span class="s">{cmd}</span> with <a href="options.txt.html#%27hidden%27" class="o">'hidden'</a> <a href="motion.txt.html#is" class="d">is</a> set.  The previous value of
+                <a href="options.txt.html#%27hidden%27" class="o">'hidden'</a> <a href="motion.txt.html#is" class="d">is</a> restored after <span class="s">{cmd}</span> has been executed.
+                Example: 
+<span class="e">                    :hide edit Makefile</span>
+               This will edit "Makefile"<a href="motion.txt.html#%2C" class="d">,</a> and hide the current buffer if <a href="motion.txt.html#it" class="d">it</a>
+                has any changes.
+
+:on[ly][!]
+:{count}on[ly][!]
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="insert.txt.html#o" class="d">o</a>                                                <a name="CTRL-W_o" class="t">CTRL-W_o</a> <a name="E445" class="t">E445</a>
+<span class="c">CTRL-W CTRL-O                                  </span> <a name="CTRL-W_CTRL-O" class="t">CTRL-W_CTRL-O</a> <a name="%3Aon" class="t">:on</a> <a name="%3Aonly" class="t">:only</a>
+                Make the current <a href="#window" class="d">window</a> the only one on the screen.  All other
+                <a href="#windows" class="d">windows</a> are closed.  For <span class="s">{count}</span> see <a href="editing.txt.html#%3Aquit" class="l">:quit</a> command.
+                
+                When the <a href="options.txt.html#%27hidden%27" class="o">'hidden'</a> option <a href="motion.txt.html#is" class="d">is</a> set, all <a href="#buffers" class="d">buffers</a> in closed <a href="#windows" class="d">windows</a>
+                become hidden.
+                
+                When <a href="options.txt.html#%27hidden%27" class="o">'hidden'</a> <a href="motion.txt.html#is" class="d">is</a> not set, and the <a href="options.txt.html#%27autowrite%27" class="o">'autowrite'</a> option <a href="motion.txt.html#is" class="d">is</a> set,
+                modified <a href="#buffers" class="d">buffers</a> are written.  Otherwise, <a href="#windows" class="d">windows</a> that have
+                <a href="#buffers" class="d">buffers</a> that are modified are not removed, unless the [!] <a href="motion.txt.html#is" class="d">is</a>
+                given, then they become hidden.  But modified <a href="#buffers" class="d">buffers</a> are
+                never abandoned, so changes cannot get lost.
+
+<span class="h">==============================================================================</span>
+4. Moving cursor to other <a href="#windows" class="d">windows</a>                       <a name="window-move-cursor" class="t">window-move-cursor</a>
+
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="motion.txt.html#%3CDown%3E" class="s">&lt;Down&gt;</a>                                   <a name="CTRL-W_%3CDown%3E" class="t">CTRL-W_&lt;Down&gt;</a>
+<span class="c">CTRL-W CTRL-J                                  </span> <a name="CTRL-W_CTRL-J" class="t">CTRL-W_CTRL-J</a> <a name="CTRL-W_j" class="t">CTRL-W_j</a>
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="motion.txt.html#j" class="d">j</a>        Move cursor to Nth <a href="#window" class="d">window</a> below current one.  Uses the cursor
+                position to select between alternatives.
+
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="motion.txt.html#%3CUp%3E" class="s">&lt;Up&gt;</a>                                     <a name="CTRL-W_%3CUp%3E" class="t">CTRL-W_&lt;Up&gt;</a>
+<span class="c">CTRL-W CTRL-K                                  </span> <a name="CTRL-W_CTRL-K" class="t">CTRL-W_CTRL-K</a> <a name="CTRL-W_k" class="t">CTRL-W_k</a>
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="motion.txt.html#k" class="d">k</a>        Move cursor to Nth <a href="#window" class="d">window</a> above current one.  Uses the cursor
+                position to select between alternatives.
+
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="motion.txt.html#%3CLeft%3E" class="s">&lt;Left&gt;</a>                                   <a name="CTRL-W_%3CLeft%3E" class="t">CTRL-W_&lt;Left&gt;</a>
+<span class="c">CTRL-W CTRL-H                                  </span> <a name="CTRL-W_CTRL-H" class="t">CTRL-W_CTRL-H</a>
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a>                                     <a name="CTRL-W_%3CBS%3E" class="t">CTRL-W_&lt;BS&gt;</a> <a name="CTRL-W_h" class="t">CTRL-W_h</a>
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="motion.txt.html#h" class="d">h</a>        Move cursor to Nth <a href="#window" class="d">window</a> left of current one.  Uses the
+                cursor position to select between alternatives.
+
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="motion.txt.html#%3CRight%3E" class="s">&lt;Right&gt;</a>                                  <a name="CTRL-W_%3CRight%3E" class="t">CTRL-W_&lt;Right&gt;</a>
+<span class="c">CTRL-W CTRL-L                                  </span> <a name="CTRL-W_CTRL-L" class="t">CTRL-W_CTRL-L</a> <a name="CTRL-W_l" class="t">CTRL-W_l</a>
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="motion.txt.html#l" class="d">l</a>        Move cursor to Nth <a href="#window" class="d">window</a> right of current one.  Uses the
+                cursor position to select between alternatives.
+
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="motion.txt.html#w" class="d">w</a>                                        <a name="CTRL-W_w" class="t">CTRL-W_w</a> <a name="CTRL-W_CTRL-W" class="t">CTRL-W_CTRL-W</a>
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="index.txt.html#CTRL-W" class="k">CTRL-W</a>   Without count: move cursor to <a href="#window" class="d">window</a> below/right of the
+                current one.  If there <a href="motion.txt.html#is" class="d">is</a> no <a href="#window" class="d">window</a> below or right, <a href="motion.txt.html#go" class="d">go</a> to
+                top-left window.
+                With count: <a href="motion.txt.html#go" class="d">go</a> to Nth <a href="#window" class="d">window</a> (windows are numbered from
+                top-left to bottom-right).  To obtain the <a href="#window" class="d">window</a> number see
+                <a href="eval.txt.html#bufwinnr%28%29" class="l">bufwinnr()</a> and <a href="eval.txt.html#winnr%28%29" class="l">winnr()</a><a href="repeat.txt.html#." class="d">.</a>  When <a href="pattern.txt.html#N" class="d">N</a> <a href="motion.txt.html#is" class="d">is</a> larger than the number
+                of <a href="#windows" class="d">windows</a> <a href="motion.txt.html#go" class="d">go</a> to the last window.
+
+                                                <a name="CTRL-W_W" class="t">CTRL-W_W</a>
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="motion.txt.html#W" class="d">W</a>        Without count: move cursor to <a href="#window" class="d">window</a> above/left of current
+                one.  If there <a href="motion.txt.html#is" class="d">is</a> no <a href="#window" class="d">window</a> above or left, <a href="motion.txt.html#go" class="d">go</a> to bottom-right
+                window.  With count: <a href="motion.txt.html#go" class="d">go</a> to Nth window, like with <a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> w.
+
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="motion.txt.html#t" class="d">t</a>                                        <a name="CTRL-W_t" class="t">CTRL-W_t</a> <a name="CTRL-W_CTRL-T" class="t">CTRL-W_CTRL-T</a>
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="tagsrch.txt.html#CTRL-T" class="k">CTRL-T</a>   Move cursor to top-left window.
+
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="motion.txt.html#b" class="d">b</a>                                        <a name="CTRL-W_b" class="t">CTRL-W_b</a> <a name="CTRL-W_CTRL-B" class="t">CTRL-W_CTRL-B</a>
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="scroll.txt.html#CTRL-B" class="k">CTRL-B</a>   Move cursor to bottom-right window.
+
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="change.txt.html#p" class="d">p</a>                                        <a name="CTRL-W_p" class="t">CTRL-W_p</a> <a name="CTRL-W_CTRL-P" class="t">CTRL-W_CTRL-P</a>
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="motion.txt.html#CTRL-P" class="k">CTRL-P</a>   Go to previous (last accessed) window.
+
+                                                <a name="CTRL-W_P" class="t">CTRL-W_P</a> <a name="E441" class="t">E441</a>
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="change.txt.html#P" class="d">P</a>        Go to preview window.  When there <a href="motion.txt.html#is" class="d">is</a> no preview <a href="#window" class="d">window</a> this <a href="motion.txt.html#is" class="d">is</a>
+                an error.
+                <span class="s">{not available when compiled without the |+quickfix| feature}</span>
+
+If <a href="visual.txt.html#Visual" class="d">Visual</a> mode <a href="motion.txt.html#is" class="d">is</a> active and the new <a href="#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> not for the same buffer, the
+<a href="visual.txt.html#Visual" class="d">Visual</a> mode <a href="motion.txt.html#is" class="d">is</a> ended.  If the <a href="#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> on the same buffer, the cursor
+position <a href="motion.txt.html#is" class="d">is</a> set to keep the same <a href="visual.txt.html#Visual" class="d">Visual</a> area selected.
+
+                                                <a name="%3Awinc" class="t">:winc</a> <a name="%3Awincmd" class="t">:wincmd</a>
+These commands can also be executed with "<a href="#%3Awincmd" class="d">:wincmd</a>"<a href="cmdline.txt.html#%3A" class="d">:</a>
+
+:[count]winc[md] <span class="s">{arg}</span>
+                Like executing <a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> <span class="s">{arg}</span>.  Example: 
+<span class="e">                        :wincmd j</span>
+               Moves to the <a href="#window" class="d">window</a> below the current one.
+                This command <a href="motion.txt.html#is" class="d">is</a> useful when <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#Normal" class="d">Normal</a> mode cannot be used (for
+                the <a href="autocmd.txt.html#CursorHold" class="l">CursorHold</a> <a href="autocmd.txt.html#autocommand" class="d">autocommand</a> event).  Or when <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#Normal" class="d">Normal</a> mode
+                command <a href="motion.txt.html#is" class="d">is</a> inconvenient.
+                The <a href="intro.txt.html#count" class="d">count</a> can also be <a href="insert.txt.html#a" class="d">a</a> <a href="#window" class="d">window</a> number.  Example: 
+<span class="e">                        :exe nr . "wincmd w"</span>
+               This goes to <a href="#window" class="d">window</a> "nr"<a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+5. Moving <a href="#windows" class="d">windows</a> around                                <a name="window-moving" class="t">window-moving</a>
+
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="change.txt.html#r" class="d">r</a>                                <a name="CTRL-W_r" class="t">CTRL-W_r</a> <a name="CTRL-W_CTRL-R" class="t">CTRL-W_CTRL-R</a> <a name="E443" class="t">E443</a>
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="undo.txt.html#CTRL-R" class="k">CTRL-R</a>   Rotate <a href="#windows" class="d">windows</a> downwards/rightwards.  The first <a href="#window" class="d">window</a> becomes
+                the second one, the second one becomes the third one, etc.
+                The last <a href="#window" class="d">window</a> becomes the first window.  The cursor remains
+                in the same window.
+                This only works within the row or column of <a href="#windows" class="d">windows</a> that the
+                current <a href="#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> in.
+
+                                                <a name="CTRL-W_R" class="t">CTRL-W_R</a>
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="change.txt.html#R" class="d">R</a>        Rotate <a href="#windows" class="d">windows</a> upwards/leftwards.  The second <a href="#window" class="d">window</a> becomes
+                the first one, the third one becomes the second one, etc.  The
+                first <a href="#window" class="d">window</a> becomes the last window.  The cursor remains in
+                the same window.
+                This only works within the row or column of <a href="#windows" class="d">windows</a> that the
+                current <a href="#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> in.
+
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="change.txt.html#x" class="d">x</a>                                        <a name="CTRL-W_x" class="t">CTRL-W_x</a> <a name="CTRL-W_CTRL-X" class="t">CTRL-W_CTRL-X</a>
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="change.txt.html#CTRL-X" class="k">CTRL-X</a>   Without count: Exchange current <a href="#window" class="d">window</a> with next one.  If there
+                <a href="motion.txt.html#is" class="d">is</a> no next window, exchange with previous window.
+                With count: Exchange current <a href="#window" class="d">window</a> with Nth <a href="#window" class="d">window</a> (first
+                <a href="#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> 1).  The cursor <a href="motion.txt.html#is" class="d">is</a> <a href="change.txt.html#put" class="d">put</a> in the other window.
+                When vertical and horizontal <a href="#window" class="d">window</a> splits are mixed, the
+                exchange <a href="motion.txt.html#is" class="d">is</a> only done in the row or column of <a href="#windows" class="d">windows</a> that the
+                current <a href="#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> in.
+
+The following commands can be used to change the <a href="#window" class="d">window</a> layout.  For example,
+when there are two vertically split windows, <a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="various.txt.html#K" class="d">K</a> will change that in
+horizontally split windows.  <a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="motion.txt.html#H" class="d">H</a> does <a href="motion.txt.html#it" class="d">it</a> the other way around.
+
+                                                <a name="CTRL-W_K" class="t">CTRL-W_K</a>
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="various.txt.html#K" class="d">K</a>        Move the current <a href="#window" class="d">window</a> to be <a href="motion.txt.html#at" class="d">at</a> the very top, using the full
+                width of the screen.  This works like closing the current
+                <a href="#window" class="d">window</a> and then creating another one with "<a href="#%3Atopleft" class="d">:topleft</a> split"<a href="motion.txt.html#%2C" class="d">,</a>
+                except that the current <a href="#window" class="d">window</a> contents <a href="motion.txt.html#is" class="d">is</a> used for the new
+                window.
+
+                                                <a name="CTRL-W_J" class="t">CTRL-W_J</a>
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="change.txt.html#J" class="d">J</a>        Move the current <a href="#window" class="d">window</a> to be <a href="motion.txt.html#at" class="d">at</a> the very bottom, using the
+                full width of the screen.  This works like closing the current
+                <a href="#window" class="d">window</a> and then creating another one with "<a href="#%3Abotright" class="d">:botright</a> split"<a href="motion.txt.html#%2C" class="d">,</a>
+                except that the current <a href="#window" class="d">window</a> contents <a href="motion.txt.html#is" class="d">is</a> used for the new
+                window.
+
+                                                <a name="CTRL-W_H" class="t">CTRL-W_H</a>
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="motion.txt.html#H" class="d">H</a>        Move the current <a href="#window" class="d">window</a> to be <a href="motion.txt.html#at" class="d">at</a> the far left, using the
+                full height of the screen.  This works like closing the
+                current <a href="#window" class="d">window</a> and then creating another one with
+                "<a href="#%3Avert" class="d">:vert</a> topleft split"<a href="motion.txt.html#%2C" class="d">,</a> except that the current <a href="#window" class="d">window</a> contents
+                <a href="motion.txt.html#is" class="d">is</a> used for the new window.
+                <span class="s">{not available when compiled without the |+vertsplit| feature}</span>
+
+                                                <a name="CTRL-W_L" class="t">CTRL-W_L</a>
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="motion.txt.html#L" class="d">L</a>        Move the current <a href="#window" class="d">window</a> to be <a href="motion.txt.html#at" class="d">at</a> the far right, using the full
+                height of the screen.  This works like closing the
+                current <a href="#window" class="d">window</a> and then creating another one with
+                "<a href="#%3Avert" class="d">:vert</a> botright split"<a href="motion.txt.html#%2C" class="d">,</a> except that the current <a href="#window" class="d">window</a>
+                contents <a href="motion.txt.html#is" class="d">is</a> used for the new window.
+                <span class="s">{not available when compiled without the |+vertsplit| feature}</span>
+
+                                                <a name="CTRL-W_T" class="t">CTRL-W_T</a>
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="motion.txt.html#T" class="d">T</a>        Move the current <a href="#window" class="d">window</a> to <a href="insert.txt.html#a" class="d">a</a> new <a href="intro.txt.html#tab" class="d">tab</a> page.  This fails if
+                there <a href="motion.txt.html#is" class="d">is</a> only one <a href="#window" class="d">window</a> in the current <a href="intro.txt.html#tab" class="d">tab</a> page.
+                When <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> <a href="motion.txt.html#is" class="d">is</a> specified the new <a href="intro.txt.html#tab" class="d">tab</a> page will be opened
+                before the <a href="intro.txt.html#tab" class="d">tab</a> page with this index.  Otherwise <a href="motion.txt.html#it" class="d">it</a> comes after
+                the current <a href="intro.txt.html#tab" class="d">tab</a> page.
+
+<span class="h">==============================================================================</span>
+6. Window resizing                                      <a name="window-resize" class="t">window-resize</a>
+
+                                                <a name="CTRL-W_%3D" class="t">CTRL-W_=</a>
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="change.txt.html#%3D" class="d">=</a>        Make all <a href="#windows" class="d">windows</a> (almost) equally high and wide, but use
+                <a href="options.txt.html#%27winheight%27" class="o">'winheight'</a> and <a href="options.txt.html#%27winwidth%27" class="o">'winwidth'</a> for the current window.
+                Windows with <a href="options.txt.html#%27winfixheight%27" class="o">'winfixheight'</a> set keep their height and <a href="#windows" class="d">windows</a>
+                with <a href="options.txt.html#%27winfixwidth%27" class="o">'winfixwidth'</a> set keep their width.
+
+:res[ize] <a href="starting.txt.html#-N" class="d">-N</a>                                    <a name="%3Ares" class="t">:res</a> <a name="%3Aresize" class="t">:resize</a> <a name="CTRL-W_-" class="t">CTRL-W_-</a>
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="motion.txt.html#-" class="d">-</a>        Decrease current <a href="#window" class="d">window</a> height by <a href="pattern.txt.html#N" class="d">N</a> (default 1).
+                If used after <a href="#%3Avertical" class="l">:vertical</a><a href="cmdline.txt.html#%3A" class="d">:</a> decrease width by N.
+
+:res[ize] +N                                    <a name="CTRL-W_%2B" class="t">CTRL-W_+</a>
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="motion.txt.html#%2B" class="d">+</a>        Increase current <a href="#window" class="d">window</a> height by <a href="pattern.txt.html#N" class="d">N</a> (default 1).
+                If used after <a href="#%3Avertical" class="l">:vertical</a><a href="cmdline.txt.html#%3A" class="d">:</a> increase width by N.
+
+:res[ize] [N]
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <span class="k">CTRL-_</span>                                   <a name="CTRL-W_CTRL-_" class="t">CTRL-W_CTRL-_</a> <a name="CTRL-W__" class="t">CTRL-W__</a>
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="motion.txt.html#_" class="d">_</a>        Set current <a href="#window" class="d">window</a> height to <a href="pattern.txt.html#N" class="d">N</a> (default: highest possible).
+
+z{nr}&lt;CR&gt;       Set current <a href="#window" class="d">window</a> height to <span class="s">{nr}</span>.
+
+                                                <a name="CTRL-W_%3C" class="t">CTRL-W_&lt;</a>
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="change.txt.html#%3C" class="d">&lt;</a>        Decrease current <a href="#window" class="d">window</a> width by <a href="pattern.txt.html#N" class="d">N</a> (default 1).
+
+                                                <a name="CTRL-W_%3E" class="t">CTRL-W_&gt;</a>
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="change.txt.html#%3E" class="d">&gt;</a>        Increase current <a href="#window" class="d">window</a> width by <a href="pattern.txt.html#N" class="d">N</a> (default 1).
+
+<a href="#%3Avertical" class="d">:vertical</a> res[ize] [N]                  <a name="%3Avertical-resize" class="t">:vertical-resize</a> <a name="CTRL-W_bar" class="t">CTRL-W_bar</a>
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> |        Set current <a href="#window" class="d">window</a> width to <a href="pattern.txt.html#N" class="d">N</a> (default: widest possible).
+
+You can also resize <a href="insert.txt.html#a" class="d">a</a> <a href="#window" class="d">window</a> by dragging <a href="insert.txt.html#a" class="d">a</a> status line up or down with the
+mouse.  Or by dragging <a href="insert.txt.html#a" class="d">a</a> vertical separator line left or right.  This only
+works if the version of Vim that <a href="motion.txt.html#is" class="d">is</a> being used supports the mouse and the
+<a href="options.txt.html#%27mouse%27" class="o">'mouse'</a> option has been set to enable it.
+
+The option <a href="options.txt.html#%27winheight%27" class="o">'winheight'</a> ('wh') <a href="motion.txt.html#is" class="d">is</a> used to set the minimal <a href="#window" class="d">window</a> height of the
+current window.  This option <a href="motion.txt.html#is" class="d">is</a> used each time another <a href="#window" class="d">window</a> becomes the
+current window.  If the option <a href="motion.txt.html#is" class="d">is</a> '0', <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> disabled.  Set <a href="options.txt.html#%27winheight%27" class="o">'winheight'</a> to <a href="insert.txt.html#a" class="d">a</a>
+very large value, e.g., '9999', to make the current <a href="#window" class="d">window</a> always fill all
+available space.  Set <a href="motion.txt.html#it" class="d">it</a> to <a href="insert.txt.html#a" class="d">a</a> reasonable value, e.g., '10', to make editing in
+the current <a href="#window" class="d">window</a> comfortable.
+
+The equivalent <a href="options.txt.html#%27winwidth%27" class="o">'winwidth'</a> ('wiw') option <a href="motion.txt.html#is" class="d">is</a> used to set the minimal width of
+the current window.
+
+When the option <a href="options.txt.html#%27equalalways%27" class="o">'equalalways'</a> ('ea') <a href="motion.txt.html#is" class="d">is</a> set, all the <a href="#windows" class="d">windows</a> are automatically
+made the same size after splitting or closing <a href="insert.txt.html#a" class="d">a</a> window.  If you don't set this
+option, splitting <a href="insert.txt.html#a" class="d">a</a> <a href="#window" class="d">window</a> will reduce the size of the current <a href="#window" class="d">window</a> and
+leave the other <a href="#windows" class="d">windows</a> the same.  When closing <a href="insert.txt.html#a" class="d">a</a> window, the extra lines are
+given to the <a href="#window" class="d">window</a> above it.
+
+The <a href="options.txt.html#%27eadirection%27" class="o">'eadirection'</a> option <a href="vi_diff.txt.html#limits" class="d">limits</a> the direction in which the <a href="options.txt.html#%27equalalways%27" class="o">'equalalways'</a>
+option <a href="motion.txt.html#is" class="d">is</a> applied.  The default "both" resizes in both directions.  When the
+value <a href="motion.txt.html#is" class="d">is</a> "ver" only the heights of <a href="#windows" class="d">windows</a> are equalized.  Use this when you
+have manually resized <a href="insert.txt.html#a" class="d">a</a> vertically split <a href="#window" class="d">window</a> and want to keep this width.
+Likewise, "hor" causes only the widths of <a href="#windows" class="d">windows</a> to be equalized.
+
+The option <a href="options.txt.html#%27cmdheight%27" class="o">'cmdheight'</a> ('ch') <a href="motion.txt.html#is" class="d">is</a> used to set the height of the command-line.
+If you are annoyed by the <a href="message.txt.html#hit-enter" class="l">hit-enter</a> prompt for long messages, set this
+option to 2 or 3.
+
+If there <a href="motion.txt.html#is" class="d">is</a> only one window, resizing that <a href="#window" class="d">window</a> will also change the command
+line height.  If there are several windows, resizing the current <a href="#window" class="d">window</a> will
+also change the height of the <a href="#window" class="d">window</a> below <a href="motion.txt.html#it" class="d">it</a> (and sometimes the <a href="#window" class="d">window</a> above
+it).
+
+The minimal height and width of <a href="insert.txt.html#a" class="d">a</a> <a href="#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> set with <a href="options.txt.html#%27winminheight%27" class="o">'winminheight'</a> and
+<a href="options.txt.html#%27winminwidth%27" class="o">'winminwidth'</a>.  These are hard values, <a href="insert.txt.html#a" class="d">a</a> <a href="#window" class="d">window</a> will never become smaller.
+
+<span class="h">==============================================================================</span>
+7. Argument and buffer <a href="eval.txt.html#list" class="d">list</a> commands                    <a name="buffer-list" class="t">buffer-list</a>
+
+<span class="h">      args list                buffer list         meaning </span>
+1. :[N]argument [N]     11. :[N]buffer [N]      to arg/buf <a href="pattern.txt.html#N" class="d">N</a>
+2. :[N]next [file ..]   12. :[N]bnext [N]       to Nth next arg/buf
+3. :[N]Next [N]         13. :[N]bNext [N]       to Nth previous arg/buf
+4. :[N]previous [N]     14. :[N]bprevious [N]   to Nth previous arg/buf
+5. <a href="editing.txt.html#%3Arewind" class="d">:rewind</a> <a href="pattern.txt.html#%2F" class="d">/</a> <a href="editing.txt.html#%3Afirst" class="d">:first</a>     15. <a href="#%3Abrewind" class="d">:brewind</a> <a href="pattern.txt.html#%2F" class="d">/</a> <a href="#%3Abfirst" class="d">:bfirst</a>  to first arg/buf
+6. <a href="editing.txt.html#%3Alast" class="d">:last</a>                16. <a href="#%3Ablast" class="d">:blast</a>              to last arg/buf
+7. <a href="#%3Aall" class="d">:all</a>                 17. <a href="#%3Aball" class="d">:ball</a>               edit all args/buffers
+                        18. <a href="#%3Aunhide" class="d">:unhide</a>             edit all loaded <a href="#buffers" class="d">buffers</a>
+                        19. :[N]bmod [N]        to Nth modified buf
+
+<span class="h">  split &amp; args list       split &amp; buffer list      meaning </span>
+21. :[N]sargument [N]   31. :[N]sbuffer [N]     split <a href="motion.txt.html#%2B" class="d">+</a> to arg/buf <a href="pattern.txt.html#N" class="d">N</a>
+22. :[N]snext [file ..] 32. :[N]sbnext [N]      split <a href="motion.txt.html#%2B" class="d">+</a> to Nth next arg/buf
+23. :[N]sNext [N]       33. :[N]sbNext [N]      split <a href="motion.txt.html#%2B" class="d">+</a> to Nth previous arg/buf
+24. :[N]sprevious [N]   34. :[N]sbprevious [N]  split <a href="motion.txt.html#%2B" class="d">+</a> to Nth previous arg/buf
+25. <a href="#%3Asrewind" class="d">:srewind</a> <a href="pattern.txt.html#%2F" class="d">/</a> <a href="#%3Asfirst" class="d">:sfirst</a>  35. <a href="#%3Asbrewind" class="d">:sbrewind</a> <a href="pattern.txt.html#%2F" class="d">/</a> <a href="#%3Asbfirst" class="d">:sbfirst</a> split <a href="motion.txt.html#%2B" class="d">+</a> to first arg/buf
+26. <a href="#%3Aslast" class="d">:slast</a>              36. <a href="#%3Asblast" class="d">:sblast</a>             split <a href="motion.txt.html#%2B" class="d">+</a> to last arg/buf
+27. <a href="#%3Asall" class="d">:sall</a>               37. <a href="#%3Asball" class="d">:sball</a>              edit all args/buffers
+                        38. <a href="#%3Asunhide" class="d">:sunhide</a>            edit all loaded <a href="#buffers" class="d">buffers</a>
+                        39. :[N]sbmod [N]       split <a href="motion.txt.html#%2B" class="d">+</a> to Nth modified buf
+
+40. <a href="editing.txt.html#%3Aargs" class="d">:args</a>               <a href="eval.txt.html#list" class="d">list</a> of arguments
+41. <a href="#%3Abuffers" class="d">:buffers</a>            <a href="eval.txt.html#list" class="d">list</a> of <a href="#buffers" class="d">buffers</a>
+
+The meaning of [N] depends on the command:
+ [N] <a href="motion.txt.html#is" class="d">is</a> the number of <a href="#buffers" class="d">buffers</a> to <a href="motion.txt.html#go" class="d">go</a> forward/backward on 2/12/22/32,
+     3/13/23/33, and 4/14/24/34
+ [N] <a href="motion.txt.html#is" class="d">is</a> an argument number, defaulting to current argument, for 1 and 21
+ [N] <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> buffer number, defaulting to current buffer, for 11 and 31
+ [N] <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> for 19 and 39
+
+<span class="n">Note:</span> "<a href="editing.txt.html#%3Anext" class="d">:next</a>" <a href="motion.txt.html#is" class="d">is</a> an exception, because <a href="motion.txt.html#it" class="d">it</a> <a href="vim_faq.txt.html#must" class="d">must</a> accept <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of file names
+for compatibility with Vi.
+
+
+The argument <a href="eval.txt.html#list" class="d">list</a> and multiple <a href="#windows" class="d">windows</a>
+<span class="h">--------------------------------------</span>
+
+The current position in the argument <a href="eval.txt.html#list" class="d">list</a> can be different for each window.
+Remember that when doing "<a href="editing.txt.html#%3Ae" class="d">:e</a> file"<a href="motion.txt.html#%2C" class="d">,</a> the position in the argument <a href="eval.txt.html#list" class="d">list</a> stays
+the same, but you are not editing the file <a href="motion.txt.html#at" class="d">at</a> that position.  To indicate
+this, the file message (and the title, if you have one) shows
+"(file (N) of M)"<a href="motion.txt.html#%2C" class="d">,</a> where "(N)" <a href="motion.txt.html#is" class="d">is</a> the current position in the file list, and
+"<a href="motion.txt.html#M" class="d">M</a>" the number of files in the file list.
+
+All the entries in the argument <a href="eval.txt.html#list" class="d">list</a> are added to the buffer list.  Thus, you
+can also get to them with the buffer <a href="eval.txt.html#list" class="d">list</a> commands, like "<a href="#%3Abnext" class="d">:bnext</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+:[N]al[l][!] [N]                                <a name="%3Aal" class="t">:al</a> <a name="%3Aall" class="t">:all</a> <a name="%3Asal" class="t">:sal</a> <a name="%3Asall" class="t">:sall</a>
+:[N]sal[l][!] [N]
+                Rearrange the screen to open one <a href="#window" class="d">window</a> for each argument.
+                All other <a href="#windows" class="d">windows</a> are closed.  When <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> <a href="motion.txt.html#is" class="d">is</a> given, this <a href="motion.txt.html#is" class="d">is</a>
+                the maximum number of <a href="#windows" class="d">windows</a> to open.
+                With the <a href="tabpage.txt.html#%3Atab" class="l">:tab</a> modifier open <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#tab" class="d">tab</a> page for each argument.
+                When there are more arguments than <a href="options.txt.html#%27tabpagemax%27" class="o">'tabpagemax'</a> further ones
+                become split <a href="#windows" class="d">windows</a> in the last <a href="intro.txt.html#tab" class="d">tab</a> page.
+                When the <a href="options.txt.html#%27hidden%27" class="o">'hidden'</a> option <a href="motion.txt.html#is" class="d">is</a> set, all <a href="#buffers" class="d">buffers</a> in closed <a href="#windows" class="d">windows</a>
+                become hidden.
+                When <a href="options.txt.html#%27hidden%27" class="o">'hidden'</a> <a href="motion.txt.html#is" class="d">is</a> not set, and the <a href="options.txt.html#%27autowrite%27" class="o">'autowrite'</a> option <a href="motion.txt.html#is" class="d">is</a> set,
+                modified <a href="#buffers" class="d">buffers</a> are written.  Otherwise, <a href="#windows" class="d">windows</a> that have
+                <a href="#buffers" class="d">buffers</a> that are modified are not removed, unless the [!] <a href="motion.txt.html#is" class="d">is</a>
+                given, then they become hidden.  But modified <a href="#buffers" class="d">buffers</a> are
+                never abandoned, so changes cannot get lost.
+                [N] <a href="motion.txt.html#is" class="d">is</a> the maximum number of <a href="#windows" class="d">windows</a> to open.  <a href="options.txt.html#%27winheight%27" class="o">'winheight'</a>
+                also <a href="vi_diff.txt.html#limits" class="d">limits</a> the number of <a href="#windows" class="d">windows</a> opened ('winwidth' if
+                <a href="#%3Avertical" class="l">:vertical</a> was prepended).
+                Buf/Win Enter/Leave autocommands are not executed for the new
+                <a href="#windows" class="d">windows</a> here, that's only done when they are really entered.
+
+:[N]sa[rgument][!] <a href="editing.txt.html#%5B%2B%2Bopt%5D" class="s">[++opt]</a> <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a> [N]                   <a name="%3Asa" class="t">:sa</a> <a name="%3Asargument" class="t">:sargument</a>
+                Short for "<a href="#%3Asplit" class="d">:split</a> | argument [N]"<a href="cmdline.txt.html#%3A" class="d">:</a> split <a href="#window" class="d">window</a> and <a href="motion.txt.html#go" class="d">go</a> to Nth
+                argument.  But when there <a href="motion.txt.html#is" class="d">is</a> no such argument, the <a href="#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a>
+                not split.  Also see <a href="editing.txt.html#%2B%2Bopt" class="l">++opt</a> and <a href="editing.txt.html#%2Bcmd" class="l">+cmd</a><a href="repeat.txt.html#." class="d">.</a>
+
+:[N]sn[ext][!] <a href="editing.txt.html#%5B%2B%2Bopt%5D" class="s">[++opt]</a> <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a> [file ..]                 <a name="%3Asn" class="t">:sn</a> <a name="%3Asnext" class="t">:snext</a>
+                Short for "<a href="#%3Asplit" class="d">:split</a> | [N]next"<a href="cmdline.txt.html#%3A" class="d">:</a> split <a href="#window" class="d">window</a> and <a href="motion.txt.html#go" class="d">go</a> to Nth next
+                argument.  But when there <a href="motion.txt.html#is" class="d">is</a> no next file, the <a href="#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> not
+                split.  Also see <a href="editing.txt.html#%2B%2Bopt" class="l">++opt</a> and <a href="editing.txt.html#%2Bcmd" class="l">+cmd</a><a href="repeat.txt.html#." class="d">.</a>
+
+:[N]spr[evious][!] <a href="editing.txt.html#%5B%2B%2Bopt%5D" class="s">[++opt]</a> <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a> [N]                   <a name="%3Aspr" class="t">:spr</a> <a name="%3Asprevious" class="t">:sprevious</a>
+:[N]sN[ext][!] <a href="editing.txt.html#%5B%2B%2Bopt%5D" class="s">[++opt]</a> <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a> [N]                       <a name="%3AsN" class="t">:sN</a> <a name="%3AsNext" class="t">:sNext</a>
+                Short for "<a href="#%3Asplit" class="d">:split</a> | [N]Next"<a href="cmdline.txt.html#%3A" class="d">:</a> split <a href="#window" class="d">window</a> and <a href="motion.txt.html#go" class="d">go</a> to Nth
+                previous argument.  But when there <a href="motion.txt.html#is" class="d">is</a> no previous file, the
+                <a href="#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> not split.  Also see <a href="editing.txt.html#%2B%2Bopt" class="l">++opt</a> and <a href="editing.txt.html#%2Bcmd" class="l">+cmd</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                <a name="%3Asre" class="t">:sre</a> <a name="%3Asrewind" class="t">:srewind</a>
+:sre[wind][!] <a href="editing.txt.html#%5B%2B%2Bopt%5D" class="s">[++opt]</a> <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a>
+                Short for "<a href="#%3Asplit" class="d">:split</a> | rewind"<a href="cmdline.txt.html#%3A" class="d">:</a> split <a href="#window" class="d">window</a> and <a href="motion.txt.html#go" class="d">go</a> to first
+                argument.  But when there <a href="motion.txt.html#is" class="d">is</a> no argument list, the <a href="#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a>
+                not split.  Also see <a href="editing.txt.html#%2B%2Bopt" class="l">++opt</a> and <a href="editing.txt.html#%2Bcmd" class="l">+cmd</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                <a name="%3Asfir" class="t">:sfir</a> <a name="%3Asfirst" class="t">:sfirst</a>
+:sfir[st] <a href="editing.txt.html#%5B%2B%2Bopt%5D" class="s">[++opt]</a> <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a>
+                Same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Asrewind" class="d">:srewind</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+                                                <a name="%3Asla" class="t">:sla</a> <a name="%3Aslast" class="t">:slast</a>
+:sla[st][!] <a href="editing.txt.html#%5B%2B%2Bopt%5D" class="s">[++opt]</a> <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a>
+                Short for "<a href="#%3Asplit" class="d">:split</a> | last"<a href="cmdline.txt.html#%3A" class="d">:</a> split <a href="#window" class="d">window</a> and <a href="motion.txt.html#go" class="d">go</a> to last
+                argument.  But when there <a href="motion.txt.html#is" class="d">is</a> no argument list, the <a href="#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a>
+                not split.  Also see <a href="editing.txt.html#%2B%2Bopt" class="l">++opt</a> and <a href="editing.txt.html#%2Bcmd" class="l">+cmd</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                <a name="%3Adr" class="t">:dr</a> <a name="%3Adrop" class="t">:drop</a>
+:dr[op] <a href="editing.txt.html#%5B%2B%2Bopt%5D" class="s">[++opt]</a> <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a> <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a> ..
+                Edit the first <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a> in <a href="insert.txt.html#a" class="d">a</a> window.
+                <a href="motion.txt.html#-" class="d">-</a> If the file <a href="motion.txt.html#is" class="d">is</a> already open in <a href="insert.txt.html#a" class="d">a</a> <a href="#window" class="d">window</a> change to that
+                  window.
+                <a href="motion.txt.html#-" class="d">-</a> If the file <a href="motion.txt.html#is" class="d">is</a> not open in <a href="insert.txt.html#a" class="d">a</a> <a href="#window" class="d">window</a> edit the file in the
+                  current window.  If the current buffer can't be <a href="editing.txt.html#abandon" class="l">abandon</a>ed,
+                  the <a href="#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> split first.
+                <a href="motion.txt.html#-" class="d">-</a> Windows that are not in the argument <a href="eval.txt.html#list" class="d">list</a> or are not full
+                  width will be closed if possible.
+                The <a href="editing.txt.html#argument-list" class="l">argument-list</a> <a href="motion.txt.html#is" class="d">is</a> set, like with the <a href="editing.txt.html#%3Anext" class="l">:next</a> command.
+                The purpose of this command <a href="motion.txt.html#is" class="d">is</a> that <a href="motion.txt.html#it" class="d">it</a> can be used from <a href="insert.txt.html#a" class="d">a</a>
+                program that wants Vim to edit another file, e.g., <a href="insert.txt.html#a" class="d">a</a> debugger.
+                When using the <a href="tabpage.txt.html#%3Atab" class="l">:tab</a> modifier each argument <a href="motion.txt.html#is" class="d">is</a> opened in <a href="insert.txt.html#a" class="d">a</a>
+                <a href="intro.txt.html#tab" class="d">tab</a> page.  The last <a href="#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> used if it's empty.
+                Also see <a href="editing.txt.html#%2B%2Bopt" class="l">++opt</a> and <a href="editing.txt.html#%2Bcmd" class="l">+cmd</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+8. Do <a href="insert.txt.html#a" class="d">a</a> command in all <a href="#buffers" class="d">buffers</a> or <a href="#windows" class="d">windows</a>                       <a name="list-repeat" class="t">list-repeat</a>
+
+                                                        <a name="%3Awindo" class="t">:windo</a>
+:[range]windo <span class="s">{cmd}</span>     Execute <span class="s">{cmd}</span> in each <a href="#window" class="d">window</a> or if <a href="cmdline.txt.html#%5Brange%5D" class="s">[range]</a> <a href="motion.txt.html#is" class="d">is</a> given
+                        only in <a href="#windows" class="d">windows</a> for which the <a href="#window" class="d">window</a> number lies in
+                        the <a href="cmdline.txt.html#%5Brange%5D" class="s">[range]</a>.  It works like doing this: 
+<span class="e">                                CTRL-W t</span>
+<span class="e">                                :{cmd}</span>
+<span class="e">                                CTRL-W w</span>
+<span class="e">                                :{cmd}</span>
+<span class="e">                                etc.</span>
+                       This only operates in the current <a href="intro.txt.html#tab" class="d">tab</a> page.
+                        When an error <a href="motion.txt.html#is" class="d">is</a> detected on one window, further
+                        <a href="#windows" class="d">windows</a> will not be visited.
+                        The last <a href="#window" class="d">window</a> (or where an error occurred) becomes
+                        the current window.
+                        <span class="s">{cmd}</span> can contain <a href="motion.txt.html#%27" class="d">'</a>|<a href="motion.txt.html#%27" class="d">'</a> to concatenate several commands.
+                        <span class="s">{cmd}</span> <a href="vim_faq.txt.html#must" class="d">must</a> not open or close <a href="#windows" class="d">windows</a> or reorder them.
+                        <span class="s">{not in Vi}</span>
+                        Also see <a href="tabpage.txt.html#%3Atabdo" class="l">:tabdo</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="editing.txt.html#%3Aargdo" class="l">:argdo</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="#%3Abufdo" class="l">:bufdo</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="quickfix.txt.html#%3Acdo" class="l">:cdo</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="quickfix.txt.html#%3Aldo" class="l">:ldo</a><a href="motion.txt.html#%2C" class="d">,</a>
+                        <a href="quickfix.txt.html#%3Acfdo" class="l">:cfdo</a> and <a href="quickfix.txt.html#%3Alfdo" class="l">:lfdo</a>
+
+                                                        <a name="%3Abufdo" class="t">:bufdo</a>
+:[range]bufdo[!] <span class="s">{cmd}</span>  Execute <span class="s">{cmd}</span> in each buffer in the buffer <a href="eval.txt.html#list" class="d">list</a> or if
+                        <a href="cmdline.txt.html#%5Brange%5D" class="s">[range]</a> <a href="motion.txt.html#is" class="d">is</a> given only for <a href="#buffers" class="d">buffers</a> for which their
+                        buffer number <a href="motion.txt.html#is" class="d">is</a> in the <a href="cmdline.txt.html#%5Brange%5D" class="s">[range]</a>.  It works like doing
+                        this: 
+<span class="e">                                :bfirst</span>
+<span class="e">                                :{cmd}</span>
+<span class="e">                                :bnext</span>
+<span class="e">                                :{cmd}</span>
+<span class="e">                                etc.</span>
+                       When the current file can't be <a href="editing.txt.html#abandon" class="l">abandon</a>ed and the [!]
+                        <a href="motion.txt.html#is" class="d">is</a> not present, the command fails.
+                        When an error <a href="motion.txt.html#is" class="d">is</a> detected on one buffer, further
+                        <a href="#buffers" class="d">buffers</a> will not be visited.
+                        Unlisted <a href="#buffers" class="d">buffers</a> are skipped.
+                        The last buffer (or where an error occurred) becomes
+                        the current buffer.
+                        <span class="s">{cmd}</span> can contain <a href="motion.txt.html#%27" class="d">'</a>|<a href="motion.txt.html#%27" class="d">'</a> to concatenate several commands.
+                        <span class="s">{cmd}</span> <a href="vim_faq.txt.html#must" class="d">must</a> not delete <a href="#buffers" class="d">buffers</a> or add <a href="#buffers" class="d">buffers</a> to the
+                        buffer list.
+                        <span class="n">Note:</span> While this command <a href="motion.txt.html#is" class="d">is</a> executing, the <a href="autocmd.txt.html#Syntax" class="d">Syntax</a>
+                        <a href="autocmd.txt.html#autocommand" class="d">autocommand</a> event <a href="motion.txt.html#is" class="d">is</a> disabled by adding <a href="motion.txt.html#it" class="d">it</a> to
+                        <a href="options.txt.html#%27eventignore%27" class="o">'eventignore'</a>.  This considerably speeds up editing
+                        each buffer.
+                        <span class="s">{not in Vi}</span>
+                        Also see <a href="tabpage.txt.html#%3Atabdo" class="l">:tabdo</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="editing.txt.html#%3Aargdo" class="l">:argdo</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="#%3Awindo" class="l">:windo</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="quickfix.txt.html#%3Acdo" class="l">:cdo</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="quickfix.txt.html#%3Aldo" class="l">:ldo</a><a href="motion.txt.html#%2C" class="d">,</a>
+                        <a href="quickfix.txt.html#%3Acfdo" class="l">:cfdo</a> and <a href="quickfix.txt.html#%3Alfdo" class="l">:lfdo</a>
+
+Examples: 
+<span class="e"></span>
+<span class="e">        :windo set nolist nofoldcolumn | normal zn</span>
+<span class="e"></span>
+This resets the <a href="options.txt.html#%27list%27" class="o">'list'</a> option and disables <a href="fold.txt.html#folding" class="d">folding</a> in all windows. 
+<span class="e"></span>
+<span class="e">        :bufdo set fileencoding= | update</span>
+<span class="e"></span>
+This resets the <a href="options.txt.html#%27fileencoding%27" class="o">'fileencoding'</a> in each buffer and writes <a href="motion.txt.html#it" class="d">it</a> if this changed
+the buffer.  The result <a href="motion.txt.html#is" class="d">is</a> that all <a href="#buffers" class="d">buffers</a> will use the <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> encoding
+(if conversion works properly).
+
+<span class="h">==============================================================================</span>
+9. Tag or file name under the cursor                    <a name="window-tag" class="t">window-tag</a>
+
+                                                        <a name="%3Asta" class="t">:sta</a> <a name="%3Astag" class="t">:stag</a>
+:sta[g][!] <span class="s">[tagname]</span>
+                Does ":tag[!] <span class="s">[tagname]</span>" and splits the <a href="#window" class="d">window</a> for the found
+                tag.  See also <a href="tagsrch.txt.html#%3Atag" class="l">:tag</a><a href="repeat.txt.html#." class="d">.</a>
+
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="index.txt.html#%5D" class="d">]</a>                                        <a name="CTRL-W_%5D" class="t">CTRL-W_]</a> <a name="CTRL-W_CTRL-%5D" class="t">CTRL-W_CTRL-]</a>
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="tagsrch.txt.html#CTRL-%5D" class="k">CTRL-]</a>   Split current <a href="#window" class="d">window</a> in two.  Use identifier under cursor <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a>
+                <a href="tagsrch.txt.html#tag" class="d">tag</a> and jump to <a href="motion.txt.html#it" class="d">it</a> in the new upper window.
+                In <a href="visual.txt.html#Visual" class="d">Visual</a> mode uses the Visually selected text <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> tag.
+                Make new <a href="#window" class="d">window</a> <a href="pattern.txt.html#N" class="d">N</a> high.
+
+                                                        <a name="CTRL-W_g%5D" class="t">CTRL-W_g]</a>
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="index.txt.html#g" class="d">g</a> <a href="index.txt.html#%5D" class="d">]</a>      Split current <a href="#window" class="d">window</a> in two.  Use identifier under cursor <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a>
+                <a href="tagsrch.txt.html#tag" class="d">tag</a> and perform "<a href="tagsrch.txt.html#%3Atselect" class="d">:tselect</a>" on <a href="motion.txt.html#it" class="d">it</a> in the new upper window.
+                In <a href="visual.txt.html#Visual" class="d">Visual</a> mode uses the Visually selected text <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> tag.
+                Make new <a href="#window" class="d">window</a> <a href="pattern.txt.html#N" class="d">N</a> high.
+
+                                                        <a name="CTRL-W_g_CTRL-%5D" class="t">CTRL-W_g_CTRL-]</a>
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="index.txt.html#g" class="d">g</a> <a href="tagsrch.txt.html#CTRL-%5D" class="k">CTRL-]</a> Split current <a href="#window" class="d">window</a> in two.  Use identifier under cursor <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a>
+                <a href="tagsrch.txt.html#tag" class="d">tag</a> and perform "<a href="tagsrch.txt.html#%3Atjump" class="d">:tjump</a>" on <a href="motion.txt.html#it" class="d">it</a> in the new upper window.
+                In <a href="visual.txt.html#Visual" class="d">Visual</a> mode uses the Visually selected text <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> tag.
+                Make new <a href="#window" class="d">window</a> <a href="pattern.txt.html#N" class="d">N</a> high.
+
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="motion.txt.html#f" class="d">f</a>                                        <a name="CTRL-W_f" class="t">CTRL-W_f</a> <a name="CTRL-W_CTRL-F" class="t">CTRL-W_CTRL-F</a>
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="scroll.txt.html#CTRL-F" class="k">CTRL-F</a>   Split current <a href="#window" class="d">window</a> in two.  Edit file name under cursor.
+                Like "<a href="#%3Asplit" class="d">:split</a> <a href="editing.txt.html#gf" class="d">gf</a>"<a href="motion.txt.html#%2C" class="d">,</a> but <a href="#window" class="d">window</a> isn't split if the file does not
+                exist.
+                Uses the <a href="options.txt.html#%27path%27" class="o">'path'</a> variable <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of directory names where to
+                look for the file.  Also the path for current file <a href="motion.txt.html#is" class="d">is</a>
+                used to search for the file name.
+                If the name <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> hypertext link that looks like
+                "type://machine/path"<a href="motion.txt.html#%2C" class="d">,</a> only "/path" <a href="motion.txt.html#is" class="d">is</a> used.
+                If <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> <a href="motion.txt.html#is" class="d">is</a> given, the count'th matching file <a href="motion.txt.html#is" class="d">is</a> edited.
+                {not available when the <a href="various.txt.html#%2Bfile_in_path" class="l">+file_in_path</a> feature was disabled
+                <a href="motion.txt.html#at" class="d">at</a> compile time}
+
+<span class="c">CTRL-W F                                               </span> <a name="CTRL-W_F" class="t">CTRL-W_F</a>
+                Split current <a href="#window" class="d">window</a> in two.  Edit file name under cursor and
+                jump to the line number following the file name. See <a href="editing.txt.html#gF" class="l">gF</a> for
+                details on how the line number <a href="motion.txt.html#is" class="d">is</a> obtained.
+                {not available when the <a href="various.txt.html#%2Bfile_in_path" class="l">+file_in_path</a> feature was disabled
+                <a href="motion.txt.html#at" class="d">at</a> compile time}
+
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="editing.txt.html#gf" class="d">gf</a>                                               <a name="CTRL-W_gf" class="t">CTRL-W_gf</a>
+                Open <a href="insert.txt.html#a" class="d">a</a> new <a href="intro.txt.html#tab" class="d">tab</a> page and edit the file name under the cursor.
+                Like "<a href="intro.txt.html#tab" class="d">tab</a> split" and "<a href="editing.txt.html#gf" class="d">gf</a>"<a href="motion.txt.html#%2C" class="d">,</a> but the new <a href="intro.txt.html#tab" class="d">tab</a> page isn't created
+                if the file does not exist.
+                {not available when the <a href="various.txt.html#%2Bfile_in_path" class="l">+file_in_path</a> feature was disabled
+                <a href="motion.txt.html#at" class="d">at</a> compile time}
+
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="editing.txt.html#gF" class="d">gF</a>                                               <a name="CTRL-W_gF" class="t">CTRL-W_gF</a>
+                Open <a href="insert.txt.html#a" class="d">a</a> new <a href="intro.txt.html#tab" class="d">tab</a> page and edit the file name under the cursor
+                and jump to the line number following the file name.  Like
+                "<a href="intro.txt.html#tab" class="d">tab</a> split" and "<a href="editing.txt.html#gF" class="d">gF</a>"<a href="motion.txt.html#%2C" class="d">,</a> but the new <a href="intro.txt.html#tab" class="d">tab</a> page isn't created if
+                the file does not exist.
+                {not available when the <a href="various.txt.html#%2Bfile_in_path" class="l">+file_in_path</a> feature was disabled
+                <a href="motion.txt.html#at" class="d">at</a> compile time}
+
+Also see <a href="tagsrch.txt.html#CTRL-W_CTRL-I" class="l">CTRL-W_CTRL-I</a><a href="cmdline.txt.html#%3A" class="d">:</a> open <a href="#window" class="d">window</a> for an included file that includes
+the keyword under the cursor.
+
+<span class="h">==============================================================================</span>
+10. The preview <a href="#window" class="d">window</a>                          <a name="preview-window" class="t">preview-window</a>
+
+The preview <a href="#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> special <a href="#window" class="d">window</a> to show (preview) another file.  It <a href="motion.txt.html#is" class="d">is</a>
+normally <a href="insert.txt.html#a" class="d">a</a> small <a href="#window" class="d">window</a> used to show an include file or definition of <a href="insert.txt.html#a" class="d">a</a>
+function.
+<span class="s">{not available when compiled without the |+quickfix| feature}</span>
+
+There can be only one preview <a href="#window" class="d">window</a> (per <a href="intro.txt.html#tab" class="d">tab</a> page).  It <a href="motion.txt.html#is" class="d">is</a> created with one
+of the commands below.  The <a href="options.txt.html#%27previewheight%27" class="o">'previewheight'</a> option can be set to specify the
+height of the preview <a href="#window" class="d">window</a> when it's opened.  The <a href="options.txt.html#%27previewwindow%27" class="o">'previewwindow'</a> option <a href="motion.txt.html#is" class="d">is</a>
+set in the preview <a href="#window" class="d">window</a> to be able to recognize it.  The <a href="options.txt.html#%27winfixheight%27" class="o">'winfixheight'</a>
+option <a href="motion.txt.html#is" class="d">is</a> set to have <a href="motion.txt.html#it" class="d">it</a> keep the same height when opening/closing other
+windows.
+
+                                                <a name="%3Apta" class="t">:pta</a> <a name="%3Aptag" class="t">:ptag</a>
+:pta[g][!] <span class="s">[tagname]</span>
+                Does ":tag[!] <span class="s">[tagname]</span>" and shows the found <a href="tagsrch.txt.html#tag" class="d">tag</a> in <a href="insert.txt.html#a" class="d">a</a>
+                "Preview" <a href="#window" class="d">window</a> without <a href="change.txt.html#changing" class="d">changing</a> the current buffer or cursor
+                position.  If <a href="insert.txt.html#a" class="d">a</a> "Preview" <a href="#window" class="d">window</a> already exists, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> re-used
+                (like <a href="insert.txt.html#a" class="d">a</a> <a href="helphelp.txt.html#help" class="d">help</a> <a href="#window" class="d">window</a> is).  If <a href="insert.txt.html#a" class="d">a</a> new one <a href="motion.txt.html#is" class="d">is</a> opened,
+                <a href="options.txt.html#%27previewheight%27" class="o">'previewheight'</a> <a href="motion.txt.html#is" class="d">is</a> used for the height of the window.   See
+                also <a href="tagsrch.txt.html#%3Atag" class="l">:tag</a><a href="repeat.txt.html#." class="d">.</a>
+                See below for an example. <a href="#CursorHold-example" class="l">CursorHold-example</a>
+                Small difference from <a href="tagsrch.txt.html#%3Atag" class="l">:tag</a><a href="cmdline.txt.html#%3A" class="d">:</a> When <span class="s">[tagname]</span> <a href="motion.txt.html#is" class="d">is</a> equal to the
+                already displayed tag, the position in the matching <a href="tagsrch.txt.html#tag" class="d">tag</a> <a href="eval.txt.html#list" class="d">list</a>
+                <a href="motion.txt.html#is" class="d">is</a> not reset.  This makes the <a href="autocmd.txt.html#CursorHold" class="d">CursorHold</a> example work after <a href="insert.txt.html#a" class="d">a</a>
+                <a href="tagsrch.txt.html#%3Aptnext" class="l">:ptnext</a><a href="repeat.txt.html#." class="d">.</a>
+
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="index.txt.html#z" class="d">z</a>                                        <a name="CTRL-W_z" class="t">CTRL-W_z</a>
+<span class="c">CTRL-W CTRL-Z                                  </span> <a name="CTRL-W_CTRL-Z" class="t">CTRL-W_CTRL-Z</a> <a name="%3Apc" class="t">:pc</a> <a name="%3Apclose" class="t">:pclose</a>
+:pc[lose][!]    Close any "Preview" <a href="#window" class="d">window</a> currently open.  When the <a href="options.txt.html#%27hidden%27" class="o">'hidden'</a>
+                option <a href="motion.txt.html#is" class="d">is</a> set, or when the buffer was changed and the [!] <a href="motion.txt.html#is" class="d">is</a>
+                used, the buffer becomes hidden (unless there <a href="motion.txt.html#is" class="d">is</a> another
+                <a href="#window" class="d">window</a> editing it).  The command fails if any "Preview" buffer
+                cannot be closed.  See also <a href="#%3Aclose" class="l">:close</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="%3App" class="t">:pp</a> <a name="%3Appop" class="t">:ppop</a>
+:[count]pp[op][!]
+                Does ":[count]pop[!]" in the preview window.  See <a href="tagsrch.txt.html#%3Apop" class="l">:pop</a> and
+                <a href="#%3Aptag" class="l">:ptag</a><a href="repeat.txt.html#." class="d">.</a>  <span class="s">{not in Vi}</span>
+
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="motion.txt.html#%7D" class="d">}</a>                                                <a name="CTRL-W_%7D" class="t">CTRL-W_}</a>
+                Use identifier under cursor <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> <a href="tagsrch.txt.html#tag" class="d">tag</a> and perform <a href="insert.txt.html#a" class="d">a</a> <a href="#%3Aptag" class="d">:ptag</a> on
+                it.  Make the new Preview <a href="#window" class="d">window</a> (if required) <a href="pattern.txt.html#N" class="d">N</a> high.  If <a href="pattern.txt.html#N" class="d">N</a> <a href="motion.txt.html#is" class="d">is</a>
+                not given, <a href="options.txt.html#%27previewheight%27" class="o">'previewheight'</a> <a href="motion.txt.html#is" class="d">is</a> used.
+
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="index.txt.html#g" class="d">g</a> <a href="motion.txt.html#%7D" class="d">}</a>                                              <a name="CTRL-W_g%7D" class="t">CTRL-W_g}</a>
+                Use identifier under cursor <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> <a href="tagsrch.txt.html#tag" class="d">tag</a> and perform <a href="insert.txt.html#a" class="d">a</a> <a href="tagsrch.txt.html#%3Aptjump" class="d">:ptjump</a> on
+                it.  Make the new Preview <a href="#window" class="d">window</a> (if required) <a href="pattern.txt.html#N" class="d">N</a> high.  If <a href="pattern.txt.html#N" class="d">N</a> <a href="motion.txt.html#is" class="d">is</a>
+                not given, <a href="options.txt.html#%27previewheight%27" class="o">'previewheight'</a> <a href="motion.txt.html#is" class="d">is</a> used.
+
+                                                        <a name="%3Aped" class="t">:ped</a> <a name="%3Apedit" class="t">:pedit</a>
+:ped[it][!] <a href="editing.txt.html#%5B%2B%2Bopt%5D" class="s">[++opt]</a> <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a> <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a>
+                Edit <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a> in the preview window.  The preview <a href="#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a>
+                opened like with <a href="#%3Aptag" class="l">:ptag</a><a href="repeat.txt.html#." class="d">.</a>  The current <a href="#window" class="d">window</a> and cursor
+                position isn't changed.  Useful example: 
+<span class="e">                        :pedit +/fputc /usr/include/stdio.h</span>
+
+                                                        <a name="%3Aps" class="t">:ps</a> <a name="%3Apsearch" class="t">:psearch</a>
+:[range]ps[earch][!] <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> [/]pattern[/]
+                Works like <a href="tagsrch.txt.html#%3Aijump" class="l">:ijump</a> but shows the found match in the preview
+                window.  The preview <a href="#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> opened like with <a href="#%3Aptag" class="l">:ptag</a><a href="repeat.txt.html#." class="d">.</a>  The
+                current <a href="#window" class="d">window</a> and cursor position isn't changed.  Useful
+                example: 
+<span class="e">                        :psearch popen</span>
+               Like with the <a href="#%3Aptag" class="l">:ptag</a> command, you can use this to
+                automatically show information about the <a href="motion.txt.html#word" class="d">word</a> under the
+                cursor.  This <a href="motion.txt.html#is" class="d">is</a> <a href="various.txt.html#less" class="d">less</a> clever than using <a href="#%3Aptag" class="l">:ptag</a><a href="motion.txt.html#%2C" class="d">,</a> but you don't
+                need <a href="insert.txt.html#a" class="d">a</a> <a href="tagsrch.txt.html#tags" class="d">tags</a> file and <a href="motion.txt.html#it" class="d">it</a> will also find matches in system
+                include files.  Example: 
+<span class="e">  :au! CursorHold *.[ch] nested exe "silent! psearch " . expand("&lt;cword&gt;")</span>
+               Warning: This can be slow.
+
+Example                                         <a name="CursorHold-example" class="t">CursorHold-example</a>  
+<span class="e"></span>
+<span class="e">  :au! CursorHold *.[ch] nested exe "silent! ptag " . expand("&lt;cword&gt;")</span>
+<span class="e"></span>
+This will cause <a href="insert.txt.html#a" class="d">a</a> "<a href="#%3Aptag" class="d">:ptag</a>" to be executed for the keyword under the cursor,
+when the cursor hasn't moved for the time set with <a href="options.txt.html#%27updatetime%27" class="o">'updatetime'</a>.  The "nested"
+makes other autocommands be executed, so that <a href="syntax.txt.html#syntax" class="d">syntax</a> highlighting works in the
+preview window.  The "silent!" avoids an error message when the <a href="tagsrch.txt.html#tag" class="d">tag</a> could not
+be found.  Also see <a href="autocmd.txt.html#CursorHold" class="l">CursorHold</a><a href="repeat.txt.html#." class="d">.</a>  To disable this again: 
+<span class="e"></span>
+<span class="e">  :au! CursorHold</span>
+<span class="e"></span>
+<a href="insert.txt.html#A" class="d">A</a> <a href="todo.txt.html#nice" class="d">nice</a> addition <a href="motion.txt.html#is" class="d">is</a> to highlight the found tag, avoid the "<a href="#%3Aptag" class="d">:ptag</a>" when there
+<a href="motion.txt.html#is" class="d">is</a> no <a href="motion.txt.html#word" class="d">word</a> under the cursor, and <a href="insert.txt.html#a" class="d">a</a> few other things: 
+<span class="e"></span>
+<span class="e">  :au! CursorHold *.[ch] nested call PreviewWord()</span>
+<span class="e">  :func PreviewWord()</span>
+<span class="e">  :  if &amp;previewwindow                  " don't do this in the preview window</span>
+<span class="e">  :    return</span>
+<span class="e">  :  endif</span>
+<span class="e">  :  let w = expand("&lt;cword&gt;")          " get the word under cursor</span>
+<span class="e">  :  if w =~ '\a'                       " if the word contains a letter</span>
+<span class="e">  :</span>
+<span class="e">  :    " Delete any existing highlight before showing another tag</span>
+<span class="e">  :    silent! wincmd P                 " jump to preview window</span>
+<span class="e">  :    if &amp;previewwindow                        " if we really get there...</span>
+<span class="e">  :      match none                     " delete existing highlight</span>
+<span class="e">  :      wincmd p                       " back to old window</span>
+<span class="e">  :    endif</span>
+<span class="e">  :</span>
+<span class="e">  :    " Try displaying a matching tag for the word under the cursor</span>
+<span class="e">  :    try</span>
+<span class="e">  :       exe "ptag " . w</span>
+<span class="e">  :    catch</span>
+<span class="e">  :      return</span>
+<span class="e">  :    endtry</span>
+<span class="e">  :</span>
+<span class="e">  :    silent! wincmd P                 " jump to preview window</span>
+<span class="e">  :    if &amp;previewwindow                " if we really get there...</span>
+<span class="e">  :      if has("folding")</span>
+<span class="e">  :        silent! .foldopen            " don't want a closed fold</span>
+<span class="e">  :      endif</span>
+<span class="e">  :      call search("$", "b")          " to end of previous line</span>
+<span class="e">  :      let w = substitute(w, '\\', '\\\\', "")</span>
+<span class="e">  :      call search('\&lt;\V' . w . '\&gt;') " position cursor on match</span>
+<span class="e">  :      " Add a match highlight to the word at this position</span>
+<span class="e">  :      hi previewWord term=bold ctermbg=green guibg=green</span>
+<span class="e">  :      exe 'match previewWord "\%' . line(".") . 'l\%' . col(".") . 'c\k*"'</span>
+<span class="e">  :      wincmd p                       " back to old window</span>
+<span class="e">  :    endif</span>
+<span class="e">  :  endif</span>
+<span class="e">  :endfun</span>
+<span class="e"></span>
+<span class="h">==============================================================================</span>
+11. Using hidden <a href="#buffers" class="d">buffers</a>                                <a name="buffer-hidden" class="t">buffer-hidden</a>
+
+<a href="insert.txt.html#A" class="d">A</a> hidden buffer <a href="motion.txt.html#is" class="d">is</a> not displayed in <a href="insert.txt.html#a" class="d">a</a> window, but <a href="motion.txt.html#is" class="d">is</a> still loaded into memory.
+This makes <a href="motion.txt.html#it" class="d">it</a> possible to jump from file to file, without the need to read or
+write the file every time you get another buffer in <a href="insert.txt.html#a" class="d">a</a> window.
+
+                                                        <a name="%3Abuffer-%21" class="t">:buffer-!</a>
+If the option <a href="options.txt.html#%27hidden%27" class="o">'hidden'</a> ('hid') <a href="motion.txt.html#is" class="d">is</a> set, abandoned <a href="#buffers" class="d">buffers</a> are kept for all
+commands that start editing another file: "<a href="editing.txt.html#%3Aedit" class="d">:edit</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="editing.txt.html#%3Anext" class="d">:next</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="tagsrch.txt.html#%3Atag" class="d">:tag</a>"<a href="motion.txt.html#%2C" class="d">,</a> etc.  The
+commands that move through the buffer <a href="eval.txt.html#list" class="d">list</a> sometimes make the current buffer
+hidden although the <a href="options.txt.html#%27hidden%27" class="o">'hidden'</a> option <a href="motion.txt.html#is" class="d">is</a> not set.  This happens when <a href="insert.txt.html#a" class="d">a</a> buffer <a href="motion.txt.html#is" class="d">is</a>
+modified, but <a href="motion.txt.html#is" class="d">is</a> forced (with '!') to be removed from <a href="insert.txt.html#a" class="d">a</a> window, and
+<a href="options.txt.html#%27autowrite%27" class="o">'autowrite'</a> <a href="motion.txt.html#is" class="d">is</a> off or the buffer can't be written.
+
+You can make <a href="insert.txt.html#a" class="d">a</a> hidden buffer not hidden by <a href="starting.txt.html#starting" class="d">starting</a> to edit <a href="motion.txt.html#it" class="d">it</a> with any
+command.  Or by <a href="change.txt.html#deleting" class="d">deleting</a> <a href="motion.txt.html#it" class="d">it</a> with the "<a href="#%3Abdelete" class="d">:bdelete</a>" command.
+
+The <a href="options.txt.html#%27hidden%27" class="o">'hidden'</a> <a href="motion.txt.html#is" class="d">is</a> global, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> used for all buffers.  The <a href="options.txt.html#%27bufhidden%27" class="o">'bufhidden'</a> option
+can be used to make an exception for <a href="insert.txt.html#a" class="d">a</a> specific buffer.  It can take these
+values:
+        <span class="s">&lt;empty&gt;</span>         Use the value of <a href="options.txt.html#%27hidden%27" class="o">'hidden'</a>.
+        hide            Hide this buffer, also when <a href="options.txt.html#%27hidden%27" class="o">'hidden'</a> <a href="motion.txt.html#is" class="d">is</a> not set.
+        unload          Don't hide but unload this buffer, also when <a href="options.txt.html#%27hidden%27" class="o">'hidden'</a>
+                        <a href="motion.txt.html#is" class="d">is</a> set.
+        delete          Delete the buffer.
+
+                                                        <a name="hidden-quit" class="t">hidden-quit</a>
+When you try to quit Vim while there <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> hidden, modified buffer, you will
+get an error message and Vim will make that buffer the current buffer.  You
+can then decide to write this buffer <a href="motion.txt.html#%28" class="d">(</a>"<a href="editing.txt.html#%3Awq" class="d">:wq</a>"<a href="motion.txt.html#%29" class="d">)</a> or quit without <a href="editing.txt.html#writing" class="d">writing</a> <a href="motion.txt.html#%28" class="d">(</a>":q!").
+Be careful: there may be more hidden, modified buffers!
+
+<a href="insert.txt.html#A" class="d">A</a> buffer can also be unlisted.  This means <a href="motion.txt.html#it" class="d">it</a> exists, but <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> not in the
+<a href="eval.txt.html#list" class="d">list</a> of buffers. <a href="#unlisted-buffer" class="l">unlisted-buffer</a>
+
+
+:files[!] <span class="s">[flags]</span>                               <a name="%3Afiles" class="t">:files</a>
+:buffers[!] <span class="s">[flags]</span>                             <a name="%3Abuffers" class="t">:buffers</a> <a name="%3Als" class="t">:ls</a>
+:ls[!] <span class="s">[flags]</span>
+                Show all buffers.  Example:
+
+<span class="h">                        1 #h   "/test/text"             line 1 </span>
+<span class="h">                        2u     "asdf"                   line 0 </span>
+<span class="h">                        3 %a + "version.c"              line 1 </span>
+
+                When the [!] <a href="motion.txt.html#is" class="d">is</a> included the <a href="eval.txt.html#list" class="d">list</a> will show unlisted <a href="#buffers" class="d">buffers</a>
+                (the term "unlisted" <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> bit confusing then...).
+
+                Each buffer has <a href="insert.txt.html#a" class="d">a</a> unique number.  That number will not change,
+                thus you can always <a href="motion.txt.html#go" class="d">go</a> to <a href="insert.txt.html#a" class="d">a</a> specific buffer with "<a href="#%3Abuffer" class="d">:buffer</a> <a href="pattern.txt.html#N" class="d">N</a>"
+                or "<a href="pattern.txt.html#N" class="d">N</a> <a href="editing.txt.html#CTRL-%5E" class="k">CTRL-^</a>"<a href="motion.txt.html#%2C" class="d">,</a> where <a href="pattern.txt.html#N" class="d">N</a> <a href="motion.txt.html#is" class="d">is</a> the buffer number.
+
+                Indicators (chars in the same column are mutually exclusive):
+                <a href="undo.txt.html#u" class="d">u</a>       an unlisted buffer (only displayed when [!] <a href="motion.txt.html#is" class="d">is</a> used)
+                           <a href="#unlisted-buffer" class="l">unlisted-buffer</a>
+                 <a href="motion.txt.html#%25" class="d">%</a>      the buffer in the current <a href="#window" class="d">window</a>
+                 <a href="pattern.txt.html#%23" class="d">#</a>      the alternate buffer for "<a href="editing.txt.html#%3Ae" class="d">:e</a> <a href="pattern.txt.html#%23" class="d">#</a>" and <a href="editing.txt.html#CTRL-%5E" class="k">CTRL-^</a>
+                  <a href="insert.txt.html#a" class="d">a</a>     an active buffer: <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> loaded and visible
+                  <a href="motion.txt.html#h" class="d">h</a>     <a href="insert.txt.html#a" class="d">a</a> hidden buffer: It <a href="motion.txt.html#is" class="d">is</a> loaded, but currently not
+                           displayed in <a href="insert.txt.html#a" class="d">a</a> <a href="#window" class="d">window</a> <a href="#hidden-buffer" class="l">hidden-buffer</a>
+                   <a href="motion.txt.html#-" class="d">-</a>    <a href="insert.txt.html#a" class="d">a</a> buffer with <a href="options.txt.html#%27modifiable%27" class="o">'modifiable'</a> off
+                   <a href="change.txt.html#%3D" class="d">=</a>    <a href="insert.txt.html#a" class="d">a</a> readonly buffer
+                   <a href="change.txt.html#R" class="d">R</a>    <a href="insert.txt.html#a" class="d">a</a> <a href="terminal.txt.html#terminal" class="d">terminal</a> buffer with <a href="insert.txt.html#a" class="d">a</a> running <a href="channel.txt.html#job" class="d">job</a>
+                   <a href="motion.txt.html#F" class="d">F</a>    <a href="insert.txt.html#a" class="d">a</a> <a href="terminal.txt.html#terminal" class="d">terminal</a> buffer with <a href="insert.txt.html#a" class="d">a</a> finished <a href="channel.txt.html#job" class="d">job</a>
+                   <a href="pattern.txt.html#%3F" class="d">?</a>    <a href="insert.txt.html#a" class="d">a</a> <a href="terminal.txt.html#terminal" class="d">terminal</a> buffer without <a href="insert.txt.html#a" class="d">a</a> job: `:terminal NONE`
+                    <a href="motion.txt.html#%2B" class="d">+</a>   <a href="insert.txt.html#a" class="d">a</a> modified buffer
+                    <a href="change.txt.html#x" class="d">x</a>   <a href="insert.txt.html#a" class="d">a</a> buffer with read <a href="message.txt.html#errors" class="d">errors</a>
+
+                <span class="s">[flags]</span> can be <a href="insert.txt.html#a" class="d">a</a> combination of the following characters,
+                which restrict the <a href="#buffers" class="d">buffers</a> to be listed:
+                     <a href="motion.txt.html#%2B" class="d">+</a>   modified <a href="#buffers" class="d">buffers</a>
+                     <a href="motion.txt.html#-" class="d">-</a>   <a href="#buffers" class="d">buffers</a> with <a href="options.txt.html#%27modifiable%27" class="o">'modifiable'</a> off
+                     <a href="change.txt.html#%3D" class="d">=</a>   readonly <a href="#buffers" class="d">buffers</a>
+                     <a href="insert.txt.html#a" class="d">a</a>   active <a href="#buffers" class="d">buffers</a>
+                     <a href="undo.txt.html#u" class="d">u</a>   unlisted <a href="#buffers" class="d">buffers</a> (overrides the "<a href="change.txt.html#%21" class="d">!</a>"<a href="motion.txt.html#%29" class="d">)</a>
+                     <a href="motion.txt.html#h" class="d">h</a>   hidden <a href="#buffers" class="d">buffers</a>
+                     <a href="change.txt.html#x" class="d">x</a>   <a href="#buffers" class="d">buffers</a> with <a href="insert.txt.html#a" class="d">a</a> read error
+                     <a href="motion.txt.html#%25" class="d">%</a>   current buffer
+                     <a href="pattern.txt.html#%23" class="d">#</a>   alternate buffer
+                     <a href="change.txt.html#R" class="d">R</a>   <a href="terminal.txt.html#terminal" class="d">terminal</a> <a href="#buffers" class="d">buffers</a> with <a href="insert.txt.html#a" class="d">a</a> running <a href="channel.txt.html#job" class="d">job</a>
+                     <a href="motion.txt.html#F" class="d">F</a>   <a href="terminal.txt.html#terminal" class="d">terminal</a> <a href="#buffers" class="d">buffers</a> with <a href="insert.txt.html#a" class="d">a</a> finished <a href="channel.txt.html#job" class="d">job</a>
+                     <a href="pattern.txt.html#%3F" class="d">?</a>   <a href="terminal.txt.html#terminal" class="d">terminal</a> <a href="#buffers" class="d">buffers</a> without <a href="insert.txt.html#a" class="d">a</a> job: `:terminal NONE`
+                Combining flags means they are "and"ed together, e.g.:
+                     h+   hidden <a href="#buffers" class="d">buffers</a> which are modified
+                     a+   active <a href="#buffers" class="d">buffers</a> which are modified
+
+                When using <a href="various.txt.html#%3Afilter" class="l">:filter</a> the <a href="pattern.txt.html#pattern" class="d">pattern</a> <a href="motion.txt.html#is" class="d">is</a> matched against the
+                displayed buffer name, e.g.: 
+<span class="e">                        filter /\.vim/ ls</span>
+
+                                                <a name="%3Abad" class="t">:bad</a> <a name="%3Abadd" class="t">:badd</a>
+:bad[d] [+lnum] <span class="s">{fname}</span>
+                Add file name <span class="s">{fname}</span> to the buffer list, without loading it.
+                If "lnum" <a href="motion.txt.html#is" class="d">is</a> specified, the cursor will be positioned <a href="motion.txt.html#at" class="d">at</a> that
+                line when the buffer <a href="motion.txt.html#is" class="d">is</a> first entered.  <span class="n">Note</span> that other
+                commands after the <a href="motion.txt.html#%2B" class="d">+</a> will be ignored.
+
+:[N]bd[elete][!]                        <a name="%3Abd" class="t">:bd</a> <a name="%3Abdel" class="t">:bdel</a> <a name="%3Abdelete" class="t">:bdelete</a> <a name="E516" class="t">E516</a>
+:bd[elete][!] [N]
+                Unload buffer [N] (default: current buffer) and delete <a href="motion.txt.html#it" class="d">it</a> from
+                the buffer list.  If the buffer was changed, this fails,
+                unless when [!] <a href="motion.txt.html#is" class="d">is</a> specified, in which <a href="change.txt.html#case" class="d">case</a> changes are lost.
+                The file remains unaffected.  Any <a href="#windows" class="d">windows</a> for this buffer are
+                closed.  If buffer [N] <a href="motion.txt.html#is" class="d">is</a> the current buffer, another buffer
+                will be displayed instead.  This <a href="motion.txt.html#is" class="d">is</a> the most recent entry in
+                the jump <a href="eval.txt.html#list" class="d">list</a> that points into <a href="insert.txt.html#a" class="d">a</a> loaded buffer.
+                Actually, the buffer isn't completely deleted, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> removed
+                from the buffer <a href="eval.txt.html#list" class="d">list</a> <a href="#unlisted-buffer" class="l">unlisted-buffer</a> and option values,
+                <a href="eval.txt.html#variables" class="d">variables</a> and mappings/abbreviations for the buffer are
+                cleared. Examples: 
+<span class="e">                    :.,$-bdelete    " delete buffers from the current one to</span>
+<span class="e">                                    " last but one</span>
+<span class="e">                    :%bdelete       " delete all buffers</span>
+
+
+:bdelete[!] <a href="#%7Bbufname%7D" class="s">{bufname}</a>                                           <a name="E93" class="t">E93</a> <a name="E94" class="t">E94</a>
+                Like ":bdelete[!] [N]"<a href="motion.txt.html#%2C" class="d">,</a> but buffer given by name, see
+                <a href="#%7Bbufname%7D" class="l">{bufname}</a><a href="repeat.txt.html#." class="d">.</a>
+
+:bdelete[!] N1 N2 <a href="eval.txt.html#..." class="d">...</a>
+                Do ":bdelete[!]" for buffer N1, N2, etc.  The arguments can be
+                buffer numbers or buffer names (but not buffer names that are
+                <a href="insert.txt.html#a" class="d">a</a> number).  <a href="insert.txt.html#Insert" class="d">Insert</a> <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#backslash" class="d">backslash</a> before <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#space" class="d">space</a> in <a href="insert.txt.html#a" class="d">a</a> buffer
+                name.
+
+:N,Mbdelete[!]  Do ":bdelete[!]" for all <a href="#buffers" class="d">buffers</a> in the range <a href="pattern.txt.html#N" class="d">N</a> to <a href="motion.txt.html#M" class="d">M</a>
+                <a href="motion.txt.html#inclusive" class="l">inclusive</a><a href="repeat.txt.html#." class="d">.</a>
+
+:[N]bw[ipeout][!]                       <a name="%3Abw" class="t">:bw</a> <a name="%3Abwipe" class="t">:bwipe</a> <a name="%3Abwipeout" class="t">:bwipeout</a> <a name="E517" class="t">E517</a>
+:bw[ipeout][!] <a href="#%7Bbufname%7D" class="s">{bufname}</a>
+:N,Mbw[ipeout][!]
+:bw[ipeout][!] N1 N2 <a href="eval.txt.html#..." class="d">...</a>
+                Like <a href="#%3Abdelete" class="l">:bdelete</a><a href="motion.txt.html#%2C" class="d">,</a> but really delete the buffer.  Everything
+                related to the buffer <a href="motion.txt.html#is" class="d">is</a> lost.  All marks in this buffer
+                become invalid, option settings are lost, etc.  Don't use this
+                unless you know what you are doing. Examples: 
+<span class="e">                    :.+,$bwipeout   " wipe out all buffers after the current</span>
+<span class="e">                                    " one</span>
+<span class="e">                    :%bwipeout      " wipe out all buffers</span>
+
+
+:[N]bun[load][!]                                <a name="%3Abun" class="t">:bun</a> <a name="%3Abunload" class="t">:bunload</a> <a name="E515" class="t">E515</a>
+:bun[load][!] [N]
+                Unload buffer [N] (default: current buffer).  The memory
+                allocated for this buffer will be freed.  The buffer remains
+                in the buffer list.
+                If the buffer was changed, this fails, unless when [!] <a href="motion.txt.html#is" class="d">is</a>
+                specified, in which <a href="change.txt.html#case" class="d">case</a> the changes are lost.
+                Any <a href="#windows" class="d">windows</a> for this buffer are closed.  If buffer [N] <a href="motion.txt.html#is" class="d">is</a> the
+                current buffer, another buffer will be displayed instead.
+                This <a href="motion.txt.html#is" class="d">is</a> the most recent entry in the jump <a href="eval.txt.html#list" class="d">list</a> that points
+                into <a href="insert.txt.html#a" class="d">a</a> loaded buffer.
+
+:bunload[!] <a href="#%7Bbufname%7D" class="s">{bufname}</a>
+                Like ":bunload[!] [N]"<a href="motion.txt.html#%2C" class="d">,</a> but buffer given by name.
+                Also see <a href="#%7Bbufname%7D" class="l">{bufname}</a><a href="repeat.txt.html#." class="d">.</a>
+
+:N,Mbunload[!]  Do ":bunload[!]" for all <a href="#buffers" class="d">buffers</a> in the range <a href="pattern.txt.html#N" class="d">N</a> to <a href="motion.txt.html#M" class="d">M</a>
+                <a href="motion.txt.html#inclusive" class="l">inclusive</a><a href="repeat.txt.html#." class="d">.</a>
+
+:bunload[!] N1 N2 <a href="eval.txt.html#..." class="d">...</a>
+                Do ":bunload[!]" for buffer N1, N2, etc.  The arguments can be
+                buffer numbers or buffer names (but not buffer names that are
+                <a href="insert.txt.html#a" class="d">a</a> number).  <a href="insert.txt.html#Insert" class="d">Insert</a> <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#backslash" class="d">backslash</a> before <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#space" class="d">space</a> in <a href="insert.txt.html#a" class="d">a</a> buffer
+                name.
+
+:[N]b[uffer][!] <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a> [N]              <a name="%3Ab" class="t">:b</a> <a name="%3Abu" class="t">:bu</a> <a name="%3Abuf" class="t">:buf</a> <a name="%3Abuffer" class="t">:buffer</a> <a name="E86" class="t">E86</a>
+                Edit buffer [N] from the buffer list.  If [N] <a href="motion.txt.html#is" class="d">is</a> not given,
+                the current buffer remains being edited.  See <a href="#%3Abuffer-%21" class="l">:buffer-!</a> for
+                [!].  This will also edit <a href="insert.txt.html#a" class="d">a</a> buffer that <a href="motion.txt.html#is" class="d">is</a> not in the buffer
+                list, without setting the <a href="options.txt.html#%27buflisted%27" class="o">'buflisted'</a> flag.
+                Also see <a href="editing.txt.html#%2Bcmd" class="l">+cmd</a><a href="repeat.txt.html#." class="d">.</a>
+
+:[N]b[uffer][!] <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a> <a href="#%7Bbufname%7D" class="s">{bufname}</a>                                <a name="%7Bbufname%7D" class="t">{bufname}</a>
+                Edit buffer for <a href="#%7Bbufname%7D" class="s">{bufname}</a> from the buffer list.  <a href="insert.txt.html#A" class="d">A</a> partial
+                name also works, so long <a href="motion.txt.html#as" class="d">as</a> <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> unique in the <a href="eval.txt.html#list" class="d">list</a> of
+                buffers.
+                <span class="n">Note</span> that <a href="insert.txt.html#a" class="d">a</a> buffer whose name <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> number cannot be referenced
+                by that name; use the buffer number instead.
+                <a href="insert.txt.html#Insert" class="d">Insert</a> <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#backslash" class="d">backslash</a> before <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#space" class="d">space</a> in <a href="insert.txt.html#a" class="d">a</a> buffer name.
+                See <a href="#%3Abuffer-%21" class="l">:buffer-!</a> for [!].
+                This will also edit <a href="insert.txt.html#a" class="d">a</a> buffer that <a href="motion.txt.html#is" class="d">is</a> not in the buffer list,
+                without setting the <a href="options.txt.html#%27buflisted%27" class="o">'buflisted'</a> flag.
+                Also see <a href="editing.txt.html#%2Bcmd" class="l">+cmd</a><a href="repeat.txt.html#." class="d">.</a>
+
+:[N]sb[uffer] <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a> [N]                                <a name="%3Asb" class="t">:sb</a> <a name="%3Asbuffer" class="t">:sbuffer</a>
+                Split <a href="#window" class="d">window</a> and edit buffer [N] from the buffer list.  If [N]
+                <a href="motion.txt.html#is" class="d">is</a> not given, the current buffer <a href="motion.txt.html#is" class="d">is</a> edited.  Respects the
+                "useopen" setting of <a href="options.txt.html#%27switchbuf%27" class="o">'switchbuf'</a> when splitting.  This will
+                also edit <a href="insert.txt.html#a" class="d">a</a> buffer that <a href="motion.txt.html#is" class="d">is</a> not in the buffer list, without
+                setting the <a href="options.txt.html#%27buflisted%27" class="o">'buflisted'</a> flag.
+                Also see <a href="editing.txt.html#%2Bcmd" class="l">+cmd</a><a href="repeat.txt.html#." class="d">.</a>
+
+:[N]sb[uffer] <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a> <a href="#%7Bbufname%7D" class="s">{bufname}</a>
+                Split <a href="#window" class="d">window</a> and edit buffer for <a href="#%7Bbufname%7D" class="l">{bufname}</a> from the buffer
+                list.  This will also edit <a href="insert.txt.html#a" class="d">a</a> buffer that <a href="motion.txt.html#is" class="d">is</a> not in the buffer
+                list, without setting the <a href="options.txt.html#%27buflisted%27" class="o">'buflisted'</a> flag.
+                <span class="n">Note:</span> If what you want to <a href="diff.txt.html#do" class="d">do</a> <a href="motion.txt.html#is" class="d">is</a> split the buffer, make <a href="insert.txt.html#a" class="d">a</a> copy
+                under another name, you can <a href="diff.txt.html#do" class="d">do</a> <a href="motion.txt.html#it" class="d">it</a> this way: 
+<span class="e">                        :w foobar | sp #</span>
+               Also see <a href="editing.txt.html#%2Bcmd" class="l">+cmd</a><a href="repeat.txt.html#." class="d">.</a>
+
+:[N]bn[ext][!] <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a> [N]                               <a name="%3Abn" class="t">:bn</a> <a name="%3Abnext" class="t">:bnext</a> <a name="E87" class="t">E87</a>
+                Go to [N]th next buffer in buffer list.  [N] defaults to one.
+                Wraps around the <a href="intro.txt.html#end" class="d">end</a> of the buffer list.
+                See <a href="#%3Abuffer-%21" class="l">:buffer-!</a> for [!].
+                Also see <a href="editing.txt.html#%2Bcmd" class="l">+cmd</a><a href="repeat.txt.html#." class="d">.</a>
+                If you are in <a href="insert.txt.html#a" class="d">a</a> <a href="helphelp.txt.html#help" class="d">help</a> buffer, this takes you to the next <a href="helphelp.txt.html#help" class="d">help</a>
+                buffer (if there <a href="motion.txt.html#is" class="d">is</a> one).  Similarly, if you are in <a href="insert.txt.html#a" class="d">a</a> normal
+                (non-help) buffer, this takes you to the next normal buffer.
+                This <a href="motion.txt.html#is" class="d">is</a> so that if you have invoked help, <a href="motion.txt.html#it" class="d">it</a> doesn't get in
+                the way when you're browsing code/text buffers.  The next three
+                commands also work like this.
+
+
+                                                        <a name="%3Asbn" class="t">:sbn</a> <a name="%3Asbnext" class="t">:sbnext</a>
+:[N]sbn[ext] <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a> [N]
+                Split <a href="#window" class="d">window</a> and <a href="motion.txt.html#go" class="d">go</a> to [N]th next buffer in buffer list.
+                Wraps around the <a href="intro.txt.html#end" class="d">end</a> of the buffer list.  Uses <a href="options.txt.html#%27switchbuf%27" class="o">'switchbuf'</a>
+                Also see <a href="editing.txt.html#%2Bcmd" class="l">+cmd</a><a href="repeat.txt.html#." class="d">.</a>
+
+:[N]bN[ext][!] <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a> [N]               <a name="%3AbN" class="t">:bN</a> <a name="%3AbNext" class="t">:bNext</a> <a name="%3Abp" class="t">:bp</a> <a name="%3Abprevious" class="t">:bprevious</a> <a name="E88" class="t">E88</a>
+:[N]bp[revious][!] <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a> [N]
+                Go to [N]th previous buffer in buffer list.  [N] defaults to
+                one.  Wraps around the start of the buffer list.
+                See <a href="#%3Abuffer-%21" class="l">:buffer-!</a> for [!] and <a href="options.txt.html#%27switchbuf%27" class="o">'switchbuf'</a>.
+                Also see <a href="editing.txt.html#%2Bcmd" class="l">+cmd</a><a href="repeat.txt.html#." class="d">.</a>
+
+:[N]sbN[ext] <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a> [N]                 <a name="%3AsbN" class="t">:sbN</a> <a name="%3AsbNext" class="t">:sbNext</a> <a name="%3Asbp" class="t">:sbp</a> <a name="%3Asbprevious" class="t">:sbprevious</a>
+:[N]sbp[revious] <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a> [N]
+                Split <a href="#window" class="d">window</a> and <a href="motion.txt.html#go" class="d">go</a> to [N]th previous buffer in buffer list.
+                Wraps around the start of the buffer list.
+                Uses <a href="options.txt.html#%27switchbuf%27" class="o">'switchbuf'</a>.
+                Also see <a href="editing.txt.html#%2Bcmd" class="l">+cmd</a><a href="repeat.txt.html#." class="d">.</a>
+
+:br[ewind][!] <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a>                                    <a name="%3Abr" class="t">:br</a> <a name="%3Abrewind" class="t">:brewind</a>
+                Go to first buffer in buffer list.  If the buffer <a href="eval.txt.html#list" class="d">list</a> <a href="motion.txt.html#is" class="d">is</a>
+                empty, <a href="motion.txt.html#go" class="d">go</a> to the first unlisted buffer.
+                See <a href="#%3Abuffer-%21" class="l">:buffer-!</a> for [!].
+
+:bf[irst] <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a>                                        <a name="%3Abf" class="t">:bf</a> <a name="%3Abfirst" class="t">:bfirst</a>
+                Same <a href="motion.txt.html#as" class="d">as</a> <a href="#%3Abrewind" class="l">:brewind</a><a href="repeat.txt.html#." class="d">.</a>
+                Also see <a href="editing.txt.html#%2Bcmd" class="l">+cmd</a><a href="repeat.txt.html#." class="d">.</a>
+
+:sbr[ewind] <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a>                                      <a name="%3Asbr" class="t">:sbr</a> <a name="%3Asbrewind" class="t">:sbrewind</a>
+                Split <a href="#window" class="d">window</a> and <a href="motion.txt.html#go" class="d">go</a> to first buffer in buffer list.  If the
+                buffer <a href="eval.txt.html#list" class="d">list</a> <a href="motion.txt.html#is" class="d">is</a> empty, <a href="motion.txt.html#go" class="d">go</a> to the first unlisted buffer.
+                Respects the <a href="options.txt.html#%27switchbuf%27" class="o">'switchbuf'</a> option.
+                Also see <a href="editing.txt.html#%2Bcmd" class="l">+cmd</a><a href="repeat.txt.html#." class="d">.</a>
+
+:sbf[irst] <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a>                                       <a name="%3Asbf" class="t">:sbf</a> <a name="%3Asbfirst" class="t">:sbfirst</a>
+                Same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Asbrewind" class="d">:sbrewind</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+:bl[ast][!] <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a>                                      <a name="%3Abl" class="t">:bl</a> <a name="%3Ablast" class="t">:blast</a>
+                Go to last buffer in buffer list.  If the buffer <a href="eval.txt.html#list" class="d">list</a> <a href="motion.txt.html#is" class="d">is</a>
+                empty, <a href="motion.txt.html#go" class="d">go</a> to the last unlisted buffer.
+                See <a href="#%3Abuffer-%21" class="l">:buffer-!</a> for [!].
+
+:sbl[ast] <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a>                                        <a name="%3Asbl" class="t">:sbl</a> <a name="%3Asblast" class="t">:sblast</a>
+                Split <a href="#window" class="d">window</a> and <a href="motion.txt.html#go" class="d">go</a> to last buffer in buffer list.  If the
+                buffer <a href="eval.txt.html#list" class="d">list</a> <a href="motion.txt.html#is" class="d">is</a> empty, <a href="motion.txt.html#go" class="d">go</a> to the last unlisted buffer.
+                Respects <a href="options.txt.html#%27switchbuf%27" class="o">'switchbuf'</a> option.
+
+:[N]bm[odified][!] <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a> [N]                   <a name="%3Abm" class="t">:bm</a> <a name="%3Abmodified" class="t">:bmodified</a> <a name="E84" class="t">E84</a>
+                Go to [N]th next modified buffer.  <span class="n">Note:</span> this command also
+                finds unlisted buffers.  If there <a href="motion.txt.html#is" class="d">is</a> no modified buffer the
+                command fails.
+
+:[N]sbm[odified] <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a> [N]                             <a name="%3Asbm" class="t">:sbm</a> <a name="%3Asbmodified" class="t">:sbmodified</a>
+                Split <a href="#window" class="d">window</a> and <a href="motion.txt.html#go" class="d">go</a> to [N]th next modified buffer.
+                Respects <a href="options.txt.html#%27switchbuf%27" class="o">'switchbuf'</a> option.
+                <span class="n">Note:</span> this command also finds <a href="#buffers" class="d">buffers</a> not in the buffer list.
+
+:[N]unh[ide] [N]                        <a name="%3Aunh" class="t">:unh</a> <a name="%3Aunhide" class="t">:unhide</a> <a name="%3Asun" class="t">:sun</a> <a name="%3Asunhide" class="t">:sunhide</a>
+:[N]sun[hide] [N]
+                Rearrange the screen to open one <a href="#window" class="d">window</a> for each loaded buffer
+                in the buffer list.  When <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> <a href="motion.txt.html#is" class="d">is</a> given, this <a href="motion.txt.html#is" class="d">is</a> the
+                maximum number of <a href="#windows" class="d">windows</a> to open.
+
+:[N]ba[ll] [N]                                  <a name="%3Aba" class="t">:ba</a> <a name="%3Aball" class="t">:ball</a> <a name="%3Asba" class="t">:sba</a> <a name="%3Asball" class="t">:sball</a>
+:[N]sba[ll] [N] Rearrange the screen to open one <a href="#window" class="d">window</a> for each buffer in
+                the buffer list.  When <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> <a href="motion.txt.html#is" class="d">is</a> given, this <a href="motion.txt.html#is" class="d">is</a> the maximum
+                number of <a href="#windows" class="d">windows</a> to open.  <a href="options.txt.html#%27winheight%27" class="o">'winheight'</a> also <a href="vi_diff.txt.html#limits" class="d">limits</a> the number
+                of <a href="#windows" class="d">windows</a> opened ('winwidth' if <a href="#%3Avertical" class="l">:vertical</a> was prepended).
+                Buf/Win Enter/Leave autocommands are not executed for the new
+                <a href="#windows" class="d">windows</a> here, that's only done when they are really entered.
+                When the <a href="tabpage.txt.html#%3Atab" class="l">:tab</a> modifier <a href="motion.txt.html#is" class="d">is</a> used new <a href="#windows" class="d">windows</a> are opened in <a href="insert.txt.html#a" class="d">a</a>
+                new tab, up to <a href="options.txt.html#%27tabpagemax%27" class="o">'tabpagemax'</a>.
+
+<span class="n">Note:</span> All the commands above that start editing another buffer, keep the
+<a href="options.txt.html#%27readonly%27" class="o">'readonly'</a> flag <a href="motion.txt.html#as" class="d">as</a> <a href="motion.txt.html#it" class="d">it</a> was.  This differs from the "<a href="editing.txt.html#%3Aedit" class="d">:edit</a>" command, which sets
+the <a href="options.txt.html#%27readonly%27" class="o">'readonly'</a> flag each time the file <a href="motion.txt.html#is" class="d">is</a> read.
+
+<span class="h">==============================================================================</span>
+12. <a href="eval.txt.html#Special" class="d">Special</a> kinds of <a href="#buffers" class="d">buffers</a>                    <a name="special-buffers" class="t">special-buffers</a>
+
+Instead of containing the text of <a href="insert.txt.html#a" class="d">a</a> file, <a href="#buffers" class="d">buffers</a> can also be used for other
+purposes.  <a href="insert.txt.html#A" class="d">A</a> few <a href="options.txt.html#options" class="d">options</a> can be set to change the behavior of <a href="insert.txt.html#a" class="d">a</a> buffer:
+        <a href="options.txt.html#%27bufhidden%27" class="o">'bufhidden'</a>     what happens when the buffer <a href="motion.txt.html#is" class="d">is</a> no longer displayed
+                        in <a href="insert.txt.html#a" class="d">a</a> window.
+        <a href="options.txt.html#%27buftype%27" class="o">'buftype'</a>       what kind of <a href="insert.txt.html#a" class="d">a</a> buffer this <a href="motion.txt.html#is" class="d">is</a>
+        <a href="options.txt.html#%27swapfile%27" class="o">'swapfile'</a>      whether the buffer will have <a href="insert.txt.html#a" class="d">a</a> swap file
+        <a href="options.txt.html#%27buflisted%27" class="o">'buflisted'</a>     buffer shows up in the buffer <a href="eval.txt.html#list" class="d">list</a>
+
+<a href="insert.txt.html#A" class="d">A</a> few useful kinds of <a href="insert.txt.html#a" class="d">a</a> buffer:
+
+<a href="quickfix.txt.html#quickfix" class="d">quickfix</a>        Used to contain the error <a href="eval.txt.html#list" class="d">list</a> or the location list.  See
+                <a href="quickfix.txt.html#%3Acwindow" class="l">:cwindow</a> and <a href="quickfix.txt.html#%3Alwindow" class="l">:lwindow</a><a href="repeat.txt.html#." class="d">.</a>  This command sets the <a href="options.txt.html#%27buftype%27" class="o">'buftype'</a>
+                option to "<a href="quickfix.txt.html#quickfix" class="d">quickfix</a>"<a href="repeat.txt.html#." class="d">.</a>  You are not supposed to change this!
+                <a href="options.txt.html#%27swapfile%27" class="o">'swapfile'</a> <a href="motion.txt.html#is" class="d">is</a> off.
+
+<a href="helphelp.txt.html#help" class="d">help</a>            Contains <a href="insert.txt.html#a" class="d">a</a> <a href="helphelp.txt.html#help" class="d">help</a> file.  Will only be created with the <a href="helphelp.txt.html#%3Ahelp" class="l">:help</a>
+                command.  The flag that indicates <a href="insert.txt.html#a" class="d">a</a> <a href="helphelp.txt.html#help" class="d">help</a> buffer <a href="motion.txt.html#is" class="d">is</a> internal
+                and can't be changed.  The <a href="options.txt.html#%27buflisted%27" class="o">'buflisted'</a> option will be reset
+                for <a href="insert.txt.html#a" class="d">a</a> <a href="helphelp.txt.html#help" class="d">help</a> buffer.
+
+<a href="terminal.txt.html#terminal" class="d">terminal</a>        <a href="insert.txt.html#A" class="d">A</a> <a href="terminal.txt.html#terminal" class="d">terminal</a> <a href="#window" class="d">window</a> buffer, see <a href="terminal.txt.html#terminal" class="l">terminal</a><a href="repeat.txt.html#." class="d">.</a> The contents cannot
+                be read or changed until the <a href="channel.txt.html#job" class="d">job</a> ends.
+
+directory       Displays directory contents.  Can be used by <a href="insert.txt.html#a" class="d">a</a> file explorer
+                plugin.  The buffer <a href="motion.txt.html#is" class="d">is</a> created with these settings: 
+<span class="e">                        :setlocal buftype=nowrite</span>
+<span class="e">                        :setlocal bufhidden=delete</span>
+<span class="e">                        :setlocal noswapfile</span>
+               The buffer name <a href="motion.txt.html#is" class="d">is</a> the name of the directory and <a href="motion.txt.html#is" class="d">is</a> adjusted
+                when using the <a href="editing.txt.html#%3Acd" class="l">:cd</a> command.
+
+scratch         Contains text that can be discarded <a href="motion.txt.html#at" class="d">at</a> any time.  It <a href="motion.txt.html#is" class="d">is</a> kept
+                when closing the window, <a href="motion.txt.html#it" class="d">it</a> <a href="vim_faq.txt.html#must" class="d">must</a> be deleted explicitly.
+                Settings: 
+<span class="e">                        :setlocal buftype=nofile</span>
+<span class="e">                        :setlocal bufhidden=hide</span>
+<span class="e">                        :setlocal noswapfile</span>
+               The buffer name can be used to identify the buffer, if you
+                give <a href="motion.txt.html#it" class="d">it</a> <a href="insert.txt.html#a" class="d">a</a> meaningful name.
+
+                                                <a name="unlisted-buffer" class="t">unlisted-buffer</a>
+unlisted        The buffer <a href="motion.txt.html#is" class="d">is</a> not in the buffer list.  It <a href="motion.txt.html#is" class="d">is</a> not used for
+                normal editing, but to show <a href="insert.txt.html#a" class="d">a</a> <a href="helphelp.txt.html#help" class="d">help</a> file, remember <a href="insert.txt.html#a" class="d">a</a> file name
+                or marks.  The "<a href="#%3Abdelete" class="d">:bdelete</a>" command will also set this option,
+                thus <a href="motion.txt.html#it" class="d">it</a> doesn't completely delete the buffer.  Settings: 
+<span class="e">                        :setlocal nobuflisted</span>
+
+
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

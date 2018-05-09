@@ -1,0 +1,941 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: if_pyth.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="if_pyth.txt" class="t">if_pyth.txt</a>   For <span class="i">Vim version 8.0.</span>  Last change: 2018 Jan 30
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Paul Moore</span>
+
+
+The <a href="#Python" class="d">Python</a> Interface to Vim                             <a name="python" class="t">python</a> <a name="Python" class="t">Python</a>
+
+1. Commands                                     <a href="#python-commands" class="l">python-commands</a>
+2. The vim module                               <a href="#python-vim" class="l">python-vim</a>
+3. Buffer <a href="index.txt.html#objects" class="d">objects</a>                               <a href="#python-buffer" class="l">python-buffer</a>
+4. Range <a href="index.txt.html#objects" class="d">objects</a>                                <a href="#python-range" class="l">python-range</a>
+5. Window <a href="index.txt.html#objects" class="d">objects</a>                               <a href="#python-window" class="l">python-window</a>
+6. <a href="intro.txt.html#Tab" class="d">Tab</a> page <a href="index.txt.html#objects" class="d">objects</a>                             <a href="#python-tabpage" class="l">python-tabpage</a>
+7. vim.bindeval <a href="index.txt.html#objects" class="d">objects</a>                         <a href="#python-bindeval-objects" class="l">python-bindeval-objects</a>
+8. pyeval(), <a href="eval.txt.html#py3eval%28%29" class="d">py3eval()</a> Vim <a href="eval.txt.html#functions" class="d">functions</a>            <a href="#python-pyeval" class="l">python-pyeval</a>
+9. Dynamic loading                              <a href="#python-dynamic" class="l">python-dynamic</a>
+10. <a href="#Python" class="d">Python</a> 3                                    <a href="#python3" class="l">python3</a>
+11. <a href="#Python" class="d">Python</a> <a href="change.txt.html#X" class="d">X</a>                                    <a href="#python_x" class="l">python_x</a>
+12. Building with <a href="#Python" class="d">Python</a> support                <a href="#python-building" class="l">python-building</a>
+
+<span class="s">{Vi does not have any of these commands}</span>
+
+The <a href="#Python" class="d">Python</a> 2.x interface <a href="motion.txt.html#is" class="d">is</a> available only when Vim was compiled with the
+<a href="various.txt.html#%2Bpython" class="l">+python</a> feature.
+The <a href="#Python" class="d">Python</a> 3 interface <a href="motion.txt.html#is" class="d">is</a> available only when Vim was compiled with the
+<a href="various.txt.html#%2Bpython3" class="l">+python3</a> feature.
+Both can be available <a href="motion.txt.html#at" class="d">at</a> the same time, but read <a href="#python-2-and-3" class="l">python-2-and-3</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+1. Commands                                             <a name="python-commands" class="t">python-commands</a>
+
+                                        <a name="%3Apython" class="t">:python</a> <a name="%3Apy" class="t">:py</a> <a name="E263" class="t">E263</a> <a name="E264" class="t">E264</a> <a name="E887" class="t">E887</a>
+:[range]py[thon] <span class="s">{stmt}</span>
+                        Execute <a href="#Python" class="d">Python</a> statement <span class="s">{stmt}</span>.  <a href="insert.txt.html#A" class="d">A</a> simple check if
+                        the <span class="e">:python</span> command <a href="motion.txt.html#is" class="d">is</a> working: 
+<span class="e">                                :python print "Hello"</span>
+<span class="e"></span>
+:[range]py[thon] <a href="change.txt.html#%3C%3C" class="d">&lt;&lt;</a> <span class="s">{endmarker}</span>
+<span class="s">{script}</span>
+<span class="s">{endmarker}</span>
+                        Execute <a href="#Python" class="d">Python</a> <a href="usr_41.txt.html#script" class="d">script</a> <span class="s">{script}</span>.
+                        <span class="n">Note:</span> This command doesn't work when the <a href="#Python" class="d">Python</a>
+                        feature wasn't compiled in.  To avoid errors, see
+                        <a href="if_perl.txt.html#script-here" class="l">script-here</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="s">{endmarker}</span> <a href="vim_faq.txt.html#must" class="d">must</a> NOT be preceded by any white space.  If <span class="s">{endmarker}</span> <a href="motion.txt.html#is" class="d">is</a>
+omitted from after the "<a href="change.txt.html#%3C%3C" class="d">&lt;&lt;</a>"<a href="motion.txt.html#%2C" class="d">,</a> <a href="insert.txt.html#a" class="d">a</a> dot '.' <a href="vim_faq.txt.html#must" class="d">must</a> be used after <span class="s">{script}</span>, like
+for the <a href="insert.txt.html#%3Aappend" class="l">:append</a> and <a href="insert.txt.html#%3Ainsert" class="l">:insert</a> commands.
+This form of the <a href="#%3Apython" class="l">:python</a> command <a href="motion.txt.html#is" class="d">is</a> mainly useful for including <a href="#python" class="d">python</a> code
+in Vim scripts.
+
+Example: 
+<span class="e">        function! IcecreamInitialize()</span>
+<span class="e">        python &lt;&lt; EOF</span>
+<span class="e">        class StrawberryIcecream:</span>
+<span class="e">                def __call__(self):</span>
+<span class="e">                        print 'EAT ME'</span>
+<span class="e">        EOF</span>
+<span class="e">        endfunction</span>
+<span class="e"></span>
+To see what version of <a href="#Python" class="d">Python</a> you have: 
+<span class="e">        :python import sys</span>
+<span class="e">        :python print(sys.version)</span>
+<span class="e"></span>
+<span class="n">Note:</span> <a href="#Python" class="d">Python</a> <a href="motion.txt.html#is" class="d">is</a> very sensitive to the indenting.  Make sure the "class" line
+and "EOF" <a href="diff.txt.html#do" class="d">do</a> not have any indent.
+
+                                                        <a name="%3Apydo" class="t">:pydo</a>
+:[range]pydo <span class="s">{body}</span>     Execute <a href="#Python" class="d">Python</a> function "def _vim_pydo(line, linenr):
+                        <span class="s">{body}</span>" for each line in the <a href="cmdline.txt.html#%5Brange%5D" class="s">[range]</a>, with the
+                        function arguments being set to the text of each line
+                        in turn, without <a href="insert.txt.html#a" class="d">a</a> trailing <a href="intro.txt.html#%3CEOL%3E" class="s">&lt;EOL&gt;</a>, and the current
+                        line number. The function should return <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#string" class="d">string</a> or
+                        None. If <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#string" class="d">string</a> <a href="motion.txt.html#is" class="d">is</a> returned, <a href="motion.txt.html#it" class="d">it</a> becomes the text of
+                        the line in the current turn. The default for <a href="cmdline.txt.html#%5Brange%5D" class="s">[range]</a>
+                        <a href="motion.txt.html#is" class="d">is</a> the whole file: "1,$"<a href="repeat.txt.html#." class="d">.</a>
+                        <span class="s">{not in Vi}</span>
+
+Examples:
+
+<span class="e">        :pydo return "%s\t%d" % (line[::-1], len(line))</span>
+<span class="e">        :pydo if line: return "%4d: %s" % (linenr, line)</span>
+
+                                                        <a name="%3Apyfile" class="t">:pyfile</a> <a name="%3Apyf" class="t">:pyf</a>
+:[range]pyf[ile] <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a>
+                        Execute the <a href="#Python" class="d">Python</a> <a href="usr_41.txt.html#script" class="d">script</a> in <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a>.  The whole
+                        argument <a href="motion.txt.html#is" class="d">is</a> used <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> single file name.  <span class="s">{not in Vi}</span>
+
+Both of these commands <a href="diff.txt.html#do" class="d">do</a> essentially the same thing <a href="motion.txt.html#-" class="d">-</a> they execute <a href="insert.txt.html#a" class="d">a</a> piece of
+<a href="#Python" class="d">Python</a> code, with the "current range" <a href="#python-range" class="l">python-range</a> set to the given line
+range.
+
+In the <a href="change.txt.html#case" class="d">case</a> of :python, the code to execute <a href="motion.txt.html#is" class="d">is</a> in the command-line.
+In the <a href="change.txt.html#case" class="d">case</a> of :pyfile, the code to execute <a href="motion.txt.html#is" class="d">is</a> the contents of the given file.
+
+<a href="#Python" class="d">Python</a> commands cannot be used in the <a href="eval.txt.html#sandbox" class="l">sandbox</a><a href="repeat.txt.html#." class="d">.</a>
+
+To pass arguments you need to set sys.argv[] explicitly.  Example: 
+<span class="e"></span>
+<span class="e">        :python import sys</span>
+<span class="e">        :python sys.argv = ["foo", "bar"]</span>
+<span class="e">        :pyfile myscript.py</span>
+<span class="e"></span>
+Here are some examples                                  <a name="python-examples" class="t">python-examples</a>  
+<span class="e"></span>
+<span class="e">        :python from vim import *</span>
+<span class="e">        :python from string import upper</span>
+<span class="e">        :python current.line = upper(current.line)</span>
+<span class="e">        :python print "Hello"</span>
+<span class="e">        :python str = current.buffer[42]</span>
+<span class="e"></span>
+(Note that changes <a href="motion.txt.html#-" class="d">-</a> like the imports <a href="motion.txt.html#-" class="d">-</a> persist from one command to the next,
+just like in the <a href="#Python" class="d">Python</a> interpreter.)
+
+<span class="h">==============================================================================</span>
+2. The vim module                                       <a name="python-vim" class="t">python-vim</a>
+
+<a href="#Python" class="d">Python</a> code gets all of its access to vim (with one exception <a href="motion.txt.html#-" class="d">-</a> see
+<a href="#python-output" class="l">python-output</a> below) via the "vim" module.  The vim module implements two
+methods, three constants, and one error object.  You need to import the vim
+module before using it: 
+<span class="e">        :python import vim</span>
+<span class="e"></span>
+Overview 
+<span class="e">        :py print "Hello"               # displays a message</span>
+<span class="e">        :py vim.command(cmd)            # execute an Ex command</span>
+<span class="e">        :py w = vim.windows[n]          # gets window "n"</span>
+<span class="e">        :py cw = vim.current.window     # gets the current window</span>
+<span class="e">        :py b = vim.buffers[n]          # gets buffer "n"</span>
+<span class="e">        :py cb = vim.current.buffer     # gets the current buffer</span>
+<span class="e">        :py w.height = lines            # sets the window height</span>
+<span class="e">        :py w.cursor = (row, col)       # sets the window cursor position</span>
+<span class="e">        :py pos = w.cursor              # gets a tuple (row, col)</span>
+<span class="e">        :py name = b.name               # gets the buffer file name</span>
+<span class="e">        :py line = b[n]                 # gets a line from the buffer</span>
+<span class="e">        :py lines = b[n:m]              # gets a list of lines</span>
+<span class="e">        :py num = len(b)                # gets the number of lines</span>
+<span class="e">        :py b[n] = str                  # sets a line in the buffer</span>
+<span class="e">        :py b[n:m] = [str1, str2, str3] # sets a number of lines at once</span>
+<span class="e">        :py del b[n]                    # deletes a line</span>
+<span class="e">        :py del b[n:m]                  # deletes a number of lines</span>
+<span class="e"></span>
+<span class="e"></span>
+Methods of the "vim" module
+
+vim.command(str)                                        <a name="python-command" class="t">python-command</a>
+        Executes the vim (ex-mode) command str.  Returns None.
+        Examples: 
+<span class="e">            :py vim.command("set tw=72")</span>
+<span class="e">            :py vim.command("%s/aaa/bbb/g")</span>
+       The following definition executes <a href="intro.txt.html#Normal" class="d">Normal</a> mode commands: 
+<span class="e">                def normal(str):</span>
+<span class="e">                        vim.command("normal "+str)</span>
+<span class="e">                # Note the use of single quotes to delimit a string containing</span>
+<span class="e">                # double quotes</span>
+<span class="e">                normal('"a2dd"aP')</span>
+                                                               <a name="E659" class="t">E659</a>
+        The "<a href="#%3Apython" class="d">:python</a>" command cannot be used recursively with <a href="#Python" class="d">Python</a> 2.2 and
+        older.  This only works with <a href="#Python" class="d">Python</a> 2.3 and later: 
+<span class="e">            :py vim.command("python print 'Hello again Python'")</span>
+<span class="e"></span>
+vim.eval(str)                                           <a name="python-eval" class="t">python-eval</a>
+        Evaluates the <a href="eval.txt.html#expression" class="d">expression</a> str using the vim internal <a href="eval.txt.html#expression" class="d">expression</a>
+        evaluator (see <a href="eval.txt.html#expression" class="l">expression</a>).  Returns the <a href="eval.txt.html#expression" class="d">expression</a> result as:
+        <a href="motion.txt.html#-" class="d">-</a> <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#string" class="d">string</a> if the Vim <a href="eval.txt.html#expression" class="d">expression</a> evaluates to <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#string" class="d">string</a> or number
+        <a href="motion.txt.html#-" class="d">-</a> <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> if the Vim <a href="eval.txt.html#expression" class="d">expression</a> evaluates to <a href="insert.txt.html#a" class="d">a</a> Vim <a href="eval.txt.html#list" class="d">list</a>
+        <a href="motion.txt.html#-" class="d">-</a> <a href="insert.txt.html#a" class="d">a</a> dictionary if the Vim <a href="eval.txt.html#expression" class="d">expression</a> evaluates to <a href="insert.txt.html#a" class="d">a</a> Vim dictionary
+        <a href="eval.txt.html#Dictionaries" class="d">Dictionaries</a> and lists are recursively expanded.
+        Examples: 
+<span class="e">            :py text_width = vim.eval("&amp;tw")</span>
+<span class="e">            :py str = vim.eval("12+12")         # NB result is a string! Use</span>
+<span class="e">                                                # string.atoi() to convert to</span>
+<span class="e">                                                # a number.</span>
+<span class="e"></span>
+<span class="e">            :py tagList = vim.eval('taglist("eval_expr")')</span>
+       The latter will return <a href="insert.txt.html#a" class="d">a</a> <a href="#python" class="d">python</a> <a href="eval.txt.html#list" class="d">list</a> of <a href="#python" class="d">python</a> dicts, for instance:
+<span class="h">        [{'cmd': '/^eval_expr(arg, nextcmd)$/', 'static': 0, 'name': </span>
+<span class="h">        'eval_expr', 'kind': 'f', 'filename': './src/eval.c'}] </span>
+
+vim.bindeval(str)                                       <a name="python-bindeval" class="t">python-bindeval</a>
+        Like <a href="#python-eval" class="l">python-eval</a><a href="motion.txt.html#%2C" class="d">,</a> but returns special <a href="index.txt.html#objects" class="d">objects</a> described in 
+        <a href="#python-bindeval-objects" class="l">python-bindeval-objects</a><a href="repeat.txt.html#." class="d">.</a> These <a href="#python" class="d">python</a> <a href="index.txt.html#objects" class="d">objects</a> let you modify <a href="motion.txt.html#%28" class="d">(</a><a href="eval.txt.html#List" class="l">List</a> 
+        or <a href="eval.txt.html#Dictionary" class="l">Dictionary</a><a href="motion.txt.html#%29" class="d">)</a> or call <a href="motion.txt.html#%28" class="d">(</a><a href="eval.txt.html#Funcref" class="l">Funcref</a><a href="motion.txt.html#%29" class="d">)</a> vim objects.
+
+vim.strwidth(str)                                       <a name="python-strwidth" class="t">python-strwidth</a>
+        Like <a href="eval.txt.html#strwidth%28%29" class="l">strwidth()</a><a href="cmdline.txt.html#%3A" class="d">:</a> returns number of display cells str occupies, <a href="intro.txt.html#tab" class="d">tab</a> 
+        <a href="motion.txt.html#is" class="d">is</a> counted <a href="motion.txt.html#as" class="d">as</a> one cell.
+
+vim.foreach_rtp(callable)                               <a name="python-foreach_rtp" class="t">python-foreach_rtp</a>
+        Call the given callable for each path in <a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a> until either 
+        callable returns something but None, the exception <a href="motion.txt.html#is" class="d">is</a> raised or there 
+        are no longer paths. If stopped in <a href="change.txt.html#case" class="d">case</a> callable returned non-None, 
+        vim.foreach_rtp function returns the value returned by callable.
+
+vim.chdir(*args, **kwargs)                              <a name="python-chdir" class="t">python-chdir</a>
+vim.fchdir(*args, **kwargs)                             <a name="python-fchdir" class="t">python-fchdir</a>
+        Run os.chdir or os.fchdir, then all appropriate vim stuff.
+        <span class="n">Note:</span> you should not use these <a href="eval.txt.html#functions" class="d">functions</a> directly, use os.chdir and 
+              os.fchdir instead. Behavior of vim.fchdir <a href="motion.txt.html#is" class="d">is</a> undefined in <a href="change.txt.html#case" class="d">case</a> 
+              os.fchdir does not exist.
+
+Error object of the "vim" module
+
+vim.error                                               <a name="python-error" class="t">python-error</a>
+        Upon encountering <a href="insert.txt.html#a" class="d">a</a> Vim error, <a href="#Python" class="d">Python</a> raises an exception of type
+        vim.error.
+        Example: 
+<span class="e">                try:</span>
+<span class="e">                        vim.command("put a")</span>
+<span class="e">                except vim.error:</span>
+<span class="e">                        # nothing in register a</span>
+<span class="e"></span>
+Constants of the "vim" module
+
+        <span class="n">Note</span> that these are not actually constants <a href="motion.txt.html#-" class="d">-</a> you could reassign them.
+        But this <a href="motion.txt.html#is" class="d">is</a> silly, <a href="motion.txt.html#as" class="d">as</a> you would then lose access to the vim <a href="index.txt.html#objects" class="d">objects</a>
+        to which the <a href="eval.txt.html#variables" class="d">variables</a> referred.
+
+vim.buffers                                             <a name="python-buffers" class="t">python-buffers</a>
+        <a href="insert.txt.html#A" class="d">A</a> <a href="map.txt.html#mapping" class="d">mapping</a> object providing access to the <a href="eval.txt.html#list" class="d">list</a> of vim buffers.  The
+        object supports the following operations: 
+<span class="e">            :py b = vim.buffers[i]      # Indexing (read-only)</span>
+<span class="e">            :py b in vim.buffers        # Membership test</span>
+<span class="e">            :py n = len(vim.buffers)    # Number of elements</span>
+<span class="e">            :py for b in vim.buffers:   # Iterating over buffer list</span>
+
+vim.windows                                             <a name="python-windows" class="t">python-windows</a>
+        <a href="insert.txt.html#A" class="d">A</a> sequence object providing access to the <a href="eval.txt.html#list" class="d">list</a> of vim windows.  The
+        object supports the following operations: 
+<span class="e">            :py w = vim.windows[i]      # Indexing (read-only)</span>
+<span class="e">            :py w in vim.windows        # Membership test</span>
+<span class="e">            :py n = len(vim.windows)    # Number of elements</span>
+<span class="e">            :py for w in vim.windows:   # Sequential access</span>
+       <span class="n">Note:</span> vim.windows object always accesses current <a href="intro.txt.html#tab" class="d">tab</a> page. 
+        <a href="#python-tabpage" class="l">python-tabpage</a>.windows <a href="index.txt.html#objects" class="d">objects</a> are bound to parent <a href="#python-tabpage" class="l">python-tabpage</a> 
+        object and always use <a href="windows.txt.html#windows" class="d">windows</a> from that <a href="intro.txt.html#tab" class="d">tab</a> page (or throw vim.error 
+        in <a href="change.txt.html#case" class="d">case</a> <a href="intro.txt.html#tab" class="d">tab</a> page was deleted). You can keep <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#reference" class="d">reference</a> to both 
+        without keeping <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#reference" class="d">reference</a> to vim module object or <a href="#python-tabpage" class="l">python-tabpage</a><a href="motion.txt.html#%2C" class="d">,</a> 
+        they will not lose their properties in this case.
+
+vim.tabpages                                            <a name="python-tabpages" class="t">python-tabpages</a>
+        <a href="insert.txt.html#A" class="d">A</a> sequence object providing access to the <a href="eval.txt.html#list" class="d">list</a> of vim <a href="intro.txt.html#tab" class="d">tab</a> pages. The 
+        object supports the following operations: 
+<span class="e">            :py t = vim.tabpages[i]     # Indexing (read-only)</span>
+<span class="e">            :py t in vim.tabpages       # Membership test</span>
+<span class="e">            :py n = len(vim.tabpages)   # Number of elements</span>
+<span class="e">            :py for t in vim.tabpages:  # Sequential access</span>
+
+vim.current                                             <a name="python-current" class="t">python-current</a>
+        An object providing access (via specific attributes) to <a href="various.txt.html#various" class="d">various</a>
+        "current" <a href="index.txt.html#objects" class="d">objects</a> available in <a href="options.txt.html#vim%3A" class="d">vim:</a>
+                vim.current.line        The current line (RW)           <a href="eval.txt.html#String" class="d">String</a>
+                vim.current.buffer      The current buffer (RW)         Buffer
+                vim.current.window      The current <a href="windows.txt.html#window" class="d">window</a> (RW)         Window
+                vim.current.tabpage     The current <a href="intro.txt.html#tab" class="d">tab</a> page (RW)       TabPage
+                vim.current.range       The current line range (RO)     Range
+
+        The last <a href="change.txt.html#case" class="d">case</a> deserves <a href="insert.txt.html#a" class="d">a</a> little explanation.  When the <a href="#%3Apython" class="d">:python</a> or
+        <a href="#%3Apyfile" class="d">:pyfile</a> command specifies <a href="insert.txt.html#a" class="d">a</a> range, this range of lines becomes the
+        "current range"<a href="repeat.txt.html#." class="d">.</a>  <a href="insert.txt.html#A" class="d">A</a> range <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> bit like <a href="insert.txt.html#a" class="d">a</a> buffer, but with all access
+        restricted to <a href="insert.txt.html#a" class="d">a</a> subset of lines.  See <a href="#python-range" class="l">python-range</a> for more details.
+
+        <span class="n">Note:</span> When assigning to vim.current.{buffer,window,tabpage} <a href="motion.txt.html#it" class="d">it</a> expects 
+        valid <a href="#python-buffer" class="l">python-buffer</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="#python-window" class="l">python-window</a> or <a href="#python-tabpage" class="l">python-tabpage</a> <a href="index.txt.html#objects" class="d">objects</a> 
+        respectively. Assigning triggers normal (with <a href="autocmd.txt.html#autocommand" class="l">autocommand</a>s) 
+        switching to given buffer, <a href="windows.txt.html#window" class="d">window</a> or <a href="intro.txt.html#tab" class="d">tab</a> page. It <a href="motion.txt.html#is" class="d">is</a> the only way to 
+        switch UI <a href="index.txt.html#objects" class="d">objects</a> in python: you can't assign to 
+        <a href="#python-tabpage" class="l">python-tabpage</a>.window attribute. To switch without triggering 
+        autocommands use 
+<span class="e">            py &lt;&lt; EOF</span>
+<span class="e">            saved_eventignore = vim.options['eventignore']</span>
+<span class="e">            vim.options['eventignore'] = 'all'</span>
+<span class="e">            try:</span>
+<span class="e">                vim.current.buffer = vim.buffers[2] # Switch to buffer 2</span>
+<span class="e">            finally:</span>
+<span class="e">                vim.options['eventignore'] = saved_eventignore</span>
+<span class="e">            EOF</span>
+
+vim.vars                                                <a name="python-vars" class="t">python-vars</a>
+vim.vvars                                               <a name="python-vvars" class="t">python-vvars</a>
+        Dictionary-like <a href="index.txt.html#objects" class="d">objects</a> holding dictionaries with global <a href="motion.txt.html#%28" class="d">(</a><a href="eval.txt.html#g%3A" class="l">g:</a><a href="motion.txt.html#%29" class="d">)</a> and 
+        vim <a href="motion.txt.html#%28" class="d">(</a><a href="eval.txt.html#v%3A" class="l">v:</a><a href="motion.txt.html#%29" class="d">)</a> <a href="eval.txt.html#variables" class="d">variables</a> respectively. Identical to <span class="e">vim.bindeval("g:")</span>, 
+        but faster.
+
+vim.options                                             <a name="python-options" class="t">python-options</a>
+        Object partly supporting <a href="map.txt.html#mapping" class="d">mapping</a> protocol (supports setting and 
+        getting items) providing <a href="insert.txt.html#a" class="d">a</a> read-write access to global options.
+        <span class="n">Note:</span> unlike <a href="options.txt.html#%3Aset" class="l">:set</a> this provides access only to global options. You
+        cannot use this object to obtain or set local options' values or
+        access local-only <a href="options.txt.html#options" class="d">options</a> in any fashion. Raises KeyError if no global
+        option with such name exists (i.e. does not raise KeyError for
+        <a href="options.txt.html#global-local" class="l">global-local</a> <a href="options.txt.html#options" class="d">options</a> and global only options, but does for window-
+        and buffer-local ones).  Use <a href="#python-buffer" class="l">python-buffer</a> <a href="index.txt.html#objects" class="d">objects</a> to access to
+        buffer-local <a href="options.txt.html#options" class="d">options</a> and <a href="#python-window" class="l">python-window</a> <a href="index.txt.html#objects" class="d">objects</a> to access to
+        window-local options.
+
+        Type of this object <a href="motion.txt.html#is" class="d">is</a> available via "Options" attribute of vim 
+        module.
+
+Output from <a href="#Python" class="d">Python</a>                                      <a name="python-output" class="t">python-output</a>
+        Vim displays all <a href="#Python" class="d">Python</a> code output in the Vim message area.  <a href="intro.txt.html#Normal" class="d">Normal</a>
+        output appears <a href="motion.txt.html#as" class="d">as</a> information messages, and error output appears <a href="motion.txt.html#as" class="d">as</a>
+        error messages.
+
+        In implementation terms, this means that all output to sys.stdout
+        (including the output from print statements) appears <a href="motion.txt.html#as" class="d">as</a> information
+        messages, and all output to sys.stderr (including error tracebacks)
+        appears <a href="motion.txt.html#as" class="d">as</a> error messages.
+
+                                                        <a name="python-input" class="t">python-input</a>
+        Input (via sys.stdin, including <a href="eval.txt.html#input%28%29" class="d">input()</a> and raw_input()) <a href="motion.txt.html#is" class="d">is</a> not
+        supported, and may cause the program to crash.  This should probably be
+        fixed.
+
+                    <a name="python2-directory" class="t">python2-directory</a> <a name="python3-directory" class="t">python3-directory</a> <a name="pythonx-directory" class="t">pythonx-directory</a>
+<a href="#Python" class="d">Python</a> <a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a> handling                           <a name="python-special-path" class="t">python-special-path</a>
+
+In <a href="#python" class="d">python</a> vim.VIM_SPECIAL_PATH special directory <a href="motion.txt.html#is" class="d">is</a> used <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> replacement for 
+the <a href="eval.txt.html#list" class="d">list</a> of paths found in <a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a>: with this directory in sys.path and 
+vim.path_hooks in sys.path_hooks <a href="#python" class="d">python</a> will try to load module from 
+<span class="s">{rtp}</span>/python2 (or python3) and <span class="s">{rtp}</span>/pythonx (for both <a href="#python" class="d">python</a> versions) for 
+each <span class="s">{rtp}</span> found in <a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a>.
+
+Implementation <a href="motion.txt.html#is" class="d">is</a> similar to the following, but written in C: 
+<span class="e"></span>
+<span class="e">    from imp import find_module, load_module</span>
+<span class="e">    import vim</span>
+<span class="e">    import sys</span>
+<span class="e"></span>
+<span class="e">    class VimModuleLoader(object):</span>
+<span class="e">        def __init__(self, module):</span>
+<span class="e">            self.module = module</span>
+<span class="e"></span>
+<span class="e">        def load_module(self, fullname, path=None):</span>
+<span class="e">            return self.module</span>
+<span class="e"></span>
+<span class="e">    def _find_module(fullname, oldtail, path):</span>
+<span class="e">        idx = oldtail.find('.')</span>
+<span class="e">        if idx &gt; 0:</span>
+<span class="e">            name = oldtail[:idx]</span>
+<span class="e">            tail = oldtail[idx+1:]</span>
+<span class="e">            fmr = find_module(name, path)</span>
+<span class="e">            module = load_module(fullname[:-len(oldtail)] + name, *fmr)</span>
+<span class="e">            return _find_module(fullname, tail, module.__path__)</span>
+<span class="e">        else:</span>
+<span class="e">            fmr = find_module(fullname, path)</span>
+<span class="e">            return load_module(fullname, *fmr)</span>
+<span class="e"></span>
+<span class="e">    # It uses vim module itself in place of VimPathFinder class: it does not </span>
+<span class="e">    # matter for python which object has find_module function attached to as </span>
+<span class="e">    # an attribute.</span>
+<span class="e">    class VimPathFinder(object):</span>
+<span class="e">        @classmethod</span>
+<span class="e">        def find_module(cls, fullname, path=None):</span>
+<span class="e">            try:</span>
+<span class="e">                return VimModuleLoader(_find_module(fullname, fullname, path or vim._get_paths()))</span>
+<span class="e">            except ImportError:</span>
+<span class="e">                return None</span>
+<span class="e"></span>
+<span class="e">        @classmethod</span>
+<span class="e">        def load_module(cls, fullname, path=None):</span>
+<span class="e">            return _find_module(fullname, fullname, path or vim._get_paths())</span>
+<span class="e"></span>
+<span class="e">    def hook(path):</span>
+<span class="e">        if path == vim.VIM_SPECIAL_PATH:</span>
+<span class="e">            return VimPathFinder</span>
+<span class="e">        else:</span>
+<span class="e">            raise ImportError</span>
+<span class="e"></span>
+<span class="e">    sys.path_hooks.append(hook)</span>
+<span class="e"></span>
+vim.VIM_SPECIAL_PATH                                    <a name="python-VIM_SPECIAL_PATH" class="t">python-VIM_SPECIAL_PATH</a>
+        <a href="eval.txt.html#String" class="d">String</a> constant used in conjunction with vim path hook. If path hook 
+        installed by vim <a href="motion.txt.html#is" class="d">is</a> requested to handle anything but path equal to 
+        vim.VIM_SPECIAL_PATH constant <a href="motion.txt.html#it" class="d">it</a> raises ImportError. In the only other 
+        <a href="change.txt.html#case" class="d">case</a> <a href="motion.txt.html#it" class="d">it</a> uses special loader.
+
+        <span class="n">Note:</span> you <a href="vim_faq.txt.html#must" class="d">must</a> not use value of this constant directly, always use 
+              vim.VIM_SPECIAL_PATH object.
+
+vim.find_module(...)                                    <a name="python-find_module" class="t">python-find_module</a>
+vim.path_hook(path)                                     <a name="python-path_hook" class="t">python-path_hook</a>
+        Methods or <a href="index.txt.html#objects" class="d">objects</a> used to implement path loading <a href="motion.txt.html#as" class="d">as</a> described above. 
+        You should not be using any of these directly except for vim.path_hook 
+        in <a href="change.txt.html#case" class="d">case</a> you need to <a href="diff.txt.html#do" class="d">do</a> something with sys.meta_path. It <a href="motion.txt.html#is" class="d">is</a> not 
+        guaranteed that any of the <a href="index.txt.html#objects" class="d">objects</a> will exist in the future vim 
+        versions.
+
+vim._get_paths                                          <a name="python-_get_paths" class="t">python-_get_paths</a>
+        Methods returning <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of paths which will be searched for by path 
+        hook. You should not rely on this method being present in future 
+        versions, but can use <a href="motion.txt.html#it" class="d">it</a> for debugging.
+
+        It returns <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of <span class="s">{rtp}</span>/python2 (or <span class="s">{rtp}</span>/python3) and 
+        <span class="s">{rtp}</span>/pythonx directories for each <span class="s">{rtp}</span> in <a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a>.
+
+<span class="h">==============================================================================</span>
+3. Buffer <a href="index.txt.html#objects" class="d">objects</a>                                       <a name="python-buffer" class="t">python-buffer</a>
+
+Buffer <a href="index.txt.html#objects" class="d">objects</a> represent vim buffers.  You can obtain them in <a href="insert.txt.html#a" class="d">a</a> number of ways:
+        <a href="motion.txt.html#-" class="d">-</a> via vim.current.buffer <a href="motion.txt.html#%28" class="d">(</a><a href="#python-current" class="l">python-current</a><a href="motion.txt.html#%29" class="d">)</a>
+        <a href="motion.txt.html#-" class="d">-</a> from indexing vim.buffers <a href="motion.txt.html#%28" class="d">(</a><a href="#python-buffers" class="l">python-buffers</a><a href="motion.txt.html#%29" class="d">)</a>
+        <a href="motion.txt.html#-" class="d">-</a> from the "buffer" attribute of <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#%28" class="d">(</a><a href="#python-window" class="l">python-window</a><a href="motion.txt.html#%29" class="d">)</a>
+
+Buffer <a href="index.txt.html#objects" class="d">objects</a> have two read-only attributes <a href="motion.txt.html#-" class="d">-</a> name <a href="motion.txt.html#-" class="d">-</a> the full file name for
+the buffer, and number <a href="motion.txt.html#-" class="d">-</a> the buffer number.  They also have three methods
+(append, mark, and range; see below).
+
+You can also treat buffer <a href="index.txt.html#objects" class="d">objects</a> <a href="motion.txt.html#as" class="d">as</a> sequence objects.  In this context, they
+act <a href="motion.txt.html#as" class="d">as</a> if they were lists (yes, they are mutable) of strings, with each
+element being <a href="insert.txt.html#a" class="d">a</a> line of the buffer.  All of the usual sequence operations,
+including indexing, <a href="index.txt.html#index" class="d">index</a> assignment, slicing and <a href="eval.txt.html#slice" class="d">slice</a> assignment, work <a href="motion.txt.html#as" class="d">as</a>
+you would expect.  <span class="n">Note</span> that the result of indexing (slicing) <a href="insert.txt.html#a" class="d">a</a> buffer <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a>
+<a href="eval.txt.html#string" class="d">string</a> (list of strings).  This has one unusual consequence <a href="motion.txt.html#-" class="d">-</a> b[:] <a href="motion.txt.html#is" class="d">is</a> different
+from b.  In particular, "b[:] <a href="change.txt.html#%3D" class="d">=</a> None" deletes the whole of the buffer, whereas
+"<a href="motion.txt.html#b" class="d">b</a> <a href="change.txt.html#%3D" class="d">=</a> None" merely updates the variable b, with no effect on the buffer.
+
+Buffer indexes start <a href="motion.txt.html#at" class="d">at</a> zero, <a href="motion.txt.html#as" class="d">as</a> <a href="motion.txt.html#is" class="d">is</a> normal in Python.  This differs from vim
+line numbers, which start from 1.  This <a href="motion.txt.html#is" class="d">is</a> particularly relevant when dealing
+with marks (see below) which use vim line numbers.
+
+The buffer object attributes are:
+        b.vars          Dictionary-like object used to access 
+                        <a href="eval.txt.html#buffer-variable" class="l">buffer-variable</a>s.
+        b.options       Mapping object (supports item getting, setting and 
+                        deleting) that provides access to buffer-local <a href="options.txt.html#options" class="d">options</a> 
+                        and buffer-local values of <a href="options.txt.html#global-local" class="l">global-local</a> options. Use 
+                        <a href="#python-window" class="l">python-window</a>.options if option <a href="motion.txt.html#is" class="d">is</a> window-local, 
+                        this object will raise KeyError. If option <a href="motion.txt.html#is" class="d">is</a> 
+                        <a href="options.txt.html#global-local" class="l">global-local</a> and local value <a href="motion.txt.html#is" class="d">is</a> missing getting <a href="motion.txt.html#it" class="d">it</a> 
+                        will return None.
+        b.name          String, RW. Contains buffer name (full path).
+                        <span class="n">Note:</span> when assigning to b.name <a href="autocmd.txt.html#BufFilePre" class="l">BufFilePre</a> and 
+                        <a href="autocmd.txt.html#BufFilePost" class="l">BufFilePost</a> autocommands are launched.
+        b.number        Buffer number. Can be used <a href="motion.txt.html#as" class="d">as</a> <a href="#python-buffers" class="l">python-buffers</a> key.
+                        Read-only.
+        b.valid         True or False. Buffer object becomes invalid when 
+                        corresponding buffer <a href="motion.txt.html#is" class="d">is</a> wiped out.
+
+The buffer object methods are:
+        b.append(str)   Append <a href="insert.txt.html#a" class="d">a</a> line to the buffer
+        b.append(str, nr)  Idem, below line "nr"
+        b.append(list)  Append <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of lines to the buffer
+                        <span class="n">Note</span> that the option of supplying <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of strings to
+                        the append method differs from the equivalent method
+                        for Python's built-in <a href="eval.txt.html#list" class="d">list</a> objects.
+        b.append(list, nr)  Idem, below line "nr"
+        b.mark(name)    Return <a href="insert.txt.html#a" class="d">a</a> tuple (row,col) representing the position
+                        of the named <a href="motion.txt.html#mark" class="d">mark</a> (can also get the <a href="motion.txt.html#%5B%5D" class="d">[]</a>"<a href="intro.txt.html#%3C%3E" class="d">&lt;&gt;</a> marks)
+        b.range(s,e)    Return <a href="insert.txt.html#a" class="d">a</a> range object (see <a href="#python-range" class="l">python-range</a><a href="motion.txt.html#%29" class="d">)</a> which
+                        represents the part of the given buffer between line
+                        numbers <a href="change.txt.html#s" class="d">s</a> and <a href="motion.txt.html#e" class="d">e</a> <a href="motion.txt.html#inclusive" class="l">inclusive</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="n">Note</span> that when adding <a href="insert.txt.html#a" class="d">a</a> line <a href="motion.txt.html#it" class="d">it</a> <a href="vim_faq.txt.html#must" class="d">must</a> not contain <a href="insert.txt.html#a" class="d">a</a> line break character '\n'.
+<a href="insert.txt.html#A" class="d">A</a> trailing '\n' <a href="motion.txt.html#is" class="d">is</a> allowed and ignored, so that you can do: 
+<span class="e">        :py b.append(f.readlines())</span>
+<span class="e"></span>
+Buffer object type <a href="motion.txt.html#is" class="d">is</a> available using "Buffer" attribute of vim module.
+
+Examples (assume <a href="motion.txt.html#b" class="d">b</a> <a href="motion.txt.html#is" class="d">is</a> the current buffer) 
+<span class="e">        :py print b.name                # write the buffer file name</span>
+<span class="e">        :py b[0] = "hello!!!"           # replace the top line</span>
+<span class="e">        :py b[:] = None                 # delete the whole buffer</span>
+<span class="e">        :py del b[:]                    # delete the whole buffer</span>
+<span class="e">        :py b[0:0] = [ "a line" ]       # add a line at the top</span>
+<span class="e">        :py del b[2]                    # delete a line (the third)</span>
+<span class="e">        :py b.append("bottom")          # add a line at the bottom</span>
+<span class="e">        :py n = len(b)                  # number of lines</span>
+<span class="e">        :py (row,col) = b.mark('a')     # named mark</span>
+<span class="e">        :py r = b.range(1,5)            # a sub-range of the buffer</span>
+<span class="e">        :py b.vars["foo"] = "bar"       # assign b:foo variable</span>
+<span class="e">        :py b.options["ff"] = "dos"     # set fileformat</span>
+<span class="e">        :py del b.options["ar"]         # same as :set autoread&lt;</span>
+<span class="e"></span>
+<span class="h">==============================================================================</span>
+4. Range <a href="index.txt.html#objects" class="d">objects</a>                                        <a name="python-range" class="t">python-range</a>
+
+Range <a href="index.txt.html#objects" class="d">objects</a> represent <a href="insert.txt.html#a" class="d">a</a> part of <a href="insert.txt.html#a" class="d">a</a> vim buffer.  You can obtain them in <a href="insert.txt.html#a" class="d">a</a>
+number of ways:
+        <a href="motion.txt.html#-" class="d">-</a> via vim.current.range <a href="motion.txt.html#%28" class="d">(</a><a href="#python-current" class="l">python-current</a><a href="motion.txt.html#%29" class="d">)</a>
+        <a href="motion.txt.html#-" class="d">-</a> from <a href="insert.txt.html#a" class="d">a</a> buffer's <a href="eval.txt.html#range%28%29" class="d">range()</a> method <a href="motion.txt.html#%28" class="d">(</a><a href="#python-buffer" class="l">python-buffer</a><a href="motion.txt.html#%29" class="d">)</a>
+
+<a href="insert.txt.html#A" class="d">A</a> range object <a href="motion.txt.html#is" class="d">is</a> almost identical in operation to <a href="insert.txt.html#a" class="d">a</a> buffer object.  However,
+all operations are restricted to the lines within the range (this line range
+can, of course, change <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> result of <a href="eval.txt.html#slice" class="d">slice</a> assignments, line deletions, or
+the range.append() method).
+
+The range object attributes are:
+        r.start         Index of first line into the buffer
+        r.end           Index of last line into the buffer
+
+The range object methods are:
+        r.append(str)   Append <a href="insert.txt.html#a" class="d">a</a> line to the range
+        r.append(str, nr)  Idem, after line "nr"
+        r.append(list)  Append <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of lines to the range
+                        <span class="n">Note</span> that the option of supplying <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of strings to
+                        the append method differs from the equivalent method
+                        for Python's built-in <a href="eval.txt.html#list" class="d">list</a> objects.
+        r.append(list, nr)  Idem, after line "nr"
+
+Range object type <a href="motion.txt.html#is" class="d">is</a> available using "Range" attribute of vim module.
+
+Example (assume <a href="change.txt.html#r" class="d">r</a> <a href="motion.txt.html#is" class="d">is</a> the current range):
+        <a href="pattern.txt.html#%23" class="d">#</a> Send all lines in <a href="insert.txt.html#a" class="d">a</a> range to the default printer
+        vim.command("%d,%dhardcopy!" <a href="motion.txt.html#%25" class="d">%</a> (r.start+1,r.end+1))
+
+<span class="h">==============================================================================</span>
+5. Window <a href="index.txt.html#objects" class="d">objects</a>                                       <a name="python-window" class="t">python-window</a>
+
+Window <a href="index.txt.html#objects" class="d">objects</a> represent vim windows.  You can obtain them in <a href="insert.txt.html#a" class="d">a</a> number of ways:
+        <a href="motion.txt.html#-" class="d">-</a> via vim.current.window <a href="motion.txt.html#%28" class="d">(</a><a href="#python-current" class="l">python-current</a><a href="motion.txt.html#%29" class="d">)</a>
+        <a href="motion.txt.html#-" class="d">-</a> from indexing vim.windows <a href="motion.txt.html#%28" class="d">(</a><a href="#python-windows" class="l">python-windows</a><a href="motion.txt.html#%29" class="d">)</a>
+        <a href="motion.txt.html#-" class="d">-</a> from indexing "<a href="windows.txt.html#windows" class="d">windows</a>" attribute of <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#tab" class="d">tab</a> page <a href="motion.txt.html#%28" class="d">(</a><a href="#python-tabpage" class="l">python-tabpage</a><a href="motion.txt.html#%29" class="d">)</a>
+        <a href="motion.txt.html#-" class="d">-</a> from the "<a href="windows.txt.html#window" class="d">window</a>" attribute of <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#tab" class="d">tab</a> page <a href="motion.txt.html#%28" class="d">(</a><a href="#python-tabpage" class="l">python-tabpage</a><a href="motion.txt.html#%29" class="d">)</a>
+
+You can manipulate <a href="windows.txt.html#window" class="d">window</a> <a href="index.txt.html#objects" class="d">objects</a> only through their attributes.  They have no
+methods, and no sequence or other interface.
+
+Window attributes are:
+        buffer (read-only)      The buffer displayed in this <a href="windows.txt.html#window" class="d">window</a>
+        cursor (read-write)     The current cursor position in the <a href="windows.txt.html#window" class="d">window</a>
+                                This <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> tuple, (row,col).
+        height (read-write)     The <a href="windows.txt.html#window" class="d">window</a> height, in rows
+        width (read-write)      The <a href="windows.txt.html#window" class="d">window</a> width, in columns
+        vars (read-only)        The <a href="windows.txt.html#window" class="d">window</a> <a href="eval.txt.html#w%3A" class="l">w:</a> variables. Attribute <a href="motion.txt.html#is" class="d">is</a> 
+                                unassignable, but you can change <a href="windows.txt.html#window" class="d">window</a> 
+                                <a href="eval.txt.html#variables" class="d">variables</a> this way
+        <a href="options.txt.html#options" class="d">options</a> (read-only)     The window-local options. Attribute <a href="motion.txt.html#is" class="d">is</a> 
+                                unassignable, but you can change <a href="windows.txt.html#window" class="d">window</a> 
+                                <a href="options.txt.html#options" class="d">options</a> this way. Provides access only to 
+                                window-local options, for buffer-local use 
+                                <a href="#python-buffer" class="l">python-buffer</a> and for global ones use 
+                                <a href="#python-options" class="l">python-options</a><a href="repeat.txt.html#." class="d">.</a> If option <a href="motion.txt.html#is" class="d">is</a> <a href="options.txt.html#global-local" class="l">global-local</a> 
+                                and local value <a href="motion.txt.html#is" class="d">is</a> missing getting <a href="motion.txt.html#it" class="d">it</a> will 
+                                return None.
+        number (read-only)      Window number.  The first <a href="windows.txt.html#window" class="d">window</a> has number 1.
+                                This <a href="motion.txt.html#is" class="d">is</a> zero in <a href="change.txt.html#case" class="d">case</a> <a href="motion.txt.html#it" class="d">it</a> cannot be determined
+                                (e.g. when the <a href="windows.txt.html#window" class="d">window</a> object belongs to other
+                                <a href="intro.txt.html#tab" class="d">tab</a> page).
+        row, col (read-only)    On-screen <a href="windows.txt.html#window" class="d">window</a> position in display cells.
+                                First position <a href="motion.txt.html#is" class="d">is</a> zero.
+        <a href="tabpage.txt.html#tabpage" class="d">tabpage</a> (read-only)     Window <a href="intro.txt.html#tab" class="d">tab</a> page.
+        valid (read-write)      True or False. Window object becomes invalid 
+                                when corresponding <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> closed.
+
+The height attribute <a href="motion.txt.html#is" class="d">is</a> writable only if the screen <a href="motion.txt.html#is" class="d">is</a> split horizontally.
+The width attribute <a href="motion.txt.html#is" class="d">is</a> writable only if the screen <a href="motion.txt.html#is" class="d">is</a> split vertically.
+
+Window object type <a href="motion.txt.html#is" class="d">is</a> available using "Window" attribute of vim module.
+
+<span class="h">==============================================================================</span>
+6. <a href="intro.txt.html#Tab" class="d">Tab</a> page <a href="index.txt.html#objects" class="d">objects</a>                                     <a name="python-tabpage" class="t">python-tabpage</a>
+
+<a href="intro.txt.html#Tab" class="d">Tab</a> page <a href="index.txt.html#objects" class="d">objects</a> represent vim <a href="intro.txt.html#tab" class="d">tab</a> pages. You can obtain them in <a href="insert.txt.html#a" class="d">a</a> number of 
+ways:
+        <a href="motion.txt.html#-" class="d">-</a> via vim.current.tabpage <a href="motion.txt.html#%28" class="d">(</a><a href="#python-current" class="l">python-current</a><a href="motion.txt.html#%29" class="d">)</a>
+        <a href="motion.txt.html#-" class="d">-</a> from indexing vim.tabpages <a href="motion.txt.html#%28" class="d">(</a><a href="#python-tabpages" class="l">python-tabpages</a><a href="motion.txt.html#%29" class="d">)</a>
+
+You can use this object to access <a href="intro.txt.html#tab" class="d">tab</a> page windows. They have no methods and 
+no sequence or other interfaces.
+
+<a href="intro.txt.html#Tab" class="d">Tab</a> page attributes are:
+        number          The <a href="intro.txt.html#tab" class="d">tab</a> page number like the one returned by 
+                        <a href="eval.txt.html#tabpagenr%28%29" class="l">tabpagenr()</a><a href="repeat.txt.html#." class="d">.</a>
+        <a href="windows.txt.html#windows" class="d">windows</a>         Like <a href="#python-windows" class="l">python-windows</a><a href="motion.txt.html#%2C" class="d">,</a> but for current <a href="intro.txt.html#tab" class="d">tab</a> page.
+        vars            The <a href="intro.txt.html#tab" class="d">tab</a> page <a href="eval.txt.html#t%3A" class="l">t:</a> variables.
+        <a href="windows.txt.html#window" class="d">window</a>          Current <a href="tabpage.txt.html#tabpage" class="d">tabpage</a> window.
+        valid           True or False. <a href="intro.txt.html#Tab" class="d">Tab</a> page object becomes invalid when 
+                        corresponding <a href="intro.txt.html#tab" class="d">tab</a> page <a href="motion.txt.html#is" class="d">is</a> closed.
+
+TabPage object type <a href="motion.txt.html#is" class="d">is</a> available using "TabPage" attribute of vim module.
+
+<span class="h">==============================================================================</span>
+7. vim.bindeval <a href="index.txt.html#objects" class="d">objects</a>                         <a name="python-bindeval-objects" class="t">python-bindeval-objects</a>
+
+vim.Dictionary object                           <a name="python-Dictionary" class="t">python-Dictionary</a>
+    Dictionary-like object providing access to vim <a href="eval.txt.html#Dictionary" class="l">Dictionary</a> type.
+    Attributes:
+<span class="h">        Attribute  Description </span>
+        locked     One of                       <a name="python-.locked" class="t">python-.locked</a>
+<span class="h">                    Value           Description </span>
+                    zero            Variable <a href="motion.txt.html#is" class="d">is</a> not locked
+                    vim.VAR_LOCKED  Variable <a href="motion.txt.html#is" class="d">is</a> locked, but can be unlocked
+                    vim.VAR_FIXED   Variable <a href="motion.txt.html#is" class="d">is</a> locked and can't be unlocked
+                   Read-write. You can unlock locked variable by assigning 
+                   <span class="e">True</span> or <span class="e">False</span> to this attribute. No recursive locking 
+                   <a href="motion.txt.html#is" class="d">is</a> supported.
+        scope      One of
+<span class="h">                    Value              Description </span>
+                    zero               <a href="eval.txt.html#Dictionary" class="d">Dictionary</a> <a href="motion.txt.html#is" class="d">is</a> not <a href="insert.txt.html#a" class="d">a</a> scope one
+                    vim.VAR_DEF_SCOPE  <a href="eval.txt.html#g%3A" class="l">g:</a> or <a href="eval.txt.html#l%3A" class="l">l:</a> dictionary
+                    vim.VAR_SCOPE      Other scope dictionary,
+                                       see <a href="eval.txt.html#internal-variables" class="l">internal-variables</a>
+    Methods (note: methods <a href="diff.txt.html#do" class="d">do</a> not support keyword arguments):
+<span class="h">        Method      Description </span>
+        <a href="eval.txt.html#keys%28%29" class="d">keys()</a>      Returns <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> with dictionary keys.
+        <a href="eval.txt.html#values%28%29" class="d">values()</a>    Returns <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> with dictionary values.
+        <a href="eval.txt.html#items%28%29" class="d">items()</a>     Returns <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of 2-tuples with dictionary contents.
+        update(iterable), update(dictionary), update(**kwargs)
+                    Adds keys to dictionary.
+        get(key[, default=None])
+                    Obtain key from dictionary, returning the default if <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> 
+                    not present.
+        pop(key[, default])
+                    Remove specified key from dictionary and return 
+                    corresponding value. If key <a href="motion.txt.html#is" class="d">is</a> not found and default <a href="motion.txt.html#is" class="d">is</a> 
+                    given returns the default, otherwise raises KeyError.
+        popitem()
+                    Remove random key from dictionary and return (key, value) 
+                    pair.
+        has_key(key)
+                    Check whether dictionary contains specified key, similar 
+                    to `key in dict`.
+
+        __new__(), __new__(iterable), __new__(dictionary), __new__(update)
+                    You can use <span class="e">vim.Dictionary()</span> to create new vim 
+                    dictionaries. <span class="e">d=vim.Dictionary(arg)</span> <a href="motion.txt.html#is" class="d">is</a> the same <a href="motion.txt.html#as" class="d">as</a> 
+                    <span class="e">d=vim.bindeval('{}');d.update(arg)</span>. Without arguments 
+                    constructs empty dictionary.
+
+    Examples: 
+<span class="e">        d = vim.Dictionary(food="bar")          # Constructor</span>
+<span class="e">        d['a'] = 'b'                            # Item assignment</span>
+<span class="e">        print d['a']                            # getting item</span>
+<span class="e">        d.update({'c': 'd'})                    # .update(dictionary)</span>
+<span class="e">        d.update(e='f')                         # .update(**kwargs)</span>
+<span class="e">        d.update((('g', 'h'), ('i', 'j')))      # .update(iterable)</span>
+<span class="e">        for key in d.keys():                    # .keys()</span>
+<span class="e">        for val in d.values():                  # .values()</span>
+<span class="e">        for key, val in d.items():              # .items()</span>
+<span class="e">        print isinstance(d, vim.Dictionary)     # True</span>
+<span class="e">        for key in d:                           # Iteration over keys</span>
+<span class="e">        class Dict(vim.Dictionary):             # Subclassing</span>
+
+    <span class="n">Note:</span> when iterating over keys you should not modify dictionary.
+
+vim.List object                                 <a name="python-List" class="t">python-List</a>
+    Sequence-like object providing access to vim <a href="eval.txt.html#List" class="l">List</a> type.
+    Supports <span class="e">.locked</span> attribute, see <a href="#python-.locked" class="l">python-.locked</a><a href="repeat.txt.html#." class="d">.</a> Also supports the 
+    following methods:
+<span class="h">        Method          Description </span>
+        extend(item)    Add items to the list.
+
+        __new__(), __new__(iterable)
+                        You can use <span class="e">vim.List()</span> to create new vim lists. 
+                        <span class="e">l=vim.List(iterable)</span> <a href="motion.txt.html#is" class="d">is</a> the same <a href="motion.txt.html#as" class="d">as</a> 
+                        <span class="e">l=vim.bindeval('[]');l.extend(iterable)</span>. Without 
+                        arguments constructs empty list.
+    Examples: 
+<span class="e">        l = vim.List("abc")             # Constructor, result: ['a', 'b', 'c']</span>
+<span class="e">        l.extend(['abc', 'def'])        # .extend() method</span>
+<span class="e">        print l[1:]                     # slicing</span>
+<span class="e">        l[:0] = ['ghi', 'jkl']          # slice assignment</span>
+<span class="e">        print l[0]                      # getting item</span>
+<span class="e">        l[0] = 'mno'                    # assignment</span>
+<span class="e">        for i in l:                     # iteration</span>
+<span class="e">        print isinstance(l, vim.List)   # True</span>
+<span class="e">        class List(vim.List):           # Subclassing</span>
+<span class="e"></span>
+vim.Function object                             <a name="python-Function" class="t">python-Function</a>
+    Function-like object, acting like vim <a href="eval.txt.html#Funcref" class="l">Funcref</a> object. Accepts special 
+    keyword argument <span class="e">self</span>, see <a href="eval.txt.html#Dictionary-function" class="l">Dictionary-function</a><a href="repeat.txt.html#." class="d">.</a> You can also use 
+    <span class="e">vim.Function(name)</span> constructor, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> the same <a href="motion.txt.html#as" class="d">as</a> 
+    <span class="e">vim.bindeval('function(%s)'%json.dumps(name))</span>.
+
+    Attributes (read-only):
+<span class="h">        Attribute    Description </span>
+        name         Function name.
+        args         <span class="e">None</span> or <a href="insert.txt.html#a" class="d">a</a> <a href="#python-List" class="l">python-List</a> object with arguments.  <span class="n">Note</span> 
+                     that this <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> copy of the arguments list, constructed 
+                     each time you request this attribute. Modifications made 
+                     to the <a href="eval.txt.html#list" class="d">list</a> will be ignored (but not to the containers 
+                     inside argument list: this <a href="motion.txt.html#is" class="d">is</a> like <a href="eval.txt.html#copy%28%29" class="l">copy()</a> and not 
+                     <a href="eval.txt.html#deepcopy%28%29" class="l">deepcopy()</a>).
+        <a href="eval.txt.html#self" class="d">self</a>         <span class="e">None</span> or <a href="insert.txt.html#a" class="d">a</a> <a href="#python-Dictionary" class="l">python-Dictionary</a> object with <a href="eval.txt.html#self" class="d">self</a> 
+                     dictionary. <span class="n">Note</span> that explicit <span class="e">self</span> keyword used when 
+                     calling resulting object overrides this attribute.
+        auto_rebind  Boolean. True if partial created from this <a href="#Python" class="d">Python</a> object 
+                     and stored in the Vim <a href="usr_41.txt.html#script" class="d">script</a> dictionary should be
+                     automatically rebound to the dictionary <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> stored in
+                     when this dictionary <a href="motion.txt.html#is" class="d">is</a> indexed. Exposes Vim internal
+                     difference between <span class="e">dict.func</span> (auto_rebind=True) and
+                     <span class="e">function(dict.func,dict)</span> (auto_rebind=False). This
+                     attribute makes no sense if <span class="e">self</span> attribute <a href="motion.txt.html#is" class="d">is</a> <span class="e">None</span>.
+
+    Constructor additionally accepts <span class="e">args</span>, <span class="e">self</span> and <span class="e">auto_rebind</span> 
+    keywords.  If <span class="e">args</span> and/or <span class="e">self</span> argument <a href="motion.txt.html#is" class="d">is</a> given then <a href="motion.txt.html#it" class="d">it</a> constructs 
+    <a href="insert.txt.html#a" class="d">a</a> partial, see <a href="eval.txt.html#function%28%29" class="l">function()</a><a href="repeat.txt.html#." class="d">.</a>  <span class="e">auto_rebind</span> <a href="motion.txt.html#is" class="d">is</a> only used when <span class="e">self</span> 
+    argument <a href="motion.txt.html#is" class="d">is</a> given, otherwise <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> assumed to be <span class="e">True</span> regardless of 
+    whether <a href="motion.txt.html#it" class="d">it</a> was given or not.  If <span class="e">self</span> <a href="motion.txt.html#is" class="d">is</a> given then <a href="motion.txt.html#it" class="d">it</a> defaults to 
+    <span class="e">False</span>.
+
+    Examples: 
+<span class="e">        f = vim.Function('tr')                  # Constructor</span>
+<span class="e">        print f('abc', 'a', 'b')                # Calls tr('abc', 'a', 'b')</span>
+<span class="e">        vim.command('''</span>
+<span class="e">            function DictFun() dict</span>
+<span class="e">                return self</span>
+<span class="e">            endfunction</span>
+<span class="e">        ''')</span>
+<span class="e">        f = vim.bindeval('function("DictFun")')</span>
+<span class="e">        print f(self={})                        # Like call('DictFun', [], {})</span>
+<span class="e">        print isinstance(f, vim.Function)       # True</span>
+<span class="e"></span>
+<span class="e">        p = vim.Function('DictFun', self={})</span>
+<span class="e">        print f()</span>
+<span class="e">        p = vim.Function('tr', args=['abc', 'a'])</span>
+<span class="e">        print f('b')</span>
+<span class="e"></span>
+<span class="h">==============================================================================</span>
+8. <a href="eval.txt.html#pyeval%28%29" class="d">pyeval()</a> and <a href="eval.txt.html#py3eval%28%29" class="d">py3eval()</a> Vim <a href="eval.txt.html#functions" class="d">functions</a>                 <a name="python-pyeval" class="t">python-pyeval</a>
+
+To facilitate bi-directional interface, you can use <a href="eval.txt.html#pyeval%28%29" class="l">pyeval()</a> and <a href="eval.txt.html#py3eval%28%29" class="l">py3eval()</a> 
+<a href="eval.txt.html#functions" class="d">functions</a> to evaluate <a href="#Python" class="d">Python</a> expressions and pass their values to Vim script.
+<a href="eval.txt.html#pyxeval%28%29" class="l">pyxeval()</a> <a href="motion.txt.html#is" class="d">is</a> also available.
+
+The <a href="#Python" class="d">Python</a> value "None" <a href="motion.txt.html#is" class="d">is</a> converted to v:none.
+
+<span class="h">==============================================================================</span>
+9. Dynamic loading                                      <a name="python-dynamic" class="t">python-dynamic</a>
+
+On <a href="os_win32.txt.html#MS-Windows" class="d">MS-Windows</a> and <a href="os_unix.txt.html#Unix" class="d">Unix</a> the <a href="#Python" class="d">Python</a> library can be loaded dynamically.  The
+<a href="various.txt.html#%3Aversion" class="l">:version</a> output then includes <a href="various.txt.html#%2Bpython%2Fdyn" class="l">+python/dyn</a> or <a href="various.txt.html#%2Bpython3%2Fdyn" class="l">+python3/dyn</a><a href="repeat.txt.html#." class="d">.</a>
+
+This means that Vim will search for the <a href="#Python" class="d">Python</a> DLL or shared library file only
+when needed.  When you don't use the <a href="#Python" class="d">Python</a> interface you don't need it, thus
+you can use Vim without this file.
+
+
+<span class="h">MS-Windows </span>
+
+To use the <a href="#Python" class="d">Python</a> interface the <a href="#Python" class="d">Python</a> DLL <a href="vim_faq.txt.html#must" class="d">must</a> be in your search path.  In <a href="insert.txt.html#a" class="d">a</a>
+console <a href="windows.txt.html#window" class="d">window</a> type "path" to see what directories are used.  The <a href="options.txt.html#%27pythondll%27" class="o">'pythondll'</a>
+or <a href="options.txt.html#%27pythonthreedll%27" class="o">'pythonthreedll'</a> option can be also used to specify the <a href="#Python" class="d">Python</a> DLL.
+
+The name of the DLL should match the <a href="#Python" class="d">Python</a> version Vim was compiled with.
+Currently the name for <a href="#Python" class="d">Python</a> 2 <a href="motion.txt.html#is" class="d">is</a> "python27.dll"<a href="motion.txt.html#%2C" class="d">,</a> that <a href="motion.txt.html#is" class="d">is</a> for <a href="#Python" class="d">Python</a> 2.7.
+That <a href="motion.txt.html#is" class="d">is</a> the default value for <a href="options.txt.html#%27pythondll%27" class="o">'pythondll'</a>.  For <a href="#Python" class="d">Python</a> 3 <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> python36.dll
+(Python 3.6).  To know for sure edit "gvim.exe" and search for
+"python\d*.dll\c"<a href="repeat.txt.html#." class="d">.</a>
+
+
+<span class="h">Unix </span>
+
+The <a href="options.txt.html#%27pythondll%27" class="o">'pythondll'</a> or <a href="options.txt.html#%27pythonthreedll%27" class="o">'pythonthreedll'</a> option can be used to specify the <a href="#Python" class="d">Python</a>
+shared library file instead of DYNAMIC_PYTHON_DLL or DYNAMIC_PYTHON3_DLL file
+what were specified <a href="motion.txt.html#at" class="d">at</a> compile time.  The version of the shared library <a href="vim_faq.txt.html#must" class="d">must</a>
+match the <a href="#Python" class="d">Python</a> 2.x or <a href="#Python" class="d">Python</a> 3 version Vim was compiled with.
+
+<span class="h">==============================================================================</span>
+10. <a href="#Python" class="d">Python</a> 3                                            <a name="python3" class="t">python3</a>
+
+                                                        <a name="%3Apy3" class="t">:py3</a> <a name="%3Apython3" class="t">:python3</a>
+The <span class="e">:py3</span> and <span class="e">:python3</span> commands work similar to <span class="e">:python</span>.  <a href="insert.txt.html#A" class="d">A</a> simple check
+if the <span class="e">:py3</span> command <a href="motion.txt.html#is" class="d">is</a> working: 
+<span class="e">        :py3 print("Hello")</span>
+<span class="e"></span>
+To see what version of <a href="#Python" class="d">Python</a> you have: 
+<span class="e">        :py3 import sys</span>
+<span class="e">        :py3 print(sys.version)</span>
+                                                       <a name="%3Apy3file" class="t">:py3file</a>
+The <span class="e">:py3file</span> command works similar to <span class="e">:pyfile</span>.
+                                                        <a name="%3Apy3do" class="t">:py3do</a>
+The <span class="e">:py3do</span> command works similar to <span class="e">:pydo</span>.
+
+
+Vim can be built in four ways (:version output):
+1. No <a href="#Python" class="d">Python</a> support        (-python, -python3)
+2. <a href="#Python" class="d">Python</a> 2 support only    (+python or +python/dyn, -python3)
+3. <a href="#Python" class="d">Python</a> 3 support only    (-python, <a href="various.txt.html#%2Bpython3" class="d">+python3</a> or +python3/dyn)
+4. <a href="#Python" class="d">Python</a> 2 and 3 support   (+python/dyn, +python3/dyn)
+
+Some more details on the special <a href="change.txt.html#case" class="d">case</a> 4:  <a name="python-2-and-3" class="t">python-2-and-3</a>
+
+When <a href="#Python" class="d">Python</a> 2 and <a href="#Python" class="d">Python</a> 3 are both supported they <a href="vim_faq.txt.html#must" class="d">must</a> be loaded dynamically.
+
+When doing this on Linux/Unix systems and importing global symbols, this leads
+to <a href="insert.txt.html#a" class="d">a</a> crash when the second <a href="#Python" class="d">Python</a> version <a href="motion.txt.html#is" class="d">is</a> used.  So either global symbols
+are loaded but only one <a href="#Python" class="d">Python</a> version <a href="motion.txt.html#is" class="d">is</a> activated, or no global symbols are
+loaded. The latter makes Python's "import" fail on libraries that expect the
+symbols to be provided by Vim.
+                                                        <a name="E836" class="t">E836</a> <a name="E837" class="t">E837</a>
+Vim's configuration <a href="usr_41.txt.html#script" class="d">script</a> makes <a href="insert.txt.html#a" class="d">a</a> guess for all libraries based on one
+standard <a href="#Python" class="d">Python</a> library (termios).  If importing this library succeeds for
+both <a href="#Python" class="d">Python</a> versions, then both will be made available in Vim <a href="motion.txt.html#at" class="d">at</a> the same
+time.  If not, only the version first used in <a href="insert.txt.html#a" class="d">a</a> session will be enabled.
+When trying to use the other one you will get the <a href="#E836" class="d">E836</a> or <a href="#E837" class="d">E837</a> error message.
+
+Here Vim's behavior depends on the system in which <a href="motion.txt.html#it" class="d">it</a> was configured.  In <a href="insert.txt.html#a" class="d">a</a>
+system where both versions of <a href="#Python" class="d">Python</a> were configured with --enable-shared,
+both versions of <a href="#Python" class="d">Python</a> will be activated <a href="motion.txt.html#at" class="d">at</a> the same time.  There will still
+be problems with other third party libraries that were not linked to
+libPython.
+
+To work around such problems there are these options:
+1. The problematic library <a href="motion.txt.html#is" class="d">is</a> recompiled to link to the according
+   libpython.so.
+2. Vim <a href="motion.txt.html#is" class="d">is</a> recompiled for only one <a href="#Python" class="d">Python</a> version.
+3. You undefine PY_NO_RTLD_GLOBAL in auto/config.h after configuration.  This
+   may crash Vim though.
+
+                                                        <a name="E880" class="t">E880</a>
+Raising SystemExit exception in <a href="#python" class="d">python</a> isn't endorsed way to quit vim, use: 
+<span class="e">        :py vim.command("qall!")</span>
+
+
+                                                        <a name="has-python" class="t">has-python</a>
+You can test what <a href="#Python" class="d">Python</a> version <a href="motion.txt.html#is" class="d">is</a> available with: 
+<span class="e">        if has('python')</span>
+<span class="e">          echo 'there is Python 2.x'</span>
+<span class="e">        endif</span>
+<span class="e">        if has('python3')</span>
+<span class="e">          echo 'there is Python 3.x'</span>
+<span class="e">        endif</span>
+<span class="e"></span>
+<span class="n">Note</span> however, that when <a href="#Python" class="d">Python</a> 2 and 3 are both available and loaded
+dynamically, these <a href="eval.txt.html#has%28%29" class="d">has()</a> calls will try to load them.  If only one can be
+loaded <a href="motion.txt.html#at" class="d">at</a> <a href="insert.txt.html#a" class="d">a</a> time, just checking if <a href="#Python" class="d">Python</a> 2 or 3 are available will prevent
+the other one from being available.
+
+To avoid loading the dynamic library, only check if Vim was compiled with
+<a href="#python" class="d">python</a> support: 
+<span class="e">        if has('python_compiled')</span>
+<span class="e">          echo 'compiled with Python 2.x support'</span>
+<span class="e">          if has('python_dynamic')</span>
+<span class="e">            echo 'Python 2.x dynamically loaded'</span>
+<span class="e">          endif</span>
+<span class="e">        endif</span>
+<span class="e">        if has('python3_compiled')</span>
+<span class="e">          echo 'compiled with Python 3.x support'</span>
+<span class="e">          if has('python3_dynamic')</span>
+<span class="e">            echo 'Python 3.x dynamically loaded'</span>
+<span class="e">          endif</span>
+<span class="e">        endif</span>
+<span class="e"></span>
+This also tells you whether <a href="#Python" class="d">Python</a> <a href="motion.txt.html#is" class="d">is</a> dynamically loaded, which will fail if
+the runtime library cannot be found.
+
+<span class="h">==============================================================================</span>
+11. <a href="#Python" class="d">Python</a> <a href="change.txt.html#X" class="d">X</a>                                            <a name="python_x" class="t">python_x</a> <a name="pythonx" class="t">pythonx</a>
+
+Because most <a href="#python" class="d">python</a> code can be written so that <a href="motion.txt.html#it" class="d">it</a> works with <a href="#python" class="d">python</a> 2.6+ and
+<a href="#python" class="d">python</a> 3 the pyx* <a href="eval.txt.html#functions" class="d">functions</a> and commands have been written.  They work exactly
+the same <a href="motion.txt.html#as" class="d">as</a> the <a href="#Python" class="d">Python</a> 2 and 3 variants, but select the <a href="#Python" class="d">Python</a> version using
+the <a href="options.txt.html#%27pyxversion%27" class="o">'pyxversion'</a> setting.
+
+You should set <a href="options.txt.html#%27pyxversion%27" class="o">'pyxversion'</a> in your <a href="starting.txt.html#.vimrc" class="l">.vimrc</a> to prefer <a href="#Python" class="d">Python</a> 2 or <a href="#Python" class="d">Python</a> 3
+for <a href="#Python" class="d">Python</a> commands. If you change this setting <a href="motion.txt.html#at" class="d">at</a> runtime you may risk that
+state of plugins (such <a href="motion.txt.html#as" class="d">as</a> initialization) may be lost.
+
+If you want to use <a href="insert.txt.html#a" class="d">a</a> module, you can <a href="change.txt.html#put" class="d">put</a> <a href="motion.txt.html#it" class="d">it</a> in the <span class="s">{rtp}</span>/pythonx directory.
+See <a href="#pythonx-directory" class="l">pythonx-directory</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="%3Apyx" class="t">:pyx</a> <a name="%3Apythonx" class="t">:pythonx</a>
+The <span class="e">:pyx</span> and <span class="e">:pythonx</span> commands work similar to <span class="e">:python</span>.  <a href="insert.txt.html#A" class="d">A</a> simple check
+if the <span class="e">:pyx</span> command <a href="motion.txt.html#is" class="d">is</a> working: 
+<span class="e">        :pyx print("Hello")</span>
+<span class="e"></span>
+To see what version of <a href="#Python" class="d">Python</a> <a href="motion.txt.html#is" class="d">is</a> being used: 
+<span class="e">        :pyx import sys</span>
+<span class="e">        :pyx print(sys.version)</span>
+
+                                        <a name="%3Apyxfile" class="t">:pyxfile</a> <a name="python_x-special-comments" class="t">python_x-special-comments</a>
+The <span class="e">:pyxfile</span> command works similar to <span class="e">:pyfile</span>.  However you can add one of
+these comments to force Vim using <span class="e">:pyfile</span> or <span class="e">:py3file</span>: 
+<span class="e">  #!/any string/python2         " Shebang. Must be the first line of the file.</span>
+<span class="e">  #!/any string/python3         " Shebang. Must be the first line of the file.</span>
+<span class="e">  # requires python 2.x         " Maximum lines depend on 'modelines'.</span>
+<span class="e">  # requires python 3.x         " Maximum lines depend on 'modelines'.</span>
+Unlike normal modelines, the bottom of the file <a href="motion.txt.html#is" class="d">is</a> not checked.
+If none of them are found, the <a href="options.txt.html#%27pyxversion%27" class="o">'pyxversion'</a> setting <a href="motion.txt.html#is" class="d">is</a> used.
+                                                        <a name="W20" class="t">W20</a> <a name="W21" class="t">W21</a>
+If Vim does not support the selected <a href="#Python" class="d">Python</a> version <a href="insert.txt.html#a" class="d">a</a> silent message will be
+printed.  Use <span class="e">:messages</span> to read them.
+
+                                                        <a name="%3Apyxdo" class="t">:pyxdo</a>
+The <span class="e">:pyxdo</span> command works similar to <span class="e">:pydo</span>.
+
+                                                        <a name="has-pythonx" class="t">has-pythonx</a>
+You can test if pyx* commands are available with: 
+<span class="e">        if has('pythonx')</span>
+<span class="e">          echo 'pyx* commands are available. (Python ' . &amp;pyx . ')'</span>
+<span class="e">        endif</span>
+<span class="e"></span>
+When compiled with only one of <a href="various.txt.html#%2Bpython" class="l">+python</a> or <a href="various.txt.html#%2Bpython3" class="l">+python3</a><a href="motion.txt.html#%2C" class="d">,</a> the <a href="eval.txt.html#has%28%29" class="d">has()</a> returns 1.
+When compiled with both <a href="various.txt.html#%2Bpython" class="l">+python</a> and <a href="various.txt.html#%2Bpython3" class="l">+python3</a><a href="motion.txt.html#%2C" class="d">,</a> the test depends on the
+<a href="options.txt.html#%27pyxversion%27" class="o">'pyxversion'</a> setting.  If <a href="options.txt.html#%27pyxversion%27" class="o">'pyxversion'</a> <a href="motion.txt.html#is" class="d">is</a> 0, <a href="motion.txt.html#it" class="d">it</a> tests <a href="#Python" class="d">Python</a> 3 first, and if
+<a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> not available then <a href="#Python" class="d">Python</a> 2.  If <a href="options.txt.html#%27pyxversion%27" class="o">'pyxversion'</a> <a href="motion.txt.html#is" class="d">is</a> 2 or 3, <a href="motion.txt.html#it" class="d">it</a> tests only
+<a href="#Python" class="d">Python</a> 2 or 3 respectively.
+
+<span class="n">Note</span> that for <span class="e">has('pythonx')</span> to work <a href="motion.txt.html#it" class="d">it</a> may try to dynamically load <a href="#Python" class="d">Python</a> 3
+or 2.  This may have side effects, especially when Vim can only load one of
+the two.
+
+If <a href="insert.txt.html#a" class="d">a</a> user prefers <a href="#Python" class="d">Python</a> 2 and want to fallback to <a href="#Python" class="d">Python</a> 3, he needs to set
+<a href="options.txt.html#%27pyxversion%27" class="o">'pyxversion'</a> explicitly in his <a href="starting.txt.html#.vimrc" class="l">.vimrc</a><a href="repeat.txt.html#." class="d">.</a>  E.g.: 
+<span class="e">        if has('python')</span>
+<span class="e">          set pyx=2</span>
+<span class="e">        elseif has('python3')</span>
+<span class="e">          set pyx=3</span>
+<span class="e">        endif</span>
+<span class="e"></span>
+<span class="h">==============================================================================</span>
+12. Building with <a href="#Python" class="d">Python</a> support                        <a name="python-building" class="t">python-building</a>
+
+<a href="insert.txt.html#A" class="d">A</a> few hints for building with <a href="#Python" class="d">Python</a> 2 or 3 support.
+
+UNIX
+
+See src/Makefile for how to enable including the <a href="#Python" class="d">Python</a> interface.
+
+On Ubuntu you will want to <a href="usr_90.txt.html#install" class="d">install</a> these <a href="repeat.txt.html#packages" class="d">packages</a> for <a href="#Python" class="d">Python</a> 2:
+        <a href="#python" class="d">python</a>
+        python-dev
+For <a href="#Python" class="d">Python</a> 3:
+        <a href="#python3" class="d">python3</a>
+        python3-dev
+For <a href="#Python" class="d">Python</a> 3.6:
+        python3.6
+        python3.6-dev
+
+If you have more than one version of <a href="#Python" class="d">Python</a> 3, you need to link <a href="#python3" class="d">python3</a> to the
+one you prefer, before running configure.
+
+<span class="h">==============================================================================</span>
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

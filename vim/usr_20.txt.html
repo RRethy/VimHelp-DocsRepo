@@ -1,0 +1,398 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: usr_20.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="usr_20.txt" class="t">usr_20.txt</a>    For <span class="i">Vim version 8.0.</span>  Last change: 2006 Apr 24
+
+                     VIM USER MANUAL <a href="motion.txt.html#-" class="d">-</a> by <a href="intro.txt.html#Bram" class="d">Bram</a> <a href="intro.txt.html#Moolenaar" class="d">Moolenaar</a>
+
+                     Typing command-line commands quickly
+
+
+Vim has <a href="insert.txt.html#a" class="d">a</a> few generic features that makes <a href="motion.txt.html#it" class="d">it</a> easier to enter commands.  Colon
+commands can be abbreviated, edited and repeated.  Completion <a href="motion.txt.html#is" class="d">is</a> available for
+nearly everything.
+
+<a href="#20.1" class="l">20.1</a>  Command line editing
+<a href="#20.2" class="l">20.2</a>  Command line <a href="map.txt.html#abbreviations" class="d">abbreviations</a>
+<a href="#20.3" class="l">20.3</a>  Command line completion
+<a href="#20.4" class="l">20.4</a>  Command line <a href="cmdline.txt.html#history" class="d">history</a>
+<a href="#20.5" class="l">20.5</a>  Command line <a href="windows.txt.html#window" class="d">window</a>
+
+     Next chapter: <a href="usr_21.txt.html#usr_21.txt" class="l">usr_21.txt</a>  Go away and come back
+ Previous chapter: <a href="usr_12.txt.html#usr_12.txt" class="l">usr_12.txt</a>  Clever tricks
+Table of contents: <a href="usr_toc.txt.html#usr_toc.txt" class="l">usr_toc.txt</a>
+
+<span class="h">==============================================================================</span>
+<a name="20.1" class="t">20.1</a>  Command line editing
+
+When you use <a href="insert.txt.html#a" class="d">a</a> colon (:) command or search for <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#string" class="d">string</a> with <a href="pattern.txt.html#%2F" class="d">/</a> or ?, Vim puts
+the cursor on the bottom of the screen.  There you type the command or search
+pattern.  This <a href="motion.txt.html#is" class="d">is</a> called the Command line.  Also when it's used for entering <a href="insert.txt.html#a" class="d">a</a>
+search command.
+
+The most obvious way to edit the command you type <a href="motion.txt.html#is" class="d">is</a> by pressing the <a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a> key.
+This erases the character before the cursor.  To erase another character,
+typed earlier, first move the cursor with the cursor keys.
+   For example, you have typed this: 
+<span class="e"></span>
+<span class="e">        :s/col/pig/</span>
+<span class="e"></span>
+Before you hit <a href="intro.txt.html#%3CEnter%3E" class="s">&lt;Enter&gt;</a>, you notice that "col" should be "cow"<a href="repeat.txt.html#." class="d">.</a>  To correct
+this, you type <a href="motion.txt.html#%3CLeft%3E" class="s">&lt;Left&gt;</a> five times.  The cursor <a href="motion.txt.html#is" class="d">is</a> now just after "col"<a href="repeat.txt.html#." class="d">.</a>  Type
+<a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a> and "<a href="motion.txt.html#w" class="d">w</a>" to correct: 
+<span class="e"></span>
+<span class="e">        :s/cow/pig/</span>
+<span class="e"></span>
+Now you can press <a href="intro.txt.html#%3CEnter%3E" class="s">&lt;Enter&gt;</a> directly.  You don't have to move the cursor to the
+<a href="intro.txt.html#end" class="d">end</a> of the line before executing the command.
+
+The most often used keys to move around in the command line:
+
+        <a href="motion.txt.html#%3CLeft%3E" class="s">&lt;Left&gt;</a>                  one character left
+        <a href="motion.txt.html#%3CRight%3E" class="s">&lt;Right&gt;</a>                 one character right
+        <a href="motion.txt.html#%3CS-Left%3E" class="s">&lt;S-Left&gt;</a> or <a href="motion.txt.html#%3CC-Left%3E" class="s">&lt;C-Left&gt;</a>    one <a href="motion.txt.html#word" class="d">word</a> left
+        <a href="motion.txt.html#%3CS-Right%3E" class="s">&lt;S-Right&gt;</a> or <a href="motion.txt.html#%3CC-Right%3E" class="s">&lt;C-Right&gt;</a>  one <a href="motion.txt.html#word" class="d">word</a> right
+        <a href="scroll.txt.html#CTRL-B" class="k">CTRL-B</a> or <a href="motion.txt.html#%3CHome%3E" class="s">&lt;Home&gt;</a>        to begin of command line
+        <a href="scroll.txt.html#CTRL-E" class="k">CTRL-E</a> or <a href="motion.txt.html#%3CEnd%3E" class="s">&lt;End&gt;</a>         to <a href="intro.txt.html#end" class="d">end</a> of command line
+
+        <span class="n">Note:</span>
+        <a href="motion.txt.html#%3CS-Left%3E" class="s">&lt;S-Left&gt;</a> (cursor left key with Shift key pressed) and <a href="motion.txt.html#%3CC-Left%3E" class="s">&lt;C-Left&gt;</a> (cursor
+        left key with Control pressed) will not work on all keyboards.  Same
+        for the other Shift and Control combinations.
+
+You can also use the mouse to move the cursor.
+
+
+DELETING
+
+As mentioned, <a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a> deletes the character before the cursor.  To delete <a href="insert.txt.html#a" class="d">a</a> whole
+<a href="motion.txt.html#word" class="d">word</a> use <a href="index.txt.html#CTRL-W" class="k">CTRL-W</a>.
+
+<span class="h">        /the fine pig </span>
+
+                     <a href="index.txt.html#CTRL-W" class="k">CTRL-W</a>
+
+<span class="h">        /the fine </span>
+
+<a href="scroll.txt.html#CTRL-U" class="k">CTRL-U</a> removes all text, thus allows you to start all over again.
+
+
+OVERSTRIKE
+
+The <a href="insert.txt.html#%3CInsert%3E" class="s">&lt;Insert&gt;</a> key toggles between <a href="insert.txt.html#inserting" class="d">inserting</a> characters and <a href="change.txt.html#replacing" class="d">replacing</a> the
+existing ones.  Start with this text:
+
+<span class="h">        /the fine pig </span>
+
+Move the cursor to the start of "fine" with <a href="motion.txt.html#%3CS-Left%3E" class="s">&lt;S-Left&gt;</a> <a href="if_cscop.txt.html#twice" class="d">twice</a> (or <a href="motion.txt.html#%3CLeft%3E" class="s">&lt;Left&gt;</a> eight
+times, if <a href="motion.txt.html#%3CS-Left%3E" class="s">&lt;S-Left&gt;</a> doesn't work).  Now press <a href="insert.txt.html#%3CInsert%3E" class="s">&lt;Insert&gt;</a> to switch to overstrike
+and type "great"<a href="cmdline.txt.html#%3A" class="d">:</a>
+
+<span class="h">        /the greatpig </span>
+
+Oops, we lost the space.  Now, don't use <a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a>, because <a href="motion.txt.html#it" class="d">it</a> would delete the
+"<a href="motion.txt.html#t" class="d">t</a>" (this <a href="motion.txt.html#is" class="d">is</a> different from <a href="insert.txt.html#Replace" class="d">Replace</a> mode).  Instead, press <a href="insert.txt.html#%3CInsert%3E" class="s">&lt;Insert&gt;</a> to switch
+from overstrike to inserting, and type the space:
+
+<span class="h">        /the great pig </span>
+
+
+CANCELLING
+
+You thought of executing <a href="insert.txt.html#a" class="d">a</a> <a href="cmdline.txt.html#%3A" class="d">:</a> or <a href="pattern.txt.html#%2F" class="d">/</a> command, but changed your mind.  To get rid
+of what you already typed, without executing it, press <a href="pattern.txt.html#CTRL-C" class="k">CTRL-C</a> or <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a>.
+
+        <span class="n">Note:</span>
+        <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a> <a href="motion.txt.html#is" class="d">is</a> the universal "get out" key.  Unfortunately, in the good old
+        <a href="intro.txt.html#Vi" class="d">Vi</a> pressing <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a> in <a href="insert.txt.html#a" class="d">a</a> command line executed the command!  Since that
+        might be considered to be <a href="insert.txt.html#a" class="d">a</a> bug, Vim uses <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a> to cancel the command.
+        But with the <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a> option <a href="motion.txt.html#it" class="d">it</a> can be made <a href="intro.txt.html#Vi" class="d">Vi</a> compatible.  And
+        when using <a href="insert.txt.html#a" class="d">a</a> <a href="map.txt.html#mapping" class="d">mapping</a> (which might be written for Vi) <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a> also works
+        <a href="intro.txt.html#Vi" class="d">Vi</a> compatible.  Therefore, using <a href="pattern.txt.html#CTRL-C" class="k">CTRL-C</a> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> method that always works.
+
+If you are <a href="motion.txt.html#at" class="d">at</a> the start of the command line, pressing <a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a> will cancel the
+command.  It's like <a href="change.txt.html#deleting" class="d">deleting</a> the "<a href="cmdline.txt.html#%3A" class="d">:</a>" or "<a href="pattern.txt.html#%2F" class="d">/</a>" that the line starts with.
+
+<span class="h">==============================================================================</span>
+<a name="20.2" class="t">20.2</a>  Command line <a href="map.txt.html#abbreviations" class="d">abbreviations</a>
+
+Some of the "<a href="cmdline.txt.html#%3A" class="d">:</a>" commands are really long.  We already mentioned that
+"<a href="change.txt.html#%3Asubstitute" class="d">:substitute</a>" can be abbreviated to "<a href="change.txt.html#%3As" class="d">:s</a>"<a href="repeat.txt.html#." class="d">.</a>  This <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> generic mechanism, all
+"<a href="cmdline.txt.html#%3A" class="d">:</a>" commands can be abbreviated.
+
+How short can <a href="insert.txt.html#a" class="d">a</a> command get?  There are 26 letters, and many more commands.
+For example, "<a href="options.txt.html#%3Aset" class="d">:set</a>" also starts with "<a href="change.txt.html#%3As" class="d">:s</a>"<a href="motion.txt.html#%2C" class="d">,</a> but "<a href="change.txt.html#%3As" class="d">:s</a>" doesn't start <a href="insert.txt.html#a" class="d">a</a> "<a href="options.txt.html#%3Aset" class="d">:set</a>"
+command.  Instead "<a href="options.txt.html#%3Aset" class="d">:set</a>" can be abbreviated to "<a href="options.txt.html#%3Ase" class="d">:se</a>"<a href="repeat.txt.html#." class="d">.</a>
+   When the shorter form of <a href="insert.txt.html#a" class="d">a</a> command could be used for two commands, <a href="motion.txt.html#it" class="d">it</a>
+stands for only one of them.  There <a href="motion.txt.html#is" class="d">is</a> no logic behind which one, you have to
+learn them.  In the <a href="helphelp.txt.html#help" class="d">help</a> files the shortest form that works <a href="motion.txt.html#is" class="d">is</a> mentioned.  For
+example: 
+<span class="e"></span>
+<span class="e">        :s[ubstitute]</span>
+<span class="e"></span>
+This means that the shortest form of "<a href="change.txt.html#%3Asubstitute" class="d">:substitute</a>" <a href="motion.txt.html#is" class="d">is</a> "<a href="change.txt.html#%3As" class="d">:s</a>"<a href="repeat.txt.html#." class="d">.</a>  The following
+characters are optional.  Thus "<a href="change.txt.html#%3Asu" class="d">:su</a>" and ":sub" also work.
+
+In the user manual we will either use the full name of command, or <a href="insert.txt.html#a" class="d">a</a> short
+version that <a href="motion.txt.html#is" class="d">is</a> still readable.  For example, "<a href="eval.txt.html#%3Afunction" class="d">:function</a>" can be abbreviated
+to "<a href="eval.txt.html#%3Afu" class="d">:fu</a>"<a href="repeat.txt.html#." class="d">.</a>  But since most people don't understand what that stands for, we
+will use ":fun"<a href="repeat.txt.html#." class="d">.</a>  (Vim doesn't have <a href="insert.txt.html#a" class="d">a</a> ":funny" command, otherwise ":fun" would
+be confusing too.)
+
+It <a href="motion.txt.html#is" class="d">is</a> recommended that in Vim scripts you write the full command name.  That
+makes <a href="motion.txt.html#it" class="d">it</a> easier to read back when you make later changes.  Except for some
+often used commands like "<a href="editing.txt.html#%3Aw" class="d">:w</a>" <a href="motion.txt.html#%28" class="d">(</a>"<a href="editing.txt.html#%3Awrite" class="d">:write</a>"<a href="motion.txt.html#%29" class="d">)</a> and "<a href="insert.txt.html#%3Ar" class="d">:r</a>" <a href="motion.txt.html#%28" class="d">(</a>"<a href="insert.txt.html#%3Aread" class="d">:read</a>").
+   <a href="insert.txt.html#A" class="d">A</a> particularly confusing one <a href="motion.txt.html#is" class="d">is</a> ":end"<a href="motion.txt.html#%2C" class="d">,</a> which could stand for "<a href="eval.txt.html#%3Aendif" class="d">:endif</a>"<a href="motion.txt.html#%2C" class="d">,</a>
+"<a href="eval.txt.html#%3Aendwhile" class="d">:endwhile</a>" or "<a href="eval.txt.html#%3Aendfunction" class="d">:endfunction</a>"<a href="repeat.txt.html#." class="d">.</a>  Therefore, always use the full name.
+
+
+SHORT OPTION NAMES
+
+In the user manual the long version of the option names <a href="motion.txt.html#is" class="d">is</a> used.  Many <a href="options.txt.html#options" class="d">options</a>
+also have <a href="insert.txt.html#a" class="d">a</a> short name.  Unlike "<a href="cmdline.txt.html#%3A" class="d">:</a>" commands, there <a href="motion.txt.html#is" class="d">is</a> only one short name
+that works.  For example, the short name of <a href="options.txt.html#%27autoindent%27" class="o">'autoindent'</a> <a href="motion.txt.html#is" class="d">is</a> <a href="options.txt.html#%27ai%27" class="o">'ai'</a>.  Thus these
+two commands <a href="diff.txt.html#do" class="d">do</a> the same thing: 
+<span class="e"></span>
+<span class="e">        :set autoindent</span>
+<span class="e">        :set ai</span>
+<span class="e"></span>
+You can find the full <a href="eval.txt.html#list" class="d">list</a> of long and short names here: <a href="quickref.txt.html#option-list" class="l">option-list</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+<a name="20.3" class="t">20.3</a>  Command line completion
+
+This <a href="motion.txt.html#is" class="d">is</a> one of those Vim features that, by itself, <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> reason to switch from
+<a href="intro.txt.html#Vi" class="d">Vi</a> to Vim.  Once you have used this, you can't <a href="diff.txt.html#do" class="d">do</a> without.
+
+Suppose you have <a href="insert.txt.html#a" class="d">a</a> directory that contains these files:
+
+        info.txt
+        <a href="intro.txt.html#intro.txt" class="d">intro.txt</a>
+        bodyofthepaper.txt
+
+To edit the last one, you use the command: 
+<span class="e"></span>
+<span class="e">        :edit bodyofthepaper.txt</span>
+<span class="e"></span>
+It's <a href="starting.txt.html#easy" class="d">easy</a> to type this wrong.  <a href="insert.txt.html#A" class="d">A</a> much quicker way is: 
+<span class="e"></span>
+<span class="e">        :edit b&lt;Tab&gt;</span>
+<span class="e"></span>
+Which will result in the same command.  What happened?  The <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a> key does
+completion of the <a href="motion.txt.html#word" class="d">word</a> before the cursor.  In this <a href="change.txt.html#case" class="d">case</a> "<a href="motion.txt.html#b" class="d">b</a>"<a href="repeat.txt.html#." class="d">.</a>  Vim looks in the
+directory and finds only one file that starts with <a href="insert.txt.html#a" class="d">a</a> "<a href="motion.txt.html#b" class="d">b</a>"<a href="repeat.txt.html#." class="d">.</a>  That <a href="vim_faq.txt.html#must" class="d">must</a> be the
+one you are looking for, thus Vim completes the file name for you.
+
+Now type: 
+<span class="e"></span>
+<span class="e">        :edit i&lt;Tab&gt;</span>
+<span class="e"></span>
+Vim will beep, and give you: 
+<span class="e"></span>
+<span class="e">        :edit info.txt</span>
+<span class="e"></span>
+The <a href="options.txt.html#beep" class="d">beep</a> means that Vim has found more than one match.  It then uses the first
+match <a href="motion.txt.html#it" class="d">it</a> found (alphabetically).  If you press <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a> again, you get: 
+<span class="e"></span>
+<span class="e">        :edit intro.txt</span>
+<span class="e"></span>
+Thus, if the first <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a> doesn't give you the file you were looking for, press
+<a href="motion.txt.html#it" class="d">it</a> again.  If there are more matches, you will see them all, one <a href="motion.txt.html#at" class="d">at</a> <a href="insert.txt.html#a" class="d">a</a> time.
+   If you press <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a> on the last matching entry, you will <a href="motion.txt.html#go" class="d">go</a> back to what you
+first typed: 
+<span class="e"></span>
+<span class="e">        :edit i</span>
+<span class="e"></span>
+Then <a href="motion.txt.html#it" class="d">it</a> starts all over again.  Thus Vim cycles through the <a href="eval.txt.html#list" class="d">list</a> of matches.
+Use <a href="motion.txt.html#CTRL-P" class="k">CTRL-P</a> to <a href="motion.txt.html#go" class="d">go</a> through the <a href="eval.txt.html#list" class="d">list</a> in the other direction:
+
+              <span class="s">&lt;------------------- &lt;Tab&gt;</span> -------------------------+
+                                                                  |
+                  <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a> --&gt;                    <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a> --&gt;
+        <a href="editing.txt.html#%3Aedit" class="d">:edit</a> <a href="insert.txt.html#i" class="d">i</a>               <a href="editing.txt.html#%3Aedit" class="d">:edit</a> info.txt               <a href="editing.txt.html#%3Aedit" class="d">:edit</a> <a href="intro.txt.html#intro.txt" class="d">intro.txt</a>
+                  &lt;-- <a href="motion.txt.html#CTRL-P" class="k">CTRL-P</a>                   &lt;-- <a href="motion.txt.html#CTRL-P" class="k">CTRL-P</a>
+           |
+           +---------------------- <a href="motion.txt.html#CTRL-P" class="k">CTRL-P</a> ------------------------&gt;
+
+
+CONTEXT
+
+When you type "<a href="options.txt.html#%3Aset" class="d">:set</a> <a href="insert.txt.html#i" class="d">i</a>" instead of "<a href="editing.txt.html#%3Aedit" class="d">:edit</a> <a href="insert.txt.html#i" class="d">i</a>" and press <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a> you get: 
+<span class="e"></span>
+<span class="e">        :set icon</span>
+<span class="e"></span>
+Hey, why didn't you get "<a href="options.txt.html#%3Aset" class="d">:set</a> info.txt"<a href="pattern.txt.html#%3F" class="d">?</a>  That's because Vim has context
+sensitive completion.  The kind of words Vim will look for depends on the
+command before it.  Vim knows that you cannot use <a href="insert.txt.html#a" class="d">a</a> file name just after <a href="insert.txt.html#a" class="d">a</a>
+"<a href="options.txt.html#%3Aset" class="d">:set</a>" command, but you can use an option name.
+   Again, if you repeat typing the <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a>, Vim will cycle through all matches.
+There are quite <a href="insert.txt.html#a" class="d">a</a> few, it's better to type more characters first: 
+<span class="e"></span>
+<span class="e">        :set isk&lt;Tab&gt;</span>
+<span class="e"></span>
+Gives: 
+<span class="e"></span>
+<span class="e">        :set iskeyword</span>
+<span class="e"></span>
+Now type "<a href="change.txt.html#%3D" class="d">=</a>" and press <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a>: 
+<span class="e"></span>
+<span class="e">        :set iskeyword=@,48-57,_,192-255</span>
+<span class="e"></span>
+What happens here <a href="motion.txt.html#is" class="d">is</a> that Vim inserts the old value of the option.  Now you
+can edit it.
+   What <a href="motion.txt.html#is" class="d">is</a> completed with <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a> <a href="motion.txt.html#is" class="d">is</a> what Vim expects in that place.  Just try
+<a href="motion.txt.html#it" class="d">it</a> out to see how <a href="motion.txt.html#it" class="d">it</a> works.  In some situations you will not get what you
+want.  That's either because Vim doesn't know what you want, or because
+completion was not implemented for that situation.  In that <a href="change.txt.html#case" class="d">case</a> you will get
+<a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a> inserted (displayed <a href="motion.txt.html#as" class="d">as</a> ^I).
+
+
+LIST MATCHES
+
+When there are many matches, you would like to see an overview.  Do this by
+pressing <a href="scroll.txt.html#CTRL-D" class="k">CTRL-D</a>.  For example, pressing <a href="scroll.txt.html#CTRL-D" class="k">CTRL-D</a> after: 
+<span class="e"></span>
+<span class="e">        :set is</span>
+<span class="e"></span>
+results in: 
+<span class="e"></span>
+<span class="e">        :set is</span>
+<span class="e">        incsearch  isfname    isident    iskeyword  isprint</span>
+<span class="e">        :set is</span>
+<span class="e"></span>
+Vim lists the matches and then comes back with the text you typed.  You can
+now check the <a href="eval.txt.html#list" class="d">list</a> for the item you wanted.  If <a href="motion.txt.html#it" class="d">it</a> isn't there, you can use
+<a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a> to correct the word.  If there are many matches, type <a href="insert.txt.html#a" class="d">a</a> few more
+characters before pressing <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a> to complete the rest.
+   If you have watched carefully, you will have noticed that "incsearch"
+doesn't start with "<a href="motion.txt.html#is" class="d">is</a>"<a href="repeat.txt.html#." class="d">.</a>  In this <a href="change.txt.html#case" class="d">case</a> "<a href="motion.txt.html#is" class="d">is</a>" stands for the short name of
+"incsearch"<a href="repeat.txt.html#." class="d">.</a>  (Many <a href="options.txt.html#options" class="d">options</a> have <a href="insert.txt.html#a" class="d">a</a> short and <a href="insert.txt.html#a" class="d">a</a> long name.)  Vim <a href="motion.txt.html#is" class="d">is</a> clever
+enough to know that you might have wanted to expand the short name of the
+option into the long name.
+
+
+THERE IS MORE
+
+The <a href="various.txt.html#CTRL-L" class="k">CTRL-L</a> command completes the <a href="motion.txt.html#word" class="d">word</a> to the longest unambiguous string.  If
+you type "<a href="editing.txt.html#%3Aedit" class="d">:edit</a> <a href="insert.txt.html#i" class="d">i</a>" and there are files "info.txt" and "info_backup.txt" you
+will get "<a href="editing.txt.html#%3Aedit" class="d">:edit</a> info"<a href="repeat.txt.html#." class="d">.</a>
+
+The <a href="options.txt.html#%27wildmode%27" class="o">'wildmode'</a> option can be used to change the way completion works.
+The <a href="options.txt.html#%27wildmenu%27" class="o">'wildmenu'</a> option can be used to get <a href="insert.txt.html#a" class="d">a</a> menu-like <a href="eval.txt.html#list" class="d">list</a> of matches.
+Use the <a href="options.txt.html#%27suffixes%27" class="o">'suffixes'</a> option to specify files that are <a href="various.txt.html#less" class="d">less</a> important and appear
+<a href="motion.txt.html#at" class="d">at</a> the <a href="intro.txt.html#end" class="d">end</a> of the <a href="eval.txt.html#list" class="d">list</a> of files.
+The <a href="options.txt.html#%27wildignore%27" class="o">'wildignore'</a> option specifies files that are not listed <a href="motion.txt.html#at" class="d">at</a> all.
+
+More about all of this here: <a href="cmdline.txt.html#cmdline-completion" class="l">cmdline-completion</a>
+
+<span class="h">==============================================================================</span>
+<a name="20.4" class="t">20.4</a>  Command line <a href="cmdline.txt.html#history" class="d">history</a>
+
+In chapter 3 we briefly mentioned the history.  The basics are that you can
+use the <a href="motion.txt.html#%3CUp%3E" class="s">&lt;Up&gt;</a> key to recall an older command line.  <a href="motion.txt.html#%3CDown%3E" class="s">&lt;Down&gt;</a> then takes you back
+to newer commands.
+
+There are actually four histories.  The ones we will mention here are for "<a href="cmdline.txt.html#%3A" class="d">:</a>"
+commands and for "<a href="pattern.txt.html#%2F" class="d">/</a>" and "<a href="pattern.txt.html#%3F" class="d">?</a>" search commands.  The "<a href="pattern.txt.html#%2F" class="d">/</a>" and "<a href="pattern.txt.html#%3F" class="d">?</a>" commands share
+the same history, because they are both search commands.  The two other
+histories are for expressions and input lines for the <a href="eval.txt.html#input%28%29" class="d">input()</a> function.
+<a href="cmdline.txt.html#cmdline-history" class="l">cmdline-history</a>
+
+Suppose you have done <a href="insert.txt.html#a" class="d">a</a> "<a href="options.txt.html#%3Aset" class="d">:set</a>" command, typed ten more colon commands and then
+want to repeat that "<a href="options.txt.html#%3Aset" class="d">:set</a>" command again.  You could press "<a href="cmdline.txt.html#%3A" class="d">:</a>" and then ten
+times <a href="motion.txt.html#%3CUp%3E" class="s">&lt;Up&gt;</a>.  There <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> quicker way: 
+<span class="e"></span>
+<span class="e">        :se&lt;Up&gt;</span>
+<span class="e"></span>
+Vim will now <a href="motion.txt.html#go" class="d">go</a> back to the previous command that started with "se"<a href="repeat.txt.html#." class="d">.</a>  You have
+<a href="insert.txt.html#a" class="d">a</a> good chance that this <a href="motion.txt.html#is" class="d">is</a> the "<a href="options.txt.html#%3Aset" class="d">:set</a>" command you were looking for.  At least
+you should not have to press <a href="motion.txt.html#%3CUp%3E" class="s">&lt;Up&gt;</a> very often (unless "<a href="options.txt.html#%3Aset" class="d">:set</a>" commands <a href="motion.txt.html#is" class="d">is</a> all
+you have done).
+
+The <a href="motion.txt.html#%3CUp%3E" class="s">&lt;Up&gt;</a> key will use the text typed so far and compare <a href="motion.txt.html#it" class="d">it</a> with the lines in
+the history.  Only matching lines will be used.
+   If you <a href="diff.txt.html#do" class="d">do</a> not find the line you were looking for, use <a href="motion.txt.html#%3CDown%3E" class="s">&lt;Down&gt;</a> to <a href="motion.txt.html#go" class="d">go</a> back to
+what you typed and correct that.  Or use <a href="scroll.txt.html#CTRL-U" class="k">CTRL-U</a> to start all over again.
+
+To see all the lines in the history: 
+<span class="e"></span>
+<span class="e">        :history</span>
+<span class="e"></span>
+That's the <a href="cmdline.txt.html#history" class="d">history</a> of "<a href="cmdline.txt.html#%3A" class="d">:</a>" commands.  The search <a href="cmdline.txt.html#history" class="d">history</a> <a href="motion.txt.html#is" class="d">is</a> displayed with this
+command: 
+<span class="e"></span>
+<span class="e">        :history /</span>
+<span class="e"></span>
+<a href="motion.txt.html#CTRL-P" class="k">CTRL-P</a> will work like <a href="motion.txt.html#%3CUp%3E" class="s">&lt;Up&gt;</a>, except that <a href="motion.txt.html#it" class="d">it</a> doesn't matter what you already
+typed.  Similarly for <a href="motion.txt.html#CTRL-N" class="k">CTRL-N</a> and <a href="motion.txt.html#%3CDown%3E" class="s">&lt;Down&gt;</a>.  <a href="motion.txt.html#CTRL-P" class="k">CTRL-P</a> stands for previous, <a href="motion.txt.html#CTRL-N" class="k">CTRL-N</a>
+for next.
+
+<span class="h">==============================================================================</span>
+<a name="20.5" class="t">20.5</a>  Command line <a href="windows.txt.html#window" class="d">window</a>
+
+Typing the text in the command line works different from typing text in <a href="insert.txt.html#Insert" class="d">Insert</a>
+mode.  It doesn't allow many commands to change the text.  For most commands
+that's OK, but sometimes you have to type <a href="insert.txt.html#a" class="d">a</a> complicated command.  That's where
+the command line <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> useful.
+
+Open the command line <a href="windows.txt.html#window" class="d">window</a> with this command: 
+<span class="e"></span>
+<span class="e">        q:</span>
+<span class="e"></span>
+Vim now opens <a href="insert.txt.html#a" class="d">a</a> (small) <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#at" class="d">at</a> the bottom.  It contains the command line
+history, and an empty line <a href="motion.txt.html#at" class="d">at</a> the end:
+
+        +-------------------------------------+
+        |other <a href="windows.txt.html#window" class="d">window</a>                         |
+        |<a href="change.txt.html#%7E" class="d">~</a>                                    |
+        <span class="l">file.txt=============================</span>
+        |<a href="editing.txt.html#%3Ae" class="d">:e</a> <a href="change.txt.html#c" class="d">c</a>                                 |
+        |<a href="editing.txt.html#%3Ae" class="d">:e</a> config.h.in                       |
+        |<a href="options.txt.html#%3Aset" class="d">:set</a> path=.,/usr/include,,           |
+        |<a href="options.txt.html#%3Aset" class="d">:set</a> iskeyword=@,48-57,_,192-255     |
+        |<a href="options.txt.html#%3Aset" class="d">:set</a> <a href="motion.txt.html#is" class="d">is</a>                              |
+        |<a href="editing.txt.html#%3Aq" class="d">:q</a>                                   |
+        |<a href="cmdline.txt.html#%3A" class="d">:</a>                                    |
+        <span class="l">command-line=========================</span>
+        |                                     |
+        +-------------------------------------+
+
+You are now in <a href="intro.txt.html#Normal" class="d">Normal</a> mode.  You can use the "<a href="usr_02.txt.html#hjkl" class="d">hjkl</a>" keys to move around.  For
+example, move up with "5k" to the "<a href="editing.txt.html#%3Ae" class="d">:e</a> config.h.in" line.  Type "$h" to <a href="motion.txt.html#go" class="d">go</a> to
+the "<a href="insert.txt.html#i" class="d">i</a>" of "in" and type "cwout"<a href="repeat.txt.html#." class="d">.</a>  Now you have changed the line to:
+
+<span class="h">        :e config.h.out </span>
+
+Now press <a href="intro.txt.html#%3CEnter%3E" class="s">&lt;Enter&gt;</a> and this command will be executed.  The command line <a href="windows.txt.html#window" class="d">window</a>
+will close.
+   The <a href="intro.txt.html#%3CEnter%3E" class="s">&lt;Enter&gt;</a> command will execute the line under the cursor.  It doesn't
+matter whether Vim <a href="motion.txt.html#is" class="d">is</a> in <a href="insert.txt.html#Insert" class="d">Insert</a> mode or in <a href="intro.txt.html#Normal" class="d">Normal</a> mode.
+   Changes in the command line <a href="windows.txt.html#window" class="d">window</a> are lost.  They <a href="diff.txt.html#do" class="d">do</a> not result in the
+<a href="cmdline.txt.html#history" class="d">history</a> to be changed.  Except that the command you execute will be added to
+the <a href="intro.txt.html#end" class="d">end</a> of the history, like with all executed commands.
+
+The command line <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> very useful when you want to have overview of the
+history, lookup <a href="insert.txt.html#a" class="d">a</a> similar command, change <a href="motion.txt.html#it" class="d">it</a> <a href="insert.txt.html#a" class="d">a</a> bit and execute it.  <a href="insert.txt.html#A" class="d">A</a> search
+command can be used to find something.
+   In the previous example the "?config" search command could have been used
+to find the previous command that contains "config"<a href="repeat.txt.html#." class="d">.</a>  It's <a href="insert.txt.html#a" class="d">a</a> bit strange,
+because you are using <a href="insert.txt.html#a" class="d">a</a> command line to search in the command line window.
+While typing that search command you can't open another command line window,
+there can be only one.
+
+<span class="h">==============================================================================</span>
+
+Next chapter: <a href="usr_21.txt.html#usr_21.txt" class="l">usr_21.txt</a>  Go away and come back
+
+Copyright: see <a href="usr_01.txt.html#manual-copyright" class="l">manual-copyright</a>  vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,433 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: usr_45.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="usr_45.txt" class="t">usr_45.txt</a>    For <span class="i">Vim version 8.0.</span>  Last change: 2008 Nov 15
+
+                     VIM USER MANUAL <a href="motion.txt.html#-" class="d">-</a> by <a href="intro.txt.html#Bram" class="d">Bram</a> <a href="intro.txt.html#Moolenaar" class="d">Moolenaar</a>
+
+                             <a href="visual.txt.html#Select" class="d">Select</a> your language
+
+
+The <a href="message.txt.html#messages" class="d">messages</a> in Vim can be given in several languages.  This chapter explains
+how to change which one <a href="motion.txt.html#is" class="d">is</a> used.  Also, the different ways to work with files
+in <a href="various.txt.html#various" class="d">various</a> languages <a href="motion.txt.html#is" class="d">is</a> explained.
+
+<a href="#45.1" class="l">45.1</a>  Language for Messages
+<a href="#45.2" class="l">45.2</a>  Language for Menus
+<a href="#45.3" class="l">45.3</a>  Using another encoding
+<a href="#45.4" class="l">45.4</a>  Editing files with <a href="insert.txt.html#a" class="d">a</a> different encoding
+<a href="#45.5" class="l">45.5</a>  Entering language text
+
+     Next chapter: <a href="usr_90.txt.html#usr_90.txt" class="l">usr_90.txt</a>  Installing Vim
+ Previous chapter: <a href="usr_44.txt.html#usr_44.txt" class="l">usr_44.txt</a>  Your own <a href="syntax.txt.html#syntax" class="d">syntax</a> highlighted
+Table of contents: <a href="usr_toc.txt.html#usr_toc.txt" class="l">usr_toc.txt</a>
+
+<span class="h">==============================================================================</span>
+<a name="45.1" class="t">45.1</a>  Language for Messages
+
+When you start Vim, <a href="motion.txt.html#it" class="d">it</a> checks the environment to find out what language you
+are using.  Mostly this should work fine, and you get the <a href="message.txt.html#messages" class="d">messages</a> in your
+language (if they are available).  To see what the current language is, use
+this command: 
+<span class="e"></span>
+<span class="e">        :language</span>
+<span class="e"></span>
+If <a href="motion.txt.html#it" class="d">it</a> replies with "<a href="change.txt.html#C" class="d">C</a>"<a href="motion.txt.html#%2C" class="d">,</a> this means the default <a href="motion.txt.html#is" class="d">is</a> being used, which <a href="motion.txt.html#is" class="d">is</a>
+English.
+
+        <span class="n">Note:</span>
+        Using different languages only works when Vim was compiled to handle
+        it.  To find out if <a href="motion.txt.html#it" class="d">it</a> works, use the "<a href="various.txt.html#%3Aversion" class="d">:version</a>" command and check the
+        output for "<a href="various.txt.html#%2Bgettext" class="d">+gettext</a>" and "<a href="various.txt.html#%2Bmulti_lang" class="d">+multi_lang</a>"<a href="repeat.txt.html#." class="d">.</a>  If they are there, you are
+        OK.  If you see "-gettext" or "-multi_lang" you will have to find
+        another Vim.
+
+What if you would like your <a href="message.txt.html#messages" class="d">messages</a> in <a href="insert.txt.html#a" class="d">a</a> different language?  There are
+several ways.  Which one you should use depends on the capabilities of your
+system.
+   The first way <a href="motion.txt.html#is" class="d">is</a> to set the environment to the desired language before
+<a href="starting.txt.html#starting" class="d">starting</a> Vim.  Example for Unix: 
+<span class="e"></span>
+<span class="e">        env LANG=de_DE.ISO_8859-1  vim</span>
+<span class="e"></span>
+This only works if the language <a href="motion.txt.html#is" class="d">is</a> available on your system.  The advantage <a href="motion.txt.html#is" class="d">is</a>
+that all the <a href="gui.txt.html#GUI" class="d">GUI</a> <a href="message.txt.html#messages" class="d">messages</a> and things in libraries will use the right language
+<a href="motion.txt.html#as" class="d">as</a> well.  <a href="insert.txt.html#A" class="d">A</a> disadvantage <a href="motion.txt.html#is" class="d">is</a> that you <a href="vim_faq.txt.html#must" class="d">must</a> <a href="diff.txt.html#do" class="d">do</a> this before <a href="starting.txt.html#starting" class="d">starting</a> Vim.  If you
+want to change language while Vim <a href="motion.txt.html#is" class="d">is</a> running, you can use the second method: 
+<span class="e"></span>
+<span class="e">        :language fr_FR.ISO_8859-1</span>
+<span class="e"></span>
+This way you can try out several names for your language.  You will get an
+error message when it's not supported on your system.  You don't get an error
+when translated <a href="message.txt.html#messages" class="d">messages</a> are not available.  Vim will silently fall back to
+using English.
+   To find out which languages are supported on your system, find the
+directory where they are listed.  On my system <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> "/usr/share/locale"<a href="repeat.txt.html#." class="d">.</a>  On
+some systems it's in "/usr/lib/locale"<a href="repeat.txt.html#." class="d">.</a>  The manual page for "setlocale"
+should give you <a href="insert.txt.html#a" class="d">a</a> hint where <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> found on your system.
+   Be careful to type the name exactly <a href="motion.txt.html#as" class="d">as</a> <a href="motion.txt.html#it" class="d">it</a> should be.  Upper and <a href="change.txt.html#lowercase" class="d">lowercase</a>
+matter, and the '-' and '_' characters are easily confused.
+
+You can also set the language separately for messages, edited text and the
+time format.  See <a href="mlang.txt.html#%3Alanguage" class="l">:language</a><a href="repeat.txt.html#." class="d">.</a>
+
+
+DO-IT-YOURSELF MESSAGE TRANSLATION
+
+If translated <a href="message.txt.html#messages" class="d">messages</a> are not available for your language, you could write
+them yourself.  To <a href="diff.txt.html#do" class="d">do</a> this, get the source code for Vim and the GNU gettext
+package.  After unpacking the sources, instructions can be found in the
+directory src/po/README.txt.
+   It's not too difficult to <a href="diff.txt.html#do" class="d">do</a> the translation.  You don't need to be <a href="insert.txt.html#a" class="d">a</a>
+programmer.  You <a href="vim_faq.txt.html#must" class="d">must</a> know both English and the language you are translating
+to, of course.
+   When you are satisfied with the translation, consider making <a href="motion.txt.html#it" class="d">it</a> available
+to others.  Upload <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#at" class="d">at</a> vim-online (http://vim.sf.net) or e-mail <a href="motion.txt.html#it" class="d">it</a> to
+the Vim maintainer <span class="s">&lt;maintainer@vim.org&gt;</span>.  Or both.
+
+<span class="h">==============================================================================</span>
+<a name="45.2" class="t">45.2</a>  Language for Menus
+
+The default <a href="gui.txt.html#menus" class="d">menus</a> are in English.  To be able to use your local language, they
+<a href="vim_faq.txt.html#must" class="d">must</a> be translated.  Normally this <a href="motion.txt.html#is" class="d">is</a> automatically done for you if the
+environment <a href="motion.txt.html#is" class="d">is</a> set for your language, just like with messages.  You don't need
+to <a href="diff.txt.html#do" class="d">do</a> anything extra for this.  But <a href="motion.txt.html#it" class="d">it</a> only works if translations for the
+language are available.
+   Suppose you are in Germany, with the language set to German, but prefer to
+use "File" instead of "Datei"<a href="repeat.txt.html#." class="d">.</a>  You can switch back to using the English <a href="gui.txt.html#menus" class="d">menus</a>
+this way: 
+<span class="e"></span>
+<span class="e">        :set langmenu=none</span>
+<span class="e"></span>
+It <a href="motion.txt.html#is" class="d">is</a> also possible to specify <a href="insert.txt.html#a" class="d">a</a> language: 
+<span class="e"></span>
+<span class="e">        :set langmenu=nl_NL.ISO_8859-1</span>
+<span class="e"></span>
+Like above, differences between "<a href="motion.txt.html#-" class="d">-</a>" and "<a href="motion.txt.html#_" class="d">_</a>" matter.  However, upper/lowercase
+differences are ignored here.
+   The <a href="options.txt.html#%27langmenu%27" class="o">'langmenu'</a> option <a href="vim_faq.txt.html#must" class="d">must</a> be set before the <a href="gui.txt.html#menus" class="d">menus</a> are loaded.  Once the
+<a href="gui.txt.html#menus" class="d">menus</a> have been defined <a href="change.txt.html#changing" class="d">changing</a> <a href="options.txt.html#%27langmenu%27" class="o">'langmenu'</a> has no direct effect.  Therefore,
+<a href="change.txt.html#put" class="d">put</a> the command to set <a href="options.txt.html#%27langmenu%27" class="o">'langmenu'</a> in your <a href="starting.txt.html#vimrc" class="d">vimrc</a> file.
+   If you really want to switch menu language while running Vim, you can <a href="diff.txt.html#do" class="d">do</a> <a href="motion.txt.html#it" class="d">it</a>
+this way: 
+<span class="e"></span>
+<span class="e">        :source $VIMRUNTIME/delmenu.vim</span>
+<span class="e">        :set langmenu=de_DE.ISO_8859-1</span>
+<span class="e">        :source $VIMRUNTIME/menu.vim</span>
+<span class="e"></span>
+There <a href="motion.txt.html#is" class="d">is</a> one drawback: All <a href="gui.txt.html#menus" class="d">menus</a> that you defined yourself will be gone.  You
+will need to redefine them <a href="motion.txt.html#as" class="d">as</a> well.
+
+
+DO-IT-YOURSELF MENU TRANSLATION
+
+To see which menu translations are available, look in this directory:
+
+<span class="h">        $VIMRUNTIME/lang </span>
+
+The files are called menu_{language}.vim.  If you don't see the language you
+want to use, you can <a href="diff.txt.html#do" class="d">do</a> your own translations.  The simplest way to <a href="diff.txt.html#do" class="d">do</a> this <a href="motion.txt.html#is" class="d">is</a>
+by <a href="uganda.txt.html#copying" class="d">copying</a> one of the existing language files, and change it.
+   First find out the name of your language with the "<a href="mlang.txt.html#%3Alanguage" class="d">:language</a>" command.  Use
+this name, but with all letters made lowercase.  Then copy the file to your
+own runtime directory, <a href="motion.txt.html#as" class="d">as</a> found early in <a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a>.  For example, for <a href="os_unix.txt.html#Unix" class="d">Unix</a>
+you would do: 
+<span class="e"></span>
+<span class="e">        :!cp $VIMRUNTIME/lang/menu_ko_kr.euckr.vim ~/.vim/lang/menu_nl_be.iso_8859-1.vim</span>
+<span class="e"></span>
+You will find hints for the translation in "$VIMRUNTIME/lang/README.txt"<a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+<a name="45.3" class="t">45.3</a>  Using another encoding
+
+Vim guesses that the files you are going to edit are encoded for your
+language.  For many European languages this <a href="motion.txt.html#is" class="d">is</a> "latin1"<a href="repeat.txt.html#." class="d">.</a>  Then each byte <a href="motion.txt.html#is" class="d">is</a>
+one character.  That means there are 256 different characters possible.  For
+Asian languages this <a href="motion.txt.html#is" class="d">is</a> not sufficient.  These mostly use <a href="insert.txt.html#a" class="d">a</a> double-byte
+encoding, providing for over ten thousand possible characters.  This still
+isn't enough when <a href="insert.txt.html#a" class="d">a</a> text <a href="motion.txt.html#is" class="d">is</a> to contain several different languages.  This <a href="motion.txt.html#is" class="d">is</a>
+where <a href="mbyte.txt.html#Unicode" class="d">Unicode</a> comes in.  It was designed to include all characters used in
+commonly used languages.  This <a href="motion.txt.html#is" class="d">is</a> the "Super encoding that replaces all
+others"<a href="repeat.txt.html#." class="d">.</a>  But <a href="motion.txt.html#it" class="d">it</a> isn't used that much yet.
+   Fortunately, Vim supports these three kinds of encodings.  And, with some
+restrictions, you can use them even when your environment uses another
+language than the text.
+   Nevertheless, when you only edit files that are in the encoding of your
+language, the default should work fine and you don't need to <a href="diff.txt.html#do" class="d">do</a> anything.  The
+following <a href="motion.txt.html#is" class="d">is</a> only relevant when you want to edit different languages.
+
+        <span class="n">Note:</span>
+        Using different encodings only works when Vim was compiled to handle
+        it.  To find out if <a href="motion.txt.html#it" class="d">it</a> works, use the "<a href="various.txt.html#%3Aversion" class="d">:version</a>" command and check the
+        output for "<a href="various.txt.html#%2Bmulti_byte" class="d">+multi_byte</a>"<a href="repeat.txt.html#." class="d">.</a>  If it's there, you are OK.  If you see
+        "-multi_byte" you will have to find another Vim.
+
+
+USING UNICODE IN THE <a href="gui.txt.html#GUI" class="d">GUI</a>
+
+The <a href="todo.txt.html#nice" class="d">nice</a> thing about <a href="mbyte.txt.html#Unicode" class="d">Unicode</a> <a href="motion.txt.html#is" class="d">is</a> that other encodings can be converted to <a href="motion.txt.html#it" class="d">it</a>
+and back without losing information.  When you make Vim use <a href="mbyte.txt.html#Unicode" class="d">Unicode</a>
+internally, you will be able to edit files in any encoding.
+   Unfortunately, the number of systems supporting <a href="mbyte.txt.html#Unicode" class="d">Unicode</a> <a href="motion.txt.html#is" class="d">is</a> still limited.
+Thus it's unlikely that your language uses it.  You need to tell Vim you want
+to use Unicode, and how to handle interfacing with the rest of the system.
+   Let's start with the <a href="gui.txt.html#GUI" class="d">GUI</a> version of Vim, which <a href="motion.txt.html#is" class="d">is</a> able to display <a href="mbyte.txt.html#Unicode" class="d">Unicode</a>
+characters.  This should work: 
+<span class="e"></span>
+<span class="e">        :set encoding=utf-8</span>
+<span class="e">        :set guifont=-misc-fixed-medium-r-normal--18-120-100-100-c-90-iso10646-1</span>
+<span class="e"></span>
+The <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> option tells Vim the encoding of the characters that you use.
+This applies to the text in <a href="windows.txt.html#buffers" class="d">buffers</a> (files you are editing), registers, Vim
+<a href="usr_41.txt.html#script" class="d">script</a> files, etc.  You can regard <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> <a href="motion.txt.html#as" class="d">as</a> the setting for the internals
+of Vim.
+   This example assumes you have this font on your system.  The name in the
+example <a href="motion.txt.html#is" class="d">is</a> for the <a href="change.txt.html#X" class="d">X</a> Window System.  This font <a href="motion.txt.html#is" class="d">is</a> in <a href="insert.txt.html#a" class="d">a</a> package that <a href="motion.txt.html#is" class="d">is</a> used to
+enhance xterm with <a href="mbyte.txt.html#Unicode" class="d">Unicode</a> support.  If you don't have this font, you might
+find <a href="motion.txt.html#it" class="d">it</a> here:
+
+<span class="h">        http://www.cl.cam.ac.uk/~mgk25/download/ucs-fonts.tar.gz </span>
+
+For MS-Windows, some fonts have <a href="insert.txt.html#a" class="d">a</a> limited number of <a href="mbyte.txt.html#Unicode" class="d">Unicode</a> characters.  Try
+using the "Courier New" font.  You can use the Edit/Select Font... menu to
+select and try out the fonts available.  Only fixed-width fonts can be used
+though.  Example: 
+<span class="e"></span>
+<span class="e">        :set guifont=courier_new:h12</span>
+<span class="e"></span>
+If <a href="motion.txt.html#it" class="d">it</a> doesn't work well, try getting <a href="insert.txt.html#a" class="d">a</a> fontpack.  If Microsoft didn't move it,
+you can find <a href="motion.txt.html#it" class="d">it</a> here:
+
+<span class="h">        http://www.microsoft.com/typography/fonts/default.aspx </span>
+
+Now you have told Vim to use <a href="mbyte.txt.html#Unicode" class="d">Unicode</a> internally and display text with <a href="insert.txt.html#a" class="d">a</a>
+<a href="mbyte.txt.html#Unicode" class="d">Unicode</a> font.  Typed characters still arrive in the encoding of your original
+language.  This requires converting them to Unicode.  Tell Vim the language
+from which to convert with the <a href="options.txt.html#%27termencoding%27" class="o">'termencoding'</a> option.  You can <a href="diff.txt.html#do" class="d">do</a> <a href="motion.txt.html#it" class="d">it</a> like
+this: 
+<span class="e"></span>
+<span class="e">        :let &amp;termencoding = &amp;encoding</span>
+<span class="e">        :set encoding=utf-8</span>
+<span class="e"></span>
+This assigns the old value of <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> to <a href="options.txt.html#%27termencoding%27" class="o">'termencoding'</a> before setting
+<a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> to utf-8.  You will have to try out if this really works for your
+setup.  It should work especially well when using an input method for an Asian
+language, and you want to edit <a href="mbyte.txt.html#Unicode" class="d">Unicode</a> text.
+
+
+USING UNICODE IN <a href="insert.txt.html#A" class="d">A</a> UNICODE TERMINAL
+
+There are terminals that support <a href="mbyte.txt.html#Unicode" class="d">Unicode</a> directly.  The standard xterm that
+comes with XFree86 <a href="motion.txt.html#is" class="d">is</a> one of them.  Let's use that <a href="motion.txt.html#as" class="d">as</a> an example.
+   First of all, the xterm <a href="vim_faq.txt.html#must" class="d">must</a> have been compiled with <a href="mbyte.txt.html#Unicode" class="d">Unicode</a> support.  See
+<a href="mbyte.txt.html#UTF8-xterm" class="l">UTF8-xterm</a> how to check that and how to compile <a href="motion.txt.html#it" class="d">it</a> when needed.
+   Start the xterm with the "-u8" argument.  You might also need so specify <a href="insert.txt.html#a" class="d">a</a>
+font.  Example: 
+<span class="e"></span>
+<span class="e">   xterm -u8 -fn -misc-fixed-medium-r-normal--18-120-100-100-c-90-iso10646-1</span>
+<span class="e"></span>
+Now you can run Vim inside this terminal.  Set <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> to "<a href="mbyte.txt.html#utf-8" class="d">utf-8</a>" <a href="motion.txt.html#as" class="d">as</a>
+before.  That's all.
+
+
+USING UNICODE IN AN ORDINARY TERMINAL
+
+Suppose you want to work with <a href="mbyte.txt.html#Unicode" class="d">Unicode</a> files, but don't have <a href="insert.txt.html#a" class="d">a</a> terminal with
+<a href="mbyte.txt.html#Unicode" class="d">Unicode</a> support.  You can <a href="diff.txt.html#do" class="d">do</a> this with Vim, although characters that are not
+supported by the terminal will not be displayed.  The layout of the text
+will be preserved.  
+<span class="e"></span>
+<span class="e">        :let &amp;termencoding = &amp;encoding</span>
+<span class="e">        :set encoding=utf-8</span>
+<span class="e"></span>
+This <a href="motion.txt.html#is" class="d">is</a> the same <a href="motion.txt.html#as" class="d">as</a> what was used for the GUI.  But <a href="motion.txt.html#it" class="d">it</a> works differently: Vim
+will convert the displayed text before sending <a href="motion.txt.html#it" class="d">it</a> to the terminal.  That
+avoids that the display <a href="motion.txt.html#is" class="d">is</a> messed up with strange characters.
+   For this to work the conversion between <a href="options.txt.html#%27termencoding%27" class="o">'termencoding'</a> and <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> <a href="vim_faq.txt.html#must" class="d">must</a>
+be possible.  Vim will convert from latin1 to Unicode, thus that always works.
+For other conversions the <a href="various.txt.html#%2Biconv" class="l">+iconv</a> feature <a href="motion.txt.html#is" class="d">is</a> required.
+   Try editing <a href="insert.txt.html#a" class="d">a</a> file with <a href="mbyte.txt.html#Unicode" class="d">Unicode</a> characters in it.  You will notice that Vim
+will <a href="change.txt.html#put" class="d">put</a> <a href="insert.txt.html#a" class="d">a</a> question <a href="motion.txt.html#mark" class="d">mark</a> (or underscore or some other character) in places
+where <a href="insert.txt.html#a" class="d">a</a> character should be that the terminal can't display.  Move the cursor
+to <a href="insert.txt.html#a" class="d">a</a> question <a href="motion.txt.html#mark" class="d">mark</a> and use this command: 
+<span class="e"></span>
+<span class="e">        ga</span>
+<span class="e"></span>
+Vim will display <a href="insert.txt.html#a" class="d">a</a> line with the code of the character.  This gives you <a href="insert.txt.html#a" class="d">a</a> hint
+about what character <a href="motion.txt.html#it" class="d">it</a> is.  You can look <a href="motion.txt.html#it" class="d">it</a> up in <a href="insert.txt.html#a" class="d">a</a> <a href="mbyte.txt.html#Unicode" class="d">Unicode</a> table.  You could
+actually <a href="starting.txt.html#view" class="d">view</a> <a href="insert.txt.html#a" class="d">a</a> file that way, if you have lots of time <a href="motion.txt.html#at" class="d">at</a> hand.
+
+        <span class="n">Note:</span>
+        Since <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> <a href="motion.txt.html#is" class="d">is</a> used for all text inside Vim, <a href="change.txt.html#changing" class="d">changing</a> <a href="motion.txt.html#it" class="d">it</a> makes
+        all non-ASCII text invalid.  You will notice this when using <a href="change.txt.html#registers" class="d">registers</a>
+        and the <a href="options.txt.html#%27viminfo%27" class="o">'viminfo'</a> file (e.g., <a href="insert.txt.html#a" class="d">a</a> remembered search pattern).  It's
+        recommended to set <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> in your <a href="starting.txt.html#vimrc" class="d">vimrc</a> file, and leave <a href="motion.txt.html#it" class="d">it</a> alone.
+
+<span class="h">==============================================================================</span>
+<a name="45.4" class="t">45.4</a>  Editing files with <a href="insert.txt.html#a" class="d">a</a> different encoding
+
+Suppose you have setup Vim to use Unicode, and you want to edit <a href="insert.txt.html#a" class="d">a</a> file that <a href="motion.txt.html#is" class="d">is</a>
+in 16-bit Unicode.  Sounds simple, right?  Well, Vim actually uses <a href="mbyte.txt.html#utf-8" class="d">utf-8</a>
+encoding internally, thus the 16-bit encoding <a href="vim_faq.txt.html#must" class="d">must</a> be converted, since there
+<a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> difference between the character set (Unicode) and the encoding (utf-8 or
+16-bit).
+   Vim will try to detect what kind of file you are editing.  It uses the
+encoding names in the <a href="options.txt.html#%27fileencodings%27" class="o">'fileencodings'</a> option.  When using Unicode, the default
+value is: "ucs-bom,utf-8,latin1"<a href="repeat.txt.html#." class="d">.</a>  This means that Vim checks the file to see
+if it's one of these encodings:
+
+        ucs-bom         File <a href="vim_faq.txt.html#must" class="d">must</a> start with <a href="insert.txt.html#a" class="d">a</a> Byte Order <a href="motion.txt.html#Mark" class="d">Mark</a> (BOM).  This
+                        allows detection of 16-bit, 32-bit and <a href="mbyte.txt.html#utf-8" class="d">utf-8</a> <a href="mbyte.txt.html#Unicode" class="d">Unicode</a>
+                        encodings.
+        <a href="mbyte.txt.html#utf-8" class="d">utf-8</a>           <a href="mbyte.txt.html#utf-8" class="d">utf-8</a> Unicode.  This <a href="motion.txt.html#is" class="d">is</a> rejected when <a href="insert.txt.html#a" class="d">a</a> sequence of
+                        bytes <a href="motion.txt.html#is" class="d">is</a> illegal in utf-8.
+        latin1          The good old 8-bit encoding.  Always works.
+
+When you start editing that 16-bit <a href="mbyte.txt.html#Unicode" class="d">Unicode</a> file, and <a href="motion.txt.html#it" class="d">it</a> has <a href="insert.txt.html#a" class="d">a</a> BOM, Vim will
+detect this and convert the file to <a href="mbyte.txt.html#utf-8" class="d">utf-8</a> when reading it.  The <a href="options.txt.html#%27fileencoding%27" class="o">'fileencoding'</a>
+option (without <a href="change.txt.html#s" class="d">s</a> <a href="motion.txt.html#at" class="d">at</a> the end) <a href="motion.txt.html#is" class="d">is</a> set to the detected value.  In this <a href="change.txt.html#case" class="d">case</a> <a href="motion.txt.html#it" class="d">it</a>
+<a href="motion.txt.html#is" class="d">is</a> "utf-16le"<a href="repeat.txt.html#." class="d">.</a>  That means it's Unicode, 16-bit and little-endian.  This
+file format <a href="motion.txt.html#is" class="d">is</a> common on <a href="os_win32.txt.html#MS-Windows" class="d">MS-Windows</a> (e.g., for registry files).
+   When <a href="editing.txt.html#writing" class="d">writing</a> the file, Vim will compare <a href="options.txt.html#%27fileencoding%27" class="o">'fileencoding'</a> with <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a>.  If
+they are different, the text will be converted.
+   An empty value for <a href="options.txt.html#%27fileencoding%27" class="o">'fileencoding'</a> means that no conversion <a href="motion.txt.html#is" class="d">is</a> to be done.
+Thus the text <a href="motion.txt.html#is" class="d">is</a> assumed to be encoded with <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a>.
+
+If the default <a href="options.txt.html#%27fileencodings%27" class="o">'fileencodings'</a> value <a href="motion.txt.html#is" class="d">is</a> not good for you, set <a href="motion.txt.html#it" class="d">it</a> to the
+encodings you want Vim to try.  Only when <a href="insert.txt.html#a" class="d">a</a> value <a href="motion.txt.html#is" class="d">is</a> found to be invalid will
+the next one be used.  Putting "latin1" first doesn't work, because <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a>
+never illegal.  An example, to fall back to <a href="mbyte.txt.html#Japanese" class="d">Japanese</a> when the file doesn't
+have <a href="insert.txt.html#a" class="d">a</a> BOM and isn't utf-8: 
+<span class="e"></span>
+<span class="e">        :set fileencodings=ucs-bom,utf-8,sjis</span>
+<span class="e"></span>
+See <a href="mbyte.txt.html#encoding-values" class="l">encoding-values</a> for suggested values.  Other values may work <a href="motion.txt.html#as" class="d">as</a> well.
+This depends on the conversion available.
+
+
+FORCING AN ENCODING
+
+If the automatic detection doesn't work you <a href="vim_faq.txt.html#must" class="d">must</a> tell Vim what encoding the
+file is.  Example: 
+<span class="e"></span>
+<span class="e">        :edit ++enc=koi8-r russian.txt</span>
+<span class="e"></span>
+The "<a href="editing.txt.html#%2B%2Benc" class="d">++enc</a>" part specifies the name of the encoding to be used for this file
+only.  Vim will convert the file from the specified encoding, <a href="russian.txt.html#Russian" class="d">Russian</a> in this
+example, to <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a>.  <a href="options.txt.html#%27fileencoding%27" class="o">'fileencoding'</a> will also be set to the specified
+encoding, so that the reverse conversion can be done when <a href="editing.txt.html#writing" class="d">writing</a> the file.
+   The same argument can be used when <a href="editing.txt.html#writing" class="d">writing</a> the file.  This way you can
+actually use Vim to convert <a href="insert.txt.html#a" class="d">a</a> file.  Example: 
+<span class="e"></span>
+<span class="e">        :write ++enc=utf-8 russian.txt</span>
+
+        <span class="n">Note:</span>
+        Conversion may result in lost characters.  Conversion from an encoding
+        to <a href="mbyte.txt.html#Unicode" class="d">Unicode</a> and back <a href="motion.txt.html#is" class="d">is</a> mostly free of this problem, unless there are
+        illegal characters.  Conversion from <a href="mbyte.txt.html#Unicode" class="d">Unicode</a> to other encodings often
+        loses information when there was more than one language in the file.
+
+<span class="h">==============================================================================</span>
+<a name="45.5" class="t">45.5</a>  Entering language text
+
+Computer keyboards don't have much more than <a href="insert.txt.html#a" class="d">a</a> hundred keys.  Some languages
+have thousands of characters, <a href="mbyte.txt.html#Unicode" class="d">Unicode</a> has over hundred thousand.  So how <a href="diff.txt.html#do" class="d">do</a>
+you type these characters?
+   First of all, when you don't use too many of the special characters, you
+can use digraphs.  This was already explained in <a href="usr_24.txt.html#24.9" class="l">24.9</a><a href="repeat.txt.html#." class="d">.</a>
+   When you use <a href="insert.txt.html#a" class="d">a</a> language that uses many more characters than keys on your
+keyboard, you will want to use an Input Method (IM).  This requires learning
+the translation from typed keys to resulting character.  When you need an IM
+you probably already have one on your system.  It should work with Vim like
+with other programs.  For details see <a href="mbyte.txt.html#mbyte-XIM" class="l">mbyte-XIM</a> for the <a href="change.txt.html#X" class="d">X</a> Window system and
+<a href="mbyte.txt.html#mbyte-IME" class="l">mbyte-IME</a> for MS-Windows.
+
+
+KEYMAPS
+
+For some languages the character set <a href="motion.txt.html#is" class="d">is</a> different from latin, but uses <a href="insert.txt.html#a" class="d">a</a>
+similar number of characters.  It's possible to map keys to characters.  Vim
+uses keymaps for this.
+   Suppose you want to type Hebrew.  You can load the keymap like this: 
+<span class="e"></span>
+<span class="e">        :set keymap=hebrew</span>
+<span class="e"></span>
+Vim will try to find <a href="insert.txt.html#a" class="d">a</a> keymap file for you.  This depends on the value of
+<a href="options.txt.html#%27encoding%27" class="o">'encoding'</a>.  If no matching file was found, you will get an error message.
+
+Now you can type Hebrew in <a href="insert.txt.html#Insert" class="d">Insert</a> mode.  In <a href="intro.txt.html#Normal" class="d">Normal</a> mode, and when typing <a href="insert.txt.html#a" class="d">a</a> "<a href="cmdline.txt.html#%3A" class="d">:</a>"
+command, Vim automatically switches to English.  You can use this command to
+switch between Hebrew and English: 
+<span class="e"></span>
+<span class="e">        CTRL-^</span>
+<span class="e"></span>
+This only works in <a href="insert.txt.html#Insert" class="d">Insert</a> mode and <a href="cmdline.txt.html#Command-line" class="d">Command-line</a> mode.  In <a href="intro.txt.html#Normal" class="d">Normal</a> mode <a href="motion.txt.html#it" class="d">it</a> does
+something completely different (jumps to alternate file).
+   The usage of the keymap <a href="motion.txt.html#is" class="d">is</a> indicated in the mode message, if you have the
+<a href="options.txt.html#%27showmode%27" class="o">'showmode'</a> option set.  In the <a href="gui.txt.html#GUI" class="d">GUI</a> Vim will indicate the usage of keymaps with
+<a href="insert.txt.html#a" class="d">a</a> different cursor color.
+   You can also change the usage of the keymap with the <a href="options.txt.html#%27iminsert%27" class="o">'iminsert'</a> and
+<a href="options.txt.html#%27imsearch%27" class="o">'imsearch'</a> options.
+
+To see the <a href="eval.txt.html#list" class="d">list</a> of mappings, use this command: 
+<span class="e"></span>
+<span class="e">        :lmap</span>
+<span class="e"></span>
+To find out which keymap files are available, in the <a href="gui.txt.html#GUI" class="d">GUI</a> you can use the
+Edit/Keymap menu.  Otherwise you can use this command: 
+<span class="e"></span>
+<span class="e">        :echo globpath(&amp;rtp, "keymap/*.vim")</span>
+<span class="e"></span>
+<span class="e"></span>
+DO-IT-YOURSELF KEYMAPS
+
+You can create your own keymap file.  It's not very difficult.  Start with
+<a href="insert.txt.html#a" class="d">a</a> keymap file that <a href="motion.txt.html#is" class="d">is</a> similar to the language you want to use.  Copy <a href="motion.txt.html#it" class="d">it</a> to the
+"keymap" directory in your runtime directory.  For example, for Unix, you
+would use the directory "~/.vim/keymap"<a href="repeat.txt.html#." class="d">.</a>
+   The name of the keymap file <a href="vim_faq.txt.html#must" class="d">must</a> look like this:
+
+<span class="h">        keymap/{name}.vim </span>
+or
+<span class="h">        keymap/{name}_{encoding}.vim </span>
+
+<span class="s">{name}</span> <a href="motion.txt.html#is" class="d">is</a> the name of the keymap.  Chose <a href="insert.txt.html#a" class="d">a</a> name that <a href="motion.txt.html#is" class="d">is</a> obvious, but different
+from existing keymaps (unless you want to replace an existing keymap file).
+<span class="s">{name}</span> cannot contain an underscore.  Optionally, add the encoding used after
+an underscore.  Examples:
+
+<span class="h">        keymap/hebrew.vim </span>
+<span class="h">        keymap/hebrew_utf-8.vim </span>
+
+The contents of the file should be self-explanatory.  Look <a href="motion.txt.html#at" class="d">at</a> <a href="insert.txt.html#a" class="d">a</a> few of the
+keymaps that are distributed with Vim.  For the details, see <a href="mbyte.txt.html#mbyte-keymap" class="l">mbyte-keymap</a><a href="repeat.txt.html#." class="d">.</a>
+
+
+LAST RESORT
+
+If all other methods fail, you can enter any character with <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a>:
+
+<span class="h">        encoding   type                 range </span>
+        8-bit      <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> 123           decimal 0-255
+        8-bit      <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> <a href="change.txt.html#x" class="d">x</a> a1          hexadecimal 00-ff
+        16-bit     <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> <a href="undo.txt.html#u" class="d">u</a> 013b        hexadecimal 0000-ffff
+        31-bit     <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> <a href="undo.txt.html#U" class="d">U</a> 001303a4    hexadecimal 00000000-7fffffff
+
+Don't type the spaces.  See <a href="insert.txt.html#i_CTRL-V_digit" class="l">i_CTRL-V_digit</a> for the details.
+
+<span class="h">==============================================================================</span>
+
+Next chapter: <a href="usr_90.txt.html#usr_90.txt" class="l">usr_90.txt</a>  Installing Vim
+
+Copyright: see <a href="usr_01.txt.html#manual-copyright" class="l">manual-copyright</a>  vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

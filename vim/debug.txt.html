@@ -1,0 +1,189 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: debug.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="debug.txt" class="t">debug.txt</a>     For <span class="i">Vim version 8.0.</span>  Last change: 2017 Jul 15
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Bram Moolenaar</span>
+
+
+Debugging Vim                                           <a name="debug-vim" class="t">debug-vim</a>
+
+This <a href="motion.txt.html#is" class="d">is</a> for debugging Vim itself, when <a href="motion.txt.html#it" class="d">it</a> doesn't work properly.
+For debugging Vim scripts, functions, etc. see <a href="repeat.txt.html#debug-scripts" class="l">debug-scripts</a>
+
+1. Location of <a href="insert.txt.html#a" class="d">a</a> crash, using gcc and <a href="#gdb" class="d">gdb</a>       <a href="#debug-gcc" class="l">debug-gcc</a>
+2. Locating memory leaks                        <a href="#debug-leaks" class="l">debug-leaks</a>
+3. Windows Bug Reporting                        <a href="#debug-win32" class="l">debug-win32</a>
+
+<span class="h">==============================================================================</span>
+
+1. Location of <a href="insert.txt.html#a" class="d">a</a> crash, using gcc and <a href="#gdb" class="d">gdb</a>               <a name="debug-gcc" class="t">debug-gcc</a> <a name="gdb" class="t">gdb</a>
+
+When Vim crashes in one of the test files, and you are using gcc for
+compilation, here <a href="motion.txt.html#is" class="d">is</a> what you can <a href="diff.txt.html#do" class="d">do</a> to find out exactly where Vim crashes.
+This also applies when using the MingW tools.
+
+1. Compile Vim with the "<a href="starting.txt.html#-g" class="d">-g</a>" option (there <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> line in the src/Makefile for
+   this, which you can uncomment).  Also make sure "strip" <a href="motion.txt.html#is" class="d">is</a> disabled (do not
+   <a href="usr_90.txt.html#install" class="d">install</a> it, or use the line "STRIP <a href="change.txt.html#%3D" class="d">=</a> /bin/true").
+
+2. Execute these commands (replace "11" with the test that fails): 
+<span class="e">        cd testdir</span>
+<span class="e">        gdb ../vim</span>
+<span class="e">        run -u unix.vim -U NONE -s dotest.in test11.in</span>
+<span class="e"></span>
+3. Check where Vim crashes, <a href="#gdb" class="d">gdb</a> should give <a href="insert.txt.html#a" class="d">a</a> message for this.
+
+4. Get <a href="insert.txt.html#a" class="d">a</a> stack trace from <a href="#gdb" class="d">gdb</a> with this command: 
+<span class="e">        where</span>
+  You can check out different places in the stack trace with: 
+<span class="e">        frame 3</span>
+  <a href="insert.txt.html#Replace" class="d">Replace</a> "3" with one of the numbers in the stack trace.
+
+<span class="h">==============================================================================</span>
+
+2. Locating memory leaks                        <a name="debug-leaks" class="t">debug-leaks</a> <a name="valgrind" class="t">valgrind</a>
+
+If you suspect Vim <a href="motion.txt.html#is" class="d">is</a> leaking memory and you are using Linux, the <a href="#valgrind" class="d">valgrind</a>
+tool <a href="motion.txt.html#is" class="d">is</a> very useful to pinpoint memory leaks.
+
+First of all, build Vim with EXITFREE defined.  Search for this in MAKEFILE
+and uncomment the line.
+
+Use this command to start Vim:
+
+<span class="e">        valgrind --log-file=valgrind.log --leak-check=full ./vim</span>
+<span class="e"></span>
+<span class="n">Note:</span> Vim will run much slower.  If your <a href="starting.txt.html#.vimrc" class="d">.vimrc</a> <a href="motion.txt.html#is" class="d">is</a> big or you have several
+plugins you need to be patient for startup, or run with the "--clean"
+argument.
+
+There are often <a href="insert.txt.html#a" class="d">a</a> few leaks from libraries, such <a href="motion.txt.html#as" class="d">as</a> getpwuid() and
+XtVaAppCreateShell().  Those are unavoidable.  The number of bytes should be
+very small <a href="insert.txt.html#a" class="d">a</a> Kbyte or less.
+
+<span class="h">==============================================================================</span>
+
+3. Windows Bug Reporting                                <a name="debug-win32" class="t">debug-win32</a>
+
+If the Windows version of Vim crashes in <a href="insert.txt.html#a" class="d">a</a> reproducible manner, you can take
+some steps to provide <a href="insert.txt.html#a" class="d">a</a> useful bug report.
+
+
+<span class="h">3.1 GENERIC </span>
+
+You <a href="vim_faq.txt.html#must" class="d">must</a> obtain the debugger symbols (PDB) file for your executable: gvim.pdb
+for gvim.exe, or vim.pdb for vim.exe. The PDB should be available from the
+same place that you obtained the executable. Be sure to use the PDB that
+matches the EXE (same date).
+
+If you built the executable yourself with the Microsoft <a href="visual.txt.html#Visual" class="d">Visual</a> C++ compiler,
+then the PDB was built with the EXE.
+
+Alternatively, if you have the source files, you can import Make_ivc.mak into
+<a href="visual.txt.html#Visual" class="d">Visual</a> Studio <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> workspace.  Then select <a href="insert.txt.html#a" class="d">a</a> debug configuration, build and
+you can <a href="diff.txt.html#do" class="d">do</a> all kinds of debugging (set breakpoints, watch variables, etc.).
+
+If you have <a href="visual.txt.html#Visual" class="d">Visual</a> Studio, use that instead of the VC Toolkit and WinDbg.
+
+For other compilers, you should always use the corresponding debugger: TD for
+<a href="insert.txt.html#a" class="d">a</a> Vim executable compiled with the Borland compiler; <a href="#gdb" class="d">gdb</a> (see above
+<a href="#debug-gcc" class="l">debug-gcc</a><a href="motion.txt.html#%29" class="d">)</a> for the Cygwin and MinGW compilers.
+
+
+                                                                <a name="debug-vs2005" class="t">debug-vs2005</a>
+<span class="h">3.2 Debugging Vim crashes with Visual Studio 2005/Visual C++ 2005 Express </span>
+
+First launch vim.exe or gvim.exe and then launch <a href="visual.txt.html#Visual" class="d">Visual</a> Studio.  (If you don't
+have <a href="visual.txt.html#Visual" class="d">Visual</a> Studio, follow the instructions <a href="motion.txt.html#at" class="d">at</a> <a href="#get-ms-debuggers" class="l">get-ms-debuggers</a> to obtain <a href="insert.txt.html#a" class="d">a</a>
+free copy of <a href="visual.txt.html#Visual" class="d">Visual</a> C++ 2005 Express Edition.)
+
+On the Tools menu, click Attach to Process.  Choose the Vim process.
+
+In Vim, reproduce the crash.  <a href="insert.txt.html#A" class="d">A</a> <a href="gui_w32.txt.html#dialog" class="d">dialog</a> will appear in <a href="visual.txt.html#Visual" class="d">Visual</a> Studio, telling
+you about the unhandled exception in the Vim process.  Click Break to break
+into the process.
+
+<a href="visual.txt.html#Visual" class="d">Visual</a> Studio will pop up another dialog, telling you that no symbols are
+loaded and that the source code cannot be displayed.  Click OK.
+
+Several <a href="windows.txt.html#windows" class="d">windows</a> will open.  Right-click in the Call Stack window.  Choose Load
+Symbols.  The Find Symbols <a href="gui_w32.txt.html#dialog" class="d">dialog</a> will open, looking for (g)vim.pdb.  Navigate
+to the directory where you have the PDB file and click Open.
+
+At this point, you should have <a href="insert.txt.html#a" class="d">a</a> full call stack with vim function names and
+line numbers.  Double-click one of the lines and the Find Source <a href="gui_w32.txt.html#dialog" class="d">dialog</a> will
+appear.  Navigate to the directory where the Vim source <a href="motion.txt.html#is" class="d">is</a> (if you have it.)
+
+If you don't know how to debug this any further, follow the instructions
+<a href="motion.txt.html#at" class="d">at</a> "<a href="helphelp.txt.html#%3Ahelp" class="d">:help</a> <a href="intro.txt.html#bug-reports" class="d">bug-reports</a>"<a href="repeat.txt.html#." class="d">.</a>  Paste the call stack into the bug report.
+
+If you have <a href="insert.txt.html#a" class="d">a</a> non-free version of <a href="visual.txt.html#Visual" class="d">Visual</a> Studio, you can save <a href="insert.txt.html#a" class="d">a</a> minidump via
+the Debug menu and send <a href="motion.txt.html#it" class="d">it</a> with the bug report.  <a href="insert.txt.html#A" class="d">A</a> minidump <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> small file
+(&lt;100KB), which contains information about the state of your process.
+<a href="visual.txt.html#Visual" class="d">Visual</a> C++ 2005 Express Edition cannot save minidumps and <a href="motion.txt.html#it" class="d">it</a> cannot be
+installed <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> just-in-time debugger. Use WinDbg, <a href="#debug-windbg" class="l">debug-windbg</a><a href="motion.txt.html#%2C" class="d">,</a> if you
+need to save minidumps or you want <a href="insert.txt.html#a" class="d">a</a> just-in-time (postmortem) debugger.
+
+                                                                <a name="debug-windbg" class="t">debug-windbg</a>
+<span class="h">3.3 Debugging Vim crashes with WinDbg </span>
+
+See <a href="#get-ms-debuggers" class="l">get-ms-debuggers</a> to obtain <a href="insert.txt.html#a" class="d">a</a> copy of WinDbg.
+
+As with the <a href="visual.txt.html#Visual" class="d">Visual</a> Studio IDE, you can attach WinDbg to <a href="insert.txt.html#a" class="d">a</a> running Vim process.
+You can also have your system automatically invoke WinDbg <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> postmortem
+debugger. To set WinDbg <a href="motion.txt.html#as" class="d">as</a> your postmortem debugger, run "windbg -I"<a href="repeat.txt.html#." class="d">.</a>
+
+To attach WinDbg to <a href="insert.txt.html#a" class="d">a</a> running Vim process, launch WinDbg. On the File menu,
+choose Attach to <a href="insert.txt.html#a" class="d">a</a> Process. <a href="visual.txt.html#Select" class="d">Select</a> the Vim process and click OK.
+
+At this point, choose Symbol File Path on the File menu, and add the folder
+containing your Vim PDB to the sympath. If you have Vim source available,
+use Source File Path on the File menu. You can now open source files in WinDbg
+and set breakpoints, if you like. Reproduce your crash. WinDbg should open the
+source file <a href="motion.txt.html#at" class="d">at</a> the point of the crash. Using the <a href="starting.txt.html#View" class="d">View</a> menu, you can examine
+the call stack, local variables, watch windows, and so on.
+
+If WinDbg <a href="motion.txt.html#is" class="d">is</a> your postmortem debugger, you <a href="diff.txt.html#do" class="d">do</a> not need to attach WinDbg to
+your Vim process. Simply reproduce the crash and WinDbg will launch
+automatically. As above, set the Symbol File Path and the Source File Path.
+
+To save <a href="insert.txt.html#a" class="d">a</a> minidump, type the following <a href="motion.txt.html#at" class="d">at</a> the WinDbg command line: 
+<span class="e">        .dump vim.dmp</span>
+
+                                                        <a name="debug-minidump" class="t">debug-minidump</a>
+<span class="h">3.4 Opening a Minidump </span>
+
+If you have <a href="insert.txt.html#a" class="d">a</a> minidump file, you can open <a href="motion.txt.html#it" class="d">it</a> in <a href="visual.txt.html#Visual" class="d">Visual</a> Studio or in WinDbg.
+
+In <a href="visual.txt.html#Visual" class="d">Visual</a> Studio 2005: on the File menu, choose Open, then Project/Solution.
+Navigate to the .dmp file and open it. Now press F5 to invoke the debugger.
+Follow the instructions in <a href="#debug-vs2005" class="l">debug-vs2005</a> to set the Symbol File Path.
+
+In WinDbg: choose Open Crash Dump on the File menu. Follow the instructions in
+<a href="#debug-windbg" class="l">debug-windbg</a> to set the Symbol File Path.
+
+                                                        <a name="get-ms-debuggers" class="t">get-ms-debuggers</a>
+<span class="h">3.5 Obtaining Microsoft Debugging Tools </span>
+
+The Debugging Tools for Windows (including WinDbg) can be downloaded from
+    <a class="u" href="http://www.microsoft.com/whdc/devtools/debugging/default.mspx">http://www.microsoft.com/whdc/devtools/debugging/default.mspx</a>
+This includes the WinDbg debugger.
+
+<a href="visual.txt.html#Visual" class="d">Visual</a> C++ 2005 Express Edition can be downloaded for free from:
+    <a class="u" href="http://msdn.microsoft.com/vstudio/express/visualC/default.aspx">http://msdn.microsoft.com/vstudio/express/visualC/default.aspx</a>
+
+<span class="h">=========================================================================</span>
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

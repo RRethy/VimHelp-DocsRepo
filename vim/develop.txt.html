@@ -1,0 +1,580 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: develop.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="develop.txt" class="t">develop.txt</a>   For <span class="i">Vim version 8.0.</span>  Last change: 2018 May 02
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Bram Moolenaar</span>
+
+
+Development of Vim.                                     <a name="development" class="t">development</a>
+
+This text <a href="motion.txt.html#is" class="d">is</a> important for those who want to be involved in further developing
+Vim.
+
+1. Design goals         <a href="#design-goals" class="l">design-goals</a>
+2. Coding style         <a href="#coding-style" class="l">coding-style</a>
+3. Design decisions     <a href="#design-decisions" class="l">design-decisions</a>
+4. Assumptions          <a href="#design-assumptions" class="l">design-assumptions</a>
+
+See the file README.txt in the "src" directory for an overview of the source
+code.
+
+Vim <a href="motion.txt.html#is" class="d">is</a> open source software.  Everybody <a href="motion.txt.html#is" class="d">is</a> encouraged to contribute to <a href="helphelp.txt.html#help" class="d">help</a>
+improving Vim.  For sending patches <a href="insert.txt.html#a" class="d">a</a> unified <a href="diff.txt.html#diff" class="d">diff</a> "<a href="diff.txt.html#diff" class="d">diff</a> <a href="starting.txt.html#-u" class="d">-u</a>" <a href="motion.txt.html#is" class="d">is</a> preferred.
+You can create <a href="insert.txt.html#a" class="d">a</a> pull request on github, but it's not required.
+Also see <a class="u" href="http://vim.wikia.com/wiki/How_to_make_and_submit_a_patch">http://vim.wikia.com/wiki/How_to_make_and_submit_a_patch</a>.
+
+<span class="h">==============================================================================</span>
+1. Design goals                                         <a name="design-goals" class="t">design-goals</a>
+
+Most important things come first (roughly).
+
+<span class="n">Note</span> that quite <a href="insert.txt.html#a" class="d">a</a> few items are contradicting.  This <a href="motion.txt.html#is" class="d">is</a> intentional.  <a href="insert.txt.html#A" class="d">A</a>
+balance <a href="vim_faq.txt.html#must" class="d">must</a> be found between them.
+
+
+<span class="c">VIM IS... VI COMPATIBLE                                </span> <a name="design-compatible" class="t">design-compatible</a>
+
+First of all, <a href="motion.txt.html#it" class="d">it</a> should be possible to use Vim <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> drop-in replacement for
+Vi.  When the user wants to, he can use Vim in compatible mode and hardly
+notice any difference with the original Vi.
+
+Exceptions:
+<a href="motion.txt.html#-" class="d">-</a> We don't reproduce obvious <a href="intro.txt.html#Vi" class="d">Vi</a> <a href="intro.txt.html#bugs" class="d">bugs</a> in Vim.
+<a href="motion.txt.html#-" class="d">-</a> There are different versions of Vi.  <a href="insert.txt.html#I" class="d">I</a> am using Version 3.7 (6/7/85) <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a>
+  reference.  But support for other versions <a href="motion.txt.html#is" class="d">is</a> also included when possible.
+  The <a href="intro.txt.html#Vi" class="d">Vi</a> part of POSIX <a href="motion.txt.html#is" class="d">is</a> not considered <a href="insert.txt.html#a" class="d">a</a> definitive source.
+<a href="motion.txt.html#-" class="d">-</a> Vim adds new commands, you cannot rely on some command to fail because <a href="motion.txt.html#it" class="d">it</a>
+  didn't exist in Vi.
+<a href="motion.txt.html#-" class="d">-</a> Vim will have <a href="insert.txt.html#a" class="d">a</a> lot of features that <a href="intro.txt.html#Vi" class="d">Vi</a> doesn't have.  Going back from Vim
+  to <a href="intro.txt.html#Vi" class="d">Vi</a> will be <a href="insert.txt.html#a" class="d">a</a> problem, this cannot be avoided.
+<a href="motion.txt.html#-" class="d">-</a> Some things are hardly ever used (open mode, sending an e-mail when
+  crashing, etc.).  Those will only be included when someone has <a href="insert.txt.html#a" class="d">a</a> good reason
+  why <a href="motion.txt.html#it" class="d">it</a> should be included and it's not too much work.
+<a href="motion.txt.html#-" class="d">-</a> For some items <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> debatable whether <a href="intro.txt.html#Vi" class="d">Vi</a> compatibility should be
+  maintained.  There will be an option flag for these.
+
+
+<span class="c">VIM IS... IMPROVED                                     </span> <a name="design-improved" class="t">design-improved</a>
+
+The IMproved bits of Vim should make <a href="motion.txt.html#it" class="d">it</a> <a href="insert.txt.html#a" class="d">a</a> better Vi, without becoming <a href="insert.txt.html#a" class="d">a</a>
+completely different editor.  Extensions are done with <a href="insert.txt.html#a" class="d">a</a> "<a href="intro.txt.html#Vi" class="d">Vi</a> spirit"<a href="repeat.txt.html#." class="d">.</a>
+<a href="motion.txt.html#-" class="d">-</a> Use the keyboard <a href="motion.txt.html#as" class="d">as</a> much <a href="motion.txt.html#as" class="d">as</a> feasible.  The mouse requires <a href="insert.txt.html#a" class="d">a</a> third hand,
+  which we don't have.  Many terminals don't have <a href="insert.txt.html#a" class="d">a</a> mouse.
+<a href="motion.txt.html#-" class="d">-</a> When the mouse <a href="motion.txt.html#is" class="d">is</a> used anyway, avoid the need to switch back to the
+  keyboard.  Avoid mixing mouse and keyboard handling.
+<a href="motion.txt.html#-" class="d">-</a> Add commands and <a href="options.txt.html#options" class="d">options</a> in <a href="insert.txt.html#a" class="d">a</a> consistent way.  Otherwise people will have <a href="insert.txt.html#a" class="d">a</a>
+  hard time finding and remembering them.  Keep in mind that more commands and
+  <a href="options.txt.html#options" class="d">options</a> will be added later.
+<a href="motion.txt.html#-" class="d">-</a> <a href="insert.txt.html#A" class="d">A</a> feature that people <a href="diff.txt.html#do" class="d">do</a> not know about <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> useless feature.  Don't add
+  obscure features, or <a href="motion.txt.html#at" class="d">at</a> least add hints in documentation that they exist.
+<a href="motion.txt.html#-" class="d">-</a> Minimize using CTRL and other modifiers, they are more difficult to type.
+<a href="motion.txt.html#-" class="d">-</a> There are many first-time and inexperienced Vim users.  Make <a href="motion.txt.html#it" class="d">it</a> <a href="starting.txt.html#easy" class="d">easy</a> for
+  them to start using Vim and learn more over time.
+<a href="motion.txt.html#-" class="d">-</a> There <a href="motion.txt.html#is" class="d">is</a> no limit to the features that can be added.  Selecting new features
+  <a href="motion.txt.html#is" class="d">is</a> one based on (1) what users ask for, (2) how much effort <a href="motion.txt.html#it" class="d">it</a> takes to
+  implement and (3) someone actually implementing it.
+
+
+<span class="c">VIM IS... MULTI PLATFORM                               </span> <a name="design-multi-platform" class="t">design-multi-platform</a>
+
+Vim tries to <a href="helphelp.txt.html#help" class="d">help</a> <a href="motion.txt.html#as" class="d">as</a> many users on <a href="motion.txt.html#as" class="d">as</a> many platforms <a href="motion.txt.html#as" class="d">as</a> possible.
+<a href="motion.txt.html#-" class="d">-</a> Support many kinds of terminals.  The minimal demands are cursor positioning
+  and clear-screen.  Commands should only use key strokes that most keyboards
+  have.  Support all the keys on the keyboard for mapping.
+<a href="motion.txt.html#-" class="d">-</a> Support many platforms.  <a href="insert.txt.html#A" class="d">A</a> condition <a href="motion.txt.html#is" class="d">is</a> that there <a href="motion.txt.html#is" class="d">is</a> someone willing to <a href="diff.txt.html#do" class="d">do</a>
+  Vim <a href="#development" class="d">development</a> on that platform, and <a href="motion.txt.html#it" class="d">it</a> doesn't mean messing up the code.
+<a href="motion.txt.html#-" class="d">-</a> Support many compilers and libraries.  Not everybody <a href="motion.txt.html#is" class="d">is</a> able or allowed to
+  <a href="usr_90.txt.html#install" class="d">install</a> another compiler or <a href="gui.txt.html#GUI" class="d">GUI</a> library.
+<a href="motion.txt.html#-" class="d">-</a> People switch from one platform to another, and from <a href="gui.txt.html#GUI" class="d">GUI</a> to <a href="terminal.txt.html#terminal" class="d">terminal</a>
+  version.  Features should be present in all versions, or <a href="motion.txt.html#at" class="d">at</a> least in <a href="motion.txt.html#as" class="d">as</a> many
+  <a href="motion.txt.html#as" class="d">as</a> possible with <a href="insert.txt.html#a" class="d">a</a> reasonable effort.  Try to avoid that users <a href="vim_faq.txt.html#must" class="d">must</a> switch
+  between platforms to accomplish their work efficiently.
+<a href="motion.txt.html#-" class="d">-</a> That <a href="insert.txt.html#a" class="d">a</a> feature <a href="motion.txt.html#is" class="d">is</a> not possible on some platforms, or only possible on one
+  platform, does not mean <a href="motion.txt.html#it" class="d">it</a> cannot be implemented.  [This intentionally
+  contradicts the previous item, these two <a href="vim_faq.txt.html#must" class="d">must</a> be balanced.]
+
+
+<span class="c">VIM IS... WELL DOCUMENTED                              </span> <a name="design-documented" class="t">design-documented</a>
+
+<a href="motion.txt.html#-" class="d">-</a> <a href="insert.txt.html#A" class="d">A</a> feature that isn't documented <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> useless feature.  <a href="insert.txt.html#A" class="d">A</a> patch for <a href="insert.txt.html#a" class="d">a</a> new
+  feature <a href="vim_faq.txt.html#must" class="d">must</a> include the documentation.
+<a href="motion.txt.html#-" class="d">-</a> Documentation should be comprehensive and understandable.  Using examples <a href="motion.txt.html#is" class="d">is</a>
+  recommended.
+<a href="motion.txt.html#-" class="d">-</a> Don't make the text unnecessarily long.  Less documentation means that an
+  item <a href="motion.txt.html#is" class="d">is</a> easier to find.
+
+
+<span class="c">VIM IS... HIGH SPEED AND SMALL IN SIZE                 </span> <a name="design-speed-size" class="t">design-speed-size</a>
+
+Using Vim <a href="vim_faq.txt.html#must" class="d">must</a> not be <a href="insert.txt.html#a" class="d">a</a> big attack on system resources.  Keep <a href="motion.txt.html#it" class="d">it</a> small and
+fast.
+<a href="motion.txt.html#-" class="d">-</a> Computers are becoming faster and bigger each year.  Vim can grow too, but
+  no faster than computers are growing.  Keep Vim usable on older systems.
+<a href="motion.txt.html#-" class="d">-</a> Many users start Vim from <a href="insert.txt.html#a" class="d">a</a> shell very often.  Startup time <a href="vim_faq.txt.html#must" class="d">must</a> be short.
+<a href="motion.txt.html#-" class="d">-</a> Commands <a href="vim_faq.txt.html#must" class="d">must</a> work efficiently.  The time they consume <a href="vim_faq.txt.html#must" class="d">must</a> be <a href="motion.txt.html#as" class="d">as</a> small <a href="motion.txt.html#as" class="d">as</a>
+  possible.  Useful commands may take longer.
+<a href="motion.txt.html#-" class="d">-</a> Don't forget that some people use Vim over <a href="insert.txt.html#a" class="d">a</a> slow connection.  Minimize the
+  communication overhead.
+<a href="motion.txt.html#-" class="d">-</a> Items that add considerably to the size and are not used by many people
+  should be <a href="insert.txt.html#a" class="d">a</a> feature that can be disabled.
+<a href="motion.txt.html#-" class="d">-</a> Vim <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> component among other components.  Don't turn <a href="motion.txt.html#it" class="d">it</a> into <a href="insert.txt.html#a" class="d">a</a> massive
+  application, but have <a href="motion.txt.html#it" class="d">it</a> work well together with other programs.
+
+
+<span class="c">VIM IS... MAINTAINABLE                                 </span> <a name="design-maintain" class="t">design-maintain</a>
+
+<a href="motion.txt.html#-" class="d">-</a> The source code should not become <a href="insert.txt.html#a" class="d">a</a> mess.  It should be reliable code.
+<a href="motion.txt.html#-" class="d">-</a> Use the same layout in all files to make <a href="motion.txt.html#it" class="d">it</a> <a href="starting.txt.html#easy" class="d">easy</a> to read <a href="#coding-style" class="l">coding-style</a><a href="repeat.txt.html#." class="d">.</a>
+<a href="motion.txt.html#-" class="d">-</a> Use comments in <a href="insert.txt.html#a" class="d">a</a> useful way!  Quoting the function name and argument names
+  <a href="motion.txt.html#is" class="d">is</a> NOT useful.  Do explain what they are for.
+<a href="motion.txt.html#-" class="d">-</a> Porting to another platform should be made easy, without having to change
+  too much platform-independent code.
+<a href="motion.txt.html#-" class="d">-</a> Use the object-oriented spirit: Put data and code together.  Minimize the
+  knowledge spread to other parts of the code.
+
+
+<span class="c">VIM IS... FLEXIBLE                                     </span> <a name="design-flexible" class="t">design-flexible</a>
+
+Vim should make <a href="motion.txt.html#it" class="d">it</a> <a href="starting.txt.html#easy" class="d">easy</a> for users to work in their preferred styles rather
+than coercing its users into particular patterns of work.  This can be for
+items with <a href="insert.txt.html#a" class="d">a</a> large impact (e.g., the <a href="options.txt.html#%27compatible%27" class="o">'compatible'</a> option) or for details.  The
+defaults are carefully chosen such that most users will enjoy using Vim <a href="motion.txt.html#as" class="d">as</a> <a href="motion.txt.html#it" class="d">it</a>
+is.  Commands and <a href="options.txt.html#options" class="d">options</a> can be used to adjust Vim to the desire of the user
+and its environment.
+
+
+<span class="c">VIM IS... NOT                                          </span> <a name="design-not" class="t">design-not</a>
+
+<a href="motion.txt.html#-" class="d">-</a> Vim <a href="motion.txt.html#is" class="d">is</a> not <a href="insert.txt.html#a" class="d">a</a> shell or an Operating System.  It does provide <a href="insert.txt.html#a" class="d">a</a> <a href="terminal.txt.html#terminal" class="d">terminal</a>
+  window, in which you can run <a href="insert.txt.html#a" class="d">a</a> shell or debugger.  E.g. to be able to <a href="diff.txt.html#do" class="d">do</a>
+  this over an ssh connection.  But if you don't need <a href="insert.txt.html#a" class="d">a</a> text editor with that
+  <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> out of scope (use something like screen or tmux instead).
+  <a href="insert.txt.html#A" class="d">A</a> satirical way to say this: "Unlike Emacs, Vim does not attempt to include
+  everything but the kitchen sink, but some people say that you can clean one
+  with it.  ;-)"
+  To use Vim with <a href="debug.txt.html#gdb" class="d">gdb</a> see: <a class="u" href="http://www.agide.org">http://www.agide.org</a> and <a class="u" href="http://clewn.sf.net">http://clewn.sf.net</a>.
+<a href="motion.txt.html#-" class="d">-</a> Vim <a href="motion.txt.html#is" class="d">is</a> not <a href="insert.txt.html#a" class="d">a</a> fancy <a href="gui.txt.html#GUI" class="d">GUI</a> editor that tries to look <a href="todo.txt.html#nice" class="d">nice</a> <a href="motion.txt.html#at" class="d">at</a> the cost of
+  being <a href="various.txt.html#less" class="d">less</a> consistent over all platforms.  But functional <a href="gui.txt.html#GUI" class="d">GUI</a> features are
+  welcomed.
+
+<span class="h">==============================================================================</span>
+2. Coding style                                         <a name="coding-style" class="t">coding-style</a>
+
+These are the rules to use when making changes to the Vim source code.  Please
+stick to these rules, to keep the sources readable and maintainable.
+
+This <a href="eval.txt.html#list" class="d">list</a> <a href="motion.txt.html#is" class="d">is</a> not complete.  Look in the source code for more examples.
+
+
+<span class="c">MAKING CHANGES                                         </span> <a name="style-changes" class="t">style-changes</a>
+
+The basic steps to make changes to the code:
+1. Get the code from github.  That makes <a href="motion.txt.html#it" class="d">it</a> easier to keep your changed
+   version in sync with the main code base (it may be <a href="insert.txt.html#a" class="d">a</a> while before your
+   changes will be included).  You <a href="diff.txt.html#do" class="d">do</a> need to spend some time learning git,
+   it's not the most user friendly tool.
+2. Adjust the documentation.  Doing this first gives you an impression of how
+   your changes affect the user.
+3. Make the source code changes.
+4. Check ../doc/todo.txt if the change affects any listed item.
+5. Make <a href="insert.txt.html#a" class="d">a</a> patch with "git <a href="diff.txt.html#diff" class="d">diff</a>"<a href="repeat.txt.html#." class="d">.</a>  You can also create <a href="insert.txt.html#a" class="d">a</a> pull request on
+   github, but it's the <a href="diff.txt.html#diff" class="d">diff</a> that matters.
+6. Make <a href="insert.txt.html#a" class="d">a</a> <span class="n">note</span> about what changed, preferably mentioning the problem and the
+   solution.  Send an email to the <a href="intro.txt.html#vim-dev" class="l">vim-dev</a> <a href="intro.txt.html#maillist" class="d">maillist</a> with an explanation and
+   include the diff. Or create <a href="insert.txt.html#a" class="d">a</a> pull request on github.
+
+
+<span class="c">C COMPILER                             </span> <a name="style-compiler" class="t">style-compiler</a> <a name="ANSI-C" class="t">ANSI-C</a> <a name="C89" class="t">C89</a> <a name="C99" class="t">C99</a>
+
+The minimal <a href="change.txt.html#C" class="d">C</a> compiler version supported <a href="motion.txt.html#is" class="d">is</a> C89, also known <a href="motion.txt.html#as" class="d">as</a> ANSI C.
+Later standards, such <a href="motion.txt.html#as" class="d">as</a> C99, are not widely supported, or <a href="motion.txt.html#at" class="d">at</a> least not 100%
+supported.  Therefore we use only some of the <a href="#C99" class="d">C99</a> features and disallow some
+(at least for now).
+
+Please don't make changes everywhere to use the <a href="#C99" class="d">C99</a> features, <a href="motion.txt.html#it" class="d">it</a> causes <a href="diff.txt.html#merge" class="d">merge</a>
+problems for existing patches.  Only use them for new and changed code.
+
+<span class="h">Comments </span>
+
+Traditionally Vim uses <a href="pattern.txt.html#%2F" class="d">/</a>* comments *<a href="pattern.txt.html#%2F." class="d">/.</a>  We intend to keep <a href="motion.txt.html#it" class="d">it</a> that way,
+especially for file and function headers.  For new code or lines of code that
+change, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> allowed to use <a href="version7.txt.html#%2F%2F" class="d">//</a> comments.  Especially when <a href="motion.txt.html#it" class="d">it</a> comes after
+code:
+        int some_var;  <a href="version7.txt.html#%2F%2F" class="d">//</a> single line comment useful here
+
+<span class="h">Enums </span>
+
+The last item in an enum may have <a href="insert.txt.html#a" class="d">a</a> trailing comma.  <a href="#C89" class="d">C89</a> didn't allow this.
+
+<span class="h">Types </span>
+
+"long long" <a href="motion.txt.html#is" class="d">is</a> allowed and can be expected to be 64 bits.  Use %lld in printf
+formats.  Also "long long unsigned" with %llu.
+
+<span class="h">Not to be used </span>
+
+These <a href="#C99" class="d">C99</a> features are not to be used, because not enough compilers support
+them:
+<a href="motion.txt.html#-" class="d">-</a> Declaration after Statements (MSVC 2012 does not support it).  All
+  declarations need to be <a href="motion.txt.html#at" class="d">at</a> the start of the block.
+<a href="motion.txt.html#-" class="d">-</a> Variable length arrays (even in C11 this <a href="motion.txt.html#is" class="d">is</a> an optional feature).
+<a href="motion.txt.html#-" class="d">-</a> _Bool and _Complex types.
+<a href="motion.txt.html#-" class="d">-</a> "inline" (it's hardly ever needed, let the optimizer <a href="diff.txt.html#do" class="d">do</a> its work)
+<a href="motion.txt.html#-" class="d">-</a> flexible array members: Not supported by HP-UX <a href="change.txt.html#C" class="d">C</a> compiler (John Marriott)
+
+
+<span class="c">USE OF COMMON FUNCTIONS                                </span> <a name="style-functions" class="t">style-functions</a>
+
+Some <a href="eval.txt.html#functions" class="d">functions</a> that are common to use, have <a href="insert.txt.html#a" class="d">a</a> special Vim version.  Always
+consider using the Vim version, because they were introduced with <a href="insert.txt.html#a" class="d">a</a> reason.
+
+NORMAL NAME     VIM NAME        DIFFERENCE OF VIM VERSION
+free()          vim_free()      Checks for freeing NULL
+malloc()        alloc()         Checks for out of memory situation
+malloc()        lalloc()        Like alloc(), but has long argument
+strcpy()        STRCPY()        Includes cast to (char *), for char_u * args
+<a href="eval.txt.html#strchr%28%29" class="d">strchr()</a>        vim_strchr()    Accepts special characters
+<a href="eval.txt.html#strrchr%28%29" class="d">strrchr()</a>       vim_strrchr()   Accepts special characters
+isspace()       vim_isspace()   Can handle characters <a href="change.txt.html#%3E" class="d">&gt;</a> 128
+iswhite()       vim_iswhite()   Only <a href="eval.txt.html#TRUE" class="d">TRUE</a> for <a href="intro.txt.html#tab" class="d">tab</a> and <a href="intro.txt.html#space" class="d">space</a>
+memcpy()        mch_memmove()   Handles overlapped copies
+bcopy()         mch_memmove()   Handles overlapped copies
+memset()        vim_memset()    Uniform for all systems
+
+
+<span class="c">NAMES                                                  </span> <a name="style-names" class="t">style-names</a>
+
+Function names can not be more than 31 characters long (because of VMS).
+
+Don't use "delete" or "this" <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> variable name, C++ doesn't like it.
+
+Because of the requirement that Vim runs on <a href="motion.txt.html#as" class="d">as</a> many systems <a href="motion.txt.html#as" class="d">as</a> possible, we
+need to avoid using names that are already defined by the system.  This <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a>
+<a href="eval.txt.html#list" class="d">list</a> of names that are known to cause trouble.  The name <a href="motion.txt.html#is" class="d">is</a> given <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> <a href="pattern.txt.html#regexp" class="d">regexp</a>
+pattern.
+
+is.*()          POSIX, ctype.h
+to.*()          POSIX, ctype.h
+
+d_.*            POSIX, dirent.h
+l_.*            POSIX, fcntl.h
+gr_.*           POSIX, grp.h
+pw_.*           POSIX, pwd.h
+sa_.*           POSIX, signal.h
+mem.*           POSIX, string.h
+str.*           POSIX, string.h
+wcs.*           POSIX, string.h
+st_.*           POSIX, stat.h
+tms_.*          POSIX, times.h
+tm_.*           POSIX, time.h
+c_.*            POSIX, termios.h
+MAX.*           POSIX, limits.h
+__.*            POSIX, system
+_[A-Z].*        POSIX, system
+E[A-Z0-9]*      POSIX, errno.h
+
+<a href="repeat.txt.html#." class="d">.</a>*_t            POSIX, for typedefs.  Use <a href="repeat.txt.html#." class="d">.</a>*_T instead.
+
+wait            don't use <a href="motion.txt.html#as" class="d">as</a> argument to <a href="insert.txt.html#a" class="d">a</a> function, conflicts with types.h
+<a href="index.txt.html#index" class="d">index</a>           shadows global declaration
+time            shadows global declaration
+new             C++ reserved keyword
+try             Borland C++ doesn't like <a href="motion.txt.html#it" class="d">it</a> to be used <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> variable.
+
+clear           <a href="os_mac.txt.html#Mac" class="d">Mac</a> curses.h
+echo            <a href="os_mac.txt.html#Mac" class="d">Mac</a> curses.h
+instr           <a href="os_mac.txt.html#Mac" class="d">Mac</a> curses.h
+<a href="intro.txt.html#meta" class="d">meta</a>            <a href="os_mac.txt.html#Mac" class="d">Mac</a> curses.h
+newwin          <a href="os_mac.txt.html#Mac" class="d">Mac</a> curses.h
+nl              <a href="os_mac.txt.html#Mac" class="d">Mac</a> curses.h
+overwrite       <a href="os_mac.txt.html#Mac" class="d">Mac</a> curses.h
+refresh         <a href="os_mac.txt.html#Mac" class="d">Mac</a> curses.h
+scroll          <a href="os_mac.txt.html#Mac" class="d">Mac</a> curses.h
+typeahead       <a href="os_mac.txt.html#Mac" class="d">Mac</a> curses.h
+
+basename()      GNU <a href="eval.txt.html#string" class="d">string</a> function
+dirname()       GNU <a href="eval.txt.html#string" class="d">string</a> function
+get_env_value() Linux system function
+
+
+<span class="c">VARIOUS                                                </span> <a name="style-various" class="t">style-various</a>
+
+Typedef'ed names should <a href="intro.txt.html#end" class="d">end</a> in "_T"<a href="cmdline.txt.html#%3A" class="d">:</a> 
+<span class="e">    typedef int some_T;</span>
+Define'ed names should be uppercase: 
+<span class="e">    #define SOME_THING</span>
+Features always start with "FEAT_"<a href="cmdline.txt.html#%3A" class="d">:</a> 
+<span class="e">    #define FEAT_FOO</span>
+<span class="e"></span>
+Don't use '\"', some compilers can't handle it.  <a href="motion.txt.html#%27" class="d">'</a>"<a href="motion.txt.html#%27" class="d">'</a> works fine.
+
+Don't use:
+    #if HAVE_SOME
+Some compilers can't handle that and complain that "HAVE_SOME" <a href="motion.txt.html#is" class="d">is</a> not defined.
+Use
+    #ifdef HAVE_SOME
+or
+    #if defined(HAVE_SOME)
+
+
+<span class="c">STYLE                                                  </span> <a name="style-examples" class="t">style-examples</a>
+
+General rule: One statement per line.
+
+Wrong:      if (cond) <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#%3D" class="d">=</a> 1;
+
+OK:         if (cond)
+                <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#%3D" class="d">=</a> 1;
+
+Wrong:      while (cond);
+
+OK:         while (cond)
+                <a href="motion.txt.html#%3B" class="d">;</a>
+
+Wrong:      <a href="diff.txt.html#do" class="d">do</a> <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#%3D" class="d">=</a> 1; while (cond);
+
+OK:         <a href="diff.txt.html#do" class="d">do</a>
+                <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#%3D" class="d">=</a> 1;
+            while (cond);
+
+Wrong:      if (cond) <a href="motion.txt.html#%7B" class="d">{</a>
+               cmd;
+               cmd;
+            <a href="motion.txt.html#%7D" class="d">}</a> else <a href="motion.txt.html#%7B" class="d">{</a>
+               cmd;
+               cmd;
+            <a href="motion.txt.html#%7D" class="d">}</a>
+
+OK:         if (cond)
+            <a href="motion.txt.html#%7B" class="d">{</a>
+               cmd;
+               cmd;
+            <a href="motion.txt.html#%7D" class="d">}</a>
+            else
+            <a href="motion.txt.html#%7B" class="d">{</a>
+               cmd;
+               cmd;
+            <a href="motion.txt.html#%7D" class="d">}</a>
+
+Use ANSI (new style) function declarations with the return type on <a href="insert.txt.html#a" class="d">a</a> separate
+indented line.
+
+Wrong:  int function_name(int arg1, int arg2)
+
+OK:     <a href="pattern.txt.html#%2F" class="d">/</a>*
+         * Explanation of what this function <a href="motion.txt.html#is" class="d">is</a> used for.
+         *
+         * Return value explanation.
+         *<a href="pattern.txt.html#%2F" class="d">/</a>
+            int
+        function_name(
+            int         arg1,           <a href="pattern.txt.html#%2F" class="d">/</a>* short comment about arg1 *<a href="pattern.txt.html#%2F" class="d">/</a>
+            int         arg2)           <a href="pattern.txt.html#%2F" class="d">/</a>* short comment about arg2 *<a href="pattern.txt.html#%2F" class="d">/</a>
+        <a href="motion.txt.html#%7B" class="d">{</a>
+            int         local;          <a href="pattern.txt.html#%2F" class="d">/</a>* comment about local *<a href="pattern.txt.html#%2F" class="d">/</a>
+
+            local <a href="change.txt.html#%3D" class="d">=</a> arg1 * arg2;
+
+
+
+<span class="c">SPACES AND PUNCTUATION                                 </span> <a name="style-spaces" class="t">style-spaces</a>
+
+No <a href="intro.txt.html#space" class="d">space</a> between <a href="insert.txt.html#a" class="d">a</a> function name and the bracket:
+
+Wrong:  func (arg);
+OK:     func(arg);
+
+Do use <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#space" class="d">space</a> after if, while, switch, etc.
+
+Wrong:  if(arg)         for(;;)
+OK:     if (arg)        for (;;)
+
+Use <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#space" class="d">space</a> after <a href="insert.txt.html#a" class="d">a</a> comma and semicolon:
+
+Wrong:  func(arg1,arg2);        for (i <a href="change.txt.html#%3D" class="d">=</a> 0;i <a href="change.txt.html#%3C" class="d">&lt;</a> 2;++i)
+OK:     func(arg1, arg2);       for (i <a href="change.txt.html#%3D" class="d">=</a> 0; <a href="insert.txt.html#i" class="d">i</a> <a href="change.txt.html#%3C" class="d">&lt;</a> 2; ++i)
+
+Use <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#space" class="d">space</a> before and after '=', '+', '/', etc.
+
+Wrong:  var=a*5;
+OK:     var <a href="change.txt.html#%3D" class="d">=</a> <a href="insert.txt.html#a" class="d">a</a> * 5;
+
+In general: Use empty lines to group lines of code together.  Put <a href="insert.txt.html#a" class="d">a</a> comment
+just above the group of lines.  This makes <a href="motion.txt.html#it" class="d">it</a> easier to quickly see what <a href="motion.txt.html#is" class="d">is</a>
+being done.
+
+OK:     <a href="pattern.txt.html#%2F" class="d">/</a>* Prepare for building the table. *<a href="pattern.txt.html#%2F" class="d">/</a>
+        get_first_item();
+        table_idx <a href="change.txt.html#%3D" class="d">=</a> 0;
+
+        <a href="pattern.txt.html#%2F" class="d">/</a>* Build the table *<a href="pattern.txt.html#%2F" class="d">/</a>
+        while (has_item())
+            table[table_idx++] <a href="change.txt.html#%3D" class="d">=</a> next_item();
+
+        <a href="pattern.txt.html#%2F" class="d">/</a>* Finish up. *<a href="pattern.txt.html#%2F" class="d">/</a>
+        cleanup_items();
+        generate_hash(table);
+
+<span class="h">==============================================================================</span>
+3. Design decisions                                     <a name="design-decisions" class="t">design-decisions</a>
+
+<a href="fold.txt.html#Folding" class="d">Folding</a>
+
+Several forms of <a href="fold.txt.html#folding" class="d">folding</a> should be possible for the same buffer.  For example,
+have one <a href="windows.txt.html#window" class="d">window</a> that shows the text with function bodies folded, another
+<a href="windows.txt.html#window" class="d">window</a> that shows <a href="insert.txt.html#a" class="d">a</a> function body.
+
+<a href="fold.txt.html#Folding" class="d">Folding</a> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> way to display the text.  It should not change the text itself.
+Therefore the <a href="fold.txt.html#folding" class="d">folding</a> has been implemented <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#filter" class="d">filter</a> between the text stored
+in <a href="insert.txt.html#a" class="d">a</a> buffer (buffer lines) and the text displayed in <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a> (logical lines).
+
+
+Naming the <a href="windows.txt.html#window" class="d">window</a>
+
+The <a href="motion.txt.html#word" class="d">word</a> "<a href="windows.txt.html#window" class="d">window</a>" <a href="motion.txt.html#is" class="d">is</a> commonly used for several things: <a href="insert.txt.html#A" class="d">A</a> <a href="windows.txt.html#window" class="d">window</a> on the screen,
+the xterm window, <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a> inside Vim to <a href="starting.txt.html#view" class="d">view</a> <a href="insert.txt.html#a" class="d">a</a> buffer.
+To avoid confusion, other items that are sometimes called <a href="windows.txt.html#window" class="d">window</a> have been
+given another name.  Here <a href="motion.txt.html#is" class="d">is</a> an overview of the related items:
+
+screen          The whole display.  For the <a href="gui.txt.html#GUI" class="d">GUI</a> it's something like 1024x768
+                pixels.  The Vim shell can use the whole screen or part of it.
+shell           The Vim application.  This can cover the whole screen (e.g.,
+                when running in <a href="insert.txt.html#a" class="d">a</a> console) or part of <a href="motion.txt.html#it" class="d">it</a> (xterm or GUI).
+<a href="windows.txt.html#window" class="d">window</a>          <a href="starting.txt.html#View" class="d">View</a> on <a href="insert.txt.html#a" class="d">a</a> buffer.  There can be several <a href="windows.txt.html#windows" class="d">windows</a> in Vim,
+                together with the command line, menubar, toolbar, etc. they
+                fit in the shell.
+
+
+Spell checking                                          <a name="develop-spell" class="t">develop-spell</a>
+
+When <a href="spell.txt.html#spell" class="d">spell</a> checking was going to be added to Vim <a href="insert.txt.html#a" class="d">a</a> survey was done over the
+available <a href="spell.txt.html#spell" class="d">spell</a> checking libraries and programs.  Unfortunately, the result
+was that none of them provided sufficient capabilities to be used <a href="motion.txt.html#as" class="d">as</a> the <a href="spell.txt.html#spell" class="d">spell</a>
+checking engine in Vim, for <a href="various.txt.html#various" class="d">various</a> reasons:
+
+<a href="motion.txt.html#-" class="d">-</a> Missing support for <a href="mbyte.txt.html#multi-byte" class="d">multi-byte</a> encodings.  At least <a href="mbyte.txt.html#UTF-8" class="d">UTF-8</a> <a href="vim_faq.txt.html#must" class="d">must</a> be supported,
+  so that more than one language can be used in the same file.
+  Doing on-the-fly conversion <a href="motion.txt.html#is" class="d">is</a> not always possible (would require iconv
+  support).
+<a href="motion.txt.html#-" class="d">-</a> For the programs and libraries: Using them as-is would require installing
+  them separately from Vim.  That's mostly not impossible, but <a href="insert.txt.html#a" class="d">a</a> drawback.
+<a href="motion.txt.html#-" class="d">-</a> Performance: <a href="insert.txt.html#A" class="d">A</a> few tests showed that it's possible to check spelling on the
+  fly (while redrawing), just like <a href="syntax.txt.html#syntax" class="d">syntax</a> highlighting.  But the mechanisms
+  used by other code are much slower.  <a href="spell.txt.html#Myspell" class="d">Myspell</a> uses <a href="insert.txt.html#a" class="d">a</a> hashtable, for example.
+  The affix compression that most <a href="spell.txt.html#spell" class="d">spell</a> checkers use makes <a href="motion.txt.html#it" class="d">it</a> slower too.
+<a href="motion.txt.html#-" class="d">-</a> For using an external program like aspell <a href="insert.txt.html#a" class="d">a</a> communication mechanism would
+  have to be setup.  That's complicated to <a href="diff.txt.html#do" class="d">do</a> in <a href="insert.txt.html#a" class="d">a</a> portable way (Unix-only
+  would be relatively simple, but that's not good enough).  And performance
+  will become <a href="insert.txt.html#a" class="d">a</a> problem (lots of process switching involved).
+<a href="motion.txt.html#-" class="d">-</a> Missing support for words with non-word characters, such <a href="motion.txt.html#as" class="d">as</a> "Etten-Leur" and
+  "et al."<a href="motion.txt.html#%2C" class="d">,</a> would require marking the pieces of them OK, lowering the
+  reliability.
+<a href="motion.txt.html#-" class="d">-</a> Missing support for regions or dialects.  Makes <a href="motion.txt.html#it" class="d">it</a> difficult to accept
+  all English words and highlight non-Canadian words differently.
+<a href="motion.txt.html#-" class="d">-</a> Missing support for rare words.  Many words are correct but hardly ever used
+  and could be <a href="insert.txt.html#a" class="d">a</a> misspelled often-used word.
+<a href="motion.txt.html#-" class="d">-</a> For making suggestions the speed <a href="motion.txt.html#is" class="d">is</a> <a href="various.txt.html#less" class="d">less</a> important and requiring to <a href="usr_90.txt.html#install" class="d">install</a>
+  another program or library would be acceptable.  But the <a href="motion.txt.html#word" class="d">word</a> lists probably
+  differ, the suggestions may be wrong words.
+
+
+Spelling suggestions                            <a name="develop-spell-suggestions" class="t">develop-spell-suggestions</a>
+
+For making suggestions there are two basic mechanisms:
+1. Try <a href="change.txt.html#changing" class="d">changing</a> the bad <a href="motion.txt.html#word" class="d">word</a> <a href="insert.txt.html#a" class="d">a</a> little bit and check for <a href="insert.txt.html#a" class="d">a</a> match with <a href="insert.txt.html#a" class="d">a</a> good
+   word.  Or <a href="motion.txt.html#go" class="d">go</a> through the <a href="eval.txt.html#list" class="d">list</a> of good words, change them <a href="insert.txt.html#a" class="d">a</a> little bit and
+   check for <a href="insert.txt.html#a" class="d">a</a> match with the bad word.  The changes are <a href="change.txt.html#deleting" class="d">deleting</a> <a href="insert.txt.html#a" class="d">a</a> character,
+   <a href="insert.txt.html#inserting" class="d">inserting</a> <a href="insert.txt.html#a" class="d">a</a> character, swapping two characters, etc.
+2. Perform soundfolding on both the bad <a href="motion.txt.html#word" class="d">word</a> and the good words and then find
+   matches, possibly with <a href="insert.txt.html#a" class="d">a</a> few changes like with the first mechanism.
+
+The first <a href="motion.txt.html#is" class="d">is</a> good for finding typing mistakes.  After experimenting with
+hashtables and looking <a href="motion.txt.html#at" class="d">at</a> solutions from other <a href="spell.txt.html#spell" class="d">spell</a> checkers the conclusion
+was that <a href="insert.txt.html#a" class="d">a</a> trie (a kind of tree structure) <a href="motion.txt.html#is" class="d">is</a> ideal for this.  Both for
+reducing memory use and being able to try sensible changes.  For example, when
+<a href="insert.txt.html#inserting" class="d">inserting</a> <a href="insert.txt.html#a" class="d">a</a> character only characters that lead to good words need to be
+tried.  Other mechanisms (with hashtables) need to try all possible letters <a href="motion.txt.html#at" class="d">at</a>
+every position in the word.  Also, <a href="insert.txt.html#a" class="d">a</a> hashtable has the requirement that <a href="motion.txt.html#word" class="d">word</a>
+boundaries are identified separately, while <a href="insert.txt.html#a" class="d">a</a> trie does not require this.
+That makes the mechanism <a href="insert.txt.html#a" class="d">a</a> lot simpler.
+
+Soundfolding <a href="motion.txt.html#is" class="d">is</a> useful when someone knows how the words sounds but doesn't
+know how <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> spelled.  For example, the <a href="motion.txt.html#word" class="d">word</a> "dictionary" might be written
+<a href="motion.txt.html#as" class="d">as</a> "daktonerie"<a href="repeat.txt.html#." class="d">.</a>  The number of changes that the first method would need to
+try <a href="motion.txt.html#is" class="d">is</a> very big, it's hard to find the good <a href="motion.txt.html#word" class="d">word</a> that way.  After soundfolding
+the words become "tktnr" and "tkxnry"<a href="motion.txt.html#%2C" class="d">,</a> these differ by only two letters.
+
+To find words by their soundfolded equivalent (soundalike word) we need <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a>
+of all soundfolded words.  <a href="insert.txt.html#A" class="d">A</a> few experiments have been done to find out what
+the best method is.  Alternatives:
+1. Do the sound <a href="fold.txt.html#folding" class="d">folding</a> on the fly when looking for suggestions.  This means
+   walking through the trie of good words, soundfolding each <a href="motion.txt.html#word" class="d">word</a> and
+   checking how different <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> from the bad word.  This <a href="motion.txt.html#is" class="d">is</a> very efficient for
+   memory use, but takes <a href="insert.txt.html#a" class="d">a</a> long time.  On <a href="insert.txt.html#a" class="d">a</a> fast PC <a href="motion.txt.html#it" class="d">it</a> takes <a href="insert.txt.html#a" class="d">a</a> couple of
+   seconds for English, which can be acceptable for interactive use.  But for
+   some languages <a href="motion.txt.html#it" class="d">it</a> takes more than ten seconds (e.g., German, Catalan),
+   which <a href="motion.txt.html#is" class="d">is</a> unacceptable slow.  For batch processing (automatic corrections)
+   it's too slow for all languages.
+2. Use <a href="insert.txt.html#a" class="d">a</a> trie for the soundfolded words, so that searching can be done just
+   like how <a href="motion.txt.html#it" class="d">it</a> works without soundfolding.  This requires remembering <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a>
+   of good words for each soundfolded word.  This makes finding matches very
+   fast but requires quite <a href="insert.txt.html#a" class="d">a</a> lot of memory, in the order of 1 to 10 Mbyte.
+   For some languages more than the original <a href="motion.txt.html#word" class="d">word</a> list.
+3. Like the second alternative, but reduce the amount of memory by using affix
+   compression and store only the soundfolded basic word.  This <a href="motion.txt.html#is" class="d">is</a> what Aspell
+   does.  Disadvantage <a href="motion.txt.html#is" class="d">is</a> that affixes need to be stripped from the bad <a href="motion.txt.html#word" class="d">word</a>
+   before soundfolding it, which means that mistakes <a href="motion.txt.html#at" class="d">at</a> the start and/or <a href="intro.txt.html#end" class="d">end</a>
+   of the <a href="motion.txt.html#word" class="d">word</a> will cause the mechanism to fail.  Also, this becomes slow when
+   the bad <a href="motion.txt.html#word" class="d">word</a> <a href="motion.txt.html#is" class="d">is</a> quite different from the good word.
+
+The choice made <a href="motion.txt.html#is" class="d">is</a> to use the second mechanism and use <a href="insert.txt.html#a" class="d">a</a> separate file.  This
+way <a href="insert.txt.html#a" class="d">a</a> user with sufficient memory can get very good suggestions while <a href="insert.txt.html#a" class="d">a</a> user
+who <a href="motion.txt.html#is" class="d">is</a> short of memory or just wants the <a href="spell.txt.html#spell" class="d">spell</a> checking and no suggestions
+doesn't use so much memory.
+
+
+Word frequency
+
+For <a href="change.txt.html#sorting" class="d">sorting</a> suggestions <a href="motion.txt.html#it" class="d">it</a> helps to know which words are common.  In theory we
+could store <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> frequency with the <a href="motion.txt.html#word" class="d">word</a> in the dictionary.  However, this
+requires storing <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> per word.  That degrades <a href="motion.txt.html#word" class="d">word</a> tree compression <a href="insert.txt.html#a" class="d">a</a> lot.
+And maintaining the <a href="motion.txt.html#word" class="d">word</a> frequency for all languages will be <a href="insert.txt.html#a" class="d">a</a> heavy task.
+Also, <a href="motion.txt.html#it" class="d">it</a> would be <a href="todo.txt.html#nice" class="d">nice</a> to prefer words that are already in the text.  This way
+the words that appear in the specific text are preferred for suggestions.
+
+What has been implemented <a href="motion.txt.html#is" class="d">is</a> to <a href="intro.txt.html#count" class="d">count</a> words that have been seen during
+displaying.  <a href="insert.txt.html#A" class="d">A</a> hashtable <a href="motion.txt.html#is" class="d">is</a> used to quickly find the <a href="motion.txt.html#word" class="d">word</a> count.  The <a href="intro.txt.html#count" class="d">count</a> <a href="motion.txt.html#is" class="d">is</a>
+initialized from words listed in COMMON items in the affix file, so that <a href="motion.txt.html#it" class="d">it</a>
+also works when <a href="starting.txt.html#starting" class="d">starting</a> <a href="insert.txt.html#a" class="d">a</a> new file.
+
+This isn't ideal, because the longer Vim <a href="motion.txt.html#is" class="d">is</a> running the higher the counts
+become.  But in practice <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> noticeable improvement over not using the <a href="motion.txt.html#word" class="d">word</a>
+count.
+
+<span class="h">==============================================================================</span>
+4. Assumptions                                          <a name="design-assumptions" class="t">design-assumptions</a>
+
+Size of variables:
+char        8 bit signed
+char_u      8 bit unsigned
+int         32 or 64 bit signed (16 might be possible with limited features)
+unsigned    32 or 64 bit unsigned (16 <a href="motion.txt.html#as" class="d">as</a> with ints)
+long        32 or 64 bit signed, can hold <a href="insert.txt.html#a" class="d">a</a> pointer
+
+<span class="n">Note</span> that some compilers cannot handle long lines or strings.  The <a href="#C89" class="d">C89</a>
+standard specifies <a href="insert.txt.html#a" class="d">a</a> limit of 509 characters.
+
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

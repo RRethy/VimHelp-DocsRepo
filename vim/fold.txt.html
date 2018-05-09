@@ -1,0 +1,618 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: fold.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="fold.txt" class="t">fold.txt</a>      For <span class="i">Vim version 8.0.</span>  Last change: 2017 Mar 18
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Bram Moolenaar</span>
+
+
+<a href="#Folding" class="d">Folding</a>                                         <a name="Folding" class="t">Folding</a> <a name="folding" class="t">folding</a> <a name="folds" class="t">folds</a>
+
+You can find an introduction on <a href="#folding" class="d">folding</a> in chapter 28 of the user manual.
+<a href="usr_28.txt.html#usr_28.txt" class="l">usr_28.txt</a>
+
+1. Fold methods         <a href="#fold-methods" class="l">fold-methods</a>
+2. Fold commands        <a href="#fold-commands" class="l">fold-commands</a>
+3. Fold <a href="options.txt.html#options" class="d">options</a>         <a href="#fold-options" class="l">fold-options</a>
+4. Behavior of <a href="#folds" class="d">folds</a>    <a href="#fold-behavior" class="l">fold-behavior</a>
+
+<span class="s">{Vi has no Folding}</span>
+<span class="s">{not available when compiled without the |+folding| feature}</span>
+
+<span class="h">==============================================================================</span>
+1. Fold methods                                 <a name="fold-methods" class="t">fold-methods</a>
+
+The <a href="#folding" class="d">folding</a> method can be set with the <a href="options.txt.html#%27foldmethod%27" class="o">'foldmethod'</a> option.
+
+When setting <a href="options.txt.html#%27foldmethod%27" class="o">'foldmethod'</a> to <a href="insert.txt.html#a" class="d">a</a> value other than "manual"<a href="motion.txt.html#%2C" class="d">,</a> all <a href="#folds" class="d">folds</a> are
+deleted and new ones created.  Switching to the "manual" method doesn't remove
+the existing folds.  This can be used to first define the <a href="#folds" class="d">folds</a> automatically
+and then change them manually.
+
+There are six methods to select folds:
+        manual          manually define <a href="#folds" class="d">folds</a>
+        indent          more indent means <a href="insert.txt.html#a" class="d">a</a> higher fold level
+        <a href="eval.txt.html#expr" class="d">expr</a>            specify an <a href="eval.txt.html#expression" class="d">expression</a> to define <a href="#folds" class="d">folds</a>
+        <a href="syntax.txt.html#syntax" class="d">syntax</a>          <a href="#folds" class="d">folds</a> defined by <a href="syntax.txt.html#syntax" class="d">syntax</a> highlighting
+        <a href="diff.txt.html#diff" class="d">diff</a>            <a href="#folds" class="d">folds</a> for unchanged text
+        marker          <a href="#folds" class="d">folds</a> defined by markers in the text
+
+
+<span class="c">MANUAL                                         </span> <a name="fold-manual" class="t">fold-manual</a>
+
+Use commands to manually define the fold regions.  This can also be used by <a href="insert.txt.html#a" class="d">a</a>
+<a href="usr_41.txt.html#script" class="d">script</a> that parses text to find folds.
+
+The level of <a href="insert.txt.html#a" class="d">a</a> fold <a href="motion.txt.html#is" class="d">is</a> only defined by its nesting.  To increase the fold
+level of <a href="insert.txt.html#a" class="d">a</a> fold for <a href="insert.txt.html#a" class="d">a</a> range of lines, define <a href="insert.txt.html#a" class="d">a</a> fold inside <a href="motion.txt.html#it" class="d">it</a> that has the
+same lines.
+
+The manual <a href="#folds" class="d">folds</a> are lost when you <a href="editing.txt.html#abandon" class="d">abandon</a> the file.  To save the <a href="#folds" class="d">folds</a> use
+the <a href="starting.txt.html#%3Amkview" class="l">:mkview</a> command.  The <a href="starting.txt.html#view" class="d">view</a> can be restored later with <a href="starting.txt.html#%3Aloadview" class="l">:loadview</a><a href="repeat.txt.html#." class="d">.</a>
+
+
+<span class="c">INDENT                                         </span> <a name="fold-indent" class="t">fold-indent</a>
+
+The <a href="#folds" class="d">folds</a> are automatically defined by the indent of the lines.
+
+The foldlevel <a href="motion.txt.html#is" class="d">is</a> computed from the indent of the line, divided by the
+<a href="options.txt.html#%27shiftwidth%27" class="o">'shiftwidth'</a> (rounded down).  <a href="insert.txt.html#A" class="d">A</a> sequence of lines with the same or higher fold
+level form <a href="insert.txt.html#a" class="d">a</a> fold, with the lines with <a href="insert.txt.html#a" class="d">a</a> higher level forming <a href="insert.txt.html#a" class="d">a</a> nested fold.
+
+The nesting of <a href="#folds" class="d">folds</a> <a href="motion.txt.html#is" class="d">is</a> limited with <a href="options.txt.html#%27foldnestmax%27" class="o">'foldnestmax'</a>.
+
+Some lines are ignored and get the fold level of the line above or below it,
+whichever <a href="motion.txt.html#is" class="d">is</a> lower.  These are empty or white lines and lines <a href="starting.txt.html#starting" class="d">starting</a>
+with <a href="insert.txt.html#a" class="d">a</a> character in <a href="options.txt.html#%27foldignore%27" class="o">'foldignore'</a>.  White <a href="intro.txt.html#space" class="d">space</a> <a href="motion.txt.html#is" class="d">is</a> skipped before checking for
+characters in <a href="options.txt.html#%27foldignore%27" class="o">'foldignore'</a>.  For <a href="change.txt.html#C" class="d">C</a> use "<a href="pattern.txt.html#%23" class="d">#</a>" to ignore preprocessor lines.
+
+When you want to ignore lines in another way, use the "<a href="eval.txt.html#expr" class="d">expr</a>" method.  The
+<a href="eval.txt.html#indent%28%29" class="l">indent()</a> function can be used in <a href="options.txt.html#%27foldexpr%27" class="o">'foldexpr'</a> to get the indent of <a href="insert.txt.html#a" class="d">a</a> line.
+
+
+<span class="c">EXPR                                           </span> <a name="fold-expr" class="t">fold-expr</a>
+
+The <a href="#folds" class="d">folds</a> are automatically defined by their foldlevel, like with the "indent"
+method.  The value of the <a href="options.txt.html#%27foldexpr%27" class="o">'foldexpr'</a> option <a href="motion.txt.html#is" class="d">is</a> evaluated to get the foldlevel
+of <a href="insert.txt.html#a" class="d">a</a> line.  Examples:
+This will create <a href="insert.txt.html#a" class="d">a</a> fold for all consecutive lines that start with <a href="insert.txt.html#a" class="d">a</a> tab: 
+<span class="e">        :set foldexpr=getline(v:lnum)[0]==\"\\t\"</span>
+This will call <a href="insert.txt.html#a" class="d">a</a> function to compute the fold level: 
+<span class="e">        :set foldexpr=MyFoldLevel(v:lnum)</span>
+This will make <a href="insert.txt.html#a" class="d">a</a> fold out of paragraphs separated by blank lines: 
+<span class="e">        :set foldexpr=getline(v:lnum)=~'^\\s*$'&amp;&amp;getline(v:lnum+1)=~'\\S'?'&lt;1':1</span>
+This does the same: 
+<span class="e">        :set foldexpr=getline(v:lnum-1)=~'^\\s*$'&amp;&amp;getline(v:lnum)=~'\\S'?'&gt;1':1</span>
+<span class="e"></span>
+<span class="n">Note</span> that backslashes <a href="vim_faq.txt.html#must" class="d">must</a> be used to <a href="intro.txt.html#escape" class="d">escape</a> characters that "<a href="options.txt.html#%3Aset" class="d">:set</a>" handles
+differently (space, backslash, double quote, etc., see <a href="options.txt.html#option-backslash" class="l">option-backslash</a>).
+
+These are the conditions with which the <a href="eval.txt.html#expression" class="d">expression</a> <a href="motion.txt.html#is" class="d">is</a> evaluated:
+<a href="motion.txt.html#-" class="d">-</a> The current buffer and <a href="windows.txt.html#window" class="d">window</a> are set for the line.
+<a href="motion.txt.html#-" class="d">-</a> The variable "<a href="eval.txt.html#v%3Alnum" class="d">v:lnum</a>" <a href="motion.txt.html#is" class="d">is</a> set to the line number.
+<a href="motion.txt.html#-" class="d">-</a> The result <a href="motion.txt.html#is" class="d">is</a> used for the fold level in this way:
+<span class="h">  value                 meaning </span>
+  <a href="motion.txt.html#0" class="d">0</a>                     the line <a href="motion.txt.html#is" class="d">is</a> not in <a href="insert.txt.html#a" class="d">a</a> fold
+  1, 2, ..              the line <a href="motion.txt.html#is" class="d">is</a> in <a href="insert.txt.html#a" class="d">a</a> fold with this level
+  -1                    the fold level <a href="motion.txt.html#is" class="d">is</a> undefined, use the fold level of <a href="insert.txt.html#a" class="d">a</a>
+                        line before or after this line, whichever <a href="motion.txt.html#is" class="d">is</a> the
+                        lowest.
+  "<a href="change.txt.html#%3D" class="d">=</a>"                   use fold level from the previous line
+  "a1"<a href="motion.txt.html#%2C" class="d">,</a> "a2"<a href="motion.txt.html#%2C" class="d">,</a> ..        add one, two, .. to the fold level of the previous
+                        line, use the result for the current line
+  "s1"<a href="motion.txt.html#%2C" class="d">,</a> "s2"<a href="motion.txt.html#%2C" class="d">,</a> ..        subtract one, two, .. from the fold level of the
+                        previous line, use the result for the next line
+  "&lt;1"<a href="motion.txt.html#%2C" class="d">,</a> "&lt;2"<a href="motion.txt.html#%2C" class="d">,</a> ..        <a href="insert.txt.html#a" class="d">a</a> fold with this level ends <a href="motion.txt.html#at" class="d">at</a> this line
+  "&gt;1"<a href="motion.txt.html#%2C" class="d">,</a> "&gt;2"<a href="motion.txt.html#%2C" class="d">,</a> ..        <a href="insert.txt.html#a" class="d">a</a> fold with this level starts <a href="motion.txt.html#at" class="d">at</a> this line
+
+It <a href="motion.txt.html#is" class="d">is</a> not required to <a href="motion.txt.html#mark" class="d">mark</a> the start (end) of <a href="insert.txt.html#a" class="d">a</a> fold with "&gt;1" <a href="motion.txt.html#%28" class="d">(</a>"&lt;1"), <a href="insert.txt.html#a" class="d">a</a> fold
+will also start (end) when the fold level <a href="motion.txt.html#is" class="d">is</a> higher (lower) than the fold
+level of the previous line.
+
+There <a href="vim_faq.txt.html#must" class="d">must</a> be no side effects from the expression.  The text in the buffer,
+cursor position, the search patterns, <a href="options.txt.html#options" class="d">options</a> etc. <a href="vim_faq.txt.html#must" class="d">must</a> not be changed.
+You can change and restore them if you are careful.
+
+If there <a href="motion.txt.html#is" class="d">is</a> some error in the expression, or the resulting value isn't
+recognized, there <a href="motion.txt.html#is" class="d">is</a> no error message and the fold level will be zero.
+For debugging the <a href="options.txt.html#%27debug%27" class="o">'debug'</a> option can be set to "msg"<a href="motion.txt.html#%2C" class="d">,</a> the error <a href="message.txt.html#messages" class="d">messages</a> will
+be visible then.
+
+<span class="n">Note:</span> Since the <a href="eval.txt.html#expression" class="d">expression</a> has to be evaluated for every line, this fold
+method can be very slow!
+
+Try to avoid the "<a href="change.txt.html#%3D" class="d">=</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="insert.txt.html#a" class="d">a</a>" and "<a href="change.txt.html#s" class="d">s</a>" return values, since Vim often has to search
+backwards for <a href="insert.txt.html#a" class="d">a</a> line for which the fold level <a href="motion.txt.html#is" class="d">is</a> defined.  This can be slow.
+
+An example of using "a1" and "s1"<a href="cmdline.txt.html#%3A" class="d">:</a> For <a href="insert.txt.html#a" class="d">a</a> multi-line <a href="change.txt.html#C" class="d">C</a> comment, <a href="insert.txt.html#a" class="d">a</a> line
+containing "<a href="pattern.txt.html#%2F" class="d">/</a>*" would return "a1" to start <a href="insert.txt.html#a" class="d">a</a> fold, and <a href="insert.txt.html#a" class="d">a</a> line containing "*<a href="pattern.txt.html#%2F" class="d">/</a>"
+would return "s1" to <a href="intro.txt.html#end" class="d">end</a> the fold after that line: 
+<span class="e">  if match(thisline, '/\*') &gt;= 0</span>
+<span class="e">    return 'a1'</span>
+<span class="e">  elseif match(thisline, '\*/') &gt;= 0</span>
+<span class="e">    return 's1'</span>
+<span class="e">  else</span>
+<span class="e">    return '='</span>
+<span class="e">  endif</span>
+However, this won't work for single line comments, strings, etc.
+
+<a href="eval.txt.html#foldlevel%28%29" class="l">foldlevel()</a> can be useful to compute <a href="insert.txt.html#a" class="d">a</a> fold level relative to <a href="insert.txt.html#a" class="d">a</a> previous
+fold level.  But <span class="n">note</span> that <a href="eval.txt.html#foldlevel%28%29" class="d">foldlevel()</a> may return -1 if the level <a href="motion.txt.html#is" class="d">is</a> not known
+yet.  And <a href="motion.txt.html#it" class="d">it</a> returns the level <a href="motion.txt.html#at" class="d">at</a> the start of the line, while <a href="insert.txt.html#a" class="d">a</a> fold might
+<a href="intro.txt.html#end" class="d">end</a> in that line.
+
+It may happen that <a href="#folds" class="d">folds</a> are not updated properly.  You can use <a href="#zx" class="l">zx</a> or <a href="#zX" class="l">zX</a>
+to force updating folds.
+
+
+<span class="c">SYNTAX                                         </span> <a name="fold-syntax" class="t">fold-syntax</a>
+
+<a href="insert.txt.html#A" class="d">A</a> fold <a href="motion.txt.html#is" class="d">is</a> defined by <a href="syntax.txt.html#syntax" class="d">syntax</a> items that have the "fold" argument. <a href="syntax.txt.html#%3Asyn-fold" class="l">:syn-fold</a>
+
+The fold level <a href="motion.txt.html#is" class="d">is</a> defined by nesting folds.  The nesting of <a href="#folds" class="d">folds</a> <a href="motion.txt.html#is" class="d">is</a> limited
+with <a href="options.txt.html#%27foldnestmax%27" class="o">'foldnestmax'</a>.
+
+Be careful to specify proper <a href="syntax.txt.html#syntax" class="d">syntax</a> syncing.  If this <a href="motion.txt.html#is" class="d">is</a> not done right, <a href="#folds" class="d">folds</a>
+may differ from the displayed highlighting.  This <a href="motion.txt.html#is" class="d">is</a> especially relevant when
+using patterns that match more than one line.  In <a href="change.txt.html#case" class="d">case</a> of doubt, try using
+brute-force syncing: 
+<span class="e">        :syn sync fromstart</span>
+<span class="e"></span>
+<span class="e"></span>
+<span class="c">DIFF                                           </span> <a name="fold-diff" class="t">fold-diff</a>
+
+The <a href="#folds" class="d">folds</a> are automatically defined for text that <a href="motion.txt.html#is" class="d">is</a> not part of <a href="insert.txt.html#a" class="d">a</a> change or
+close to <a href="insert.txt.html#a" class="d">a</a> change.
+
+This method only works properly when the <a href="options.txt.html#%27diff%27" class="o">'diff'</a> option <a href="motion.txt.html#is" class="d">is</a> set for the current
+<a href="windows.txt.html#window" class="d">window</a> and changes are being displayed.  Otherwise the whole buffer will be
+one big fold.
+
+The <a href="options.txt.html#%27diffopt%27" class="o">'diffopt'</a> option can be used to specify the context.  That is, the number
+of lines between the fold and <a href="insert.txt.html#a" class="d">a</a> change that are not included in the fold.  For
+example, to use <a href="insert.txt.html#a" class="d">a</a> context of 8 lines: 
+<span class="e">        :set diffopt=filler,context:8</span>
+The default context <a href="motion.txt.html#is" class="d">is</a> six lines.
+
+When <a href="options.txt.html#%27scrollbind%27" class="o">'scrollbind'</a> <a href="motion.txt.html#is" class="d">is</a> also set, Vim will attempt to keep the same <a href="#folds" class="d">folds</a> open in
+other <a href="diff.txt.html#diff" class="d">diff</a> windows, so that the same text <a href="motion.txt.html#is" class="d">is</a> visible.
+
+
+<span class="c">MARKER                                         </span> <a name="fold-marker" class="t">fold-marker</a>
+
+Markers in the text tell where <a href="#folds" class="d">folds</a> start and end.  This allows you to
+precisely specify the folds.  This will allow <a href="change.txt.html#deleting" class="d">deleting</a> and putting <a href="insert.txt.html#a" class="d">a</a> fold,
+without the risk of including the wrong lines.  The <a href="options.txt.html#%27foldtext%27" class="o">'foldtext'</a> option <a href="motion.txt.html#is" class="d">is</a>
+normally set such that the text before the marker shows up in the folded line.
+This makes <a href="motion.txt.html#it" class="d">it</a> possible to give <a href="insert.txt.html#a" class="d">a</a> name to the fold.
+
+Markers can have <a href="insert.txt.html#a" class="d">a</a> level included, or can use matching pairs.  Including <a href="insert.txt.html#a" class="d">a</a>
+level <a href="motion.txt.html#is" class="d">is</a> easier, you don't have to add <a href="intro.txt.html#end" class="d">end</a> markers and avoid problems with
+non-matching marker pairs.  Example: 
+<span class="e">        /* global variables {{{1 */</span>
+<span class="e">        int varA, varB;</span>
+<span class="e"></span>
+<span class="e">        /* functions {{{1 */</span>
+<span class="e">        /* funcA() {{{2 */</span>
+<span class="e">        void funcA() {}</span>
+<span class="e"></span>
+<span class="e">        /* funcB() {{{2 */</span>
+<span class="e">        void funcB() {}</span>
+<span class="e"></span>
+<a href="insert.txt.html#A" class="d">A</a> fold starts <a href="motion.txt.html#at" class="d">at</a> <a href="insert.txt.html#a" class="d">a</a> "{{{" marker.  The following number specifies the fold
+level.  What happens depends on the difference between the current fold level
+and the level given by the marker:
+1. If <a href="insert.txt.html#a" class="d">a</a> marker with the same fold level <a href="motion.txt.html#is" class="d">is</a> encountered, the previous fold
+   ends and another fold with the same level starts.
+2. If <a href="insert.txt.html#a" class="d">a</a> marker with <a href="insert.txt.html#a" class="d">a</a> higher fold level <a href="motion.txt.html#is" class="d">is</a> found, <a href="insert.txt.html#a" class="d">a</a> nested fold <a href="motion.txt.html#is" class="d">is</a> started.
+3. If <a href="insert.txt.html#a" class="d">a</a> marker with <a href="insert.txt.html#a" class="d">a</a> lower fold level <a href="motion.txt.html#is" class="d">is</a> found, all <a href="#folds" class="d">folds</a> up to and including
+   this level <a href="intro.txt.html#end" class="d">end</a> and <a href="insert.txt.html#a" class="d">a</a> fold with the specified level starts.
+
+The number indicates the fold level.  <a href="insert.txt.html#A" class="d">A</a> zero cannot be used (a marker with
+level zero <a href="motion.txt.html#is" class="d">is</a> ignored).  You can use "}}}" with <a href="insert.txt.html#a" class="d">a</a> digit to indicate the level
+of the fold that ends.  The fold level of the following line will be one <a href="various.txt.html#less" class="d">less</a>
+than the indicated level.  <span class="n">Note</span> that Vim doesn't look back to the level of the
+matching marker (that would take too much time).  Example: 
+<span class="e"></span>
+<span class="e">        {{{1</span>
+<span class="e">        fold level here is 1</span>
+<span class="e">        {{{3</span>
+<span class="e">        fold level here is 3</span>
+<span class="e">        }}}3</span>
+<span class="e">        fold level here is 2</span>
+<span class="e"></span>
+You can also use matching pairs of "<span class="s">{{{" and "}</span>}}" markers to define folds.
+Each "<span class="s">{{{" increases the fold level by one, each "}</span>}}" decreases the fold
+level by one.  Be careful to keep the markers matching!  Example: 
+<span class="e"></span>
+<span class="e">        {{{</span>
+<span class="e">        fold level here is 1</span>
+<span class="e">        {{{</span>
+<span class="e">        fold level here is 2</span>
+<span class="e">        }}}</span>
+<span class="e">        fold level here is 1</span>
+<span class="e"></span>
+You can mix using markers with <a href="insert.txt.html#a" class="d">a</a> number and without <a href="insert.txt.html#a" class="d">a</a> number.  <a href="insert.txt.html#A" class="d">A</a> useful way of
+doing this <a href="motion.txt.html#is" class="d">is</a> to use numbered markers for large folds, and unnumbered markers
+locally in <a href="insert.txt.html#a" class="d">a</a> function.  For example use level one <a href="#folds" class="d">folds</a> for the sections of
+your file like "structure <a href="intro.txt.html#definitions" class="d">definitions</a>"<a href="motion.txt.html#%2C" class="d">,</a> "local <a href="eval.txt.html#variables" class="d">variables</a>" and "<a href="eval.txt.html#functions" class="d">functions</a>"<a href="repeat.txt.html#." class="d">.</a>
+Use level 2 markers for each definition and function,  Use unnumbered markers
+inside functions.  When you make changes in <a href="insert.txt.html#a" class="d">a</a> function to split up folds, you
+don't have to renumber the markers.
+
+The markers can be set with the <a href="options.txt.html#%27foldmarker%27" class="o">'foldmarker'</a> option.  It <a href="motion.txt.html#is" class="d">is</a> recommended to
+keep this <a href="motion.txt.html#at" class="d">at</a> the default value of "<span class="s">{{{,}</span>}}"<a href="motion.txt.html#%2C" class="d">,</a> so that files can be exchanged
+between Vim users.  Only change <a href="motion.txt.html#it" class="d">it</a> when <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> required for the file (e.g., <a href="motion.txt.html#it" class="d">it</a>
+contains markers from another <a href="#folding" class="d">folding</a> editor, or the default markers cause
+trouble for the language of the file).
+
+                                                        <a name="fold-create-marker" class="t">fold-create-marker</a>
+"<a href="#zf" class="d">zf</a>" can be used to create <a href="insert.txt.html#a" class="d">a</a> fold defined by markers.  Vim will <a href="insert.txt.html#insert" class="d">insert</a> the
+markers for you.  Vim will append the start and <a href="intro.txt.html#end" class="d">end</a> marker, <a href="motion.txt.html#as" class="d">as</a> specified with
+<a href="options.txt.html#%27foldmarker%27" class="o">'foldmarker'</a>.  The markers are appended to the <a href="intro.txt.html#end" class="d">end</a> of the line.
+<a href="options.txt.html#%27commentstring%27" class="o">'commentstring'</a> <a href="motion.txt.html#is" class="d">is</a> used if <a href="motion.txt.html#it" class="d">it</a> isn't empty.
+This does not work properly when:
+<a href="motion.txt.html#-" class="d">-</a> The line already contains <a href="insert.txt.html#a" class="d">a</a> marker with <a href="insert.txt.html#a" class="d">a</a> level number.  Vim then doesn't
+  know what to do.
+<a href="motion.txt.html#-" class="d">-</a> Folds nearby use <a href="insert.txt.html#a" class="d">a</a> level number in their marker which gets in the way.
+<a href="motion.txt.html#-" class="d">-</a> The line <a href="motion.txt.html#is" class="d">is</a> inside <a href="insert.txt.html#a" class="d">a</a> comment, <a href="options.txt.html#%27commentstring%27" class="o">'commentstring'</a> isn't empty and nested
+  comments don't work.  For example with C: adding <a href="pattern.txt.html#%2F" class="d">/</a>* {{{ *<a href="pattern.txt.html#%2F" class="d">/</a> inside <a href="insert.txt.html#a" class="d">a</a> comment
+  will truncate the existing comment.  Either <a href="change.txt.html#put" class="d">put</a> the marker before or after
+  the comment, or add the marker manually.
+Generally it's not <a href="insert.txt.html#a" class="d">a</a> good idea to let Vim create markers when you already have
+markers with <a href="insert.txt.html#a" class="d">a</a> level number.
+
+                                                        <a name="fold-delete-marker" class="t">fold-delete-marker</a>
+"<a href="#zd" class="d">zd</a>" can be used to delete <a href="insert.txt.html#a" class="d">a</a> fold defined by markers.  Vim will delete the
+markers for you.  Vim will search for the start and <a href="intro.txt.html#end" class="d">end</a> markers, <a href="motion.txt.html#as" class="d">as</a> specified
+with <a href="options.txt.html#%27foldmarker%27" class="o">'foldmarker'</a>, <a href="motion.txt.html#at" class="d">at</a> the start and <a href="intro.txt.html#end" class="d">end</a> of the fold.  When the text around the
+marker matches with <a href="options.txt.html#%27commentstring%27" class="o">'commentstring'</a>, that text <a href="motion.txt.html#is" class="d">is</a> deleted <a href="motion.txt.html#as" class="d">as</a> well.
+This does not work properly when:
+<a href="motion.txt.html#-" class="d">-</a> <a href="insert.txt.html#A" class="d">A</a> line contains more than one marker and one of them specifies <a href="insert.txt.html#a" class="d">a</a> level.
+  Only the first one <a href="motion.txt.html#is" class="d">is</a> removed, without checking if this will have the
+  desired effect of <a href="change.txt.html#deleting" class="d">deleting</a> the fold.
+<a href="motion.txt.html#-" class="d">-</a> The marker contains <a href="insert.txt.html#a" class="d">a</a> level number and <a href="motion.txt.html#is" class="d">is</a> used to start or <a href="intro.txt.html#end" class="d">end</a> several <a href="#folds" class="d">folds</a>
+  <a href="motion.txt.html#at" class="d">at</a> the same time.
+
+<span class="h">==============================================================================</span>
+2. Fold commands                                <a name="fold-commands" class="t">fold-commands</a> <a name="E490" class="t">E490</a>
+
+All <a href="#folding" class="d">folding</a> commands start with "<a href="index.txt.html#z" class="d">z</a>"<a href="repeat.txt.html#." class="d">.</a>  Hint: the "<a href="index.txt.html#z" class="d">z</a>" looks like <a href="insert.txt.html#a" class="d">a</a> folded piece
+of paper, if you look <a href="motion.txt.html#at" class="d">at</a> <a href="motion.txt.html#it" class="d">it</a> from the side.
+
+
+<span class="h">CREATING AND DELETING FOLDS </span>
+                                                        <a name="zf" class="t">zf</a> <a name="E350" class="t">E350</a>
+zf{motion}  or
+<a href="intro.txt.html#%7BVisual%7D" class="s">{Visual}</a>zf      Operator to create <a href="insert.txt.html#a" class="d">a</a> fold.
+                This only works when <a href="options.txt.html#%27foldmethod%27" class="o">'foldmethod'</a> <a href="motion.txt.html#is" class="d">is</a> "manual" or "marker"<a href="repeat.txt.html#." class="d">.</a>
+                The new fold will be closed for the "manual" method.
+                <a href="options.txt.html#%27foldenable%27" class="o">'foldenable'</a> will be set.
+                Also see <a href="#fold-create-marker" class="l">fold-create-marker</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="zF" class="t">zF</a>
+<a href="#zF" class="d">zF</a>              Create <a href="insert.txt.html#a" class="d">a</a> fold for <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> lines.  Works like "<a href="#zf" class="d">zf</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+:{range}fo[ld]                                          <a name="%3Afold" class="t">:fold</a> <a name="%3Afo" class="t">:fo</a>
+                Create <a href="insert.txt.html#a" class="d">a</a> fold for the lines in <span class="s">{range}</span>.  Works like "<a href="#zf" class="d">zf</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="zd" class="t">zd</a> <a name="E351" class="t">E351</a>
+<a href="#zd" class="d">zd</a>              Delete one fold <a href="motion.txt.html#at" class="d">at</a> the cursor.  When the cursor <a href="motion.txt.html#is" class="d">is</a> on <a href="insert.txt.html#a" class="d">a</a> folded
+                line, that fold <a href="motion.txt.html#is" class="d">is</a> deleted.  Nested <a href="#folds" class="d">folds</a> are moved one level
+                up.  In <a href="visual.txt.html#Visual" class="d">Visual</a> mode one level of all <a href="#folds" class="d">folds</a> (partially) in the
+                selected area are deleted.
+                Careful: This easily deletes more <a href="#folds" class="d">folds</a> than you expect and
+                there <a href="motion.txt.html#is" class="d">is</a> no <a href="undo.txt.html#undo" class="d">undo</a> for manual folding.
+                This only works when <a href="options.txt.html#%27foldmethod%27" class="o">'foldmethod'</a> <a href="motion.txt.html#is" class="d">is</a> "manual" or "marker"<a href="repeat.txt.html#." class="d">.</a>
+                Also see <a href="#fold-delete-marker" class="l">fold-delete-marker</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="zD" class="t">zD</a>
+<a href="#zD" class="d">zD</a>              Delete <a href="#folds" class="d">folds</a> recursively <a href="motion.txt.html#at" class="d">at</a> the cursor.  In <a href="visual.txt.html#Visual" class="d">Visual</a> mode all
+                <a href="#folds" class="d">folds</a> (partially) in the selected area and all nested <a href="#folds" class="d">folds</a> in
+                them are deleted.
+                This only works when <a href="options.txt.html#%27foldmethod%27" class="o">'foldmethod'</a> <a href="motion.txt.html#is" class="d">is</a> "manual" or "marker"<a href="repeat.txt.html#." class="d">.</a>
+                Also see <a href="#fold-delete-marker" class="l">fold-delete-marker</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="zE" class="t">zE</a> <a name="E352" class="t">E352</a>
+<a href="#zE" class="d">zE</a>              Eliminate all <a href="#folds" class="d">folds</a> in the window.
+                This only works when <a href="options.txt.html#%27foldmethod%27" class="o">'foldmethod'</a> <a href="motion.txt.html#is" class="d">is</a> "manual" or "marker"<a href="repeat.txt.html#." class="d">.</a>
+                Also see <a href="#fold-delete-marker" class="l">fold-delete-marker</a><a href="repeat.txt.html#." class="d">.</a>
+
+
+<span class="h">OPENING AND CLOSING FOLDS </span>
+
+<a href="insert.txt.html#A" class="d">A</a> fold smaller than <a href="options.txt.html#%27foldminlines%27" class="o">'foldminlines'</a> will always be displayed like <a href="motion.txt.html#it" class="d">it</a> was open.
+Therefore the commands below may work differently on small folds.
+
+                                                        <a name="zo" class="t">zo</a>
+<a href="#zo" class="d">zo</a>              Open one fold under the cursor.  When <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> <a href="motion.txt.html#is" class="d">is</a> given, that
+                many <a href="#folds" class="d">folds</a> deep will be opened.  In <a href="visual.txt.html#Visual" class="d">Visual</a> mode one level of
+                <a href="#folds" class="d">folds</a> <a href="motion.txt.html#is" class="d">is</a> opened for all lines in the selected area.
+
+                                                        <a name="zO" class="t">zO</a>
+<a href="#zO" class="d">zO</a>              Open all <a href="#folds" class="d">folds</a> under the cursor recursively.  Folds that don't
+                contain the cursor line are unchanged.
+                In <a href="visual.txt.html#Visual" class="d">Visual</a> mode <a href="motion.txt.html#it" class="d">it</a> opens all <a href="#folds" class="d">folds</a> that are in the selected
+                area, also those that are only partly selected.
+
+                                                        <a name="zc" class="t">zc</a>
+<a href="#zc" class="d">zc</a>              Close one fold under the cursor.  When <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> <a href="motion.txt.html#is" class="d">is</a> given, that
+                many <a href="#folds" class="d">folds</a> deep are closed.  In <a href="visual.txt.html#Visual" class="d">Visual</a> mode one level of <a href="#folds" class="d">folds</a>
+                <a href="motion.txt.html#is" class="d">is</a> closed for all lines in the selected area.
+                <a href="options.txt.html#%27foldenable%27" class="o">'foldenable'</a> will be set.
+
+                                                        <a name="zC" class="t">zC</a>
+<a href="#zC" class="d">zC</a>              Close all <a href="#folds" class="d">folds</a> under the cursor recursively.  Folds that
+                don't contain the cursor line are unchanged.
+                In <a href="visual.txt.html#Visual" class="d">Visual</a> mode <a href="motion.txt.html#it" class="d">it</a> closes all <a href="#folds" class="d">folds</a> that are in the selected
+                area, also those that are only partly selected.
+                <a href="options.txt.html#%27foldenable%27" class="o">'foldenable'</a> will be set.
+
+                                                        <a name="za" class="t">za</a>
+<a href="#za" class="d">za</a>              When on <a href="insert.txt.html#a" class="d">a</a> closed fold: open it.  When <a href="#folds" class="d">folds</a> are nested, you
+                may have to use "<a href="#za" class="d">za</a>" several times.  When <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> <a href="motion.txt.html#is" class="d">is</a> given,
+                that many closed <a href="#folds" class="d">folds</a> are opened.
+                When on an open fold: close <a href="motion.txt.html#it" class="d">it</a> and set <a href="options.txt.html#%27foldenable%27" class="o">'foldenable'</a>.  This
+                will only close one level, since using "<a href="#za" class="d">za</a>" again will open
+                the fold.  When <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> <a href="motion.txt.html#is" class="d">is</a> given that many <a href="#folds" class="d">folds</a> will be
+                closed (that's not the same <a href="motion.txt.html#as" class="d">as</a> <a href="repeat.txt.html#repeating" class="d">repeating</a> "<a href="#za" class="d">za</a>" that many
+                times).
+
+                                                        <a name="zA" class="t">zA</a>
+<a href="#zA" class="d">zA</a>              When on <a href="insert.txt.html#a" class="d">a</a> closed fold: open <a href="motion.txt.html#it" class="d">it</a> recursively.
+                When on an open fold: close <a href="motion.txt.html#it" class="d">it</a> recursively and set
+                <a href="options.txt.html#%27foldenable%27" class="o">'foldenable'</a>.
+
+                                                        <a name="zv" class="t">zv</a>
+<a href="#zv" class="d">zv</a>              <a href="starting.txt.html#View" class="d">View</a> cursor line: Open just enough <a href="#folds" class="d">folds</a> to make the line in
+                which the cursor <a href="motion.txt.html#is" class="d">is</a> located not folded.
+
+                                                        <a name="zx" class="t">zx</a>
+<a href="#zx" class="d">zx</a>              Update folds: Undo manually opened and closed folds: re-apply
+                <a href="options.txt.html#%27foldlevel%27" class="o">'foldlevel'</a>, then <a href="diff.txt.html#do" class="d">do</a> "<a href="#zv" class="d">zv</a>"<a href="cmdline.txt.html#%3A" class="d">:</a> <a href="starting.txt.html#View" class="d">View</a> cursor line.
+                Also forces recomputing folds.  This <a href="motion.txt.html#is" class="d">is</a> useful when using
+                <a href="options.txt.html#%27foldexpr%27" class="o">'foldexpr'</a> and the buffer <a href="motion.txt.html#is" class="d">is</a> changed in <a href="insert.txt.html#a" class="d">a</a> way that results in
+                <a href="#folds" class="d">folds</a> not to be updated properly.
+
+                                                        <a name="zX" class="t">zX</a>
+<a href="#zX" class="d">zX</a>              Undo manually opened and closed folds: re-apply <a href="options.txt.html#%27foldlevel%27" class="o">'foldlevel'</a>.
+                Also forces recomputing folds, like <a href="#zx" class="l">zx</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="zm" class="t">zm</a>
+<a href="#zm" class="d">zm</a>              Fold more: Subtract <a href="eval.txt.html#v%3Acount1" class="l">v:count1</a> from <a href="options.txt.html#%27foldlevel%27" class="o">'foldlevel'</a>.  If <a href="options.txt.html#%27foldlevel%27" class="o">'foldlevel'</a> was
+                already zero nothing happens.
+                <a href="options.txt.html#%27foldenable%27" class="o">'foldenable'</a> will be set.
+
+                                                        <a name="zM" class="t">zM</a>
+<a href="#zM" class="d">zM</a>              Close all folds: set <a href="options.txt.html#%27foldlevel%27" class="o">'foldlevel'</a> to 0.
+                <a href="options.txt.html#%27foldenable%27" class="o">'foldenable'</a> will be set.
+
+                                                        <a name="zr" class="t">zr</a>
+<a href="#zr" class="d">zr</a>              Reduce folding: Add <a href="eval.txt.html#v%3Acount1" class="l">v:count1</a> to <a href="options.txt.html#%27foldlevel%27" class="o">'foldlevel'</a>.
+
+                                                        <a name="zR" class="t">zR</a>
+<a href="#zR" class="d">zR</a>              Open all folds.  This sets <a href="options.txt.html#%27foldlevel%27" class="o">'foldlevel'</a> to highest fold level.
+
+                                                        <a name="%3Afoldo" class="t">:foldo</a> <a name="%3Afoldopen" class="t">:foldopen</a>
+:{range}foldo[pen][!]
+                Open <a href="#folds" class="d">folds</a> in <span class="s">{range}</span>.  When [!] <a href="motion.txt.html#is" class="d">is</a> added all <a href="#folds" class="d">folds</a> are
+                opened.  Useful to see all the text in <span class="s">{range}</span>.  Without [!]
+                one level of <a href="#folds" class="d">folds</a> <a href="motion.txt.html#is" class="d">is</a> opened.
+
+                                                        <a name="%3Afoldc" class="t">:foldc</a> <a name="%3Afoldclose" class="t">:foldclose</a>
+:{range}foldc[lose][!]
+                Close <a href="#folds" class="d">folds</a> in <span class="s">{range}</span>.  When [!] <a href="motion.txt.html#is" class="d">is</a> added all <a href="#folds" class="d">folds</a> are
+                closed.  Useful to hide all the text in <span class="s">{range}</span>.  Without [!]
+                one level of <a href="#folds" class="d">folds</a> <a href="motion.txt.html#is" class="d">is</a> closed.
+
+                                                        <a name="zn" class="t">zn</a>
+<a href="#zn" class="d">zn</a>              Fold none: reset <a href="options.txt.html#%27foldenable%27" class="o">'foldenable'</a>.  All <a href="#folds" class="d">folds</a> will be open.
+
+                                                        <a name="zN" class="t">zN</a>
+<a href="#zN" class="d">zN</a>              Fold normal: set <a href="options.txt.html#%27foldenable%27" class="o">'foldenable'</a>.  All <a href="#folds" class="d">folds</a> will be <a href="motion.txt.html#as" class="d">as</a> they
+                were before.
+
+                                                        <a name="zi" class="t">zi</a>
+<a href="#zi" class="d">zi</a>              Invert <a href="options.txt.html#%27foldenable%27" class="o">'foldenable'</a>.
+
+
+<span class="h">MOVING OVER FOLDS </span>
+                                                        <a name="%5Bz" class="t">[z</a>
+<a href="#%5Bz" class="d">[z</a>              Move to the start of the current open fold.  If already <a href="motion.txt.html#at" class="d">at</a> the
+                start, move to the start of the fold that contains it.  If
+                there <a href="motion.txt.html#is" class="d">is</a> no containing fold, the command fails.
+                When <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> <a href="motion.txt.html#is" class="d">is</a> used, repeats the command <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> times.
+
+                                                        <a name="%5Dz" class="t">]z</a>
+<a href="#%5Dz" class="d">]z</a>              Move to the <a href="intro.txt.html#end" class="d">end</a> of the current open fold.  If already <a href="motion.txt.html#at" class="d">at</a> the
+                end, move to the <a href="intro.txt.html#end" class="d">end</a> of the fold that contains it.  If there
+                <a href="motion.txt.html#is" class="d">is</a> no containing fold, the command fails.
+                When <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> <a href="motion.txt.html#is" class="d">is</a> used, repeats the command <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> times.
+
+                                                        <a name="zj" class="t">zj</a>
+<a href="#zj" class="d">zj</a>              Move downwards to the start of the next fold.  <a href="insert.txt.html#A" class="d">A</a> closed fold
+                <a href="motion.txt.html#is" class="d">is</a> counted <a href="motion.txt.html#as" class="d">as</a> one fold.
+                When <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> <a href="motion.txt.html#is" class="d">is</a> used, repeats the command <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> times.
+                This command can be used after an <a href="motion.txt.html#operator" class="l">operator</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="zk" class="t">zk</a>
+<a href="#zk" class="d">zk</a>              Move upwards to the <a href="intro.txt.html#end" class="d">end</a> of the previous fold.  <a href="insert.txt.html#A" class="d">A</a> closed fold
+                <a href="motion.txt.html#is" class="d">is</a> counted <a href="motion.txt.html#as" class="d">as</a> one fold.
+                When <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> <a href="motion.txt.html#is" class="d">is</a> used, repeats the command <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> times.
+                This command can be used after an <a href="motion.txt.html#operator" class="l">operator</a><a href="repeat.txt.html#." class="d">.</a>
+
+
+<span class="h">EXECUTING COMMANDS ON FOLDS </span>
+
+:[range]foldd[oopen] <span class="s">{cmd}</span>                      <a name="%3Afoldd" class="t">:foldd</a> <a name="%3Afolddoopen" class="t">:folddoopen</a>
+                Execute <span class="s">{cmd}</span> on all lines that are not in <a href="insert.txt.html#a" class="d">a</a> closed fold.
+                When <a href="cmdline.txt.html#%5Brange%5D" class="s">[range]</a> <a href="motion.txt.html#is" class="d">is</a> given, only these lines are used.
+                Each time <span class="s">{cmd}</span> <a href="motion.txt.html#is" class="d">is</a> executed the cursor <a href="motion.txt.html#is" class="d">is</a> positioned on the
+                line <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> executed for.
+                This works like the "<a href="repeat.txt.html#%3Aglobal" class="d">:global</a>" command: First all lines that
+                are not in <a href="insert.txt.html#a" class="d">a</a> closed fold are marked.  Then the <span class="s">{cmd}</span> <a href="motion.txt.html#is" class="d">is</a>
+                executed for all marked lines.  Thus when <span class="s">{cmd}</span> changes the
+                folds, this has no influence on where <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> executed (except
+                when lines are deleted, of course).
+                Example: 
+<span class="e">                        :folddoopen s/end/loop_end/ge</span>
+               <span class="n">Note</span> the use of the "<a href="motion.txt.html#e" class="d">e</a>" flag to avoid getting an error message
+                where "<a href="intro.txt.html#end" class="d">end</a>" doesn't match.
+
+:[range]folddoc[losed] <span class="s">{cmd}</span>                    <a name="%3Afolddoc" class="t">:folddoc</a> <a name="%3Afolddoclosed" class="t">:folddoclosed</a>
+                Execute <span class="s">{cmd}</span> on all lines that are in <a href="insert.txt.html#a" class="d">a</a> closed fold.
+                Otherwise like "<a href="#%3Afolddoopen" class="d">:folddoopen</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+3. Fold <a href="options.txt.html#options" class="d">options</a>                                 <a name="fold-options" class="t">fold-options</a>
+
+<span class="c">COLORS                                                 </span> <a name="fold-colors" class="t">fold-colors</a>
+
+The colors of <a href="insert.txt.html#a" class="d">a</a> closed fold are set with the Folded group <a href="syntax.txt.html#hl-Folded" class="l">hl-Folded</a><a href="repeat.txt.html#." class="d">.</a>  The
+colors of the fold column are set with the FoldColumn group <a href="syntax.txt.html#hl-FoldColumn" class="l">hl-FoldColumn</a><a href="repeat.txt.html#." class="d">.</a>
+Example to set the colors: 
+<span class="e"></span>
+<span class="e">        :highlight Folded guibg=grey guifg=blue</span>
+<span class="e">        :highlight FoldColumn guibg=darkgrey guifg=white</span>
+<span class="e"></span>
+<span class="e"></span>
+<span class="c">FOLDLEVEL                                              </span> <a name="fold-foldlevel" class="t">fold-foldlevel</a>
+
+<a href="options.txt.html#%27foldlevel%27" class="o">'foldlevel'</a> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> number option: The higher the more folded regions are open.
+When <a href="options.txt.html#%27foldlevel%27" class="o">'foldlevel'</a> <a href="motion.txt.html#is" class="d">is</a> 0, all <a href="#folds" class="d">folds</a> are closed.
+When <a href="options.txt.html#%27foldlevel%27" class="o">'foldlevel'</a> <a href="motion.txt.html#is" class="d">is</a> positive, some <a href="#folds" class="d">folds</a> are closed.
+When <a href="options.txt.html#%27foldlevel%27" class="o">'foldlevel'</a> <a href="motion.txt.html#is" class="d">is</a> very high, all <a href="#folds" class="d">folds</a> are open.
+<a href="options.txt.html#%27foldlevel%27" class="o">'foldlevel'</a> <a href="motion.txt.html#is" class="d">is</a> applied when <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> changed.  After that manually <a href="#folds" class="d">folds</a> can be
+opened and closed.
+When increased, <a href="#folds" class="d">folds</a> above the new level are opened.  No manually opened
+<a href="#folds" class="d">folds</a> will be closed.
+When decreased, <a href="#folds" class="d">folds</a> above the new level are closed.  No manually closed
+<a href="#folds" class="d">folds</a> will be opened.
+
+
+<span class="c">FOLDTEXT                                               </span> <a name="fold-foldtext" class="t">fold-foldtext</a>
+
+<a href="options.txt.html#%27foldtext%27" class="o">'foldtext'</a> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#string" class="d">string</a> option that specifies an expression.  This <a href="eval.txt.html#expression" class="d">expression</a>
+<a href="motion.txt.html#is" class="d">is</a> evaluated to obtain the text displayed for <a href="insert.txt.html#a" class="d">a</a> closed fold.  Example: 
+<span class="e"></span>
+<span class="e">    :set foldtext=v:folddashes.substitute(getline(v:foldstart),'/\\*\\\|\\*/\\\|{{{\\d\\=','','g')</span>
+<span class="e"></span>
+This shows the first line of the fold, with "<a href="pattern.txt.html#%2F" class="d">/</a>*"<a href="motion.txt.html#%2C" class="d">,</a> "*<a href="pattern.txt.html#%2F" class="d">/</a>" and "{{{" removed.
+<span class="n">Note</span> the use of backslashes to avoid some characters to be interpreted by the
+"<a href="options.txt.html#%3Aset" class="d">:set</a>" command.  It's simpler to define <a href="insert.txt.html#a" class="d">a</a> function and call that: 
+<span class="e"></span>
+<span class="e">    :set foldtext=MyFoldText()</span>
+<span class="e">    :function MyFoldText()</span>
+<span class="e">    :  let line = getline(v:foldstart)</span>
+<span class="e">    :  let sub = substitute(line, '/\*\|\*/\|{{{\d\=', '', 'g')</span>
+<span class="e">    :  return v:folddashes . sub</span>
+<span class="e">    :endfunction</span>
+<span class="e"></span>
+Evaluating <a href="options.txt.html#%27foldtext%27" class="o">'foldtext'</a> <a href="motion.txt.html#is" class="d">is</a> done in the <a href="eval.txt.html#sandbox" class="l">sandbox</a><a href="repeat.txt.html#." class="d">.</a>  The current <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> set to
+the <a href="windows.txt.html#window" class="d">window</a> that displays the line.  Errors are ignored.
+
+The default value <a href="motion.txt.html#is" class="d">is</a> <a href="eval.txt.html#foldtext%28%29" class="l">foldtext()</a><a href="repeat.txt.html#." class="d">.</a>  This returns <a href="insert.txt.html#a" class="d">a</a> reasonable text for most
+types of folding.  If you don't like it, you can specify your own <a href="options.txt.html#%27foldtext%27" class="o">'foldtext'</a>
+expression.  It can use these special Vim variables:
+        <a href="eval.txt.html#v%3Afoldstart" class="d">v:foldstart</a>     line number of first line in the fold
+        <a href="eval.txt.html#v%3Afoldend" class="d">v:foldend</a>       line number of last line in the fold
+        <a href="eval.txt.html#v%3Afolddashes" class="d">v:folddashes</a>    <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#string" class="d">string</a> that contains dashes to represent the
+                        foldlevel.
+        <a href="eval.txt.html#v%3Afoldlevel" class="d">v:foldlevel</a>     the foldlevel of the fold
+
+In the result <a href="insert.txt.html#a" class="d">a</a> TAB <a href="motion.txt.html#is" class="d">is</a> replaced with <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#space" class="d">space</a> and unprintable characters are
+made into printable characters.
+
+The resulting line <a href="motion.txt.html#is" class="d">is</a> truncated to fit in the window, <a href="motion.txt.html#it" class="d">it</a> never wraps.
+When there <a href="motion.txt.html#is" class="d">is</a> room after the text, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> filled with the character specified
+by <a href="options.txt.html#%27fillchars%27" class="o">'fillchars'</a>.
+
+<span class="n">Note</span> that backslashes need to be used for characters that the "<a href="options.txt.html#%3Aset" class="d">:set</a>" command
+handles differently: Space, <a href="intro.txt.html#backslash" class="d">backslash</a> and double-quote. <a href="options.txt.html#option-backslash" class="l">option-backslash</a>
+
+
+<span class="c">FOLDCOLUMN                                             </span> <a name="fold-foldcolumn" class="t">fold-foldcolumn</a>
+
+<a href="options.txt.html#%27foldcolumn%27" class="o">'foldcolumn'</a> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> number, which sets the width for <a href="insert.txt.html#a" class="d">a</a> column on the side of the
+<a href="windows.txt.html#window" class="d">window</a> to indicate folds.  When <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> zero, there <a href="motion.txt.html#is" class="d">is</a> no foldcolumn.  <a href="insert.txt.html#A" class="d">A</a> normal
+value <a href="motion.txt.html#is" class="d">is</a> 4 or 5.  The minimal useful value <a href="motion.txt.html#is" class="d">is</a> 2, although 1 still provides
+some information.  The maximum <a href="motion.txt.html#is" class="d">is</a> 12.
+
+An open fold <a href="motion.txt.html#is" class="d">is</a> indicated with <a href="insert.txt.html#a" class="d">a</a> column that has <a href="insert.txt.html#a" class="d">a</a> '-' <a href="motion.txt.html#at" class="d">at</a> the top and <a href="motion.txt.html#%27" class="d">'</a>|<a href="motion.txt.html#%27" class="d">'</a>
+characters below it.  This column stops where the open fold stops.  When <a href="#folds" class="d">folds</a>
+nest, the nested fold <a href="motion.txt.html#is" class="d">is</a> one character right of the fold it's contained in.
+
+<a href="insert.txt.html#A" class="d">A</a> closed fold <a href="motion.txt.html#is" class="d">is</a> indicated with <a href="insert.txt.html#a" class="d">a</a> '+'.
+
+Where the fold column <a href="motion.txt.html#is" class="d">is</a> too narrow to display all nested folds, digits are
+shown to indicate the nesting level.
+
+The mouse can also be used to open and close <a href="#folds" class="d">folds</a> by clicking in the
+fold column:
+<a href="motion.txt.html#-" class="d">-</a> Click on <a href="insert.txt.html#a" class="d">a</a> '+' to open the closed fold <a href="motion.txt.html#at" class="d">at</a> this row.
+<a href="motion.txt.html#-" class="d">-</a> Click on any other non-blank character to close the open fold <a href="motion.txt.html#at" class="d">at</a> this row.
+
+
+OTHER OPTIONS
+
+<a href="options.txt.html#%27foldenable%27" class="o">'foldenable'</a>  <a href="options.txt.html#%27fen%27" class="o">'fen'</a>:    Open all <a href="#folds" class="d">folds</a> while not set.
+<a href="options.txt.html#%27foldexpr%27" class="o">'foldexpr'</a>    <a href="options.txt.html#%27fde%27" class="o">'fde'</a>:    Expression used for "<a href="eval.txt.html#expr" class="d">expr</a>" folding.
+<a href="options.txt.html#%27foldignore%27" class="o">'foldignore'</a>  <a href="options.txt.html#%27fdi%27" class="o">'fdi'</a>:    Characters used for "indent" folding.
+<a href="options.txt.html#%27foldmarker%27" class="o">'foldmarker'</a>  <a href="options.txt.html#%27fmr%27" class="o">'fmr'</a>:    Defined markers used for "marker" folding.
+<a href="options.txt.html#%27foldmethod%27" class="o">'foldmethod'</a>  <a href="options.txt.html#%27fdm%27" class="o">'fdm'</a>:    Name of the current <a href="#folding" class="d">folding</a> method.
+<a href="options.txt.html#%27foldminlines%27" class="o">'foldminlines'</a> <a href="options.txt.html#%27fml%27" class="o">'fml'</a>:   Minimum number of screen lines for <a href="insert.txt.html#a" class="d">a</a> fold to be
+                        displayed closed.
+<a href="options.txt.html#%27foldnestmax%27" class="o">'foldnestmax'</a> <a href="options.txt.html#%27fdn%27" class="o">'fdn'</a>:    Maximum nesting for "indent" and "<a href="syntax.txt.html#syntax" class="d">syntax</a>" folding.
+<a href="options.txt.html#%27foldopen%27" class="o">'foldopen'</a>    <a href="options.txt.html#%27fdo%27" class="o">'fdo'</a>:    Which kinds of commands open closed folds.
+<a href="options.txt.html#%27foldclose%27" class="o">'foldclose'</a>   <a href="options.txt.html#%27fcl%27" class="o">'fcl'</a>:    When the <a href="#folds" class="d">folds</a> not under the cursor are closed.
+
+<span class="h">==============================================================================</span>
+4. Behavior of <a href="#folds" class="d">folds</a>                                    <a name="fold-behavior" class="t">fold-behavior</a>
+
+When moving the cursor upwards or downwards and when scrolling, the cursor
+will move to the first line of <a href="insert.txt.html#a" class="d">a</a> sequence of folded lines.  When the cursor <a href="motion.txt.html#is" class="d">is</a>
+already on <a href="insert.txt.html#a" class="d">a</a> folded line, <a href="motion.txt.html#it" class="d">it</a> moves to the next unfolded line or the next
+closed fold.
+
+While the cursor <a href="motion.txt.html#is" class="d">is</a> on folded lines, the cursor <a href="motion.txt.html#is" class="d">is</a> always displayed in the
+first column.  The ruler does show the actual cursor position, but since the
+line <a href="motion.txt.html#is" class="d">is</a> folded, <a href="motion.txt.html#it" class="d">it</a> cannot be displayed there.
+
+Many <a href="intro.txt.html#movement" class="d">movement</a> commands handle <a href="insert.txt.html#a" class="d">a</a> sequence of folded lines like an empty line.
+For example, the "<a href="motion.txt.html#w" class="d">w</a>" command stops once in the first column.
+
+When in <a href="insert.txt.html#Insert" class="d">Insert</a> mode, the cursor line <a href="motion.txt.html#is" class="d">is</a> never folded.  That allows you to see
+what you type!
+
+When using an operator, <a href="insert.txt.html#a" class="d">a</a> closed fold <a href="motion.txt.html#is" class="d">is</a> included <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> whole.  Thus "<a href="change.txt.html#dl" class="d">dl</a>"
+deletes the whole closed fold under the cursor.
+
+For <a href="intro.txt.html#Ex" class="d">Ex</a> commands that work on buffer lines the range <a href="motion.txt.html#is" class="d">is</a> adjusted to always
+start <a href="motion.txt.html#at" class="d">at</a> the first line of <a href="insert.txt.html#a" class="d">a</a> closed fold and <a href="intro.txt.html#end" class="d">end</a> <a href="motion.txt.html#at" class="d">at</a> the last line of <a href="insert.txt.html#a" class="d">a</a> closed
+fold.  Thus this command: 
+<span class="e">        :s/foo/bar/g</span>
+when used with the cursor on <a href="insert.txt.html#a" class="d">a</a> closed fold, will replace "foo" with "<a href="motion.txt.html#bar" class="d">bar</a>" in
+all lines of the fold.
+This does not happen for <a href="#%3Afolddoopen" class="l">:folddoopen</a> and <a href="#%3Afolddoclosed" class="l">:folddoclosed</a><a href="repeat.txt.html#." class="d">.</a>
+
+When editing <a href="insert.txt.html#a" class="d">a</a> buffer that has been edited before, the last used <a href="#folding" class="d">folding</a>
+settings are used again.  For manual <a href="#folding" class="d">folding</a> the defined <a href="#folds" class="d">folds</a> are restored.
+For all <a href="#folding" class="d">folding</a> methods the manually opened and closed <a href="#folds" class="d">folds</a> are restored.
+If this buffer has been edited in this window, the values from back then are
+used.  Otherwise the values from the <a href="windows.txt.html#window" class="d">window</a> where the buffer was edited last
+are used.
+
+<span class="h">==============================================================================</span>
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,219 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: sign.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="sign.txt" class="t">sign.txt</a>      For <span class="i">Vim version 8.0.</span>  Last change: 2016 Aug 17
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Gordon Prieur</span>
+                                          and <a href="intro.txt.html#Bram" class="d">Bram</a> <a href="intro.txt.html#Moolenaar" class="d">Moolenaar</a>
+
+
+Sign Support Features                           <a name="sign-support" class="t">sign-support</a>
+
+1. Introduction                         <a href="#sign-intro" class="l">sign-intro</a>
+2. Commands                             <a href="#sign-commands" class="l">sign-commands</a>
+
+<span class="s">{Vi does not have any of these features}</span>
+<span class="s">{only available when compiled with the |+signs| feature}</span>
+
+<span class="h">==============================================================================</span>
+1. Introduction                                 <a name="sign-intro" class="t">sign-intro</a> <a name="signs" class="t">signs</a>
+
+When <a href="insert.txt.html#a" class="d">a</a> debugger or other IDE tool <a href="motion.txt.html#is" class="d">is</a> driving an editor <a href="motion.txt.html#it" class="d">it</a> needs to be able
+to give specific highlights which quickly tell the user useful information
+about the file.  One example of this would be <a href="insert.txt.html#a" class="d">a</a> debugger which had an icon
+in the left-hand column denoting <a href="insert.txt.html#a" class="d">a</a> breakpoint.  Another example might be an
+arrow representing the Program Counter (PC).  The sign features allow both
+placement of <a href="insert.txt.html#a" class="d">a</a> sign, or icon, in the left-hand side of the <a href="windows.txt.html#window" class="d">window</a> and
+definition of <a href="insert.txt.html#a" class="d">a</a> highlight which will be applied to that line.  Displaying the
+sign <a href="motion.txt.html#as" class="d">as</a> an image <a href="motion.txt.html#is" class="d">is</a> most likely only feasible in <a href="starting.txt.html#gvim" class="d">gvim</a> (although Sun
+Microsystem's dtterm does support this it's the only terminal emulator <a href="insert.txt.html#I" class="d">I</a> know
+of which does).  <a href="insert.txt.html#A" class="d">A</a> text sign and the highlight should be feasible in any color
+terminal emulator.
+
+Signs and highlights are not useful just for debuggers.  Sun's <a href="visual.txt.html#Visual" class="d">Visual</a>
+WorkShop uses <a href="#signs" class="d">signs</a> and highlights to <a href="motion.txt.html#mark" class="d">mark</a> build <a href="message.txt.html#errors" class="d">errors</a> and SourceBrowser
+hits.  Additionally, the debugger supports 8 to 10 different <a href="#signs" class="d">signs</a> and
+highlight colors. <a href="workshop.txt.html#workshop" class="l">workshop</a>  Same for Netbeans <a href="netbeans.txt.html#netbeans" class="l">netbeans</a><a href="repeat.txt.html#." class="d">.</a>
+
+There are two steps in using signs:
+
+1. Define the sign.  This specifies the image, text and highlighting.  For
+   example, you can define <a href="insert.txt.html#a" class="d">a</a> "break" sign with an image of <a href="insert.txt.html#a" class="d">a</a> stop roadsign and
+   text "<a href="change.txt.html#%21%21" class="d">!!</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+2. Place the sign.  This specifies the file and line number where the sign <a href="motion.txt.html#is" class="d">is</a>
+   displayed.  <a href="insert.txt.html#A" class="d">A</a> defined sign can be placed several times in different lines
+   and files.
+
+When <a href="#signs" class="d">signs</a> are defined for <a href="insert.txt.html#a" class="d">a</a> file, Vim will automatically add <a href="insert.txt.html#a" class="d">a</a> column of two
+characters to display them in.  When the last sign <a href="motion.txt.html#is" class="d">is</a> unplaced the column
+disappears again.  This behavior can be changed with the <a href="options.txt.html#%27signcolumn%27" class="o">'signcolumn'</a> option.
+
+The color of the column <a href="motion.txt.html#is" class="d">is</a> set with the SignColumn group <a href="syntax.txt.html#hl-SignColumn" class="l">hl-SignColumn</a><a href="repeat.txt.html#." class="d">.</a>
+Example to set the color: 
+<span class="e"></span>
+<span class="e">        :highlight SignColumn guibg=darkgrey</span>
+<span class="e"></span>
+<span class="h">==============================================================================</span>
+2. Commands                                     <a name="sign-commands" class="t">sign-commands</a> <a name="%3Asig" class="t">:sig</a> <a name="%3Asign" class="t">:sign</a>
+
+Here <a href="motion.txt.html#is" class="d">is</a> an example that places <a href="insert.txt.html#a" class="d">a</a> sign "piet"<a href="motion.txt.html#%2C" class="d">,</a> displayed with the text "<a href="change.txt.html#%3E%3E" class="d">&gt;&gt;</a>"<a href="motion.txt.html#%2C" class="d">,</a> in
+line 23 of the current file: 
+<span class="e">        :sign define piet text=&gt;&gt; texthl=Search</span>
+<span class="e">        :exe ":sign place 2 line=23 name=piet file=" . expand("%:p")</span>
+<span class="e"></span>
+And here <a href="motion.txt.html#is" class="d">is</a> the command to delete <a href="motion.txt.html#it" class="d">it</a> again: 
+<span class="e">        :sign unplace 2</span>
+<span class="e"></span>
+<span class="n">Note</span> that the "<a href="#%3Asign" class="d">:sign</a>" command cannot be followed by another command or <a href="insert.txt.html#a" class="d">a</a>
+comment.  If you <a href="diff.txt.html#do" class="d">do</a> need that, use the <a href="eval.txt.html#%3Aexecute" class="l">:execute</a> command.
+
+
+<span class="c">DEFINING A SIGN.                       </span> <a name="%3Asign-define" class="t">:sign-define</a> <a name="E255" class="t">E255</a> <a name="E160" class="t">E160</a> <a name="E612" class="t">E612</a>
+
+<a href="#%3Asign" class="d">:sign</a> define <span class="s">{name}</span> <span class="s">{argument}</span>...
+                Define <a href="insert.txt.html#a" class="d">a</a> new sign or set attributes for an existing sign.
+                The <span class="s">{name}</span> can either be <a href="insert.txt.html#a" class="d">a</a> number (all digits) or <a href="insert.txt.html#a" class="d">a</a> name
+                <a href="starting.txt.html#starting" class="d">starting</a> with <a href="insert.txt.html#a" class="d">a</a> non-digit.  Leading digits are ignored, thus
+                "0012"<a href="motion.txt.html#%2C" class="d">,</a> "012" and "12" are considered the same name.
+                About 120 different <a href="#signs" class="d">signs</a> can be defined.
+
+                Accepted arguments:
+
+        icon={bitmap}
+                Define the file name where the bitmap can be found.  Should be
+                <a href="insert.txt.html#a" class="d">a</a> full path.  The bitmap should fit in the place of two
+                characters.  This <a href="motion.txt.html#is" class="d">is</a> not checked.  If the bitmap <a href="motion.txt.html#is" class="d">is</a> too big <a href="motion.txt.html#it" class="d">it</a>
+                will cause redraw problems.  Only <a href="gui_x11.txt.html#GTK" class="d">GTK</a> 2 can scale the bitmap
+                to fit the <a href="intro.txt.html#space" class="d">space</a> available.
+<span class="h">                        toolkit         supports </span>
+                        <a href="gui_x11.txt.html#GTK" class="d">GTK</a> 1           pixmap (.xpm)
+                        <a href="gui_x11.txt.html#GTK" class="d">GTK</a> 2           many
+                        <a href="gui_x11.txt.html#Motif" class="d">Motif</a>           pixmap (.xpm)
+                        <a href="os_win32.txt.html#Win32" class="d">Win32</a>           .bmp, .ico, .cur
+                                        pixmap (.xpm) <a href="various.txt.html#%2Bxpm_w32" class="l">+xpm_w32</a>
+
+        linehl={group}
+                Highlighting group used for the whole line the sign <a href="motion.txt.html#is" class="d">is</a> placed
+                in.  Most useful <a href="motion.txt.html#is" class="d">is</a> defining <a href="insert.txt.html#a" class="d">a</a> background color.
+
+        text={text}                                             <a name="E239" class="t">E239</a>
+                Define the text that <a href="motion.txt.html#is" class="d">is</a> displayed when there <a href="motion.txt.html#is" class="d">is</a> no icon or the
+                <a href="gui.txt.html#GUI" class="d">GUI</a> <a href="motion.txt.html#is" class="d">is</a> not being used.  Only printable characters are allowed
+                and they <a href="vim_faq.txt.html#must" class="d">must</a> occupy one or two display cells.
+
+        texthl={group}
+                Highlighting group used for the text item.
+
+
+<span class="c">DELETING A SIGN                                        </span> <a name="%3Asign-undefine" class="t">:sign-undefine</a> <a name="E155" class="t">E155</a>
+
+<a href="#%3Asign" class="d">:sign</a> undefine <span class="s">{name}</span>
+                Deletes <a href="insert.txt.html#a" class="d">a</a> previously defined sign.  If <a href="#signs" class="d">signs</a> with this <span class="s">{name}</span>
+                are still placed this will cause trouble.
+
+
+<span class="c">LISTING SIGNS                                          </span> <a name="%3Asign-list" class="t">:sign-list</a> <a name="E156" class="t">E156</a>
+
+<a href="#%3Asign" class="d">:sign</a> <a href="eval.txt.html#list" class="d">list</a>      <a href="eval.txt.html#Lists" class="d">Lists</a> all defined <a href="#signs" class="d">signs</a> and their attributes.
+
+<a href="#%3Asign" class="d">:sign</a> <a href="eval.txt.html#list" class="d">list</a> <span class="s">{name}</span>
+                <a href="eval.txt.html#Lists" class="d">Lists</a> one defined sign and its attributes.
+
+
+<span class="c">PLACING SIGNS                                          </span> <a name="%3Asign-place" class="t">:sign-place</a> <a name="E158" class="t">E158</a>
+
+<a href="#%3Asign" class="d">:sign</a> place <span class="s">{id}</span> line={lnum} name={name} file={fname}
+                Place sign defined <a href="motion.txt.html#as" class="d">as</a> <span class="s">{name}</span> <a href="motion.txt.html#at" class="d">at</a> line <span class="s">{lnum}</span> in file <span class="s">{fname}</span>.
+                                                        <a name="%3Asign-fname" class="t">:sign-fname</a>
+                The file <span class="s">{fname}</span> <a href="vim_faq.txt.html#must" class="d">must</a> already be loaded in <a href="insert.txt.html#a" class="d">a</a> buffer.  The
+                exact file name <a href="vim_faq.txt.html#must" class="d">must</a> be used, wildcards, $ENV and <a href="change.txt.html#%7E" class="d">~</a> are not
+                expanded, white <a href="intro.txt.html#space" class="d">space</a> <a href="vim_faq.txt.html#must" class="d">must</a> not be escaped.  Trailing white
+                <a href="intro.txt.html#space" class="d">space</a> <a href="motion.txt.html#is" class="d">is</a> ignored.
+
+                The sign <a href="motion.txt.html#is" class="d">is</a> remembered under <span class="s">{id}</span>, this can be used for
+                further manipulation.  <span class="s">{id}</span> <a href="vim_faq.txt.html#must" class="d">must</a> be <a href="insert.txt.html#a" class="d">a</a> number.
+                It's up to the user to make sure the <span class="s">{id}</span> <a href="motion.txt.html#is" class="d">is</a> used only once in
+                each file (if it's used several times unplacing will also have
+                to be done several times and making changes may not work <a href="motion.txt.html#as" class="d">as</a>
+                expected).
+
+<a href="#%3Asign" class="d">:sign</a> place <span class="s">{id}</span> line={lnum} name={name} buffer={nr}
+                Same, but use buffer <span class="s">{nr}</span>.
+
+                                                        <a name="E885" class="t">E885</a>
+<a href="#%3Asign" class="d">:sign</a> place <span class="s">{id}</span> name={name} file={fname}
+                Change the placed sign <span class="s">{id}</span> in file <span class="s">{fname}</span> to use the defined
+                sign <span class="s">{name}</span>.  See remark above about <span class="s">{fname}</span> <a href="#%3Asign-fname" class="l">:sign-fname</a><a href="repeat.txt.html#." class="d">.</a>
+                This can be used to change the displayed sign without moving
+                <a href="motion.txt.html#it" class="d">it</a> (e.g., when the debugger has stopped <a href="motion.txt.html#at" class="d">at</a> <a href="insert.txt.html#a" class="d">a</a> breakpoint).
+
+<a href="#%3Asign" class="d">:sign</a> place <span class="s">{id}</span> name={name} buffer={nr}
+                Same, but use buffer <span class="s">{nr}</span>.
+
+
+<span class="c">REMOVING SIGNS                                         </span> <a name="%3Asign-unplace" class="t">:sign-unplace</a> <a name="E159" class="t">E159</a>
+
+<a href="#%3Asign" class="d">:sign</a> unplace <span class="s">{id}</span> file={fname}
+                Remove the previously placed sign <span class="s">{id}</span> from file <span class="s">{fname}</span>.
+                See remark above about <span class="s">{fname}</span> <a href="#%3Asign-fname" class="l">:sign-fname</a><a href="repeat.txt.html#." class="d">.</a>
+
+<a href="#%3Asign" class="d">:sign</a> unplace * file={fname}
+                Remove all placed <a href="#signs" class="d">signs</a> in file <span class="s">{fname}</span>.
+
+<a href="#%3Asign" class="d">:sign</a> unplace <span class="s">{id}</span> buffer={nr}
+                Remove the previously placed sign <span class="s">{id}</span> from buffer <span class="s">{nr}</span>.
+
+<a href="#%3Asign" class="d">:sign</a> unplace * buffer={nr}
+                Remove all placed <a href="#signs" class="d">signs</a> in buffer <span class="s">{nr}</span>.
+
+<a href="#%3Asign" class="d">:sign</a> unplace <span class="s">{id}</span>
+                Remove the previously placed sign <span class="s">{id}</span> from all files <a href="motion.txt.html#it" class="d">it</a>
+                appears in.
+
+<a href="#%3Asign" class="d">:sign</a> unplace *
+                Remove all placed signs.
+
+<a href="#%3Asign" class="d">:sign</a> unplace
+                Remove the placed sign <a href="motion.txt.html#at" class="d">at</a> the cursor position.
+
+
+<span class="c">LISTING PLACED SIGNS                                   </span> <a name="%3Asign-place-list" class="t">:sign-place-list</a>
+
+<a href="#%3Asign" class="d">:sign</a> place file={fname}
+                <a href="eval.txt.html#List" class="d">List</a> <a href="#signs" class="d">signs</a> placed in file <span class="s">{fname}</span>.
+                See remark above about <span class="s">{fname}</span> <a href="#%3Asign-fname" class="l">:sign-fname</a><a href="repeat.txt.html#." class="d">.</a>
+
+<a href="#%3Asign" class="d">:sign</a> place buffer={nr}
+                <a href="eval.txt.html#List" class="d">List</a> <a href="#signs" class="d">signs</a> placed in buffer <span class="s">{nr}</span>.
+
+<a href="#%3Asign" class="d">:sign</a> place     <a href="eval.txt.html#List" class="d">List</a> placed <a href="#signs" class="d">signs</a> in all files.
+
+
+<span class="c">JUMPING TO A SIGN                                      </span> <a name="%3Asign-jump" class="t">:sign-jump</a> <a name="E157" class="t">E157</a>
+
+<a href="#%3Asign" class="d">:sign</a> jump <span class="s">{id}</span> file={fname}
+                Open the file <span class="s">{fname}</span> or jump to the <a href="windows.txt.html#window" class="d">window</a> that contains
+                <span class="s">{fname}</span> and position the cursor <a href="motion.txt.html#at" class="d">at</a> sign <span class="s">{id}</span>.
+                See remark above about <span class="s">{fname}</span> <a href="#%3Asign-fname" class="l">:sign-fname</a><a href="repeat.txt.html#." class="d">.</a>
+                If the file isn't displayed in <a href="windows.txt.html#window" class="d">window</a> and the current file can
+                not be <a href="editing.txt.html#abandon" class="l">abandon</a>ed this fails.
+
+<a href="#%3Asign" class="d">:sign</a> jump <span class="s">{id}</span> buffer={nr}                                     <a name="E934" class="t">E934</a>
+                Same, but use buffer <span class="s">{nr}</span>.  This fails if buffer <span class="s">{nr}</span> does not
+                have <a href="insert.txt.html#a" class="d">a</a> name.
+
+
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

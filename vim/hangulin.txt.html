@@ -1,0 +1,126 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: hangulin.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="hangulin.txt" class="t">hangulin.txt</a>  For <span class="i">Vim version 8.0.</span>  Last change: 2015 Nov 24
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Chi-Deok Hwang and Sung-Hyun Nam</span>
+
+
+Introduction                                    <a name="hangul" class="t">hangul</a>
+<span class="h">------------</span>
+It <a href="motion.txt.html#is" class="d">is</a> to input hangul, the <a href="mbyte.txt.html#Korean" class="d">Korean</a> language, with Vim <a href="gui.txt.html#GUI" class="d">GUI</a> version.
+If you have <a href="insert.txt.html#a" class="d">a</a> <a href="mbyte.txt.html#XIM" class="d">XIM</a> program, you can use another <a href="various.txt.html#%2Bxim" class="l">+xim</a> feature.
+Basically, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> for anybody who has no <a href="mbyte.txt.html#XIM" class="d">XIM</a> program.
+
+Compile
+<span class="h">-------</span>
+Next <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> basic option.  You can add any other configure option. 
+<span class="e"></span>
+<span class="e">   ./configure --with-x --enable-multibyte --enable-hangulinput \</span>
+<span class="e">            --disable-xim</span>
+<span class="e"></span>
+And you should check feature.h.  If <a href="various.txt.html#%2Bhangul_input" class="l">+hangul_input</a> feature <a href="motion.txt.html#is" class="d">is</a> enabled
+by configure, you can select more <a href="options.txt.html#options" class="d">options</a> such <a href="motion.txt.html#as" class="d">as</a> keyboard type, 2 bulsik
+or 3 bulsik.  You can find keywords like next in there. 
+<span class="e"></span>
+<span class="e">        #define HANGUL_DEFAULT_KEYBOARD 2</span>
+<span class="e">        #define ESC_CHG_TO_ENG_MODE</span>
+<span class="e">        /* #define X_LOCALE */</span>
+<span class="e"></span>
+Environment <a href="eval.txt.html#variables" class="d">variables</a>
+<span class="h">---------------------</span>
+You should set LANG variable to <a href="mbyte.txt.html#Korean" class="d">Korean</a> <a href="mbyte.txt.html#locale" class="d">locale</a> such <a href="motion.txt.html#as" class="d">as</a> ko, ko_KR.eucKR
+or ko_KR.UTF-8.
+If you set LC_ALL variable, <a href="motion.txt.html#it" class="d">it</a> should be set to <a href="mbyte.txt.html#Korean" class="d">Korean</a> <a href="mbyte.txt.html#locale" class="d">locale</a> also.
+
+Vim resource
+<span class="h">------------</span>
+You may want to set <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> and <a href="options.txt.html#%27fileencodings%27" class="o">'fileencodings'</a>.
+Next are examples: 
+<span class="e"></span>
+<span class="e">        :set encoding=euc-kr</span>
+<span class="e">        :set encoding=utf-8</span>
+<span class="e">        :set fileencodings=ucs-bom,utf-8,cp949,euc-kr,latin1</span>
+<span class="e"></span>
+Keyboard
+<span class="h">--------</span>
+You can change keyboard type (2 bulsik or 3 bulsik) using VIM_KEYBOARD
+or HANGUL_KEYBOARD_TYPE environment variables.  For sh, just <a href="diff.txt.html#do" class="d">do</a> (2 bulsik): 
+<span class="e"></span>
+<span class="e">    export VIM_KEYBOARD="2"</span>
+or 
+<span class="e">    export HANGUL_KEYBOARD_TYPE="2"</span>
+<span class="e"></span>
+If both are set, VIM_KEYBOARD has higher priority.
+
+Hangul Fonts
+<span class="h">------------</span>
+If you use <a href="gui_x11.txt.html#GTK" class="d">GTK</a> version of gvim, you should set <a href="options.txt.html#%27guifont%27" class="o">'guifont'</a> and <a href="options.txt.html#%27guifontwide%27" class="o">'guifontwide'</a>.
+For example: 
+<span class="e">    set guifont=Courier\ 12</span>
+<span class="e">    set guifontwide=NanumGothicCoding\ 12</span>
+<span class="e"></span>
+If you use <a href="gui_x11.txt.html#Motif" class="d">Motif</a> or <a href="gui_x11.txt.html#Athena" class="d">Athena</a> version of gvim, you should set <a href="options.txt.html#%27guifontset%27" class="o">'guifontset'</a> in
+your vimrc.  You can set <a href="mbyte.txt.html#fontset" class="d">fontset</a> in the <a href="gui_x11.txt.html#.Xdefaults" class="d">.Xdefaults</a> file.
+
+$HOME/.gvimrc: 
+<span class="e">    set guifontset=english_font,hangul_font</span>
+<span class="e"></span>
+$HOME/.Xdefaults: 
+<span class="e">    Vim.font: english_font</span>
+<span class="e"></span>
+<span class="e">    ! Nexts are for hangul menu with Athena</span>
+<span class="e">    *international: True</span>
+<span class="e">    Vim*fontSet: english_font,hangul_font</span>
+<span class="e"></span>
+<span class="e">    ! Nexts are for hangul menu with Motif</span>
+<span class="e">    *international: True</span>
+<span class="e">    Vim*fontList: english_font;hangul_font:</span>
+<span class="e"></span>
+attention! the <a href="motion.txt.html#%2C" class="d">,</a> (comma) or <a href="motion.txt.html#%3B" class="d">;</a> (semicolon)
+
+And there should be no ':set guifont'.  If <a href="motion.txt.html#it" class="d">it</a> exists, then <a href="starting.txt.html#gvim" class="d">gvim</a> ignores
+':set guifontset'.  It means Vim runs without <a href="mbyte.txt.html#fontset" class="d">fontset</a> supporting.
+So, you can see only English.  Hangul does not be correctly displayed.
+
+After "<a href="mbyte.txt.html#fontset" class="d">fontset</a>" feature <a href="motion.txt.html#is" class="d">is</a> enabled, Vim does not allow using english
+font only in "font" setting for syntax.
+For example, if you use 
+<span class="e">   :set guifontset=eng_font,your_font</span>
+in your .gvimrc, then you should <a href="diff.txt.html#do" class="d">do</a> for <a href="syntax.txt.html#syntax" class="d">syntax</a> 
+<span class="e">   :hi Comment guifg=Cyan font=another_eng_font,another_your_font</span>
+If you just <a href="diff.txt.html#do" class="d">do</a> 
+<span class="e">   :hi Comment font=another_eng_font</span>
+then you can see <a href="insert.txt.html#a" class="d">a</a> error message.  Be careful!
+
+hangul_font width should be <a href="if_cscop.txt.html#twice" class="d">twice</a> than english_font width.
+
+Unsupported Feature
+<span class="h">-------------------</span>
+We don't support Johab font.
+We don't support Hanja input.
+And We don't have any plan to support them.
+
+If you really need such features, you can use console version of Vim with <a href="insert.txt.html#a" class="d">a</a>
+capable terminal emulator.
+
+Bug or Comment
+<span class="h">--------------</span>
+Send comments, patches and suggestions to:
+
+                                    SungHyun Nam <span class="s">&lt;goweol@gmail.com&gt;</span>
+                                    Chi-Deok Hwang <span class="s">&lt;...&gt;</span>
+
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

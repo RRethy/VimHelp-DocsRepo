@@ -1,0 +1,329 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: if_mzsch.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="if_mzsch.txt" class="t">if_mzsch.txt</a>  For <span class="i">Vim version 8.0.</span>  Last change: 2017 Oct 08
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Sergey Khorev</span>
+
+
+The <a href="#MzScheme" class="d">MzScheme</a> Interface to Vim                           <a name="mzscheme" class="t">mzscheme</a> <a name="MzScheme" class="t">MzScheme</a>
+
+1. Commands                             <a href="#mzscheme-commands" class="l">mzscheme-commands</a>
+2. Examples                             <a href="#mzscheme-examples" class="l">mzscheme-examples</a>
+3. Threads                              <a href="#mzscheme-threads" class="l">mzscheme-threads</a>
+4. Vim access from <a href="#MzScheme" class="d">MzScheme</a>             <a href="#mzscheme-vim" class="l">mzscheme-vim</a>
+5. <a href="eval.txt.html#mzeval%28%29" class="d">mzeval()</a> Vim function                <a href="#mzscheme-mzeval" class="l">mzscheme-mzeval</a>
+6. Using Function references            <a href="#mzscheme-funcref" class="l">mzscheme-funcref</a>
+7. Dynamic loading                      <a href="#mzscheme-dynamic" class="l">mzscheme-dynamic</a>
+8. <a href="#MzScheme" class="d">MzScheme</a> setup                       <a href="#mzscheme-setup" class="l">mzscheme-setup</a>
+
+<span class="s">{Vi does not have any of these commands}</span>
+
+The <a href="#MzScheme" class="d">MzScheme</a> interface <a href="motion.txt.html#is" class="d">is</a> available only if Vim was compiled with the
+<a href="various.txt.html#%2Bmzscheme" class="l">+mzscheme</a> feature.
+
+Based on the work of Brent Fulgham.
+Dynamic loading added by Sergey Khorev
+
+<a href="#MzScheme" class="d">MzScheme</a> and PLT Scheme names have been rebranded <a href="motion.txt.html#as" class="d">as</a> Racket. For more
+information please check <a class="u" href="http://racket-lang.org">http://racket-lang.org</a>
+
+Futures and places of Racket version 5.x up to and including 5.3.1 <a href="diff.txt.html#do" class="d">do</a> not
+work correctly with processes created by Vim.
+The simplest solution <a href="motion.txt.html#is" class="d">is</a> to build Racket on your own with these features
+disabled: 
+<span class="e">  ./configure --disable-futures --disable-places --prefix=your-install-prefix</span>
+<span class="e"></span>
+To speed up the process, you might also want to use --disable-gracket and
+--disable-docs
+
+<span class="h">==============================================================================</span>
+1. Commands                                             <a name="mzscheme-commands" class="t">mzscheme-commands</a>
+
+                                                        <a name="%3Amzscheme" class="t">:mzscheme</a> <a name="%3Amz" class="t">:mz</a>
+:[range]mz[scheme] <span class="s">{stmt}</span>
+                        Execute <a href="#MzScheme" class="d">MzScheme</a> statement <span class="s">{stmt}</span>.  <span class="s">{not in Vi}</span>
+
+:[range]mz[scheme] <a href="change.txt.html#%3C%3C" class="d">&lt;&lt;</a> <span class="s">{endmarker}</span>
+<span class="s">{script}</span>
+<span class="s">{endmarker}</span>
+                        Execute inlined <a href="#MzScheme" class="d">MzScheme</a> <a href="usr_41.txt.html#script" class="d">script</a> <span class="s">{script}</span>.
+                        <span class="n">Note:</span> This command doesn't work if the <a href="#MzScheme" class="d">MzScheme</a>
+                        feature wasn't compiled in.  To avoid errors, see
+                        <a href="if_perl.txt.html#script-here" class="l">script-here</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="%3Amzfile" class="t">:mzfile</a> <a name="%3Amzf" class="t">:mzf</a>
+:[range]mzf[ile] <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a> Execute the <a href="#MzScheme" class="d">MzScheme</a> <a href="usr_41.txt.html#script" class="d">script</a> in <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a>.  <span class="s">{not in Vi}</span>
+
+All of these commands <a href="diff.txt.html#do" class="d">do</a> essentially the same thing <a href="motion.txt.html#-" class="d">-</a> they execute <a href="insert.txt.html#a" class="d">a</a> piece of
+<a href="#MzScheme" class="d">MzScheme</a> code, with the "current range" set to the given line
+range.
+
+In the <a href="change.txt.html#case" class="d">case</a> of :mzscheme, the code to execute <a href="motion.txt.html#is" class="d">is</a> in the command-line.
+In the <a href="change.txt.html#case" class="d">case</a> of :mzfile, the code to execute <a href="motion.txt.html#is" class="d">is</a> the contents of the given file.
+
+<a href="#MzScheme" class="d">MzScheme</a> interface defines exception exn:vim, derived from exn.
+It <a href="motion.txt.html#is" class="d">is</a> raised for <a href="various.txt.html#various" class="d">various</a> Vim errors.
+
+During compilation, the <a href="#MzScheme" class="d">MzScheme</a> interface will remember the current <a href="#MzScheme" class="d">MzScheme</a>
+collection path. If you want to specify additional paths use the
+'current-library-collection-paths' parameter. E.g., to cons the user-local
+<a href="#MzScheme" class="d">MzScheme</a> collection path: 
+<span class="e">    :mz &lt;&lt; EOF</span>
+<span class="e">    (current-library-collection-paths</span>
+<span class="e">        (cons</span>
+<span class="e">            (build-path (find-system-path 'addon-dir) (version) "collects")</span>
+<span class="e">            (current-library-collection-paths)))</span>
+<span class="e">    EOF</span>
+
+
+All functionality <a href="motion.txt.html#is" class="d">is</a> provided through module vimext.
+
+The exn:vim <a href="motion.txt.html#is" class="d">is</a> available without explicit import.
+
+To avoid clashes with MzScheme, consider using prefix when requiring module,
+e.g.: 
+<span class="e">        :mzscheme (require (prefix vim- vimext))</span>
+
+All the examples below assume this naming scheme. 
+
+                                                        <a name="mzscheme-sandbox" class="t">mzscheme-sandbox</a>
+When executed in the <a href="eval.txt.html#sandbox" class="l">sandbox</a><a href="motion.txt.html#%2C" class="d">,</a> access to some filesystem and Vim interface
+procedures <a href="motion.txt.html#is" class="d">is</a> restricted.
+
+<span class="h">==============================================================================</span>
+2. Examples                                             <a name="mzscheme-examples" class="t">mzscheme-examples</a>
+
+<span class="e">        :mzscheme (display "Hello")</span>
+<span class="e">        :mz (display (string-append "Using MzScheme version " (version)))</span>
+<span class="e">        :mzscheme (require (prefix vim- vimext)) ; for MzScheme &lt; 4.x</span>
+<span class="e">        :mzscheme (require (prefix-in vim- 'vimext)) ; MzScheme 4.x</span>
+<span class="e">        :mzscheme (vim-set-buff-line 10 "This is line #10")</span>
+<span class="e"></span>
+To see what version of <a href="#MzScheme" class="d">MzScheme</a> you have: 
+<span class="e">        :mzscheme (display (version))</span>
+
+Inline <a href="usr_41.txt.html#script" class="d">script</a> usage: 
+<span class="e">        function! &lt;SID&gt;SetFirstLine()</span>
+<span class="e">            :mz &lt;&lt; EOF</span>
+<span class="e">            (display "!!!")</span>
+<span class="e">            (require (prefix vim- vimext))</span>
+<span class="e">            ; for newer versions (require (prefix-in vim- 'vimext))</span>
+<span class="e">            (vim-set-buff-line 1 "This is line #1")</span>
+<span class="e">            (vim-beep)</span>
+<span class="e">        EOF</span>
+<span class="e">        endfunction</span>
+<span class="e"></span>
+<span class="e">        nmap &lt;F9&gt; :call &lt;SID&gt;SetFirstLine() &lt;CR&gt;</span>
+
+File execution: 
+<span class="e">        :mzfile supascript.scm</span>
+
+Vim exception handling: 
+<span class="e">        :mz &lt;&lt; EOF</span>
+<span class="e">        (require (prefix vim- vimext))</span>
+<span class="e">        ; for newer versions (require (prefix-in vim- 'vimext))</span>
+<span class="e">        (with-handlers</span>
+<span class="e">          ([exn:vim? (lambda (e) (display (exn-message e)))])</span>
+<span class="e">          (vim-eval "nonsense-string"))</span>
+<span class="e">        EOF</span>
+
+Auto-instantiation of vimext module (can be placed in your <a href="starting.txt.html#vimrc" class="l">vimrc</a>): 
+<span class="e">    function! MzRequire()</span>
+<span class="e">        :redir =&gt; l:mzversion</span>
+<span class="e">        :mz (version)</span>
+<span class="e">        :redir END</span>
+<span class="e">        if strpart(l:mzversion, 1, 1) &lt; "4"</span>
+<span class="e">            " MzScheme versions &lt; 4.x:</span>
+<span class="e">            :mz (require (prefix vim- vimext))</span>
+<span class="e">        else</span>
+<span class="e">            " newer versions:</span>
+<span class="e">            :mz (require (prefix-in vim- 'vimext))</span>
+<span class="e">        endif</span>
+<span class="e">    endfunction</span>
+<span class="e"></span>
+<span class="e">    if has("mzscheme")</span>
+<span class="e">        silent call MzRequire()</span>
+<span class="e">    endif</span>
+
+<span class="h">==============================================================================</span>
+3. Threads                                              <a name="mzscheme-threads" class="t">mzscheme-threads</a>
+
+The <a href="#MzScheme" class="d">MzScheme</a> interface supports threads. They are independent from OS threads,
+thus scheduling <a href="motion.txt.html#is" class="d">is</a> required. The option <a href="options.txt.html#%27mzquantum%27" class="o">'mzquantum'</a> determines how often
+Vim should poll for available <a href="#MzScheme" class="d">MzScheme</a> threads.
+<span class="n">NOTE</span>
+Thread scheduling in the console version of Vim <a href="motion.txt.html#is" class="d">is</a> <a href="various.txt.html#less" class="d">less</a> reliable than in the
+<a href="gui.txt.html#GUI" class="d">GUI</a> version.
+
+<span class="h">==============================================================================</span>
+4. Vim access from <a href="#MzScheme" class="d">MzScheme</a>                             <a name="mzscheme-vim" class="t">mzscheme-vim</a>
+
+                                                        <a name="mzscheme-vimext" class="t">mzscheme-vimext</a>
+The <span class="o">'vimext'</span> module provides access to procedures defined in the <a href="#MzScheme" class="d">MzScheme</a>
+interface.
+
+Common
+<span class="h">------</span>
+    (command <span class="s">{command-string}</span>)      Perform the vim ":Ex" style command.
+    (eval <span class="s">{expr-string}</span>)            Evaluate the vim <a href="eval.txt.html#expression" class="d">expression</a> into
+                                    respective <a href="#MzScheme" class="d">MzScheme</a> object: <a href="eval.txt.html#Lists" class="l">Lists</a> are
+                                    represented <a href="motion.txt.html#as" class="d">as</a> Scheme lists,
+                                    <a href="eval.txt.html#Dictionaries" class="l">Dictionaries</a> <a href="motion.txt.html#as" class="d">as</a> hash tables,
+                                    <a href="eval.txt.html#Funcref" class="l">Funcref</a><a href="change.txt.html#s" class="d">s</a> <a href="motion.txt.html#as" class="d">as</a> <a href="eval.txt.html#functions" class="d">functions</a> (see also
+                                    <a href="#mzscheme-funcref" class="l">mzscheme-funcref</a><a href="motion.txt.html#%29" class="d">)</a>
+                                    <span class="n">NOTE</span> the name clashes with <a href="#MzScheme" class="d">MzScheme</a> eval,
+                                    use module qualifiers to overcome this.
+    (range-start)                   Start/End of the range passed with
+    (range-end)                     the Scheme command.
+    (beep)                          <a href="options.txt.html#beep" class="d">beep</a>
+    (get-option <span class="s">{option-name}</span> <span class="s">[buffer-or-window]</span>) Get Vim option value (either
+                                    local or global, see set-option).
+    (set-option <span class="s">{string}</span> <span class="s">[buffer-or-window]</span>)
+                                    Set <a href="insert.txt.html#a" class="d">a</a> Vim option. <a href="eval.txt.html#String" class="d">String</a> <a href="vim_faq.txt.html#must" class="d">must</a> have option
+                                    setting form (like optname=optval, or
+                                    optname+=optval, etc.) When called with
+                                    <span class="s">{buffer}</span> or <span class="s">{window}</span> the local option will
+                                    be set. The symbol 'global can be passed
+                                    <a href="motion.txt.html#as" class="d">as</a> <span class="s">{buffer-or-window}</span>. Then <a href="options.txt.html#%3Asetglobal" class="l">:setglobal</a>
+                                    will be used.
+
+Buffers                                                  <a name="mzscheme-buffer" class="t">mzscheme-buffer</a>
+<span class="h">-------</span>
+    (buff? <span class="s">{object}</span>)                Is object <a href="insert.txt.html#a" class="d">a</a> buffer?
+    (buff-valid? <span class="s">{object}</span>)          Is object <a href="insert.txt.html#a" class="d">a</a> valid buffer? (i.e.
+                                    corresponds to the real Vim buffer)
+    (get-buff-line <span class="s">{linenr}</span> <span class="s">[buffer]</span>)
+                                    Get line from <a href="insert.txt.html#a" class="d">a</a> buffer.
+    (set-buff-line <span class="s">{linenr}</span> <span class="s">{string}</span> <span class="s">[buffer]</span>)
+                                    Set <a href="insert.txt.html#a" class="d">a</a> line in <a href="insert.txt.html#a" class="d">a</a> buffer. If <span class="s">{string}</span> <a href="motion.txt.html#is" class="d">is</a> #f,
+                                    the line gets deleted.  The <span class="s">[buffer]</span>
+                                    argument <a href="motion.txt.html#is" class="d">is</a> optional. If omitted, the
+                                    current buffer will be used.
+    (get-buff-line-list <span class="s">{start}</span> <span class="s">{end}</span> <span class="s">[buffer]</span>)
+                                    Get <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of lines in <a href="insert.txt.html#a" class="d">a</a> buffer. <span class="s">{Start}</span>
+                                    and <span class="s">{end}</span> are 1-based and inclusive.
+    (set-buff-line-list <span class="s">{start}</span> <span class="s">{end}</span> <span class="s">{string-list}</span> <span class="s">[buffer]</span>)
+                                    Set <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of lines in <a href="insert.txt.html#a" class="d">a</a> buffer. If
+                                    string-list <a href="motion.txt.html#is" class="d">is</a> #f or null, the lines get
+                                    deleted. If <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> <a href="motion.txt.html#is" class="d">is</a> shorter than
+                                    <span class="s">{end}</span>-<span class="s">{start}</span> the remaining lines will
+                                    be deleted.
+    (get-buff-name <span class="s">[buffer]</span>)        Get <a href="insert.txt.html#a" class="d">a</a> buffer's text name.
+    (get-buff-num <span class="s">[buffer]</span>)         Get <a href="insert.txt.html#a" class="d">a</a> buffer's number.
+    (get-buff-size <span class="s">[buffer]</span>)        Get buffer line count.
+    (insert-buff-line-list <span class="s">{linenr}</span> <span class="s">{string/string-list}</span> <span class="s">[buffer]</span>)
+                                    <a href="insert.txt.html#Insert" class="d">Insert</a> <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of lines into <a href="insert.txt.html#a" class="d">a</a> buffer after
+                                    <span class="s">{linenr}</span>. If <span class="s">{linenr}</span> <a href="motion.txt.html#is" class="d">is</a> 0, lines will be
+                                    inserted <a href="motion.txt.html#at" class="d">at</a> start.
+    (curr-buff)                     Get the current buffer. Use other <a href="#MzScheme" class="d">MzScheme</a>
+                                    interface procedures to change it.
+    (buff-count)                    Get <a href="intro.txt.html#count" class="d">count</a> of total <a href="windows.txt.html#buffers" class="d">buffers</a> in the editor.
+    (get-next-buff <span class="s">[buffer]</span>)        Get next buffer.
+    (get-prev-buff <span class="s">[buffer]</span>)        Get previous buffer. Return #f when there
+                                    are no more buffers.
+    (open-buff <span class="s">{filename}</span>)          Open <a href="insert.txt.html#a" class="d">a</a> new buffer (for file "name"<a href="motion.txt.html#%29" class="d">)</a>
+    (get-buff-by-name <span class="s">{buffername}</span>) Get <a href="insert.txt.html#a" class="d">a</a> buffer by its filename or #f
+                                        if there <a href="motion.txt.html#is" class="d">is</a> no such buffer.
+    (get-buff-by-num <span class="s">{buffernum}</span>)   Get <a href="insert.txt.html#a" class="d">a</a> buffer by its number (return #f if
+                                    there <a href="motion.txt.html#is" class="d">is</a> no buffer with this number).
+
+Windows                                                     <a name="mzscheme-window" class="t">mzscheme-window</a>
+<span class="h">------</span>
+    (win? <span class="s">{object}</span>)                 Is object <a href="insert.txt.html#a" class="d">a</a> window?
+    (win-valid? <span class="s">{object}</span>)           Is object <a href="insert.txt.html#a" class="d">a</a> valid <a href="windows.txt.html#window" class="d">window</a> (i.e. corresponds
+                                    to the real Vim window)?
+    (curr-win)                      Get the current window.
+    (win-count)                     Get <a href="intro.txt.html#count" class="d">count</a> of windows.
+    (get-win-num <span class="s">[window]</span>)          Get <a href="windows.txt.html#window" class="d">window</a> number.
+    (get-win-by-num <span class="s">{windownum}</span>)    Get <a href="windows.txt.html#window" class="d">window</a> by its number.
+    (get-win-buffer     <span class="s">[window]</span>)   Get the buffer for <a href="insert.txt.html#a" class="d">a</a> given window.
+    (get-win-height <span class="s">[window]</span>)
+    (set-win-height <span class="s">{height}</span> <span class="s">[window]</span>)  Get/Set height of window.
+    (get-win-width <span class="s">[window]</span>)
+    (set-win-width <span class="s">{width}</span> <span class="s">[window]</span>)Get/Set width of window.
+    (get-win-list <span class="s">[buffer]</span>)         Get <a href="eval.txt.html#list" class="d">list</a> of <a href="windows.txt.html#windows" class="d">windows</a> for <a href="insert.txt.html#a" class="d">a</a> buffer.
+    (get-cursor <span class="s">[window]</span>)           Get cursor position in <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#as" class="d">as</a>
+                                    <a href="insert.txt.html#a" class="d">a</a> pair (linenr <a href="repeat.txt.html#." class="d">.</a> column).
+    (set-cursor (line <a href="repeat.txt.html#." class="d">.</a> col) <span class="s">[window]</span>)  Set cursor position.
+
+<span class="h">==============================================================================</span>
+5. <a href="eval.txt.html#mzeval%28%29" class="d">mzeval()</a> Vim function                                    <a name="mzscheme-mzeval" class="t">mzscheme-mzeval</a>
+
+To facilitate bi-directional interface, you can use <a href="eval.txt.html#mzeval%28%29" class="l">mzeval()</a> function to
+evaluate <a href="#MzScheme" class="d">MzScheme</a> expressions and pass their values to Vim script.
+
+<span class="h">==============================================================================</span>
+6. Using Function references                                <a name="mzscheme-funcref" class="t">mzscheme-funcref</a>
+
+<a href="#MzScheme" class="d">MzScheme</a> interface allows use of <a href="eval.txt.html#Funcref" class="l">Funcref</a><a href="change.txt.html#s" class="d">s</a> so you can call Vim <a href="eval.txt.html#functions" class="d">functions</a>
+directly from Scheme. For instance: 
+<span class="e">    function! MyAdd2(arg)</span>
+<span class="e">        return a:arg + 2</span>
+<span class="e">    endfunction</span>
+<span class="e">    mz (define f2 (vim-eval "function(\"MyAdd2\")"))</span>
+<span class="e">    mz (f2 7)</span>
+ or <a href="cmdline.txt.html#%3A" class="d">:</a> 
+<span class="e">    :mz (define indent (vim-eval "function('indent')"))</span>
+<span class="e">    " return Vim indent for line 12</span>
+<span class="e">    :mz (indent 12)</span>
+
+
+<span class="h">==============================================================================</span>
+7. Dynamic loading                              <a name="mzscheme-dynamic" class="t">mzscheme-dynamic</a> <a name="E815" class="t">E815</a>
+
+On <a href="os_win32.txt.html#MS-Windows" class="d">MS-Windows</a> the <a href="#MzScheme" class="d">MzScheme</a> libraries can be loaded dynamically. The <a href="various.txt.html#%3Aversion" class="l">:version</a>
+output then includes <a href="various.txt.html#%2Bmzscheme%2Fdyn" class="l">+mzscheme/dyn</a><a href="repeat.txt.html#." class="d">.</a>
+
+This means that Vim will search for the <a href="#MzScheme" class="d">MzScheme</a> DLL files only when needed.
+When you don't use the <a href="#MzScheme" class="d">MzScheme</a> interface you don't need them, thus you can
+use Vim without these DLL files.
+<span class="n">NOTE:</span> Newer version of <a href="#MzScheme" class="d">MzScheme</a> (Racket) require earlier (trampolined)
+initialisation via scheme_main_setup.  So Vim always loads the <a href="#MzScheme" class="d">MzScheme</a> DLL <a href="motion.txt.html#at" class="d">at</a>
+<a href="starting.txt.html#startup" class="d">startup</a> if possible.  This may make Vim <a href="starting.txt.html#startup" class="d">startup</a> slower.
+
+To use the <a href="#MzScheme" class="d">MzScheme</a> interface the <a href="#MzScheme" class="d">MzScheme</a> DLLs <a href="vim_faq.txt.html#must" class="d">must</a> be in your search path.
+In <a href="insert.txt.html#a" class="d">a</a> console <a href="windows.txt.html#window" class="d">window</a> type "path" to see what directories are used.
+
+On <a href="os_win32.txt.html#MS-Windows" class="d">MS-Windows</a> the <a href="options.txt.html#options" class="d">options</a> <span class="o">'mzschemedll'</span> and <span class="o">'mzschemegcdll'</span> are used for the
+name of the library to load.  The initial value <a href="motion.txt.html#is" class="d">is</a> specified <a href="motion.txt.html#at" class="d">at</a> build time.
+
+The version of the DLL <a href="vim_faq.txt.html#must" class="d">must</a> match the <a href="#MzScheme" class="d">MzScheme</a> version Vim was compiled with.
+For <a href="#MzScheme" class="d">MzScheme</a> version 209 they will be "libmzsch209_000.dll" and
+"libmzgc209_000.dll"<a href="repeat.txt.html#." class="d">.</a> To know for sure look <a href="motion.txt.html#at" class="d">at</a> the output of the "<a href="various.txt.html#%3Aversion" class="d">:version</a>"
+command, look for -DDYNAMIC_MZSCH_DLL="something" and
+-DDYNAMIC_MZGC_DLL="something" in the "Compilation" info.
+
+For example, if <a href="#MzScheme" class="d">MzScheme</a> (Racket) <a href="motion.txt.html#is" class="d">is</a> installed <a href="motion.txt.html#at" class="d">at</a> C:\Racket63, you may need
+to set the environment variable <a href="motion.txt.html#as" class="d">as</a> the following: 
+<span class="e"></span>
+<span class="e">  PATH=%PATH%;C:\Racket63\lib</span>
+<span class="e">  PLTCOLLECTS=C:\Racket63\collects</span>
+<span class="e">  PLTCONFIGDIR=C:\Racket63\etc</span>
+
+<span class="h">==============================================================================</span>
+8. <a href="#MzScheme" class="d">MzScheme</a> setup                                   <a name="mzscheme-setup" class="t">mzscheme-setup</a> <a name="E895" class="t">E895</a>
+
+Vim requires "racket/base" module for if_mzsch core (fallback to "scheme/base"
+if <a href="motion.txt.html#it" class="d">it</a> doesn't exist), "r5rs" module for test and "raco ctool" command for
+building Vim.  If <a href="#MzScheme" class="d">MzScheme</a> did not have them, you can <a href="usr_90.txt.html#install" class="d">install</a> them with
+MzScheme's raco command:
+
+<span class="e">  raco pkg install scheme-lib       # scheme/base module</span>
+<span class="e">  raco pkg install r5rs-lib         # r5rs module</span>
+<span class="e">  raco pkg install cext-lib         # raco ctool command</span>
+
+<span class="h">======================================================================</span>
+  vim:tw=78:ts=8:sts=4:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

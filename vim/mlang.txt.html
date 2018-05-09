@@ -1,0 +1,227 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: mlang.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="mlang.txt" class="t">mlang.txt</a>     For <span class="i">Vim version 8.0.</span>  Last change: 2018 May 06
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Bram Moolenaar</span>
+
+
+Multi-language features                         <a name="multilang" class="t">multilang</a> <a name="multi-lang" class="t">multi-lang</a>
+
+This <a href="motion.txt.html#is" class="d">is</a> about using <a href="message.txt.html#messages" class="d">messages</a> and <a href="gui.txt.html#menus" class="d">menus</a> in <a href="various.txt.html#various" class="d">various</a> languages.  For editing
+<a href="mbyte.txt.html#multi-byte" class="d">multi-byte</a> text see <a href="mbyte.txt.html#multibyte" class="l">multibyte</a><a href="repeat.txt.html#." class="d">.</a>
+
+The basics are explained in the user manual: <a href="usr_45.txt.html#usr_45.txt" class="l">usr_45.txt</a><a href="repeat.txt.html#." class="d">.</a>
+
+1. Messages                     <a href="#multilang-messages" class="l">multilang-messages</a>
+2. Menus                        <a href="#multilang-menus" class="l">multilang-menus</a>
+3. Scripts                      <a href="#multilang-scripts" class="l">multilang-scripts</a>
+
+Also see <a href="helphelp.txt.html#help-translated" class="l">help-translated</a> for multi-language help.
+
+<span class="s">{Vi does not have any of these features}</span>
+<span class="s">{not available when compiled without the |+multi_lang| feature}</span>
+
+<span class="h">==============================================================================</span>
+1. Messages                                             <a name="multilang-messages" class="t">multilang-messages</a>
+
+Vim picks up the <a href="mbyte.txt.html#locale" class="d">locale</a> from the environment.  In most cases this means Vim
+will use the language that you prefer, unless it's not available.
+
+To see <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of supported <a href="mbyte.txt.html#locale" class="d">locale</a> names on your system, look in one of these
+directories (for Unix):
+<span class="h">        /usr/lib/locale </span>
+<span class="h">        /usr/share/locale </span>
+Unfortunately, upper/lowercase differences matter.  Also watch out for the
+use of "<a href="motion.txt.html#-" class="d">-</a>" and "<a href="motion.txt.html#_" class="d">_</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+                                            <a name="%3Alan" class="t">:lan</a> <a name="%3Alang" class="t">:lang</a> <a name="%3Alanguage" class="t">:language</a> <a name="E197" class="t">E197</a>
+:lan[guage]
+:lan[guage] mes[sages]
+:lan[guage] cty[pe]
+:lan[guage] tim[e]
+                        Print the current language (aka locale).
+                        With the "<a href="message.txt.html#messages" class="d">messages</a>" argument the language used for
+                        <a href="message.txt.html#messages" class="d">messages</a> <a href="motion.txt.html#is" class="d">is</a> printed.  Technical: LC_MESSAGES.
+                        With the "ctype" argument the language used for
+                        character encoding <a href="motion.txt.html#is" class="d">is</a> printed.  Technical: LC_CTYPE.
+                        With the "time" argument the language used for
+                        <a href="eval.txt.html#strftime%28%29" class="d">strftime()</a> <a href="motion.txt.html#is" class="d">is</a> printed.  Technical: LC_TIME.
+                        Without argument all parts of the <a href="mbyte.txt.html#locale" class="d">locale</a> are printed
+                        (this <a href="motion.txt.html#is" class="d">is</a> system dependent).
+                        The current language can also be obtained with the
+                        <a href="eval.txt.html#v%3Alang" class="l">v:lang</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="eval.txt.html#v%3Actype" class="l">v:ctype</a> and <a href="eval.txt.html#v%3Alc_time" class="l">v:lc_time</a> variables.
+
+:lan[guage] <span class="s">{name}</span>
+:lan[guage] mes[sages] <span class="s">{name}</span>
+:lan[guage] cty[pe] <span class="s">{name}</span>
+:lan[guage] tim[e] <span class="s">{name}</span>
+                        Set the current language (aka locale) to <span class="s">{name}</span>.
+                        The <a href="mbyte.txt.html#locale" class="d">locale</a> <span class="s">{name}</span> <a href="vim_faq.txt.html#must" class="d">must</a> be <a href="insert.txt.html#a" class="d">a</a> valid <a href="mbyte.txt.html#locale" class="d">locale</a> on your
+                        system.  Some systems accept aliases like "en" or
+                        "en_US"<a href="motion.txt.html#%2C" class="d">,</a> but some only accept the full specification
+                        like "en_US.ISO_8859-1"<a href="repeat.txt.html#." class="d">.</a>  On <a href="os_unix.txt.html#Unix" class="d">Unix</a> systems you can use
+                        this command to see what locales are supported: 
+<span class="e">                                :!locale -a</span>
+                       With the "<a href="message.txt.html#messages" class="d">messages</a>" argument the language used for
+                        <a href="message.txt.html#messages" class="d">messages</a> <a href="motion.txt.html#is" class="d">is</a> set.  This can be different when you want,
+                        for example, English <a href="message.txt.html#messages" class="d">messages</a> while editing <a href="mbyte.txt.html#Japanese" class="d">Japanese</a>
+                        text.  This sets $LC_MESSAGES.
+                        With the "ctype" argument the language used for
+                        character encoding <a href="motion.txt.html#is" class="d">is</a> set.  This affects the libraries
+                        that Vim was linked with.  It's unusual to set this to
+                        <a href="insert.txt.html#a" class="d">a</a> different value from <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> or "<a href="change.txt.html#C" class="d">C</a>"<a href="repeat.txt.html#." class="d">.</a>  This sets
+                        $LC_CTYPE.
+                        With the "time" argument the language used for time
+                        and date <a href="message.txt.html#messages" class="d">messages</a> <a href="motion.txt.html#is" class="d">is</a> set.  This affects strftime().
+                        This sets $LC_TIME.
+                        Without an argument both are set, and additionally
+                        $LANG <a href="motion.txt.html#is" class="d">is</a> set.
+                        When compiled with the <a href="various.txt.html#%2Bfloat" class="l">+float</a> feature the LC_NUMERIC
+                        value will always be set to "<a href="change.txt.html#C" class="d">C</a>"<a href="motion.txt.html#%2C" class="d">,</a> so that floating
+                        point numbers use '.' <a href="motion.txt.html#as" class="d">as</a> the decimal point.
+                        This will make <a href="insert.txt.html#a" class="d">a</a> difference for items that depend on
+                        the language (some messages, time and date format).
+                        Not fully supported on all systems
+                        If this fails there will be an error message.  If <a href="motion.txt.html#it" class="d">it</a>
+                        succeeds there <a href="motion.txt.html#is" class="d">is</a> no message.  Example: 
+<span class="e">                                :language</span>
+<span class="e">                                Current language: C</span>
+<span class="e">                                :language de_DE.ISO_8859-1</span>
+<span class="e">                                :language mes</span>
+<span class="e">                                Current messages language: de_DE.ISO_8859-1</span>
+<span class="e">                                :lang mes en</span>
+
+
+<span class="c">MS-WINDOWS MESSAGE TRANSLATIONS                        </span> <a name="win32-gettext" class="t">win32-gettext</a>
+
+If you used the self-installing .exe file, message translations should work
+already.  Otherwise get the libintl.dll file if you don't have <a href="motion.txt.html#it" class="d">it</a> yet:
+
+        <a class="u" href="http://sourceforge.net/projects/gettext">http://sourceforge.net/projects/gettext</a>
+Or:
+        <a class="u" href="https://mlocati.github.io/gettext-iconv-windows/">https://mlocati.github.io/gettext-iconv-windows/</a>
+
+This also contains tools xgettext, msgformat and others.
+
+libintl.dll should be placed in same directory with (g)vim.exe, or some
+place where PATH environment value describe.  Vim also finds libintl-8.dll.
+Message files (vim.mo) have to be placed in "$VIMRUNTIME/lang/xx/LC_MESSAGES"<a href="motion.txt.html#%2C" class="d">,</a>
+where "xx" <a href="motion.txt.html#is" class="d">is</a> the abbreviation of the language (mostly two letters).
+
+If you write your own translations you need to generate the .po file and
+convert <a href="motion.txt.html#it" class="d">it</a> to <a href="insert.txt.html#a" class="d">a</a> .mo file.  You need to get the source <a href="intro.txt.html#distribution" class="d">distribution</a> and read
+the file "src/po/README.txt"<a href="repeat.txt.html#." class="d">.</a>
+
+To overrule the automatic choice of the language, set the $LANG variable to
+the language of your choice.  use "en" to disable translations. 
+<span class="e"></span>
+<span class="e">  :let $LANG = 'ja'</span>
+<span class="e"></span>
+(text for Windows by Muraoka Taro)
+
+<span class="h">==============================================================================</span>
+2. Menus                                                <a name="multilang-menus" class="t">multilang-menus</a>
+
+See <a href="usr_45.txt.html#45.2" class="l">45.2</a> for the basics, esp. using <a href="options.txt.html#%27langmenu%27" class="o">'langmenu'</a>.
+
+<span class="n">Note</span> that if changes have been made to the <a href="gui.txt.html#menus" class="d">menus</a> after the translation was
+done, some of the <a href="gui.txt.html#menus" class="d">menus</a> may be shown in English.  Please try contacting the
+maintainer of the translation and ask him to update it.  You can find the
+name and e-mail address of the translator in
+"$VIMRUNTIME/lang/menu_&lt;lang&gt;.vim"<a href="repeat.txt.html#." class="d">.</a>
+
+To set the font (or fontset) to use for the menus, use the <a href="syntax.txt.html#%3Ahighlight" class="l">:highlight</a>
+command.  Example: 
+<span class="e"></span>
+<span class="e">        :highlight Menu font=k12,r12</span>
+<span class="e"></span>
+<span class="e"></span>
+ALIAS LOCALE NAMES
+
+Unfortunately, the <a href="mbyte.txt.html#locale" class="d">locale</a> names are different on <a href="various.txt.html#various" class="d">various</a> systems, even though
+they are for the same language and encoding.  If you <a href="diff.txt.html#do" class="d">do</a> not get the menu
+translations you expected, check the output of this command: 
+<span class="e"></span>
+<span class="e">        echo v:lang</span>
+<span class="e"></span>
+Now check the "$VIMRUNTIME/lang" directory for menu translation files that use
+<a href="insert.txt.html#a" class="d">a</a> similar language.  <a href="insert.txt.html#A" class="d">A</a> difference in <a href="insert.txt.html#a" class="d">a</a> "<a href="motion.txt.html#-" class="d">-</a>" being <a href="insert.txt.html#a" class="d">a</a> "<a href="motion.txt.html#_" class="d">_</a>" already causes <a href="insert.txt.html#a" class="d">a</a> file
+not to be found!  Another common difference to watch out for <a href="motion.txt.html#is" class="d">is</a> "iso8859-1"
+versus "iso_8859-1"<a href="repeat.txt.html#." class="d">.</a>  Fortunately Vim makes all names lowercase, thus you
+don't have to worry about <a href="change.txt.html#case" class="d">case</a> differences.  Spaces are changed to
+underscores, to avoid having to <a href="intro.txt.html#escape" class="d">escape</a> them.
+
+If you find <a href="insert.txt.html#a" class="d">a</a> menu translation file for your language with <a href="insert.txt.html#a" class="d">a</a> different name,
+create <a href="insert.txt.html#a" class="d">a</a> file in your own runtime directory to load that one.  The name of
+that file could be: 
+<span class="e"></span>
+<span class="e">        ~/.vim/lang/menu_&lt;v:lang&gt;.vim</span>
+<span class="e"></span>
+Check the <a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a> option for directories which are searched.  In that
+file <a href="change.txt.html#put" class="d">put</a> <a href="insert.txt.html#a" class="d">a</a> command to load the menu file with the other name: 
+<span class="e"></span>
+<span class="e">        runtime lang/menu_&lt;other_lang&gt;.vim</span>
+<span class="e"></span>
+<span class="e"></span>
+TRANSLATING MENUS
+
+If you want to <a href="diff.txt.html#do" class="d">do</a> your own translations, you can use the <a href="#%3Amenutrans" class="l">:menutrans</a> command,
+explained below.  It <a href="motion.txt.html#is" class="d">is</a> recommended to <a href="change.txt.html#put" class="d">put</a> the translations for one language
+in <a href="insert.txt.html#a" class="d">a</a> Vim script.  For <a href="insert.txt.html#a" class="d">a</a> language that has no translation yet, please consider
+becoming the maintainer and make your translations available to all Vim users.
+Send an e-mail to the Vim maintainer <span class="s">&lt;maintainer@vim.org&gt;</span>.
+
+                                        <a name="%3Amenut" class="t">:menut</a> <a name="%3Amenutrans" class="t">:menutrans</a> <a name="%3Amenutranslate" class="t">:menutranslate</a>
+:menut[ranslate] clear
+                        Clear all menu translations.
+
+:menut[ranslate] <span class="s">{english}</span> <span class="s">{mylang}</span>
+                        Translate menu name <span class="s">{english}</span> to <span class="s">{mylang}</span>.  All
+                        special characters like "<a href="change.txt.html#%26" class="d">&amp;</a>" and "<a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a>" need to be
+                        included.  Spaces and dots need to be escaped with <a href="insert.txt.html#a" class="d">a</a>
+                        backslash, just like in other <a href="gui.txt.html#%3Amenu" class="l">:menu</a> commands.
+                        Case in <span class="s">{english}</span> <a href="motion.txt.html#is" class="d">is</a> ignored.
+
+See the $VIMRUNTIME/lang directory for examples.
+
+To try out your translations you first have to remove all menus.  This <a href="motion.txt.html#is" class="d">is</a> how
+you can <a href="diff.txt.html#do" class="d">do</a> <a href="motion.txt.html#it" class="d">it</a> without restarting Vim: 
+<span class="e">        :source $VIMRUNTIME/delmenu.vim</span>
+<span class="e">        :source &lt;your-new-menu-file&gt;</span>
+<span class="e">        :source $VIMRUNTIME/menu.vim</span>
+<span class="e"></span>
+Each part of <a href="insert.txt.html#a" class="d">a</a> menu path <a href="motion.txt.html#is" class="d">is</a> translated separately.  The result <a href="motion.txt.html#is" class="d">is</a> that when
+"Help" <a href="motion.txt.html#is" class="d">is</a> translated to "Hilfe" and "Overview" to "Überblick" then
+"Help.Overview" will be translated to "Hilfe.Überblick"<a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+3. Scripts                                              <a name="multilang-scripts" class="t">multilang-scripts</a>
+
+In Vim scripts you can use the <a href="eval.txt.html#v%3Alang" class="l">v:lang</a> variable to get the current language
+(locale).  The default value <a href="motion.txt.html#is" class="d">is</a> "<a href="change.txt.html#C" class="d">C</a>" or comes from the $LANG environment
+variable.
+
+The following example shows how this variable <a href="motion.txt.html#is" class="d">is</a> used in <a href="insert.txt.html#a" class="d">a</a> simple way, to make
+<a href="insert.txt.html#a" class="d">a</a> message adapt to language preferences of the user, 
+<span class="e"></span>
+<span class="e">        :if v:lang =~ "de_DE"</span>
+<span class="e">        :  echo "Guten Morgen"</span>
+<span class="e">        :else</span>
+<span class="e">        :  echo "Good morning"</span>
+<span class="e">        :endif</span>
+
+
+ vim:tw=78:sw=4:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

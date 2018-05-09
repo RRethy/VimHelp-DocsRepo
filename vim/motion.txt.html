@@ -1,0 +1,1357 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: motion.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="motion.txt" class="t">motion.txt</a>    For <span class="i">Vim version 8.0.</span>  Last change: 2017 Oct 15
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Bram Moolenaar</span>
+
+
+Cursor motions                                  <a name="cursor-motions" class="t">cursor-motions</a> <a name="navigation" class="t">navigation</a>
+
+These commands move the cursor position.  If the new position <a href="#is" class="d">is</a> off of the
+screen, the screen <a href="#is" class="d">is</a> scrolled to show the cursor (see also <a href="options.txt.html#%27scrolljump%27" class="o">'scrolljump'</a> and
+<a href="options.txt.html#%27scrolloff%27" class="o">'scrolloff'</a> options).
+
+1. Motions and operators        <a href="#operator" class="l">operator</a>
+2. Left-right motions           <a href="#left-right-motions" class="l">left-right-motions</a>
+3. Up-down motions              <a href="#up-down-motions" class="l">up-down-motions</a>
+4. Word motions                 <a href="#word-motions" class="l">word-motions</a>
+5. Text object motions          <a href="#object-motions" class="l">object-motions</a>
+6. Text object selection        <a href="#object-select" class="l">object-select</a>
+7. Marks                        <a href="#mark-motions" class="l">mark-motions</a>
+8. Jumps                        <a href="#jump-motions" class="l">jump-motions</a>
+9. Various motions              <a href="#various-motions" class="l">various-motions</a>
+
+General remarks:
+
+If you want to know where you are in the file use the "<a href="editing.txt.html#CTRL-G" class="k">CTRL-G</a>" command
+<a href="editing.txt.html#CTRL-G" class="l">CTRL-G</a> or the "<a href="index.txt.html#g" class="d">g</a> <a href="editing.txt.html#CTRL-G" class="k">CTRL-G</a>" command <a href="editing.txt.html#g_CTRL-G" class="l">g_CTRL-G</a><a href="repeat.txt.html#." class="d">.</a>  If you set the <a href="options.txt.html#%27ruler%27" class="o">'ruler'</a> option,
+the cursor position <a href="#is" class="d">is</a> continuously shown in the status line (which slows down
+Vim <a href="insert.txt.html#a" class="d">a</a> little).
+
+Experienced users prefer the <a href="usr_02.txt.html#hjkl" class="d">hjkl</a> keys because they are always right under
+their fingers.  Beginners often prefer the arrow keys, because they <a href="diff.txt.html#do" class="d">do</a> not
+know what the <a href="usr_02.txt.html#hjkl" class="d">hjkl</a> keys do.  The mnemonic value of <a href="usr_02.txt.html#hjkl" class="d">hjkl</a> <a href="#is" class="d">is</a> clear from looking
+<a href="#at" class="d">at</a> the keyboard.  Think of <a href="#j" class="d">j</a> <a href="#as" class="d">as</a> an arrow pointing downwards.
+
+The <a href="options.txt.html#%27virtualedit%27" class="o">'virtualedit'</a> option can be set to make <a href="#it" class="d">it</a> possible to move the cursor to
+positions where there <a href="#is" class="d">is</a> no character or halfway <a href="insert.txt.html#a" class="d">a</a> character.
+
+<span class="h">==============================================================================</span>
+1. Motions and operators                                <a name="operator" class="t">operator</a>
+
+The motion commands can be used after an <a href="#operator" class="d">operator</a> command, to have the command
+operate on the text that was moved over.  That <a href="#is" class="d">is</a> the text between the cursor
+position before and after the motion.  Operators are generally used to delete
+or change text.  The following operators are available:
+
+        <a href="change.txt.html#c" class="l">c</a>     <a href="change.txt.html#c" class="d">c</a>       change
+        <a href="change.txt.html#d" class="l">d</a>     <a href="change.txt.html#d" class="d">d</a>       delete
+        <a href="change.txt.html#y" class="l">y</a>     <a href="change.txt.html#y" class="d">y</a>       <a href="change.txt.html#yank" class="d">yank</a> into <a href="sponsor.txt.html#register" class="d">register</a> (does not change the text)
+        <a href="change.txt.html#%7E" class="l">~</a>     <a href="change.txt.html#%7E" class="d">~</a>       swap <a href="change.txt.html#case" class="d">case</a> (only if <a href="options.txt.html#%27tildeop%27" class="o">'tildeop'</a> <a href="#is" class="d">is</a> set)
+        <a href="change.txt.html#g%7E" class="l">g~</a>    <a href="change.txt.html#g%7E" class="d">g~</a>      swap <a href="change.txt.html#case" class="d">case</a>
+        <a href="change.txt.html#gu" class="l">gu</a>    <a href="change.txt.html#gu" class="d">gu</a>      make <a href="change.txt.html#lowercase" class="d">lowercase</a>
+        <a href="change.txt.html#gU" class="l">gU</a>    <a href="change.txt.html#gU" class="d">gU</a>      make <a href="change.txt.html#uppercase" class="d">uppercase</a>
+        <a href="change.txt.html#%21" class="l">!</a>     <a href="change.txt.html#%21" class="d">!</a>       <a href="change.txt.html#filter" class="d">filter</a> through an external program
+        <a href="change.txt.html#%3D" class="l">=</a>     <a href="change.txt.html#%3D" class="d">=</a>       <a href="change.txt.html#filter" class="d">filter</a> through <a href="options.txt.html#%27equalprg%27" class="o">'equalprg'</a> or <a href="indent.txt.html#C-indenting" class="d">C-indenting</a> if empty
+        <a href="change.txt.html#gq" class="l">gq</a>    <a href="change.txt.html#gq" class="d">gq</a>      text <a href="change.txt.html#formatting" class="d">formatting</a>
+        <a href="change.txt.html#g%3F" class="l">g?</a>    <a href="change.txt.html#g%3F" class="d">g?</a>      ROT13 encoding
+        <a href="change.txt.html#%3E" class="l">&gt;</a>     <a href="change.txt.html#%3E" class="d">&gt;</a>       <a href="intro.txt.html#shift" class="d">shift</a> right
+        <a href="change.txt.html#%3C" class="l">&lt;</a>     <a href="change.txt.html#%3C" class="d">&lt;</a>       <a href="intro.txt.html#shift" class="d">shift</a> left
+        <a href="fold.txt.html#zf" class="l">zf</a>    <a href="fold.txt.html#zf" class="d">zf</a>      define <a href="insert.txt.html#a" class="d">a</a> fold
+        <a href="map.txt.html#g%40" class="l">g@</a>    <a href="map.txt.html#g%40" class="d">g@</a>      call function set with the <a href="options.txt.html#%27operatorfunc%27" class="o">'operatorfunc'</a> option
+
+If the motion includes <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> and the <a href="#operator" class="d">operator</a> also had <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> before it,
+the two counts are multiplied.  For example: "2d3w" deletes six words.
+
+After applying the <a href="#operator" class="d">operator</a> the cursor <a href="#is" class="d">is</a> mostly left <a href="#at" class="d">at</a> the start of the text
+that was operated upon.  For example, "yfe" doesn't move the cursor, but "yFe"
+moves the cursor leftwards to the "<a href="#e" class="d">e</a>" where the <a href="change.txt.html#yank" class="d">yank</a> started.
+
+                                                <a name="linewise" class="t">linewise</a> <a name="characterwise" class="t">characterwise</a>
+The <a href="#operator" class="d">operator</a> either affects whole lines, or the characters between the start
+and <a href="intro.txt.html#end" class="d">end</a> position.  Generally, motions that move between lines affect lines
+(are linewise), and motions that move within <a href="insert.txt.html#a" class="d">a</a> line affect characters (are
+characterwise).  However, there are some exceptions.
+
+                                                <a name="exclusive" class="t">exclusive</a> <a name="inclusive" class="t">inclusive</a>
+<a href="insert.txt.html#A" class="d">A</a> character motion <a href="#is" class="d">is</a> either <a href="#inclusive" class="d">inclusive</a> or exclusive.  When inclusive, the
+start and <a href="intro.txt.html#end" class="d">end</a> position of the motion are included in the operation.  When
+exclusive, the last character towards the <a href="intro.txt.html#end" class="d">end</a> of the buffer <a href="#is" class="d">is</a> not included.
+Linewise motions always include the start and <a href="intro.txt.html#end" class="d">end</a> position.
+
+Which motions are linewise, <a href="#inclusive" class="d">inclusive</a> or <a href="#exclusive" class="d">exclusive</a> <a href="#is" class="d">is</a> mentioned with the
+command.  There are however, two general exceptions:
+1. If the motion <a href="#is" class="d">is</a> <a href="#exclusive" class="d">exclusive</a> and the <a href="intro.txt.html#end" class="d">end</a> of the motion <a href="#is" class="d">is</a> in column 1, the
+   <a href="intro.txt.html#end" class="d">end</a> of the motion <a href="#is" class="d">is</a> moved to the <a href="intro.txt.html#end" class="d">end</a> of the previous line and the motion
+   becomes inclusive.  Example: "<a href="#%7D" class="d">}</a>" moves to the first line after <a href="insert.txt.html#a" class="d">a</a> paragraph,
+   but "d}" will not include that line.
+                                                <a name="exclusive-linewise" class="t">exclusive-linewise</a>
+2. If the motion <a href="#is" class="d">is</a> exclusive, the <a href="intro.txt.html#end" class="d">end</a> of the motion <a href="#is" class="d">is</a> in column 1 and the
+   start of the motion was <a href="#at" class="d">at</a> or before the first non-blank in the line, the
+   motion becomes linewise.  Example: If <a href="insert.txt.html#a" class="d">a</a> <a href="#paragraph" class="d">paragraph</a> begins with some blanks
+   and you <a href="diff.txt.html#do" class="d">do</a> "d}" while standing on the first non-blank, all the lines of
+   the <a href="#paragraph" class="d">paragraph</a> are deleted, including the blanks.  If you <a href="diff.txt.html#do" class="d">do</a> <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#put" class="d">put</a> now, the
+   deleted lines will be inserted below the cursor position.
+
+<span class="n">Note</span> that when the <a href="#operator" class="d">operator</a> <a href="#is" class="d">is</a> pending (the <a href="#operator" class="d">operator</a> command <a href="#is" class="d">is</a> typed, but the
+motion isn't yet), <a href="insert.txt.html#a" class="d">a</a> special set of mappings can be used.  See <a href="map.txt.html#%3Aomap" class="l">:omap</a><a href="repeat.txt.html#." class="d">.</a>
+
+Instead of first giving the <a href="#operator" class="d">operator</a> and then <a href="insert.txt.html#a" class="d">a</a> motion you can use <a href="visual.txt.html#Visual" class="d">Visual</a>
+mode: <a href="#mark" class="d">mark</a> the start of the text with "<a href="visual.txt.html#v" class="d">v</a>"<a href="#%2C" class="d">,</a> move the cursor to the <a href="intro.txt.html#end" class="d">end</a> of the
+text that <a href="#is" class="d">is</a> to be affected and then hit the operator.  The text between the
+start and the cursor position <a href="#is" class="d">is</a> highlighted, so you can see what text will
+be operated upon.  This allows much more freedom, but requires more key
+strokes and has limited <a href="undo.txt.html#redo" class="d">redo</a> functionality.  See the chapter on <a href="visual.txt.html#Visual" class="d">Visual</a> mode
+<a href="visual.txt.html#Visual-mode" class="l">Visual-mode</a><a href="repeat.txt.html#." class="d">.</a>
+
+You can use <a href="insert.txt.html#a" class="d">a</a> "<a href="cmdline.txt.html#%3A" class="d">:</a>" command for <a href="insert.txt.html#a" class="d">a</a> motion.  For example "d:call FindEnd()"<a href="repeat.txt.html#." class="d">.</a>
+But this can't be repeated with "<a href="repeat.txt.html#." class="d">.</a>" if the command <a href="#is" class="d">is</a> more than one line.
+This can be repeated: 
+<span class="e">        d:call search("f")&lt;CR&gt;</span>
+This cannot be repeated: 
+<span class="e">        d:if 1&lt;CR&gt;</span>
+<span class="e">           call search("f")&lt;CR&gt;</span>
+<span class="e">        endif&lt;CR&gt;</span>
+<span class="n">Note</span> that when using "<a href="cmdline.txt.html#%3A" class="d">:</a>" any motion becomes <a href="#characterwise" class="d">characterwise</a> exclusive.
+
+
+FORCING <a href="insert.txt.html#A" class="d">A</a> MOTION TO BE LINEWISE, CHARACTERWISE OR BLOCKWISE
+
+When <a href="insert.txt.html#a" class="d">a</a> motion <a href="#is" class="d">is</a> not of the type you would like to use, you can force another
+type by using "<a href="visual.txt.html#v" class="d">v</a>"<a href="#%2C" class="d">,</a> "<a href="visual.txt.html#V" class="d">V</a>" or <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> just after the operator.
+Example: 
+<span class="e">        dj</span>
+deletes two lines 
+<span class="e">        dvj</span>
+deletes from the cursor position until the character below the cursor 
+<span class="e">        d&lt;C-V&gt;j</span>
+deletes the character under the cursor and the character below the cursor. 
+<span class="e"></span>
+Be careful with forcing <a href="insert.txt.html#a" class="d">a</a> <a href="#linewise" class="d">linewise</a> <a href="intro.txt.html#movement" class="d">movement</a> to be used <a href="#characterwise" class="d">characterwise</a> or
+blockwise, the column may not always be defined.
+
+                                                        <a name="o_v" class="t">o_v</a>
+<a href="visual.txt.html#v" class="d">v</a>               When used after an operator, before the motion command: Force
+                the <a href="#operator" class="d">operator</a> to work characterwise, also when the motion <a href="#is" class="d">is</a>
+                linewise.  If the motion was linewise, <a href="#it" class="d">it</a> will become
+                <a href="#exclusive" class="l">exclusive</a><a href="repeat.txt.html#." class="d">.</a>
+                If the motion already was characterwise, <a href="options.txt.html#toggle" class="d">toggle</a>
+                inclusive/exclusive.  This can be used to make an <a href="#exclusive" class="d">exclusive</a>
+                motion <a href="#inclusive" class="d">inclusive</a> and an <a href="#inclusive" class="d">inclusive</a> motion exclusive.
+
+                                                        <a name="o_V" class="t">o_V</a>
+<a href="visual.txt.html#V" class="d">V</a>               When used after an operator, before the motion command: Force
+                the <a href="#operator" class="d">operator</a> to work linewise, also when the motion <a href="#is" class="d">is</a>
+                characterwise.
+
+                                                        <a name="o_CTRL-V" class="t">o_CTRL-V</a>
+<a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a>          When used after an operator, before the motion command: Force
+                the <a href="#operator" class="d">operator</a> to work blockwise.  This works like <a href="visual.txt.html#Visual" class="d">Visual</a> block
+                mode selection, with the corners defined by the cursor
+                position before and after the motion.
+
+<span class="h">==============================================================================</span>
+2. Left-right motions                                   <a name="left-right-motions" class="t">left-right-motions</a>
+
+These commands move the cursor to the specified column in the current line.
+They stop <a href="#at" class="d">at</a> the first column and <a href="#at" class="d">at</a> the <a href="intro.txt.html#end" class="d">end</a> of the line, except "<a href="#%24" class="d">$</a>"<a href="#%2C" class="d">,</a> which
+may move to one of the next lines.  See <a href="options.txt.html#%27whichwrap%27" class="o">'whichwrap'</a> option to make some of the
+commands move across line boundaries.
+
+<a href="#h" class="d">h</a>               or                                      <a name="h" class="t">h</a>
+<a href="#%3CLeft%3E" class="s">&lt;Left&gt;</a>          or                                      <a name="%3CLeft%3E" class="t">&lt;Left&gt;</a>
+<a href="#CTRL-H" class="k">CTRL-H</a>          or                                      <a name="CTRL-H" class="t">CTRL-H</a> <a name="%3CBS%3E" class="t">&lt;BS&gt;</a>
+<a href="#%3CBS%3E" class="s">&lt;BS&gt;</a>                    <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> characters to the left.  <a href="#exclusive" class="l">exclusive</a> motion.
+                        <span class="n">Note:</span> If you prefer <a href="#%3CBS%3E" class="s">&lt;BS&gt;</a> to delete <a href="insert.txt.html#a" class="d">a</a> character, use
+                        the mapping:
+                                <a href="map.txt.html#%3Amap" class="d">:map</a> <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a><a href="#%3CBS%3E" class="s">&lt;BS&gt;</a>         <a href="change.txt.html#X" class="d">X</a>
+                        (to enter "<a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a><a href="#%3CBS%3E" class="s">&lt;BS&gt;</a>" type the <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> key, followed
+                        by the <a href="#%3CBS%3E" class="s">&lt;BS&gt;</a> key)
+                        See <a href="options.txt.html#%3Afixdel" class="l">:fixdel</a> if the <a href="#%3CBS%3E" class="s">&lt;BS&gt;</a> key does not <a href="diff.txt.html#do" class="d">do</a> what you
+                        want.
+
+<a href="#l" class="d">l</a>               or                                      <a name="l" class="t">l</a>
+<a href="#%3CRight%3E" class="s">&lt;Right&gt;</a>         or                                      <a name="%3CRight%3E" class="t">&lt;Right&gt;</a> <a name="%3CSpace%3E" class="t">&lt;Space&gt;</a>
+<a href="#%3CSpace%3E" class="s">&lt;Space&gt;</a>                 <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> characters to the right.  <a href="#exclusive" class="l">exclusive</a> motion.
+                        See the <a href="options.txt.html#%27whichwrap%27" class="o">'whichwrap'</a> option for adjusting the behavior
+                        <a href="#at" class="d">at</a> <a href="intro.txt.html#end" class="d">end</a> of line
+
+                                                        <a name="0" class="t">0</a>
+<a href="#0" class="d">0</a>                       To the first character of the line.  <a href="#exclusive" class="l">exclusive</a>
+                        motion.
+
+                                                        <a name="%3CHome%3E" class="t">&lt;Home&gt;</a> <a name="%3CkHome%3E" class="t">&lt;kHome&gt;</a>
+<a href="#%3CHome%3E" class="s">&lt;Home&gt;</a>                  To the first character of the line.  <a href="#exclusive" class="l">exclusive</a>
+                        motion.  When moving up or down next, stay in same
+                        TEXT column (if possible).  Most other commands stay
+                        in the same SCREEN column.  <a href="#%3CHome%3E" class="s">&lt;Home&gt;</a> works like "1|"<a href="#%2C" class="d">,</a>
+                        which differs from "<a href="#0" class="d">0</a>" when the line starts with <a href="insert.txt.html#a" class="d">a</a>
+                        <a href="#%3CTab%3E" class="s">&lt;Tab&gt;</a>.  <span class="s">{not in Vi}</span>
+
+                                                        <a name="%5E" class="t">^</a>
+<a href="#%5E" class="d">^</a>                       To the first non-blank character of the line.
+                        <a href="#exclusive" class="l">exclusive</a> motion.
+
+                                                        <a name="%24" class="t">$</a> <a name="%3CEnd%3E" class="t">&lt;End&gt;</a> <a name="%3CkEnd%3E" class="t">&lt;kEnd&gt;</a>
+<a href="#%24" class="d">$</a>  or <a href="#%3CEnd%3E" class="s">&lt;End&gt;</a>             To the <a href="intro.txt.html#end" class="d">end</a> of the line.  When <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> <a href="#is" class="d">is</a> given also <a href="#go" class="d">go</a>
+                        [count <a href="#-" class="d">-</a> 1] lines downward. <a href="#inclusive" class="l">inclusive</a> motion.
+                        In <a href="visual.txt.html#Visual" class="d">Visual</a> mode the cursor goes to just after the last
+                        character in the line.
+                        When <a href="options.txt.html#%27virtualedit%27" class="o">'virtualedit'</a> <a href="#is" class="d">is</a> active, "<a href="#%24" class="d">$</a>" may move the cursor
+                        back from past the <a href="intro.txt.html#end" class="d">end</a> of the line to the last
+                        character in the line.
+
+                                                        <a name="g_" class="t">g_</a>
+<a href="#g_" class="d">g_</a>                      To the last non-blank character of the line and
+                        [count <a href="#-" class="d">-</a> 1] lines downward <a href="#inclusive" class="l">inclusive</a><a href="repeat.txt.html#." class="d">.</a> <span class="s">{not in Vi}</span>
+
+                                                        <a name="g0" class="t">g0</a> <a name="g%3CHome%3E" class="t">g&lt;Home&gt;</a>
+<a href="#g0" class="d">g0</a> or <a href="#g%3CHome%3E" class="d">g&lt;Home&gt;</a>           When lines wrap ('wrap' on): To the first character of
+                        the screen line.  <a href="#exclusive" class="l">exclusive</a> motion.  Differs from
+                        "<a href="#0" class="d">0</a>" when <a href="insert.txt.html#a" class="d">a</a> line <a href="#is" class="d">is</a> wider than the screen.
+                        When lines don't wrap ('wrap' off): To the leftmost
+                        character of the current line that <a href="#is" class="d">is</a> on the screen.
+                        Differs from "<a href="#0" class="d">0</a>" when the first character of the line
+                        <a href="#is" class="d">is</a> not on the screen.  <span class="s">{not in Vi}</span>
+
+                                                        <a name="g%5E" class="t">g^</a>
+<a href="#g%5E" class="d">g^</a>                      When lines wrap ('wrap' on): To the first non-blank
+                        character of the screen line.  <a href="#exclusive" class="l">exclusive</a> motion.
+                        Differs from "<a href="#%5E" class="d">^</a>" when <a href="insert.txt.html#a" class="d">a</a> line <a href="#is" class="d">is</a> wider than the screen.
+                        When lines don't wrap ('wrap' off): To the leftmost
+                        non-blank character of the current line that <a href="#is" class="d">is</a> on the
+                        screen.  Differs from "<a href="#%5E" class="d">^</a>" when the first non-blank
+                        character of the line <a href="#is" class="d">is</a> not on the screen.  {not in
+                        Vi}
+
+                                                        <a name="gm" class="t">gm</a>
+<a href="#gm" class="d">gm</a>                      Like "<a href="#g0" class="d">g0</a>"<a href="#%2C" class="d">,</a> but half <a href="insert.txt.html#a" class="d">a</a> screenwidth to the right (or <a href="#as" class="d">as</a>
+                        much <a href="#as" class="d">as</a> possible). <span class="s">{not in Vi}</span>
+
+                                                        <a name="g%24" class="t">g$</a> <a name="g%3CEnd%3E" class="t">g&lt;End&gt;</a>
+<a href="#g%24" class="d">g$</a> or <a href="#g%3CEnd%3E" class="d">g&lt;End&gt;</a>            When lines wrap ('wrap' on): To the last character of
+                        the screen line and [count <a href="#-" class="d">-</a> 1] screen lines downward
+                        <a href="#inclusive" class="l">inclusive</a><a href="repeat.txt.html#." class="d">.</a>  Differs from "<a href="#%24" class="d">$</a>" when <a href="insert.txt.html#a" class="d">a</a> line <a href="#is" class="d">is</a> wider
+                        than the screen.
+                        When lines don't wrap ('wrap' off): To the rightmost
+                        character of the current line that <a href="#is" class="d">is</a> visible on the
+                        screen.  Differs from "<a href="#%24" class="d">$</a>" when the last character of
+                        the line <a href="#is" class="d">is</a> not on the screen or when <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> <a href="#is" class="d">is</a> used.
+                        Additionally, vertical movements keep the column,
+                        instead of going to the <a href="intro.txt.html#end" class="d">end</a> of the line.
+                        When <a href="options.txt.html#%27virtualedit%27" class="o">'virtualedit'</a> <a href="#is" class="d">is</a> enabled moves to the <a href="intro.txt.html#end" class="d">end</a> of the
+                        screen line.
+                        <span class="s">{not in Vi}</span>
+
+                                                        <a name="bar" class="t">bar</a>
+|                       To screen column <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> in the current line.
+                        <a href="#exclusive" class="l">exclusive</a> motion.  Ceci n'est pas une pipe.
+
+                                                        <a name="f" class="t">f</a>
+f{char}                 To <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a>'th occurrence of <span class="s">{char}</span> to the right.  The
+                        cursor <a href="#is" class="d">is</a> placed on <span class="s">{char}</span> <a href="#inclusive" class="l">inclusive</a><a href="repeat.txt.html#." class="d">.</a>
+                        <span class="s">{char}</span> can be entered <a href="#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> <a href="digraph.txt.html#digraph" class="d">digraph</a> <a href="change.txt.html#digraph-arg" class="l">digraph-arg</a><a href="repeat.txt.html#." class="d">.</a>
+                        When <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> <a href="#is" class="d">is</a> set to Unicode, composing
+                        characters may be used, see <a href="mbyte.txt.html#utf-8-char-arg" class="l">utf-8-char-arg</a><a href="repeat.txt.html#." class="d">.</a>
+                        <a href="map.txt.html#%3Almap" class="l">:lmap</a> mappings apply to <span class="s">{char}</span>.  The <a href="editing.txt.html#CTRL-%5E" class="k">CTRL-^</a> command
+                        in <a href="insert.txt.html#Insert" class="d">Insert</a> mode can be used to switch this on/off
+                        <a href="insert.txt.html#i_CTRL-%5E" class="l">i_CTRL-^</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="F" class="t">F</a>
+F{char}                 To the <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a>'th occurrence of <span class="s">{char}</span> to the left.
+                        The cursor <a href="#is" class="d">is</a> placed on <span class="s">{char}</span> <a href="#exclusive" class="l">exclusive</a><a href="repeat.txt.html#." class="d">.</a>
+                        <span class="s">{char}</span> can be entered like with the <a href="#f" class="l">f</a> command.
+
+                                                        <a name="t" class="t">t</a>
+t{char}                 Till before <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a>'th occurrence of <span class="s">{char}</span> to the
+                        right.  The cursor <a href="#is" class="d">is</a> placed on the character left of
+                        <span class="s">{char}</span> <a href="#inclusive" class="l">inclusive</a><a href="repeat.txt.html#." class="d">.</a>
+                        <span class="s">{char}</span> can be entered like with the <a href="#f" class="l">f</a> command.
+
+                                                        <a name="T" class="t">T</a>
+T{char}                 Till after <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a>'th occurrence of <span class="s">{char}</span> to the
+                        left.  The cursor <a href="#is" class="d">is</a> placed on the character right of
+                        <span class="s">{char}</span> <a href="#exclusive" class="l">exclusive</a><a href="repeat.txt.html#." class="d">.</a>
+                        <span class="s">{char}</span> can be entered like with the <a href="#f" class="l">f</a> command.
+
+                                                        <a name="%3B" class="t">;</a>
+<a href="#%3B" class="d">;</a>                       Repeat latest f, t, <a href="#F" class="d">F</a> or <a href="#T" class="d">T</a> <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> times. See <a href="options.txt.html#cpo-%3B" class="l">cpo-;</a>
+
+                                                        <a name="%2C" class="t">,</a>
+<a href="#%2C" class="d">,</a>                       Repeat latest f, t, <a href="#F" class="d">F</a> or <a href="#T" class="d">T</a> in opposite direction
+                        <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> times. See also <a href="options.txt.html#cpo-%3B" class="l">cpo-;</a>
+
+<span class="h">==============================================================================</span>
+3. Up-down motions                                      <a name="up-down-motions" class="t">up-down-motions</a>
+
+<a href="#k" class="d">k</a>               or                                      <a name="k" class="t">k</a>
+<a href="#%3CUp%3E" class="s">&lt;Up&gt;</a>            or                                      <a name="%3CUp%3E" class="t">&lt;Up&gt;</a> <a name="CTRL-P" class="t">CTRL-P</a>
+<a href="#CTRL-P" class="k">CTRL-P</a>                  <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> lines upward <a href="#linewise" class="l">linewise</a><a href="repeat.txt.html#." class="d">.</a>
+
+<a href="#j" class="d">j</a>               or                                      <a name="j" class="t">j</a>
+<a href="#%3CDown%3E" class="s">&lt;Down&gt;</a>          or                                      <a name="%3CDown%3E" class="t">&lt;Down&gt;</a>
+<a href="#CTRL-J" class="k">CTRL-J</a>          or                                      <a name="CTRL-J" class="t">CTRL-J</a>
+<a href="#%3CNL%3E" class="s">&lt;NL&gt;</a>            or                                      <a name="%3CNL%3E" class="t">&lt;NL&gt;</a> <a name="CTRL-N" class="t">CTRL-N</a>
+<a href="#CTRL-N" class="k">CTRL-N</a>                  <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> lines downward <a href="#linewise" class="l">linewise</a><a href="repeat.txt.html#." class="d">.</a>
+
+<a href="#gk" class="d">gk</a>              or                                      <a name="gk" class="t">gk</a> <a name="g%3CUp%3E" class="t">g&lt;Up&gt;</a>
+<a href="#g%3CUp%3E" class="d">g&lt;Up&gt;</a>                   <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> display lines upward.  <a href="#exclusive" class="l">exclusive</a> motion.
+                        Differs from 'k' when lines wrap, and when used with
+                        an operator, because it's not linewise.  <span class="s">{not in Vi}</span>
+
+<a href="#gj" class="d">gj</a>              or                                      <a name="gj" class="t">gj</a> <a name="g%3CDown%3E" class="t">g&lt;Down&gt;</a>
+<a href="#g%3CDown%3E" class="d">g&lt;Down&gt;</a>                 <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> display lines downward.  <a href="#exclusive" class="l">exclusive</a> motion.
+                        Differs from 'j' when lines wrap, and when used with
+                        an operator, because it's not linewise.  <span class="s">{not in Vi}</span>
+
+                                                        <a name="-" class="t">-</a>
+<a href="#-" class="d">-</a>  <span class="s">&lt;minus&gt;</span>              <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> lines upward, on the first non-blank
+                        character <a href="#linewise" class="l">linewise</a><a href="repeat.txt.html#." class="d">.</a>
+
+<a href="#%2B" class="d">+</a>               or                                      <a name="%2B" class="t">+</a>
+<a href="#CTRL-M" class="k">CTRL-M</a>          or                                      <a name="CTRL-M" class="t">CTRL-M</a> <a name="%3CCR%3E" class="t">&lt;CR&gt;</a>
+<a href="#%3CCR%3E" class="s">&lt;CR&gt;</a>                    <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> lines downward, on the first non-blank
+                        character <a href="#linewise" class="l">linewise</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="_" class="t">_</a>
+<a href="#_" class="d">_</a>  <span class="s">&lt;underscore&gt;</span>         <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> <a href="#-" class="d">-</a> 1 lines downward, on the first non-blank
+                        character <a href="#linewise" class="l">linewise</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="G" class="t">G</a>
+<a href="#G" class="d">G</a>                       Goto line <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a>, default last line, on the first
+                        non-blank character <a href="#linewise" class="l">linewise</a><a href="repeat.txt.html#." class="d">.</a>  If <a href="options.txt.html#%27startofline%27" class="o">'startofline'</a> not
+                        set, keep the same column.
+                        <a href="#G" class="d">G</a> <a href="#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> one of <a href="#jump-motions" class="l">jump-motions</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="%3CC-End%3E" class="t">&lt;C-End&gt;</a>
+<a href="#%3CC-End%3E" class="s">&lt;C-End&gt;</a>                 Goto line <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a>, default last line, on the last
+                        character <a href="#inclusive" class="l">inclusive</a><a href="repeat.txt.html#." class="d">.</a> <span class="s">{not in Vi}</span>
+
+<a href="#%3CC-Home%3E" class="s">&lt;C-Home&gt;</a>        or                                      <a name="gg" class="t">gg</a> <a name="%3CC-Home%3E" class="t">&lt;C-Home&gt;</a>
+<a href="#gg" class="d">gg</a>                      Goto line <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a>, default first line, on the first
+                        non-blank character <a href="#linewise" class="l">linewise</a><a href="repeat.txt.html#." class="d">.</a>  If <a href="options.txt.html#%27startofline%27" class="o">'startofline'</a> not
+                        set, keep the same column.
+
+                                                        <a name="%3A%5Brange%5D" class="t">:[range]</a>
+<a href="#%3A%5Brange%5D" class="d">:[range]</a>                Set the cursor on the last line number in <a href="cmdline.txt.html#%5Brange%5D" class="s">[range]</a>.
+                        <a href="cmdline.txt.html#%5Brange%5D" class="s">[range]</a> can also be just one line number, e.g., ":1"
+                        or ":'m"<a href="repeat.txt.html#." class="d">.</a>
+                        In contrast with <a href="#G" class="l">G</a> this command does not modify the
+                        <a href="#jumplist" class="l">jumplist</a><a href="repeat.txt.html#." class="d">.</a>
+                                                        <a name="N%25" class="t">N%</a>
+<span class="s">{count}</span>%                Go to <span class="s">{count}</span> percentage in the file, on the first
+                        non-blank in the line <a href="#linewise" class="l">linewise</a><a href="repeat.txt.html#." class="d">.</a>  To compute the new
+                        line number this formula <a href="#is" class="d">is</a> used:
+                            ({count} * number-of-lines <a href="#%2B" class="d">+</a> 99) <a href="pattern.txt.html#%2F" class="d">/</a> 100
+                        See also <a href="options.txt.html#%27startofline%27" class="o">'startofline'</a> option.  <span class="s">{not in Vi}</span>
+
+:[range]go[to] <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a>                                  <a name="%3Ago" class="t">:go</a> <a name="%3Agoto" class="t">:goto</a> <a name="go" class="t">go</a>
+<a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a>go               Go to <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> byte in the buffer.  Default <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> <a href="#is" class="d">is</a>
+                        one, start of the file.  When giving <a href="cmdline.txt.html#%5Brange%5D" class="s">[range]</a>, the
+                        last number in <a href="#it" class="d">it</a> used <a href="#as" class="d">as</a> the byte count.  End-of-line
+                        characters are counted depending on the current
+                        <a href="options.txt.html#%27fileformat%27" class="o">'fileformat'</a> setting.
+                        Also see the <a href="eval.txt.html#line2byte%28%29" class="l">line2byte()</a> function, and the 'o'
+                        option in <a href="options.txt.html#%27statusline%27" class="o">'statusline'</a>.
+                        <span class="s">{not in Vi}</span>
+                        {not available when compiled without the
+                        <a href="various.txt.html#%2Bbyte_offset" class="l">+byte_offset</a> feature}
+
+These commands move to the specified line.  They stop when reaching the first
+or the last line.  The first two commands <a href="change.txt.html#put" class="d">put</a> the cursor in the same column
+(if possible) <a href="#as" class="d">as</a> <a href="#it" class="d">it</a> was after the last command that changed the column,
+except after the "<a href="#%24" class="d">$</a>" command, then the cursor will be <a href="change.txt.html#put" class="d">put</a> on the last
+character of the line.
+
+If "<a href="#k" class="d">k</a>"<a href="#%2C" class="d">,</a> "<a href="#-" class="d">-</a>" or <a href="#CTRL-P" class="k">CTRL-P</a> <a href="#is" class="d">is</a> used with <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> and there are <a href="various.txt.html#less" class="d">less</a> than <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a>
+lines above the cursor and the <a href="options.txt.html#%27cpo%27" class="o">'cpo'</a> option includes the "<a href="#-" class="d">-</a>" flag <a href="#it" class="d">it</a> <a href="#is" class="d">is</a> an
+error. <a href="options.txt.html#cpo--" class="l">cpo--</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+4. Word motions                                         <a name="word-motions" class="t">word-motions</a>
+
+<a href="#%3CS-Right%3E" class="s">&lt;S-Right&gt;</a>       or                                      <a name="%3CS-Right%3E" class="t">&lt;S-Right&gt;</a> <a name="w" class="t">w</a>
+<a href="#w" class="d">w</a>                       <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> words forward.  <a href="#exclusive" class="l">exclusive</a> motion.
+
+<a href="#%3CC-Right%3E" class="s">&lt;C-Right&gt;</a>       or                                      <a name="%3CC-Right%3E" class="t">&lt;C-Right&gt;</a> <a name="W" class="t">W</a>
+<a href="#W" class="d">W</a>                       <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> WORDS forward.  <a href="#exclusive" class="l">exclusive</a> motion.
+
+                                                        <a name="e" class="t">e</a>
+<a href="#e" class="d">e</a>                       Forward to the <a href="intro.txt.html#end" class="d">end</a> of <a href="#word" class="d">word</a> <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> <a href="#inclusive" class="l">inclusive</a><a href="repeat.txt.html#." class="d">.</a>
+                        Does not stop in an empty line.
+
+                                                        <a name="E" class="t">E</a>
+<a href="#E" class="d">E</a>                       Forward to the <a href="intro.txt.html#end" class="d">end</a> of <a href="#WORD" class="d">WORD</a> <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> <a href="#inclusive" class="l">inclusive</a><a href="repeat.txt.html#." class="d">.</a>
+                        Does not stop in an empty line.
+
+<a href="#%3CS-Left%3E" class="s">&lt;S-Left&gt;</a>        or                                      <a name="%3CS-Left%3E" class="t">&lt;S-Left&gt;</a> <a name="b" class="t">b</a>
+<a href="#b" class="d">b</a>                       <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> words backward.  <a href="#exclusive" class="l">exclusive</a> motion.
+
+<a href="#%3CC-Left%3E" class="s">&lt;C-Left&gt;</a>        or                                      <a name="%3CC-Left%3E" class="t">&lt;C-Left&gt;</a> <a name="B" class="t">B</a>
+<a href="#B" class="d">B</a>                       <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> WORDS backward.  <a href="#exclusive" class="l">exclusive</a> motion.
+
+                                                        <a name="ge" class="t">ge</a>
+<a href="#ge" class="d">ge</a>                      Backward to the <a href="intro.txt.html#end" class="d">end</a> of <a href="#word" class="d">word</a> <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> <a href="#inclusive" class="l">inclusive</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="gE" class="t">gE</a>
+<a href="#gE" class="d">gE</a>                      Backward to the <a href="intro.txt.html#end" class="d">end</a> of <a href="#WORD" class="d">WORD</a> <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> <a href="#inclusive" class="l">inclusive</a><a href="repeat.txt.html#." class="d">.</a>
+
+These commands move over words or WORDS.
+                                                        <a name="word" class="t">word</a>
+<a href="insert.txt.html#A" class="d">A</a> <a href="#word" class="d">word</a> consists of <a href="insert.txt.html#a" class="d">a</a> sequence of letters, digits and underscores, or <a href="insert.txt.html#a" class="d">a</a>
+sequence of other non-blank characters, separated with white <a href="intro.txt.html#space" class="d">space</a> (spaces,
+tabs, <a href="intro.txt.html#%3CEOL%3E" class="s">&lt;EOL&gt;</a>).  This can be changed with the <a href="options.txt.html#%27iskeyword%27" class="o">'iskeyword'</a> option.  An empty line
+<a href="#is" class="d">is</a> also considered to be <a href="insert.txt.html#a" class="d">a</a> word.
+                                                        <a name="WORD" class="t">WORD</a>
+<a href="insert.txt.html#A" class="d">A</a> <a href="#WORD" class="d">WORD</a> consists of <a href="insert.txt.html#a" class="d">a</a> sequence of non-blank characters, separated with white
+space.  An empty line <a href="#is" class="d">is</a> also considered to be <a href="insert.txt.html#a" class="d">a</a> WORD.
+
+<a href="insert.txt.html#A" class="d">A</a> sequence of folded lines <a href="#is" class="d">is</a> counted for one <a href="#word" class="d">word</a> of <a href="insert.txt.html#a" class="d">a</a> single character.
+"<a href="#w" class="d">w</a>" and "<a href="#W" class="d">W</a>"<a href="#%2C" class="d">,</a> "<a href="#e" class="d">e</a>" and "<a href="#E" class="d">E</a>" move to the start/end of the first <a href="#word" class="d">word</a> or <a href="#WORD" class="d">WORD</a> after
+<a href="insert.txt.html#a" class="d">a</a> range of folded lines.  "<a href="#b" class="d">b</a>" and "<a href="#B" class="d">B</a>" move to the start of the first <a href="#word" class="d">word</a> or
+<a href="#WORD" class="d">WORD</a> before the fold.
+
+<a href="eval.txt.html#Special" class="d">Special</a> case: "<a href="change.txt.html#cw" class="d">cw</a>" and "<a href="change.txt.html#cW" class="d">cW</a>" are treated like "ce" and "cE" if the cursor <a href="#is" class="d">is</a>
+on <a href="insert.txt.html#a" class="d">a</a> non-blank.  This <a href="#is" class="d">is</a> because "<a href="change.txt.html#cw" class="d">cw</a>" <a href="#is" class="d">is</a> interpreted <a href="#as" class="d">as</a> change-word, and <a href="insert.txt.html#a" class="d">a</a>
+<a href="#word" class="d">word</a> does not include the following white space.  {Vi: "<a href="change.txt.html#cw" class="d">cw</a>" when on <a href="insert.txt.html#a" class="d">a</a> blank
+followed by other blanks changes only the first blank; this <a href="#is" class="d">is</a> probably <a href="insert.txt.html#a" class="d">a</a>
+bug, because "dw" deletes all the blanks}
+
+Another special case: When using the "<a href="#w" class="d">w</a>" motion in combination with an
+<a href="#operator" class="d">operator</a> and the last <a href="#word" class="d">word</a> moved over <a href="#is" class="d">is</a> <a href="#at" class="d">at</a> the <a href="intro.txt.html#end" class="d">end</a> of <a href="insert.txt.html#a" class="d">a</a> line, the <a href="intro.txt.html#end" class="d">end</a> of
+that <a href="#word" class="d">word</a> becomes the <a href="intro.txt.html#end" class="d">end</a> of the operated text, not the first <a href="#word" class="d">word</a> in the
+next line.
+
+The original <a href="intro.txt.html#Vi" class="d">Vi</a> implementation of "<a href="#e" class="d">e</a>" <a href="#is" class="d">is</a> buggy.  For example, the "<a href="#e" class="d">e</a>" command
+will stop on the first character of <a href="insert.txt.html#a" class="d">a</a> line if the previous line was empty.
+But when you use "2e" this does not happen.  In Vim "ee" and "2e" are the
+same, which <a href="#is" class="d">is</a> more logical.  However, this causes <a href="insert.txt.html#a" class="d">a</a> small incompatibility
+between <a href="intro.txt.html#Vi" class="d">Vi</a> and Vim.
+
+<span class="h">==============================================================================</span>
+5. Text object motions                                  <a name="object-motions" class="t">object-motions</a>
+
+                                                        <a name="%28" class="t">(</a>
+<a href="#%28" class="d">(</a>                       <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> sentences backward.  <a href="#exclusive" class="l">exclusive</a> motion.
+
+                                                        <a name="%29" class="t">)</a>
+<a href="#%29" class="d">)</a>                       <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> sentences forward.  <a href="#exclusive" class="l">exclusive</a> motion.
+
+                                                        <a name="%7B" class="t">{</a>
+<a href="#%7B" class="d">{</a>                       <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> paragraphs backward.  <a href="#exclusive" class="l">exclusive</a> motion.
+
+                                                        <a name="%7D" class="t">}</a>
+<a href="#%7D" class="d">}</a>                       <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> paragraphs forward.  <a href="#exclusive" class="l">exclusive</a> motion.
+
+                                                        <a name="%5D%5D" class="t">]]</a>
+<a href="#%5D%5D" class="d">]]</a>                      <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> sections forward or to the next '{' in the
+                        first column.  When used after an operator, then also
+                        stops below <a href="insert.txt.html#a" class="d">a</a> '}' in the first column.  <a href="#exclusive" class="l">exclusive</a>
+                        <span class="n">Note</span> that <a href="#exclusive-linewise" class="l">exclusive-linewise</a> often applies.
+
+                                                        <a name="%5D%5B" class="t">][</a>
+<a href="#%5D%5B" class="d">][</a>                      <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> sections forward or to the next '}' in the
+                        first column.  <a href="#exclusive" class="l">exclusive</a>
+                        <span class="n">Note</span> that <a href="#exclusive-linewise" class="l">exclusive-linewise</a> often applies.
+
+                                                        <a name="%5B%5B" class="t">[[</a>
+<a href="#%5B%5B" class="d">[[</a>                      <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> sections backward or to the previous '{' in
+                        the first column.  <a href="#exclusive" class="l">exclusive</a>
+                        <span class="n">Note</span> that <a href="#exclusive-linewise" class="l">exclusive-linewise</a> often applies.
+
+                                                        <a name="%5B%5D" class="t">[]</a>
+<a href="#%5B%5D" class="d">[]</a>                      <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> sections backward or to the previous '}' in
+                        the first column.  <a href="#exclusive" class="l">exclusive</a>
+                        <span class="n">Note</span> that <a href="#exclusive-linewise" class="l">exclusive-linewise</a> often applies.
+
+These commands move over three kinds of text objects.
+
+                                                        <a name="sentence" class="t">sentence</a>
+<a href="insert.txt.html#A" class="d">A</a> <a href="#sentence" class="d">sentence</a> <a href="#is" class="d">is</a> defined <a href="#as" class="d">as</a> ending <a href="#at" class="d">at</a> <a href="insert.txt.html#a" class="d">a</a> '.', '!' or '?' followed by either the
+<a href="intro.txt.html#end" class="d">end</a> of <a href="insert.txt.html#a" class="d">a</a> line, or by <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#space" class="d">space</a> or tab.  Any number of closing ')', ']', <a href="#%27" class="d">'</a>"<a href="#%27" class="d">'</a>
+and ''' characters may appear after the '.', '!' or '?' before the spaces,
+tabs or <a href="intro.txt.html#end" class="d">end</a> of line.  <a href="insert.txt.html#A" class="d">A</a> <a href="#paragraph" class="d">paragraph</a> and <a href="#section" class="d">section</a> boundary <a href="#is" class="d">is</a> also <a href="insert.txt.html#a" class="d">a</a> <a href="#sentence" class="d">sentence</a>
+boundary.
+If the 'J' flag <a href="#is" class="d">is</a> present in <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a>, <a href="#at" class="d">at</a> least two spaces have to
+follow the punctuation mark; <a href="#%3CTab%3E" class="s">&lt;Tab&gt;</a>s are not recognized <a href="#as" class="d">as</a> white space.
+The definition of <a href="insert.txt.html#a" class="d">a</a> <a href="#sentence" class="d">sentence</a> cannot be changed.
+
+                                                        <a name="paragraph" class="t">paragraph</a>
+<a href="insert.txt.html#A" class="d">A</a> <a href="#paragraph" class="d">paragraph</a> begins after each empty line, and also <a href="#at" class="d">at</a> each of <a href="insert.txt.html#a" class="d">a</a> set of
+<a href="#paragraph" class="d">paragraph</a> macros, specified by the pairs of characters in the <a href="options.txt.html#%27paragraphs%27" class="o">'paragraphs'</a>
+option.  The default <a href="#is" class="d">is</a> "IPLPPPQPP TPHPLIPpLpItpplpipbp"<a href="#%2C" class="d">,</a> which corresponds to
+the macros ".IP"<a href="#%2C" class="d">,</a> ".LP"<a href="#%2C" class="d">,</a> etc.  (These are nroff macros, so the dot <a href="vim_faq.txt.html#must" class="d">must</a> be in
+the first column).  <a href="insert.txt.html#A" class="d">A</a> <a href="#section" class="d">section</a> boundary <a href="#is" class="d">is</a> also <a href="insert.txt.html#a" class="d">a</a> <a href="#paragraph" class="d">paragraph</a> boundary.
+<span class="n">Note</span> that <a href="insert.txt.html#a" class="d">a</a> blank line (only containing white space) <a href="#is" class="d">is</a> NOT <a href="insert.txt.html#a" class="d">a</a> <a href="#paragraph" class="d">paragraph</a>
+boundary.
+Also <span class="n">note</span> that this does not include <a href="insert.txt.html#a" class="d">a</a> '{' or '}' in the first column.  When
+the '{' flag <a href="#is" class="d">is</a> in <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a> then '{' in the first column <a href="#is" class="d">is</a> used <a href="#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a>
+<a href="#paragraph" class="d">paragraph</a> boundary <a href="vi_diff.txt.html#posix" class="l">posix</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="section" class="t">section</a>
+<a href="insert.txt.html#A" class="d">A</a> <a href="#section" class="d">section</a> begins after <a href="insert.txt.html#a" class="d">a</a> form-feed (&lt;C-L&gt;) in the first column and <a href="#at" class="d">at</a> each of
+<a href="insert.txt.html#a" class="d">a</a> set of <a href="#section" class="d">section</a> macros, specified by the pairs of characters in the
+<a href="options.txt.html#%27sections%27" class="o">'sections'</a> option.  The default <a href="#is" class="d">is</a> "SHNHH HUnhsh"<a href="#%2C" class="d">,</a> which defines <a href="insert.txt.html#a" class="d">a</a> <a href="#section" class="d">section</a> to
+start <a href="#at" class="d">at</a> the nroff macros ".SH"<a href="#%2C" class="d">,</a> ".NH"<a href="#%2C" class="d">,</a> ".H"<a href="#%2C" class="d">,</a> ".HU"<a href="#%2C" class="d">,</a> ".nh" and ".sh"<a href="repeat.txt.html#." class="d">.</a>
+
+The "<a href="index.txt.html#%5D" class="d">]</a>" and "<a href="index.txt.html#%5B" class="d">[</a>" commands stop <a href="#at" class="d">at</a> the '{' or '}' in the first column.  This <a href="#is" class="d">is</a>
+useful to find the start or <a href="intro.txt.html#end" class="d">end</a> of <a href="insert.txt.html#a" class="d">a</a> function in <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#C" class="d">C</a> program.  <span class="n">Note</span> that the
+first character of the command determines the search direction and the
+second character the type of brace found.
+
+If your '{' or '}' are not in the first column, and you would like to use "<a href="#%5B%5B" class="d">[[</a>"
+and "<a href="#%5D%5D" class="d">]]</a>" anyway, try these mappings: 
+<span class="e">   :map [[ ?{&lt;CR&gt;w99[{</span>
+<span class="e">   :map ][ /}&lt;CR&gt;b99]}</span>
+<span class="e">   :map ]] j0[[%/{&lt;CR&gt;</span>
+<span class="e">   :map [] k$][%?}&lt;CR&gt;</span>
+[type these literally, see <a href="intro.txt.html#%3C%3E" class="l">&lt;&gt;</a><a href="index.txt.html#%5D" class="d">]</a>
+
+<span class="h">==============================================================================</span>
+6. Text object selection                        <a name="object-select" class="t">object-select</a> <a name="text-objects" class="t">text-objects</a>
+                                                <a name="v_a" class="t">v_a</a> <a name="v_i" class="t">v_i</a>
+
+This <a href="#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> series of commands that can only be used while in <a href="visual.txt.html#Visual" class="d">Visual</a> mode or
+after an operator.  The commands that start with "<a href="insert.txt.html#a" class="d">a</a>" select "<a href="insert.txt.html#a" class="d">a</a>"<a href="pattern.txt.html#n" class="d">n</a> object
+including white space, the commands <a href="starting.txt.html#starting" class="d">starting</a> with "<a href="insert.txt.html#i" class="d">i</a>" select an "inner" object
+without white space, or just the white space.  Thus the "inner" commands
+always select <a href="various.txt.html#less" class="d">less</a> text than the "<a href="insert.txt.html#a" class="d">a</a>" commands.
+
+These commands are <span class="s">{not in Vi}</span>.
+These commands are not available when the <a href="various.txt.html#%2Btextobjects" class="l">+textobjects</a> feature has been
+disabled <a href="#at" class="d">at</a> compile time.
+Also see <span class="e">gn</span> and <span class="e">gN</span>, operating on the last search pattern.
+
+                                                        <a name="v_aw" class="t">v_aw</a> <a name="aw" class="t">aw</a>
+<a href="#aw" class="d">aw</a>                      "<a href="insert.txt.html#a" class="d">a</a> <a href="#word" class="d">word</a>"<a href="#%2C" class="d">,</a> select <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> words (see <a href="#word" class="l">word</a>).
+                        Leading or trailing white <a href="intro.txt.html#space" class="d">space</a> <a href="#is" class="d">is</a> included, but not
+                        counted.
+                        When used in <a href="visual.txt.html#Visual" class="d">Visual</a> <a href="#linewise" class="d">linewise</a> mode "<a href="#aw" class="d">aw</a>" switches to
+                        <a href="visual.txt.html#Visual" class="d">Visual</a> <a href="#characterwise" class="d">characterwise</a> mode.
+
+                                                        <a name="v_iw" class="t">v_iw</a> <a name="iw" class="t">iw</a>
+<a href="#iw" class="d">iw</a>                      "inner <a href="#word" class="d">word</a>"<a href="#%2C" class="d">,</a> select <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> words (see <a href="#word" class="l">word</a>).
+                        White <a href="intro.txt.html#space" class="d">space</a> between words <a href="#is" class="d">is</a> counted too.
+                        When used in <a href="visual.txt.html#Visual" class="d">Visual</a> <a href="#linewise" class="d">linewise</a> mode "<a href="#iw" class="d">iw</a>" switches to
+                        <a href="visual.txt.html#Visual" class="d">Visual</a> <a href="#characterwise" class="d">characterwise</a> mode.
+
+                                                        <a name="v_aW" class="t">v_aW</a> <a name="aW" class="t">aW</a>
+<a href="#aW" class="d">aW</a>                      "<a href="insert.txt.html#a" class="d">a</a> <a href="#WORD" class="d">WORD</a>"<a href="#%2C" class="d">,</a> select <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> WORDs (see <a href="#WORD" class="l">WORD</a>).
+                        Leading or trailing white <a href="intro.txt.html#space" class="d">space</a> <a href="#is" class="d">is</a> included, but not
+                        counted.
+                        When used in <a href="visual.txt.html#Visual" class="d">Visual</a> <a href="#linewise" class="d">linewise</a> mode "<a href="#aW" class="d">aW</a>" switches to
+                        <a href="visual.txt.html#Visual" class="d">Visual</a> <a href="#characterwise" class="d">characterwise</a> mode.
+
+                                                        <a name="v_iW" class="t">v_iW</a> <a name="iW" class="t">iW</a>
+<a href="#iW" class="d">iW</a>                      "inner <a href="#WORD" class="d">WORD</a>"<a href="#%2C" class="d">,</a> select <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> WORDs (see <a href="#WORD" class="l">WORD</a>).
+                        White <a href="intro.txt.html#space" class="d">space</a> between words <a href="#is" class="d">is</a> counted too.
+                        When used in <a href="visual.txt.html#Visual" class="d">Visual</a> <a href="#linewise" class="d">linewise</a> mode "<a href="#iW" class="d">iW</a>" switches to
+                        <a href="visual.txt.html#Visual" class="d">Visual</a> <a href="#characterwise" class="d">characterwise</a> mode.
+
+                                                        <a name="v_as" class="t">v_as</a> <a name="as" class="t">as</a>
+<a href="#as" class="d">as</a>                      "<a href="insert.txt.html#a" class="d">a</a> <a href="#sentence" class="d">sentence</a>"<a href="#%2C" class="d">,</a> select <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> sentences (see
+                        <a href="#sentence" class="l">sentence</a>).
+                        When used in <a href="visual.txt.html#Visual" class="d">Visual</a> mode <a href="#it" class="d">it</a> <a href="#is" class="d">is</a> made characterwise.
+
+                                                        <a name="v_is" class="t">v_is</a> <a name="is" class="t">is</a>
+<a href="#is" class="d">is</a>                      "inner <a href="#sentence" class="d">sentence</a>"<a href="#%2C" class="d">,</a> select <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> sentences (see
+                        <a href="#sentence" class="l">sentence</a>).
+                        When used in <a href="visual.txt.html#Visual" class="d">Visual</a> mode <a href="#it" class="d">it</a> <a href="#is" class="d">is</a> made characterwise.
+
+                                                        <a name="v_ap" class="t">v_ap</a> <a name="ap" class="t">ap</a>
+<a href="#ap" class="d">ap</a>                      "<a href="insert.txt.html#a" class="d">a</a> <a href="#paragraph" class="d">paragraph</a>"<a href="#%2C" class="d">,</a> select <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> paragraphs (see
+                        <a href="#paragraph" class="l">paragraph</a>).
+                        Exception: <a href="insert.txt.html#a" class="d">a</a> blank line (only containing white space)
+                        <a href="#is" class="d">is</a> also <a href="insert.txt.html#a" class="d">a</a> <a href="#paragraph" class="d">paragraph</a> boundary.
+                        When used in <a href="visual.txt.html#Visual" class="d">Visual</a> mode <a href="#it" class="d">it</a> <a href="#is" class="d">is</a> made linewise.
+
+                                                        <a name="v_ip" class="t">v_ip</a> <a name="ip" class="t">ip</a>
+<a href="#ip" class="d">ip</a>                      "inner <a href="#paragraph" class="d">paragraph</a>"<a href="#%2C" class="d">,</a> select <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> paragraphs (see
+                        <a href="#paragraph" class="l">paragraph</a>).
+                        Exception: <a href="insert.txt.html#a" class="d">a</a> blank line (only containing white space)
+                        <a href="#is" class="d">is</a> also <a href="insert.txt.html#a" class="d">a</a> <a href="#paragraph" class="d">paragraph</a> boundary.
+                        When used in <a href="visual.txt.html#Visual" class="d">Visual</a> mode <a href="#it" class="d">it</a> <a href="#is" class="d">is</a> made linewise.
+
+<a href="#a%5D" class="d">a]</a>                                              <a name="v_a%5D" class="t">v_a]</a> <a name="v_a%5B" class="t">v_a[</a> <a name="a%5D" class="t">a]</a> <a name="a%5B" class="t">a[</a>
+<a href="#a%5B" class="d">a[</a>                      "<a href="insert.txt.html#a" class="d">a</a> <a href="#%5B%5D" class="d">[]</a> block"<a href="#%2C" class="d">,</a> select <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> '[' ']' blocks.  This
+                        goes backwards to the <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> unclosed '[', and finds
+                        the matching ']'.  The enclosed text <a href="#is" class="d">is</a> selected,
+                        including the '[' and ']'.
+                        When used in <a href="visual.txt.html#Visual" class="d">Visual</a> mode <a href="#it" class="d">it</a> <a href="#is" class="d">is</a> made characterwise.
+
+<a href="#i%5D" class="d">i]</a>                                              <a name="v_i%5D" class="t">v_i]</a> <a name="v_i%5B" class="t">v_i[</a> <a name="i%5D" class="t">i]</a> <a name="i%5B" class="t">i[</a>
+<a href="#i%5B" class="d">i[</a>                      "inner <a href="#%5B%5D" class="d">[]</a> block"<a href="#%2C" class="d">,</a> select <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> '[' ']' blocks.  This
+                        goes backwards to the <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> unclosed '[', and finds
+                        the matching ']'.  The enclosed text <a href="#is" class="d">is</a> selected,
+                        excluding the '[' and ']'.
+                        When used in <a href="visual.txt.html#Visual" class="d">Visual</a> mode <a href="#it" class="d">it</a> <a href="#is" class="d">is</a> made characterwise.
+
+<a href="#a%29" class="d">a)</a>                                                      <a name="v_a%29" class="t">v_a)</a> <a name="a%29" class="t">a)</a> <a name="a%28" class="t">a(</a>
+<a href="#a%28" class="d">a(</a>                                                      <a name="vab" class="t">vab</a> <a name="v_ab" class="t">v_ab</a> <a name="v_a%28" class="t">v_a(</a> <a name="ab" class="t">ab</a>
+<a href="#ab" class="d">ab</a>                      "<a href="insert.txt.html#a" class="d">a</a> block"<a href="#%2C" class="d">,</a> select <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> blocks, from "<a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> <a href="#%5B%28" class="d">[(</a>" to
+                        the matching ')', including the '(' and ')' (see
+                        <a href="#%5B%28" class="l">[(</a>).  Does not include white <a href="intro.txt.html#space" class="d">space</a> outside of the
+                        parenthesis.
+                        When used in <a href="visual.txt.html#Visual" class="d">Visual</a> mode <a href="#it" class="d">it</a> <a href="#is" class="d">is</a> made characterwise.
+
+<a href="#i%29" class="d">i)</a>                                                      <a name="v_i%29" class="t">v_i)</a> <a name="i%29" class="t">i)</a> <a name="i%28" class="t">i(</a>
+<a href="#i%28" class="d">i(</a>                                                      <a name="vib" class="t">vib</a> <a name="v_ib" class="t">v_ib</a> <a name="v_i%28" class="t">v_i(</a> <a name="ib" class="t">ib</a>
+<a href="#ib" class="d">ib</a>                      "inner block"<a href="#%2C" class="d">,</a> select <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> blocks, from "<a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> <a href="#%5B%28" class="d">[(</a>"
+                        to the matching ')', excluding the '(' and ')' (see
+                        <a href="#%5B%28" class="l">[(</a>).
+                        When used in <a href="visual.txt.html#Visual" class="d">Visual</a> mode <a href="#it" class="d">it</a> <a href="#is" class="d">is</a> made characterwise.
+
+<a href="#a%3E" class="d">a&gt;</a>                                              <a name="v_a%3E" class="t">v_a&gt;</a> <a name="v_a%3C" class="t">v_a&lt;</a> <a name="a%3E" class="t">a&gt;</a> <a name="a%3C" class="t">a&lt;</a>
+<a href="#a%3C" class="d">a&lt;</a>                      "<a href="insert.txt.html#a" class="d">a</a> <span class="s">&lt;&gt; block", select [count] &lt;&gt;</span> blocks, from the
+                        <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a>'th unmatched '&lt;' backwards to the matching
+                        '&gt;', including the '&lt;' and '&gt;'.
+                        When used in <a href="visual.txt.html#Visual" class="d">Visual</a> mode <a href="#it" class="d">it</a> <a href="#is" class="d">is</a> made characterwise.
+
+<a href="#i%3E" class="d">i&gt;</a>                                              <a name="v_i%3E" class="t">v_i&gt;</a> <a name="v_i%3C" class="t">v_i&lt;</a> <a name="i%3E" class="t">i&gt;</a> <a name="i%3C" class="t">i&lt;</a>
+<a href="#i%3C" class="d">i&lt;</a>                      "inner <span class="s">&lt;&gt; block", select [count] &lt;&gt;</span> blocks, from
+                        the <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a>'th unmatched '&lt;' backwards to the matching
+                        '&gt;', excluding the '&lt;' and '&gt;'.
+                        When used in <a href="visual.txt.html#Visual" class="d">Visual</a> mode <a href="#it" class="d">it</a> <a href="#is" class="d">is</a> made characterwise.
+
+                                                <a name="v_at" class="t">v_at</a> <a name="at" class="t">at</a>
+<a href="#at" class="d">at</a>                      "<a href="insert.txt.html#a" class="d">a</a> <a href="tagsrch.txt.html#tag" class="d">tag</a> block"<a href="#%2C" class="d">,</a> select <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> <a href="tagsrch.txt.html#tag" class="d">tag</a> blocks, from the
+                        <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a>'th unmatched "<span class="s">&lt;aaa&gt;</span>" backwards to the matching
+                        "<span class="s">&lt;/aaa&gt;</span>"<a href="#%2C" class="d">,</a> including the "<span class="s">&lt;aaa&gt;</span>" and "<span class="s">&lt;/aaa&gt;</span>"<a href="repeat.txt.html#." class="d">.</a>
+                        See <a href="#tag-blocks" class="l">tag-blocks</a> about the details.
+                        When used in <a href="visual.txt.html#Visual" class="d">Visual</a> mode <a href="#it" class="d">it</a> <a href="#is" class="d">is</a> made characterwise.
+
+                                                <a name="v_it" class="t">v_it</a> <a name="it" class="t">it</a>
+<a href="#it" class="d">it</a>                      "inner <a href="tagsrch.txt.html#tag" class="d">tag</a> block"<a href="#%2C" class="d">,</a> select <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> <a href="tagsrch.txt.html#tag" class="d">tag</a> blocks, from the
+                        <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a>'th unmatched "<span class="s">&lt;aaa&gt;</span>" backwards to the matching
+                        "<span class="s">&lt;/aaa&gt;</span>"<a href="#%2C" class="d">,</a> excluding the "<span class="s">&lt;aaa&gt;</span>" and "<span class="s">&lt;/aaa&gt;</span>"<a href="repeat.txt.html#." class="d">.</a>
+                        See <a href="#tag-blocks" class="l">tag-blocks</a> about the details.
+                        When used in <a href="visual.txt.html#Visual" class="d">Visual</a> mode <a href="#it" class="d">it</a> <a href="#is" class="d">is</a> made characterwise.
+
+<a href="#a%7D" class="d">a}</a>                                                      <a name="v_a%7D" class="t">v_a}</a> <a name="a%7D" class="t">a}</a> <a name="a%7B" class="t">a{</a>
+<a href="#a%7B" class="d">a{</a>                                                      <a name="v_aB" class="t">v_aB</a> <a name="v_a%7B" class="t">v_a{</a> <a name="aB" class="t">aB</a>
+<a href="#aB" class="d">aB</a>                      "<a href="insert.txt.html#a" class="d">a</a> Block"<a href="#%2C" class="d">,</a> select <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> Blocks, from "<a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> <a href="#%5B%7B" class="d">[{</a>" to
+                        the matching '}', including the '{' and '}' (see
+                        <a href="#%5B%7B" class="l">[{</a>).
+                        When used in <a href="visual.txt.html#Visual" class="d">Visual</a> mode <a href="#it" class="d">it</a> <a href="#is" class="d">is</a> made characterwise.
+
+<a href="#i%7D" class="d">i}</a>                                                      <a name="v_i%7D" class="t">v_i}</a> <a name="i%7D" class="t">i}</a> <a name="i%7B" class="t">i{</a>
+<a href="#i%7B" class="d">i{</a>                                                      <a name="v_iB" class="t">v_iB</a> <a name="v_i%7B" class="t">v_i{</a> <a name="iB" class="t">iB</a>
+<a href="#iB" class="d">iB</a>                      "inner Block"<a href="#%2C" class="d">,</a> select <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> Blocks, from "<a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> <a href="#%5B%7B" class="d">[{</a>"
+                        to the matching '}', excluding the '{' and '}' (see
+                        <a href="#%5B%7B" class="l">[{</a>).
+                        When used in <a href="visual.txt.html#Visual" class="d">Visual</a> mode <a href="#it" class="d">it</a> <a href="#is" class="d">is</a> made characterwise.
+
+<a href="insert.txt.html#a" class="d">a</a>"                                                      <a name="v_aquote" class="t">v_aquote</a> <a name="aquote" class="t">aquote</a>
+<a href="#a%27" class="d">a'</a>                                                      <a name="v_a%27" class="t">v_a'</a> <a name="a%27" class="t">a'</a>
+<a href="#a%60" class="d">a`</a>                                                      <a name="v_a%60" class="t">v_a`</a> <a name="a%60" class="t">a`</a>
+                        "<a href="insert.txt.html#a" class="d">a</a> quoted <a href="eval.txt.html#string" class="d">string</a>"<a href="repeat.txt.html#." class="d">.</a>  Selects the text from the previous
+                        <a href="change.txt.html#quote" class="d">quote</a> until the next <a href="change.txt.html#quote." class="d">quote.</a>  The <a href="options.txt.html#%27quoteescape%27" class="o">'quoteescape'</a> option
+                        <a href="#is" class="d">is</a> used to skip escaped quotes.
+                        Only works within one line.
+                        When the cursor starts on <a href="insert.txt.html#a" class="d">a</a> quote, Vim will figure out
+                        which <a href="change.txt.html#quote" class="d">quote</a> pairs form <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#string" class="d">string</a> by searching from the
+                        start of the line.
+                        Any trailing white <a href="intro.txt.html#space" class="d">space</a> <a href="#is" class="d">is</a> included, unless there <a href="#is" class="d">is</a>
+                        none, then leading white <a href="intro.txt.html#space" class="d">space</a> <a href="#is" class="d">is</a> included.
+                        When used in <a href="visual.txt.html#Visual" class="d">Visual</a> mode <a href="#it" class="d">it</a> <a href="#is" class="d">is</a> made characterwise.
+                        Repeating this object in <a href="visual.txt.html#Visual" class="d">Visual</a> mode another <a href="eval.txt.html#string" class="d">string</a> <a href="#is" class="d">is</a>
+                        included.  <a href="insert.txt.html#A" class="d">A</a> <a href="intro.txt.html#count" class="d">count</a> <a href="#is" class="d">is</a> currently not used.
+
+<a href="insert.txt.html#i" class="d">i</a>"                                                      <a name="v_iquote" class="t">v_iquote</a> <a name="iquote" class="t">iquote</a>
+<a href="#i%27" class="d">i'</a>                                                      <a name="v_i%27" class="t">v_i'</a> <a name="i%27" class="t">i'</a>
+<a href="#i%60" class="d">i`</a>                                                      <a name="v_i%60" class="t">v_i`</a> <a name="i%60" class="t">i`</a>
+                        Like <a href="insert.txt.html#a" class="d">a</a>"<a href="#%2C" class="d">,</a> <a href="#a%27" class="d">a'</a> and a`, but exclude the <a href="quotes.txt.html#quotes" class="d">quotes</a> and
+                        <a href="repeat.txt.html#repeating" class="d">repeating</a> won't extend the <a href="visual.txt.html#Visual" class="d">Visual</a> selection.
+                        <a href="eval.txt.html#Special" class="d">Special</a> case: With <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> of 2 the <a href="quotes.txt.html#quotes" class="d">quotes</a> are
+                        included, but no extra white <a href="intro.txt.html#space" class="d">space</a> <a href="#as" class="d">as</a> with <a href="insert.txt.html#a" class="d">a</a>"/a'/a`.
+
+When used after an operator:
+For non-block objects:
+        For the "<a href="insert.txt.html#a" class="d">a</a>" commands: The <a href="#operator" class="d">operator</a> applies to the object and the white
+        <a href="intro.txt.html#space" class="d">space</a> after the object.  If there <a href="#is" class="d">is</a> no white <a href="intro.txt.html#space" class="d">space</a> after the object
+        or when the cursor was in the white <a href="intro.txt.html#space" class="d">space</a> before the object, the white
+        <a href="intro.txt.html#space" class="d">space</a> before the object <a href="#is" class="d">is</a> included.
+        For the "inner" commands: If the cursor was on the object, the
+        <a href="#operator" class="d">operator</a> applies to the object.  If the cursor was on white space, the
+        <a href="#operator" class="d">operator</a> applies to the white space.
+For <a href="insert.txt.html#a" class="d">a</a> block object:
+        The <a href="#operator" class="d">operator</a> applies to the block where the cursor <a href="#is" class="d">is</a> in, or the block
+        on which the cursor <a href="#is" class="d">is</a> on one of the braces.  For the "inner" commands
+        the surrounding braces are excluded.  For the "<a href="insert.txt.html#a" class="d">a</a>" commands, the braces
+        are included.
+
+When used in <a href="visual.txt.html#Visual" class="d">Visual</a> mode:
+When start and <a href="intro.txt.html#end" class="d">end</a> of the <a href="visual.txt.html#Visual" class="d">Visual</a> area are the same (just after typing "<a href="visual.txt.html#v" class="d">v</a>"):
+        One object <a href="#is" class="d">is</a> selected, the same <a href="#as" class="d">as</a> for using an operator.
+When start and <a href="intro.txt.html#end" class="d">end</a> of the <a href="visual.txt.html#Visual" class="d">Visual</a> area are not the same:
+        For non-block <a href="index.txt.html#objects" class="d">objects</a> the area <a href="#is" class="d">is</a> extended by one object or the white
+        <a href="intro.txt.html#space" class="d">space</a> up to the next object, or both for the "<a href="insert.txt.html#a" class="d">a</a>" objects.  The
+        direction in which this happens depends on which side of the <a href="visual.txt.html#Visual" class="d">Visual</a>
+        area the cursor is.  For the block <a href="index.txt.html#objects" class="d">objects</a> the block <a href="#is" class="d">is</a> extended one
+        level outwards.
+
+For illustration, here <a href="#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of delete commands, grouped from small to big
+objects.  <span class="n">Note</span> that for <a href="insert.txt.html#a" class="d">a</a> single character and <a href="insert.txt.html#a" class="d">a</a> whole line the existing <a href="intro.txt.html#vi" class="d">vi</a>
+<a href="intro.txt.html#movement" class="d">movement</a> commands are used.
+        "<a href="change.txt.html#dl" class="d">dl</a>"    delete character (alias: "<a href="change.txt.html#x" class="d">x</a>"<a href="#%29" class="d">)</a>           <a href="change.txt.html#dl" class="l">dl</a>
+        "<a href="#diw" class="d">diw</a>"   delete inner <a href="#word" class="d">word</a>                       <a name="diw" class="t">diw</a>
+        "<a href="#daw" class="d">daw</a>"   delete <a href="insert.txt.html#a" class="d">a</a> <a href="#word" class="d">word</a>                           <a name="daw" class="t">daw</a>
+        "<a href="#diW" class="d">diW</a>"   delete inner <a href="#WORD" class="d">WORD</a> (see <a href="#WORD" class="l">WORD</a><a href="#%29" class="d">)</a>          <a name="diW" class="t">diW</a>
+        "<a href="#daW" class="d">daW</a>"   delete <a href="insert.txt.html#a" class="d">a</a> <a href="#WORD" class="d">WORD</a> (see <a href="#WORD" class="l">WORD</a><a href="#%29" class="d">)</a>              <a name="daW" class="t">daW</a>
+        "<a href="#dgn" class="d">dgn</a>"   delete the next search <a href="pattern.txt.html#pattern" class="d">pattern</a> match    <a name="dgn" class="t">dgn</a>
+        "<a href="change.txt.html#dd" class="d">dd</a>"    delete one line                         <a href="change.txt.html#dd" class="l">dd</a>
+        "<a href="#dis" class="d">dis</a>"   delete inner <a href="#sentence" class="d">sentence</a>                   <a name="dis" class="t">dis</a>
+        "<a href="#das" class="d">das</a>"   delete <a href="insert.txt.html#a" class="d">a</a> <a href="#sentence" class="d">sentence</a>                       <a name="das" class="t">das</a>
+        "<a href="#dib" class="d">dib</a>"   delete inner '(' ')' block              <a name="dib" class="t">dib</a>
+        "<a href="#dab" class="d">dab</a>"   delete <a href="insert.txt.html#a" class="d">a</a> '(' ')' block                  <a name="dab" class="t">dab</a>
+        "<a href="#dip" class="d">dip</a>"   delete inner <a href="#paragraph" class="d">paragraph</a>                  <a name="dip" class="t">dip</a>
+        "<a href="#dap" class="d">dap</a>"   delete <a href="insert.txt.html#a" class="d">a</a> <a href="#paragraph" class="d">paragraph</a>                      <a name="dap" class="t">dap</a>
+        "<a href="#diB" class="d">diB</a>"   delete inner '{' '}' block              <a name="diB" class="t">diB</a>
+        "<a href="#daB" class="d">daB</a>"   delete <a href="insert.txt.html#a" class="d">a</a> '{' '}' block                  <a name="daB" class="t">daB</a>
+
+<span class="n">Note</span> the difference between using <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#movement" class="d">movement</a> command and an object.  The
+<a href="intro.txt.html#movement" class="d">movement</a> command operates from here (cursor position) to where the <a href="intro.txt.html#movement" class="d">movement</a>
+takes us.  When using an object the whole object <a href="#is" class="d">is</a> operated upon, no matter
+where on the object the cursor is.  For example, compare "dw" and "<a href="#daw" class="d">daw</a>"<a href="cmdline.txt.html#%3A" class="d">:</a> "dw"
+deletes from the cursor position to the start of the next word, "<a href="#daw" class="d">daw</a>" deletes
+the <a href="#word" class="d">word</a> under the cursor and the <a href="intro.txt.html#space" class="d">space</a> after or before it.
+
+
+Tag blocks                                              <a name="tag-blocks" class="t">tag-blocks</a>
+
+For the "<a href="#it" class="d">it</a>" and "<a href="#at" class="d">at</a>" text <a href="index.txt.html#objects" class="d">objects</a> an attempt <a href="#is" class="d">is</a> done to select blocks between
+matching <a href="tagsrch.txt.html#tags" class="d">tags</a> for HTML and XML.  But since these are not completely compatible
+there are <a href="insert.txt.html#a" class="d">a</a> few restrictions.
+
+The normal method <a href="#is" class="d">is</a> to select <a href="insert.txt.html#a" class="d">a</a> <span class="s">&lt;tag&gt;</span> until the matching <span class="s">&lt;/tag&gt;</span>.  For "<a href="#at" class="d">at</a>"
+the <a href="tagsrch.txt.html#tags" class="d">tags</a> are included, for "<a href="#it" class="d">it</a>" they are excluded.  But when "<a href="#it" class="d">it</a>" <a href="#is" class="d">is</a> repeated
+the <a href="tagsrch.txt.html#tags" class="d">tags</a> will be included (otherwise nothing would change).  Also, "<a href="#it" class="d">it</a>" used
+on <a href="insert.txt.html#a" class="d">a</a> <a href="tagsrch.txt.html#tag" class="d">tag</a> block with no contents will select the leading tag.
+
+"<span class="s">&lt;aaa/&gt;</span>" items are skipped.  Case <a href="#is" class="d">is</a> ignored, also for XML where <a href="change.txt.html#case" class="d">case</a> does
+matter.
+
+In HTML <a href="#it" class="d">it</a> <a href="#is" class="d">is</a> possible to have <a href="insert.txt.html#a" class="d">a</a> <a href="tagsrch.txt.html#tag" class="d">tag</a> like <span class="s">&lt;br&gt;</span> or <span class="s">&lt;meta ...&gt;</span> without <a href="insert.txt.html#a" class="d">a</a>
+matching <a href="intro.txt.html#end" class="d">end</a> tag.  These are ignored.
+
+The text <a href="index.txt.html#objects" class="d">objects</a> are tolerant about mistakes.  Stray <a href="intro.txt.html#end" class="d">end</a> <a href="tagsrch.txt.html#tags" class="d">tags</a> are ignored.
+
+<span class="h">==============================================================================</span>
+7. Marks                                        <a name="mark-motions" class="t">mark-motions</a> <a name="E20" class="t">E20</a> <a name="E78" class="t">E78</a>
+
+Jumping to <a href="insert.txt.html#a" class="d">a</a> <a href="#mark" class="d">mark</a> can be done in two ways:
+1. With <a href="#%60" class="d">`</a> (backtick):     The cursor <a href="#is" class="d">is</a> positioned <a href="#at" class="d">at</a> the specified location
+                          and the motion <a href="#is" class="d">is</a> <a href="#exclusive" class="l">exclusive</a><a href="repeat.txt.html#." class="d">.</a>
+2. With <a href="#%27" class="d">'</a> (single quote): The cursor <a href="#is" class="d">is</a> positioned on the first non-blank
+                          character in the line of the specified location and
+                          the motion <a href="#is" class="d">is</a> linewise.
+
+                                                <a name="m" class="t">m</a> <a name="mark" class="t">mark</a> <a name="Mark" class="t">Mark</a>
+m{a-zA-Z}               Set <a href="#mark" class="d">mark</a> <span class="s">{a-zA-Z}</span> <a href="#at" class="d">at</a> cursor position (does not move
+                        the cursor, this <a href="#is" class="d">is</a> not <a href="insert.txt.html#a" class="d">a</a> motion command).
+
+                                                <a name="m%27" class="t">m'</a> <a name="m%60" class="t">m`</a>
+<a href="#m%27" class="d">m'</a>  or  <a href="#m%60" class="d">m`</a>              Set the previous context mark.  This can be jumped to
+                        with the "<a href="#%27%27" class="d">''</a>" or "<a href="#%60%60" class="d">``</a>" command (does not move the
+                        cursor, this <a href="#is" class="d">is</a> not <a href="insert.txt.html#a" class="d">a</a> motion command).
+
+                                                <a name="m%5B" class="t">m[</a> <a name="m%5D" class="t">m]</a>
+<a href="#m%5B" class="d">m[</a>  or  <a href="#m%5D" class="d">m]</a>              Set the <a href="#%27%5B" class="l">'[</a> or <a href="#%27%5D" class="l">']</a> mark.  Useful when an <a href="#operator" class="d">operator</a> <a href="#is" class="d">is</a>
+                        to be simulated by multiple commands.  (does not move
+                        the cursor, this <a href="#is" class="d">is</a> not <a href="insert.txt.html#a" class="d">a</a> motion command).
+
+                                                <a name="m%3C" class="t">m&lt;</a> <a name="m%3E" class="t">m&gt;</a>
+<a href="#m%3C" class="d">m&lt;</a>  or  <a href="#m%3E" class="d">m&gt;</a>              Set the <a href="#%27%3C" class="l">'&lt;</a> or <a href="#%27%3E" class="l">'&gt;</a> mark.  Useful to change what the
+                        <span class="e">gv</span> command selects.  (does not move the cursor, this
+                        <a href="#is" class="d">is</a> not <a href="insert.txt.html#a" class="d">a</a> motion command).
+                        <span class="n">Note</span> that the <a href="visual.txt.html#Visual" class="d">Visual</a> mode cannot be set, only the
+                        start and <a href="intro.txt.html#end" class="d">end</a> position.
+
+                                                <a name="%3Ama" class="t">:ma</a> <a name="%3Amark" class="t">:mark</a> <a name="E191" class="t">E191</a>
+:[range]ma[rk] <span class="s">{a-zA-Z'}</span>
+                        Set <a href="#mark" class="d">mark</a> <span class="s">{a-zA-Z'}</span> <a href="#at" class="d">at</a> last line number in <a href="cmdline.txt.html#%5Brange%5D" class="s">[range]</a>,
+                        column 0.  Default <a href="#is" class="d">is</a> cursor line.
+
+                                                <a name="%3Ak" class="t">:k</a>
+:[range]k{a-zA-Z'}      Same <a href="#as" class="d">as</a> :mark, but the <a href="intro.txt.html#space" class="d">space</a> before the <a href="#mark" class="d">mark</a> name can
+                        be omitted.
+
+                                                <a name="%27" class="t">'</a> <a name="%27a" class="t">'a</a> <a name="%60" class="t">`</a> <a name="%60a" class="t">`a</a>
+'{a-z}  `{a-z}          Jump to the <a href="#mark" class="d">mark</a> <span class="s">{a-z}</span> in the current buffer.
+
+                                                <a name="%27A" class="t">'A</a> <a name="%270" class="t">'0</a> <a name="%60A" class="t">`A</a> <a name="%600" class="t">`0</a>
+'{A-Z0-9}  `{A-Z0-9}    To the <a href="#mark" class="d">mark</a> <span class="s">{A-Z0-9}</span> in the file where <a href="#it" class="d">it</a> was set (not
+                        <a href="insert.txt.html#a" class="d">a</a> motion command when in another file).  <span class="s">{not in Vi}</span>
+
+                                                <a name="g%27" class="t">g'</a> <a name="g%27a" class="t">g'a</a> <a name="g%60" class="t">g`</a> <a name="g%60a" class="t">g`a</a>
+g'{mark}  g`{mark}
+                        Jump to the <span class="s">{mark}</span>, but don't change the <a href="#jumplist" class="d">jumplist</a> when
+                        jumping within the current buffer.  Example: 
+<span class="e">                                g`"</span>
+                       jumps to the last known position in <a href="insert.txt.html#a" class="d">a</a> file.  See
+                        $VIMRUNTIME/vimrc_example.vim.
+                        Also see <a href="#%3Akeepjumps" class="l">:keepjumps</a><a href="repeat.txt.html#." class="d">.</a>
+                        <span class="s">{not in Vi}</span>
+
+                                                <a name="%3Amarks" class="t">:marks</a>
+<a href="#%3Amarks" class="d">:marks</a>                  <a href="eval.txt.html#List" class="d">List</a> all the current marks (not <a href="insert.txt.html#a" class="d">a</a> motion command).
+                        The <a href="#%27%28" class="l">'(</a><a href="#%2C" class="d">,</a> <a href="#%27%29" class="l">')</a><a href="#%2C" class="d">,</a> <a href="#%27%7B" class="l">'{</a> and <a href="#%27%7D" class="l">'}</a> marks are not listed.
+                        The first column has number zero.
+                        <span class="s">{not in Vi}</span>
+                                                <a name="E283" class="t">E283</a>
+<a href="#%3Amarks" class="d">:marks</a> <span class="s">{arg}</span>            <a href="eval.txt.html#List" class="d">List</a> the marks that are mentioned in <span class="s">{arg}</span> (not <a href="insert.txt.html#a" class="d">a</a>
+                        motion command).  For example: 
+<span class="e">                                :marks aB</span>
+                       to <a href="eval.txt.html#list" class="d">list</a> marks 'a' and 'B'.  <span class="s">{not in Vi}</span>
+
+                                                        <a name="%3Adelm" class="t">:delm</a> <a name="%3Adelmarks" class="t">:delmarks</a>
+:delm[arks] <span class="s">{marks}</span>     Delete the specified marks.  Marks that can be deleted
+                        include A-Z and 0-9.  You cannot delete the <a href="#%27" class="d">'</a> mark.
+                        They can be specified by giving the <a href="eval.txt.html#list" class="d">list</a> of <a href="#mark" class="d">mark</a>
+                        names, or with <a href="insert.txt.html#a" class="d">a</a> range, separated with <a href="insert.txt.html#a" class="d">a</a> dash.  Spaces
+                        are ignored.  Examples: 
+<span class="e">                           :delmarks a        deletes mark a</span>
+<span class="e">                           :delmarks a b 1    deletes marks a, b and 1</span>
+<span class="e">                           :delmarks Aa       deletes marks A and a</span>
+<span class="e">                           :delmarks p-z      deletes marks in the range p to z</span>
+<span class="e">                           :delmarks ^.[]     deletes marks ^ . [ ]</span>
+<span class="e">                           :delmarks \"       deletes mark "</span>
+                       <span class="s">{not in Vi}</span>
+
+:delm[arks]!            Delete all marks for the current buffer, but not marks
+                        A-Z or 0-9.
+                        <span class="s">{not in Vi}</span>
+
+<a href="insert.txt.html#A" class="d">A</a> <a href="#mark" class="d">mark</a> <a href="#is" class="d">is</a> not visible in any way.  It <a href="#is" class="d">is</a> just <a href="insert.txt.html#a" class="d">a</a> position in the file that <a href="#is" class="d">is</a>
+remembered.  Do not confuse marks with named registers, they are totally
+unrelated.
+
+<a href="#%27a" class="d">'a</a> <a href="#-" class="d">-</a> 'z         <a href="change.txt.html#lowercase" class="d">lowercase</a> marks, valid within one file
+<a href="#%27A" class="d">'A</a> <a href="#-" class="d">-</a> 'Z         <a href="change.txt.html#uppercase" class="d">uppercase</a> marks, also called file marks, valid between files
+<a href="#%270" class="d">'0</a> <a href="#-" class="d">-</a> '9         numbered marks, set from .viminfo file
+
+Lowercase marks <a href="#%27a" class="d">'a</a> to 'z are remembered <a href="#as" class="d">as</a> long <a href="#as" class="d">as</a> the file remains in the
+buffer list.  If you remove the file from the buffer list, all its marks are
+lost.  If you delete <a href="insert.txt.html#a" class="d">a</a> line that contains <a href="insert.txt.html#a" class="d">a</a> mark, that <a href="#mark" class="d">mark</a> <a href="#is" class="d">is</a> erased.
+
+Lowercase marks can be used in combination with operators.  For example: "d't"
+deletes the lines from the cursor position to <a href="#mark" class="d">mark</a> 't'.  Hint: Use <a href="#mark" class="d">mark</a> 't' for
+Top, 'b' for Bottom, etc..  Lowercase marks are restored when using <a href="undo.txt.html#undo" class="d">undo</a> and
+redo.
+
+Uppercase marks <a href="#%27A" class="d">'A</a> to 'Z include the file name.  <span class="s">{Vi: no uppercase marks}</span> You
+can use them to jump from file to file.  You can only use an <a href="change.txt.html#uppercase" class="d">uppercase</a> <a href="#mark" class="d">mark</a>
+with an <a href="#operator" class="d">operator</a> if the <a href="#mark" class="d">mark</a> <a href="#is" class="d">is</a> in the current file.  The line number of the
+<a href="#mark" class="d">mark</a> remains correct, even if you insert/delete lines or edit another file for
+<a href="insert.txt.html#a" class="d">a</a> moment.  When the <a href="options.txt.html#%27viminfo%27" class="o">'viminfo'</a> option <a href="#is" class="d">is</a> not empty, <a href="change.txt.html#uppercase" class="d">uppercase</a> marks are kept in
+the .viminfo file.  See <a href="starting.txt.html#viminfo-file-marks" class="l">viminfo-file-marks</a><a href="repeat.txt.html#." class="d">.</a>
+
+Numbered marks <a href="#%270" class="d">'0</a> to '9 are quite different.  They can not be set directly.
+They are only present when using <a href="insert.txt.html#a" class="d">a</a> <a href="starting.txt.html#viminfo" class="d">viminfo</a> file <a href="starting.txt.html#viminfo-file" class="l">viminfo-file</a><a href="repeat.txt.html#." class="d">.</a>  Basically <a href="#%270" class="d">'0</a>
+<a href="#is" class="d">is</a> the location of the cursor when you last exited Vim, '1 the last but one
+time, etc.  Use the "<a href="change.txt.html#r" class="d">r</a>" flag in <a href="options.txt.html#%27viminfo%27" class="o">'viminfo'</a> to specify files for which no
+Numbered <a href="#mark" class="d">mark</a> should be stored.  See <a href="starting.txt.html#viminfo-file-marks" class="l">viminfo-file-marks</a><a href="repeat.txt.html#." class="d">.</a>
+
+
+                                                        <a name="%27%5B" class="t">'[</a> <a name="%60%5B" class="t">`[</a>
+<a href="#%27%5B" class="d">'[</a>  <a href="#%60%5B" class="d">`[</a>                  To the first character of the previously changed
+                        or yanked text.  <span class="s">{not in Vi}</span>
+
+                                                        <a name="%27%5D" class="t">']</a> <a name="%60%5D" class="t">`]</a>
+<a href="#%27%5D" class="d">']</a>  <a href="#%60%5D" class="d">`]</a>                  To the last character of the previously changed or
+                        yanked text.  <span class="s">{not in Vi}</span>
+
+After executing an <a href="#operator" class="d">operator</a> the Cursor <a href="#is" class="d">is</a> <a href="change.txt.html#put" class="d">put</a> <a href="#at" class="d">at</a> the beginning of the text
+that was operated upon.  After <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#put" class="d">put</a> command <a href="#%28" class="d">(</a>"<a href="change.txt.html#p" class="d">p</a>" or "<a href="change.txt.html#P" class="d">P</a>"<a href="#%29" class="d">)</a> the cursor <a href="#is" class="d">is</a>
+sometimes placed <a href="#at" class="d">at</a> the first inserted line and sometimes on the last inserted
+character.  The four commands above <a href="change.txt.html#put" class="d">put</a> the cursor <a href="#at" class="d">at</a> either end.  Example:
+After yanking 10 lines you want to <a href="#go" class="d">go</a> to the last one of them: "10Y']"<a href="repeat.txt.html#." class="d">.</a>  After
+<a href="insert.txt.html#inserting" class="d">inserting</a> several lines with the "<a href="change.txt.html#p" class="d">p</a>" command you want to jump to the lowest
+inserted line: "p']"<a href="repeat.txt.html#." class="d">.</a>  This also works for text that has been inserted.
+
+<span class="n">Note:</span> After <a href="change.txt.html#deleting" class="d">deleting</a> text, the start and <a href="intro.txt.html#end" class="d">end</a> positions are the same, except
+when using blockwise <a href="visual.txt.html#Visual" class="d">Visual</a> mode.  These commands <a href="diff.txt.html#do" class="d">do</a> not work when no change
+was made yet in the current file.
+
+                                                        <a name="%27%3C" class="t">'&lt;</a> <a name="%60%3C" class="t">`&lt;</a>
+<a href="#%27%3C" class="d">'&lt;</a>  <a href="#%60%3C" class="d">`&lt;</a>                  To the first line or character of the last selected
+                        <a href="visual.txt.html#Visual" class="d">Visual</a> area in the current buffer.  For block mode <a href="#it" class="d">it</a>
+                        may also be the last character in the first line (to
+                        be able to define the block).  <span class="s">{not in Vi}</span>.
+
+                                                        <a name="%27%3E" class="t">'&gt;</a> <a name="%60%3E" class="t">`&gt;</a>
+<a href="#%27%3E" class="d">'&gt;</a>  <a href="#%60%3E" class="d">`&gt;</a>                  To the last line or character of the last selected
+                        <a href="visual.txt.html#Visual" class="d">Visual</a> area in the current buffer.  For block mode <a href="#it" class="d">it</a>
+                        may also be the first character of the last line (to
+                        be able to define the block).  <span class="n">Note</span> that <a href="options.txt.html#%27selection%27" class="o">'selection'</a>
+                        applies, the position may be just after the <a href="visual.txt.html#Visual" class="d">Visual</a>
+                        area.  <span class="s">{not in Vi}</span>.
+
+                                                        <a name="%27%27" class="t">''</a> <a name="%60%60" class="t">``</a>
+<a href="#%27%27" class="d">''</a>  <a href="#%60%60" class="d">``</a>                  To the position before the latest jump, or where the
+                        last "<a href="#m%27" class="d">m'</a>" or "<a href="#m%60" class="d">m`</a>" command was given.  Not set when the
+                        <a href="#%3Akeepjumps" class="l">:keepjumps</a> command modifier was used.
+                        Also see <a href="tips.txt.html#restore-position" class="l">restore-position</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="%27quote" class="t">'quote</a> <a name="%60quote" class="t">`quote</a>
+<a href="#%27" class="d">'</a>"  <a href="#%60" class="d">`</a>"                  To the cursor position when last <a href="starting.txt.html#exiting" class="d">exiting</a> the current
+                        buffer.  Defaults to the first character of the first
+                        line.  See <a href="eval.txt.html#last-position-jump" class="l">last-position-jump</a> for how to use this
+                        for each opened file.
+                        Only one position <a href="#is" class="d">is</a> remembered per buffer, not one
+                        for each window.  As long <a href="#as" class="d">as</a> the buffer <a href="#is" class="d">is</a> visible in
+                        <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a> the position won't be changed.
+                        <span class="s">{not in Vi}</span>.
+
+                                                        <a name="%27%5E" class="t">'^</a> <a name="%60%5E" class="t">`^</a>
+<a href="#%27%5E" class="d">'^</a>  <a href="#%60%5E" class="d">`^</a>                  To the position where the cursor was the last time
+                        when <a href="insert.txt.html#Insert" class="d">Insert</a> mode was stopped.  This <a href="#is" class="d">is</a> used by the
+                        <a href="insert.txt.html#gi" class="l">gi</a> command.  Not set when the <a href="#%3Akeepjumps" class="l">:keepjumps</a> command
+                        modifier was used.  <span class="s">{not in Vi}</span>
+
+                                                        <a name="%27." class="t">'.</a> <a name="%60." class="t">`.</a>
+<a href="#%27." class="d">'.</a>  <a href="#%60." class="d">`.</a>                  To the position where the last change was made.  The
+                        position <a href="#is" class="d">is</a> <a href="#at" class="d">at</a> or near where the change started.
+                        Sometimes <a href="insert.txt.html#a" class="d">a</a> command <a href="#is" class="d">is</a> executed <a href="#as" class="d">as</a> several changes,
+                        then the position can be near the <a href="intro.txt.html#end" class="d">end</a> of what the
+                        command changed.  For example when <a href="insert.txt.html#inserting" class="d">inserting</a> <a href="insert.txt.html#a" class="d">a</a> word,
+                        the position will be on the last character.
+                        To jump to older changes use <a href="#g%3B" class="l">g;</a><a href="repeat.txt.html#." class="d">.</a>
+                        <span class="s">{not in Vi}</span>
+
+                                                        <a name="%27%28" class="t">'(</a> <a name="%60%28" class="t">`(</a>
+<a href="#%27%28" class="d">'(</a>  <a href="#%60%28" class="d">`(</a>                  To the start of the current sentence, like the <a href="#%28" class="l">(</a>
+                        command.  <span class="s">{not in Vi}</span>
+
+                                                        <a name="%27%29" class="t">')</a> <a name="%60%29" class="t">`)</a>
+<a href="#%27%29" class="d">')</a>  <a href="#%60%29" class="d">`)</a>                  To the <a href="intro.txt.html#end" class="d">end</a> of the current sentence, like the <a href="#%29" class="l">)</a>
+                        command.  <span class="s">{not in Vi}</span>
+
+                                                        <a name="%27%7B" class="t">'{</a> <a name="%60%7B" class="t">`{</a>
+<a href="#%27%7B" class="d">'{</a>  <a href="#%60%7B" class="d">`{</a>                  To the start of the current paragraph, like the <a href="#%7B" class="l">{</a>
+                        command.  <span class="s">{not in Vi}</span>
+
+                                                        <a name="%27%7D" class="t">'}</a> <a name="%60%7D" class="t">`}</a>
+<a href="#%27%7D" class="d">'}</a>  <a href="#%60%7D" class="d">`}</a>                  To the <a href="intro.txt.html#end" class="d">end</a> of the current paragraph, like the <a href="#%7D" class="l">}</a>
+                        command.  <span class="s">{not in Vi}</span>
+
+These commands are not marks themselves, but jump to <a href="insert.txt.html#a" class="d">a</a> mark:
+
+                                                        <a name="%5D%27" class="t">]'</a>
+<a href="#%5D%27" class="d">]'</a>                      <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> times to next line with <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#lowercase" class="d">lowercase</a> <a href="#mark" class="d">mark</a> below
+                        the cursor, on the first non-blank character in the
+                        line. <span class="s">{not in Vi}</span>
+
+                                                        <a name="%5D%60" class="t">]`</a>
+<a href="#%5D%60" class="d">]`</a>                      <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> times to <a href="change.txt.html#lowercase" class="d">lowercase</a> <a href="#mark" class="d">mark</a> after the cursor. {not
+                        in Vi}
+
+                                                        <a name="%5B%27" class="t">['</a>
+<a href="#%5B%27" class="d">['</a>                      <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> times to previous line with <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#lowercase" class="d">lowercase</a> <a href="#mark" class="d">mark</a>
+                        before the cursor, on the first non-blank character in
+                        the line. <span class="s">{not in Vi}</span>
+
+                                                        <a name="%5B%60" class="t">[`</a>
+<a href="#%5B%60" class="d">[`</a>                      <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> times to <a href="change.txt.html#lowercase" class="d">lowercase</a> <a href="#mark" class="d">mark</a> before the cursor.
+                        <span class="s">{not in Vi}</span>
+
+
+:loc[kmarks] <span class="s">{command}</span>                                  <a name="%3Aloc" class="t">:loc</a> <a name="%3Alockmarks" class="t">:lockmarks</a>
+                        Execute <span class="s">{command}</span> without adjusting marks.  This <a href="#is" class="d">is</a>
+                        useful when <a href="change.txt.html#changing" class="d">changing</a> text in <a href="insert.txt.html#a" class="d">a</a> way that the line <a href="intro.txt.html#count" class="d">count</a>
+                        will be the same when the change has completed.
+                        WARNING: When the line <a href="intro.txt.html#count" class="d">count</a> does change, marks below
+                        the change will keep their line number, thus move to
+                        another text line.
+                        These items will not be adjusted for deleted/inserted
+                        lines:
+                        <a href="#-" class="d">-</a> lower <a href="change.txt.html#case" class="d">case</a> <a href="print.txt.html#letter" class="d">letter</a> marks <a href="#%27a" class="d">'a</a> <a href="#-" class="d">-</a> 'z
+                        <a href="#-" class="d">-</a> upper <a href="change.txt.html#case" class="d">case</a> <a href="print.txt.html#letter" class="d">letter</a> marks <a href="#%27A" class="d">'A</a> <a href="#-" class="d">-</a> 'Z
+                        <a href="#-" class="d">-</a> numbered marks <a href="#%270" class="d">'0</a> <a href="#-" class="d">-</a> '9
+                        <a href="#-" class="d">-</a> last <a href="insert.txt.html#insert" class="d">insert</a> position <a href="#%27%5E" class="d">'^</a>
+                        <a href="#-" class="d">-</a> last change position <a href="#%27." class="d">'.</a>
+                        <a href="#-" class="d">-</a> the <a href="visual.txt.html#Visual" class="d">Visual</a> area <a href="#%27%3C" class="d">'&lt;</a> and <a href="#%27%3E" class="d">'&gt;</a>
+                        <a href="#-" class="d">-</a> line numbers in placed <a href="sign.txt.html#signs" class="d">signs</a>
+                        <a href="#-" class="d">-</a> line numbers in <a href="quickfix.txt.html#quickfix" class="d">quickfix</a> positions
+                        <a href="#-" class="d">-</a> positions in the <a href="#jumplist" class="l">jumplist</a>
+                        <a href="#-" class="d">-</a> positions in the <a href="tagsrch.txt.html#tagstack" class="l">tagstack</a>
+                        These items will still be adjusted:
+                        <a href="#-" class="d">-</a> previous context <a href="#mark" class="d">mark</a> <a href="#%27%27" class="d">''</a>
+                        <a href="#-" class="d">-</a> the cursor position
+                        <a href="#-" class="d">-</a> the <a href="starting.txt.html#view" class="d">view</a> of <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a> on <a href="insert.txt.html#a" class="d">a</a> buffer
+                        <a href="#-" class="d">-</a> <a href="fold.txt.html#folds" class="d">folds</a>
+                        <a href="#-" class="d">-</a> diffs
+
+:kee[pmarks] <span class="s">{command}</span>                                  <a name="%3Akee" class="t">:kee</a> <a name="%3Akeepmarks" class="t">:keepmarks</a>
+                        Currently only has effect for the <a href="change.txt.html#filter" class="d">filter</a> command
+                        <a href="change.txt.html#%3Arange%21" class="l">:range!</a><a href="cmdline.txt.html#%3A" class="d">:</a>
+                        <a href="#-" class="d">-</a> When the number of lines after filtering <a href="#is" class="d">is</a> equal to
+                          or larger than before, all marks are kept <a href="#at" class="d">at</a> the
+                          same line number.
+                        <a href="#-" class="d">-</a> When the number of lines decreases, the marks in the
+                          lines that disappeared are deleted.
+                        In any <a href="change.txt.html#case" class="d">case</a> the marks below the filtered text have
+                        their line numbers adjusted, thus stick to the text,
+                        <a href="#as" class="d">as</a> usual.
+                        When the 'R' flag <a href="#is" class="d">is</a> missing from <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a> this has
+                        the same effect <a href="#as" class="d">as</a> using "<a href="#%3Akeepmarks" class="d">:keepmarks</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="%3Akeepj" class="t">:keepj</a> <a name="%3Akeepjumps" class="t">:keepjumps</a>
+:keepj[umps] <span class="s">{command}</span>
+                        Moving around in <span class="s">{command}</span> does not change the <a href="#%27%27" class="l">''</a><a href="#%2C" class="d">,</a>
+                        <a href="#%27." class="l">'.</a> and <a href="#%27%5E" class="l">'^</a> marks, the <a href="#jumplist" class="l">jumplist</a> or the
+                        <a href="#changelist" class="l">changelist</a><a href="repeat.txt.html#." class="d">.</a>
+                        Useful when making <a href="insert.txt.html#a" class="d">a</a> change or <a href="insert.txt.html#inserting" class="d">inserting</a> text
+                        automatically and the user doesn't want to <a href="#go" class="d">go</a> to this
+                        position.  E.g., when updating <a href="insert.txt.html#a" class="d">a</a> "Last change"
+                        <a href="editing.txt.html#timestamp" class="d">timestamp</a> in the first line: 
+<span class="e"></span>
+<span class="e">                                :let lnum = line(".")</span>
+<span class="e">                                :keepjumps normal gg</span>
+<span class="e">                                :call SetLastChange()</span>
+<span class="e">                                :keepjumps exe "normal " . lnum . "G"</span>
+
+                        <span class="n">Note</span> that "<a href="#%3Akeepjumps" class="d">:keepjumps</a>" <a href="vim_faq.txt.html#must" class="d">must</a> be used for every command.
+                        When invoking <a href="insert.txt.html#a" class="d">a</a> function the commands in that function
+                        can still change the jumplist.  Also, for
+                        "<a href="#%3Akeepjumps" class="d">:keepjumps</a> exe 'command <a href="#%27" class="d">'</a>" the "command" won't keep
+                        jumps.  Instead use: "<a href="eval.txt.html#%3Aexe" class="d">:exe</a> 'keepjumps command'"
+
+<span class="h">==============================================================================</span>
+8. Jumps                                        <a name="jump-motions" class="t">jump-motions</a>
+
+<a href="insert.txt.html#A" class="d">A</a> "jump" <a href="#is" class="d">is</a> one of the following commands: "<a href="#%27" class="d">'</a>"<a href="#%2C" class="d">,</a> "<a href="#%60" class="d">`</a>"<a href="#%2C" class="d">,</a> "<a href="#G" class="d">G</a>"<a href="#%2C" class="d">,</a> "<a href="pattern.txt.html#%2F" class="d">/</a>"<a href="#%2C" class="d">,</a> "<a href="pattern.txt.html#%3F" class="d">?</a>"<a href="#%2C" class="d">,</a> "<a href="pattern.txt.html#n" class="d">n</a>"<a href="#%2C" class="d">,</a>
+"<a href="pattern.txt.html#N" class="d">N</a>"<a href="#%2C" class="d">,</a> "<a href="#%25" class="d">%</a>"<a href="#%2C" class="d">,</a> "<a href="#%28" class="d">(</a>"<a href="#%2C" class="d">,</a> "<a href="#%29" class="d">)</a>"<a href="#%2C" class="d">,</a> "<a href="#%5B%5B" class="d">[[</a>"<a href="#%2C" class="d">,</a> "<a href="#%5D%5D" class="d">]]</a>"<a href="#%2C" class="d">,</a> "<span class="s">{", "}</span>"<a href="#%2C" class="d">,</a> "<a href="change.txt.html#%3As" class="d">:s</a>"<a href="#%2C" class="d">,</a> "<a href="tagsrch.txt.html#%3Atag" class="d">:tag</a>"<a href="#%2C" class="d">,</a> "<a href="#L" class="d">L</a>"<a href="#%2C" class="d">,</a> "<a href="#M" class="d">M</a>"<a href="#%2C" class="d">,</a> "<a href="#H" class="d">H</a>" and
+the commands that start editing <a href="insert.txt.html#a" class="d">a</a> new file.  If you make the cursor "jump"
+with one of these commands, the position of the cursor before the jump <a href="#is" class="d">is</a>
+remembered.  You can return to that position with the "<a href="#%27%27" class="d">''</a>" and "<a href="#%60%60" class="d">``</a>" command,
+unless the line containing that position was changed or deleted.
+
+                                                        <a name="CTRL-O" class="t">CTRL-O</a>
+<a href="#CTRL-O" class="k">CTRL-O</a>                  Go to <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> Older cursor position in jump <a href="eval.txt.html#list" class="d">list</a>
+                        (not <a href="insert.txt.html#a" class="d">a</a> motion command).
+                        <span class="s">{not in Vi}</span>
+                        <span class="s">{not available without the |+jumplist| feature}</span>
+
+<a href="#%3CTab%3E" class="s">&lt;Tab&gt;</a>           or                                      <a name="CTRL-I" class="t">CTRL-I</a> <a name="%3CTab%3E" class="t">&lt;Tab&gt;</a>
+<a href="#CTRL-I" class="k">CTRL-I</a>                  Go to <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> newer cursor position in jump <a href="eval.txt.html#list" class="d">list</a>
+                        (not <a href="insert.txt.html#a" class="d">a</a> motion command).
+                        <span class="s">{not in Vi}</span>
+                        <span class="s">{not available without the |+jumplist| feature}</span>
+
+                                                        <a name="%3Aju" class="t">:ju</a> <a name="%3Ajumps" class="t">:jumps</a>
+:ju[mps]                Print the jump <a href="eval.txt.html#list" class="d">list</a> (not <a href="insert.txt.html#a" class="d">a</a> motion command).
+                        <span class="s">{not in Vi}</span>
+                        <span class="s">{not available without the |+jumplist| feature}</span>
+
+                                                        <a name="%3Acle" class="t">:cle</a> <a name="%3Aclearjumps" class="t">:clearjumps</a>
+:cle[arjumps]           Clear the jump <a href="eval.txt.html#list" class="d">list</a> of the current window.
+                        <span class="s">{not in Vi}</span>
+                        <span class="s">{not available without the |+jumplist| feature}</span>
+
+                                                        <a name="jumplist" class="t">jumplist</a>
+Jumps are remembered in <a href="insert.txt.html#a" class="d">a</a> jump list.  With the <a href="#CTRL-O" class="k">CTRL-O</a> and <a href="#CTRL-I" class="k">CTRL-I</a> command you
+can <a href="#go" class="d">go</a> to cursor positions before older jumps, and back again.  Thus you can
+move up and down the list.  There <a href="#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> separate jump <a href="eval.txt.html#list" class="d">list</a> for each window.
+The maximum number of entries <a href="#is" class="d">is</a> fixed <a href="#at" class="d">at</a> 100.
+<span class="s">{not available without the |+jumplist| feature}</span>
+
+For example, after three jump commands you have this jump list:
+
+<span class="h">  jump line  col file/text </span>
+<span class="h">    3     1    0 some text </span>
+<span class="h">    2    70    0 another line </span>
+<span class="h">    1  1154   23 end. </span>
+<span class="h"> &gt; </span>
+
+The "file/text" column shows the file name, or the text <a href="#at" class="d">at</a> the jump if <a href="#it" class="d">it</a> <a href="#is" class="d">is</a>
+in the current file (an indent <a href="#is" class="d">is</a> removed and <a href="insert.txt.html#a" class="d">a</a> long line <a href="#is" class="d">is</a> truncated to fit
+in the window).
+
+You are currently in line 1167.  If you then use the <a href="#CTRL-O" class="k">CTRL-O</a> command, the
+cursor <a href="#is" class="d">is</a> <a href="change.txt.html#put" class="d">put</a> in line 1154.  This results in:
+
+<span class="h">  jump line  col file/text </span>
+<span class="h">    2     1    0 some text </span>
+<span class="h">    1    70    0 another line </span>
+<span class="h"> &gt;  0  1154   23 end. </span>
+<span class="h">    1  1167    0 foo bar </span>
+
+The pointer will be set <a href="#at" class="d">at</a> the last used jump position.  The next <a href="#CTRL-O" class="k">CTRL-O</a>
+command will use the entry above it, the next <a href="#CTRL-I" class="k">CTRL-I</a> command will use the
+entry below it.  If the pointer <a href="#is" class="d">is</a> below the last entry, this indicates that
+you did not use <a href="insert.txt.html#a" class="d">a</a> <a href="#CTRL-I" class="k">CTRL-I</a> or <a href="#CTRL-O" class="k">CTRL-O</a> before.  In this <a href="change.txt.html#case" class="d">case</a> the <a href="#CTRL-O" class="k">CTRL-O</a> command
+will cause the cursor position to be added to the jump list, so you can get
+back to the position before the <a href="#CTRL-O" class="k">CTRL-O</a>.  In this <a href="change.txt.html#case" class="d">case</a> this <a href="#is" class="d">is</a> line 1167.
+
+With more <a href="#CTRL-O" class="k">CTRL-O</a> commands you will <a href="#go" class="d">go</a> to lines 70 and 1.  If you use <a href="#CTRL-I" class="k">CTRL-I</a>
+you can <a href="#go" class="d">go</a> back to 1154 and 1167 again.  <span class="n">Note</span> that the number in the "jump"
+column indicates the <a href="intro.txt.html#count" class="d">count</a> for the <a href="#CTRL-O" class="k">CTRL-O</a> or <a href="#CTRL-I" class="k">CTRL-I</a> command that takes you to
+this position.
+
+If you use <a href="insert.txt.html#a" class="d">a</a> jump command, the current line number <a href="#is" class="d">is</a> inserted <a href="#at" class="d">at</a> the <a href="intro.txt.html#end" class="d">end</a> of
+the jump list.  If the same line was already in the jump list, <a href="#it" class="d">it</a> <a href="#is" class="d">is</a> removed.
+The result <a href="#is" class="d">is</a> that when <a href="repeat.txt.html#repeating" class="d">repeating</a> <a href="#CTRL-O" class="k">CTRL-O</a> you will get back to old positions
+only once.
+
+When the <a href="#%3Akeepjumps" class="l">:keepjumps</a> command modifier <a href="#is" class="d">is</a> used, jumps are not stored in the
+jumplist.  Jumps are also not stored in other cases, e.g., in <a href="insert.txt.html#a" class="d">a</a> <a href="repeat.txt.html#%3Aglobal" class="l">:global</a>
+command.  You can explicitly add <a href="insert.txt.html#a" class="d">a</a> jump by setting the <a href="#%27" class="d">'</a> <a href="#mark" class="d">mark</a> with "<a href="#m%27" class="d">m'</a>"<a href="repeat.txt.html#." class="d">.</a>  <span class="n">Note</span>
+that calling <a href="eval.txt.html#setpos%28%29" class="d">setpos()</a> does not <a href="diff.txt.html#do" class="d">do</a> this.
+
+After the <a href="#CTRL-O" class="k">CTRL-O</a> command that got you into line 1154 you could give another
+jump command (e.g., "<a href="#G" class="d">G</a>").  The jump <a href="eval.txt.html#list" class="d">list</a> would then become:
+
+<span class="h">  jump line  col file/text </span>
+<span class="h">    4     1    0 some text </span>
+<span class="h">    3    70    0 another line </span>
+<span class="h">    2  1167    0 foo bar </span>
+<span class="h">    1  1154   23 end. </span>
+<span class="h"> &gt; </span>
+
+The line numbers will be adjusted for deleted and inserted lines.  This fails
+if you stop editing <a href="insert.txt.html#a" class="d">a</a> file without writing, like with ":n!"<a href="repeat.txt.html#." class="d">.</a>
+
+When you split <a href="insert.txt.html#a" class="d">a</a> window, the <a href="#jumplist" class="d">jumplist</a> will be copied to the new window.
+
+If you have included the <a href="#%27" class="d">'</a> item in the <a href="options.txt.html#%27viminfo%27" class="o">'viminfo'</a> option the <a href="#jumplist" class="d">jumplist</a> will be
+stored in the <a href="starting.txt.html#viminfo" class="d">viminfo</a> file and restored when <a href="starting.txt.html#starting" class="d">starting</a> Vim.
+
+
+<span class="c">CHANGE LIST JUMPS                      </span> <a name="changelist" class="t">changelist</a> <a name="change-list-jumps" class="t">change-list-jumps</a> <a name="E664" class="t">E664</a>
+
+When making <a href="insert.txt.html#a" class="d">a</a> change the cursor position <a href="#is" class="d">is</a> remembered.  One position <a href="#is" class="d">is</a>
+remembered for every change that can be undone, unless <a href="#it" class="d">it</a> <a href="#is" class="d">is</a> close to <a href="insert.txt.html#a" class="d">a</a>
+previous change.  Two commands can be used to jump to positions of changes,
+also those that have been undone:
+
+                                                        <a name="g%3B" class="t">g;</a> <a name="E662" class="t">E662</a>
+<a href="#g%3B" class="d">g;</a>                      Go to <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> older position in change list.
+                        If <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> <a href="#is" class="d">is</a> larger than the number of older change
+                        positions <a href="#go" class="d">go</a> to the oldest change.
+                        If there <a href="#is" class="d">is</a> no older change an error message <a href="#is" class="d">is</a> given.
+                        (not <a href="insert.txt.html#a" class="d">a</a> motion command)
+                        <span class="s">{not in Vi}</span>
+                        <span class="s">{not available without the |+jumplist| feature}</span>
+
+                                                        <a name="g%2C" class="t">g,</a> <a name="E663" class="t">E663</a>
+<a href="#g%2C" class="d">g,</a>                      Go to <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> newer cursor position in change list.
+                        Just like <a href="#g%3B" class="l">g;</a> but in the opposite direction.
+                        (not <a href="insert.txt.html#a" class="d">a</a> motion command)
+                        <span class="s">{not in Vi}</span>
+                        <span class="s">{not available without the |+jumplist| feature}</span>
+
+When using <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> you jump <a href="#as" class="d">as</a> far back or forward <a href="#as" class="d">as</a> possible.  Thus you can
+use "999g;" to <a href="#go" class="d">go</a> to the first change for which the position <a href="#is" class="d">is</a> still
+remembered.  The number of entries in the change <a href="eval.txt.html#list" class="d">list</a> <a href="#is" class="d">is</a> fixed and <a href="#is" class="d">is</a> the same
+<a href="#as" class="d">as</a> for the <a href="#jumplist" class="l">jumplist</a><a href="repeat.txt.html#." class="d">.</a>
+
+When two undo-able changes are in the same line and <a href="#at" class="d">at</a> <a href="insert.txt.html#a" class="d">a</a> column position <a href="various.txt.html#less" class="d">less</a>
+than <a href="options.txt.html#%27textwidth%27" class="o">'textwidth'</a> apart only the last one <a href="#is" class="d">is</a> remembered.  This avoids that <a href="insert.txt.html#a" class="d">a</a>
+sequence of small changes in <a href="insert.txt.html#a" class="d">a</a> line, for example "xxxxx"<a href="#%2C" class="d">,</a> adds many positions
+to the change list.  When <a href="options.txt.html#%27textwidth%27" class="o">'textwidth'</a> <a href="#is" class="d">is</a> zero <a href="options.txt.html#%27wrapmargin%27" class="o">'wrapmargin'</a> <a href="#is" class="d">is</a> used.  When that
+also isn't set <a href="insert.txt.html#a" class="d">a</a> fixed number of 79 <a href="#is" class="d">is</a> used.  Detail: For the computations
+bytes are used, not characters, to avoid <a href="insert.txt.html#a" class="d">a</a> speed penalty (this only matters
+for <a href="mbyte.txt.html#multi-byte" class="d">multi-byte</a> encodings).
+
+<span class="n">Note</span> that when text has been inserted or deleted the cursor position might be
+<a href="insert.txt.html#a" class="d">a</a> bit different from the position of the change.  Especially when lines have
+been deleted.
+
+When the <a href="#%3Akeepjumps" class="l">:keepjumps</a> command modifier <a href="#is" class="d">is</a> used the position of <a href="insert.txt.html#a" class="d">a</a> change <a href="#is" class="d">is</a> not
+remembered.
+
+                                                        <a name="%3Achanges" class="t">:changes</a>
+<a href="#%3Achanges" class="d">:changes</a>                Print the change list.  <a href="insert.txt.html#A" class="d">A</a> "<a href="change.txt.html#%3E" class="d">&gt;</a>" character indicates the
+                        current position.  Just after <a href="insert.txt.html#a" class="d">a</a> change <a href="#it" class="d">it</a> <a href="#is" class="d">is</a> below the
+                        newest entry, indicating that "<a href="#g%3B" class="d">g;</a>" takes you to the
+                        newest entry position.  The first column indicates the
+                        <a href="intro.txt.html#count" class="d">count</a> needed to take you to this position.  Example:
+
+<span class="h">                                change line  col text </span>
+                                    3     9    8 bla bla bla
+                                    2    11   57 foo <a href="#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> <a href="#bar" class="d">bar</a>
+                                    1    14   54 the latest changed line
+                                <a href="change.txt.html#%3E" class="d">&gt;</a>
+
+                        The "3g;" command takes you to line 9.  Then the
+                        output of "<a href="#%3Achanges" class="d">:changes</a> is:
+
+<span class="h">                                change line  col text </span>
+                                <a href="change.txt.html#%3E" class="d">&gt;</a>   <a href="#0" class="d">0</a>     9    8 bla bla bla
+                                    1    11   57 foo <a href="#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> <a href="#bar" class="d">bar</a>
+                                    2    14   54 the latest changed line
+
+                        Now you can use "<a href="#g%2C" class="d">g,</a>" to <a href="#go" class="d">go</a> to line 11 and "2g," to <a href="#go" class="d">go</a>
+                        to line 14.
+
+<span class="h">==============================================================================</span>
+9. Various motions                              <a name="various-motions" class="t">various-motions</a>
+
+                                                        <a name="%25" class="t">%</a>
+<a href="#%25" class="d">%</a>                       Find the next item in this line after or under the
+                        cursor and jump to its match. <a href="#inclusive" class="l">inclusive</a> motion.
+                        Items can be:
+                        ([{}])          parenthesis or (curly/square) brackets
+                                        (this can be changed with the
+                                        <a href="options.txt.html#%27matchpairs%27" class="o">'matchpairs'</a> option)
+                        <a href="pattern.txt.html#%2F" class="d">/</a>* *<a href="pattern.txt.html#%2F" class="d">/</a>           start or <a href="intro.txt.html#end" class="d">end</a> of C-style comment
+                        #if, #ifdef, #else, #elif, #endif
+                                        <a href="change.txt.html#C" class="d">C</a> preprocessor conditionals (when the
+                                        cursor <a href="#is" class="d">is</a> on the <a href="pattern.txt.html#%23" class="d">#</a> or no ([{
+                                        following)
+                        For other items the matchit <a href="usr_05.txt.html#plugin" class="d">plugin</a> can be used, see
+                        <a href="usr_05.txt.html#matchit-install" class="l">matchit-install</a><a href="repeat.txt.html#." class="d">.</a>  This <a href="usr_05.txt.html#plugin" class="d">plugin</a> also helps to skip
+                        matches in comments.
+
+                        When <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a> contains "<a href="#M" class="d">M</a>" <a href="options.txt.html#cpo-M" class="l">cpo-M</a> backslashes
+                        before parens and braces are ignored.  Without "<a href="#M" class="d">M</a>" the
+                        number of backslashes matters: an even number doesn't
+                        match with an odd number.  Thus in "<a href="#%28" class="d">(</a> \) <a href="#%29" class="d">)</a>" and "\( <a href="#%28" class="d">(</a>
+                        \)" the first and last parenthesis match.
+
+                        When the '%' character <a href="#is" class="d">is</a> not present in <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a>
+                        <a href="options.txt.html#cpo-%25" class="l">cpo-%</a><a href="#%2C" class="d">,</a> parens and braces inside double <a href="quotes.txt.html#quotes" class="d">quotes</a> are
+                        ignored, unless the number of parens/braces in <a href="insert.txt.html#a" class="d">a</a> line
+                        <a href="#is" class="d">is</a> uneven and this line and the previous one does not
+                        <a href="intro.txt.html#end" class="d">end</a> in <a href="insert.txt.html#a" class="d">a</a> backslash.  '(', '{', '[', ']', '}' and ')'
+                        are also ignored (parens and braces inside single
+                        quotes).  <span class="n">Note</span> that this works fine for C, but not for
+                        Perl, where single <a href="quotes.txt.html#quotes" class="d">quotes</a> are used for strings.
+
+                        Nothing special <a href="#is" class="d">is</a> done for matches in comments.  You
+                        can either use the matchit <a href="usr_05.txt.html#plugin" class="d">plugin</a> <a href="usr_05.txt.html#matchit-install" class="l">matchit-install</a> or
+                        <a href="change.txt.html#put" class="d">put</a> <a href="quotes.txt.html#quotes" class="d">quotes</a> around matches.
+
+                        No <a href="intro.txt.html#count" class="d">count</a> <a href="#is" class="d">is</a> allowed, <span class="s">{count}</span>% jumps to <a href="insert.txt.html#a" class="d">a</a> line <span class="s">{count}</span>
+                        percentage down the file <a href="#N%25" class="l">N%</a><a href="repeat.txt.html#." class="d">.</a>  Using '%' on
+                        #if/#else/#endif makes the <a href="intro.txt.html#movement" class="d">movement</a> linewise.
+
+                                                <a name="%5B%28" class="t">[(</a>
+<a href="#%5B%28" class="d">[(</a>                      <a href="#go" class="d">go</a> to <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> previous unmatched '('.
+                        <a href="#exclusive" class="l">exclusive</a> motion. <span class="s">{not in Vi}</span>
+
+                                                <a name="%5B%7B" class="t">[{</a>
+<a href="#%5B%7B" class="d">[{</a>                      <a href="#go" class="d">go</a> to <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> previous unmatched '{'.
+                        <a href="#exclusive" class="l">exclusive</a> motion. <span class="s">{not in Vi}</span>
+
+                                                <a name="%5D%29" class="t">])</a>
+<a href="#%5D%29" class="d">])</a>                      <a href="#go" class="d">go</a> to <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> next unmatched ')'.
+                        <a href="#exclusive" class="l">exclusive</a> motion. <span class="s">{not in Vi}</span>
+
+                                                <a name="%5D%7D" class="t">]}</a>
+<a href="#%5D%7D" class="d">]}</a>                      <a href="#go" class="d">go</a> to <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> next unmatched '}'.
+                        <a href="#exclusive" class="l">exclusive</a> motion. <span class="s">{not in Vi}</span>
+
+The above four commands can be used to <a href="#go" class="d">go</a> to the start or <a href="intro.txt.html#end" class="d">end</a> of the current
+code block.  It <a href="#is" class="d">is</a> like doing "<a href="#%25" class="d">%</a>" on the '(', ')', '{' or '}' <a href="#at" class="d">at</a> the other
+<a href="intro.txt.html#end" class="d">end</a> of the code block, but you can <a href="diff.txt.html#do" class="d">do</a> this from anywhere in the code block.
+Very useful for <a href="change.txt.html#C" class="d">C</a> programs.  Example: When standing on "<a href="change.txt.html#case" class="d">case</a> x:"<a href="#%2C" class="d">,</a> "<a href="#%5B%7B" class="d">[{</a>" will
+bring you back to the switch statement.
+
+                                                <a name="%5Dm" class="t">]m</a>
+<a href="#%5Dm" class="d">]m</a>                      Go to <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> next start of <a href="insert.txt.html#a" class="d">a</a> method (for Java or
+                        similar structured language).  When not before the
+                        start of <a href="insert.txt.html#a" class="d">a</a> method, jump to the start or <a href="intro.txt.html#end" class="d">end</a> of the
+                        class.  When no '{' <a href="#is" class="d">is</a> found after the cursor, this <a href="#is" class="d">is</a>
+                        an error.  <a href="#exclusive" class="l">exclusive</a> motion. <span class="s">{not in Vi}</span>
+                                                <a name="%5DM" class="t">]M</a>
+<a href="#%5DM" class="d">]M</a>                      Go to <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> next <a href="intro.txt.html#end" class="d">end</a> of <a href="insert.txt.html#a" class="d">a</a> method (for Java or
+                        similar structured language).  When not before the <a href="intro.txt.html#end" class="d">end</a>
+                        of <a href="insert.txt.html#a" class="d">a</a> method, jump to the start or <a href="intro.txt.html#end" class="d">end</a> of the class.
+                        When no '}' <a href="#is" class="d">is</a> found after the cursor, this <a href="#is" class="d">is</a> an
+                        error. <a href="#exclusive" class="l">exclusive</a> motion. <span class="s">{not in Vi}</span>
+                                                <a name="%5Bm" class="t">[m</a>
+<a href="#%5Bm" class="d">[m</a>                      Go to <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> previous start of <a href="insert.txt.html#a" class="d">a</a> method (for Java or
+                        similar structured language).  When not after the
+                        start of <a href="insert.txt.html#a" class="d">a</a> method, jump to the start or <a href="intro.txt.html#end" class="d">end</a> of the
+                        class.  When no '{' <a href="#is" class="d">is</a> found before the cursor this <a href="#is" class="d">is</a>
+                        an error. <a href="#exclusive" class="l">exclusive</a> motion. <span class="s">{not in Vi}</span>
+                                                <a name="%5BM" class="t">[M</a>
+<a href="#%5BM" class="d">[M</a>                      Go to <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> previous <a href="intro.txt.html#end" class="d">end</a> of <a href="insert.txt.html#a" class="d">a</a> method (for Java or
+                        similar structured language).  When not after the
+                        <a href="intro.txt.html#end" class="d">end</a> of <a href="insert.txt.html#a" class="d">a</a> method, jump to the start or <a href="intro.txt.html#end" class="d">end</a> of the
+                        class.  When no '}' <a href="#is" class="d">is</a> found before the cursor this <a href="#is" class="d">is</a>
+                        an error. <a href="#exclusive" class="l">exclusive</a> motion. <span class="s">{not in Vi}</span>
+
+The above two commands assume that the file contains <a href="insert.txt.html#a" class="d">a</a> class with methods.
+The class definition <a href="#is" class="d">is</a> surrounded in '{' and '}'.  Each method in the class
+<a href="#is" class="d">is</a> also surrounded with '{' and '}'.  This applies to the Java language.  The
+file looks like this: 
+<span class="e"></span>
+<span class="e">        // comment</span>
+<span class="e">        class foo {</span>
+<span class="e">                int method_one() {</span>
+<span class="e">                        body_one();</span>
+<span class="e">                }</span>
+<span class="e">                int method_two() {</span>
+<span class="e">                        body_two();</span>
+<span class="e">                }</span>
+<span class="e">        }</span>
+Starting with the cursor on "body_two()"<a href="#%2C" class="d">,</a> using "<a href="#%5Bm" class="d">[m</a>" will jump to the '{' <a href="#at" class="d">at</a>
+the start of "method_two()" (obviously this <a href="#is" class="d">is</a> much more useful when the
+method <a href="#is" class="d">is</a> long!).  Using "2[m" will jump to the start of "method_one()"<a href="repeat.txt.html#." class="d">.</a>
+Using "3[m" will jump to the start of the class.
+
+                                                <a name="%5B%23" class="t">[#</a>
+<a href="#%5B%23" class="d">[#</a>                      <a href="#go" class="d">go</a> to <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> previous unmatched "#if" or "#else"<a href="repeat.txt.html#." class="d">.</a>
+                        <a href="#exclusive" class="l">exclusive</a> motion. <span class="s">{not in Vi}</span>
+
+                                                <a name="%5D%23" class="t">]#</a>
+<a href="#%5D%23" class="d">]#</a>                      <a href="#go" class="d">go</a> to <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> next unmatched "#else" or "#endif"<a href="repeat.txt.html#." class="d">.</a>
+                        <a href="#exclusive" class="l">exclusive</a> motion. <span class="s">{not in Vi}</span>
+
+These two commands work in <a href="change.txt.html#C" class="d">C</a> programs that contain #if/#else/#endif
+constructs.  It brings you to the start or <a href="intro.txt.html#end" class="d">end</a> of the #if/#else/#endif where
+the current line <a href="#is" class="d">is</a> included.  You can then use "<a href="#%25" class="d">%</a>" to <a href="#go" class="d">go</a> to the matching line.
+
+                                                <a name="%5Bstar" class="t">[star</a> <a name="%5B%2F" class="t">[/</a>
+<a href="index.txt.html#%5B" class="d">[</a>*  or  <a href="#%5B%2F" class="d">[/</a>              <a href="#go" class="d">go</a> to <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> previous start of <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#C" class="d">C</a> comment "<a href="pattern.txt.html#%2F" class="d">/</a>*"<a href="repeat.txt.html#." class="d">.</a>
+                        <a href="#exclusive" class="l">exclusive</a> motion. <span class="s">{not in Vi}</span>
+
+                                                <a name="%5Dstar" class="t">]star</a> <a name="%5D%2F" class="t">]/</a>
+<a href="index.txt.html#%5D" class="d">]</a>*  or  <a href="#%5D%2F" class="d">]/</a>              <a href="#go" class="d">go</a> to <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> next <a href="intro.txt.html#end" class="d">end</a> of <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#C" class="d">C</a> comment "*<a href="pattern.txt.html#%2F" class="d">/</a>"<a href="repeat.txt.html#." class="d">.</a>
+                        <a href="#exclusive" class="l">exclusive</a> motion. <span class="s">{not in Vi}</span>
+
+
+                                                <a name="H" class="t">H</a>
+<a href="#H" class="d">H</a>                       To line <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> from top (Home) of <a href="windows.txt.html#window" class="d">window</a> (default:
+                        first line on the window) on the first non-blank
+                        character <a href="#linewise" class="l">linewise</a><a href="repeat.txt.html#." class="d">.</a>  See also <a href="options.txt.html#%27startofline%27" class="o">'startofline'</a> option.
+                        Cursor <a href="#is" class="d">is</a> adjusted for <a href="options.txt.html#%27scrolloff%27" class="o">'scrolloff'</a> option, unless an
+                        <a href="#operator" class="d">operator</a> <a href="#is" class="d">is</a> pending, in which <a href="change.txt.html#case" class="d">case</a> the text may
+                        scroll.  E.g. "yH" yanks from the first visible line
+                        until the cursor line (inclusive).
+
+                                                <a name="M" class="t">M</a>
+<a href="#M" class="d">M</a>                       To Middle line of window, on the first non-blank
+                        character <a href="#linewise" class="l">linewise</a><a href="repeat.txt.html#." class="d">.</a>  See also <a href="options.txt.html#%27startofline%27" class="o">'startofline'</a> option.
+
+                                                <a name="L" class="t">L</a>
+<a href="#L" class="d">L</a>                       To line <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> from bottom of <a href="windows.txt.html#window" class="d">window</a> (default: Last
+                        line on the window) on the first non-blank character
+                        <a href="#linewise" class="l">linewise</a><a href="repeat.txt.html#." class="d">.</a>  See also <a href="options.txt.html#%27startofline%27" class="o">'startofline'</a> option.
+                        Cursor <a href="#is" class="d">is</a> adjusted for <a href="options.txt.html#%27scrolloff%27" class="o">'scrolloff'</a> option, unless an
+                        <a href="#operator" class="d">operator</a> <a href="#is" class="d">is</a> pending, in which <a href="change.txt.html#case" class="d">case</a> the text may
+                        scroll.  E.g. "yL" yanks from the cursor to the last
+                        visible line.
+
+<a href="visual.txt.html#%3CLeftMouse%3E" class="s">&lt;LeftMouse&gt;</a>             Moves to the position on the screen where the mouse
+                        click <a href="#is" class="d">is</a> <a href="#exclusive" class="l">exclusive</a><a href="repeat.txt.html#." class="d">.</a>  See also <a href="visual.txt.html#%3CLeftMouse%3E" class="l">&lt;LeftMouse&gt;</a><a href="repeat.txt.html#." class="d">.</a>  If the
+                        position <a href="#is" class="d">is</a> in <a href="insert.txt.html#a" class="d">a</a> status line, that <a href="windows.txt.html#window" class="d">window</a> <a href="#is" class="d">is</a> made the
+                        active <a href="windows.txt.html#window" class="d">window</a> and the cursor <a href="#is" class="d">is</a> not moved.  <span class="s">{not in Vi}</span>
+
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

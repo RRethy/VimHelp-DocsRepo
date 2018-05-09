@@ -1,0 +1,577 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: usr_27.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="usr_27.txt" class="t">usr_27.txt</a>    For <span class="i">Vim version 8.0.</span>  Last change: 2018 Jan 26
+
+                     VIM USER MANUAL <a href="motion.txt.html#-" class="d">-</a> by <a href="intro.txt.html#Bram" class="d">Bram</a> <a href="intro.txt.html#Moolenaar" class="d">Moolenaar</a>
+
+                         Search commands and patterns
+
+
+In chapter 3 <a href="insert.txt.html#a" class="d">a</a> few simple search patterns were mentioned <a href="usr_03.txt.html#03.9" class="l">03.9</a><a href="repeat.txt.html#." class="d">.</a>  Vim can <a href="diff.txt.html#do" class="d">do</a>
+much more complex searches.  This chapter explains the most often used ones.
+<a href="insert.txt.html#A" class="d">A</a> detailed specification can be found here: <a href="pattern.txt.html#pattern" class="l">pattern</a>
+
+<a href="#27.1" class="l">27.1</a>  Ignoring <a href="change.txt.html#case" class="d">case</a>
+<a href="#27.2" class="l">27.2</a>  Wrapping around the file <a href="intro.txt.html#end" class="d">end</a>
+<a href="#27.3" class="l">27.3</a>  Offsets
+<a href="#27.4" class="l">27.4</a>  Matching multiple times
+<a href="#27.5" class="l">27.5</a>  Alternatives
+<a href="#27.6" class="l">27.6</a>  Character ranges
+<a href="#27.7" class="l">27.7</a>  Character classes
+<a href="#27.8" class="l">27.8</a>  Matching <a href="insert.txt.html#a" class="d">a</a> line break
+<a href="#27.9" class="l">27.9</a>  Examples
+
+     Next chapter: <a href="usr_28.txt.html#usr_28.txt" class="l">usr_28.txt</a>  <a href="fold.txt.html#Folding" class="d">Folding</a>
+ Previous chapter: <a href="usr_26.txt.html#usr_26.txt" class="l">usr_26.txt</a>  Repeating
+Table of contents: <a href="usr_toc.txt.html#usr_toc.txt" class="l">usr_toc.txt</a>
+
+<span class="h">==============================================================================</span>
+<a name="27.1" class="t">27.1</a>  Ignoring <a href="change.txt.html#case" class="d">case</a>
+
+By default, Vim's searches are <a href="change.txt.html#case" class="d">case</a> sensitive.  Therefore, "include"<a href="motion.txt.html#%2C" class="d">,</a>
+"INCLUDE"<a href="motion.txt.html#%2C" class="d">,</a> and "Include" are three different words and <a href="insert.txt.html#a" class="d">a</a> search will match
+only one of them.
+   Now switch on the <a href="options.txt.html#%27ignorecase%27" class="o">'ignorecase'</a> option: 
+<span class="e"></span>
+<span class="e">        :set ignorecase</span>
+<span class="e"></span>
+Search for "include" again, and now <a href="motion.txt.html#it" class="d">it</a> will match "Include"<a href="motion.txt.html#%2C" class="d">,</a> "INCLUDE" and
+"InClUDe"<a href="repeat.txt.html#." class="d">.</a>  (Set the <a href="options.txt.html#%27hlsearch%27" class="o">'hlsearch'</a> option to quickly see where <a href="insert.txt.html#a" class="d">a</a> <a href="pattern.txt.html#pattern" class="d">pattern</a>
+matches.)
+   You can switch this off again with: 
+<span class="e"></span>
+<span class="e">        :set noignorecase</span>
+<span class="e"></span>
+But let's keep <a href="motion.txt.html#it" class="d">it</a> set, and search for "INCLUDE"<a href="repeat.txt.html#." class="d">.</a>  It will match exactly the
+same text <a href="motion.txt.html#as" class="d">as</a> "include" did.  Now set the <a href="options.txt.html#%27smartcase%27" class="o">'smartcase'</a> option: 
+<span class="e"></span>
+<span class="e">        :set ignorecase smartcase</span>
+<span class="e"></span>
+If you have <a href="insert.txt.html#a" class="d">a</a> <a href="pattern.txt.html#pattern" class="d">pattern</a> with <a href="motion.txt.html#at" class="d">at</a> least one <a href="change.txt.html#uppercase" class="d">uppercase</a> character, the search
+becomes <a href="change.txt.html#case" class="d">case</a> sensitive.  The idea <a href="motion.txt.html#is" class="d">is</a> that you didn't have to type that
+<a href="change.txt.html#uppercase" class="d">uppercase</a> character, so you <a href="vim_faq.txt.html#must" class="d">must</a> have done <a href="motion.txt.html#it" class="d">it</a> because you wanted <a href="change.txt.html#case" class="d">case</a> to
+match.  That's smart!
+    With these two <a href="options.txt.html#options" class="d">options</a> set you find the following matches:
+
+<span class="h">        pattern                 matches </span>
+        <a href="motion.txt.html#word" class="d">word</a>                    word, Word, WORD, WoRd, etc.
+        Word                    Word
+        <a href="motion.txt.html#WORD" class="d">WORD</a>                    <a href="motion.txt.html#WORD" class="d">WORD</a>
+        WoRd                    WoRd
+
+
+CASE IN ONE PATTERN
+
+If you want to ignore <a href="change.txt.html#case" class="d">case</a> for one specific pattern, you can <a href="diff.txt.html#do" class="d">do</a> this by
+prepending the "\c" string.  Using "\C" will make the <a href="pattern.txt.html#pattern" class="d">pattern</a> to match case.
+This overrules the <a href="options.txt.html#%27ignorecase%27" class="o">'ignorecase'</a> and <a href="options.txt.html#%27smartcase%27" class="o">'smartcase'</a> options, when "\c" or "\C" <a href="motion.txt.html#is" class="d">is</a>
+used their value doesn't matter.
+
+<span class="h">        pattern                 matches </span>
+        \Cword                  <a href="motion.txt.html#word" class="d">word</a>
+        \CWord                  Word
+        \cword                  word, Word, WORD, WoRd, etc.
+        \cWord                  word, Word, WORD, WoRd, etc.
+
+<a href="insert.txt.html#A" class="d">A</a> big advantage of using "\c" and "\C" <a href="motion.txt.html#is" class="d">is</a> that <a href="motion.txt.html#it" class="d">it</a> sticks with the pattern.
+Thus if you repeat <a href="insert.txt.html#a" class="d">a</a> <a href="pattern.txt.html#pattern" class="d">pattern</a> from the search history, the same will happen, no
+matter if <a href="options.txt.html#%27ignorecase%27" class="o">'ignorecase'</a> or <a href="options.txt.html#%27smartcase%27" class="o">'smartcase'</a> was changed.
+
+        <span class="n">Note:</span>
+        The use of "\" items in search patterns depends on the <a href="options.txt.html#%27magic%27" class="o">'magic'</a> option.
+        In this chapter we will assume <a href="options.txt.html#%27magic%27" class="o">'magic'</a> <a href="motion.txt.html#is" class="d">is</a> on, because that <a href="motion.txt.html#is" class="d">is</a> the
+        standard and recommended setting.  If you would change <a href="options.txt.html#%27magic%27" class="o">'magic'</a>, many
+        search patterns would suddenly become invalid.
+
+        <span class="n">Note:</span>
+        If your search takes much longer than you expected, you can interrupt
+        <a href="motion.txt.html#it" class="d">it</a> with <a href="pattern.txt.html#CTRL-C" class="k">CTRL-C</a> on <a href="os_unix.txt.html#Unix" class="d">Unix</a> and  <a href="scroll.txt.html#CTRL-B" class="k">CTRL-B</a>reak on <a href="os_msdos.txt.html#MS-DOS" class="d">MS-DOS</a> and MS-Windows.
+
+<span class="h">==============================================================================</span>
+<a name="27.2" class="t">27.2</a>  Wrapping around the file <a href="intro.txt.html#end" class="d">end</a>
+
+By default, <a href="insert.txt.html#a" class="d">a</a> forward search starts searching for the given <a href="eval.txt.html#string" class="d">string</a> <a href="motion.txt.html#at" class="d">at</a> the
+current cursor location.  It then proceeds to the <a href="intro.txt.html#end" class="d">end</a> of the file.  If <a href="motion.txt.html#it" class="d">it</a> has
+not found the <a href="eval.txt.html#string" class="d">string</a> by that time, <a href="motion.txt.html#it" class="d">it</a> starts from the beginning and searches
+from the start of the file to the cursor location.
+   Keep in mind that when <a href="repeat.txt.html#repeating" class="d">repeating</a> the "<a href="pattern.txt.html#n" class="d">n</a>" command to search for the next
+match, you eventually get back to the first match.  If you don't notice this
+you keep searching forever!  To give you <a href="insert.txt.html#a" class="d">a</a> hint, Vim displays this message:
+
+<span class="h">        search hit BOTTOM, continuing at TOP </span>
+
+If you use the "<a href="pattern.txt.html#%3F" class="d">?</a>" command, to search in the other direction, you get this
+message:
+
+<span class="h">        search hit TOP, continuing at BOTTOM </span>
+
+Still, you don't know when you are back <a href="motion.txt.html#at" class="d">at</a> the first match.  One way to see
+this <a href="motion.txt.html#is" class="d">is</a> by switching on the <a href="options.txt.html#%27ruler%27" class="o">'ruler'</a> option: 
+<span class="e"></span>
+<span class="e">        :set ruler</span>
+<span class="e"></span>
+Vim will display the cursor position in the lower righthand corner of the
+<a href="windows.txt.html#window" class="d">window</a> (in the status line if there <a href="motion.txt.html#is" class="d">is</a> one).  It looks like this:
+
+<span class="h">        101,29       84% </span>
+
+The first number <a href="motion.txt.html#is" class="d">is</a> the line number of the cursor.  Remember the line number
+where you started, so that you can check if you passed this position again.
+
+
+NOT WRAPPING
+
+To turn off search wrapping, use the following command: 
+<span class="e"></span>
+<span class="e">        :set nowrapscan</span>
+<span class="e"></span>
+Now when the search hits the <a href="intro.txt.html#end" class="d">end</a> of the file, an error message displays:
+
+<span class="h">        E385: search hit BOTTOM without match for: forever </span>
+
+Thus you can find all matches by going to the start of the file with "<a href="motion.txt.html#gg" class="d">gg</a>" and
+keep searching until you see this message.
+   If you search in the other direction, using "<a href="pattern.txt.html#%3F" class="d">?</a>"<a href="motion.txt.html#%2C" class="d">,</a> you get:
+
+<span class="h">        E384: search hit TOP without match for: forever </span>
+
+<span class="h">==============================================================================</span>
+<a name="27.3" class="t">27.3</a>  Offsets
+
+By default, the search command leaves the cursor positioned on the beginning
+of the pattern.  You can tell Vim to leave <a href="motion.txt.html#it" class="d">it</a> some other place by specifying
+an offset.  For the forward search command "<a href="pattern.txt.html#%2F" class="d">/</a>"<a href="motion.txt.html#%2C" class="d">,</a> the offset <a href="motion.txt.html#is" class="d">is</a> specified by
+appending <a href="insert.txt.html#a" class="d">a</a> slash (/) and the offset: 
+<span class="e"></span>
+<span class="e">        /default/2</span>
+<span class="e"></span>
+This command searches for the <a href="pattern.txt.html#pattern" class="d">pattern</a> "default" and then moves to the
+beginning of the second line past the pattern.  Using this command on the
+<a href="motion.txt.html#paragraph" class="d">paragraph</a> above, Vim finds the <a href="motion.txt.html#word" class="d">word</a> "default" in the first line.  Then the
+cursor <a href="motion.txt.html#is" class="d">is</a> moved two lines down and lands on "an offset"<a href="repeat.txt.html#." class="d">.</a>
+
+If the offset <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> simple number, the cursor will be placed <a href="motion.txt.html#at" class="d">at</a> the beginning
+of the line that many lines from the match.  The offset number can be positive
+or negative.  If <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> positive, the cursor moves down that many lines; if
+negative, <a href="motion.txt.html#it" class="d">it</a> moves up.
+
+
+CHARACTER OFFSETS
+
+The "<a href="motion.txt.html#e" class="d">e</a>" offset indicates an offset from the <a href="intro.txt.html#end" class="d">end</a> of the match.  It moves the
+cursor onto the last character of the match.  The command: 
+<span class="e"></span>
+<span class="e">        /const/e</span>
+<span class="e"></span>
+puts the cursor on the "<a href="motion.txt.html#t" class="d">t</a>" of "const"<a href="repeat.txt.html#." class="d">.</a>
+   From that position, adding <a href="insert.txt.html#a" class="d">a</a> number moves forward that many characters.
+This command moves to the character just after the match: 
+<span class="e"></span>
+<span class="e">        /const/e+1</span>
+<span class="e"></span>
+<a href="insert.txt.html#A" class="d">A</a> positive number moves the cursor to the right, <a href="insert.txt.html#a" class="d">a</a> negative number moves <a href="motion.txt.html#it" class="d">it</a> to
+the left.  For example: 
+<span class="e"></span>
+<span class="e">        /const/e-1</span>
+<span class="e"></span>
+moves the cursor to the "<a href="change.txt.html#s" class="d">s</a>" of "const"<a href="repeat.txt.html#." class="d">.</a>
+
+If the offset begins with "<a href="motion.txt.html#b" class="d">b</a>"<a href="motion.txt.html#%2C" class="d">,</a> the cursor moves to the beginning of the
+pattern.  That's not very useful, since leaving out the "<a href="motion.txt.html#b" class="d">b</a>" does the same
+thing.  It does get useful when <a href="insert.txt.html#a" class="d">a</a> number <a href="motion.txt.html#is" class="d">is</a> added or subtracted.  The cursor
+then goes forward or backward that many characters.  For example: 
+<span class="e"></span>
+<span class="e">        /const/b+2</span>
+<span class="e"></span>
+Moves the cursor to the beginning of the match and then two characters to the
+right.  Thus <a href="motion.txt.html#it" class="d">it</a> lands on the "<a href="pattern.txt.html#n" class="d">n</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+
+REPEATING
+
+To repeat searching for the previously used search pattern, but with <a href="insert.txt.html#a" class="d">a</a>
+different offset, leave out the pattern: 
+<span class="e"></span>
+<span class="e">        /that</span>
+<span class="e">        //e</span>
+<span class="e"></span>
+Is equal to: 
+<span class="e"></span>
+<span class="e">        /that/e</span>
+<span class="e"></span>
+To repeat with the same offset: 
+<span class="e"></span>
+<span class="e">        /</span>
+<span class="e"></span>
+"<a href="pattern.txt.html#n" class="d">n</a>" does the same thing.  To repeat while removing <a href="insert.txt.html#a" class="d">a</a> previously used offset: 
+<span class="e"></span>
+<span class="e">        //</span>
+<span class="e"></span>
+<span class="e"></span>
+SEARCHING BACKWARDS
+
+The "<a href="pattern.txt.html#%3F" class="d">?</a>" command uses offsets in the same way, but you <a href="vim_faq.txt.html#must" class="d">must</a> use "<a href="pattern.txt.html#%3F" class="d">?</a>" to separate
+the offset from the pattern, instead of "<a href="pattern.txt.html#%2F" class="d">/</a>"<a href="cmdline.txt.html#%3A" class="d">:</a> 
+<span class="e"></span>
+<span class="e">        ?const?e-2</span>
+<span class="e"></span>
+The "<a href="motion.txt.html#b" class="d">b</a>" and "<a href="motion.txt.html#e" class="d">e</a>" keep their meaning, they don't change direction with the use
+of "<a href="pattern.txt.html#%3F" class="d">?</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+
+START POSITION
+
+When <a href="starting.txt.html#starting" class="d">starting</a> <a href="insert.txt.html#a" class="d">a</a> search, <a href="motion.txt.html#it" class="d">it</a> normally starts <a href="motion.txt.html#at" class="d">at</a> the cursor position.  When you
+specify <a href="insert.txt.html#a" class="d">a</a> line offset, this can cause trouble.  For example: 
+<span class="e"></span>
+<span class="e">        /const/-2</span>
+<span class="e"></span>
+This finds the next <a href="motion.txt.html#word" class="d">word</a> "const" and then moves two lines up.  If you
+use "<a href="pattern.txt.html#n" class="d">n</a>" to search again, Vim could start <a href="motion.txt.html#at" class="d">at</a> the current position and find the
+same "const" match.  Then using the offset again, you would be back where you
+started.  You would be stuck!
+   It could be worse: Suppose there <a href="motion.txt.html#is" class="d">is</a> another match with "const" in the next
+line.  Then <a href="repeat.txt.html#repeating" class="d">repeating</a> the forward search would find this match and move two
+lines up.  Thus you would actually move the cursor back!
+
+When you specify <a href="insert.txt.html#a" class="d">a</a> character offset, Vim will compensate for this.  Thus the
+search starts <a href="insert.txt.html#a" class="d">a</a> few characters forward or backward, so that the same match
+isn't found again.
+
+<span class="h">==============================================================================</span>
+<a name="27.4" class="t">27.4</a>  Matching multiple times
+
+The "*" item specifies that the item before <a href="motion.txt.html#it" class="d">it</a> can match any number of times.
+Thus: 
+<span class="e"></span>
+<span class="e">        /a*</span>
+<span class="e"></span>
+matches "<a href="insert.txt.html#a" class="d">a</a>"<a href="motion.txt.html#%2C" class="d">,</a> "aa"<a href="motion.txt.html#%2C" class="d">,</a> "aaa"<a href="motion.txt.html#%2C" class="d">,</a> etc.  But also "" (the empty string), because zero
+times <a href="motion.txt.html#is" class="d">is</a> included.
+   The "*" only applies to the item directly before it.  Thus "<a href="motion.txt.html#ab" class="d">ab</a>*" matches
+"<a href="insert.txt.html#a" class="d">a</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="motion.txt.html#ab" class="d">ab</a>"<a href="motion.txt.html#%2C" class="d">,</a> "abb"<a href="motion.txt.html#%2C" class="d">,</a> "abbb"<a href="motion.txt.html#%2C" class="d">,</a> etc.  To match <a href="insert.txt.html#a" class="d">a</a> whole <a href="eval.txt.html#string" class="d">string</a> multiple times, <a href="motion.txt.html#it" class="d">it</a>
+<a href="vim_faq.txt.html#must" class="d">must</a> be grouped into one item.  This <a href="motion.txt.html#is" class="d">is</a> done by putting "\(" before <a href="motion.txt.html#it" class="d">it</a> and
+"\)" after it.  Thus this command: 
+<span class="e"></span>
+<span class="e">        /\(ab\)*</span>
+<span class="e"></span>
+Matches: "<a href="motion.txt.html#ab" class="d">ab</a>"<a href="motion.txt.html#%2C" class="d">,</a> "abab"<a href="motion.txt.html#%2C" class="d">,</a> "ababab"<a href="motion.txt.html#%2C" class="d">,</a> etc.  And also ""<a href="repeat.txt.html#." class="d">.</a>
+
+To avoid matching the empty string, use "\+"<a href="repeat.txt.html#." class="d">.</a>  This makes the previous item
+match one or more times. 
+<span class="e"></span>
+<span class="e">        /ab\+</span>
+<span class="e"></span>
+Matches "<a href="motion.txt.html#ab" class="d">ab</a>"<a href="motion.txt.html#%2C" class="d">,</a> "abb"<a href="motion.txt.html#%2C" class="d">,</a> "abbb"<a href="motion.txt.html#%2C" class="d">,</a> etc.  It does not match "<a href="insert.txt.html#a" class="d">a</a>" when no "<a href="motion.txt.html#b" class="d">b</a>" follows.
+
+To match an optional item, use "\="<a href="repeat.txt.html#." class="d">.</a>  Example: 
+<span class="e"></span>
+<span class="e">        /folders\=</span>
+<span class="e"></span>
+Matches "folder" and "folders"<a href="repeat.txt.html#." class="d">.</a>
+
+
+SPECIFIC COUNTS
+
+To match <a href="insert.txt.html#a" class="d">a</a> specific number of items use the form "\{n,m}"<a href="repeat.txt.html#." class="d">.</a>  "<a href="pattern.txt.html#n" class="d">n</a>" and "<a href="motion.txt.html#m" class="d">m</a>" are
+numbers.  The item before <a href="motion.txt.html#it" class="d">it</a> will be matched "<a href="pattern.txt.html#n" class="d">n</a>" to "<a href="motion.txt.html#m" class="d">m</a>" times <a href="motion.txt.html#inclusive" class="l">inclusive</a><a href="repeat.txt.html#." class="d">.</a>
+Example: 
+<span class="e"></span>
+<span class="e">        /ab\{3,5}</span>
+<span class="e"></span>
+matches "abbb"<a href="motion.txt.html#%2C" class="d">,</a> "abbbb" and "abbbbb"<a href="repeat.txt.html#." class="d">.</a>
+  When "<a href="pattern.txt.html#n" class="d">n</a>" <a href="motion.txt.html#is" class="d">is</a> omitted, <a href="motion.txt.html#it" class="d">it</a> defaults to zero.  When "<a href="motion.txt.html#m" class="d">m</a>" <a href="motion.txt.html#is" class="d">is</a> omitted <a href="motion.txt.html#it" class="d">it</a> defaults
+to infinity.  When ",m" <a href="motion.txt.html#is" class="d">is</a> omitted, <a href="motion.txt.html#it" class="d">it</a> matches exactly "<a href="pattern.txt.html#n" class="d">n</a>" times.
+Examples:
+
+<span class="h">        pattern         match count </span>
+        \{,4}           0, 1, 2, 3 or 4
+        \{3,}           3, 4, 5, etc.
+        \{0,1}          <a href="motion.txt.html#0" class="d">0</a> or 1, same <a href="motion.txt.html#as" class="d">as</a> \=
+        \{0,}           <a href="motion.txt.html#0" class="d">0</a> or more, same <a href="motion.txt.html#as" class="d">as</a> *
+        \{1,}           1 or more, same <a href="motion.txt.html#as" class="d">as</a> \+
+        \{3}            3
+
+
+MATCHING AS LITTLE AS POSSIBLE
+
+The items so far match <a href="motion.txt.html#as" class="d">as</a> many characters <a href="motion.txt.html#as" class="d">as</a> they can find.  To match <a href="motion.txt.html#as" class="d">as</a> few
+<a href="motion.txt.html#as" class="d">as</a> possible, use "\{-n,m}"<a href="repeat.txt.html#." class="d">.</a>  It works the same <a href="motion.txt.html#as" class="d">as</a> "\{n,m}"<a href="motion.txt.html#%2C" class="d">,</a> except that the
+minimal amount possible <a href="motion.txt.html#is" class="d">is</a> used.
+   For example, use: 
+<span class="e"></span>
+<span class="e">        /ab\{-1,3}</span>
+<span class="e"></span>
+Will match "<a href="motion.txt.html#ab" class="d">ab</a>" in "abbb"<a href="repeat.txt.html#." class="d">.</a>  Actually, <a href="motion.txt.html#it" class="d">it</a> will never match more than one b,
+because there <a href="motion.txt.html#is" class="d">is</a> no reason to match more.  It requires something else to force
+<a href="motion.txt.html#it" class="d">it</a> to match more than the lower limit.
+   The same rules apply to removing "<a href="pattern.txt.html#n" class="d">n</a>" and "<a href="motion.txt.html#m" class="d">m</a>"<a href="repeat.txt.html#." class="d">.</a>  It's even possible to remove
+both of the numbers, resulting in "\{-}"<a href="repeat.txt.html#." class="d">.</a>  This matches the item before <a href="motion.txt.html#it" class="d">it</a>
+zero or more times, <a href="motion.txt.html#as" class="d">as</a> few <a href="motion.txt.html#as" class="d">as</a> possible.  The item by itself always matches
+zero times.  It <a href="motion.txt.html#is" class="d">is</a> useful when combined with something else.  Example: 
+<span class="e"></span>
+<span class="e">        /a.\{-}b</span>
+<span class="e"></span>
+This matches "axb" in "axbxb"<a href="repeat.txt.html#." class="d">.</a>  If this <a href="pattern.txt.html#pattern" class="d">pattern</a> would be used: 
+<span class="e"></span>
+<span class="e">        /a.*b</span>
+<span class="e"></span>
+It would try to match <a href="motion.txt.html#as" class="d">as</a> many characters <a href="motion.txt.html#as" class="d">as</a> possible with "<a href="repeat.txt.html#." class="d">.</a>*"<a href="motion.txt.html#%2C" class="d">,</a> thus <a href="motion.txt.html#it" class="d">it</a>
+matches "axbxb" <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> whole.
+
+<span class="h">==============================================================================</span>
+<a name="27.5" class="t">27.5</a>  Alternatives
+
+The "or" <a href="motion.txt.html#operator" class="d">operator</a> in <a href="insert.txt.html#a" class="d">a</a> <a href="pattern.txt.html#pattern" class="d">pattern</a> <a href="motion.txt.html#is" class="d">is</a> "\|"<a href="repeat.txt.html#." class="d">.</a>  Example: 
+<span class="e"></span>
+<span class="e">        /foo\|bar</span>
+<span class="e"></span>
+This matches "foo" or "<a href="motion.txt.html#bar" class="d">bar</a>"<a href="repeat.txt.html#." class="d">.</a>  More alternatives can be concatenated: 
+<span class="e"></span>
+<span class="e">        /one\|two\|three</span>
+<span class="e"></span>
+Matches "one"<a href="motion.txt.html#%2C" class="d">,</a> "two" and "three"<a href="repeat.txt.html#." class="d">.</a>
+   To match multiple times, the whole thing <a href="vim_faq.txt.html#must" class="d">must</a> be placed in "\(" and "\)"<a href="cmdline.txt.html#%3A" class="d">:</a> 
+<span class="e"></span>
+<span class="e">        /\(foo\|bar\)\+</span>
+<span class="e"></span>
+This matches "foo"<a href="motion.txt.html#%2C" class="d">,</a> "foobar"<a href="motion.txt.html#%2C" class="d">,</a> "foofoo"<a href="motion.txt.html#%2C" class="d">,</a> "barfoobar"<a href="motion.txt.html#%2C" class="d">,</a> etc.
+   Another example: 
+<span class="e"></span>
+<span class="e">        /end\(if\|while\|for\)</span>
+<span class="e"></span>
+This matches "endif"<a href="motion.txt.html#%2C" class="d">,</a> "endwhile" and "endfor"<a href="repeat.txt.html#." class="d">.</a>
+
+<a href="insert.txt.html#A" class="d">A</a> related item <a href="motion.txt.html#is" class="d">is</a> "\&amp;"<a href="repeat.txt.html#." class="d">.</a>  This requires that both alternatives match in the
+same place.  The resulting match uses the last alternative.  Example: 
+<span class="e"></span>
+<span class="e">        /forever\&amp;...</span>
+<span class="e"></span>
+This matches "for" in "forever"<a href="repeat.txt.html#." class="d">.</a>  It will not match "fortuin"<a href="motion.txt.html#%2C" class="d">,</a> for example.
+
+<span class="h">==============================================================================</span>
+<a name="27.6" class="t">27.6</a>  Character ranges
+
+To match "<a href="insert.txt.html#a" class="d">a</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="motion.txt.html#b" class="d">b</a>" or "<a href="change.txt.html#c" class="d">c</a>" you could use "/a\|b\|<a href="change.txt.html#c" class="d">c</a>"<a href="repeat.txt.html#." class="d">.</a>  When you want to match all
+letters from "<a href="insert.txt.html#a" class="d">a</a>" to "<a href="index.txt.html#z" class="d">z</a>" this gets very long.  There <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> shorter method: 
+<span class="e"></span>
+<span class="e">        /[a-z]</span>
+<span class="e"></span>
+The <a href="motion.txt.html#%5B%5D" class="d">[]</a> construct matches <a href="insert.txt.html#a" class="d">a</a> single character.  Inside you specify which
+characters to match.  You can include <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of characters, like this: 
+<span class="e"></span>
+<span class="e">        /[0123456789abcdef]</span>
+<span class="e"></span>
+This will match any of the characters included.  For consecutive characters
+you can specify the range.  "0-3" stands for "0123"<a href="repeat.txt.html#." class="d">.</a>  "w-z" stands for "wxyz"<a href="repeat.txt.html#." class="d">.</a>
+Thus the same command <a href="motion.txt.html#as" class="d">as</a> above can be shortened to: 
+<span class="e"></span>
+<span class="e">        /[0-9a-f]</span>
+<span class="e"></span>
+To match the "<a href="motion.txt.html#-" class="d">-</a>" character itself make <a href="motion.txt.html#it" class="d">it</a> the first or last one in the range.
+These special characters are accepted to make <a href="motion.txt.html#it" class="d">it</a> easier to use them inside <a href="insert.txt.html#a" class="d">a</a>
+<a href="motion.txt.html#%5B%5D" class="d">[]</a> range (they can actually be used anywhere in the search pattern):
+
+        \e      <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a>
+        \t      <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a>
+        \r      <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a>
+        \b      <a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a>
+
+There are <a href="insert.txt.html#a" class="d">a</a> few more special cases for <a href="motion.txt.html#%5B%5D" class="d">[]</a> ranges, see <a href="pattern.txt.html#%2F%5B%5D" class="l">/[]</a> for the whole
+story.
+
+
+COMPLEMENTED RANGE
+
+To avoid matching <a href="insert.txt.html#a" class="d">a</a> specific character, use "<a href="motion.txt.html#%5E" class="d">^</a>" <a href="motion.txt.html#at" class="d">at</a> the start of the range.
+The <a href="motion.txt.html#%5B%5D" class="d">[]</a> item then matches everything but the characters included.  Example: 
+<span class="e"></span>
+<span class="e">        /"[^"]*"</span>
+
+         "        <a href="insert.txt.html#a" class="d">a</a> double <a href="change.txt.html#quote" class="d">quote</a>
+          [^"<a href="index.txt.html#%5D" class="d">]</a>    any character that <a href="motion.txt.html#is" class="d">is</a> not <a href="insert.txt.html#a" class="d">a</a> double <a href="change.txt.html#quote" class="d">quote</a>
+              *   <a href="motion.txt.html#as" class="d">as</a> many <a href="motion.txt.html#as" class="d">as</a> possible
+               "  <a href="insert.txt.html#a" class="d">a</a> double <a href="change.txt.html#quote" class="d">quote</a> again
+
+This matches "foo" and "3!x"<a href="motion.txt.html#%2C" class="d">,</a> including the double quotes.
+
+
+PREDEFINED RANGES
+
+<a href="insert.txt.html#A" class="d">A</a> number of ranges are used very often.  Vim provides <a href="insert.txt.html#a" class="d">a</a> shortcut for these.
+For example: 
+<span class="e"></span>
+<span class="e">        /\a</span>
+<span class="e"></span>
+Finds alphabetic characters.  This <a href="motion.txt.html#is" class="d">is</a> equal to using "/[a-zA-Z]"<a href="repeat.txt.html#." class="d">.</a>  Here are <a href="insert.txt.html#a" class="d">a</a>
+few more of these:
+
+<span class="h">        item    matches                 equivalent </span>
+        \d      digit                   <span class="s">[0-9]</span>
+        \D      non-digit               <span class="s">[^0-9]</span>
+        \x      hex digit               <span class="s">[0-9a-fA-F]</span>
+        \X      non-hex digit           <span class="s">[^0-9a-fA-F]</span>
+        \s      white <a href="intro.txt.html#space" class="d">space</a>             <a href="index.txt.html#%5B" class="d">[</a>       <a href="index.txt.html#%5D" class="d">]</a>     (&lt;Tab&gt; and <a href="motion.txt.html#%3CSpace%3E" class="s">&lt;Space&gt;</a>)
+        \S      non-white characters    [^      <a href="index.txt.html#%5D" class="d">]</a>     (not <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a> and <a href="motion.txt.html#%3CSpace%3E" class="s">&lt;Space&gt;</a>)
+        \l      <a href="change.txt.html#lowercase" class="d">lowercase</a> alpha         <span class="s">[a-z]</span>
+        \L      non-lowercase alpha     <span class="s">[^a-z]</span>
+        \u      <a href="change.txt.html#uppercase" class="d">uppercase</a> alpha         <span class="s">[A-Z]</span>
+        \U      non-uppercase alpha     <span class="s">[^A-Z]</span>
+
+        <span class="n">Note:</span>
+        Using these predefined ranges works <a href="insert.txt.html#a" class="d">a</a> lot faster than the character
+        range <a href="motion.txt.html#it" class="d">it</a> stands for.
+        These items can not be used inside [].  Thus "[\d\l]" does NOT work to
+        match <a href="insert.txt.html#a" class="d">a</a> digit or <a href="change.txt.html#lowercase" class="d">lowercase</a> alpha.  Use "\(\d\|\l\)" instead.
+
+See <a href="pattern.txt.html#%2F%5Cs" class="l">/\s</a> for the whole <a href="eval.txt.html#list" class="d">list</a> of these ranges.
+
+<span class="h">==============================================================================</span>
+<a name="27.7" class="t">27.7</a>  Character classes
+
+The character range matches <a href="insert.txt.html#a" class="d">a</a> fixed set of characters.  <a href="insert.txt.html#A" class="d">A</a> character class <a href="motion.txt.html#is" class="d">is</a>
+similar, but with an essential difference: The set of characters can be
+redefined without <a href="change.txt.html#changing" class="d">changing</a> the search pattern.
+   For example, search for this pattern: 
+<span class="e"></span>
+<span class="e">        /\f\+</span>
+<span class="e"></span>
+The "\f" items stands for file name characters.  Thus this matches <a href="insert.txt.html#a" class="d">a</a> sequence
+of characters that can be <a href="insert.txt.html#a" class="d">a</a> file name.
+   Which characters can be part of <a href="insert.txt.html#a" class="d">a</a> file name depends on the system you are
+using.  On MS-Windows, the <a href="intro.txt.html#backslash" class="d">backslash</a> <a href="motion.txt.html#is" class="d">is</a> included, on <a href="os_unix.txt.html#Unix" class="d">Unix</a> <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> not.  This <a href="motion.txt.html#is" class="d">is</a>
+specified with the <a href="options.txt.html#%27isfname%27" class="o">'isfname'</a> option.  The default value for <a href="os_unix.txt.html#Unix" class="d">Unix</a> is: 
+<span class="e"></span>
+<span class="e">        :set isfname</span>
+<span class="e">        isfname=@,48-57,/,.,-,_,+,,,#,$,%,~,=</span>
+<span class="e"></span>
+For other systems the default value <a href="motion.txt.html#is" class="d">is</a> different.  Thus you can make <a href="insert.txt.html#a" class="d">a</a> search
+<a href="pattern.txt.html#pattern" class="d">pattern</a> with "\f" to match <a href="insert.txt.html#a" class="d">a</a> file name, and <a href="motion.txt.html#it" class="d">it</a> will automatically adjust to
+the system you are using <a href="motion.txt.html#it" class="d">it</a> on.
+
+        <span class="n">Note:</span>
+        Actually, <a href="os_unix.txt.html#Unix" class="d">Unix</a> allows using just about any character in <a href="insert.txt.html#a" class="d">a</a> file name,
+        including white space.  Including these characters in <a href="options.txt.html#%27isfname%27" class="o">'isfname'</a> would
+        be theoretically correct.  But <a href="motion.txt.html#it" class="d">it</a> would make <a href="motion.txt.html#it" class="d">it</a> impossible to find the
+        <a href="intro.txt.html#end" class="d">end</a> of <a href="insert.txt.html#a" class="d">a</a> file name in text.  Thus the default value of <a href="options.txt.html#%27isfname%27" class="o">'isfname'</a> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a>
+        compromise.
+
+The character classes are:
+
+<span class="h">        item    matches                         option </span>
+        \i      identifier characters           <a href="options.txt.html#%27isident%27" class="o">'isident'</a>
+        \I      like \i, excluding digits
+        \k      keyword characters              <a href="options.txt.html#%27iskeyword%27" class="o">'iskeyword'</a>
+        \K      like \k, excluding digits
+        \p      printable characters            <a href="options.txt.html#%27isprint%27" class="o">'isprint'</a>
+        \P      like \p, excluding digits
+        \f      file name characters            <a href="options.txt.html#%27isfname%27" class="o">'isfname'</a>
+        \F      like \f, excluding digits
+
+<span class="h">==============================================================================</span>
+<a name="27.8" class="t">27.8</a>  Matching <a href="insert.txt.html#a" class="d">a</a> line break
+
+Vim can find <a href="insert.txt.html#a" class="d">a</a> <a href="pattern.txt.html#pattern" class="d">pattern</a> that includes <a href="insert.txt.html#a" class="d">a</a> line break.  You need to specify where
+the line break happens, because all items mentioned so far don't match <a href="insert.txt.html#a" class="d">a</a> line
+break.
+   To check for <a href="insert.txt.html#a" class="d">a</a> line break in <a href="insert.txt.html#a" class="d">a</a> specific place, use the "\n" item: 
+<span class="e"></span>
+<span class="e">        /the\nword</span>
+<span class="e"></span>
+This will match <a href="motion.txt.html#at" class="d">at</a> <a href="insert.txt.html#a" class="d">a</a> line that ends in "the" and the next line starts with
+"<a href="motion.txt.html#word" class="d">word</a>"<a href="repeat.txt.html#." class="d">.</a>  To match "the <a href="motion.txt.html#word" class="d">word</a>" <a href="motion.txt.html#as" class="d">as</a> well, you need to match <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#space" class="d">space</a> or <a href="insert.txt.html#a" class="d">a</a> line
+break.  The item to use for <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> "\_s"<a href="cmdline.txt.html#%3A" class="d">:</a> 
+<span class="e"></span>
+<span class="e">        /the\_sword</span>
+<span class="e"></span>
+To allow any amount of white space: 
+<span class="e"></span>
+<span class="e">        /the\_s\+word</span>
+<span class="e"></span>
+This also matches when "the  " <a href="motion.txt.html#is" class="d">is</a> <a href="motion.txt.html#at" class="d">at</a> the <a href="intro.txt.html#end" class="d">end</a> of <a href="insert.txt.html#a" class="d">a</a> line and "   <a href="motion.txt.html#word" class="d">word</a>" <a href="motion.txt.html#at" class="d">at</a> the
+start of the next one.
+
+"\s" matches white space, "\_s" matches white <a href="intro.txt.html#space" class="d">space</a> or <a href="insert.txt.html#a" class="d">a</a> line break.
+Similarly, "\a" matches an alphabetic character, and "\_a" matches an
+alphabetic character or <a href="insert.txt.html#a" class="d">a</a> line break.  The other character classes and ranges
+can be modified in the same way by <a href="insert.txt.html#inserting" class="d">inserting</a> <a href="insert.txt.html#a" class="d">a</a> "<a href="motion.txt.html#_" class="d">_</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+Many other items can be made to match <a href="insert.txt.html#a" class="d">a</a> line break by prepending "\_"<a href="repeat.txt.html#." class="d">.</a>  For
+example: "\_." matches any character or <a href="insert.txt.html#a" class="d">a</a> line break.
+
+        <span class="n">Note:</span>
+        "\_.*" matches everything until the <a href="intro.txt.html#end" class="d">end</a> of the file.  Be careful with
+        this, <a href="motion.txt.html#it" class="d">it</a> can make <a href="insert.txt.html#a" class="d">a</a> search command very slow.
+
+Another example <a href="motion.txt.html#is" class="d">is</a> "\_[]"<a href="motion.txt.html#%2C" class="d">,</a> <a href="insert.txt.html#a" class="d">a</a> character range that includes <a href="insert.txt.html#a" class="d">a</a> line break: 
+<span class="e"></span>
+<span class="e">        /"\_[^"]*"</span>
+<span class="e"></span>
+This finds <a href="insert.txt.html#a" class="d">a</a> text in double <a href="quotes.txt.html#quotes" class="d">quotes</a> that may be split up in several lines.
+
+<span class="h">==============================================================================</span>
+<a name="27.9" class="t">27.9</a>  Examples
+
+Here are <a href="insert.txt.html#a" class="d">a</a> few search patterns you might find useful.  This shows how the
+items mentioned above can be combined.
+
+
+FINDING <a href="insert.txt.html#A" class="d">A</a> CALIFORNIA LICENSE PLATE
+
+<a href="insert.txt.html#A" class="d">A</a> sample <a href="uganda.txt.html#license" class="d">license</a> plate number <a href="motion.txt.html#is" class="d">is</a> "1MGU103"<a href="repeat.txt.html#." class="d">.</a>  It has one digit, three <a href="change.txt.html#uppercase" class="d">uppercase</a>
+letters and three digits.  Directly putting this into <a href="insert.txt.html#a" class="d">a</a> search pattern: 
+<span class="e"></span>
+<span class="e">        /\d\u\u\u\d\d\d</span>
+<span class="e"></span>
+Another way <a href="motion.txt.html#is" class="d">is</a> to specify that there are three digits and letters with <a href="insert.txt.html#a" class="d">a</a>
+count: 
+<span class="e"></span>
+<span class="e">        /\d\u\{3}\d\{3}</span>
+<span class="e"></span>
+Using <a href="motion.txt.html#%5B%5D" class="d">[]</a> ranges instead: 
+<span class="e"></span>
+<span class="e">        /[0-9][A-Z]\{3}[0-9]\{3}</span>
+<span class="e"></span>
+Which one of these you should use?  Whichever one you can remember.  The
+simple way you can remember <a href="motion.txt.html#is" class="d">is</a> much faster than the fancy way that you can't.
+If you can remember them all, then avoid the last one, because it's both more
+typing and slower to execute.
+
+
+FINDING AN IDENTIFIER
+
+In <a href="change.txt.html#C" class="d">C</a> programs (and many other computer languages) an identifier starts with <a href="insert.txt.html#a" class="d">a</a>
+<a href="print.txt.html#letter" class="d">letter</a> and further consists of letters and digits.  Underscores can be used
+too.  This can be found with: 
+<span class="e"></span>
+<span class="e">        /\&lt;\h\w*\&gt;</span>
+<span class="e"></span>
+"\&lt;" and "\&gt;" are used to find only whole words.  "\h" stands for "[A-Za-z_]"
+and "\w" for "[0-9A-Za-z_]"<a href="repeat.txt.html#." class="d">.</a>
+
+        <span class="n">Note:</span>
+        "\&lt;" and "\&gt;" depend on the <a href="options.txt.html#%27iskeyword%27" class="o">'iskeyword'</a> option.  If <a href="motion.txt.html#it" class="d">it</a> includes "<a href="motion.txt.html#-" class="d">-</a>"<a href="motion.txt.html#%2C" class="d">,</a>
+        for example, then "ident-" <a href="motion.txt.html#is" class="d">is</a> not matched.  In this situation use: 
+<span class="e"></span>
+<span class="e">                /\w\@&lt;!\h\w*\w\@!</span>
+
+        This checks if "\w" does not match before or after the identifier.
+        See <a href="pattern.txt.html#%2F%5C%40%3C%21" class="l">/\@&lt;!</a> and <a href="pattern.txt.html#%2F%5C%40%21" class="l">/\@!</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+
+Next chapter: <a href="usr_28.txt.html#usr_28.txt" class="l">usr_28.txt</a>  <a href="fold.txt.html#Folding" class="d">Folding</a>
+
+Copyright: see <a href="usr_01.txt.html#manual-copyright" class="l">manual-copyright</a>  vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

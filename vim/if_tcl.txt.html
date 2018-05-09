@@ -1,0 +1,561 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: if_tcl.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="if_tcl.txt" class="t">if_tcl.txt</a>    For <span class="i">Vim version 8.0.</span>  Last change: 2016 Jan 01
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Ingo Wilken</span>
+
+
+The <a href="#Tcl" class="d">Tcl</a> Interface to Vim                                <a name="tcl" class="t">tcl</a> <a name="Tcl" class="t">Tcl</a> <a name="TCL" class="t">TCL</a>
+
+1. Commands                             <a href="#tcl-ex-commands" class="l">tcl-ex-commands</a>
+2. <a href="#Tcl" class="d">Tcl</a> commands                         <a href="#tcl-commands" class="l">tcl-commands</a>
+3. <a href="#Tcl" class="d">Tcl</a> <a href="eval.txt.html#variables" class="d">variables</a>                        <a href="#tcl-variables" class="l">tcl-variables</a>
+4. <a href="#Tcl" class="d">Tcl</a> <a href="windows.txt.html#window" class="d">window</a> commands                  <a href="#tcl-window-cmds" class="l">tcl-window-cmds</a>
+5. <a href="#Tcl" class="d">Tcl</a> buffer commands                  <a href="#tcl-buffer-cmds" class="l">tcl-buffer-cmds</a>
+6. Miscellaneous; Output from <a href="#Tcl" class="d">Tcl</a>       <a href="#tcl-misc" class="l">tcl-misc</a> <a href="#tcl-output" class="l">tcl-output</a>
+7. Known <a href="intro.txt.html#bugs" class="d">bugs</a> <a href="change.txt.html#%26" class="d">&amp;</a> problems                <a href="#tcl-bugs" class="l">tcl-bugs</a>
+8. Examples                             <a href="#tcl-examples" class="l">tcl-examples</a>
+9. Dynamic loading                      <a href="#tcl-dynamic" class="l">tcl-dynamic</a>
+
+<span class="s">{Vi does not have any of these commands}</span> <a name="E280" class="t">E280</a>
+
+The <a href="#Tcl" class="d">Tcl</a> interface only works when Vim was compiled with the <a href="various.txt.html#%2Btcl" class="l">+tcl</a> feature.
+
+WARNING: There are probably still some bugs.  Please send bug reports,
+comments, ideas etc to <span class="s">&lt;Ingo.Wilken@informatik.uni-oldenburg.de&gt;</span>
+
+<span class="h">==============================================================================</span>
+1. Commands                             <a name="tcl-ex-commands" class="t">tcl-ex-commands</a> <a name="E571" class="t">E571</a> <a name="E572" class="t">E572</a>
+
+                                                        <a name="%3Atcl" class="t">:tcl</a> <a name="%3Atc" class="t">:tc</a>
+:tc[l] <span class="s">{cmd}</span>            Execute <a href="#Tcl" class="d">Tcl</a> command <span class="s">{cmd}</span>.  <a href="insert.txt.html#A" class="d">A</a> simple check if <span class="e">:tcl</span>
+                        <a href="motion.txt.html#is" class="d">is</a> working: 
+<span class="e">                                :tcl puts "Hello"</span>
+<span class="e"></span>
+:[range]tc[l] <a href="change.txt.html#%3C%3C" class="d">&lt;&lt;</a> <span class="s">{endmarker}</span>
+<span class="s">{script}</span>
+<span class="s">{endmarker}</span>
+                        Execute <a href="#Tcl" class="d">Tcl</a> <a href="usr_41.txt.html#script" class="d">script</a> <span class="s">{script}</span>.
+                        <span class="n">Note:</span> This command doesn't work when the <a href="#Tcl" class="d">Tcl</a> feature
+                        wasn't compiled in.  To avoid errors, see
+                        <a href="if_perl.txt.html#script-here" class="l">script-here</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="s">{endmarker}</span> <a href="vim_faq.txt.html#must" class="d">must</a> NOT be preceded by any white space.  If <span class="s">{endmarker}</span> <a href="motion.txt.html#is" class="d">is</a>
+omitted from after the "<a href="change.txt.html#%3C%3C" class="d">&lt;&lt;</a>"<a href="motion.txt.html#%2C" class="d">,</a> <a href="insert.txt.html#a" class="d">a</a> dot '.' <a href="vim_faq.txt.html#must" class="d">must</a> be used after <span class="s">{script}</span>, like for
+the <a href="insert.txt.html#%3Aappend" class="l">:append</a> and <a href="insert.txt.html#%3Ainsert" class="l">:insert</a> commands.
+This form of the <a href="#%3Atcl" class="l">:tcl</a> command <a href="motion.txt.html#is" class="d">is</a> mainly useful for including <a href="#tcl" class="d">tcl</a> code in Vim
+scripts.
+
+Example: 
+<span class="e">        function! DefineDate()</span>
+<span class="e">            tcl &lt;&lt; EOF</span>
+<span class="e">            proc date {} {</span>
+<span class="e">                return [clock format [clock seconds]]</span>
+<span class="e">            }</span>
+<span class="e">        EOF</span>
+<span class="e">        endfunction</span>
+
+To see what version of <a href="#Tcl" class="d">Tcl</a> you have: 
+<span class="e">        :tcl puts [info patchlevel]</span>
+
+
+                                                        <a name="%3Atcldo" class="t">:tcldo</a> <a name="%3Atcld" class="t">:tcld</a>
+:[range]tcld[o] <span class="s">{cmd}</span>   Execute <a href="#Tcl" class="d">Tcl</a> command <span class="s">{cmd}</span> for each line in <a href="cmdline.txt.html#%5Brange%5D" class="s">[range]</a>
+                        with the variable "line" being set to the text of each
+                        line in turn, and "lnum" to the line number.  Setting
+                        "line" will change the text, but <span class="n">note</span> that <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> not
+                        possible to add or delete lines using this command.
+                        If <span class="s">{cmd}</span> returns an error, the command <a href="motion.txt.html#is" class="d">is</a> interrupted.
+                        The default for <a href="cmdline.txt.html#%5Brange%5D" class="s">[range]</a> <a href="motion.txt.html#is" class="d">is</a> the whole file: "1,$"<a href="repeat.txt.html#." class="d">.</a>
+                        See <a href="#tcl-var-line" class="l">tcl-var-line</a> and <a href="#tcl-var-lnum" class="l">tcl-var-lnum</a><a href="repeat.txt.html#." class="d">.</a>  <span class="s">{not in Vi}</span>
+
+                                                        <a name="%3Atclfile" class="t">:tclfile</a> <a name="%3Atclf" class="t">:tclf</a>
+:tclf[ile] <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a>       Execute the <a href="#Tcl" class="d">Tcl</a> <a href="usr_41.txt.html#script" class="d">script</a> in <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a>.  This <a href="motion.txt.html#is" class="d">is</a> the same <a href="motion.txt.html#as" class="d">as</a>
+                        "<a href="#%3Atcl" class="d">:tcl</a> source <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a>"<a href="motion.txt.html#%2C" class="d">,</a> but allows file name completion.
+                        <span class="s">{not in Vi}</span>
+
+
+<span class="n">Note</span> that <a href="#Tcl" class="d">Tcl</a> <a href="index.txt.html#objects" class="d">objects</a> (like variables) persist from one command to the next,
+just <a href="motion.txt.html#as" class="d">as</a> in the <a href="#Tcl" class="d">Tcl</a> shell.
+
+Executing <a href="#Tcl" class="d">Tcl</a> commands <a href="motion.txt.html#is" class="d">is</a> not possible in the <a href="eval.txt.html#sandbox" class="l">sandbox</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+2. <a href="#Tcl" class="d">Tcl</a> commands                                         <a name="tcl-commands" class="t">tcl-commands</a>
+
+<a href="#Tcl" class="d">Tcl</a> code gets all of its access to vim via commands in the "::vim" namespace.
+The following commands are implemented: 
+<span class="e"></span>
+<span class="e">        ::vim::beep                     # Guess.</span>
+<span class="e">        ::vim::buffer {n}               # Create Tcl command for one buffer.</span>
+<span class="e">        ::vim::buffer list              # Create Tcl commands for all buffers.</span>
+<span class="e">        ::vim::command [-quiet] {cmd}   # Execute an Ex command.</span>
+<span class="e">        ::vim::expr {expr}              # Use Vim's expression evaluator.</span>
+<span class="e">        ::vim::option {opt}             # Get vim option.</span>
+<span class="e">        ::vim::option {opt} {val}       # Set vim option.</span>
+<span class="e">        ::vim::window list              # Create Tcl commands for all windows.</span>
+<span class="e"></span>
+Commands:
+        ::vim::beep                                     <a name="tcl-beep" class="t">tcl-beep</a>
+        Honk.  Does not return <a href="insert.txt.html#a" class="d">a</a> result.
+
+        ::vim::buffer <span class="s">{n}</span>                               <a name="tcl-buffer" class="t">tcl-buffer</a>
+        ::vim::buffer exists <span class="s">{n}</span>
+        ::vim::buffer <a href="eval.txt.html#list" class="d">list</a>
+        Provides access to vim buffers.  With an integer argument, creates <a href="insert.txt.html#a" class="d">a</a>
+        buffer command (see <a href="#tcl-buffer-cmds" class="l">tcl-buffer-cmds</a><a href="motion.txt.html#%29" class="d">)</a> for the buffer with that
+        number, and returns its name <a href="motion.txt.html#as" class="d">as</a> the result.  Invalid buffer numbers
+        result in <a href="insert.txt.html#a" class="d">a</a> standard <a href="#Tcl" class="d">Tcl</a> error.  To test for valid buffer numbers,
+        vim's internal <a href="eval.txt.html#functions" class="d">functions</a> can be used: 
+<span class="e">                set nbufs [::vim::expr bufnr("$")]</span>
+<span class="e">                set isvalid [::vim::expr "bufexists($n)"]</span>
+       The "<a href="eval.txt.html#list" class="d">list</a>" option creates <a href="insert.txt.html#a" class="d">a</a> buffer command for each valid buffer, and
+        returns <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of the command names <a href="motion.txt.html#as" class="d">as</a> the result.
+        Example: 
+<span class="e">                set bufs [::vim::buffer list]</span>
+<span class="e">                foreach b $bufs { $b append end "The End!" }</span>
+       The "exists" option checks if <a href="insert.txt.html#a" class="d">a</a> buffer with the given number exists.
+        Example: 
+<span class="e">                if { [::vim::buffer exists $n] } { ::vim::command ":e #$n" }</span>
+       This command might be replaced by <a href="insert.txt.html#a" class="d">a</a> variable in future versions.
+        See also <a href="#tcl-var-current" class="l">tcl-var-current</a> for the current buffer.
+
+        ::vim::command <span class="s">{cmd}</span>                            <a name="tcl-command" class="t">tcl-command</a>
+        ::vim::command -quiet <span class="s">{cmd}</span>
+        Execute the vim (ex-mode) command <span class="s">{cmd}</span>.  Any <a href="intro.txt.html#Ex" class="d">Ex</a> command that affects
+        <a href="insert.txt.html#a" class="d">a</a> buffer or <a href="windows.txt.html#window" class="d">window</a> uses the current buffer/current window.  Does not
+        return <a href="insert.txt.html#a" class="d">a</a> result other than <a href="insert.txt.html#a" class="d">a</a> standard <a href="#Tcl" class="d">Tcl</a> error code.  After this
+        command <a href="motion.txt.html#is" class="d">is</a> completed, the "::vim::current" variable <a href="motion.txt.html#is" class="d">is</a> updated.
+        The "-quiet" flag suppresses any error <a href="message.txt.html#messages" class="d">messages</a> from vim.
+        Examples: 
+<span class="e">                ::vim::command "set ts=8"</span>
+<span class="e">                ::vim::command "%s/foo/bar/g"</span>
+       To execute normal-mode commands, use "normal" (see <a href="various.txt.html#%3Anormal" class="l">:normal</a>): 
+<span class="e">                set cmd "jj"</span>
+<span class="e">                ::vim::command "normal $cmd"</span>
+       See also <a href="#tcl-window-command" class="l">tcl-window-command</a> and <a href="#tcl-buffer-command" class="l">tcl-buffer-command</a><a href="repeat.txt.html#." class="d">.</a>
+
+        ::vim::expr <span class="s">{expr}</span>                              <a name="tcl-expr" class="t">tcl-expr</a>
+        Evaluates the <a href="eval.txt.html#expression" class="d">expression</a> <span class="s">{expr}</span> using vim's internal <a href="eval.txt.html#expression" class="d">expression</a>
+        evaluator (see <a href="eval.txt.html#expression" class="l">expression</a>).   Any <a href="eval.txt.html#expression" class="d">expression</a> that queries <a href="insert.txt.html#a" class="d">a</a> buffer
+        or <a href="windows.txt.html#window" class="d">window</a> property uses the current buffer/current window.  Returns
+        the result <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> string.  <a href="insert.txt.html#A" class="d">A</a> <a href="eval.txt.html#List" class="l">List</a> <a href="motion.txt.html#is" class="d">is</a> turned into <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#string" class="d">string</a> by joining
+        the items and <a href="insert.txt.html#inserting" class="d">inserting</a> line breaks.
+        Examples: 
+<span class="e">                set perl_available [::vim::expr has("perl")]</span>
+       See also <a href="#tcl-window-expr" class="l">tcl-window-expr</a> and <a href="#tcl-buffer-expr" class="l">tcl-buffer-expr</a><a href="repeat.txt.html#." class="d">.</a>
+
+        ::vim::option <span class="s">{opt}</span>                             <a name="tcl-option" class="t">tcl-option</a>
+        ::vim::option <span class="s">{opt}</span> <span class="s">{value}</span>
+        Without second argument, queries the value of <a href="insert.txt.html#a" class="d">a</a> vim option.  With this
+        argument, sets the vim option to <span class="s">{value}</span>, and returns the previous
+        value <a href="motion.txt.html#as" class="d">as</a> the result.  Any <a href="options.txt.html#options" class="d">options</a> that are marked <a href="motion.txt.html#as" class="d">as</a> 'local to buffer'
+        or 'local to window' affect the current buffer/current window.  The
+        global value <a href="motion.txt.html#is" class="d">is</a> not changed, use the "<a href="options.txt.html#%3Aset" class="d">:set</a>" command for that.  For
+        <a href="options.txt.html#boolean" class="d">boolean</a> options, <span class="s">{value}</span> should be "<a href="motion.txt.html#0" class="d">0</a>" or "1"<a href="motion.txt.html#%2C" class="d">,</a> or any of the keywords
+        "on"<a href="motion.txt.html#%2C" class="d">,</a> "off" or "<a href="options.txt.html#toggle" class="d">toggle</a>"<a href="repeat.txt.html#." class="d">.</a>  See <a href="options.txt.html#option-summary" class="l">option-summary</a> for <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of options.
+        Example: 
+<span class="e">                ::vim::option ts 8</span>
+       See also <a href="#tcl-window-option" class="l">tcl-window-option</a> and <a href="#tcl-buffer-option" class="l">tcl-buffer-option</a><a href="repeat.txt.html#." class="d">.</a>
+
+        ::vim::window <span class="s">{option}</span>                          <a name="tcl-window" class="t">tcl-window</a>
+        Provides access to vim windows.  Currently only the "<a href="eval.txt.html#list" class="d">list</a>" option <a href="motion.txt.html#is" class="d">is</a>
+        implemented.  This creates <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a> command (see <a href="#tcl-window-cmds" class="l">tcl-window-cmds</a><a href="motion.txt.html#%29" class="d">)</a> for
+        each window, and returns <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of the command names <a href="motion.txt.html#as" class="d">as</a> the result.
+        Example: 
+<span class="e">                set wins [::vim::window list]</span>
+<span class="e">                foreach w $wins { $w height 4 }</span>
+       This command might be replaced by <a href="insert.txt.html#a" class="d">a</a> variable in future versions.
+        See also <a href="#tcl-var-current" class="l">tcl-var-current</a> for the current window.
+
+<span class="h">==============================================================================</span>
+3. <a href="#Tcl" class="d">Tcl</a> <a href="eval.txt.html#variables" class="d">variables</a>                                        <a name="tcl-variables" class="t">tcl-variables</a>
+
+The ::vim namespace contains <a href="insert.txt.html#a" class="d">a</a> few variables.  These are created when the <a href="#Tcl" class="d">Tcl</a>
+interpreter <a href="motion.txt.html#is" class="d">is</a> called from vim and set to current values. 
+<span class="e"></span>
+<span class="e">        ::vim::current          # array containing "current" objects</span>
+<span class="e">        ::vim::lbase            # number of first line</span>
+<span class="e">        ::vim::range            # array containing current range numbers</span>
+<span class="e">        line                    # current line as a string (:tcldo only)</span>
+<span class="e">        lnum                    # current line number (:tcldo only)</span>
+<span class="e"></span>
+Variables:
+        ::vim::current                                  <a name="tcl-var-current" class="t">tcl-var-current</a>
+        This <a href="motion.txt.html#is" class="d">is</a> an array providing access to <a href="various.txt.html#various" class="d">various</a> "current" <a href="index.txt.html#objects" class="d">objects</a>
+        available in vim.  The contents of this array are updated after
+        "::vim::command" <a href="motion.txt.html#is" class="d">is</a> called, <a href="motion.txt.html#as" class="d">as</a> this might change vim's current
+        settings (e.g., by <a href="change.txt.html#deleting" class="d">deleting</a> the current buffer).
+        The "buffer" element contains the name of the buffer command for the
+        current buffer.  This can be used directly to invoke buffer commands
+        (see <a href="#tcl-buffer-cmds" class="l">tcl-buffer-cmds</a>).  This element <a href="motion.txt.html#is" class="d">is</a> read-only.
+        Example: 
+<span class="e">                $::vim::current(buffer) insert begin "Hello world"</span>
+       The "<a href="windows.txt.html#window" class="d">window</a>" element contains the name of the <a href="windows.txt.html#window" class="d">window</a> command for the
+        current window.  This can be used directly to invoke <a href="windows.txt.html#window" class="d">window</a> commands
+        (see <a href="#tcl-window-cmds" class="l">tcl-window-cmds</a>).  This element <a href="motion.txt.html#is" class="d">is</a> read-only.
+        Example: 
+<span class="e">                $::vim::current(window) height 10</span>
+
+        ::vim::lbase                                    <a name="tcl-var-lbase" class="t">tcl-var-lbase</a>
+        This variable controls how <a href="#Tcl" class="d">Tcl</a> treats line numbers.  If <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> set to
+        '1', then lines and columns start <a href="motion.txt.html#at" class="d">at</a> 1.  This way, line numbers from
+        <a href="#Tcl" class="d">Tcl</a> commands and vim expressions are compatible.  If this variable <a href="motion.txt.html#is" class="d">is</a>
+        set to '0', then line numbers and columns start <a href="motion.txt.html#at" class="d">at</a> <a href="motion.txt.html#0" class="d">0</a> in Tcl.  This <a href="motion.txt.html#is" class="d">is</a>
+        useful if you want to treat <a href="insert.txt.html#a" class="d">a</a> buffer <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> <a href="#Tcl" class="d">Tcl</a> <a href="eval.txt.html#list" class="d">list</a> or <a href="insert.txt.html#a" class="d">a</a> line <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> <a href="#Tcl" class="d">Tcl</a>
+        <a href="eval.txt.html#string" class="d">string</a> and use standard <a href="#Tcl" class="d">Tcl</a> commands that return an <a href="index.txt.html#index" class="d">index</a> <a href="motion.txt.html#%28" class="d">(</a>"lsort" or
+        "<a href="eval.txt.html#string" class="d">string</a> first"<a href="motion.txt.html#%2C" class="d">,</a> for example).  The default value <a href="motion.txt.html#is" class="d">is</a> '1'.  Currently,
+        any non-zero values <a href="motion.txt.html#is" class="d">is</a> treated <a href="motion.txt.html#as" class="d">as</a> '1', but your scripts should not
+        rely on this.  See also <a href="#tcl-linenumbers" class="l">tcl-linenumbers</a><a href="repeat.txt.html#." class="d">.</a>
+
+        ::vim::range                                    <a name="tcl-var-range" class="t">tcl-var-range</a>
+        This <a href="motion.txt.html#is" class="d">is</a> an array with three elements, "start"<a href="motion.txt.html#%2C" class="d">,</a> "begin" and "<a href="intro.txt.html#end" class="d">end</a>"<a href="repeat.txt.html#." class="d">.</a>  It
+        contains the line numbers of the start and <a href="intro.txt.html#end" class="d">end</a> row of the current
+        range.  "begin" <a href="motion.txt.html#is" class="d">is</a> the same <a href="motion.txt.html#as" class="d">as</a> "start"<a href="repeat.txt.html#." class="d">.</a>  This variable <a href="motion.txt.html#is" class="d">is</a> read-only.
+        See <a href="#tcl-examples" class="l">tcl-examples</a><a href="repeat.txt.html#." class="d">.</a>
+
+        line                                            <a name="tcl-var-line" class="t">tcl-var-line</a>
+        lnum                                            <a name="tcl-var-lnum" class="t">tcl-var-lnum</a>
+        These global <a href="eval.txt.html#variables" class="d">variables</a> are only available if the "<a href="#%3Atcldo" class="d">:tcldo</a>" <a href="intro.txt.html#Ex" class="d">Ex</a> command
+        <a href="motion.txt.html#is" class="d">is</a> being executed.  They contain the text and line number of the
+        current line.  When the <a href="#Tcl" class="d">Tcl</a> command invoked by "<a href="#%3Atcldo" class="d">:tcldo</a>" <a href="motion.txt.html#is" class="d">is</a> completed,
+        the current line <a href="motion.txt.html#is" class="d">is</a> set to the contents of the "line" variable, unless
+        the variable was unset by the <a href="#Tcl" class="d">Tcl</a> command.  The "lnum" variable <a href="motion.txt.html#is" class="d">is</a>
+        read-only.  These <a href="eval.txt.html#variables" class="d">variables</a> are not in the "::vim" namespace so they
+        can be used in "<a href="#%3Atcldo" class="d">:tcldo</a>" without much typing (this might be changed in
+        future versions).  See also <a href="#tcl-linenumbers" class="l">tcl-linenumbers</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+4. <a href="#Tcl" class="d">Tcl</a> <a href="windows.txt.html#window" class="d">window</a> commands                                  <a name="tcl-window-cmds" class="t">tcl-window-cmds</a>
+
+Window commands represent vim windows.  They are created by several commands:
+        ::vim::window <a href="eval.txt.html#list" class="d">list</a>                      <a href="#tcl-window" class="l">tcl-window</a>
+        "<a href="windows.txt.html#windows" class="d">windows</a>" option of <a href="insert.txt.html#a" class="d">a</a> buffer command    <a href="#tcl-buffer-windows" class="l">tcl-buffer-windows</a>
+The ::vim::current(window) variable contains the name of the <a href="windows.txt.html#window" class="d">window</a> command
+for the current window.  <a href="insert.txt.html#A" class="d">A</a> <a href="windows.txt.html#window" class="d">window</a> command <a href="motion.txt.html#is" class="d">is</a> automatically deleted when the
+corresponding vim <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> closed.
+
+Let's assume the name of the <a href="windows.txt.html#window" class="d">window</a> command <a href="motion.txt.html#is" class="d">is</a> stored in the <a href="#Tcl" class="d">Tcl</a> variable "win"<a href="motion.txt.html#%2C" class="d">,</a>
+i.e. "$win" calls the command.  The following <a href="options.txt.html#options" class="d">options</a> are available: 
+<span class="e"></span>
+<span class="e">        $win buffer             # Create Tcl command for window's buffer.</span>
+<span class="e">        $win command {cmd}      # Execute Ex command in windows context.</span>
+<span class="e">        $win cursor             # Get current cursor position.</span>
+<span class="e">        $win cursor {var}       # Set cursor position from array variable.</span>
+<span class="e">        $win cursor {row} {col} # Set cursor position.</span>
+<span class="e">        $win delcmd {cmd}       # Call Tcl command when window is closed.</span>
+<span class="e">        $win expr {expr}        # Evaluate vim expression in windows context.</span>
+<span class="e">        $win height             # Report the window's height.</span>
+<span class="e">        $win height {n}         # Set the window's height.</span>
+<span class="e">        $win option {opt} [val] # Get/Set vim option in windows context.</span>
+<span class="e"></span>
+Options:
+        $win buffer                                     <a name="tcl-window-buffer" class="t">tcl-window-buffer</a>
+        Creates <a href="insert.txt.html#a" class="d">a</a> <a href="#Tcl" class="d">Tcl</a> command for the window's buffer, and returns its name <a href="motion.txt.html#as" class="d">as</a>
+        the result.  The name should be stored in <a href="insert.txt.html#a" class="d">a</a> variable: 
+<span class="e">                set buf [$win buffer]</span>
+       $buf <a href="motion.txt.html#is" class="d">is</a> now <a href="insert.txt.html#a" class="d">a</a> valid <a href="#Tcl" class="d">Tcl</a> command.  See <a href="#tcl-buffer-cmds" class="l">tcl-buffer-cmds</a> for the
+        available options.
+
+        $win cursor                                     <a name="tcl-window-cursor" class="t">tcl-window-cursor</a>
+        $win cursor <span class="s">{var}</span>
+        $win cursor <span class="s">{row}</span> <span class="s">{col}</span>
+        Without argument, reports the current cursor position <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> string.
+        This can be converted to <a href="insert.txt.html#a" class="d">a</a> <a href="#Tcl" class="d">Tcl</a> array variable: 
+<span class="e">                array set here [$win cursor]</span>
+       "here(row)" and "here(column)" now contain the cursor position.
+        With <a href="insert.txt.html#a" class="d">a</a> single argument, the argument <a href="motion.txt.html#is" class="d">is</a> interpreted <a href="motion.txt.html#as" class="d">as</a> the name of <a href="insert.txt.html#a" class="d">a</a>
+        <a href="#Tcl" class="d">Tcl</a> array variable, which <a href="vim_faq.txt.html#must" class="d">must</a> contain two elements "row" and "column"<a href="repeat.txt.html#." class="d">.</a>
+        These are used to set the cursor to the new position: 
+<span class="e">                $win cursor here        ;# not $here !</span>
+       With two arguments, sets the cursor to the specified row and column: 
+<span class="e">                $win cursor $here(row) $here(column)</span>
+       Invalid positions result in <a href="insert.txt.html#a" class="d">a</a> standard <a href="#Tcl" class="d">Tcl</a> error, which can be caught
+        with "catch"<a href="repeat.txt.html#." class="d">.</a>  The row and column values depend on the "::vim::lbase"
+        variable.  See <a href="#tcl-var-lbase" class="l">tcl-var-lbase</a><a href="repeat.txt.html#." class="d">.</a>
+
+        $win delcmd <span class="s">{cmd}</span>                               <a name="tcl-window-delcmd" class="t">tcl-window-delcmd</a>
+        Registers the <a href="#Tcl" class="d">Tcl</a> command <span class="s">{cmd}</span> <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> deletion callback for the window.
+        This command <a href="motion.txt.html#is" class="d">is</a> executed (in the global scope) just before the <a href="windows.txt.html#window" class="d">window</a>
+        <a href="motion.txt.html#is" class="d">is</a> closed.  Complex commands should be build with "<a href="eval.txt.html#list" class="d">list</a>"<a href="cmdline.txt.html#%3A" class="d">:</a> 
+<span class="e">                $win delcmd [list puts vimerr "window deleted"]</span>
+       See also <a href="#tcl-buffer-delcmd" class="l">tcl-buffer-delcmd</a><a href="repeat.txt.html#." class="d">.</a>
+
+        $win height                                     <a name="tcl-window-height" class="t">tcl-window-height</a>
+        $win height <span class="s">{n}</span>
+        Without argument, reports the window's current height.  With an
+        argument, tries to set the window's height to <span class="s">{n}</span>, then reports the
+        new height (which might be different from <span class="s">{n}</span>).
+
+        $win command <span class="s">[-quiet]</span> <span class="s">{cmd}</span>                     <a name="tcl-window-command" class="t">tcl-window-command</a>
+        $win <a href="eval.txt.html#expr" class="d">expr</a> <span class="s">{expr}</span>                                <a name="tcl-window-expr" class="t">tcl-window-expr</a>
+        $win option <span class="s">{opt}</span> <span class="s">[val]</span>                         <a name="tcl-window-option" class="t">tcl-window-option</a>
+        These are similar to "::vim::command" etc., except that everything <a href="motion.txt.html#is" class="d">is</a>
+        done in the context of the <a href="windows.txt.html#window" class="d">window</a> represented by $win, instead of the
+        current window.  For example, setting an option that <a href="motion.txt.html#is" class="d">is</a> marked 'local
+        to window' affects the <a href="windows.txt.html#window" class="d">window</a> $win.  Anything that affects or queries
+        <a href="insert.txt.html#a" class="d">a</a> buffer uses the buffer displayed in this <a href="windows.txt.html#window" class="d">window</a> (i.e. the buffer
+        that <a href="motion.txt.html#is" class="d">is</a> represented by "$win buffer").  See <a href="#tcl-command" class="l">tcl-command</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="#tcl-expr" class="l">tcl-expr</a>
+        and <a href="#tcl-option" class="l">tcl-option</a> for more information.
+        Example: 
+<span class="e">                $win option number on</span>
+<span class="e"></span>
+<span class="h">==============================================================================</span>
+5. <a href="#Tcl" class="d">Tcl</a> buffer commands                                  <a name="tcl-buffer-cmds" class="t">tcl-buffer-cmds</a>
+
+Buffer commands represent vim buffers.  They are created by several commands:
+        ::vim::buffer <span class="s">{N}</span>                       <a href="#tcl-buffer" class="l">tcl-buffer</a>
+        ::vim::buffer <a href="eval.txt.html#list" class="d">list</a>                      <a href="#tcl-buffer" class="l">tcl-buffer</a>
+        "buffer" option of <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a> command     <a href="#tcl-window-buffer" class="l">tcl-window-buffer</a>
+The ::vim::current(buffer) variable contains the name of the buffer command
+for the current buffer.  <a href="insert.txt.html#A" class="d">A</a> buffer command <a href="motion.txt.html#is" class="d">is</a> automatically deleted when the
+corresponding vim buffer <a href="motion.txt.html#is" class="d">is</a> destroyed.  Whenever the buffer's contents are
+changed, all marks in the buffer are automatically adjusted.  Any changes to
+the buffer's contents made by <a href="#Tcl" class="d">Tcl</a> commands can be undone with the "<a href="undo.txt.html#undo" class="d">undo</a>" vim
+command (see <a href="undo.txt.html#undo" class="l">undo</a>).
+
+Let's assume the name of the buffer command <a href="motion.txt.html#is" class="d">is</a> stored in the <a href="#Tcl" class="d">Tcl</a> variable "buf"<a href="motion.txt.html#%2C" class="d">,</a>
+i.e. "$buf" calls the command.  The following <a href="options.txt.html#options" class="d">options</a> are available: 
+<span class="e"></span>
+<span class="e">        $buf append {n} {str}   # Append a line to buffer, after line {n}.</span>
+<span class="e">        $buf command {cmd}      # Execute Ex command in buffers context.</span>
+<span class="e">        $buf count              # Report number of lines in buffer.</span>
+<span class="e">        $buf delcmd {cmd}       # Call Tcl command when buffer is deleted.</span>
+<span class="e">        $buf delete {n}         # Delete a single line.</span>
+<span class="e">        $buf delete {n} {m}     # Delete several lines.</span>
+<span class="e">        $buf expr {expr}        # Evaluate vim expression in buffers context.</span>
+<span class="e">        $buf get {n}            # Get a single line as a string.</span>
+<span class="e">        $buf get {n} {m}        # Get several lines as a list.</span>
+<span class="e">        $buf insert {n} {str}   # Insert a line in buffer, as line {n}.</span>
+<span class="e">        $buf last               # Report line number of last line in buffer.</span>
+<span class="e">        $buf mark {mark}        # Report position of buffer mark.</span>
+<span class="e">        $buf name               # Report name of file in buffer.</span>
+<span class="e">        $buf number             # Report number of this buffer.</span>
+<span class="e">        $buf option {opt} [val] # Get/Set vim option in buffers context.</span>
+<span class="e">        $buf set {n} {text}     # Replace a single line.</span>
+<span class="e">        $buf set {n} {m} {list} # Replace several lines.</span>
+<span class="e">        $buf windows            # Create Tcl commands for buffer's windows.</span>
+
+                                                        <a name="tcl-linenumbers" class="t">tcl-linenumbers</a>
+Most buffer commands take line numbers <a href="motion.txt.html#as" class="d">as</a> arguments.  How <a href="#Tcl" class="d">Tcl</a> treats these
+numbers depends on the "::vim::lbase" variable (see <a href="#tcl-var-lbase" class="l">tcl-var-lbase</a>).  Instead
+of line numbers, several keywords can be also used: "top"<a href="motion.txt.html#%2C" class="d">,</a> "start"<a href="motion.txt.html#%2C" class="d">,</a> "begin"<a href="motion.txt.html#%2C" class="d">,</a>
+"first"<a href="motion.txt.html#%2C" class="d">,</a> "bottom"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="intro.txt.html#end" class="d">end</a>" and "last"<a href="repeat.txt.html#." class="d">.</a>
+
+Options:
+        $buf append <span class="s">{n}</span> <span class="s">{str}</span>                           <a name="tcl-buffer-append" class="t">tcl-buffer-append</a>
+        $buf <a href="insert.txt.html#insert" class="d">insert</a> <span class="s">{n}</span> <span class="s">{str}</span>                           <a name="tcl-buffer-insert" class="t">tcl-buffer-insert</a>
+        Add <a href="insert.txt.html#a" class="d">a</a> line to the buffer.  With the "<a href="insert.txt.html#insert" class="d">insert</a>" option, the <a href="eval.txt.html#string" class="d">string</a>
+        becomes the new line <span class="s">{n}</span>, with "append" <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> inserted after line <span class="s">{n}</span>.
+        Example: 
+<span class="e">                $buf insert top "This is the beginning."</span>
+<span class="e">                $buf append end "This is the end."</span>
+       To add <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of lines to the buffer, use <a href="insert.txt.html#a" class="d">a</a> loop: 
+<span class="e">                foreach line $list { $buf append $num $line ; incr num }</span>
+
+        $buf <a href="intro.txt.html#count" class="d">count</a>                                      <a name="tcl-buffer-count" class="t">tcl-buffer-count</a>
+        Reports the total number of lines in the buffer.
+
+        $buf delcmd <span class="s">{cmd}</span>                               <a name="tcl-buffer-delcmd" class="t">tcl-buffer-delcmd</a>
+        Registers the <a href="#Tcl" class="d">Tcl</a> command <span class="s">{cmd}</span> <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> deletion callback for the buffer.
+        This command <a href="motion.txt.html#is" class="d">is</a> executed (in the global scope) just before the buffer
+        <a href="motion.txt.html#is" class="d">is</a> deleted.  Complex commands should be build with "<a href="eval.txt.html#list" class="d">list</a>"<a href="cmdline.txt.html#%3A" class="d">:</a> 
+<span class="e">                $buf delcmd [list puts vimerr "buffer [$buf number] gone"]</span>
+       See also <a href="#tcl-window-delcmd" class="l">tcl-window-delcmd</a><a href="repeat.txt.html#." class="d">.</a>
+
+        $buf delete <span class="s">{n}</span>                                 <a name="tcl-buffer-delete" class="t">tcl-buffer-delete</a>
+        $buf delete <span class="s">{n}</span> <span class="s">{m}</span>
+        Deletes line <span class="s">{n}</span> or lines <span class="s">{n}</span> through <span class="s">{m}</span> from the buffer.
+        This example deletes everything except the last line: 
+<span class="e">                $buf delete first [expr [$buf last] - 1]</span>
+
+        $buf get <span class="s">{n}</span>                                    <a name="tcl-buffer-get" class="t">tcl-buffer-get</a>
+        $buf get <span class="s">{n}</span> <span class="s">{m}</span>
+        Gets one or more lines from the buffer.  For <a href="insert.txt.html#a" class="d">a</a> single line, the result
+        <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> string; for several lines, <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of strings.
+        Example: 
+<span class="e">                set topline [$buf get top]</span>
+
+        $buf last                                       <a name="tcl-buffer-last" class="t">tcl-buffer-last</a>
+        Reports the line number of the last line.  This value depends on the
+        "::vim::lbase" variable.  See <a href="#tcl-var-lbase" class="l">tcl-var-lbase</a><a href="repeat.txt.html#." class="d">.</a>
+
+        $buf <a href="motion.txt.html#mark" class="d">mark</a> <span class="s">{mark}</span>                                <a name="tcl-buffer-mark" class="t">tcl-buffer-mark</a>
+        Reports the position of the named <a href="motion.txt.html#mark" class="d">mark</a> <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> string, similar to the
+        cursor position of the "cursor" option of <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a> command (see
+        <a href="#tcl-window-cursor" class="l">tcl-window-cursor</a>).  This can be converted to <a href="insert.txt.html#a" class="d">a</a> <a href="#Tcl" class="d">Tcl</a> array variable: 
+<span class="e">                array set mpos [$buf mark "a"]</span>
+       "mpos(column)" and "mpos(row)" now contain the position of the mark.
+        If the <a href="motion.txt.html#mark" class="d">mark</a> <a href="motion.txt.html#is" class="d">is</a> not set, <a href="insert.txt.html#a" class="d">a</a> standard <a href="#Tcl" class="d">Tcl</a> error results.
+
+        $buf name
+        Reports the name of the file in the buffer.  For <a href="insert.txt.html#a" class="d">a</a> buffer without <a href="insert.txt.html#a" class="d">a</a>
+        file, this <a href="motion.txt.html#is" class="d">is</a> an empty string.
+
+        $buf number
+        Reports the number of this buffer.  See <a href="windows.txt.html#%3Abuffers" class="l">:buffers</a><a href="repeat.txt.html#." class="d">.</a>
+        This example deletes <a href="insert.txt.html#a" class="d">a</a> buffer from <a href="options.txt.html#vim%3A" class="d">vim:</a> 
+<span class="e">                ::vim::command "bdelete [$buf number]"</span>
+
+        $buf set <span class="s">{n}</span> <span class="s">{string}</span>                           <a name="tcl-buffer-set" class="t">tcl-buffer-set</a>
+        $buf set <span class="s">{n}</span> <span class="s">{m}</span> <span class="s">{list}</span>
+        <a href="insert.txt.html#Replace" class="d">Replace</a> one or several lines in the buffer.  If the <a href="eval.txt.html#list" class="d">list</a> contains more
+        elements than there are lines to replace, they are inserted into the
+        buffer.  If the <a href="eval.txt.html#list" class="d">list</a> contains fewer elements, any unreplaced line <a href="motion.txt.html#is" class="d">is</a>
+        deleted from the buffer.
+
+        $buf <a href="windows.txt.html#windows" class="d">windows</a>                                    <a name="tcl-buffer-windows" class="t">tcl-buffer-windows</a>
+        Creates <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a> command for each <a href="windows.txt.html#window" class="d">window</a> that displays this buffer, and
+        returns <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of the command names <a href="motion.txt.html#as" class="d">as</a> the result.
+        Example: 
+<span class="e">                set winlist [$buf windows]</span>
+<span class="e">                foreach win $winlist { $win height 4 }</span>
+       See <a href="#tcl-window-cmds" class="l">tcl-window-cmds</a> for the available options.
+
+        $buf command <span class="s">[-quiet]</span> <span class="s">{cmd}</span>                     <a name="tcl-buffer-command" class="t">tcl-buffer-command</a>
+        $buf <a href="eval.txt.html#expr" class="d">expr</a> <span class="s">{expr}</span>                                <a name="tcl-buffer-expr" class="t">tcl-buffer-expr</a>
+        $buf option <span class="s">{opt}</span> <span class="s">[val]</span>                         <a name="tcl-buffer-option" class="t">tcl-buffer-option</a>
+        These are similar to "::vim::command" etc., except that everything <a href="motion.txt.html#is" class="d">is</a>
+        done in the context of the buffer represented by $buf, instead of the
+        current buffer.  For example, setting an option that <a href="motion.txt.html#is" class="d">is</a> marked 'local
+        to buffer' affects the buffer $buf.  Anything that affects or queries
+        <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a> uses the first <a href="windows.txt.html#window" class="d">window</a> in vim's <a href="windows.txt.html#window" class="d">window</a> <a href="eval.txt.html#list" class="d">list</a> that displays this
+        buffer (i.e. the first entry in the <a href="eval.txt.html#list" class="d">list</a> returned by "$buf <a href="windows.txt.html#windows" class="d">windows</a>").
+        See <a href="#tcl-command" class="l">tcl-command</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="#tcl-expr" class="l">tcl-expr</a> and <a href="#tcl-option" class="l">tcl-option</a> for more information.
+        Example: 
+<span class="e">                if { [$buf option modified] } { $buf command "w" }</span>
+<span class="e"></span>
+<span class="h">==============================================================================</span>
+6. Miscellaneous; Output from <a href="#Tcl" class="d">Tcl</a>               <a name="tcl-misc" class="t">tcl-misc</a> <a name="tcl-output" class="t">tcl-output</a>
+
+The standard <a href="#Tcl" class="d">Tcl</a> commands "exit" and "catch" are replaced by custom versions.
+"exit" terminates the current <a href="#Tcl" class="d">Tcl</a> <a href="usr_41.txt.html#script" class="d">script</a> and returns to vim, which deletes the
+<a href="#Tcl" class="d">Tcl</a> interpreter.  Another call to "<a href="#%3Atcl" class="d">:tcl</a>" then creates <a href="insert.txt.html#a" class="d">a</a> new <a href="#Tcl" class="d">Tcl</a> interpreter.
+"exit" does NOT terminate vim!  "catch" works <a href="motion.txt.html#as" class="d">as</a> before, except that <a href="motion.txt.html#it" class="d">it</a> does
+not prevent <a href="usr_41.txt.html#script" class="d">script</a> termination from "exit"<a href="repeat.txt.html#." class="d">.</a>  An exit code != <a href="motion.txt.html#0" class="d">0</a> causes the <a href="starting.txt.html#ex" class="d">ex</a>
+command that invoked the <a href="#Tcl" class="d">Tcl</a> <a href="usr_41.txt.html#script" class="d">script</a> to return an error.
+
+Two new I/O streams are available in Tcl, "vimout" and "vimerr"<a href="repeat.txt.html#." class="d">.</a>  All output
+directed to them <a href="motion.txt.html#is" class="d">is</a> displayed in the vim message area, <a href="motion.txt.html#as" class="d">as</a> information <a href="message.txt.html#messages" class="d">messages</a>
+and error messages, respectively.  The standard <a href="#Tcl" class="d">Tcl</a> output streams stdout and
+stderr are mapped to vimout and vimerr, so that <a href="insert.txt.html#a" class="d">a</a> normal "puts" command can be
+used to display <a href="message.txt.html#messages" class="d">messages</a> in vim.
+
+<span class="h">==============================================================================</span>
+7. Known <a href="intro.txt.html#bugs" class="d">bugs</a> <a href="change.txt.html#%26" class="d">&amp;</a> problems                                <a name="tcl-bugs" class="t">tcl-bugs</a>
+
+Calling one of the <a href="#Tcl" class="d">Tcl</a> <a href="intro.txt.html#Ex" class="d">Ex</a> commands from inside <a href="#Tcl" class="d">Tcl</a> (via "::vim::command"<a href="motion.txt.html#%29" class="d">)</a> may
+have unexpected side effects.  The command creates <a href="insert.txt.html#a" class="d">a</a> new interpreter, which
+has the same abilities <a href="motion.txt.html#as" class="d">as</a> the standard interpreter <a href="motion.txt.html#-" class="d">-</a> making "::vim::command"
+available in <a href="insert.txt.html#a" class="d">a</a> safe child interpreter therefore makes the child unsafe.  (It
+would be trivial to block nested <a href="#%3Atcl" class="d">:tcl</a>* calls or ensure that such calls from <a href="insert.txt.html#a" class="d">a</a>
+safe interpreter create only new safe interpreters, but quite pointless <a href="motion.txt.html#-" class="d">-</a>
+depending on vim's configuration, "::vim::command" may execute arbitrary code
+in any number of other scripting languages.)  <a href="insert.txt.html#A" class="d">A</a> call to "exit" within this new
+interpreter does not affect the old interpreter; <a href="motion.txt.html#it" class="d">it</a> only terminates the new
+interpreter, then <a href="usr_41.txt.html#script" class="d">script</a> processing continues normally in the old interpreter.
+
+Input from stdin <a href="motion.txt.html#is" class="d">is</a> currently not supported.
+
+<span class="h">==============================================================================</span>
+8. Examples:                                            <a name="tcl-examples" class="t">tcl-examples</a>
+
+Here are <a href="insert.txt.html#a" class="d">a</a> few small (and maybe useful) <a href="#Tcl" class="d">Tcl</a> scripts.
+
+This <a href="usr_41.txt.html#script" class="d">script</a> sorts the lines of the entire buffer (assume <a href="motion.txt.html#it" class="d">it</a> contains <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a>
+of names or something similar):
+        set buf $::vim::current(buffer)
+        set lines [$buf get top bottom]
+        set lines [lsort -dictionary $lines]
+        $buf set top bottom $lines
+
+This <a href="usr_41.txt.html#script" class="d">script</a> reverses the lines in the buffer.  <span class="n">Note</span> the use of "::vim::lbase"
+and "$buf last" to work with any line number setting.
+        set buf $::vim::current(buffer)
+        set <a href="motion.txt.html#t" class="d">t</a> $::vim::lbase
+        set <a href="motion.txt.html#b" class="d">b</a> [$buf last]
+        while <span class="s">{ $t &lt; $b }</span> <a href="motion.txt.html#%7B" class="d">{</a>
+                set tl [$buf get $t]
+                set bl [$buf get $b]
+                $buf set $t $bl
+                $buf set $b $tl
+                incr <a href="motion.txt.html#t" class="d">t</a>
+                incr <a href="motion.txt.html#b" class="d">b</a> -1
+        <a href="motion.txt.html#%7D" class="d">}</a>
+
+This <a href="usr_41.txt.html#script" class="d">script</a> adds <a href="insert.txt.html#a" class="d">a</a> consecutive number to each line in the current range:
+        set buf $::vim::current(buffer)
+        set <a href="insert.txt.html#i" class="d">i</a> $::vim::range(start)
+        set <a href="pattern.txt.html#n" class="d">n</a> 1
+        while <span class="s">{ $i &lt;= $::vim::range(end) }</span> <a href="motion.txt.html#%7B" class="d">{</a>
+                set line [$buf get $i]
+                $buf set $i "$n\t$line"
+                incr <a href="insert.txt.html#i" class="d">i</a> <a href="motion.txt.html#%3B" class="d">;</a> incr <a href="pattern.txt.html#n" class="d">n</a>
+        <a href="motion.txt.html#%7D" class="d">}</a>
+
+The same can also be done quickly with two <a href="intro.txt.html#Ex" class="d">Ex</a> commands, using "<a href="#%3Atcldo" class="d">:tcldo</a>"<a href="cmdline.txt.html#%3A" class="d">:</a>
+        <a href="#%3Atcl" class="d">:tcl</a> set <a href="pattern.txt.html#n" class="d">n</a> 1
+        :[range]tcldo set line "$n\t$line" <a href="motion.txt.html#%3B" class="d">;</a> incr <a href="pattern.txt.html#n" class="d">n</a>
+
+This procedure runs an <a href="intro.txt.html#Ex" class="d">Ex</a> command on each buffer (idea stolen from Ron Aaron):
+        proc eachbuf <span class="s">{ cmd }</span> <a href="motion.txt.html#%7B" class="d">{</a>
+                foreach <a href="motion.txt.html#b" class="d">b</a> [::vim::buffer list] <a href="motion.txt.html#%7B" class="d">{</a>
+                        $b command $cmd
+                <a href="motion.txt.html#%7D" class="d">}</a>
+        <a href="motion.txt.html#%7D" class="d">}</a>
+Use <a href="motion.txt.html#it" class="d">it</a> like this:
+        <a href="#%3Atcl" class="d">:tcl</a> eachbuf %s/foo/bar/g
+Be careful with Tcl's <a href="eval.txt.html#string" class="d">string</a> and <a href="intro.txt.html#backslash" class="d">backslash</a> substitution, tough.  If in doubt,
+surround the <a href="intro.txt.html#Ex" class="d">Ex</a> command with curly braces.
+
+
+If you want to add some <a href="#Tcl" class="d">Tcl</a> procedures permanently to vim, just place them in
+<a href="insert.txt.html#a" class="d">a</a> file (e.g. "~/.vimrc.tcl" on <a href="os_unix.txt.html#Unix" class="d">Unix</a> machines), and add these lines to your
+<a href="starting.txt.html#startup" class="d">startup</a> file (usually "~/.vimrc" on Unix):
+        if has("<a href="#tcl" class="d">tcl</a>"<a href="motion.txt.html#%29" class="d">)</a>
+                tclfile ~/.vimrc.tcl
+        endif
+
+<span class="h">==============================================================================</span>
+9. Dynamic loading                                      <a name="tcl-dynamic" class="t">tcl-dynamic</a>
+
+On <a href="os_win32.txt.html#MS-Windows" class="d">MS-Windows</a> and <a href="os_unix.txt.html#Unix" class="d">Unix</a> the <a href="#Tcl" class="d">Tcl</a> library can be loaded dynamically.  The
+<a href="various.txt.html#%3Aversion" class="l">:version</a> output then includes <a href="various.txt.html#%2Btcl%2Fdyn" class="l">+tcl/dyn</a><a href="repeat.txt.html#." class="d">.</a>
+
+This means that Vim will search for the <a href="#Tcl" class="d">Tcl</a> DLL or shared library file only
+when needed.  When you don't use the <a href="#Tcl" class="d">Tcl</a> interface you don't need it, thus you
+can use Vim without this file.
+
+
+<span class="h">MS-Windows </span>
+
+To use the <a href="#Tcl" class="d">Tcl</a> interface the <a href="#Tcl" class="d">Tcl</a> DLL <a href="vim_faq.txt.html#must" class="d">must</a> be in your search path.  In <a href="insert.txt.html#a" class="d">a</a>
+console <a href="windows.txt.html#window" class="d">window</a> type "path" to see what directories are used.  The <a href="options.txt.html#%27tcldll%27" class="o">'tcldll'</a>
+option can be also used to specify the <a href="#Tcl" class="d">Tcl</a> DLL.
+
+The name of the DLL <a href="vim_faq.txt.html#must" class="d">must</a> match the <a href="#Tcl" class="d">Tcl</a> version Vim was compiled with.
+Currently the name <a href="motion.txt.html#is" class="d">is</a> "tcl86.dll"<a href="repeat.txt.html#." class="d">.</a>  That <a href="motion.txt.html#is" class="d">is</a> for <a href="#Tcl" class="d">Tcl</a> 8.6.  To know for sure
+edit "gvim.exe" and search for "tcl\d*.dll\c"<a href="repeat.txt.html#." class="d">.</a>
+
+
+<span class="h">Unix </span>
+
+The <a href="options.txt.html#%27tcldll%27" class="o">'tcldll'</a> option can be used to specify the <a href="#Tcl" class="d">Tcl</a> shared library file instead
+of DYNAMIC_TCL_DLL file what was specified <a href="motion.txt.html#at" class="d">at</a> compile time.  The version of
+the shared library <a href="vim_faq.txt.html#must" class="d">must</a> match the <a href="#Tcl" class="d">Tcl</a> version Vim was compiled with.
+
+<span class="h">==============================================================================</span>
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

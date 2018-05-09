@@ -1,0 +1,235 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: usr_26.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="usr_26.txt" class="t">usr_26.txt</a>    For <span class="i">Vim version 8.0.</span>  Last change: 2006 Apr 24
+
+                     VIM USER MANUAL <a href="motion.txt.html#-" class="d">-</a> by <a href="intro.txt.html#Bram" class="d">Bram</a> <a href="intro.txt.html#Moolenaar" class="d">Moolenaar</a>
+
+                                  Repeating
+
+
+An editing task <a href="motion.txt.html#is" class="d">is</a> hardly ever unstructured.  <a href="insert.txt.html#A" class="d">A</a> change often needs to be made
+several times.  In this chapter <a href="insert.txt.html#a" class="d">a</a> number of useful ways to repeat <a href="insert.txt.html#a" class="d">a</a> change
+will be explained.
+
+<a href="#26.1" class="l">26.1</a>  Repeating with <a href="visual.txt.html#Visual" class="d">Visual</a> mode
+<a href="#26.2" class="l">26.2</a>  Add and subtract
+<a href="#26.3" class="l">26.3</a>  Making <a href="insert.txt.html#a" class="d">a</a> change in many files
+<a href="#26.4" class="l">26.4</a>  Using Vim from <a href="insert.txt.html#a" class="d">a</a> shell <a href="usr_41.txt.html#script" class="d">script</a>
+
+     Next chapter: <a href="usr_27.txt.html#usr_27.txt" class="l">usr_27.txt</a>  Search commands and patterns
+ Previous chapter: <a href="usr_25.txt.html#usr_25.txt" class="l">usr_25.txt</a>  Editing formatted text
+Table of contents: <a href="usr_toc.txt.html#usr_toc.txt" class="l">usr_toc.txt</a>
+
+<span class="h">==============================================================================</span>
+<a name="26.1" class="t">26.1</a>  Repeating with <a href="visual.txt.html#Visual" class="d">Visual</a> mode
+
+<a href="visual.txt.html#Visual" class="d">Visual</a> mode <a href="motion.txt.html#is" class="d">is</a> very handy for making <a href="insert.txt.html#a" class="d">a</a> change in any sequence of lines.  You
+can see the highlighted text, thus you can check if the correct lines are
+changed.  But making the selection takes some typing.  The "<a href="visual.txt.html#gv" class="d">gv</a>" command
+selects the same area again.  This allows you to <a href="diff.txt.html#do" class="d">do</a> another operation on the
+same text.
+   Suppose you have some lines where you want to change "2001" to "2002" and
+"2000" to "2001"<a href="cmdline.txt.html#%3A" class="d">:</a>
+
+<span class="h">        The financial results for 2001 are better </span>
+<span class="h">        than for 2000.  The income increased by 50%, </span>
+<span class="h">        even though 2001 had more rain than 2000. </span>
+<span class="h">                        2000            2001 </span>
+<span class="h">        income          45,403          66,234 </span>
+
+First change "2001" to "2002"<a href="repeat.txt.html#." class="d">.</a>  <a href="visual.txt.html#Select" class="d">Select</a> the lines in <a href="visual.txt.html#Visual" class="d">Visual</a> mode, and use: 
+<span class="e"></span>
+<span class="e">        :s/2001/2002/g</span>
+<span class="e"></span>
+Now use "<a href="visual.txt.html#gv" class="d">gv</a>" to reselect the same text.  It doesn't matter where the cursor
+is.  Then use ":s/2000/2001/g" to make the second change.
+   Obviously, you can repeat these changes several times.
+
+<span class="h">==============================================================================</span>
+<a name="26.2" class="t">26.2</a>  Add and subtract
+
+When <a href="repeat.txt.html#repeating" class="d">repeating</a> the change of one number into another, you often have <a href="insert.txt.html#a" class="d">a</a> fixed
+offset.  In the example above, one was added to each year.  Instead of typing
+<a href="insert.txt.html#a" class="d">a</a> substitute command for each year that appears, the <a href="change.txt.html#CTRL-A" class="k">CTRL-A</a> command can be
+used.
+   Using the same text <a href="motion.txt.html#as" class="d">as</a> above, search for <a href="insert.txt.html#a" class="d">a</a> year: 
+<span class="e"></span>
+<span class="e">        /19[0-9][0-9]\|20[0-9][0-9]</span>
+<span class="e"></span>
+Now press <a href="change.txt.html#CTRL-A" class="k">CTRL-A</a>.  The year will be increased by one:
+
+<span class="h">        The financial results for 2002 are better </span>
+<span class="h">        than for 2000.  The income increased by 50%, </span>
+<span class="h">        even though 2001 had more rain than 2000. </span>
+<span class="h">                        2000            2001 </span>
+<span class="h">        income          45,403          66,234 </span>
+
+Use "<a href="pattern.txt.html#n" class="d">n</a>" to find the next year, and press "<a href="repeat.txt.html#." class="d">.</a>" to repeat the <a href="change.txt.html#CTRL-A" class="k">CTRL-A</a> <a href="motion.txt.html#%28" class="d">(</a>"<a href="repeat.txt.html#." class="d">.</a>" <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a>
+bit quicker to type).  Repeat "<a href="pattern.txt.html#n" class="d">n</a>" and "<a href="repeat.txt.html#." class="d">.</a>" for all years that appear.
+   Hint: set the <a href="options.txt.html#%27hlsearch%27" class="o">'hlsearch'</a> option to see the matches you are going to change,
+then you can look ahead and <a href="diff.txt.html#do" class="d">do</a> <a href="motion.txt.html#it" class="d">it</a> faster.
+
+Adding more than one can be done by prepending the number to <a href="change.txt.html#CTRL-A" class="k">CTRL-A</a>.  Suppose
+you have this list:
+
+<span class="h">        1.  item four </span>
+<span class="h">        2.  item five </span>
+<span class="h">        3.  item six </span>
+
+Move the cursor to "1." and type: 
+<span class="e"></span>
+<span class="e">        3 CTRL-A</span>
+<span class="e"></span>
+The "1." will change to "4."<a href="repeat.txt.html#." class="d">.</a>  Again, you can use "<a href="repeat.txt.html#." class="d">.</a>" to repeat this on the
+other numbers.
+
+Another example:
+
+<span class="h">        006     foo bar </span>
+<span class="h">        007     foo bar </span>
+
+Using <a href="change.txt.html#CTRL-A" class="k">CTRL-A</a> on these numbers results in:
+
+<span class="h">        007     foo bar </span>
+<span class="h">        010     foo bar </span>
+
+7 plus one <a href="motion.txt.html#is" class="d">is</a> 10?  What happened here <a href="motion.txt.html#is" class="d">is</a> that Vim recognized "007" <a href="motion.txt.html#as" class="d">as</a> an <a href="eval.txt.html#octal" class="d">octal</a>
+number, because there <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> leading zero.  This <a href="intro.txt.html#notation" class="d">notation</a> <a href="motion.txt.html#is" class="d">is</a> often used in <a href="change.txt.html#C" class="d">C</a>
+programs.  If you <a href="diff.txt.html#do" class="d">do</a> not want <a href="insert.txt.html#a" class="d">a</a> number with leading zeros to be handled <a href="motion.txt.html#as" class="d">as</a>
+octal, use this: 
+<span class="e"></span>
+<span class="e">        :set nrformats-=octal</span>
+<span class="e"></span>
+The <a href="change.txt.html#CTRL-X" class="k">CTRL-X</a> command does subtraction in <a href="insert.txt.html#a" class="d">a</a> similar way.
+
+<span class="h">==============================================================================</span>
+<a name="26.3" class="t">26.3</a>  Making <a href="insert.txt.html#a" class="d">a</a> change in many files
+
+Suppose you have <a href="insert.txt.html#a" class="d">a</a> variable called "x_cnt" and you want to change <a href="motion.txt.html#it" class="d">it</a> to
+"x_counter"<a href="repeat.txt.html#." class="d">.</a>  This variable <a href="motion.txt.html#is" class="d">is</a> used in several of your <a href="change.txt.html#C" class="d">C</a> files.  You need to
+change <a href="motion.txt.html#it" class="d">it</a> in all files.  This <a href="motion.txt.html#is" class="d">is</a> how you <a href="diff.txt.html#do" class="d">do</a> it.
+   Put all the relevant files in the argument list: 
+<span class="e"></span>
+<span class="e">        :args *.c</span>
+
+This finds all <a href="change.txt.html#C" class="d">C</a> files and edits the first one.  Now you can perform <a href="insert.txt.html#a" class="d">a</a>
+substitution command on all these files: 
+<span class="e"></span>
+<span class="e">        :argdo %s/\&lt;x_cnt\&gt;/x_counter/ge | update</span>
+<span class="e"></span>
+The "<a href="editing.txt.html#%3Aargdo" class="d">:argdo</a>" command takes an argument that <a href="motion.txt.html#is" class="d">is</a> another command.  That command
+will be executed on all files in the argument list.
+   The "%s" substitute command that follows works on all lines.  It finds the
+<a href="motion.txt.html#word" class="d">word</a> "x_cnt" with "\&lt;x_cnt\&gt;"<a href="repeat.txt.html#." class="d">.</a>  The "\&lt;" and "\&gt;" are used to match the whole
+<a href="motion.txt.html#word" class="d">word</a> only, and not "px_cnt" or "x_cnt2"<a href="repeat.txt.html#." class="d">.</a>
+   The flags for the substitute command include "<a href="index.txt.html#g" class="d">g</a>" to replace all occurrences
+of "x_cnt" in the same line.  The "<a href="motion.txt.html#e" class="d">e</a>" flag <a href="motion.txt.html#is" class="d">is</a> used to avoid an error message
+when "x_cnt" does not appear in the file.  Otherwise "<a href="editing.txt.html#%3Aargdo" class="d">:argdo</a>" would abort on
+the first file where "x_cnt" was not found.
+   The "|" separates two commands.  The following "update" command writes the
+file only if <a href="motion.txt.html#it" class="d">it</a> was changed.  If no "x_cnt" was changed to "x_counter" nothing
+happens.
+
+There <a href="motion.txt.html#is" class="d">is</a> also the "<a href="windows.txt.html#%3Awindo" class="d">:windo</a>" command, which executes its argument in all
+windows.  And "<a href="windows.txt.html#%3Abufdo" class="d">:bufdo</a>" executes its argument on all buffers.  Be careful with
+this, because you might have more files in the buffer <a href="eval.txt.html#list" class="d">list</a> than you think.
+Check this with the "<a href="windows.txt.html#%3Abuffers" class="d">:buffers</a>" command (or "<a href="windows.txt.html#%3Als" class="d">:ls</a>").
+
+<span class="h">==============================================================================</span>
+<a name="26.4" class="t">26.4</a>  Using Vim from <a href="insert.txt.html#a" class="d">a</a> shell <a href="usr_41.txt.html#script" class="d">script</a>
+
+Suppose you have <a href="insert.txt.html#a" class="d">a</a> lot of files in which you need to change the <a href="eval.txt.html#string" class="d">string</a>
+"-person-" to "Jones" and then print it.  How <a href="diff.txt.html#do" class="d">do</a> you <a href="diff.txt.html#do" class="d">do</a> that?  One way <a href="motion.txt.html#is" class="d">is</a> to
+<a href="diff.txt.html#do" class="d">do</a> <a href="insert.txt.html#a" class="d">a</a> lot of typing.  The other <a href="motion.txt.html#is" class="d">is</a> to write <a href="insert.txt.html#a" class="d">a</a> shell <a href="usr_41.txt.html#script" class="d">script</a> to <a href="diff.txt.html#do" class="d">do</a> the work.
+   The Vim editor does <a href="insert.txt.html#a" class="d">a</a> superb <a href="channel.txt.html#job" class="d">job</a> <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> screen-oriented editor when using
+<a href="intro.txt.html#Normal" class="d">Normal</a> mode commands.  For batch processing, however, <a href="intro.txt.html#Normal" class="d">Normal</a> mode commands <a href="diff.txt.html#do" class="d">do</a>
+not result in clear, commented command files; so here you will use <a href="intro.txt.html#Ex" class="d">Ex</a> mode
+instead.  This mode gives you <a href="insert.txt.html#a" class="d">a</a> <a href="todo.txt.html#nice" class="d">nice</a> command-line interface that makes <a href="motion.txt.html#it" class="d">it</a> <a href="starting.txt.html#easy" class="d">easy</a>
+to <a href="change.txt.html#put" class="d">put</a> into <a href="insert.txt.html#a" class="d">a</a> batch file.  <a href="motion.txt.html#%28" class="d">(</a>"<a href="intro.txt.html#Ex" class="d">Ex</a> command" <a href="motion.txt.html#is" class="d">is</a> just another name for <a href="insert.txt.html#a" class="d">a</a>
+command-line (:) command.)
+   The <a href="intro.txt.html#Ex" class="d">Ex</a> mode commands you need are <a href="motion.txt.html#as" class="d">as</a> follows: 
+<span class="e"></span>
+<span class="e">        %s/-person-/Jones/g</span>
+<span class="e">        write tempfile</span>
+<span class="e">        quit</span>
+<span class="e"></span>
+You <a href="change.txt.html#put" class="d">put</a> these commands in the file "change.vim"<a href="repeat.txt.html#." class="d">.</a>  Now to run the editor in
+batch mode, use this shell script: 
+<span class="e"></span>
+<span class="e">        for file in *.txt; do</span>
+<span class="e">          vim -e -s $file &lt; change.vim</span>
+<span class="e">          lpr -r tempfile</span>
+<span class="e">        done</span>
+<span class="e"></span>
+The for-done loop <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> shell construct to repeat the two lines in between,
+while the $file variable <a href="motion.txt.html#is" class="d">is</a> set to <a href="insert.txt.html#a" class="d">a</a> different file name each time.
+   The second line runs the Vim editor in <a href="intro.txt.html#Ex" class="d">Ex</a> mode (-e argument) on the file
+$file and reads commands from the file "change.vim"<a href="repeat.txt.html#." class="d">.</a>  The <a href="starting.txt.html#-s" class="d">-s</a> argument tells
+Vim to operate in silent mode.  In other words, <a href="diff.txt.html#do" class="d">do</a> not keep outputting the
+:prompt, or any other prompt for that matter.
+   The "lpr <a href="starting.txt.html#-r" class="d">-r</a> <a href="change.txt.html#tempfile" class="d">tempfile</a>" command prints the resulting "<a href="change.txt.html#tempfile" class="d">tempfile</a>" and deletes
+<a href="motion.txt.html#it" class="d">it</a> (that's what the <a href="starting.txt.html#-r" class="d">-r</a> argument does).
+
+
+READING FROM STDIN
+
+Vim can read text on standard input.  Since the normal way <a href="motion.txt.html#is" class="d">is</a> to read commands
+there, you <a href="vim_faq.txt.html#must" class="d">must</a> tell Vim to read text instead.  This <a href="motion.txt.html#is" class="d">is</a> done by passing the
+"<a href="motion.txt.html#-" class="d">-</a>" argument in place of <a href="insert.txt.html#a" class="d">a</a> file.  Example: 
+<span class="e"></span>
+<span class="e">        ls | vim -</span>
+<span class="e"></span>
+This allows you to edit the output of the "ls" command, without first saving
+the text in <a href="insert.txt.html#a" class="d">a</a> file.
+   If you use the standard input to read text from, you can use the "<a href="starting.txt.html#-S" class="d">-S</a>"
+argument to read <a href="insert.txt.html#a" class="d">a</a> script: 
+<span class="e"></span>
+<span class="e">        producer | vim -S change.vim -</span>
+<span class="e"></span>
+<span class="e"></span>
+NORMAL MODE SCRIPTS
+
+If you really want to use <a href="intro.txt.html#Normal" class="d">Normal</a> mode commands in <a href="insert.txt.html#a" class="d">a</a> script, you can use <a href="motion.txt.html#it" class="d">it</a>
+like this: 
+<span class="e"></span>
+<span class="e">        vim -s script file.txt ...</span>
+
+        <span class="n">Note:</span>
+        "<a href="starting.txt.html#-s" class="d">-s</a>" has <a href="insert.txt.html#a" class="d">a</a> different meaning when <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> used without "<a href="starting.txt.html#-e" class="d">-e</a>"<a href="repeat.txt.html#." class="d">.</a>  Here <a href="motion.txt.html#it" class="d">it</a>
+        means to source the "<a href="usr_41.txt.html#script" class="d">script</a>" <a href="motion.txt.html#as" class="d">as</a> <a href="intro.txt.html#Normal" class="d">Normal</a> mode commands.  When used with
+        "<a href="starting.txt.html#-e" class="d">-e</a>" <a href="motion.txt.html#it" class="d">it</a> means to be silent, and doesn't use the next argument <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a>
+        file name.
+
+The commands in "<a href="usr_41.txt.html#script" class="d">script</a>" are executed like you typed them.  Don't forget that
+<a href="insert.txt.html#a" class="d">a</a> line break <a href="motion.txt.html#is" class="d">is</a> interpreted <a href="motion.txt.html#as" class="d">as</a> pressing <a href="intro.txt.html#%3CEnter%3E" class="s">&lt;Enter&gt;</a>.  In <a href="intro.txt.html#Normal" class="d">Normal</a> mode that moves
+the cursor to the next line.
+   To create the <a href="usr_41.txt.html#script" class="d">script</a> you can edit the <a href="usr_41.txt.html#script" class="d">script</a> file and type the commands.
+You need to imagine what the result would be, which can be <a href="insert.txt.html#a" class="d">a</a> bit difficult.
+Another way <a href="motion.txt.html#is" class="d">is</a> to record the commands while you perform them manually.  This
+<a href="motion.txt.html#is" class="d">is</a> how you <a href="diff.txt.html#do" class="d">do</a> that: 
+<span class="e"></span>
+<span class="e">        vim -w script file.txt ...</span>
+<span class="e"></span>
+All typed keys will be written to "<a href="usr_41.txt.html#script" class="d">script</a>"<a href="repeat.txt.html#." class="d">.</a>  If you make <a href="insert.txt.html#a" class="d">a</a> small mistake you
+can just continue and remember to edit the <a href="usr_41.txt.html#script" class="d">script</a> later.
+   The "<a href="starting.txt.html#-w" class="d">-w</a>" argument appends to an existing script.  That <a href="motion.txt.html#is" class="d">is</a> good when you
+want to record the <a href="usr_41.txt.html#script" class="d">script</a> bit by bit.  If you want to start from scratch and
+start all over, use the "<a href="starting.txt.html#-W" class="d">-W</a>" argument.  It overwrites any existing file.
+
+<span class="h">==============================================================================</span>
+
+Next chapter: <a href="usr_27.txt.html#usr_27.txt" class="l">usr_27.txt</a>  Search commands and patterns
+
+Copyright: see <a href="usr_01.txt.html#manual-copyright" class="l">manual-copyright</a>  vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

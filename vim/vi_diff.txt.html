@@ -1,0 +1,1038 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: vi_diff.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="vi_diff.txt" class="t">vi_diff.txt</a>   For <span class="i">Vim version 8.0.</span>  Last change: 2016 Aug 16
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Bram Moolenaar</span>
+
+
+Differences between Vim and <a href="intro.txt.html#Vi" class="d">Vi</a>                          <a name="vi-differences" class="t">vi-differences</a>
+
+Throughout the <a href="helphelp.txt.html#help" class="d">help</a> files differences between Vim and Vi/Ex are given in
+curly braces, like "<span class="s">{not in Vi}</span>"<a href="repeat.txt.html#." class="d">.</a>  This file only lists what has not been
+mentioned in other files and gives an overview.
+
+Vim <a href="motion.txt.html#is" class="d">is</a> mostly POSIX 1003.2-1 compliant.  The only command known to be missing
+<a href="motion.txt.html#is" class="d">is</a> "<a href="#%3Aopen" class="d">:open</a>"<a href="repeat.txt.html#." class="d">.</a>  There are probably <a href="insert.txt.html#a" class="d">a</a> lot of small differences (either because Vim
+<a href="motion.txt.html#is" class="d">is</a> missing something or because <a href="intro.txt.html#Posix" class="d">Posix</a> <a href="motion.txt.html#is" class="d">is</a> beside the mark).
+
+1. Simulated command                    <a href="#simulated-command" class="l">simulated-command</a>
+2. Missing <a href="options.txt.html#options" class="d">options</a>                      <a href="#missing-options" class="l">missing-options</a>
+3. Limits                               <a href="#limits" class="l">limits</a>
+4. The most interesting additions       <a href="#vim-additions" class="l">vim-additions</a>
+5. Other vim features                   <a href="#other-features" class="l">other-features</a>
+6. <a href="cmdline.txt.html#Command-line" class="d">Command-line</a> arguments               <a href="#cmdline-arguments" class="l">cmdline-arguments</a>
+7. POSIX compliance                     <a href="#posix-compliance" class="l">posix-compliance</a>
+
+<span class="h">==============================================================================</span>
+1. Simulated command                                    <a name="simulated-command" class="t">simulated-command</a>
+
+This command <a href="motion.txt.html#is" class="d">is</a> in Vi, but Vim only simulates it:
+
+                                                        <a name="%3Ao" class="t">:o</a> <a name="%3Aop" class="t">:op</a> <a name="%3Aopen" class="t">:open</a>
+:[range]o[pen]                  Works like <a href="editing.txt.html#%3Avisual" class="l">:visual</a><a href="cmdline.txt.html#%3A" class="d">:</a> <a href="intro.txt.html#end" class="d">end</a> <a href="intro.txt.html#Ex" class="d">Ex</a> mode.
+                                <span class="s">{Vi: start editing in open mode}</span>
+
+:[range]o[pen] /pattern/        As above, additionally move the cursor to the
+                                column where "<a href="pattern.txt.html#pattern" class="d">pattern</a>" matches in the cursor
+                                line.
+
+Vim does not support open mode, since it's not really useful.  For those
+situations where "<a href="#%3Aopen" class="d">:open</a>" would start open mode Vim will leave <a href="intro.txt.html#Ex" class="d">Ex</a> mode, which
+allows executing the same commands, but updates the whole screen instead of
+only one line.
+
+<span class="h">==============================================================================</span>
+2. Missing <a href="options.txt.html#options" class="d">options</a>                                      <a name="missing-options" class="t">missing-options</a>
+
+These <a href="options.txt.html#options" class="d">options</a> are in the <a href="os_unix.txt.html#Unix" class="d">Unix</a> Vi, but not in Vim.  If you try to set one of
+them you won't get an error message, but the value <a href="motion.txt.html#is" class="d">is</a> not used and cannot be
+printed.
+
+autoprint (ap)          <a href="options.txt.html#boolean" class="d">boolean</a> (default on)            <a name="%27autoprint%27" class="t">'autoprint'</a> <a name="%27ap%27" class="t">'ap'</a>
+beautify (bf)           <a href="options.txt.html#boolean" class="d">boolean</a> (default off)           <a name="%27beautify%27" class="t">'beautify'</a> <a name="%27bf%27" class="t">'bf'</a>
+flash (fl)              <a href="options.txt.html#boolean" class="d">boolean</a> (default ??)            <a name="%27flash%27" class="t">'flash'</a> <a name="%27fl%27" class="t">'fl'</a>
+graphic (gr)            <a href="options.txt.html#boolean" class="d">boolean</a> (default off)           <a name="%27graphic%27" class="t">'graphic'</a> <a name="%27gr%27" class="t">'gr'</a>
+hardtabs (ht)           number  (default 8)             <a name="%27hardtabs%27" class="t">'hardtabs'</a> <a name="%27ht%27" class="t">'ht'</a>
+        number of spaces that <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a> moves on the display
+mesg                    <a href="options.txt.html#boolean" class="d">boolean</a> (default on)            <a name="%27mesg%27" class="t">'mesg'</a>
+novice                  <a href="options.txt.html#boolean" class="d">boolean</a> (default off)           <a name="%27novice%27" class="t">'novice'</a>
+open                    <a href="options.txt.html#boolean" class="d">boolean</a> (default on)            <a name="%27open%27" class="t">'open'</a>
+optimize (op)           <a href="options.txt.html#boolean" class="d">boolean</a> (default off)           <a name="%27optimize%27" class="t">'optimize'</a> <a name="%27op%27" class="t">'op'</a>
+redraw                  <a href="options.txt.html#boolean" class="d">boolean</a> (default off)           <a name="%27redraw%27" class="t">'redraw'</a>
+slowopen (slow)         <a href="options.txt.html#boolean" class="d">boolean</a> (default off)           <a name="%27slowopen%27" class="t">'slowopen'</a> <a name="%27slow%27" class="t">'slow'</a>
+sourceany               <a href="options.txt.html#boolean" class="d">boolean</a> (default off)           <a name="%27sourceany%27" class="t">'sourceany'</a>
+w300                    number  (default 23)            <a name="%27w300%27" class="t">'w300'</a>
+w1200                   number  (default 23)            <a name="%27w1200%27" class="t">'w1200'</a>
+w9600                   number  (default 23)            <a name="%27w9600%27" class="t">'w9600'</a>
+
+<span class="h">==============================================================================</span>
+3. Limits                                               <a name="limits" class="t">limits</a>
+
+Vim has only <a href="insert.txt.html#a" class="d">a</a> few <a href="#limits" class="d">limits</a> for the files that can be edited {Vi: can not handle
+<a href="intro.txt.html#%3CNul%3E" class="s">&lt;Nul&gt;</a> characters and characters above 128, has limited line length, many other
+limits}.
+                                                        <a name="E340" class="t">E340</a>
+Maximum line length        On machines with 16-bit ints (Amiga and <a href="os_msdos.txt.html#MS-DOS" class="d">MS-DOS</a> real
+                           mode): 32767, otherwise 2147483647 characters.
+                           Longer lines are split.
+Maximum number of lines    2147483647 lines.
+Maximum file size          2147483647 bytes (2 Gbyte) when <a href="insert.txt.html#a" class="d">a</a> long integer <a href="motion.txt.html#is" class="d">is</a>
+                           32 bits.  Much more for 64 bit longs.  Also limited
+                           by available disk <a href="intro.txt.html#space" class="d">space</a> for the <a href="recover.txt.html#swap-file" class="l">swap-file</a><a href="repeat.txt.html#." class="d">.</a>
+                                                        <a name="E75" class="t">E75</a>
+Length of <a href="insert.txt.html#a" class="d">a</a> file path      <a href="os_unix.txt.html#Unix" class="d">Unix</a> and Win32: 1024 characters, otherwise 256
+                           characters (or <a href="motion.txt.html#as" class="d">as</a> much <a href="motion.txt.html#as" class="d">as</a> the system supports).
+Length of an expanded <a href="eval.txt.html#string" class="d">string</a> option
+                           <a href="os_unix.txt.html#Unix" class="d">Unix</a> and Win32: 1024 characters, otherwise 256
+                           characters
+Maximum display width      <a href="os_unix.txt.html#Unix" class="d">Unix</a> and Win32: 1024 characters, otherwise 255
+                           characters
+Maximum lhs of <a href="insert.txt.html#a" class="d">a</a> <a href="map.txt.html#mapping" class="d">mapping</a>   50 characters.
+<a href="eval.txt.html#Number" class="d">Number</a> of different highlighting types: over 30000
+Range of <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#Number" class="d">Number</a> variable:  -2147483648 to 2147483647 (might be more on 64
+                           bit systems)
+Maximum length of <a href="insert.txt.html#a" class="d">a</a> line in <a href="insert.txt.html#a" class="d">a</a> <a href="tagsrch.txt.html#tags" class="d">tags</a> file: 512 bytes.
+
+Information for <a href="undo.txt.html#undo" class="d">undo</a> and text in <a href="change.txt.html#registers" class="d">registers</a> <a href="motion.txt.html#is" class="d">is</a> kept in memory, thus when making
+(big) changes the amount of (virtual) memory available <a href="#limits" class="d">limits</a> the number of
+<a href="undo.txt.html#undo" class="d">undo</a> levels and the text that can be kept in registers.  Other things are also
+kept in memory:  <a href="cmdline.txt.html#Command-line" class="d">Command-line</a> history, error <a href="message.txt.html#messages" class="d">messages</a> for <a href="quickfix.txt.html#Quickfix" class="d">Quickfix</a> mode, etc.
+
+Memory usage <a href="#limits" class="d">limits</a>
+<span class="h">-------------------</span>
+
+The option <a href="options.txt.html#%27maxmem%27" class="o">'maxmem'</a> ('mm') <a href="motion.txt.html#is" class="d">is</a> used to set the maximum memory used for one
+buffer (in kilobytes).  <a href="options.txt.html#%27maxmemtot%27" class="o">'maxmemtot'</a> <a href="motion.txt.html#is" class="d">is</a> used to set the maximum memory used for
+all <a href="windows.txt.html#buffers" class="d">buffers</a> (in kilobytes).  The defaults depend on the system used.  For the
+<a href="os_amiga.txt.html#Amiga" class="d">Amiga</a> and MS-DOS, <a href="options.txt.html#%27maxmemtot%27" class="o">'maxmemtot'</a> <a href="motion.txt.html#is" class="d">is</a> set depending on the amount of memory
+available.
+These are not hard limits, but tell Vim when to move text into <a href="insert.txt.html#a" class="d">a</a> swap file.
+If you don't like Vim to swap to <a href="insert.txt.html#a" class="d">a</a> file, set <a href="options.txt.html#%27maxmem%27" class="o">'maxmem'</a> and <a href="options.txt.html#%27maxmemtot%27" class="o">'maxmemtot'</a> to <a href="insert.txt.html#a" class="d">a</a>
+very large value.  The swap file will then only be used for recovery.  If you
+don't want <a href="insert.txt.html#a" class="d">a</a> swap file <a href="motion.txt.html#at" class="d">at</a> all, set <a href="options.txt.html#%27updatecount%27" class="o">'updatecount'</a> to 0, or use the "<a href="starting.txt.html#-n" class="d">-n</a>"
+argument when <a href="starting.txt.html#starting" class="d">starting</a> Vim.
+
+<span class="h">==============================================================================</span>
+4. The most interesting additions                       <a name="vim-additions" class="t">vim-additions</a>
+
+<a href="intro.txt.html#Vi" class="d">Vi</a> compatibility.                                       <a href="options.txt.html#%27compatible%27" class="l">'compatible'</a>
+        Although Vim <a href="motion.txt.html#is" class="d">is</a> 99% <a href="intro.txt.html#Vi" class="d">Vi</a> compatible, some things in <a href="intro.txt.html#Vi" class="d">Vi</a> can be
+        considered to be <a href="insert.txt.html#a" class="d">a</a> bug, or <a href="motion.txt.html#at" class="d">at</a> least need improvement.  But still, Vim
+        starts in <a href="insert.txt.html#a" class="d">a</a> mode which behaves like the "real" <a href="intro.txt.html#Vi" class="d">Vi</a> <a href="motion.txt.html#as" class="d">as</a> much <a href="motion.txt.html#as" class="d">as</a> possible.
+        To make Vim behave <a href="insert.txt.html#a" class="d">a</a> little bit better, try resetting the <a href="options.txt.html#%27compatible%27" class="o">'compatible'</a>
+        option:
+                <a href="options.txt.html#%3Aset" class="d">:set</a> nocompatible
+        Or start Vim with the "<a href="starting.txt.html#-N" class="d">-N</a>" argument:
+                vim <a href="starting.txt.html#-N" class="d">-N</a>
+        Vim starts with <a href="options.txt.html#%27nocompatible%27" class="o">'nocompatible'</a> automatically if you have <a href="insert.txt.html#a" class="d">a</a> <a href="starting.txt.html#.vimrc" class="d">.vimrc</a>
+        file.  See <a href="starting.txt.html#startup" class="l">startup</a><a href="repeat.txt.html#." class="d">.</a>
+        The <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a> option can be used to set <a href="intro.txt.html#Vi" class="d">Vi</a> compatibility on/off for
+        <a href="insert.txt.html#a" class="d">a</a> number of specific items.
+
+Support for different systems.
+        Vim can be used on:
+        <a href="motion.txt.html#-" class="d">-</a> All <a href="os_unix.txt.html#Unix" class="d">Unix</a> systems (it works on all systems <a href="motion.txt.html#it" class="d">it</a> was tested on, although
+          the <a href="gui.txt.html#GUI" class="d">GUI</a> and <a href="if_perl.txt.html#Perl" class="d">Perl</a> interface may not work everywhere).
+        <a href="motion.txt.html#-" class="d">-</a> <a href="os_amiga.txt.html#Amiga" class="d">Amiga</a> (500, 1000, 1200, 2000, 3000, 4000, ...).
+        <a href="motion.txt.html#-" class="d">-</a> <a href="os_msdos.txt.html#MS-DOS" class="d">MS-DOS</a> in real-mode (no additional drivers required).
+        <a href="motion.txt.html#-" class="d">-</a> In protected mode on Windows 3.1 and <a href="os_msdos.txt.html#MS-DOS" class="d">MS-DOS</a> (DPMI driver required).
+        <a href="motion.txt.html#-" class="d">-</a> Windows 95 and Windows NT, with support for long file names.
+        <a href="motion.txt.html#-" class="d">-</a> <a href="os_os2.txt.html#OS%2F2" class="d">OS/2</a> (needs emx.dll)
+        <a href="motion.txt.html#-" class="d">-</a> <a href="os_mint.txt.html#Atari" class="d">Atari</a> <a href="os_mint.txt.html#MiNT" class="d">MiNT</a>
+        <a href="motion.txt.html#-" class="d">-</a> <a href="os_vms.txt.html#VMS" class="d">VMS</a>
+        <a href="motion.txt.html#-" class="d">-</a> <a href="os_beos.txt.html#BeOS" class="d">BeOS</a>
+        <a href="motion.txt.html#-" class="d">-</a> <a href="os_mac.txt.html#Macintosh" class="d">Macintosh</a>
+        <a href="motion.txt.html#-" class="d">-</a> Risc OS
+        <a href="motion.txt.html#-" class="d">-</a> IBM OS/390
+        <span class="n">Note</span> that on some systems features need to be disabled to reduce
+        resource usage, esp. on MS-DOS.  For some outdated systems you need to
+        use an older Vim version.
+
+Multi level persistent undo.                                    <a href="undo.txt.html#undo" class="l">undo</a>
+        'u' goes backward in time, 'CTRL-R' goes forward again.  Set option
+        <a href="options.txt.html#%27undolevels%27" class="o">'undolevels'</a> to the number of changes to be remembered (default 1000).
+        Set <a href="options.txt.html#%27undolevels%27" class="o">'undolevels'</a> to <a href="motion.txt.html#0" class="d">0</a> for <a href="insert.txt.html#a" class="d">a</a> Vi-compatible one level undo.  Set <a href="motion.txt.html#it" class="d">it</a> to
+        -1 for no <a href="undo.txt.html#undo" class="d">undo</a> <a href="motion.txt.html#at" class="d">at</a> all.
+        When all changes in <a href="insert.txt.html#a" class="d">a</a> buffer have been undone, the buffer <a href="motion.txt.html#is" class="d">is</a> not
+        considered changed anymore.  You can exit <a href="motion.txt.html#it" class="d">it</a> with :q, without <span class="s">&lt;!&gt;</span>.
+        When undoing <a href="insert.txt.html#a" class="d">a</a> few changes and then making <a href="insert.txt.html#a" class="d">a</a> new change Vim will
+        create <a href="insert.txt.html#a" class="d">a</a> branch in the <a href="undo.txt.html#undo" class="d">undo</a> tree.  This means you can <a href="motion.txt.html#go" class="d">go</a> back to any
+        state of the text, there <a href="motion.txt.html#is" class="d">is</a> no risk of <a href="insert.txt.html#a" class="d">a</a> change causing text to be
+        lost forever. <a href="undo.txt.html#undo-tree" class="l">undo-tree</a>
+        The <a href="undo.txt.html#undo" class="d">undo</a> information <a href="motion.txt.html#is" class="d">is</a> stored in <a href="insert.txt.html#a" class="d">a</a> file when the <a href="options.txt.html#%27undofile%27" class="o">'undofile'</a> option <a href="motion.txt.html#is" class="d">is</a>
+        set.  This means you can exit Vim, start Vim on <a href="insert.txt.html#a" class="d">a</a> previously edited
+        file and <a href="undo.txt.html#undo" class="d">undo</a> changes that were made before <a href="starting.txt.html#exiting" class="d">exiting</a> Vim.
+
+Graphical <a href="autocmd.txt.html#User" class="d">User</a> Interface (GUI).                         <a href="gui.txt.html#gui" class="l">gui</a>
+        Included support for GUI: menu's, mouse, scrollbars, etc.  You can
+        define your own menus.  Better support for CTRL/SHIFT/ALT keys in
+        combination with special keys and mouse.  Supported for <a href="various.txt.html#various" class="d">various</a>
+        platforms, such <a href="motion.txt.html#as" class="d">as</a> <a href="options.txt.html#X11" class="d">X11</a> (with <a href="gui_x11.txt.html#Motif" class="d">Motif</a> and <a href="gui_x11.txt.html#Athena" class="d">Athena</a> interfaces), GTK, <a href="os_win32.txt.html#Win32" class="d">Win32</a>
+        (Windows 95 and later), BeOS, <a href="os_amiga.txt.html#Amiga" class="d">Amiga</a> and Macintosh.
+
+Multiple <a href="windows.txt.html#windows" class="d">windows</a> and buffers.                           <a href="windows.txt.html#windows.txt" class="l">windows.txt</a>
+        Vim can split the screen into several windows, each editing <a href="insert.txt.html#a" class="d">a</a>
+        different buffer or the same buffer <a href="motion.txt.html#at" class="d">at</a> <a href="insert.txt.html#a" class="d">a</a> different location.  Buffers
+        can still be loaded (and changed) but not displayed in <a href="insert.txt.html#a" class="d">a</a> window.  This
+        <a href="motion.txt.html#is" class="d">is</a> called <a href="insert.txt.html#a" class="d">a</a> hidden buffer.  Many commands and <a href="options.txt.html#options" class="d">options</a> have been added
+        for this facility.
+        Vim can also use multiple <a href="intro.txt.html#tab" class="d">tab</a> pages, each with one or more windows.  <a href="insert.txt.html#A" class="d">A</a>
+        line with <a href="intro.txt.html#tab" class="d">tab</a> labels can be used to quickly switch between these pages.
+        <a href="tabpage.txt.html#tab-page" class="l">tab-page</a>
+
+<a href="autocmd.txt.html#Syntax" class="d">Syntax</a> highlighting.                                    <a href="syntax.txt.html#%3Asyntax" class="l">:syntax</a>
+        Vim can highlight keywords, patterns and other things.  This <a href="motion.txt.html#is" class="d">is</a>
+        defined by <a href="insert.txt.html#a" class="d">a</a> number of <a href="syntax.txt.html#%3Asyntax" class="l">:syntax</a> commands, and can be made to
+        highlight most languages and file types.  <a href="insert.txt.html#A" class="d">A</a> number of files are
+        included for highlighting the most common languages, like C, C++,
+        Java, Pascal, Makefiles, shell scripts, etc.  The colors used for
+        highlighting can be defined for ordinary terminals, color terminals
+        and the <a href="gui.txt.html#GUI" class="d">GUI</a> with the <a href="syntax.txt.html#%3Ahighlight" class="l">:highlight</a> command.  <a href="insert.txt.html#A" class="d">A</a> convenient way to <a href="diff.txt.html#do" class="d">do</a>
+        this <a href="motion.txt.html#is" class="d">is</a> using <a href="insert.txt.html#a" class="d">a</a> <a href="syntax.txt.html#%3Acolorscheme" class="l">:colorscheme</a> command.
+        The highlighted text can be exported <a href="motion.txt.html#as" class="d">as</a> HTML. <a href="syntax.txt.html#convert-to-HTML" class="l">convert-to-HTML</a>
+        Other items that can be highlighted are matches with the search <a href="eval.txt.html#string" class="d">string</a>
+        <a href="options.txt.html#%27hlsearch%27" class="l">'hlsearch'</a><a href="motion.txt.html#%2C" class="d">,</a> matching parens <a href="pi_paren.txt.html#matchparen" class="l">matchparen</a> and the cursor line and
+        column <a href="options.txt.html#%27cursorline%27" class="l">'cursorline'</a> <a href="options.txt.html#%27cursorcolumn%27" class="l">'cursorcolumn'</a><a href="repeat.txt.html#." class="d">.</a>
+
+Spell checking.                                         <a href="spell.txt.html#spell" class="l">spell</a>
+        When the <a href="options.txt.html#%27spell%27" class="o">'spell'</a> option <a href="motion.txt.html#is" class="d">is</a> set Vim will highlight spelling mistakes.
+        About 50 languages are currently supported, selected with the
+        <a href="options.txt.html#%27spelllang%27" class="o">'spelllang'</a> option.  In source code only comments and strings are
+        checked for spelling.
+
+Folding.                                                <a href="fold.txt.html#folding" class="l">folding</a>
+        <a href="insert.txt.html#A" class="d">A</a> range of lines can be shown <a href="motion.txt.html#as" class="d">as</a> one "folded" line.  This allows
+        overviewing <a href="insert.txt.html#a" class="d">a</a> file and moving blocks of text around quickly.
+        Folds can be created manually, from the <a href="syntax.txt.html#syntax" class="d">syntax</a> of the file, by indent,
+        etc.
+
+Diff mode.                                              <a href="diff.txt.html#diff" class="l">diff</a>
+        Vim can show two versions of <a href="insert.txt.html#a" class="d">a</a> file with the differences highlighted.
+        Parts of the text that are equal are folded away.  Commands can be
+        used to move text from one version to the other.
+
+Plugins.                                                <a href="usr_05.txt.html#add-plugin" class="l">add-plugin</a>
+        The functionality can be extended by dropping <a href="insert.txt.html#a" class="d">a</a> <a href="usr_05.txt.html#plugin" class="d">plugin</a> file in the
+        right directory.  That's an <a href="starting.txt.html#easy" class="d">easy</a> way to start using Vim scripts
+        written by others.  Plugins can be for all kind of files, or
+        specifically for <a href="insert.txt.html#a" class="d">a</a> filetype.
+        Packages make this even easier. <a href="repeat.txt.html#packages" class="l">packages</a>
+
+Asynchronous communication and timers.                  <a href="channel.txt.html#channel" class="l">channel</a> <a href="channel.txt.html#job" class="l">job</a> <a href="eval.txt.html#timer" class="l">timer</a>
+        Vim can exchange <a href="message.txt.html#messages" class="d">messages</a> with other processes in the background.
+        This makes <a href="motion.txt.html#it" class="d">it</a> possible to have servers <a href="diff.txt.html#do" class="d">do</a> work and send back the
+        results to Vim. <a href="channel.txt.html#channel" class="l">channel</a>
+        Vim can start <a href="insert.txt.html#a" class="d">a</a> job, communicate with <a href="motion.txt.html#it" class="d">it</a> and stop it. <a href="channel.txt.html#job" class="l">job</a>
+        Timers can fire once or repeatedly and invoke <a href="insert.txt.html#a" class="d">a</a> function to <a href="diff.txt.html#do" class="d">do</a> any
+        work. <a href="eval.txt.html#timer" class="l">timer</a>
+
+Repeat <a href="insert.txt.html#a" class="d">a</a> series of commands.                            <a href="repeat.txt.html#q" class="l">q</a>
+        "q{c}" starts <a href="repeat.txt.html#recording" class="d">recording</a> typed characters into named <a href="sponsor.txt.html#register" class="d">register</a> <span class="s">{c}</span>.
+        <a href="insert.txt.html#A" class="d">A</a> subsequent "<a href="repeat.txt.html#q" class="d">q</a>" stops recording.  The <a href="sponsor.txt.html#register" class="d">register</a> can then be executed
+        with the "@{c}" command.  This <a href="motion.txt.html#is" class="d">is</a> very useful to repeat <a href="insert.txt.html#a" class="d">a</a> complex
+        action.
+
+Flexible <a href="insert.txt.html#insert" class="d">insert</a> mode.                                   <a href="insert.txt.html#ins-special-special" class="l">ins-special-special</a>
+        The arrow keys can be used in <a href="insert.txt.html#insert" class="d">insert</a> mode to move around in the file.
+        This breaks the <a href="insert.txt.html#insert" class="d">insert</a> in two parts <a href="motion.txt.html#as" class="d">as</a> far <a href="motion.txt.html#as" class="d">as</a> <a href="undo.txt.html#undo" class="d">undo</a> and <a href="undo.txt.html#redo" class="d">redo</a> <a href="motion.txt.html#is" class="d">is</a>
+        concerned.
+
+        <a href="motion.txt.html#CTRL-O" class="k">CTRL-O</a> can be used to execute <a href="insert.txt.html#a" class="d">a</a> single <a href="intro.txt.html#Normal" class="d">Normal</a> mode command.  This <a href="motion.txt.html#is" class="d">is</a>
+        almost the same <a href="motion.txt.html#as" class="d">as</a> hitting <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a>, typing the command and doing <a href="insert.txt.html#a" class="l">a</a><a href="repeat.txt.html#." class="d">.</a>
+
+<a href="visual.txt.html#Visual" class="d">Visual</a> mode.                                            <a href="visual.txt.html#Visual-mode" class="l">Visual-mode</a>
+        <a href="visual.txt.html#Visual" class="d">Visual</a> mode can be used to first highlight <a href="insert.txt.html#a" class="d">a</a> piece of text and then
+        give <a href="insert.txt.html#a" class="d">a</a> command to <a href="diff.txt.html#do" class="d">do</a> something with it.  This <a href="motion.txt.html#is" class="d">is</a> an (easy to use)
+        alternative to first giving the <a href="motion.txt.html#operator" class="d">operator</a> and then moving to the <a href="intro.txt.html#end" class="d">end</a> of
+        the text to be operated upon.
+        <a href="visual.txt.html#v" class="l">v</a> and <a href="visual.txt.html#V" class="l">V</a> are used to start <a href="visual.txt.html#Visual" class="d">Visual</a> mode.  <a href="visual.txt.html#v" class="l">v</a> works on characters
+        and <a href="visual.txt.html#V" class="l">V</a> on lines.  Move the cursor to extend the <a href="visual.txt.html#Visual" class="d">Visual</a> area.  It <a href="motion.txt.html#is" class="d">is</a>
+        shown highlighted on the screen.  By typing "<a href="insert.txt.html#o" class="d">o</a>" the other <a href="intro.txt.html#end" class="d">end</a> of the
+        <a href="visual.txt.html#Visual" class="d">Visual</a> area can be moved.  The <a href="visual.txt.html#Visual" class="d">Visual</a> area can be affected by an
+        operator:
+                <a href="change.txt.html#d" class="d">d</a>       delete
+                <a href="change.txt.html#c" class="d">c</a>       change
+                <a href="change.txt.html#y" class="d">y</a>       <a href="change.txt.html#yank" class="d">yank</a>
+                <a href="change.txt.html#%3E" class="d">&gt;</a> or <a href="change.txt.html#%3C" class="d">&lt;</a>  <a href="insert.txt.html#insert" class="d">insert</a> or delete indent
+                <a href="change.txt.html#%21" class="d">!</a>       <a href="change.txt.html#filter" class="d">filter</a> through external program
+                <a href="change.txt.html#%3D" class="d">=</a>       <a href="change.txt.html#filter" class="d">filter</a> through indent
+                <a href="cmdline.txt.html#%3A" class="d">:</a>       start <a href="cmdline.txt.html#%3A" class="l">:</a> command for the <a href="visual.txt.html#Visual" class="d">Visual</a> lines.
+                <a href="change.txt.html#gq" class="d">gq</a>      format text to <a href="options.txt.html#%27textwidth%27" class="o">'textwidth'</a> columns
+                <a href="change.txt.html#J" class="d">J</a>       join lines
+                <a href="change.txt.html#%7E" class="d">~</a>       swap <a href="change.txt.html#case" class="d">case</a>
+                <a href="undo.txt.html#u" class="d">u</a>       make <a href="change.txt.html#lowercase" class="d">lowercase</a>
+                <a href="undo.txt.html#U" class="d">U</a>       make <a href="change.txt.html#uppercase" class="d">uppercase</a>
+
+Block operators.                                        <a href="visual.txt.html#visual-block" class="l">visual-block</a>
+        With <a href="visual.txt.html#Visual" class="d">Visual</a> mode <a href="insert.txt.html#a" class="d">a</a> rectangular block of text can be selected.  Start
+        <a href="visual.txt.html#Visual" class="d">Visual</a> mode with <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a>.  The block can be deleted <a href="motion.txt.html#%28" class="d">(</a>"<a href="change.txt.html#d" class="d">d</a>"), yanked <a href="motion.txt.html#%28" class="d">(</a>"<a href="change.txt.html#y" class="d">y</a>"<a href="motion.txt.html#%29" class="d">)</a>
+        or its <a href="change.txt.html#case" class="d">case</a> can be changed <a href="motion.txt.html#%28" class="d">(</a>"<a href="change.txt.html#%7E" class="d">~</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="undo.txt.html#u" class="d">u</a>" and "<a href="undo.txt.html#U" class="d">U</a>").  <a href="insert.txt.html#A" class="d">A</a> deleted or yanked
+        block can be <a href="change.txt.html#put" class="d">put</a> into the text with the "<a href="change.txt.html#p" class="d">p</a>" and "<a href="change.txt.html#P" class="d">P</a>" commands.
+
+Help system.                                            <a href="helphelp.txt.html#%3Ahelp" class="l">:help</a>
+        Help <a href="motion.txt.html#is" class="d">is</a> displayed in <a href="insert.txt.html#a" class="d">a</a> window.  The usual commands can be used to
+        move around, search for <a href="insert.txt.html#a" class="d">a</a> string, etc.  Tags can be used to jump
+        around in the <a href="helphelp.txt.html#help" class="d">help</a> files, just like hypertext links.  The <a href="helphelp.txt.html#%3Ahelp" class="l">:help</a>
+        command takes an argument to quickly jump to the info on <a href="insert.txt.html#a" class="d">a</a> subject.
+        <a href="helphelp.txt.html#%3CF1%3E" class="s">&lt;F1&gt;</a> <a href="motion.txt.html#is" class="d">is</a> the quick access to the <a href="helphelp.txt.html#help" class="d">help</a> system.  The name of the <a href="helphelp.txt.html#help" class="d">help</a>
+        <a href="index.txt.html#index" class="d">index</a> file can be set with the <a href="options.txt.html#%27helpfile%27" class="o">'helpfile'</a> option.
+
+<a href="cmdline.txt.html#Command-line" class="d">Command-line</a> editing and history.                       <a href="cmdline.txt.html#cmdline-editing" class="l">cmdline-editing</a>
+        You can <a href="insert.txt.html#insert" class="d">insert</a> or delete <a href="motion.txt.html#at" class="d">at</a> any place in the command-line using the
+        cursor keys.  The right/left cursor keys can be used to move
+        forward/backward one character.  The shifted right/left cursor keys
+        can be used to move forward/backward one word.  <a href="scroll.txt.html#CTRL-B" class="k">CTRL-B</a>/<a href="scroll.txt.html#CTRL-E" class="k">CTRL-E</a> can be
+        used to <a href="motion.txt.html#go" class="d">go</a> to the begin/end of the command-line.
+                                                        <a href="cmdline.txt.html#cmdline-history" class="l">cmdline-history</a>
+        The command-lines are remembered.  The up/down cursor keys can be used
+        to recall previous command-lines.  The <a href="options.txt.html#%27history%27" class="o">'history'</a> option can be set to
+        the number of lines that will be remembered.  There <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> separate
+        <a href="cmdline.txt.html#history" class="d">history</a> for commands and for search patterns.
+
+<a href="cmdline.txt.html#Command-line" class="d">Command-line</a> completion.                                <a href="cmdline.txt.html#cmdline-completion" class="l">cmdline-completion</a>
+        While entering <a href="insert.txt.html#a" class="d">a</a> command-line (on the bottom line of the screen)
+        <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a> can be typed to complete
+<span class="h">           what         example         </span>
+        <a href="motion.txt.html#-" class="d">-</a> command       :e&lt;Tab&gt;
+        <a href="motion.txt.html#-" class="d">-</a> <a href="tagsrch.txt.html#tag" class="d">tag</a>           <a href="tagsrch.txt.html#%3Ata" class="d">:ta</a> scr&lt;Tab&gt;
+        <a href="motion.txt.html#-" class="d">-</a> option        <a href="options.txt.html#%3Aset" class="d">:set</a> sc&lt;Tab&gt;
+        <a href="motion.txt.html#-" class="d">-</a> option value  <a href="options.txt.html#%3Aset" class="d">:set</a> hf=&lt;Tab&gt;
+        <a href="motion.txt.html#-" class="d">-</a> file name     <a href="editing.txt.html#%3Ae" class="d">:e</a> ve&lt;Tab&gt;
+        <a href="motion.txt.html#-" class="d">-</a> etc.
+
+        If there are multiple matches, <a href="motion.txt.html#CTRL-N" class="k">CTRL-N</a> (next) and <a href="motion.txt.html#CTRL-P" class="k">CTRL-P</a> (previous)
+        will walk through the matches.  <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a> works like <a href="motion.txt.html#CTRL-N" class="k">CTRL-N</a>, but wraps
+        around to the first match.
+
+        The <a href="options.txt.html#%27wildchar%27" class="o">'wildchar'</a> option can be set to the character for command-line
+        completion, <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a> <a href="motion.txt.html#is" class="d">is</a> the default.  <a href="scroll.txt.html#CTRL-D" class="k">CTRL-D</a> can be typed after an
+        (incomplete) wildcard; all matches will be listed.  <a href="change.txt.html#CTRL-A" class="k">CTRL-A</a> will <a href="insert.txt.html#insert" class="d">insert</a>
+        all matches.  <a href="various.txt.html#CTRL-L" class="k">CTRL-L</a> will <a href="insert.txt.html#insert" class="d">insert</a> the longest common part of the
+        matches.
+
+<a href="insert.txt.html#Insert-mode" class="d">Insert-mode</a> completion.                                 <a href="insert.txt.html#ins-completion" class="l">ins-completion</a>
+        In <a href="insert.txt.html#Insert" class="d">Insert</a> mode the <a href="motion.txt.html#CTRL-N" class="k">CTRL-N</a> and <a href="motion.txt.html#CTRL-P" class="k">CTRL-P</a> keys can be used to complete <a href="insert.txt.html#a" class="d">a</a>
+        <a href="motion.txt.html#word" class="d">word</a> that appears elsewhere.    <a href="insert.txt.html#i_CTRL-N" class="l">i_CTRL-N</a>
+        With <a href="change.txt.html#CTRL-X" class="k">CTRL-X</a> another mode <a href="motion.txt.html#is" class="d">is</a> entered, through which completion can be
+        done for:
+        <a href="insert.txt.html#i_CTRL-X_CTRL-F" class="l">i_CTRL-X_CTRL-F</a>       file names
+        <a href="insert.txt.html#i_CTRL-X_CTRL-K" class="l">i_CTRL-X_CTRL-K</a>       words from <a href="options.txt.html#%27dictionary%27" class="o">'dictionary'</a> files
+        <a href="insert.txt.html#i_CTRL-X_CTRL-T" class="l">i_CTRL-X_CTRL-T</a>       words from <a href="options.txt.html#%27thesaurus%27" class="o">'thesaurus'</a> files
+        <a href="insert.txt.html#i_CTRL-X_CTRL-I" class="l">i_CTRL-X_CTRL-I</a>       words from included files
+        <a href="insert.txt.html#i_CTRL-X_CTRL-L" class="l">i_CTRL-X_CTRL-L</a>       whole lines
+        <a href="insert.txt.html#i_CTRL-X_CTRL-%5D" class="l">i_CTRL-X_CTRL-]</a>       words from the <a href="tagsrch.txt.html#tags" class="d">tags</a> file
+        <a href="insert.txt.html#i_CTRL-X_CTRL-D" class="l">i_CTRL-X_CTRL-D</a>       <a href="intro.txt.html#definitions" class="d">definitions</a> or macros
+        <a href="insert.txt.html#i_CTRL-X_CTRL-O" class="l">i_CTRL-X_CTRL-O</a>       Omni completion: clever completion
+                                specifically for <a href="insert.txt.html#a" class="d">a</a> file type
+        etc.
+
+Long line support.                                      <a href="options.txt.html#%27wrap%27" class="l">'wrap'</a> <a href="options.txt.html#%27linebreak%27" class="l">'linebreak'</a>
+        If the <a href="options.txt.html#%27wrap%27" class="o">'wrap'</a> option <a href="motion.txt.html#is" class="d">is</a> off, long lines will not wrap and only part
+        of them will be shown.  When the cursor <a href="motion.txt.html#is" class="d">is</a> moved to <a href="insert.txt.html#a" class="d">a</a> part that <a href="motion.txt.html#is" class="d">is</a> not
+        shown, the screen will scroll horizontally.  The minimum number of
+        columns to scroll can be set with the <a href="options.txt.html#%27sidescroll%27" class="o">'sidescroll'</a> option.  The <a href="scroll.txt.html#zh" class="l">zh</a>
+        and <a href="scroll.txt.html#zl" class="l">zl</a> commands can be used to scroll sideways.
+        Alternatively, long lines are broken in between words when the
+        <a href="options.txt.html#%27linebreak%27" class="o">'linebreak'</a> option <a href="motion.txt.html#is" class="d">is</a> set.  This allows editing <a href="insert.txt.html#a" class="d">a</a> single-line
+        <a href="motion.txt.html#paragraph" class="d">paragraph</a> conveniently (e.g. when the text <a href="motion.txt.html#is" class="d">is</a> later read into <a href="insert.txt.html#a" class="d">a</a> DTP
+        program).  Move the cursor up/down with the <a href="motion.txt.html#gk" class="l">gk</a> and <a href="motion.txt.html#gj" class="l">gj</a> commands.
+
+Text formatting.                                        <a href="change.txt.html#formatting" class="l">formatting</a>
+        The <a href="options.txt.html#%27textwidth%27" class="o">'textwidth'</a> option can be used to automatically limit the line
+        length.  This supplements the <a href="options.txt.html#%27wrapmargin%27" class="o">'wrapmargin'</a> option of Vi, which was not
+        very useful.  The <a href="change.txt.html#gq" class="l">gq</a> <a href="motion.txt.html#operator" class="d">operator</a> can be used to format <a href="insert.txt.html#a" class="d">a</a> piece of text
+        (for example, <a href="change.txt.html#gqap" class="l">gqap</a> formats the current paragraph).  Commands for
+        text alignment: <a href="change.txt.html#%3Acenter" class="l">:center</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="change.txt.html#%3Aleft" class="l">:left</a> and <a href="change.txt.html#%3Aright" class="l">:right</a><a href="repeat.txt.html#." class="d">.</a>
+
+Extended search patterns.                               <a href="pattern.txt.html#pattern" class="l">pattern</a>
+        There are many extra items to match <a href="various.txt.html#various" class="d">various</a> text items.  Examples:
+        <a href="insert.txt.html#A" class="d">A</a> "\n" can be used in <a href="insert.txt.html#a" class="d">a</a> search <a href="pattern.txt.html#pattern" class="d">pattern</a> to match <a href="insert.txt.html#a" class="d">a</a> line break.
+        "x\{2,4}" matches "<a href="change.txt.html#x" class="d">x</a>" 2 to 4 times.
+        "\s" matches <a href="insert.txt.html#a" class="d">a</a> white <a href="intro.txt.html#space" class="d">space</a> character.
+
+Directory, remote and archive browsing.                 <a href="pi_netrw.txt.html#netrw" class="l">netrw</a>
+        Vim can browse the file system.  Simply edit <a href="insert.txt.html#a" class="d">a</a> directory.  Move around
+        in the <a href="eval.txt.html#list" class="d">list</a> with the usual commands and press <a href="intro.txt.html#%3CEnter%3E" class="s">&lt;Enter&gt;</a> to <a href="motion.txt.html#go" class="d">go</a> to the
+        directory or file under the cursor.
+        This also works for remote files over ftp, http, ssh, etc.
+        Zip and <a href="pi_tar.txt.html#tar" class="d">tar</a> archives can also be browsed. <a href="pi_tar.txt.html#tar" class="l">tar</a> <a href="pi_zip.txt.html#zip" class="l">zip</a>
+
+Edit-compile-edit speedup.                              <a href="quickfix.txt.html#quickfix" class="l">quickfix</a>
+        The <a href="quickfix.txt.html#%3Amake" class="l">:make</a> command can be used to run the compilation and jump to the
+        first error.  <a href="insert.txt.html#A" class="d">A</a> file with compiler error <a href="message.txt.html#messages" class="d">messages</a> <a href="motion.txt.html#is" class="d">is</a> interpreted.  Vim
+        jumps to the first error.
+
+        Each line in the error file <a href="motion.txt.html#is" class="d">is</a> scanned for the name of <a href="insert.txt.html#a" class="d">a</a> file, line
+        number and error message.  The <a href="options.txt.html#%27errorformat%27" class="o">'errorformat'</a> option can be set to <a href="insert.txt.html#a" class="d">a</a>
+        <a href="eval.txt.html#list" class="d">list</a> of scanf-like strings to handle output from many compilers.
+
+        The <a href="quickfix.txt.html#%3Acn" class="l">:cn</a> command can be used to jump to the next error.
+        <a href="quickfix.txt.html#%3Acl" class="l">:cl</a> lists all the error messages.  Other commands are available.
+        The <a href="options.txt.html#%27makeef%27" class="o">'makeef'</a> option has the name of the file with error messages.
+        The <a href="options.txt.html#%27makeprg%27" class="o">'makeprg'</a> option contains the name of the program to be executed
+        with the <a href="quickfix.txt.html#%3Amake" class="l">:make</a> command.
+        The <a href="options.txt.html#%27shellpipe%27" class="o">'shellpipe'</a> option contains the <a href="eval.txt.html#string" class="d">string</a> to be used to <a href="change.txt.html#put" class="d">put</a> the
+        output of the compiler into the errorfile.
+
+Finding matches in files.                               <a href="quickfix.txt.html#%3Avimgrep" class="l">:vimgrep</a>
+        Vim can search for <a href="insert.txt.html#a" class="d">a</a> <a href="pattern.txt.html#pattern" class="d">pattern</a> in multiple files.  This uses the
+        advanced Vim <a href="pattern.txt.html#regexp" class="d">regexp</a> pattern, works on all systems and also works to
+        search in compressed files.
+
+Improved indenting for programs.                        <a href="options.txt.html#%27cindent%27" class="l">'cindent'</a>
+        When the <a href="options.txt.html#%27cindent%27" class="o">'cindent'</a> option <a href="motion.txt.html#is" class="d">is</a> on the indent of each line <a href="motion.txt.html#is" class="d">is</a>
+        automatically adjusted.  <a href="change.txt.html#C" class="d">C</a> <a href="syntax.txt.html#syntax" class="d">syntax</a> <a href="motion.txt.html#is" class="d">is</a> mostly recognized.  The indent
+        for <a href="various.txt.html#various" class="d">various</a> styles can be set with <a href="options.txt.html#%27cinoptions%27" class="o">'cinoptions'</a>.  The keys to trigger
+        indenting can be set with <a href="options.txt.html#%27cinkeys%27" class="o">'cinkeys'</a>.
+
+        Comments can be automatically formatted.  The <a href="options.txt.html#%27comments%27" class="o">'comments'</a> option can be
+        set to the characters that start and <a href="intro.txt.html#end" class="d">end</a> <a href="insert.txt.html#a" class="d">a</a> comment.  This works best
+        for <a href="change.txt.html#C" class="d">C</a> code, but also works for e-mail <a href="motion.txt.html#%28" class="d">(</a>"<a href="change.txt.html#%3E" class="d">&gt;</a>" <a href="motion.txt.html#at" class="d">at</a> start of the line) and
+        other types of text.  The <a href="change.txt.html#%3D" class="l">=</a> <a href="motion.txt.html#operator" class="d">operator</a> can be used to re-indent
+        lines.
+
+        For many other languages an indent <a href="usr_05.txt.html#plugin" class="d">plugin</a> <a href="motion.txt.html#is" class="d">is</a> present to support
+        automatic indenting. <a href="usr_30.txt.html#30.3" class="l">30.3</a>
+
+Searching for words in included files.                  <a href="tagsrch.txt.html#include-search" class="l">include-search</a>
+        The <a href="tagsrch.txt.html#%5Bi" class="l">[i</a> command can be used to search for <a href="insert.txt.html#a" class="d">a</a> match of the <a href="motion.txt.html#word" class="d">word</a> under
+        the cursor in the current and included files.  The <a href="options.txt.html#%27include%27" class="o">'include'</a> option
+        can be set to <a href="insert.txt.html#a" class="d">a</a> <a href="pattern.txt.html#pattern" class="d">pattern</a> that describes <a href="insert.txt.html#a" class="d">a</a> command to include <a href="insert.txt.html#a" class="d">a</a> file
+        (the default <a href="motion.txt.html#is" class="d">is</a> for <a href="change.txt.html#C" class="d">C</a> programs).
+        The <a href="tagsrch.txt.html#%5BI" class="l">[I</a> command lists all matches, the <a href="tagsrch.txt.html#%5B_CTRL-I" class="l">[_CTRL-I</a> command jumps to
+        <a href="insert.txt.html#a" class="d">a</a> match.
+        The <a href="tagsrch.txt.html#%5Bd" class="l">[d</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="tagsrch.txt.html#%5BD" class="l">[D</a> and <a href="tagsrch.txt.html#%5B_CTRL-D" class="l">[_CTRL-D</a> commands <a href="diff.txt.html#do" class="d">do</a> the same, but only for
+        lines where the <a href="pattern.txt.html#pattern" class="d">pattern</a> given with the <a href="options.txt.html#%27define%27" class="o">'define'</a> option matches.
+
+Automatic commands.                                     <a href="autocmd.txt.html#autocommand" class="l">autocommand</a>
+        Commands can be automatically executed when reading <a href="insert.txt.html#a" class="d">a</a> file, <a href="editing.txt.html#writing" class="d">writing</a> <a href="insert.txt.html#a" class="d">a</a>
+        file, jumping to another buffer, etc., depending on the file name.
+        This <a href="motion.txt.html#is" class="d">is</a> useful to set <a href="options.txt.html#options" class="d">options</a> and mappings for <a href="change.txt.html#C" class="d">C</a> programs,
+        documentation, plain text, e-mail, etc.  This also makes <a href="motion.txt.html#it" class="d">it</a> possible
+        to edit compressed files.
+
+Scripts and Expressions.                                <a href="eval.txt.html#expression" class="l">expression</a>
+        Commands have been added to form up <a href="insert.txt.html#a" class="d">a</a> powerful <a href="usr_41.txt.html#script" class="d">script</a> language.
+        <a href="eval.txt.html#%3Aif" class="l">:if</a>           Conditional execution, which can be used for example
+                        to set <a href="options.txt.html#options" class="d">options</a> depending on the value of $TERM.
+        <a href="eval.txt.html#%3Awhile" class="l">:while</a>        Repeat <a href="insert.txt.html#a" class="d">a</a> number of commands.
+        <a href="eval.txt.html#%3Afor" class="l">:for</a>          Loop over <a href="insert.txt.html#a" class="d">a</a> list.
+        <a href="eval.txt.html#%3Aecho" class="l">:echo</a>         Print the result of an expression.
+        <a href="eval.txt.html#%3Alet" class="l">:let</a>          Assign <a href="insert.txt.html#a" class="d">a</a> value to an internal variable, option, etc.
+                        Variable types are Number, String, <a href="eval.txt.html#List" class="d">List</a> and Dictionary.
+        <a href="eval.txt.html#%3Aexecute" class="l">:execute</a>      Execute <a href="insert.txt.html#a" class="d">a</a> command formed by an expression.
+        <a href="eval.txt.html#%3Atry" class="l">:try</a>          Catch exceptions.
+        etc., etc.  See <a href="eval.txt.html#eval" class="l">eval</a><a href="repeat.txt.html#." class="d">.</a>
+        Debugging and <a href="repeat.txt.html#profiling" class="d">profiling</a> are supported. <a href="repeat.txt.html#debug-scripts" class="l">debug-scripts</a> <a href="repeat.txt.html#profile" class="l">profile</a>
+        If this <a href="motion.txt.html#is" class="d">is</a> not enough, an interface <a href="motion.txt.html#is" class="d">is</a> provided to <a href="if_pyth.txt.html#Python" class="l">Python</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="if_ruby.txt.html#Ruby" class="l">Ruby</a><a href="motion.txt.html#%2C" class="d">,</a>
+        <a href="if_tcl.txt.html#Tcl" class="l">Tcl</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="if_lua.txt.html#Lua" class="l">Lua</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="if_perl.txt.html#Perl" class="l">Perl</a> and <a href="if_mzsch.txt.html#MzScheme" class="l">MzScheme</a><a href="repeat.txt.html#." class="d">.</a>
+
+Viminfo.                                                <a href="starting.txt.html#viminfo-file" class="l">viminfo-file</a>
+        The command-line history, marks and <a href="change.txt.html#registers" class="d">registers</a> can be stored in <a href="insert.txt.html#a" class="d">a</a> file
+        that <a href="motion.txt.html#is" class="d">is</a> read on startup.  This can be used to repeat <a href="insert.txt.html#a" class="d">a</a> search command
+        or command-line command after <a href="starting.txt.html#exiting" class="d">exiting</a> and restarting Vim.  It <a href="motion.txt.html#is" class="d">is</a> also
+        possible to jump right back to where the last edit stopped with <a href="motion.txt.html#%270" class="l">'0</a><a href="repeat.txt.html#." class="d">.</a>
+        The <a href="options.txt.html#%27viminfo%27" class="o">'viminfo'</a> option can be set to select which items to store in the
+        .viminfo file.  This <a href="motion.txt.html#is" class="d">is</a> off by default.
+
+Printing.                                               <a href="print.txt.html#printing" class="l">printing</a>
+        The <a href="print.txt.html#%3Ahardcopy" class="l">:hardcopy</a> command sends text to the printer.  This can include
+        <a href="syntax.txt.html#syntax" class="d">syntax</a> highlighting.
+
+Mouse support.                                          <a href="term.txt.html#mouse-using" class="l">mouse-using</a>
+        The mouse <a href="motion.txt.html#is" class="d">is</a> supported in the <a href="gui.txt.html#GUI" class="d">GUI</a> version, in an xterm for Unix, for
+        BSDs with sysmouse, for Linux with gpm, for MS-DOS, and Win32.  It
+        can be used to position the cursor, select the visual area, paste <a href="insert.txt.html#a" class="d">a</a>
+        register, etc.
+
+Usage of key names.                                     <a href="intro.txt.html#%3C%3E" class="l">&lt;&gt;</a> <a href="intro.txt.html#key-notation" class="l">key-notation</a>
+        <a href="eval.txt.html#Special" class="d">Special</a> keys now all have <a href="insert.txt.html#a" class="d">a</a> name like <a href="motion.txt.html#%3CUp%3E" class="s">&lt;Up&gt;</a>, <a href="motion.txt.html#%3CEnd%3E" class="s">&lt;End&gt;</a>, etc.
+        This name can be used in mappings, to make <a href="motion.txt.html#it" class="d">it</a> <a href="starting.txt.html#easy" class="d">easy</a> to edit them.
+
+Editing binary files.                                   <a href="editing.txt.html#edit-binary" class="l">edit-binary</a>
+        Vim can edit binary files.  You can change <a href="insert.txt.html#a" class="d">a</a> few characters in an
+        executable file, without corrupting it.  Vim doesn't remove NUL
+        characters (they are represented <a href="motion.txt.html#as" class="d">as</a> <a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a> internally).
+        <a href="starting.txt.html#-b" class="l">-b</a>            command-line argument to start editing <a href="insert.txt.html#a" class="d">a</a> binary file
+        <a href="options.txt.html#%27binary%27" class="l">'binary'</a>      Option set by <a href="starting.txt.html#-b" class="l">-b</a><a href="repeat.txt.html#." class="d">.</a>  Prevents adding an <a href="intro.txt.html#%3CEOL%3E" class="s">&lt;EOL&gt;</a> for the
+                        last line in the file.
+
+Multi-language support.                                 <a href="mlang.txt.html#multi-lang" class="l">multi-lang</a>
+        Files in double-byte or <a href="mbyte.txt.html#multi-byte" class="d">multi-byte</a> encodings can be edited.  There <a href="motion.txt.html#is" class="d">is</a>
+        <a href="mbyte.txt.html#UTF-8" class="d">UTF-8</a> support to be able to edit <a href="various.txt.html#various" class="d">various</a> languages <a href="motion.txt.html#at" class="d">at</a> the same time,
+        without switching fonts. <a href="mbyte.txt.html#UTF-8" class="l">UTF-8</a>
+        Messages and <a href="gui.txt.html#menus" class="d">menus</a> are available in different languages.
+
+Move cursor beyond lines.
+        When the <a href="options.txt.html#%27virtualedit%27" class="o">'virtualedit'</a> option <a href="motion.txt.html#is" class="d">is</a> set the cursor can move all over the
+        screen, also where there <a href="motion.txt.html#is" class="d">is</a> no text.  This <a href="motion.txt.html#is" class="d">is</a> useful to edit tables
+        and figures easily.
+
+<span class="h">==============================================================================</span>
+5. Other vim features                                   <a name="other-features" class="t">other-features</a>
+
+<a href="insert.txt.html#A" class="d">A</a> random collection of <a href="todo.txt.html#nice" class="d">nice</a> extra features.
+
+
+When Vim <a href="motion.txt.html#is" class="d">is</a> started with "<a href="starting.txt.html#-s" class="d">-s</a> scriptfile"<a href="motion.txt.html#%2C" class="d">,</a> the characters read from
+"scriptfile" are treated <a href="motion.txt.html#as" class="d">as</a> if you typed them.  If <a href="intro.txt.html#end" class="d">end</a> of file <a href="motion.txt.html#is" class="d">is</a> reached
+before the editor exits, further characters are read from the console.
+
+The "<a href="starting.txt.html#-w" class="d">-w</a>" option can be used to record all typed characters in <a href="insert.txt.html#a" class="d">a</a> <a href="usr_41.txt.html#script" class="d">script</a> file.
+This file can then be used to <a href="undo.txt.html#redo" class="d">redo</a> the editing, possibly on another file or
+after <a href="change.txt.html#changing" class="d">changing</a> some commands in the <a href="usr_41.txt.html#script" class="d">script</a> file.
+
+The "<a href="starting.txt.html#-o" class="d">-o</a>" option opens <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a> for each argument.  "-o4" opens four windows.
+
+<a href="intro.txt.html#Vi" class="d">Vi</a> requires several <a href="term.txt.html#termcap" class="d">termcap</a> entries to be able to work full-screen.  Vim only
+requires the "cm" entry (cursor motion).
+
+
+In command mode:
+
+When the <a href="options.txt.html#%27showcmd%27" class="o">'showcmd'</a> option <a href="motion.txt.html#is" class="d">is</a> set, the command characters are shown in the last
+line of the screen.  They are removed when the command <a href="motion.txt.html#is" class="d">is</a> finished.
+
+If the <a href="options.txt.html#%27ruler%27" class="o">'ruler'</a> option <a href="motion.txt.html#is" class="d">is</a> set, the current cursor position <a href="motion.txt.html#is" class="d">is</a> shown in the
+last line of the screen.
+
+"<a href="undo.txt.html#U" class="d">U</a>" still works after having moved off the last changed line and after "<a href="undo.txt.html#u" class="d">u</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+Characters with the 8th bit set are displayed.  The characters between '~' and
+0xa0 are displayed <a href="motion.txt.html#as" class="d">as</a> "~?"<a href="motion.txt.html#%2C" class="d">,</a> "~@"<a href="motion.txt.html#%2C" class="d">,</a> "~A"<a href="motion.txt.html#%2C" class="d">,</a> etc., unless they are included in the
+<a href="options.txt.html#%27isprint%27" class="o">'isprint'</a> option.
+
+"<a href="motion.txt.html#%5D%5B" class="d">][</a>" goes to the next ending of <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#C" class="d">C</a> function ('}' in column 1).
+"<a href="motion.txt.html#%5B%5D" class="d">[]</a>" goes to the previous ending of <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#C" class="d">C</a> function ('}' in column 1).
+
+"<a href="editing.txt.html#%5Df" class="d">]f</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="editing.txt.html#%5Bf" class="d">[f</a>" and "<a href="editing.txt.html#gf" class="d">gf</a>" start editing the file whose name <a href="motion.txt.html#is" class="d">is</a> under the cursor.
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="motion.txt.html#f" class="d">f</a> splits the <a href="windows.txt.html#window" class="d">window</a> and starts editing the file whose name <a href="motion.txt.html#is" class="d">is</a> under
+the cursor.
+
+"*" searches forward for the identifier under the cursor, "<a href="pattern.txt.html#%23" class="d">#</a>" backward.
+"<a href="various.txt.html#K" class="d">K</a>" runs the program defined by the <a href="options.txt.html#%27keywordprg%27" class="o">'keywordprg'</a> option, with the identifier
+under the cursor <a href="motion.txt.html#as" class="d">as</a> argument.
+
+"<a href="motion.txt.html#%25" class="d">%</a>" can be preceded with <a href="insert.txt.html#a" class="d">a</a> count.  The cursor jumps to the line that
+percentage down in the file.  The normal "<a href="motion.txt.html#%25" class="d">%</a>" function to jump to the matching
+brace skips braces inside quotes.
+
+With the <a href="tagsrch.txt.html#CTRL-%5D" class="k">CTRL-]</a> command, the cursor may be in the middle of the identifier.
+
+The used <a href="tagsrch.txt.html#tags" class="d">tags</a> are remembered.  Commands that can be used with the <a href="tagsrch.txt.html#tag" class="d">tag</a> stack
+are <a href="tagsrch.txt.html#CTRL-T" class="k">CTRL-T</a>, "<a href="tagsrch.txt.html#%3Apop" class="d">:pop</a>" and "<a href="tagsrch.txt.html#%3Atag" class="d">:tag</a>"<a href="repeat.txt.html#." class="d">.</a>  "<a href="tagsrch.txt.html#%3Atags" class="d">:tags</a>" lists the <a href="tagsrch.txt.html#tag" class="d">tag</a> stack.
+
+The <a href="options.txt.html#%27tags%27" class="o">'tags'</a> option can be set to <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of <a href="tagsrch.txt.html#tag" class="d">tag</a> file names.  Thus multiple
+<a href="tagsrch.txt.html#tag" class="d">tag</a> files can be used.  For file names that start with "./"<a href="motion.txt.html#%2C" class="d">,</a> the "./" <a href="motion.txt.html#is" class="d">is</a>
+replaced with the path of the current file.  This makes <a href="motion.txt.html#it" class="d">it</a> possible to use <a href="insert.txt.html#a" class="d">a</a>
+<a href="tagsrch.txt.html#tags" class="d">tags</a> file in the same directory <a href="motion.txt.html#as" class="d">as</a> the file being edited.
+
+Previously used file names are remembered in the alternate file name list.
+<a href="editing.txt.html#CTRL-%5E" class="k">CTRL-^</a> accepts <a href="insert.txt.html#a" class="d">a</a> count, which <a href="motion.txt.html#is" class="d">is</a> an <a href="index.txt.html#index" class="d">index</a> in this list.
+"<a href="windows.txt.html#%3Afiles" class="d">:files</a>" command shows the <a href="eval.txt.html#list" class="d">list</a> of alternate file names.
+"#&lt;N&gt;" <a href="motion.txt.html#is" class="d">is</a> replaced with the <span class="s">&lt;N&gt;</span>th alternate file name in the list.
+"#&lt;" <a href="motion.txt.html#is" class="d">is</a> replaced with the current file name without extension.
+
+Search patterns have more features.  The <a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a> character <a href="motion.txt.html#is" class="d">is</a> seen <a href="motion.txt.html#as" class="d">as</a> part of the
+search <a href="pattern.txt.html#pattern" class="d">pattern</a> and the substitute <a href="eval.txt.html#string" class="d">string</a> of "<a href="change.txt.html#%3As" class="d">:s</a>"<a href="repeat.txt.html#." class="d">.</a>  <a href="intro.txt.html#Vi" class="d">Vi</a> sees <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#as" class="d">as</a> the <a href="intro.txt.html#end" class="d">end</a> of
+the command.
+
+Searches can <a href="change.txt.html#put" class="d">put</a> the cursor on the <a href="intro.txt.html#end" class="d">end</a> of <a href="insert.txt.html#a" class="d">a</a> match and may include <a href="insert.txt.html#a" class="d">a</a> character
+offset.
+
+Count added to "<a href="change.txt.html#%7E" class="d">~</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="editing.txt.html#%3Anext" class="d">:next</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="editing.txt.html#%3ANext" class="d">:Next</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="pattern.txt.html#n" class="d">n</a>" and "<a href="pattern.txt.html#N" class="d">N</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+The command ":next!" with <a href="options.txt.html#%27autowrite%27" class="o">'autowrite'</a> set does not write the file.  In <a href="intro.txt.html#vi" class="d">vi</a> the
+file was written, but this <a href="motion.txt.html#is" class="d">is</a> considered to be <a href="insert.txt.html#a" class="d">a</a> bug, because one does not
+expect <a href="motion.txt.html#it" class="d">it</a> and the file <a href="motion.txt.html#is" class="d">is</a> not written with ":rewind!"<a href="repeat.txt.html#." class="d">.</a>
+
+In <a href="intro.txt.html#Vi" class="d">Vi</a> when entering <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a> in replace mode deletes <a href="insert.txt.html#a" class="d">a</a> character only when <a href="options.txt.html#%27ai%27" class="o">'ai'</a>
+<a href="motion.txt.html#is" class="d">is</a> set (but does not show <a href="motion.txt.html#it" class="d">it</a> until you hit <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a>).  Vim always deletes <a href="insert.txt.html#a" class="d">a</a>
+character (and shows <a href="motion.txt.html#it" class="d">it</a> immediately).
+
+Added <a href="editing.txt.html#%3Awnext" class="d">:wnext</a> command.  Same <a href="motion.txt.html#as" class="d">as</a> "<a href="editing.txt.html#%3Awrite" class="d">:write</a>" followed by "<a href="editing.txt.html#%3Anext" class="d">:next</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+The "<a href="editing.txt.html#%3Aw%21" class="d">:w!</a>" command always writes, also when the file <a href="motion.txt.html#is" class="d">is</a> write protected.  In <a href="intro.txt.html#Vi" class="d">Vi</a>
+you would have to <a href="diff.txt.html#do" class="d">do</a> ":!chmod +w <a href="cmdline.txt.html#%25%3AS" class="d">%:S</a>" and "<a href="options.txt.html#%3Aset" class="d">:set</a> noro"<a href="repeat.txt.html#." class="d">.</a>
+
+When <a href="options.txt.html#%27tildeop%27" class="o">'tildeop'</a> has been set, "<a href="change.txt.html#%7E" class="d">~</a>" <a href="motion.txt.html#is" class="d">is</a> an <a href="motion.txt.html#operator" class="d">operator</a> (must be followed by <a href="insert.txt.html#a" class="d">a</a>
+<a href="intro.txt.html#movement" class="d">movement</a> command).
+
+With the "<a href="change.txt.html#J" class="d">J</a>" (join) command you can reset the <a href="options.txt.html#%27joinspaces%27" class="o">'joinspaces'</a> option to have only
+one <a href="intro.txt.html#space" class="d">space</a> after <a href="insert.txt.html#a" class="d">a</a> period (Vi inserts two spaces).
+
+"<a href="change.txt.html#cw" class="d">cw</a>" can be used to change white <a href="intro.txt.html#space" class="d">space</a> formed by several characters (Vi <a href="motion.txt.html#is" class="d">is</a>
+confusing: "<a href="change.txt.html#cw" class="d">cw</a>" only changes one space, while "dw" deletes all white space).
+
+"<a href="insert.txt.html#o" class="d">o</a>" and "<a href="insert.txt.html#O" class="d">O</a>" accept <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> for <a href="repeat.txt.html#repeating" class="d">repeating</a> the <a href="insert.txt.html#insert" class="d">insert</a> (Vi clears <a href="insert.txt.html#a" class="d">a</a> part of
+display).
+
+Flags after <a href="intro.txt.html#Ex" class="d">Ex</a> commands not supported (no plans to include it).
+
+On non-UNIX systems "<a href="editing.txt.html#%3Acd" class="d">:cd</a>" command shows current directory instead of going to
+the <a href="intro.txt.html#home" class="d">home</a> directory (there isn't one).  "<a href="editing.txt.html#%3Apwd" class="d">:pwd</a>" prints the current directory on
+all systems.
+
+After <a href="insert.txt.html#a" class="d">a</a> "<a href="editing.txt.html#%3Acd" class="d">:cd</a>" command the file names (in the argument list, opened files)
+still point to the same files.  In <a href="intro.txt.html#Vi" class="d">Vi</a> "<a href="editing.txt.html#%3Acd" class="d">:cd</a>" <a href="motion.txt.html#is" class="d">is</a> not allowed in <a href="insert.txt.html#a" class="d">a</a> changed file;
+otherwise the meaning of file names change.
+
+":source!" command reads <a href="intro.txt.html#Vi" class="d">Vi</a> commands from <a href="insert.txt.html#a" class="d">a</a> file.
+
+"<a href="starting.txt.html#%3Amkexrc" class="d">:mkexrc</a>" command writes current modified <a href="options.txt.html#options" class="d">options</a> and mappings to <a href="insert.txt.html#a" class="d">a</a> "<a href="starting.txt.html#.exrc" class="d">.exrc</a>"
+file.  "<a href="starting.txt.html#%3Amkvimrc" class="d">:mkvimrc</a>" writes to <a href="insert.txt.html#a" class="d">a</a> "<a href="starting.txt.html#.vimrc" class="d">.vimrc</a>" file.
+
+No check for "tail recursion" with mappings.  This allows things like
+"<a href="map.txt.html#%3Amap%21" class="d">:map!</a> foo ^]foo"<a href="repeat.txt.html#." class="d">.</a>
+
+When <a href="insert.txt.html#a" class="d">a</a> <a href="map.txt.html#mapping" class="d">mapping</a> starts with number, <a href="intro.txt.html#vi" class="d">vi</a> loses the <a href="intro.txt.html#count" class="d">count</a> typed before <a href="motion.txt.html#it" class="d">it</a> (e.g.
+when using the <a href="map.txt.html#mapping" class="d">mapping</a> "<a href="map.txt.html#%3Amap" class="d">:map</a> <a href="index.txt.html#g" class="d">g</a> 4G" the command "7g" goes to line 4).  This <a href="motion.txt.html#is" class="d">is</a>
+considered <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#vi" class="d">vi</a> bug.  Vim concatenates the counts (in the example <a href="motion.txt.html#it" class="d">it</a> becomes
+"74G"), <a href="motion.txt.html#as" class="d">as</a> most people would expect.
+
+The :put! command inserts the contents of <a href="insert.txt.html#a" class="d">a</a> <a href="sponsor.txt.html#register" class="d">register</a> above the current line.
+
+The "<a href="change.txt.html#p" class="d">p</a>" and "<a href="change.txt.html#P" class="d">P</a>" commands of <a href="intro.txt.html#vi" class="d">vi</a> cannot be repeated with "<a href="repeat.txt.html#." class="d">.</a>" when the putted
+text <a href="motion.txt.html#is" class="d">is</a> <a href="various.txt.html#less" class="d">less</a> than <a href="insert.txt.html#a" class="d">a</a> line.  In Vim they can always be repeated.
+
+"<a href="map.txt.html#%3Anoremap" class="d">:noremap</a>" command can be used to enter <a href="insert.txt.html#a" class="d">a</a> <a href="map.txt.html#mapping" class="d">mapping</a> that will not be remapped.
+This <a href="motion.txt.html#is" class="d">is</a> useful to exchange the meaning of two keys.  "<a href="map.txt.html#%3Acmap" class="d">:cmap</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="map.txt.html#%3Acunmap" class="d">:cunmap</a>" and
+"<a href="map.txt.html#%3Acnoremap" class="d">:cnoremap</a>" can be used for <a href="map.txt.html#mapping" class="d">mapping</a> in command-line editing only.  "<a href="map.txt.html#%3Aimap" class="d">:imap</a>"<a href="motion.txt.html#%2C" class="d">,</a>
+"<a href="map.txt.html#%3Aiunmap" class="d">:iunmap</a>" and "<a href="map.txt.html#%3Ainoremap" class="d">:inoremap</a>" can be used for <a href="map.txt.html#mapping" class="d">mapping</a> in <a href="insert.txt.html#insert" class="d">insert</a> mode only.
+Similar commands exist for abbreviations: "<a href="map.txt.html#%3Anoreabbrev" class="d">:noreabbrev</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="map.txt.html#%3Aiabbrev" class="d">:iabbrev</a>"
+"<a href="map.txt.html#%3Acabbrev" class="d">:cabbrev</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="map.txt.html#%3Aiunabbrev" class="d">:iunabbrev</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="map.txt.html#%3Acunabbrev" class="d">:cunabbrev</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="map.txt.html#%3Ainoreabbrev" class="d">:inoreabbrev</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="map.txt.html#%3Acnoreabbrev" class="d">:cnoreabbrev</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+In <a href="intro.txt.html#Vi" class="d">Vi</a> the command "<a href="map.txt.html#%3Amap" class="d">:map</a> foo <a href="motion.txt.html#bar" class="d">bar</a>" would remove <a href="insert.txt.html#a" class="d">a</a> previous <a href="map.txt.html#mapping" class="d">mapping</a>
+"<a href="map.txt.html#%3Amap" class="d">:map</a> bug foo"<a href="repeat.txt.html#." class="d">.</a>  This <a href="motion.txt.html#is" class="d">is</a> considered <a href="insert.txt.html#a" class="d">a</a> bug, so <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> not included in Vim.
+"<a href="map.txt.html#%3Aunmap%21" class="d">:unmap!</a> foo" does remove "<a href="map.txt.html#%3Amap%21" class="d">:map!</a> bug foo"<a href="motion.txt.html#%2C" class="d">,</a> because unmapping would be very
+difficult otherwise (this <a href="motion.txt.html#is" class="d">is</a> <a href="intro.txt.html#vi" class="d">vi</a> compatible).
+
+The ':' <a href="sponsor.txt.html#register" class="d">register</a> contains the last command-line.
+The '%' <a href="sponsor.txt.html#register" class="d">register</a> contains the current file name.
+The '.' <a href="sponsor.txt.html#register" class="d">register</a> contains the last inserted text.
+
+":dis" command shows the contents of the <a href="change.txt.html#yank" class="d">yank</a> registers.
+
+<a href="motion.txt.html#CTRL-O" class="k">CTRL-O</a>/<a href="motion.txt.html#CTRL-I" class="k">CTRL-I</a> can be used to jump to older/newer positions.  These are the
+same positions <a href="motion.txt.html#as" class="d">as</a> used with the <a href="motion.txt.html#%27%27" class="d">''</a> command, but may be in another file.  The
+"<a href="motion.txt.html#%3Ajumps" class="d">:jumps</a>" command lists the older positions.
+
+If the <a href="options.txt.html#%27shiftround%27" class="o">'shiftround'</a> option <a href="motion.txt.html#is" class="d">is</a> set, an indent <a href="motion.txt.html#is" class="d">is</a> rounded to <a href="insert.txt.html#a" class="d">a</a> multiple of
+<a href="options.txt.html#%27shiftwidth%27" class="o">'shiftwidth'</a> with "<a href="change.txt.html#%3E" class="d">&gt;</a>" and "<a href="change.txt.html#%3C" class="d">&lt;</a>" commands.
+
+The <a href="options.txt.html#%27scrolljump%27" class="o">'scrolljump'</a> option can be set to the minimum number of lines to scroll
+when the cursor gets off the screen.  Use this when <a href="scroll.txt.html#scrolling" class="d">scrolling</a> <a href="motion.txt.html#is" class="d">is</a> slow.
+
+The <a href="options.txt.html#%27scrolloff%27" class="o">'scrolloff'</a> option can be set to the minimum number of lines to keep
+above and below the cursor.  This gives some context to where you are
+editing.  When set to <a href="insert.txt.html#a" class="d">a</a> large number the cursor line <a href="motion.txt.html#is" class="d">is</a> always in the middle
+of the window.
+
+Uppercase marks can be used to jump between files.  The "<a href="motion.txt.html#%3Amarks" class="d">:marks</a>" command lists
+all currently set marks.  The commands "<a href="motion.txt.html#%27%5D" class="d">']</a>" and "<a href="motion.txt.html#%60%5D" class="d">`]</a>" jump to the <a href="intro.txt.html#end" class="d">end</a> of the
+previous <a href="motion.txt.html#operator" class="d">operator</a> or <a href="intro.txt.html#end" class="d">end</a> of the text inserted with the <a href="change.txt.html#put" class="d">put</a> command.  "<a href="motion.txt.html#%27%5B" class="d">'[</a>" and
+"<a href="motion.txt.html#%60%5B" class="d">`[</a>" <a href="diff.txt.html#do" class="d">do</a> jump to the start.
+
+The <a href="options.txt.html#%27shelltype%27" class="o">'shelltype'</a> option can be set to reflect the type of shell used on the
+Amiga.
+
+The <a href="options.txt.html#%27highlight%27" class="o">'highlight'</a> option can be set for the highlight mode to be used for
+several commands.
+
+The <a href="change.txt.html#CTRL-A" class="k">CTRL-A</a> (add) and <a href="change.txt.html#CTRL-X" class="k">CTRL-X</a> (subtract) commands are new.  The <a href="intro.txt.html#count" class="d">count</a> to the
+command (default 1) <a href="motion.txt.html#is" class="d">is</a> added to/subtracted from the number <a href="motion.txt.html#at" class="d">at</a> or after the
+cursor.  That number may be decimal, <a href="eval.txt.html#octal" class="d">octal</a> (starts with <a href="insert.txt.html#a" class="d">a</a> '0') or hexadecimal
+(starts with '0x').  Very useful in macros.
+
+With the <a href="options.txt.html#%3Aset" class="d">:set</a> command the prefix "inv" can be used to invert <a href="options.txt.html#boolean" class="d">boolean</a> options.
+
+In both <a href="intro.txt.html#Vi" class="d">Vi</a> and Vim you can create <a href="insert.txt.html#a" class="d">a</a> line break with the "<a href="change.txt.html#%3Asubstitute" class="d">:substitute</a>" command
+by using <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#CTRL-M" class="k">CTRL-M</a>.  For <a href="intro.txt.html#Vi" class="d">Vi</a> this means you cannot <a href="insert.txt.html#insert" class="d">insert</a> <a href="insert.txt.html#a" class="d">a</a> real <a href="motion.txt.html#CTRL-M" class="k">CTRL-M</a> in the
+text.  With Vim you can <a href="change.txt.html#put" class="d">put</a> <a href="insert.txt.html#a" class="d">a</a> real <a href="motion.txt.html#CTRL-M" class="k">CTRL-M</a> in the text by preceding <a href="motion.txt.html#it" class="d">it</a> with <a href="insert.txt.html#a" class="d">a</a>
+<a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a>.
+
+
+In <a href="insert.txt.html#Insert" class="d">Insert</a> mode:
+
+If the <a href="options.txt.html#%27revins%27" class="o">'revins'</a> option <a href="motion.txt.html#is" class="d">is</a> set, <a href="insert.txt.html#insert" class="d">insert</a> happens backwards.  This <a href="motion.txt.html#is" class="d">is</a> for typing
+Hebrew.  When <a href="insert.txt.html#inserting" class="d">inserting</a> normal characters the cursor will not be shifted and
+the text moves rightwards.  Backspace, <a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> and <a href="scroll.txt.html#CTRL-U" class="k">CTRL-U</a> will also work in
+the opposite direction.  <a href="scroll.txt.html#CTRL-B" class="k">CTRL-B</a> toggles the <a href="options.txt.html#%27revins%27" class="o">'revins'</a> option.  In replace mode
+<a href="options.txt.html#%27revins%27" class="o">'revins'</a> has no effect.  Only when enabled <a href="motion.txt.html#at" class="d">at</a> compile time.
+
+The <a href="intro.txt.html#backspace" class="d">backspace</a> key can be used just like <a href="scroll.txt.html#CTRL-D" class="k">CTRL-D</a> to remove auto-indents.
+
+You can backspace, <a href="scroll.txt.html#CTRL-U" class="k">CTRL-U</a> and <a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> over line breaks if the <a href="options.txt.html#%27backspace%27" class="o">'backspace'</a> (bs)
+option includes "eol"<a href="repeat.txt.html#." class="d">.</a>  You can <a href="intro.txt.html#backspace" class="d">backspace</a> over the start of <a href="insert.txt.html#insert" class="d">insert</a> if the
+<a href="options.txt.html#%27backspace%27" class="o">'backspace'</a> option includes "start"<a href="repeat.txt.html#." class="d">.</a>
+
+When the <a href="options.txt.html#%27paste%27" class="o">'paste'</a> option <a href="motion.txt.html#is" class="d">is</a> set, <a href="insert.txt.html#a" class="d">a</a> few <a href="options.txt.html#options" class="d">options</a> are reset and <a href="map.txt.html#mapping" class="d">mapping</a> in <a href="insert.txt.html#insert" class="d">insert</a>
+mode and abbreviation are disabled.  This allows for pasting text in windowing
+systems without unexpected results.  When the <a href="options.txt.html#%27paste%27" class="o">'paste'</a> option <a href="motion.txt.html#is" class="d">is</a> reset, the old
+option values are restored.
+
+<a href="tagsrch.txt.html#CTRL-T" class="k">CTRL-T</a>/<a href="scroll.txt.html#CTRL-D" class="k">CTRL-D</a> always insert/delete an indent in the current line, no matter
+what column the cursor <a href="motion.txt.html#is" class="d">is</a> in.
+
+<span class="k">CTRL-@</span> (insert previously inserted text) works always (Vi: only when typed <a href="motion.txt.html#as" class="d">as</a>
+first character).
+
+<a href="change.txt.html#CTRL-A" class="k">CTRL-A</a> works like <span class="k">CTRL-@</span> but does not leave <a href="insert.txt.html#insert" class="d">insert</a> mode.
+
+<a href="undo.txt.html#CTRL-R" class="k">CTRL-R</a> <span class="s">{0-9a-z..}</span> can be used to <a href="insert.txt.html#insert" class="d">insert</a> the contents of <a href="insert.txt.html#a" class="d">a</a> register.
+
+When the <a href="options.txt.html#%27smartindent%27" class="o">'smartindent'</a> option <a href="motion.txt.html#is" class="d">is</a> set, <a href="change.txt.html#C" class="d">C</a> programs will be better auto-indented.
+With <a href="options.txt.html#%27cindent%27" class="o">'cindent'</a> even more.
+
+<a href="scroll.txt.html#CTRL-Y" class="k">CTRL-Y</a> and <a href="scroll.txt.html#CTRL-E" class="k">CTRL-E</a> can be used to copy <a href="insert.txt.html#a" class="d">a</a> character from above/below the
+current cursor position.
+
+After <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> you can enter <a href="insert.txt.html#a" class="d">a</a> three digit decimal number.  This byte value <a href="motion.txt.html#is" class="d">is</a>
+inserted in the text <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> single character.  Useful for international
+characters that are not on your keyboard.
+
+When the <a href="options.txt.html#%27expandtab%27" class="o">'expandtab'</a> (et) option <a href="motion.txt.html#is" class="d">is</a> set, <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a> <a href="motion.txt.html#is" class="d">is</a> expanded to the
+appropriate number of spaces.
+
+The <a href="windows.txt.html#window" class="d">window</a> always reflects the contents of the buffer (Vi does not <a href="diff.txt.html#do" class="d">do</a> this
+when <a href="change.txt.html#changing" class="d">changing</a> text and in some other cases).
+
+If Vim <a href="motion.txt.html#is" class="d">is</a> compiled with DIGRAPHS defined, <a href="digraph.txt.html#digraphs" class="d">digraphs</a> are supported.  <a href="insert.txt.html#A" class="d">A</a> set of
+normal <a href="digraph.txt.html#digraphs" class="d">digraphs</a> <a href="motion.txt.html#is" class="d">is</a> included.  They are shown with the ":digraph" command.
+More can be added with ":digraph <span class="s">{char1}</span><span class="s">{char2}</span> <span class="s">{number}</span>"<a href="repeat.txt.html#." class="d">.</a>  <a href="insert.txt.html#A" class="d">A</a> <a href="digraph.txt.html#digraph" class="d">digraph</a> <a href="motion.txt.html#is" class="d">is</a>
+entered with "<span class="k">CTRL-K</span> <span class="s">{char1}</span> <span class="s">{char2}</span>" or "<span class="s">{char1}</span> BS <span class="s">{char2}</span>" (only when
+<a href="options.txt.html#%27digraph%27" class="o">'digraph'</a> option <a href="motion.txt.html#is" class="d">is</a> set).
+
+When <a href="repeat.txt.html#repeating" class="d">repeating</a> an insert, e.g. "10atest <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a>" <a href="intro.txt.html#vi" class="d">vi</a> would only handle wrapmargin
+for the first insert.  Vim does <a href="motion.txt.html#it" class="d">it</a> for all.
+
+<a href="insert.txt.html#A" class="d">A</a> <a href="intro.txt.html#count" class="d">count</a> to the "<a href="insert.txt.html#i" class="d">i</a>" or "<a href="insert.txt.html#a" class="d">a</a>" command <a href="motion.txt.html#is" class="d">is</a> used for all the text.  <a href="intro.txt.html#Vi" class="d">Vi</a> uses the <a href="intro.txt.html#count" class="d">count</a>
+only for one line.  "3iabc&lt;NL&gt;def&lt;Esc&gt;" would <a href="insert.txt.html#insert" class="d">insert</a> "abcabcabc&lt;NL&gt;def" in <a href="intro.txt.html#Vi" class="d">Vi</a>
+but "abc&lt;NL&gt;defabc&lt;NL&gt;defabc&lt;NL&gt;def" in Vim.
+
+
+In <a href="cmdline.txt.html#Command-line" class="d">Command-line</a> mode:
+
+<a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a> terminates the command-line without executing it.  In <a href="intro.txt.html#vi" class="d">vi</a> the command
+line would be executed, which <a href="motion.txt.html#is" class="d">is</a> not what most people expect (hitting <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a>
+should always get you back to command mode).  To avoid problems with some
+obscure macros, an <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a> in <a href="insert.txt.html#a" class="d">a</a> <a href="map.txt.html#macro" class="d">macro</a> will execute the command.  If you want <a href="insert.txt.html#a" class="d">a</a>
+typed <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a> to execute the command like <a href="intro.txt.html#vi" class="d">vi</a> does you can fix this with
+        "<a href="map.txt.html#%3Acmap" class="d">:cmap</a> ^V&lt;Esc&gt; ^V&lt;CR&gt;"
+
+General:
+
+The <a href="options.txt.html#%27ttimeout%27" class="o">'ttimeout'</a> option <a href="motion.txt.html#is" class="d">is</a> like <a href="options.txt.html#%27timeout%27" class="o">'timeout'</a>, but only works for cursor and
+function keys, not for ordinary mapped characters.  The <a href="options.txt.html#%27timeoutlen%27" class="o">'timeoutlen'</a> option
+gives the number of milliseconds that <a href="motion.txt.html#is" class="d">is</a> waited for.  If the <a href="options.txt.html#%27esckeys%27" class="o">'esckeys'</a> option
+<a href="motion.txt.html#is" class="d">is</a> not set, cursor and function keys that start with <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a> are not recognized
+in <a href="insert.txt.html#insert" class="d">insert</a> mode.
+
+There <a href="motion.txt.html#is" class="d">is</a> an option for each terminal string.  Can be used when <a href="term.txt.html#termcap" class="d">termcap</a> <a href="motion.txt.html#is" class="d">is</a> not
+supported or to change individual strings.
+
+The <a href="options.txt.html#%27fileformat%27" class="o">'fileformat'</a> option can be set to select the <a href="intro.txt.html#%3CEOL%3E" class="s">&lt;EOL&gt;</a>: "<a href="os_dos.txt.html#dos" class="d">dos</a>" <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a><a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a>, "<a href="os_unix.txt.html#unix" class="d">unix</a>"
+<a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a> or "<a href="os_mac.txt.html#mac" class="d">mac</a>" <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a>.
+When the <a href="options.txt.html#%27fileformats%27" class="o">'fileformats'</a> option <a href="motion.txt.html#is" class="d">is</a> not empty, Vim tries to detect the type of
+<a href="intro.txt.html#%3CEOL%3E" class="s">&lt;EOL&gt;</a> automatically.  The <a href="options.txt.html#%27fileformat%27" class="o">'fileformat'</a> option <a href="motion.txt.html#is" class="d">is</a> set accordingly.
+
+On systems that have no <a href="channel.txt.html#job" class="d">job</a> <a href="intro.txt.html#control" class="d">control</a> (older <a href="os_unix.txt.html#Unix" class="d">Unix</a> systems and non-Unix systems)
+the <a href="starting.txt.html#CTRL-Z" class="k">CTRL-Z</a>, "<a href="starting.txt.html#%3Astop" class="d">:stop</a>" or "<a href="starting.txt.html#%3Asuspend" class="d">:suspend</a>" command starts <a href="insert.txt.html#a" class="d">a</a> new shell.
+
+If Vim <a href="motion.txt.html#is" class="d">is</a> started on the <a href="os_amiga.txt.html#Amiga" class="d">Amiga</a> without an interactive <a href="windows.txt.html#window" class="d">window</a> for output, <a href="insert.txt.html#a" class="d">a</a>
+<a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> opened (and <a href="various.txt.html#%3Ash" class="d">:sh</a> still works).  You can give <a href="insert.txt.html#a" class="d">a</a> device to use for
+editing with the <a href="starting.txt.html#-d" class="l">-d</a> argument, e.g. "<a href="starting.txt.html#-d" class="d">-d</a> con:20/20/600/150"<a href="repeat.txt.html#." class="d">.</a>
+
+The <a href="options.txt.html#%27columns%27" class="o">'columns'</a> and <a href="options.txt.html#%27lines%27" class="o">'lines'</a> <a href="options.txt.html#options" class="d">options</a> are used to set or get the width and height
+of the display.
+
+Option settings are read from the first and last few lines of the file.
+Option <a href="options.txt.html#%27modelines%27" class="o">'modelines'</a> determines how many lines are tried (default <a href="motion.txt.html#is" class="d">is</a> 5).  <span class="n">Note</span>
+that this <a href="motion.txt.html#is" class="d">is</a> different from the <a href="intro.txt.html#Vi" class="d">Vi</a> versions that can execute any <a href="intro.txt.html#Ex" class="d">Ex</a> command
+in <a href="insert.txt.html#a" class="d">a</a> <a href="options.txt.html#modeline" class="d">modeline</a> (a major security problem).  <a href="starting.txt.html#trojan-horse" class="l">trojan-horse</a>
+
+If the <a href="options.txt.html#%27insertmode%27" class="o">'insertmode'</a> option <a href="motion.txt.html#is" class="d">is</a> set (e.g. in .exrc), Vim starts in <a href="insert.txt.html#insert" class="d">insert</a> mode.
+And <a href="motion.txt.html#it" class="d">it</a> comes back there, when pressing <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a>.
+
+Undo information <a href="motion.txt.html#is" class="d">is</a> kept in memory.  Available memory <a href="#limits" class="d">limits</a> the number and
+size of change that can be undone.  This may be <a href="insert.txt.html#a" class="d">a</a> problem with MS-DOS, <a href="motion.txt.html#is" class="d">is</a>
+hardly <a href="insert.txt.html#a" class="d">a</a> problem on the <a href="os_amiga.txt.html#Amiga" class="d">Amiga</a> and almost never with <a href="os_unix.txt.html#Unix" class="d">Unix</a> and Win32.
+
+If the <a href="options.txt.html#%27backup%27" class="o">'backup'</a> or <a href="options.txt.html#%27writebackup%27" class="o">'writebackup'</a> option <a href="motion.txt.html#is" class="d">is</a> set: Before <a href="insert.txt.html#a" class="d">a</a> file <a href="motion.txt.html#is" class="d">is</a> overwritten,
+<a href="insert.txt.html#a" class="d">a</a> <a href="editing.txt.html#backup" class="d">backup</a> file (.bak) <a href="motion.txt.html#is" class="d">is</a> made.  If the "<a href="editing.txt.html#backup" class="d">backup</a>" option <a href="motion.txt.html#is" class="d">is</a> set <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> left
+behind.
+
+Vim creates <a href="insert.txt.html#a" class="d">a</a> file ending in ".swp" to store parts of the file that have been
+changed or that <a href="diff.txt.html#do" class="d">do</a> not fit in memory.  This file can be used to recover from
+an aborted editing session with "vim <a href="starting.txt.html#-r" class="d">-r</a> file"<a href="repeat.txt.html#." class="d">.</a>  Using the swap file can be
+switched off by setting the <a href="options.txt.html#%27updatecount%27" class="o">'updatecount'</a> option to <a href="motion.txt.html#0" class="d">0</a> or <a href="starting.txt.html#starting" class="d">starting</a> Vim with
+the "<a href="starting.txt.html#-n" class="d">-n</a>" option.  Use the <a href="options.txt.html#%27directory%27" class="o">'directory'</a> option for placing the .swp file
+somewhere else.
+
+Vim <a href="motion.txt.html#is" class="d">is</a> able to work correctly on filesystems with 8.3 file names, also when
+using messydos or crossdos filesystems on the Amiga, or any 8.3 mounted
+filesystem under Unix.  See <a href="options.txt.html#%27shortname%27" class="l">'shortname'</a><a href="repeat.txt.html#." class="d">.</a>
+
+Error <a href="message.txt.html#messages" class="d">messages</a> are shown <a href="motion.txt.html#at" class="d">at</a> least one second (Vi overwrites error messages).
+
+If Vim gives the <a href="message.txt.html#hit-enter" class="l">hit-enter</a> prompt, you can hit any key.  Characters other
+than <a href="motion.txt.html#%3CCR%3E" class="s">&lt;CR&gt;</a>, <a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a> and <a href="motion.txt.html#%3CSpace%3E" class="s">&lt;Space&gt;</a> are interpreted <a href="motion.txt.html#as" class="d">as</a> the (start of) <a href="insert.txt.html#a" class="d">a</a> command.  (Vi
+only accepts <a href="insert.txt.html#a" class="d">a</a> command <a href="starting.txt.html#starting" class="d">starting</a> with ':').
+
+The contents of the numbered and unnamed <a href="change.txt.html#registers" class="d">registers</a> <a href="motion.txt.html#is" class="d">is</a> remembered when
+<a href="change.txt.html#changing" class="d">changing</a> files.
+
+The "No lines in buffer" message <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> normal message instead of an error
+message, since that may cause <a href="insert.txt.html#a" class="d">a</a> <a href="map.txt.html#mapping" class="d">mapping</a> to be aborted.
+
+The AUX: device of the <a href="os_amiga.txt.html#Amiga" class="d">Amiga</a> <a href="motion.txt.html#is" class="d">is</a> supported.
+
+<span class="h">==============================================================================</span>
+6. <a href="cmdline.txt.html#Command-line" class="d">Command-line</a> arguments                               <a name="cmdline-arguments" class="t">cmdline-arguments</a>
+
+Different versions of <a href="intro.txt.html#Vi" class="d">Vi</a> have different command-line arguments.  This can be
+confusing.  To <a href="helphelp.txt.html#help" class="d">help</a> you, this <a href="motion.txt.html#section" class="d">section</a> gives an overview of the differences.
+
+Five variants of <a href="intro.txt.html#Vi" class="d">Vi</a> will be considered here:
+        <a href="intro.txt.html#Elvis" class="d">Elvis</a>   <a href="intro.txt.html#Elvis" class="d">Elvis</a> version 2.1b
+        <a href="intro.txt.html#Nvi" class="d">Nvi</a>     <a href="intro.txt.html#Nvi" class="d">Nvi</a> version 1.79
+        <a href="intro.txt.html#Posix" class="d">Posix</a>   <a href="intro.txt.html#Posix" class="d">Posix</a> 1003.2
+        <a href="intro.txt.html#Vi" class="d">Vi</a>      <a href="intro.txt.html#Vi" class="d">Vi</a> version 3.7 (for Sun 4.1.x)
+        Vile    Vile version 7.4 (incomplete)
+        Vim     <span class="i">Vim version 5.2</span>
+
+Only Vim <a href="motion.txt.html#is" class="d">is</a> able to accept <a href="options.txt.html#options" class="d">options</a> in between and after the file names.
+
++{command}      Elvis, Nvi, Posix, Vi, Vim: Same <a href="motion.txt.html#as" class="d">as</a> "<a href="starting.txt.html#-c" class="d">-c</a> <span class="s">{command}</span>"<a href="repeat.txt.html#." class="d">.</a>
+
+<a href="motion.txt.html#-" class="d">-</a>               Nvi, Posix, Vi: Run <a href="intro.txt.html#Ex" class="d">Ex</a> in batch mode.
+                Vim: Read file from stdin (use <a href="starting.txt.html#-s" class="d">-s</a> for batch mode).
+
+<a href="starting.txt.html#--" class="d">--</a>              Vim: End of options, only file names are following.
+
+<a href="starting.txt.html#--cmd" class="d">--cmd</a> <span class="s">{command}</span> Vim: execute <span class="s">{command}</span> before sourcing <a href="starting.txt.html#vimrc" class="d">vimrc</a> files.
+
+<a href="starting.txt.html#--echo-wid" class="d">--echo-wid</a>      Vim: <a href="gui_x11.txt.html#GTK%2B" class="d">GTK+</a> echoes the Window ID on stdout
+
+<a href="starting.txt.html#--help" class="d">--help</a>          Vim: show <a href="helphelp.txt.html#help" class="d">help</a> message and exit.
+
+<a href="starting.txt.html#--literal" class="d">--literal</a>       Vim: take file names literally, don't expand wildcards.
+
+<a href="starting.txt.html#--nofork" class="d">--nofork</a>        Vim: same <a href="motion.txt.html#as" class="d">as</a> <a href="starting.txt.html#-f" class="l">-f</a>
+
+--noplugin[s]   Vim: Skip loading plugins.
+
+<a href="remote.txt.html#--remote" class="d">--remote</a>        Vim: edit the files in another Vim server
+
+<a href="remote.txt.html#--remote-expr" class="d">--remote-expr</a> <span class="s">{expr}</span>    Vim: evaluate <span class="s">{expr}</span> in another Vim server
+
+<a href="remote.txt.html#--remote-send" class="d">--remote-send</a> <span class="s">{keys}</span>    Vim: send <span class="s">{keys}</span> to <a href="insert.txt.html#a" class="d">a</a> Vim server and exit
+
+<a href="remote.txt.html#--remote-silent" class="d">--remote-silent</a> <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a>  Vim: edit the files in another Vim server if possible
+
+<a href="remote.txt.html#--remote-wait" class="d">--remote-wait</a>   Vim: edit the files in another Vim server and wait for <a href="motion.txt.html#it" class="d">it</a>
+
+<a href="remote.txt.html#--remote-wait-silent" class="d">--remote-wait-silent</a>    Vim: like --remote-wait, no complaints if not possible
+
+<a href="starting.txt.html#--role" class="d">--role</a> <span class="s">{role}</span>   Vim: <a href="gui_x11.txt.html#GTK%2B" class="d">GTK+</a> 2: set role of main <a href="windows.txt.html#window" class="d">window</a>
+
+<a href="remote.txt.html#--serverlist" class="d">--serverlist</a>    Vim: Output <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of Vim servers and exit
+
+<a href="remote.txt.html#--servername" class="d">--servername</a> <span class="s">{name}</span>     Vim: Specify Vim server name
+
+<a href="starting.txt.html#--socketid" class="d">--socketid</a> <span class="s">{id}</span>         Vim: <a href="gui_x11.txt.html#GTK" class="d">GTK</a> <a href="windows.txt.html#window" class="d">window</a> socket to run Vim in
+
+<a href="starting.txt.html#--windowid" class="d">--windowid</a> <span class="s">{id}</span>         Vim: <a href="os_win32.txt.html#Win32" class="d">Win32</a> <a href="windows.txt.html#window" class="d">window</a> ID to run Vim in
+
+<a href="starting.txt.html#--version" class="d">--version</a>       Vim: show version message and exit.
+
+-?              Vile: print usage summary and exit.
+
+-a              Elvis: Load all specified file names into <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a> (use <a href="starting.txt.html#-o" class="d">-o</a> for
+                Vim).
+
+<a href="starting.txt.html#-A" class="d">-A</a>              Vim: Start in <a href="arabic.txt.html#Arabic" class="d">Arabic</a> mode (when compiled with Arabic).
+
+<a href="starting.txt.html#-b" class="d">-b</a> <span class="s">{blksize}</span>    Elvis: Use <span class="s">{blksize}</span> blocksize for the session file.
+<a href="starting.txt.html#-b" class="d">-b</a>              Vim: set <a href="options.txt.html#%27binary%27" class="o">'binary'</a> mode.
+
+<a href="starting.txt.html#-C" class="d">-C</a>              Vim: Compatible mode.
+
+<a href="starting.txt.html#-c" class="d">-c</a> <span class="s">{command}</span>    Elvis, Nvi, Posix, Vim: run <span class="s">{command}</span> <a href="motion.txt.html#as" class="d">as</a> an <a href="intro.txt.html#Ex" class="d">Ex</a> command after
+                loading the edit buffer.
+                Vim: allow up to 10 "<a href="starting.txt.html#-c" class="d">-c</a>" arguments
+
+<a href="starting.txt.html#-d" class="d">-d</a> <span class="s">{device}</span>     Vim: Use <span class="s">{device}</span> for I/O (Amiga only). {only when compiled
+                without the <a href="various.txt.html#%2Bdiff" class="l">+diff</a> feature}
+<a href="starting.txt.html#-d" class="d">-d</a>              Vim: start with <a href="options.txt.html#%27diff%27" class="o">'diff'</a> set. <a href="diff.txt.html#vimdiff" class="l">vimdiff</a>
+
+<a href="starting.txt.html#-dev" class="d">-dev</a> <span class="s">{device}</span>   Vim: Use <span class="s">{device}</span> for I/O (Amiga only).
+
+<a href="starting.txt.html#-D" class="d">-D</a>              Vim: debug mode.
+
+<a href="starting.txt.html#-e" class="d">-e</a>              Elvis, Nvi, Vim: Start in <a href="intro.txt.html#Ex" class="d">Ex</a> mode, <a href="motion.txt.html#as" class="d">as</a> if the executable <a href="motion.txt.html#is" class="d">is</a>
+                called "<a href="starting.txt.html#ex" class="d">ex</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+<a href="starting.txt.html#-E" class="d">-E</a>              Vim: Start in improved <a href="intro.txt.html#Ex" class="d">Ex</a> mode <a href="intro.txt.html#gQ" class="l">gQ</a><a href="motion.txt.html#%2C" class="d">,</a> like "<a href="starting.txt.html#exim" class="d">exim</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+<a href="starting.txt.html#-f" class="d">-f</a>              Vim: Run <a href="gui.txt.html#GUI" class="d">GUI</a> in foreground (Amiga: don't open new window).
+<a href="starting.txt.html#-f" class="d">-f</a> <span class="s">{session}</span>    Elvis: Use <span class="s">{session}</span> <a href="motion.txt.html#as" class="d">as</a> the session file.
+
+<a href="starting.txt.html#-F" class="d">-F</a>              Vim: Start in <a href="farsi.txt.html#Farsi" class="d">Farsi</a> mode (when compiled with Farsi).
+                Nvi: Fast start, don't read the entire file when editing
+                starts.
+
+-G <span class="s">{gui}</span>        Elvis: Use the <span class="s">{gui}</span> <a href="motion.txt.html#as" class="d">as</a> user interface.
+
+<a href="starting.txt.html#-g" class="d">-g</a>              Vim: Start GUI.
+<a href="starting.txt.html#-g" class="d">-g</a> <a href="pattern.txt.html#N" class="d">N</a>            Vile: start editing <a href="motion.txt.html#at" class="d">at</a> line <a href="pattern.txt.html#N" class="d">N</a>
+
+<a href="starting.txt.html#-h" class="d">-h</a>              Vim: Give <a href="helphelp.txt.html#help" class="d">help</a> message.
+                Vile: edit the <a href="helphelp.txt.html#help" class="d">help</a> file
+
+<a href="starting.txt.html#-H" class="d">-H</a>              Vim: start Hebrew mode (when compiled with it).
+
+<a href="starting.txt.html#-i" class="d">-i</a>              Elvis: Start each <a href="windows.txt.html#window" class="d">window</a> in <a href="insert.txt.html#Insert" class="d">Insert</a> mode.
+<a href="starting.txt.html#-i" class="d">-i</a> <span class="s">{viminfo}</span>    Vim: Use <span class="s">{viminfo}</span> for <a href="starting.txt.html#viminfo" class="d">viminfo</a> file.
+
+<a href="starting.txt.html#-L" class="d">-L</a>              Vim: Same <a href="motion.txt.html#as" class="d">as</a> "<a href="starting.txt.html#-r" class="d">-r</a>" (also in some versions of Vi).
+
+<a href="starting.txt.html#-l" class="d">-l</a>              Nvi, Vi, Vim: Set <a href="options.txt.html#%27lisp%27" class="o">'lisp'</a> and <a href="options.txt.html#%27showmatch%27" class="o">'showmatch'</a> options.
+
+<a href="starting.txt.html#-m" class="d">-m</a>              Vim: Modifications not allowed to be written, resets <a href="options.txt.html#%27write%27" class="o">'write'</a>
+                option.
+
+<a href="starting.txt.html#-M" class="d">-M</a>              Vim: Modifications not allowed, resets <a href="options.txt.html#%27modifiable%27" class="o">'modifiable'</a> and the
+                <a href="options.txt.html#%27write%27" class="o">'write'</a> option.
+
+<a href="starting.txt.html#-N" class="d">-N</a>              Vim: No-compatible mode.
+
+<a href="starting.txt.html#-n" class="d">-n</a>              Vim: No swap file used.
+
+-nb[args]       Vim: open <a href="insert.txt.html#a" class="d">a</a> NetBeans interface connection
+
+-O[N]           Vim: Like -o, but use vertically split windows.
+
+-o[N]           Vim: Open [N] windows, or one for each file.
+
+-p[N]           Vim: Open [N] <a href="intro.txt.html#tab" class="d">tab</a> pages, or one for each file.
+
+<a href="starting.txt.html#-P" class="d">-P</a> <span class="s">{parent-title}</span> <a href="os_win32.txt.html#Win32" class="d">Win32</a> Vim: open Vim inside <a href="insert.txt.html#a" class="d">a</a> parent application <a href="windows.txt.html#window" class="d">window</a>
+
+<a href="starting.txt.html#-q" class="d">-q</a> <span class="s">{name}</span>       Vim: Use <span class="s">{name}</span> for <a href="quickfix.txt.html#quickfix" class="d">quickfix</a> error file.
+-q{name}        Vim: Idem.
+
+<a href="starting.txt.html#-R" class="d">-R</a>              Elvis, Nvi, Posix, Vile, Vim: Set the <a href="options.txt.html#%27readonly%27" class="o">'readonly'</a> option.
+
+<a href="starting.txt.html#-r" class="d">-r</a>              Elvis, Nvi, Posix, Vi, Vim: Recovery mode.
+
+<a href="starting.txt.html#-S" class="d">-S</a>              Nvi: Set <a href="options.txt.html#%27secure%27" class="o">'secure'</a> option.
+<a href="starting.txt.html#-S" class="d">-S</a> <span class="s">{script}</span>     Vim: source <a href="usr_41.txt.html#script" class="d">script</a> after <a href="starting.txt.html#starting" class="d">starting</a> up.
+
+<a href="starting.txt.html#-s" class="d">-s</a>              Nvi, Posix, Vim: Same <a href="motion.txt.html#as" class="d">as</a> "<a href="motion.txt.html#-" class="d">-</a>" (silent mode), when in <a href="intro.txt.html#Ex" class="d">Ex</a> mode.
+                Elvis: Sets the <span class="o">'safer'</span> option.
+<a href="starting.txt.html#-s" class="d">-s</a> <span class="s">{scriptin}</span>   Vim: Read from <a href="usr_41.txt.html#script" class="d">script</a> file <span class="s">{scriptin}</span>; only when not in <a href="intro.txt.html#Ex" class="d">Ex</a>
+                mode.
+<a href="starting.txt.html#-s" class="d">-s</a> <span class="s">{pattern}</span>    Vile: search for <span class="s">{pattern}</span>
+
+<a href="starting.txt.html#-t" class="d">-t</a> <span class="s">{tag}</span>        Elvis, Nvi, Posix, Vi, Vim: Edit the file containing <span class="s">{tag}</span>.
+-t{tag}         Vim: Idem.
+
+<a href="starting.txt.html#-T" class="d">-T</a> <span class="s">{term}</span>       Vim: Set terminal name to <span class="s">{term}</span>.
+
+<a href="starting.txt.html#-u" class="d">-u</a> <span class="s">{vimrc}</span>      Vim: Read initializations from <span class="s">{vimrc}</span> file.
+
+<a href="starting.txt.html#-U" class="d">-U</a> <span class="s">{gvimrc}</span>     Vim: Read <a href="gui.txt.html#GUI" class="d">GUI</a> initializations from <span class="s">{gvimrc}</span> file.
+
+<a href="starting.txt.html#-v" class="d">-v</a>              Nvi, Posix, Vi, Vim: Begin in <a href="intro.txt.html#Normal" class="d">Normal</a> mode (visual mode, in <a href="intro.txt.html#Vi" class="d">Vi</a>
+                terms).
+                Vile: <a href="starting.txt.html#View" class="d">View</a> mode, no changes possible.
+
+<a href="starting.txt.html#-V" class="d">-V</a>              Elvis, Vim: Verbose mode.
+-V{nr}          Vim: Verbose mode with specified level.
+
+<a href="starting.txt.html#-w" class="d">-w</a> <span class="s">{size}</span>       Elvis, Posix, Nvi, Vi, Vim: Set value of <a href="options.txt.html#%27window%27" class="o">'window'</a> to <span class="s">{size}</span>.
+-w{size}        Nvi, Vi: Same <a href="motion.txt.html#as" class="d">as</a> "<a href="starting.txt.html#-w" class="d">-w</a> <span class="s">{size}</span>"<a href="repeat.txt.html#." class="d">.</a>
+<a href="starting.txt.html#-w" class="d">-w</a> <span class="s">{name}</span>       Vim: Write to <a href="usr_41.txt.html#script" class="d">script</a> file <span class="s">{name}</span> (must start with non-digit).
+
+<a href="starting.txt.html#-W" class="d">-W</a> <span class="s">{name}</span>       Vim: Append to <a href="usr_41.txt.html#script" class="d">script</a> file <span class="s">{name}</span>.
+
+<a href="starting.txt.html#-x" class="d">-x</a>              Vi, Vim: Ask for <a href="editing.txt.html#encryption" class="d">encryption</a> key.  See <a href="editing.txt.html#encryption" class="l">encryption</a><a href="repeat.txt.html#." class="d">.</a>
+
+<a href="starting.txt.html#-X" class="d">-X</a>              Vim: Don't connect to the <a href="change.txt.html#X" class="d">X</a> server.
+
+<a href="starting.txt.html#-y" class="d">-y</a>              Vim: Start in <a href="starting.txt.html#easy" class="d">easy</a> mode, like <a href="starting.txt.html#evim" class="l">evim</a><a href="repeat.txt.html#." class="d">.</a>
+
+<a href="starting.txt.html#-Z" class="d">-Z</a>              Vim: restricted mode
+
+@{cmdfile}      Vile: use <span class="s">{cmdfile}</span> <a href="motion.txt.html#as" class="d">as</a> <a href="starting.txt.html#startup" class="d">startup</a> file.
+
+<span class="h">==============================================================================</span>
+7. POSIX compliance                             <a name="posix" class="t">posix</a> <a name="posix-compliance" class="t">posix-compliance</a>
+
+In 2005 the POSIX test suite was run to check the compatibility of Vim.  Most
+of the test was executed properly.  There are the few things where Vim
+<a href="motion.txt.html#is" class="d">is</a> not POSIX compliant, even when run in <a href="intro.txt.html#Vi" class="d">Vi</a> compatibility mode.
+                                                        <a name="%24VIM_POSIX" class="t">$VIM_POSIX</a>
+Set the <a href="#%24VIM_POSIX" class="d">$VIM_POSIX</a> environment variable to have <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a> include the POSIX
+flags when Vim starts up.  This makes Vim run <a href="motion.txt.html#as" class="d">as</a> POSIX <a href="motion.txt.html#as" class="d">as</a> <a href="motion.txt.html#it" class="d">it</a> can.  That's
+<a href="insert.txt.html#a" class="d">a</a> bit different from being <a href="intro.txt.html#Vi" class="d">Vi</a> compatible.
+
+This <a href="motion.txt.html#is" class="d">is</a> where Vim does not behave <a href="motion.txt.html#as" class="d">as</a> POSIX specifies and why:
+
+                                                        <a name="posix-screen-size" class="t">posix-screen-size</a>
+        The $COLUMNS and $LINES environment <a href="eval.txt.html#variables" class="d">variables</a> are ignored by Vim if
+        the size can be obtained from the terminal in <a href="insert.txt.html#a" class="d">a</a> more reliable way.
+        Add the <a href="motion.txt.html#%27" class="d">'</a>|<a href="motion.txt.html#%27" class="d">'</a> flag to <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a> to have $COLUMNS and $LINES overrule
+        sizes obtained in another way.
+
+        The "<span class="s">{" and "}</span>" commands don't stop <a href="motion.txt.html#at" class="d">at</a> <a href="insert.txt.html#a" class="d">a</a> "<a href="motion.txt.html#%7B" class="d">{</a>" in the original Vi, but
+        POSIX specifies <a href="motion.txt.html#it" class="d">it</a> does.  Add the '{' flag to <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a> if you want
+        <a href="motion.txt.html#it" class="d">it</a> the POSIX way.
+
+        The "<a href="change.txt.html#D" class="d">D</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="insert.txt.html#o" class="d">o</a>" and "<a href="insert.txt.html#O" class="d">O</a>" commands accept <a href="insert.txt.html#a" class="d">a</a> count.  Also when repeated.
+        Add the '#' flag to <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a> if you want to ignore the count.
+
+        The "<a href="editing.txt.html#%3Acd" class="d">:cd</a>" command fails if the current buffer <a href="motion.txt.html#is" class="d">is</a> modified when the '.'
+        flag <a href="motion.txt.html#is" class="d">is</a> present in <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a>.
+
+        There <a href="motion.txt.html#is" class="d">is</a> no <a href="usr_11.txt.html#ATTENTION" class="d">ATTENTION</a> message, the "<a href="insert.txt.html#A" class="d">A</a>" flag <a href="motion.txt.html#is" class="d">is</a> added to <a href="options.txt.html#%27shortmess%27" class="o">'shortmess'</a>.
+
+These are remarks about running the POSIX test suite:
+<a href="motion.txt.html#-" class="d">-</a> <a href="intro.txt.html#vi" class="d">vi</a> test 33 sometimes fails for unknown reasons
+<a href="motion.txt.html#-" class="d">-</a> <a href="intro.txt.html#vi" class="d">vi</a> test 250 fails; behavior will be changed in <a href="insert.txt.html#a" class="d">a</a> new revision
+    <a class="u" href="http://www.opengroup.org/austin/mailarchives/ag-review/msg01710.html">http://www.opengroup.org/austin/mailarchives/ag-review/msg01710.html</a>
+    (link no longer works, perhaps it's now:
+    <a class="u" href="https://www.opengroup.org/sophocles/show_mail.tpl?CALLER=show_archive.tpl&source=L&listname=austin-review-l&id=1711">https://www.opengroup.org/sophocles/show_mail.tpl?CALLER=show_archive.tpl&amp;source=L&amp;listname=austin-review-l&amp;id=1711</a>)
+<a href="motion.txt.html#-" class="d">-</a> <a href="intro.txt.html#vi" class="d">vi</a> test 310 fails; exit code non-zero when any error occurred?
+<a href="motion.txt.html#-" class="d">-</a> <a href="starting.txt.html#ex" class="d">ex</a> test 24 fails because test <a href="motion.txt.html#is" class="d">is</a> wrong.  Changed between SUSv2 and SUSv3.
+<a href="motion.txt.html#-" class="d">-</a> <a href="starting.txt.html#ex" class="d">ex</a> tests 47, 48, 49, 72, 73 fail because <a href="starting.txt.html#.exrc" class="d">.exrc</a> file isn't read in silent
+  mode and $EXINIT isn't used.
+<a href="motion.txt.html#-" class="d">-</a> <a href="starting.txt.html#ex" class="d">ex</a> tests 76, 78 fail because echo <a href="motion.txt.html#is" class="d">is</a> used instead of printf. (fixed)
+    Also: problem with \s not changed to space.
+<a href="motion.txt.html#-" class="d">-</a> <a href="starting.txt.html#ex" class="d">ex</a> test 355 fails because <a href="options.txt.html#%27window%27" class="o">'window'</a> isn't used for "30z"<a href="repeat.txt.html#." class="d">.</a>
+<a href="motion.txt.html#-" class="d">-</a> <a href="starting.txt.html#ex" class="d">ex</a> test 368 fails because shell command isn't echoed in silent mode.
+<a href="motion.txt.html#-" class="d">-</a> <a href="starting.txt.html#ex" class="d">ex</a> test 394 fails because "<a href="change.txt.html#%3D" class="d">=</a>" command output isn't visible in silent mode.
+<a href="motion.txt.html#-" class="d">-</a> <a href="starting.txt.html#ex" class="d">ex</a> test 411 fails because test file <a href="motion.txt.html#is" class="d">is</a> wrong, contains stray ':'.
+<a href="motion.txt.html#-" class="d">-</a> <a href="starting.txt.html#ex" class="d">ex</a> test 475 and 476 fail because reprint output isn't visible in silent mode.
+<a href="motion.txt.html#-" class="d">-</a> <a href="starting.txt.html#ex" class="d">ex</a> test 480 and 481 fail because the <a href="tagsrch.txt.html#tags" class="d">tags</a> file has spaces instead of <a href="insert.txt.html#a" class="d">a</a> tab.
+<a href="motion.txt.html#-" class="d">-</a> <a href="starting.txt.html#ex" class="d">ex</a> test 502 fails because <a href="starting.txt.html#.exrc" class="d">.exrc</a> isn't read in silent mode.
+<a href="motion.txt.html#-" class="d">-</a> <a href="starting.txt.html#ex" class="d">ex</a> test 509 fails because <a href="starting.txt.html#.exrc" class="d">.exrc</a> isn't read in silent mode. and exit code <a href="motion.txt.html#is" class="d">is</a>
+  1 instead of 2.
+<a href="motion.txt.html#-" class="d">-</a> <a href="starting.txt.html#ex" class="d">ex</a> test 534 fails because <a href="starting.txt.html#.exrc" class="d">.exrc</a> isn't read in silent mode.
+
+
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,369 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: version4.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="version4.txt" class="t">version4.txt</a>  For <span class="i">Vim version 8.0.</span>  Last change: 2006 Apr 24
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Bram Moolenaar</span>
+
+
+This document lists the incompatible differences between Vim 3.0 and Vim 4.0.
+Although 4.0 <a href="motion.txt.html#is" class="d">is</a> mentioned here, this <a href="motion.txt.html#is" class="d">is</a> also for version 4.1, 4.2, etc..
+
+This file <a href="motion.txt.html#is" class="d">is</a> important for everybody upgrading from Vim 3.0.  Read <a href="motion.txt.html#it" class="d">it</a>
+carefully to avoid unexpected problems.
+
+<a href="options.txt.html#%27backup%27" class="o">'backup'</a> option default changed                 <a href="#backup-changed" class="l">backup-changed</a>
+Extension for <a href="editing.txt.html#backup" class="d">backup</a> file changed               <a href="#backup-extension" class="l">backup-extension</a>
+Structure of swap file changed                  <a href="#swapfile-changed" class="l">swapfile-changed</a>
+"<a href="starting.txt.html#-w" class="d">-w</a> scriptout" argument changed                 <a href="#scriptout-changed" class="l">scriptout-changed</a>
+Backspace and Delete keys                       <a href="#backspace-delete" class="l">backspace-delete</a>
+Escape for | changed                            <a href="#escape-bar" class="l">escape-bar</a>
+Key codes changed                               <a href="#key-codes-changed" class="l">key-codes-changed</a>
+Terminal <a href="options.txt.html#options" class="d">options</a> changed                        <a href="#termcap-changed" class="l">termcap-changed</a>
+<a href="options.txt.html#%27errorformat%27" class="o">'errorformat'</a> option changed                    <a href="#errorformat-changed" class="l">errorformat-changed</a>
+<a href="vi_diff.txt.html#%27graphic%27" class="o">'graphic'</a> option gone                           <a href="#graphic-option-gone" class="l">graphic-option-gone</a>
+<span class="o">'yankendofline'</span> option gone                     <a href="#ye-option-gone" class="l">ye-option-gone</a>
+<a href="options.txt.html#%27icon%27" class="o">'icon'</a> and <a href="options.txt.html#%27title%27" class="o">'title'</a> default value changed        <a href="#icon-changed" class="l">icon-changed</a>
+<a href="options.txt.html#%27highlight%27" class="o">'highlight'</a> option changed                      <a href="#highlight-changed" class="l">highlight-changed</a>
+<a href="options.txt.html#%27tildeop%27" class="o">'tildeop'</a> and <a href="options.txt.html#%27weirdinvert%27" class="o">'weirdinvert'</a> short names changed <a href="#short-name-changed" class="l">short-name-changed</a>
+Use of "<a href="visual.txt.html#v" class="d">v</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="visual.txt.html#V" class="d">V</a>" and "<a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a>" in <a href="visual.txt.html#Visual" class="d">Visual</a> mode     <a href="#use-visual-cmds" class="l">use-visual-cmds</a>
+<a href="scroll.txt.html#CTRL-B" class="k">CTRL-B</a> in <a href="insert.txt.html#Insert" class="d">Insert</a> mode removed                   <a href="#toggle-revins" class="l">toggle-revins</a>
+
+
+<a href="options.txt.html#%27backup%27" class="o">'backup'</a> option default changed                         <a name="backup-changed" class="t">backup-changed</a>
+<span class="h">-------------------------------</span>
+
+The default value for <a href="options.txt.html#%27backup%27" class="o">'backup'</a> used to be on.  This resulted in <a href="insert.txt.html#a" class="d">a</a> <a href="editing.txt.html#backup" class="d">backup</a> file
+being made when the original file was overwritten.
+
+Now the default for <a href="options.txt.html#%27backup%27" class="o">'backup'</a> <a href="motion.txt.html#is" class="d">is</a> off.  As soon <a href="motion.txt.html#as" class="d">as</a> the <a href="editing.txt.html#writing" class="d">writing</a> of the file has
+successfully finished, the <a href="editing.txt.html#backup" class="d">backup</a> file <a href="motion.txt.html#is" class="d">is</a> deleted.  If you want to keep the
+<a href="editing.txt.html#backup" class="d">backup</a> file, set <a href="options.txt.html#%27backup%27" class="o">'backup'</a> on in your vimrc.  The reason for this change <a href="motion.txt.html#is" class="d">is</a>
+that many people complained that leaving <a href="insert.txt.html#a" class="d">a</a> <a href="editing.txt.html#backup" class="d">backup</a> file behind <a href="motion.txt.html#is" class="d">is</a> not
+Vi-compatible.                                          <a href="options.txt.html#%27backup%27" class="l">'backup'</a>
+
+
+Extension for <a href="editing.txt.html#backup" class="d">backup</a> file changed                       <a name="backup-extension" class="t">backup-extension</a>
+<span class="h">---------------------------------</span>
+
+The extension for the <a href="editing.txt.html#backup" class="d">backup</a> file used to be ".bak"<a href="repeat.txt.html#." class="d">.</a>  Since other programs
+also use this extension and some users make copies with this extension, <a href="motion.txt.html#it" class="d">it</a> was
+changed to the <a href="various.txt.html#less" class="d">less</a> obvious "<a href="change.txt.html#%7E" class="d">~</a>"<a href="repeat.txt.html#." class="d">.</a>  Another advantage <a href="motion.txt.html#is" class="d">is</a> that this takes <a href="various.txt.html#less" class="d">less</a>
+space, which <a href="motion.txt.html#is" class="d">is</a> useful when working on <a href="insert.txt.html#a" class="d">a</a> system with short file names.  For
+example, on <a href="os_msdos.txt.html#MS-DOS" class="d">MS-DOS</a> the <a href="editing.txt.html#backup" class="d">backup</a> files for "longfile.c" and "longfile.h" would
+both become "longfile.bak"<a href="motion.txt.html#%3B" class="d">;</a> now they will be "longfile.c~" and "longfile.h~"<a href="repeat.txt.html#." class="d">.</a>
+
+If you prefer to use ".bak"<a href="motion.txt.html#%2C" class="d">,</a> you can set the <a href="options.txt.html#%27backupext%27" class="o">'backupext'</a> option: 
+<span class="e">        :set bex=.bak</span>
+<span class="e"></span>
+<span class="e"></span>
+Structure of swap file changed                          <a name="swapfile-changed" class="t">swapfile-changed</a>
+<span class="h">------------------------------</span>
+
+The contents of the swap file were extended with several parameters.  Vim
+stores the user name and other information about the edited file to make
+<a href="recover.txt.html#recovery" class="d">recovery</a> more <a href="starting.txt.html#easy" class="d">easy</a> and to be able to know where the swap file comes from.  The
+first part of the swap file can now be understood on <a href="insert.txt.html#a" class="d">a</a> machine with <a href="insert.txt.html#a" class="d">a</a>
+different byte order or sizeof(int).  When you try to recover <a href="insert.txt.html#a" class="d">a</a> file on such <a href="insert.txt.html#a" class="d">a</a>
+machine, you will get an error message that this <a href="motion.txt.html#is" class="d">is</a> not possible.
+
+Because of this change, swap files cannot be exchanged between 3.0 and 4.0.
+If you have <a href="insert.txt.html#a" class="d">a</a> swap file from <a href="insert.txt.html#a" class="d">a</a> crashed session with 3.0, use Vim 3.0 to
+recover the file---don't use 4.0.                       <a href="recover.txt.html#swap-file" class="l">swap-file</a>
+
+
+"<a href="starting.txt.html#-w" class="d">-w</a> scriptout" argument changed                         <a name="scriptout-changed" class="t">scriptout-changed</a>
+<span class="h">-------------------------------</span>
+
+"vim <a href="starting.txt.html#-w" class="d">-w</a> scriptout" used to append to the scriptout file.  Since this was
+illogical, <a href="motion.txt.html#it" class="d">it</a> now creates <a href="insert.txt.html#a" class="d">a</a> new file.  An existing file <a href="motion.txt.html#is" class="d">is</a> not overwritten
+(to avoid destroying an existing file for those who rely on the appending).
+[This was removed again later]                                  <a href="starting.txt.html#-w" class="l">-w</a>
+
+
+Backspace and Delete keys                               <a name="backspace-delete" class="t">backspace-delete</a>
+<span class="h">-------------------------</span>
+
+In 3.0 both the delete key and the <a href="intro.txt.html#backspace" class="d">backspace</a> key worked <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#backspace" class="d">backspace</a> in
+<a href="insert.txt.html#insert" class="d">insert</a> mode; they deleted the character to the left of the cursor.  In 4.0 the
+delete key has <a href="insert.txt.html#a" class="d">a</a> new function: <a href="motion.txt.html#it" class="d">it</a> deletes the character under the cursor, just
+like <a href="motion.txt.html#it" class="d">it</a> does on the command-line.  If the cursor <a href="motion.txt.html#is" class="d">is</a> after the <a href="intro.txt.html#end" class="d">end</a> of the line
+and <a href="options.txt.html#%27bs%27" class="o">'bs'</a> <a href="motion.txt.html#is" class="d">is</a> set, two lines are joined.                  <a href="change.txt.html#%3CDel%3E" class="l">&lt;Del&gt;</a> <a href="insert.txt.html#i_%3CDel%3E" class="l">i_&lt;Del&gt;</a>
+
+In 3.0 the <a href="intro.txt.html#backspace" class="d">backspace</a> key was always defined <a href="motion.txt.html#as" class="d">as</a> <a href="motion.txt.html#CTRL-H" class="k">CTRL-H</a> and delete <a href="motion.txt.html#as" class="d">as</a> <span class="k">CTRL-?</span>.
+In 4.0 the code for the <a href="intro.txt.html#backspace" class="d">backspace</a> and delete key <a href="motion.txt.html#is" class="d">is</a> obtained from <a href="term.txt.html#termcap" class="d">termcap</a> or
+termlib, and adjusted for the "stty erase" value on Unix.  This helps people
+who define the erase character according to the keyboard they are working on.
+                                                        <a href="motion.txt.html#%3CBS%3E" class="l">&lt;BS&gt;</a> <a href="insert.txt.html#i_%3CBS%3E" class="l">i_&lt;BS&gt;</a>
+
+If you prefer <a href="intro.txt.html#backspace" class="d">backspace</a> and delete in <a href="insert.txt.html#Insert" class="d">Insert</a> mode to have the old behavior,
+<a href="change.txt.html#put" class="d">put</a> this line in your vimrc:
+
+        inoremap ^? ^H
+
+And you may also want to add these, to fix the values for <a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a> and <a href="change.txt.html#%3CDel%3E" class="s">&lt;Del&gt;</a>:
+
+        set t_kb=^H
+        set t_kD=^?
+
+(Enter ^H with <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> <a href="motion.txt.html#CTRL-H" class="k">CTRL-H</a> and ^? with <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> <span class="k">CTRL-?</span> or <a href="change.txt.html#%3CDel%3E" class="s">&lt;Del&gt;</a>.)
+
+If the value for <a href="term.txt.html#t_kb" class="d">t_kb</a> <a href="motion.txt.html#is" class="d">is</a> correct, but the <a href="term.txt.html#t_kD" class="d">t_kD</a> value <a href="motion.txt.html#is" class="d">is</a> not, use the "<a href="options.txt.html#%3Afixdel" class="d">:fixdel</a>"
+command.  It will set <a href="term.txt.html#t_kD" class="d">t_kD</a> according to the value of t_kb.  This <a href="motion.txt.html#is" class="d">is</a> useful if
+you are using several different terminals.              <a href="options.txt.html#%3Afixdel" class="l">:fixdel</a>
+
+When ^H <a href="motion.txt.html#is" class="d">is</a> not recognized <a href="motion.txt.html#as" class="d">as</a> <a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a> or <a href="change.txt.html#%3CDel%3E" class="s">&lt;Del&gt;</a>, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> used like <a href="insert.txt.html#a" class="d">a</a> backspace.
+
+
+Escape for | changed                                    <a name="escape-bar" class="t">escape-bar</a>
+<span class="h">--------------------</span>
+
+When the 'b' flag <a href="motion.txt.html#is" class="d">is</a> present in <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a>, the <a href="intro.txt.html#backslash" class="d">backslash</a> cannot be used to
+<a href="intro.txt.html#escape" class="d">escape</a> <a href="motion.txt.html#%27" class="d">'</a>|<a href="motion.txt.html#%27" class="d">'</a> in <a href="map.txt.html#mapping" class="d">mapping</a> and abbreviate commands, only <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> can.  This <a href="motion.txt.html#is" class="d">is</a>
+Vi-compatible.  If you work in Vi-compatible mode and had used "\|" to include
+<a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#bar" class="d">bar</a> in <a href="insert.txt.html#a" class="d">a</a> mapping, this needs to be replaced by "^V|"<a href="repeat.txt.html#." class="d">.</a>  See <a href="cmdline.txt.html#%3Abar" class="l">:bar</a><a href="repeat.txt.html#." class="d">.</a>
+
+
+Key codes changed                                       <a name="key-codes-changed" class="t">key-codes-changed</a>
+<span class="h">-----------------</span>
+
+The internal representation of key codes has changed dramatically.  In 3.0 <a href="insert.txt.html#a" class="d">a</a>
+one-byte code was used to represent <a href="insert.txt.html#a" class="d">a</a> key.  This caused problems with
+different characters sets that also used these codes.  In 4.0 <a href="insert.txt.html#a" class="d">a</a> three-byte
+code <a href="motion.txt.html#is" class="d">is</a> used that cannot be confused with <a href="insert.txt.html#a" class="d">a</a> character.          <a href="intro.txt.html#key-notation" class="l">key-notation</a>
+
+If you have used the single-byte key codes in your <a href="starting.txt.html#vimrc" class="d">vimrc</a> for mappings, you
+will have to replace them with the 4.0 codes.  Instead of using the three-byte
+code directly, you should use the symbolic representation for this in &lt;&gt;.  See
+the table below.  The table also lists the old name, <a href="motion.txt.html#as" class="d">as</a> <a href="motion.txt.html#it" class="d">it</a> was used in the 3.0
+documentation.
+
+The key names in <a href="intro.txt.html#%3C%3E" class="d">&lt;&gt;</a> can be used in mappings directly.  This makes <a href="motion.txt.html#it" class="d">it</a> possible
+to copy/paste examples or type them literally.  The <a href="intro.txt.html#%3C%3E" class="d">&lt;&gt;</a> <a href="intro.txt.html#notation" class="d">notation</a> has been
+introduced for this <a href="intro.txt.html#%3C%3E" class="l">&lt;&gt;</a><a href="repeat.txt.html#." class="d">.</a>  The 'B' and '&lt;' flags <a href="vim_faq.txt.html#must" class="d">must</a> not be present in
+<a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a> to enable this to work <a href="options.txt.html#%27cpoptions%27" class="l">'cpoptions'</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">old name        new name          old code      old MS-DOS code </span>
+<span class="h">                                hex     dec     hex     dec     </span>
+<span class="s">&lt;ESC&gt;</span>           <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a>
+<span class="s">&lt;TAB&gt;</span>           <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a>
+<span class="s">&lt;LF&gt;</span>            <a href="motion.txt.html#%3CNL%3E" class="s">&lt;NL&gt;</a> <span class="s">&lt;NewLine&gt;</span> <span class="s">&lt;LineFeed&gt;</span>
+<span class="s">&lt;SPACE&gt;</span>         <a href="motion.txt.html#%3CSpace%3E" class="s">&lt;Space&gt;</a>
+<span class="s">&lt;NUL&gt;</span>           <a href="intro.txt.html#%3CNul%3E" class="s">&lt;Nul&gt;</a>
+<span class="s">&lt;BELL&gt;</span>          <span class="s">&lt;Bell&gt;</span>
+<a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a>            <a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a> <span class="s">&lt;BackSpace&gt;</span>
+<span class="s">&lt;INSERT&gt;</span>        <a href="insert.txt.html#%3CInsert%3E" class="s">&lt;Insert&gt;</a>
+<span class="s">&lt;DEL&gt;</span>           <a href="change.txt.html#%3CDel%3E" class="s">&lt;Del&gt;</a> <span class="s">&lt;Delete&gt;</span>
+<span class="s">&lt;HOME&gt;</span>          <a href="motion.txt.html#%3CHome%3E" class="s">&lt;Home&gt;</a>
+<span class="s">&lt;END&gt;</span>           <a href="motion.txt.html#%3CEnd%3E" class="s">&lt;End&gt;</a>
+<span class="s">&lt;PAGE_UP&gt;</span>       <a href="scroll.txt.html#%3CPageUp%3E" class="s">&lt;PageUp&gt;</a>
+<span class="s">&lt;PAGE_DOWN&gt;</span>     <a href="scroll.txt.html#%3CPageDown%3E" class="s">&lt;PageDown&gt;</a>
+
+<span class="s">&lt;C_UP&gt;</span>          <a href="motion.txt.html#%3CUp%3E" class="s">&lt;Up&gt;</a>            0x80    128     0xb0    176
+<span class="s">&lt;C_DOWN&gt;</span>        <a href="motion.txt.html#%3CDown%3E" class="s">&lt;Down&gt;</a>          0x81    129     0xb1    177
+<span class="s">&lt;C_LEFT&gt;</span>        <a href="motion.txt.html#%3CLeft%3E" class="s">&lt;Left&gt;</a>          0x82    130     0xb2    178
+<span class="s">&lt;C_RIGHT&gt;</span>       <a href="motion.txt.html#%3CRight%3E" class="s">&lt;Right&gt;</a>         0x83    131     0xb3    179
+<span class="s">&lt;SC_UP&gt;</span>         <a href="scroll.txt.html#%3CS-Up%3E" class="s">&lt;S-Up&gt;</a>          0x84    132     0xb4    180
+<span class="s">&lt;SC_DOWN&gt;</span>       <a href="scroll.txt.html#%3CS-Down%3E" class="s">&lt;S-Down&gt;</a>        0x85    133     0xb5    181
+<span class="s">&lt;SC_LEFT&gt;</span>       <a href="motion.txt.html#%3CS-Left%3E" class="s">&lt;S-Left&gt;</a>        0x86    134     0xb6    182
+<span class="s">&lt;SC_RIGHT&gt;</span>      <a href="motion.txt.html#%3CS-Right%3E" class="s">&lt;S-Right&gt;</a>       0x87    135     0xb7    183
+
+<a href="helphelp.txt.html#%3CF1%3E" class="s">&lt;F1&gt;</a>            <a href="helphelp.txt.html#%3CF1%3E" class="s">&lt;F1&gt;</a>            0x88    136     0xb8    184
+<a href="term.txt.html#%3CF2%3E" class="s">&lt;F2&gt;</a>            <a href="term.txt.html#%3CF2%3E" class="s">&lt;F2&gt;</a>            0x89    137     0xb9    185
+<a href="term.txt.html#%3CF3%3E" class="s">&lt;F3&gt;</a>            <a href="term.txt.html#%3CF3%3E" class="s">&lt;F3&gt;</a>            0x8a    138     0xba    186
+<a href="term.txt.html#%3CF4%3E" class="s">&lt;F4&gt;</a>            <a href="term.txt.html#%3CF4%3E" class="s">&lt;F4&gt;</a>            0x8b    139     0xbb    187
+<a href="term.txt.html#%3CF5%3E" class="s">&lt;F5&gt;</a>            <a href="term.txt.html#%3CF5%3E" class="s">&lt;F5&gt;</a>            0x8c    140     0xbc    188
+<a href="term.txt.html#%3CF6%3E" class="s">&lt;F6&gt;</a>            <a href="term.txt.html#%3CF6%3E" class="s">&lt;F6&gt;</a>            0x8d    141     0xbd    189
+<a href="term.txt.html#%3CF7%3E" class="s">&lt;F7&gt;</a>            <a href="term.txt.html#%3CF7%3E" class="s">&lt;F7&gt;</a>            0x8e    142     0xbe    190
+<a href="term.txt.html#%3CF8%3E" class="s">&lt;F8&gt;</a>            <a href="term.txt.html#%3CF8%3E" class="s">&lt;F8&gt;</a>            0x8f    143     0xbf    191
+<a href="term.txt.html#%3CF9%3E" class="s">&lt;F9&gt;</a>            <a href="term.txt.html#%3CF9%3E" class="s">&lt;F9&gt;</a>            0x90    144     0xc0    192
+<a href="term.txt.html#%3CF10%3E" class="s">&lt;F10&gt;</a>           <a href="term.txt.html#%3CF10%3E" class="s">&lt;F10&gt;</a>           0x91    145     0xc1    193
+
+<span class="s">&lt;SF1&gt;</span>           <a href="intro.txt.html#%3CS-F1%3E" class="s">&lt;S-F1&gt;</a>          0x92    146     0xc2    194
+<span class="s">&lt;SF2&gt;</span>           <a href="term.txt.html#%3CS-F2%3E" class="s">&lt;S-F2&gt;</a>          0x93    147     0xc3    195
+<span class="s">&lt;SF3&gt;</span>           <a href="term.txt.html#%3CS-F3%3E" class="s">&lt;S-F3&gt;</a>          0x94    148     0xc4    196
+<span class="s">&lt;SF4&gt;</span>           <a href="term.txt.html#%3CS-F4%3E" class="s">&lt;S-F4&gt;</a>          0x95    149     0xc5    197
+<span class="s">&lt;SF5&gt;</span>           <a href="term.txt.html#%3CS-F5%3E" class="s">&lt;S-F5&gt;</a>          0x96    150     0xc6    198
+<span class="s">&lt;SF6&gt;</span>           <a href="term.txt.html#%3CS-F6%3E" class="s">&lt;S-F6&gt;</a>          0x97    151     0xc7    199
+<span class="s">&lt;SF7&gt;</span>           <a href="term.txt.html#%3CS-F7%3E" class="s">&lt;S-F7&gt;</a>          0x98    152     0xc8    200
+<span class="s">&lt;SF8&gt;</span>           <a href="term.txt.html#%3CS-F8%3E" class="s">&lt;S-F8&gt;</a>          0x99    153     0xc9    201
+<span class="s">&lt;SF9&gt;</span>           <a href="term.txt.html#%3CS-F9%3E" class="s">&lt;S-F9&gt;</a>          0x9a    154     0xca    202
+<span class="s">&lt;SF10&gt;</span>          <a href="term.txt.html#%3CS-F10%3E" class="s">&lt;S-F10&gt;</a>         0x9b    155     0xcb    203
+
+<span class="s">&lt;HELP&gt;</span>          <a href="helphelp.txt.html#%3CHelp%3E" class="s">&lt;Help&gt;</a>          0x9c    156     0xcc    204
+<span class="s">&lt;UNDO&gt;</span>          <a href="undo.txt.html#%3CUndo%3E" class="s">&lt;Undo&gt;</a>          0x9d    157     0xcd    205
+
+                (not used)      0x9e    158     0xce    206
+                (not used)      0x9f    159     0xcf    207
+
+
+Terminal <a href="options.txt.html#options" class="d">options</a> changed                                <a name="termcap-changed" class="t">termcap-changed</a>
+<span class="h">------------------------</span>
+
+The names of the terminal <a href="options.txt.html#options" class="d">options</a> have been changed to match the <a href="term.txt.html#termcap" class="d">termcap</a> names
+of these options.  All terminal <a href="options.txt.html#options" class="d">options</a> now have the name t_xx, where xx <a href="motion.txt.html#is" class="d">is</a>
+the <a href="term.txt.html#termcap" class="d">termcap</a> name.  Normally these <a href="options.txt.html#options" class="d">options</a> are not used, unless you have <a href="insert.txt.html#a" class="d">a</a>
+<a href="term.txt.html#termcap" class="d">termcap</a> entry that <a href="motion.txt.html#is" class="d">is</a> wrong or incomplete, or you have set the highlight
+<a href="options.txt.html#options" class="d">options</a> to <a href="insert.txt.html#a" class="d">a</a> different value.                           <a href="term.txt.html#terminal-options" class="l">terminal-options</a>
+
+<span class="n">Note</span> that for some keys there <a href="motion.txt.html#is" class="d">is</a> no <a href="term.txt.html#termcap" class="d">termcap</a> name.  Use the <a href="intro.txt.html#%3C%3E" class="d">&lt;&gt;</a> type of name
+instead, which <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> good idea anyway.
+
+<span class="n">Note</span> that "<a href="term.txt.html#t_ti" class="d">t_ti</a>" has become "<a href="term.txt.html#t_mr" class="d">t_mr</a>" (invert/reverse output) and "<a href="term.txt.html#t_ts" class="d">t_ts</a>" has
+become "<a href="term.txt.html#t_ti" class="d">t_ti</a>" (init terminal mode).  Be careful when you use "<a href="term.txt.html#t_ti" class="d">t_ti</a>"<a href="change.txt.html#%21" class="d">!</a>
+
+<span class="h">old name        new name        meaning         </span>
+<a href="#t_cdl" class="d">t_cdl</a>           <a href="term.txt.html#t_DL" class="d">t_DL</a>            delete number of lines          <a name="t_cdl" class="t">t_cdl</a>
+<a href="#t_ci" class="d">t_ci</a>            <a href="term.txt.html#t_vi" class="d">t_vi</a>            cursor invisible                <a name="t_ci" class="t">t_ci</a>
+<a href="#t_cil" class="d">t_cil</a>           <a href="term.txt.html#t_AL" class="d">t_AL</a>            <a href="insert.txt.html#insert" class="d">insert</a> number of lines          <a name="t_cil" class="t">t_cil</a>
+<a href="term.txt.html#t_cm" class="d">t_cm</a>            <a href="term.txt.html#t_cm" class="d">t_cm</a>            move cursor
+<a href="#t_cri" class="d">t_cri</a>           <a href="term.txt.html#t_RI" class="d">t_RI</a>            cursor number of chars right    <a name="t_cri" class="t">t_cri</a>
+<a href="#t_cv" class="d">t_cv</a>            <a href="term.txt.html#t_ve" class="d">t_ve</a>            cursor visible                  <a name="t_cv" class="t">t_cv</a>
+<a href="#t_cvv" class="d">t_cvv</a>           <a href="term.txt.html#t_vs" class="d">t_vs</a>            cursor very visible             <a name="t_cvv" class="t">t_cvv</a>
+<a href="term.txt.html#t_dl" class="d">t_dl</a>            <a href="term.txt.html#t_dl" class="d">t_dl</a>            delete line
+<a href="term.txt.html#t_cs" class="d">t_cs</a>            <a href="term.txt.html#t_cs" class="d">t_cs</a>            scroll region
+<a href="#t_ed" class="d">t_ed</a>            <a href="term.txt.html#t_cl" class="d">t_cl</a>            clear display                   <a name="t_ed" class="t">t_ed</a>
+<a href="#t_el" class="d">t_el</a>            <a href="term.txt.html#t_ce" class="d">t_ce</a>            clear line                      <a name="t_el" class="t">t_el</a>
+<a href="#t_il" class="d">t_il</a>            <a href="term.txt.html#t_al" class="d">t_al</a>            <a href="insert.txt.html#insert" class="d">insert</a> line                     <a name="t_il" class="t">t_il</a>
+                <a href="term.txt.html#t_da" class="d">t_da</a>            display may be retained above the screen
+                <a href="term.txt.html#t_db" class="d">t_db</a>            display may be retained below the screen
+<a href="term.txt.html#t_ke" class="d">t_ke</a>            <a href="term.txt.html#t_ke" class="d">t_ke</a>            <a href="change.txt.html#put" class="d">put</a> terminal out of keypad transmit mode
+<a href="term.txt.html#t_ks" class="d">t_ks</a>            <a href="term.txt.html#t_ks" class="d">t_ks</a>            <a href="change.txt.html#put" class="d">put</a> terminal in keypad transmit mode
+<a href="term.txt.html#t_ms" class="d">t_ms</a>            <a href="term.txt.html#t_ms" class="d">t_ms</a>            save to move cursor in highlight mode
+<a href="term.txt.html#t_se" class="d">t_se</a>            <a href="term.txt.html#t_se" class="d">t_se</a>            normal mode (undo t_so)
+<a href="term.txt.html#t_so" class="d">t_so</a>            <a href="term.txt.html#t_so" class="d">t_so</a>            <a href="intro.txt.html#shift" class="d">shift</a> out (standout) mode
+<a href="term.txt.html#t_ti" class="d">t_ti</a>            <a href="term.txt.html#t_mr" class="d">t_mr</a>            reverse highlight
+<a href="#t_tb" class="d">t_tb</a>            <a href="term.txt.html#t_md" class="d">t_md</a>            <a href="syntax.txt.html#bold" class="d">bold</a> mode                       <a name="t_tb" class="t">t_tb</a>
+<a href="#t_tp" class="d">t_tp</a>            <a href="term.txt.html#t_me" class="d">t_me</a>            highlight <a href="intro.txt.html#end" class="d">end</a>                   <a name="t_tp" class="t">t_tp</a>
+<a href="term.txt.html#t_sr" class="d">t_sr</a>            <a href="term.txt.html#t_sr" class="d">t_sr</a>            scroll reverse
+<a href="term.txt.html#t_te" class="d">t_te</a>            <a href="term.txt.html#t_te" class="d">t_te</a>            out of <a href="term.txt.html#termcap" class="d">termcap</a> mode
+<a href="term.txt.html#t_ts" class="d">t_ts</a>            <a href="term.txt.html#t_ti" class="d">t_ti</a>            into <a href="term.txt.html#termcap" class="d">termcap</a> mode               <a name="t_ts_old" class="t">t_ts_old</a>
+<a href="term.txt.html#t_vb" class="d">t_vb</a>            <a href="term.txt.html#t_vb" class="d">t_vb</a>            visual bell
+<a href="#t_csc" class="d">t_csc</a>           <a href="term.txt.html#t_CS" class="d">t_CS</a>            cursor <a href="motion.txt.html#is" class="d">is</a> relative to scroll region <a name="t_csc" class="t">t_csc</a>
+
+<a href="term.txt.html#t_ku" class="d">t_ku</a>    <a href="term.txt.html#t_ku" class="d">t_ku</a>    <a href="motion.txt.html#%3CUp%3E" class="s">&lt;Up&gt;</a>            arrow up
+<a href="term.txt.html#t_kd" class="d">t_kd</a>    <a href="term.txt.html#t_kd" class="d">t_kd</a>    <a href="motion.txt.html#%3CDown%3E" class="s">&lt;Down&gt;</a>          arrow down
+<a href="term.txt.html#t_kr" class="d">t_kr</a>    <a href="term.txt.html#t_kr" class="d">t_kr</a>    <a href="motion.txt.html#%3CRight%3E" class="s">&lt;Right&gt;</a>         arrow right
+<a href="term.txt.html#t_kl" class="d">t_kl</a>    <a href="term.txt.html#t_kl" class="d">t_kl</a>    <a href="motion.txt.html#%3CLeft%3E" class="s">&lt;Left&gt;</a>          arrow left
+<a href="#t_sku" class="d">t_sku</a>           <a href="scroll.txt.html#%3CS-Up%3E" class="s">&lt;S-Up&gt;</a>          shifted arrow up                <a name="t_sku" class="t">t_sku</a>
+<a href="#t_skd" class="d">t_skd</a>           <a href="scroll.txt.html#%3CS-Down%3E" class="s">&lt;S-Down&gt;</a>        shifted arrow down              <a name="t_skd" class="t">t_skd</a>
+<a href="#t_skr" class="d">t_skr</a>   <a href="term.txt.html#t_%25i" class="d">t_%i</a>    <a href="motion.txt.html#%3CS-Right%3E" class="s">&lt;S-Right&gt;</a>       shifted arrow right             <a name="t_skr" class="t">t_skr</a>
+<a href="#t_skl" class="d">t_skl</a>   <a href="term.txt.html#t_%234" class="d">t_#4</a>    <a href="motion.txt.html#%3CS-Left%3E" class="s">&lt;S-Left&gt;</a>        shifted arrow left              <a name="t_skl" class="t">t_skl</a>
+<a href="#t_f1" class="d">t_f1</a>    <a href="term.txt.html#t_k1" class="d">t_k1</a>    <a href="helphelp.txt.html#%3CF1%3E" class="s">&lt;F1&gt;</a>            function key 1                  <a name="t_f1" class="t">t_f1</a>
+<a href="#t_f2" class="d">t_f2</a>    <a href="term.txt.html#t_k2" class="d">t_k2</a>    <a href="term.txt.html#%3CF2%3E" class="s">&lt;F2&gt;</a>            function key 2                  <a name="t_f2" class="t">t_f2</a>
+<a href="#t_f3" class="d">t_f3</a>    <a href="term.txt.html#t_k3" class="d">t_k3</a>    <a href="term.txt.html#%3CF3%3E" class="s">&lt;F3&gt;</a>            function key 3                  <a name="t_f3" class="t">t_f3</a>
+<a href="#t_f4" class="d">t_f4</a>    <a href="term.txt.html#t_k4" class="d">t_k4</a>    <a href="term.txt.html#%3CF4%3E" class="s">&lt;F4&gt;</a>            function key 4                  <a name="t_f4" class="t">t_f4</a>
+<a href="#t_f5" class="d">t_f5</a>    <a href="term.txt.html#t_k5" class="d">t_k5</a>    <a href="term.txt.html#%3CF5%3E" class="s">&lt;F5&gt;</a>            function key 5                  <a name="t_f5" class="t">t_f5</a>
+<a href="#t_f6" class="d">t_f6</a>    <a href="term.txt.html#t_k6" class="d">t_k6</a>    <a href="term.txt.html#%3CF6%3E" class="s">&lt;F6&gt;</a>            function key 6                  <a name="t_f6" class="t">t_f6</a>
+<a href="#t_f7" class="d">t_f7</a>    <a href="term.txt.html#t_k7" class="d">t_k7</a>    <a href="term.txt.html#%3CF7%3E" class="s">&lt;F7&gt;</a>            function key 7                  <a name="t_f7" class="t">t_f7</a>
+<a href="#t_f8" class="d">t_f8</a>    <a href="term.txt.html#t_k8" class="d">t_k8</a>    <a href="term.txt.html#%3CF8%3E" class="s">&lt;F8&gt;</a>            function key 8                  <a name="t_f8" class="t">t_f8</a>
+<a href="#t_f9" class="d">t_f9</a>    <a href="term.txt.html#t_k9" class="d">t_k9</a>    <a href="term.txt.html#%3CF9%3E" class="s">&lt;F9&gt;</a>            function key 9                  <a name="t_f9" class="t">t_f9</a>
+<a href="#t_f10" class="d">t_f10</a>   <a href="term.txt.html#t_k%3B" class="d">t_k;</a>    <a href="term.txt.html#%3CF10%3E" class="s">&lt;F10&gt;</a>           function key 10                 <a name="t_f10" class="t">t_f10</a>
+<a href="#t_sf1" class="d">t_sf1</a>           <a href="intro.txt.html#%3CS-F1%3E" class="s">&lt;S-F1&gt;</a>          shifted function key 1          <a name="t_sf1" class="t">t_sf1</a>
+<a href="#t_sf2" class="d">t_sf2</a>           <a href="term.txt.html#%3CS-F2%3E" class="s">&lt;S-F2&gt;</a>          shifted function key 2          <a name="t_sf2" class="t">t_sf2</a>
+<a href="#t_sf3" class="d">t_sf3</a>           <a href="term.txt.html#%3CS-F3%3E" class="s">&lt;S-F3&gt;</a>          shifted function key 3          <a name="t_sf3" class="t">t_sf3</a>
+<a href="#t_sf4" class="d">t_sf4</a>           <a href="term.txt.html#%3CS-F4%3E" class="s">&lt;S-F4&gt;</a>          shifted function key 4          <a name="t_sf4" class="t">t_sf4</a>
+<a href="#t_sf5" class="d">t_sf5</a>           <a href="term.txt.html#%3CS-F5%3E" class="s">&lt;S-F5&gt;</a>          shifted function key 5          <a name="t_sf5" class="t">t_sf5</a>
+<a href="#t_sf6" class="d">t_sf6</a>           <a href="term.txt.html#%3CS-F6%3E" class="s">&lt;S-F6&gt;</a>          shifted function key 6          <a name="t_sf6" class="t">t_sf6</a>
+<a href="#t_sf7" class="d">t_sf7</a>           <a href="term.txt.html#%3CS-F7%3E" class="s">&lt;S-F7&gt;</a>          shifted function key 7          <a name="t_sf7" class="t">t_sf7</a>
+<a href="#t_sf8" class="d">t_sf8</a>           <a href="term.txt.html#%3CS-F8%3E" class="s">&lt;S-F8&gt;</a>          shifted function key 8          <a name="t_sf8" class="t">t_sf8</a>
+<a href="#t_sf9" class="d">t_sf9</a>           <a href="term.txt.html#%3CS-F9%3E" class="s">&lt;S-F9&gt;</a>          shifted function key 9          <a name="t_sf9" class="t">t_sf9</a>
+<a href="#t_sf10" class="d">t_sf10</a>          <a href="term.txt.html#%3CS-F10%3E" class="s">&lt;S-F10&gt;</a>         shifted function key 10         <a name="t_sf10" class="t">t_sf10</a>
+<a href="#t_help" class="d">t_help</a>  <a href="term.txt.html#t_%251" class="d">t_%1</a>    <a href="helphelp.txt.html#%3CHelp%3E" class="s">&lt;Help&gt;</a>          <a href="helphelp.txt.html#help" class="d">help</a> key                        <a name="t_help" class="t">t_help</a>
+<a href="#t_undo" class="d">t_undo</a>  <a href="term.txt.html#t_%268" class="d">t_&amp;8</a>    <a href="undo.txt.html#%3CUndo%3E" class="s">&lt;Undo&gt;</a>          <a href="undo.txt.html#undo" class="d">undo</a> key                        <a name="t_undo" class="t">t_undo</a>
+
+
+<a href="options.txt.html#%27errorformat%27" class="o">'errorformat'</a> option changed                            <a name="errorformat-changed" class="t">errorformat-changed</a>
+<span class="h">----------------------------</span>
+
+<a href="options.txt.html#%27errorformat%27" class="o">'errorformat'</a> can now contain several formats, separated by commas.  The first
+format that matches <a href="motion.txt.html#is" class="d">is</a> used.  The default values have been adjusted to catch
+the most common formats.                                <a href="quickfix.txt.html#errorformat" class="l">errorformat</a>
+
+If you have <a href="insert.txt.html#a" class="d">a</a> format that contains <a href="insert.txt.html#a" class="d">a</a> comma, <a href="motion.txt.html#it" class="d">it</a> needs to be preceded with <a href="insert.txt.html#a" class="d">a</a>
+backslash.  Type two backslashes, because the "<a href="options.txt.html#%3Aset" class="d">:set</a>" command will eat one.
+
+
+<a href="vi_diff.txt.html#%27graphic%27" class="o">'graphic'</a> option gone                                   <a name="graphic-option-gone" class="t">graphic-option-gone</a>
+<span class="h">---------------------</span>
+
+The <a href="vi_diff.txt.html#%27graphic%27" class="o">'graphic'</a> option was used to make the characters between <span class="s">&lt;~&gt;</span> and 0xa0
+display directly on the screen.  Now the <a href="options.txt.html#%27isprint%27" class="o">'isprint'</a> option takes care of this
+with many more possibilities.  The default setting <a href="motion.txt.html#is" class="d">is</a> the same; you only need
+to look into this if you previously set the <a href="vi_diff.txt.html#%27graphic%27" class="o">'graphic'</a> option in your vimrc.
+                                                        <a href="options.txt.html#%27isprint%27" class="l">'isprint'</a>
+
+
+<span class="o">'yankendofline'</span> option gone                             <a name="ye-option-gone" class="t">ye-option-gone</a>
+<span class="h">---------------------------</span>
+
+The <span class="o">'yankendofline'</span> option has been removed.  Instead you can just use
+        <a href="map.txt.html#%3Amap" class="d">:map</a> <a href="change.txt.html#Y" class="d">Y</a> y$
+
+
+<a href="options.txt.html#%27icon%27" class="o">'icon'</a> and <a href="options.txt.html#%27title%27" class="o">'title'</a> default value changed                <a name="icon-changed" class="t">icon-changed</a>
+<span class="h">----------------------------------------</span>
+
+The <a href="options.txt.html#%27title%27" class="o">'title'</a> option <a href="motion.txt.html#is" class="d">is</a> now only set by default if the original title can be
+restored.  Avoids "Thanks for flying Vim" titles.  If you want them anyway,
+<a href="change.txt.html#put" class="d">put</a> "<a href="options.txt.html#%3Aset" class="d">:set</a> title" in your vimrc.                         <a href="options.txt.html#%27title%27" class="l">'title'</a>
+
+The default for <a href="options.txt.html#%27icon%27" class="o">'icon'</a> now depends on the possibility of restoring the
+original value, just like <a href="options.txt.html#%27title%27" class="o">'title'</a>.  If you don't like your icon titles to be
+changed, add this line to your vimrc:                   <a href="options.txt.html#%27icon%27" class="l">'icon'</a>
+        <a href="options.txt.html#%3Aset" class="d">:set</a> noicon
+
+
+<a href="options.txt.html#%27highlight%27" class="o">'highlight'</a> option changed                              <a name="highlight-changed" class="t">highlight-changed</a>
+<span class="h">--------------------------</span>
+
+The 'i' flag now means <a href="syntax.txt.html#italic" class="d">italic</a> highlighting, instead of invert.  The 'r' flag
+<a href="motion.txt.html#is" class="d">is</a> used for reverse highlighting, which <a href="motion.txt.html#is" class="d">is</a> what 'i' used to be.  Normally you
+won't see the difference, because <a href="syntax.txt.html#italic" class="d">italic</a> mode <a href="motion.txt.html#is" class="d">is</a> not supported on most
+terminals and reverse mode <a href="motion.txt.html#is" class="d">is</a> used <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> fallback.       <a href="options.txt.html#%27highlight%27" class="l">'highlight'</a>
+
+When an occasion <a href="motion.txt.html#is" class="d">is</a> not present in <a href="options.txt.html#%27highlight%27" class="o">'highlight'</a>, use the mode from the default
+value for <a href="options.txt.html#%27highlight%27" class="o">'highlight'</a>, instead of reverse mode.
+
+
+<a href="options.txt.html#%27tildeop%27" class="o">'tildeop'</a> and <a href="options.txt.html#%27weirdinvert%27" class="o">'weirdinvert'</a> short names changed         <a name="short-name-changed" class="t">short-name-changed</a>
+<span class="h">-----------------------------------------------</span>
+
+Renamed <a href="options.txt.html#%27to%27" class="o">'to'</a> (abbreviation for <a href="options.txt.html#%27tildeop%27" class="o">'tildeop'</a>) to <a href="options.txt.html#%27top%27" class="o">'top'</a>.     <a href="options.txt.html#%27tildeop%27" class="l">'tildeop'</a>
+Renamed <a href="options.txt.html#%27wi%27" class="o">'wi'</a> (abbreviation for <a href="options.txt.html#%27weirdinvert%27" class="o">'weirdinvert'</a>) to <a href="options.txt.html#%27wiv%27" class="o">'wiv'</a>. <a href="options.txt.html#%27weirdinvert%27" class="l">'weirdinvert'</a>
+
+This was done because <a href="intro.txt.html#Vi" class="d">Vi</a> uses <a href="options.txt.html#%27wi%27" class="o">'wi'</a> <a href="motion.txt.html#as" class="d">as</a> the short name for <a href="options.txt.html#%27window%27" class="o">'window'</a> and <a href="options.txt.html#%27to%27" class="o">'to'</a> <a href="motion.txt.html#as" class="d">as</a>
+the short name for <a href="options.txt.html#%27timeout%27" class="o">'timeout'</a>.  This means that if you try setting these
+options, you won't get an error message, but the effect will be different.
+
+
+Use of "<a href="visual.txt.html#v" class="d">v</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="visual.txt.html#V" class="d">V</a>" and "<a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a>" in <a href="visual.txt.html#Visual" class="d">Visual</a> mode             <a name="use-visual-cmds" class="t">use-visual-cmds</a>
+<span class="h">-------------------------------------------</span>
+
+In <a href="visual.txt.html#Visual" class="d">Visual</a> mode, "<a href="visual.txt.html#v" class="d">v</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="visual.txt.html#V" class="d">V</a>"<a href="motion.txt.html#%2C" class="d">,</a> and "<a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a>" used to <a href="intro.txt.html#end" class="d">end</a> <a href="visual.txt.html#Visual" class="d">Visual</a> mode.  Now this
+happens only if the <a href="visual.txt.html#Visual" class="d">Visual</a> mode was in the corresponding type.  Otherwise the
+type of <a href="visual.txt.html#Visual" class="d">Visual</a> mode <a href="motion.txt.html#is" class="d">is</a> changed.  Now only ESC can be used in all circumstances
+to <a href="intro.txt.html#end" class="d">end</a> <a href="visual.txt.html#Visual" class="d">Visual</a> mode without doing anything.              <a href="visual.txt.html#v_V" class="l">v_V</a>
+
+
+<a href="scroll.txt.html#CTRL-B" class="k">CTRL-B</a> in <a href="insert.txt.html#Insert" class="d">Insert</a> mode removed                           <a name="toggle-revins" class="t">toggle-revins</a>
+<span class="h">-----------------------------</span>
+
+<a href="scroll.txt.html#CTRL-B" class="k">CTRL-B</a> in <a href="insert.txt.html#Insert" class="d">Insert</a> mode used to <a href="options.txt.html#toggle" class="d">toggle</a> the <a href="options.txt.html#%27revins%27" class="o">'revins'</a> option.  If you don't know
+this and accidentally hit <a href="scroll.txt.html#CTRL-B" class="k">CTRL-B</a>, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> very difficult to find out how to <a href="undo.txt.html#undo" class="d">undo</a>
+it.  Since hardly anybody uses this feature, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> disabled by default.  If
+you want to use it, define RIGHTLEFT in feature.h before compiling. <a href="options.txt.html#%27revins%27" class="l">'revins'</a>
+
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

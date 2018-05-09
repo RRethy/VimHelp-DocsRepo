@@ -1,0 +1,251 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: recover.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="recover.txt" class="t">recover.txt</a>   For <span class="i">Vim version 8.0.</span>  Last change: 2014 Mar 27
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Bram Moolenaar</span>
+
+
+Recovery after <a href="insert.txt.html#a" class="d">a</a> crash                                  <a name="crash-recovery" class="t">crash-recovery</a>
+
+You have spent several hours typing in that text that has to be finished
+next morning, and then disaster strikes: Your computer crashes.
+
+                        DON'T PANIC!
+
+You can recover most of your changes from the files that Vim uses to store
+the contents of the file.  Mostly you can recover your work with one command:
+        vim <a href="starting.txt.html#-r" class="d">-r</a> filename
+
+1. The swap file        <a href="#swap-file" class="l">swap-file</a>
+2. Recovery             <a href="#recovery" class="l">recovery</a>
+
+<span class="h">==============================================================================</span>
+1. The swap file                                        <a name="swap-file" class="t">swap-file</a>
+
+Vim stores the things you changed in <a href="insert.txt.html#a" class="d">a</a> swap file.  Using the original file
+you started from plus the swap file you can mostly recover your work.
+
+You can see the name of the current swap file being used with the command:
+
+        :sw[apname]                                     <a name="%3Asw" class="t">:sw</a> <a name="%3Aswapname" class="t">:swapname</a>
+
+The name of the swap file <a href="motion.txt.html#is" class="d">is</a> normally the same <a href="motion.txt.html#as" class="d">as</a> the file you are editing,
+with the extension ".swp"<a href="repeat.txt.html#." class="d">.</a>
+<a href="motion.txt.html#-" class="d">-</a> On Unix, <a href="insert.txt.html#a" class="d">a</a> '.' <a href="motion.txt.html#is" class="d">is</a> prepended to swap file names in the same directory <a href="motion.txt.html#as" class="d">as</a> the
+  edited file.  This avoids that the swap file shows up in <a href="insert.txt.html#a" class="d">a</a> directory
+  listing.
+<a href="motion.txt.html#-" class="d">-</a> On <a href="os_msdos.txt.html#MS-DOS" class="d">MS-DOS</a> machines and when the <a href="options.txt.html#%27shortname%27" class="o">'shortname'</a> option <a href="motion.txt.html#is" class="d">is</a> on, any '.' in the
+  original file name <a href="motion.txt.html#is" class="d">is</a> replaced with '_'.
+<a href="motion.txt.html#-" class="d">-</a> If this file already exists (e.g., when you are recovering from <a href="insert.txt.html#a" class="d">a</a> crash) <a href="insert.txt.html#a" class="d">a</a>
+  warning <a href="motion.txt.html#is" class="d">is</a> given and another extension <a href="motion.txt.html#is" class="d">is</a> used, ".swo"<a href="motion.txt.html#%2C" class="d">,</a> ".swn"<a href="motion.txt.html#%2C" class="d">,</a> etc.
+<a href="motion.txt.html#-" class="d">-</a> An existing file will never be overwritten.
+<a href="motion.txt.html#-" class="d">-</a> The swap file <a href="motion.txt.html#is" class="d">is</a> deleted <a href="motion.txt.html#as" class="d">as</a> soon <a href="motion.txt.html#as" class="d">as</a> Vim stops editing the file.
+
+Technical: The replacement of '.' with '_' <a href="motion.txt.html#is" class="d">is</a> done to avoid problems with
+           <a href="os_msdos.txt.html#MS-DOS" class="d">MS-DOS</a> compatible filesystems (e.g., crossdos, multidos).  If Vim
+           <a href="motion.txt.html#is" class="d">is</a> able to detect that the file <a href="motion.txt.html#is" class="d">is</a> on an MS-DOS-like filesystem, <a href="insert.txt.html#a" class="d">a</a>
+           flag <a href="motion.txt.html#is" class="d">is</a> set that has the same effect <a href="motion.txt.html#as" class="d">as</a> the <a href="options.txt.html#%27shortname%27" class="o">'shortname'</a> option.
+           This flag <a href="motion.txt.html#is" class="d">is</a> reset when you start editing another file.
+                                                        <a name="E326" class="t">E326</a>
+           If the ".swp" file name already exists, the last character <a href="motion.txt.html#is" class="d">is</a>
+           decremented until there <a href="motion.txt.html#is" class="d">is</a> no file with that name or ".saa" <a href="motion.txt.html#is" class="d">is</a>
+           reached.  In the last case, no swap file <a href="motion.txt.html#is" class="d">is</a> created.
+
+By setting the <a href="options.txt.html#%27directory%27" class="o">'directory'</a> option you can place the swap file in another place
+than where the edited file is.
+Advantages:
+<a href="motion.txt.html#-" class="d">-</a> You will not pollute the directories with ".swp" files.
+<a href="motion.txt.html#-" class="d">-</a> When the <a href="options.txt.html#%27directory%27" class="o">'directory'</a> <a href="motion.txt.html#is" class="d">is</a> on another partition, reduce the risk of damaging
+  the file system where the file <a href="motion.txt.html#is" class="d">is</a> (in <a href="insert.txt.html#a" class="d">a</a> crash).
+Disadvantages:
+<a href="motion.txt.html#-" class="d">-</a> You can get name collisions from files with the same name but in different
+  directories (although Vim tries to avoid that by comparing the path name).
+  This will result in bogus <a href="usr_11.txt.html#ATTENTION" class="d">ATTENTION</a> warning messages.
+<a href="motion.txt.html#-" class="d">-</a> When you use your <a href="intro.txt.html#home" class="d">home</a> directory, and somebody else tries to edit the same
+  file, he will not see your swap file and will not get the <a href="usr_11.txt.html#ATTENTION" class="d">ATTENTION</a> warning
+  message.
+On the <a href="os_amiga.txt.html#Amiga" class="d">Amiga</a> you can also use <a href="insert.txt.html#a" class="d">a</a> recoverable ram disk, but there <a href="motion.txt.html#is" class="d">is</a> no 100%
+guarantee that this works.  Putting swap files in <a href="insert.txt.html#a" class="d">a</a> normal ram disk (like RAM:
+on the Amiga) or in <a href="insert.txt.html#a" class="d">a</a> place that <a href="motion.txt.html#is" class="d">is</a> cleared when rebooting (like /tmp on Unix)
+makes no sense, you will lose the swap file in <a href="insert.txt.html#a" class="d">a</a> crash.
+
+If you want to <a href="change.txt.html#put" class="d">put</a> swap files in <a href="insert.txt.html#a" class="d">a</a> fixed place, <a href="change.txt.html#put" class="d">put</a> <a href="insert.txt.html#a" class="d">a</a> command resembling the
+following ones in your .vimrc:
+        <a href="options.txt.html#%3Aset" class="d">:set</a> dir=dh2:tmp        (for Amiga)
+        <a href="options.txt.html#%3Aset" class="d">:set</a> dir=~/tmp          (for Unix)
+        <a href="options.txt.html#%3Aset" class="d">:set</a> dir=c:\\tmp        (for <a href="os_msdos.txt.html#MS-DOS" class="d">MS-DOS</a> and Win32)
+This <a href="motion.txt.html#is" class="d">is</a> also very handy when editing files on floppy.  Of course you will have
+to create that "tmp" directory for this to work!
+
+For read-only files, <a href="insert.txt.html#a" class="d">a</a> swap file <a href="motion.txt.html#is" class="d">is</a> not used.  Unless the file <a href="motion.txt.html#is" class="d">is</a> big, causing
+the amount of memory used to be higher than given with <a href="options.txt.html#%27maxmem%27" class="o">'maxmem'</a> or
+<a href="options.txt.html#%27maxmemtot%27" class="o">'maxmemtot'</a>.  And when making <a href="insert.txt.html#a" class="d">a</a> change to <a href="insert.txt.html#a" class="d">a</a> read-only file, the swap file <a href="motion.txt.html#is" class="d">is</a>
+created anyway.
+
+The <a href="options.txt.html#%27swapfile%27" class="o">'swapfile'</a> option can be reset to avoid creating <a href="insert.txt.html#a" class="d">a</a> swapfile.  And the
+<a href="#%3Anoswapfile" class="l">:noswapfile</a> modifier can be used to not create <a href="insert.txt.html#a" class="d">a</a> swapfile for <a href="insert.txt.html#a" class="d">a</a> new buffer.
+
+:nos[wapfile]   <span class="s">{command}</span>                       <a name="%3Anos" class="t">:nos</a> <a name="%3Anoswapfile" class="t">:noswapfile</a>
+                Execute <span class="s">{command}</span>. If <a href="motion.txt.html#it" class="d">it</a> contains <a href="insert.txt.html#a" class="d">a</a> command that loads <a href="insert.txt.html#a" class="d">a</a> new
+                buffer, <a href="motion.txt.html#it" class="d">it</a> will be loaded without creating <a href="insert.txt.html#a" class="d">a</a> swapfile and the
+                <a href="options.txt.html#%27swapfile%27" class="o">'swapfile'</a> option will be reset.  If <a href="insert.txt.html#a" class="d">a</a> buffer already had <a href="insert.txt.html#a" class="d">a</a>
+                swapfile <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> not removed and <a href="options.txt.html#%27swapfile%27" class="o">'swapfile'</a> <a href="motion.txt.html#is" class="d">is</a> not reset.
+
+
+<span class="h">Detecting an existing swap file </span>
+
+You can find this in the user manual, <a href="motion.txt.html#section" class="d">section</a> <a href="usr_11.txt.html#11.3" class="l">11.3</a><a href="repeat.txt.html#." class="d">.</a>
+
+
+<span class="h">Updating the swapfile </span>
+
+The swap file <a href="motion.txt.html#is" class="d">is</a> updated after typing 200 characters or when you have not
+typed anything for four seconds.  This only happens if the buffer was
+changed, not when you only moved around.  The reason why <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> not kept up to
+date all the time <a href="motion.txt.html#is" class="d">is</a> that this would slow down normal work too much.  You can
+change the 200 character <a href="intro.txt.html#count" class="d">count</a> with the <a href="options.txt.html#%27updatecount%27" class="o">'updatecount'</a> option.  You can set
+the time with the <a href="options.txt.html#%27updatetime%27" class="o">'updatetime'</a> option.  The time <a href="motion.txt.html#is" class="d">is</a> given in milliseconds.
+After <a href="editing.txt.html#writing" class="d">writing</a> to the swap file Vim syncs the file to disk.  This takes some
+time, especially on busy <a href="os_unix.txt.html#Unix" class="d">Unix</a> systems.  If you don't want this you can set the
+<a href="options.txt.html#%27swapsync%27" class="o">'swapsync'</a> option to an empty string.  The risk of losing work becomes bigger
+though.  On some non-Unix systems (MS-DOS, Amiga) the swap file won't be
+written <a href="motion.txt.html#at" class="d">at</a> all.
+
+If the <a href="editing.txt.html#writing" class="d">writing</a> to the swap file <a href="motion.txt.html#is" class="d">is</a> not wanted, <a href="motion.txt.html#it" class="d">it</a> can be switched off by
+setting the <a href="options.txt.html#%27updatecount%27" class="o">'updatecount'</a> option to 0.  The same <a href="motion.txt.html#is" class="d">is</a> done when <a href="starting.txt.html#starting" class="d">starting</a> Vim
+with the "<a href="starting.txt.html#-n" class="d">-n</a>" option.  Writing can be switched back on by setting the
+<a href="options.txt.html#%27updatecount%27" class="o">'updatecount'</a> option to non-zero.  Swap files will be created for all <a href="windows.txt.html#buffers" class="d">buffers</a>
+when doing this.  But when setting <a href="options.txt.html#%27updatecount%27" class="o">'updatecount'</a> to zero, the existing swap
+files will not be removed, <a href="motion.txt.html#it" class="d">it</a> will only affect files that will be opened
+after this.
+
+If you want to make sure that your changes are in the swap file use this
+command:
+
+                                        <a name="%3Apre" class="t">:pre</a> <a name="%3Apreserve" class="t">:preserve</a> <a name="E313" class="t">E313</a> <a name="E314" class="t">E314</a>
+:pre[serve]             Write all text for all <a href="windows.txt.html#buffers" class="d">buffers</a> into swap file.  The
+                        original file <a href="motion.txt.html#is" class="d">is</a> no longer needed for recovery.
+                        This sets <a href="insert.txt.html#a" class="d">a</a> flag in the current buffer.  When the '&amp;'
+                        flag <a href="motion.txt.html#is" class="d">is</a> present in <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a> the swap file will not
+                        be deleted for this buffer when Vim exits and the
+                        buffer <a href="motion.txt.html#is" class="d">is</a> still loaded <a href="options.txt.html#cpo-%26" class="l">cpo-&amp;</a><a href="repeat.txt.html#." class="d">.</a>
+                        <span class="s">{Vi: might also exit}</span>
+
+<a href="insert.txt.html#A" class="d">A</a> Vim swap file can be recognized by the first six characters: "b0VIM "<a href="repeat.txt.html#." class="d">.</a>
+After that comes the version number, e.g., "3.0"<a href="repeat.txt.html#." class="d">.</a>
+
+
+<span class="h">Links and symbolic links </span>
+
+On <a href="os_unix.txt.html#Unix" class="d">Unix</a> <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> possible to have two names for the same file.  This can be done
+with hard links and with symbolic links (symlinks).
+
+For hard links Vim does not know the other name of the file.  Therefore, the
+name of the swapfile will be based on the name you used to edit the file.
+There <a href="motion.txt.html#is" class="d">is</a> no check for editing the same file by the other name too, because Vim
+cannot find the other swapfile (except for searching all of your harddisk,
+which would be very slow).
+
+For symbolic links Vim resolves the links to find the name of the actual file.
+The swap file name <a href="motion.txt.html#is" class="d">is</a> based on that name.  Thus <a href="motion.txt.html#it" class="d">it</a> doesn't matter by what name
+you edit the file, the swap file name will normally be the same.  However,
+there are exceptions:
+<a href="motion.txt.html#-" class="d">-</a> When the directory of the actual file <a href="motion.txt.html#is" class="d">is</a> not writable the swapfile <a href="motion.txt.html#is" class="d">is</a> <a href="change.txt.html#put" class="d">put</a>
+  elsewhere.
+<a href="motion.txt.html#-" class="d">-</a> When the symbolic links somehow create <a href="insert.txt.html#a" class="d">a</a> loop you get an <a name="E773" class="t">E773</a> error
+  message and the unmodified file name will be used.  You won't be able to
+  save your file normally.
+
+<span class="h">==============================================================================</span>
+2. Recovery                                     <a name="recovery" class="t">recovery</a> <a name="E308" class="t">E308</a> <a name="E311" class="t">E311</a>
+
+Basic file <a href="#recovery" class="d">recovery</a> <a href="motion.txt.html#is" class="d">is</a> explained in the user manual: <a href="usr_11.txt.html#usr_11.txt" class="l">usr_11.txt</a><a href="repeat.txt.html#." class="d">.</a>
+
+Another way to <a href="diff.txt.html#do" class="d">do</a> <a href="#recovery" class="d">recovery</a> <a href="motion.txt.html#is" class="d">is</a> to start Vim and use the "<a href="#%3Arecover" class="d">:recover</a>" command.
+This <a href="motion.txt.html#is" class="d">is</a> <a href="starting.txt.html#easy" class="d">easy</a> when you start Vim to edit <a href="insert.txt.html#a" class="d">a</a> file and you get the "ATTENTION:
+Found <a href="insert.txt.html#a" class="d">a</a> swap file <a href="eval.txt.html#..." class="d">...</a>" message.  In this <a href="change.txt.html#case" class="d">case</a> the single command "<a href="#%3Arecover" class="d">:recover</a>"
+will <a href="diff.txt.html#do" class="d">do</a> the work.  You can also give the name of the file or the swap file to
+the recover command:
+                                        <a name="%3Arec" class="t">:rec</a> <a name="%3Arecover" class="t">:recover</a> <a name="E305" class="t">E305</a> <a name="E306" class="t">E306</a> <a name="E307" class="t">E307</a>
+:rec[over] <span class="s">[file]</span>       Try to recover <span class="s">[file]</span> from the swap file.  If <span class="s">[file]</span>
+                        <a href="motion.txt.html#is" class="d">is</a> not given use the file name for the current
+                        buffer.  The current contents of the buffer are lost.
+                        This command fails if the buffer was modified.
+
+:rec[over]! <span class="s">[file]</span>      Like "<a href="#%3Arecover" class="d">:recover</a>"<a href="motion.txt.html#%2C" class="d">,</a> but any changes in the current
+                        buffer are lost.
+
+                                                        <a name="E312" class="t">E312</a> <a name="E309" class="t">E309</a> <a name="E310" class="t">E310</a>
+Vim has some intelligence about what to <a href="diff.txt.html#do" class="d">do</a> if the swap file <a href="motion.txt.html#is" class="d">is</a> corrupt in
+some way.  If Vim has doubt about what <a href="motion.txt.html#it" class="d">it</a> found, <a href="motion.txt.html#it" class="d">it</a> will give an error
+message and <a href="insert.txt.html#insert" class="d">insert</a> lines with "???" in the text.  If you see an error message
+while recovering, search in the file for "???" to see what <a href="motion.txt.html#is" class="d">is</a> wrong.  You may
+want to cut and paste to get the text you need.
+
+The most common remark <a href="motion.txt.html#is" class="d">is</a> "???LINES MISSING"<a href="repeat.txt.html#." class="d">.</a>  This means that Vim cannot read
+the text from the original file.  This can happen if the system crashed and
+parts of the original file were not written to disk.
+
+Be sure that the <a href="#recovery" class="d">recovery</a> was successful before overwriting the original
+file or <a href="change.txt.html#deleting" class="d">deleting</a> the swap file.  It <a href="motion.txt.html#is" class="d">is</a> good practice to write the recovered
+file elsewhere and run <a href="options.txt.html#%27diff%27" class="o">'diff'</a> to find out if the changes you want are in the
+recovered file.  Or use <a href="diff.txt.html#%3ADiffOrig" class="l">:DiffOrig</a><a href="repeat.txt.html#." class="d">.</a>
+
+Once you are sure the <a href="#recovery" class="d">recovery</a> <a href="motion.txt.html#is" class="d">is</a> ok delete the swap file.  Otherwise, you
+will continue to get warning <a href="message.txt.html#messages" class="d">messages</a> that the ".swp" file already exists.
+
+<span class="s">{Vi: recovers in another way and sends mail if there is something to recover}</span>
+
+
+<span class="c">ENCRYPTION AND THE SWAP FILE                           </span> <a name="%3Arecover-crypt" class="t">:recover-crypt</a>
+
+When the text file <a href="motion.txt.html#is" class="d">is</a> encrypted the swap file <a href="motion.txt.html#is" class="d">is</a> encrypted <a href="motion.txt.html#as" class="d">as</a> well.  This
+makes <a href="#recovery" class="d">recovery</a> <a href="insert.txt.html#a" class="d">a</a> bit more complicated.  When recovering from <a href="insert.txt.html#a" class="d">a</a> swap file and
+<a href="editing.txt.html#encryption" class="d">encryption</a> has been used, you will be asked to enter one or two crypt keys.
+
+If the text file does not exist you will only be asked to enter the crypt key
+for the swap file.
+
+If the text file does exist, <a href="motion.txt.html#it" class="d">it</a> may be encrypted in <a href="insert.txt.html#a" class="d">a</a> different way than the
+swap file.  You will be asked for the crypt key twice:
+
+<span class="h">        Need encryption key for "/tmp/tt" </span>
+<span class="h">        Enter encryption key: ****** </span>
+<span class="h">        "/tmp/tt" [crypted] 23200L, 522129C </span>
+<span class="h">        Using swap file "/tmp/.tt.swp" </span>
+<span class="h">        Original file "/tmp/tt" </span>
+<span class="h">        Swap file is encrypted: "/tmp/.tt.swp" </span>
+<span class="h">        If you entered a new crypt key but did not write the text file, </span>
+<span class="h">        enter the new crypt key. </span>
+<span class="h">        If you wrote the text file after changing the crypt key press enter </span>
+<span class="h">        to use the same key for text file and swap file </span>
+<span class="h">        Enter encryption key:  </span>
+
+You can be in one of these two situations:
+
+1. The <a href="editing.txt.html#encryption" class="d">encryption</a> key was not changed, or after <a href="change.txt.html#changing" class="d">changing</a> the key the text file
+   was written.  You will be prompted for the crypt key twice.  The second
+   time you can simply press Enter.  That means the same key <a href="motion.txt.html#is" class="d">is</a> used for the
+   text file and the swap file.
+2. You entered <a href="insert.txt.html#a" class="d">a</a> new <a href="editing.txt.html#encryption" class="d">encryption</a> key, but did not save the text file.  Vim will
+   then use the new key for the swap file, and the text file will still be
+   encrypted with the old key.  At the second prompt enter the new key.
+
+<span class="n">Note</span> that after <a href="#recovery" class="d">recovery</a> the key of the swap file will be used for the text
+file.  Thus if you write the text file, you need to use that new key.
+
+
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

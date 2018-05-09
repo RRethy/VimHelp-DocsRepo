@@ -1,0 +1,620 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: usr_24.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="usr_24.txt" class="t">usr_24.txt</a>    For <span class="i">Vim version 8.0.</span>  Last change: 2018 Mar 18
+
+                     VIM USER MANUAL <a href="motion.txt.html#-" class="d">-</a> by <a href="intro.txt.html#Bram" class="d">Bram</a> <a href="intro.txt.html#Moolenaar" class="d">Moolenaar</a>
+
+                             Inserting quickly
+
+
+When entering text, Vim offers <a href="various.txt.html#various" class="d">various</a> ways to reduce the number of keystrokes
+and avoid typing mistakes.  Use <a href="insert.txt.html#Insert" class="d">Insert</a> mode completion to repeat previously
+typed words.  Abbreviate long words to short ones.  Type characters that
+aren't on your keyboard.
+
+<a href="#24.1" class="l">24.1</a>  Making corrections
+<a href="#24.2" class="l">24.2</a>  Showing matches
+<a href="#24.3" class="l">24.3</a>  Completion
+<a href="#24.4" class="l">24.4</a>  Repeating an <a href="insert.txt.html#insert" class="d">insert</a>
+<a href="#24.5" class="l">24.5</a>  Copying from another line
+<a href="#24.6" class="l">24.6</a>  Inserting <a href="insert.txt.html#a" class="d">a</a> <a href="sponsor.txt.html#register" class="d">register</a>
+<a href="#24.7" class="l">24.7</a>  <a href="map.txt.html#Abbreviations" class="d">Abbreviations</a>
+<a href="#24.8" class="l">24.8</a>  Entering special characters
+<a href="#24.9" class="l">24.9</a>  <a href="digraph.txt.html#Digraphs" class="d">Digraphs</a>
+<a href="#24.10" class="l">24.10</a> <a href="intro.txt.html#Normal" class="d">Normal</a> mode commands
+
+     Next chapter: <a href="usr_25.txt.html#usr_25.txt" class="l">usr_25.txt</a>  Editing formatted text
+ Previous chapter: <a href="usr_23.txt.html#usr_23.txt" class="l">usr_23.txt</a>  Editing other files
+Table of contents: <a href="usr_toc.txt.html#usr_toc.txt" class="l">usr_toc.txt</a>
+
+<span class="h">==============================================================================</span>
+<a name="24.1" class="t">24.1</a>  Making corrections
+
+The <a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a> key was already mentioned.  It deletes the character just before the
+cursor.  The <a href="change.txt.html#%3CDel%3E" class="s">&lt;Del&gt;</a> key does the same for the character under (after) the
+cursor.
+   When you typed <a href="insert.txt.html#a" class="d">a</a> whole <a href="motion.txt.html#word" class="d">word</a> wrong, use <a href="index.txt.html#CTRL-W" class="k">CTRL-W</a>:
+
+<span class="h">        The horse had fallen to the sky </span>
+                                       <a href="index.txt.html#CTRL-W" class="k">CTRL-W</a>
+<span class="h">        The horse had fallen to the </span>
+
+If you really messed up <a href="insert.txt.html#a" class="d">a</a> line and want to start over, use <a href="scroll.txt.html#CTRL-U" class="k">CTRL-U</a> to delete
+it.  This keeps the text after the cursor and the indent.  Only the text from
+the first non-blank to the cursor <a href="motion.txt.html#is" class="d">is</a> deleted.  With the cursor on the "<a href="motion.txt.html#f" class="d">f</a>" of
+"fallen" in the next line pressing <a href="scroll.txt.html#CTRL-U" class="k">CTRL-U</a> does this:
+
+<span class="h">        The horse had fallen to the </span>
+                      <a href="scroll.txt.html#CTRL-U" class="k">CTRL-U</a>
+<span class="h">        fallen to the </span>
+
+When you spot <a href="insert.txt.html#a" class="d">a</a> mistake <a href="insert.txt.html#a" class="d">a</a> few words back, you need to move the cursor there to
+correct it.  For example, you typed this:
+
+<span class="h">        The horse had follen to the ground </span>
+
+You need to change "follen" to "fallen"<a href="repeat.txt.html#." class="d">.</a>  With the cursor <a href="motion.txt.html#at" class="d">at</a> the end, you
+would type this to correct it: 
+<span class="e"></span>
+<span class="e">                                        &lt;Esc&gt;4blraA</span>
+<span class="e"></span>
+       get out of <a href="insert.txt.html#Insert" class="d">Insert</a> mode          <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a>
+        four words back                      4b
+        move on top of the "<a href="insert.txt.html#o" class="d">o</a>"                 <a href="motion.txt.html#l" class="d">l</a>
+        replace with "<a href="insert.txt.html#a" class="d">a</a>"                        ra
+        restart <a href="insert.txt.html#Insert" class="d">Insert</a> mode                       <a href="insert.txt.html#A" class="d">A</a>
+
+Another way to <a href="diff.txt.html#do" class="d">do</a> this: 
+<span class="e"></span>
+<span class="e">                &lt;C-Left&gt;&lt;C-Left&gt;&lt;C-Left&gt;&lt;C-Left&gt;&lt;Right&gt;&lt;Del&gt;a&lt;End&gt;</span>
+<span class="e"></span>
+       four words back              <a href="motion.txt.html#%3CC-Left%3E" class="s">&lt;C-Left&gt;</a><a href="motion.txt.html#%3CC-Left%3E" class="s">&lt;C-Left&gt;</a><a href="motion.txt.html#%3CC-Left%3E" class="s">&lt;C-Left&gt;</a><a href="motion.txt.html#%3CC-Left%3E" class="s">&lt;C-Left&gt;</a>
+        move on top of the "<a href="insert.txt.html#o" class="d">o</a>"                  <a href="motion.txt.html#%3CRight%3E" class="s">&lt;Right&gt;</a>
+        delete the "<a href="insert.txt.html#o" class="d">o</a>"                                 <a href="change.txt.html#%3CDel%3E" class="s">&lt;Del&gt;</a>
+        <a href="insert.txt.html#insert" class="d">insert</a> an "<a href="insert.txt.html#a" class="d">a</a>"                                       <a href="insert.txt.html#a" class="d">a</a>
+        <a href="motion.txt.html#go" class="d">go</a> to <a href="intro.txt.html#end" class="d">end</a> of the line                                <a href="motion.txt.html#%3CEnd%3E" class="s">&lt;End&gt;</a>
+
+This uses special keys to move around, while remaining in <a href="insert.txt.html#Insert" class="d">Insert</a> mode.  This
+resembles what you would <a href="diff.txt.html#do" class="d">do</a> in <a href="insert.txt.html#a" class="d">a</a> modeless editor.  It's easier to remember,
+but takes more time (you have to move your hand from the letters to the cursor
+keys, and the <a href="motion.txt.html#%3CEnd%3E" class="s">&lt;End&gt;</a> key <a href="motion.txt.html#is" class="d">is</a> hard to press without looking <a href="motion.txt.html#at" class="d">at</a> the keyboard).
+   These special keys are most useful when <a href="editing.txt.html#writing" class="d">writing</a> <a href="insert.txt.html#a" class="d">a</a> <a href="map.txt.html#mapping" class="d">mapping</a> that doesn't
+leave <a href="insert.txt.html#Insert" class="d">Insert</a> mode.  The extra typing doesn't matter then.
+   An overview of the keys you can use in <a href="insert.txt.html#Insert" class="d">Insert</a> mode:
+
+        <a href="motion.txt.html#%3CC-Home%3E" class="s">&lt;C-Home&gt;</a>        to start of the file
+        <a href="scroll.txt.html#%3CPageUp%3E" class="s">&lt;PageUp&gt;</a>        <a href="insert.txt.html#a" class="d">a</a> whole screenful up
+        <a href="motion.txt.html#%3CHome%3E" class="s">&lt;Home&gt;</a>          to start of line
+        <a href="motion.txt.html#%3CS-Left%3E" class="s">&lt;S-Left&gt;</a>        one <a href="motion.txt.html#word" class="d">word</a> left
+        <a href="motion.txt.html#%3CC-Left%3E" class="s">&lt;C-Left&gt;</a>        one <a href="motion.txt.html#word" class="d">word</a> left
+        <a href="motion.txt.html#%3CS-Right%3E" class="s">&lt;S-Right&gt;</a>       one <a href="motion.txt.html#word" class="d">word</a> right
+        <a href="motion.txt.html#%3CC-Right%3E" class="s">&lt;C-Right&gt;</a>       one <a href="motion.txt.html#word" class="d">word</a> right
+        <a href="motion.txt.html#%3CEnd%3E" class="s">&lt;End&gt;</a>           to <a href="intro.txt.html#end" class="d">end</a> of the line
+        <a href="scroll.txt.html#%3CPageDown%3E" class="s">&lt;PageDown&gt;</a>      <a href="insert.txt.html#a" class="d">a</a> whole screenful down
+        <a href="motion.txt.html#%3CC-End%3E" class="s">&lt;C-End&gt;</a>         to <a href="intro.txt.html#end" class="d">end</a> of the file
+
+There are <a href="insert.txt.html#a" class="d">a</a> few more, see <a href="insert.txt.html#ins-special-special" class="l">ins-special-special</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+<a name="24.2" class="t">24.2</a>  Showing matches
+
+When you type <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%29" class="d">)</a> <a href="motion.txt.html#it" class="d">it</a> would be <a href="todo.txt.html#nice" class="d">nice</a> to see with which <a href="motion.txt.html#%28" class="d">(</a> <a href="motion.txt.html#it" class="d">it</a> matches.  To make
+Vim <a href="diff.txt.html#do" class="d">do</a> that use this command: 
+<span class="e"></span>
+<span class="e">        :set showmatch</span>
+<span class="e"></span>
+When you now type <a href="insert.txt.html#a" class="d">a</a> text like "(example)"<a href="motion.txt.html#%2C" class="d">,</a> <a href="motion.txt.html#as" class="d">as</a> soon <a href="motion.txt.html#as" class="d">as</a> you type the <a href="motion.txt.html#%29" class="d">)</a> Vim will
+briefly move the cursor to the matching (, keep <a href="motion.txt.html#it" class="d">it</a> there for half <a href="insert.txt.html#a" class="d">a</a> second,
+and move back to where you were typing.
+   In <a href="change.txt.html#case" class="d">case</a> there <a href="motion.txt.html#is" class="d">is</a> no matching (, Vim will beep.  Then you know that you
+might have forgotten the <a href="motion.txt.html#%28" class="d">(</a> somewhere, or typed <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%29" class="d">)</a> too many.
+   The match will also be shown for <a href="motion.txt.html#%5B%5D" class="d">[]</a> and <a href="intro.txt.html#%7B%7D" class="d">{}</a> pairs.  You don't have to wait
+with typing the next character, <a href="motion.txt.html#as" class="d">as</a> soon <a href="motion.txt.html#as" class="d">as</a> Vim sees <a href="motion.txt.html#it" class="d">it</a> the cursor will move
+back and <a href="insert.txt.html#inserting" class="d">inserting</a> continues <a href="motion.txt.html#as" class="d">as</a> before.
+   You can change the time Vim waits with the <a href="options.txt.html#%27matchtime%27" class="o">'matchtime'</a> option.  For
+example, to make Vim wait one and <a href="insert.txt.html#a" class="d">a</a> half second: 
+<span class="e"></span>
+<span class="e">        :set matchtime=15</span>
+<span class="e"></span>
+The time <a href="motion.txt.html#is" class="d">is</a> specified in tenths of <a href="insert.txt.html#a" class="d">a</a> second.
+
+<span class="h">==============================================================================</span>
+<a name="24.3" class="t">24.3</a>  Completion
+
+Vim can automatically complete words on insertion.  You type the first part of
+<a href="insert.txt.html#a" class="d">a</a> word, press <a href="motion.txt.html#CTRL-P" class="k">CTRL-P</a>, and Vim guesses the rest.
+   Suppose, for example, that you are creating <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#C" class="d">C</a> program and want to type in
+the following:
+
+<span class="h">        total = ch_array[0] + ch_array[1] + ch_array[2]; </span>
+
+You start by entering the following:
+
+<span class="h">        total = ch_array[0] + ch_ </span>
+
+At this point, you tell Vim to complete the <a href="motion.txt.html#word" class="d">word</a> using the command <a href="motion.txt.html#CTRL-P" class="k">CTRL-P</a>.
+Vim searches for <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> that starts with what's in front of the cursor.  In
+this case, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> "ch_"<a href="motion.txt.html#%2C" class="d">,</a> which matches with the <a href="motion.txt.html#word" class="d">word</a> ch_array.  So typing
+<a href="motion.txt.html#CTRL-P" class="k">CTRL-P</a> gives you the following:
+
+<span class="h">        total = ch_array[0] + ch_array </span>
+
+After <a href="insert.txt.html#a" class="d">a</a> little more typing, you get this (ending in <a href="insert.txt.html#a" class="d">a</a> space):
+
+<span class="h">        total = ch_array[0] + ch_array[1] +  </span>
+
+If you now type <a href="motion.txt.html#CTRL-P" class="k">CTRL-P</a> Vim will search again for <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> that completes the
+<a href="motion.txt.html#word" class="d">word</a> before the cursor.  Since there <a href="motion.txt.html#is" class="d">is</a> nothing in front of the cursor, <a href="motion.txt.html#it" class="d">it</a>
+finds the first <a href="motion.txt.html#word" class="d">word</a> backwards, which <a href="motion.txt.html#is" class="d">is</a> "ch_array"<a href="repeat.txt.html#." class="d">.</a>  Typing <a href="motion.txt.html#CTRL-P" class="k">CTRL-P</a> again
+gives you the next <a href="motion.txt.html#word" class="d">word</a> that matches, in this <a href="change.txt.html#case" class="d">case</a> "total"<a href="repeat.txt.html#." class="d">.</a>  <a href="insert.txt.html#A" class="d">A</a> third <a href="motion.txt.html#CTRL-P" class="k">CTRL-P</a>
+searches further back.  If there <a href="motion.txt.html#is" class="d">is</a> nothing else, <a href="motion.txt.html#it" class="d">it</a> causes the editor to run
+out of words, so <a href="motion.txt.html#it" class="d">it</a> returns to the original text, which <a href="motion.txt.html#is" class="d">is</a> nothing.  <a href="insert.txt.html#A" class="d">A</a> fourth
+<a href="motion.txt.html#CTRL-P" class="k">CTRL-P</a> causes the editor to start over again with "ch_array"<a href="repeat.txt.html#." class="d">.</a>
+
+To search forward, use <a href="motion.txt.html#CTRL-N" class="k">CTRL-N</a>.  Since the search wraps around the <a href="intro.txt.html#end" class="d">end</a> of the
+file, <a href="motion.txt.html#CTRL-N" class="k">CTRL-N</a> and <a href="motion.txt.html#CTRL-P" class="k">CTRL-P</a> will find the same matches, but in <a href="insert.txt.html#a" class="d">a</a> different
+sequence.  Hint: <a href="motion.txt.html#CTRL-N" class="k">CTRL-N</a> <a href="motion.txt.html#is" class="d">is</a> Next-match and <a href="motion.txt.html#CTRL-P" class="k">CTRL-P</a> <a href="motion.txt.html#is" class="d">is</a> Previous-match.
+
+The Vim editor goes through <a href="insert.txt.html#a" class="d">a</a> lot of effort to find words to complete.  By
+default, <a href="motion.txt.html#it" class="d">it</a> searches the following places:
+
+        1. Current file
+        2. Files in other <a href="windows.txt.html#windows" class="d">windows</a>
+        3. Other loaded files (hidden buffers)
+        4. Files which are not loaded (inactive buffers)
+        5. Tag files
+        6. All files #included by the current file
+
+
+OPTIONS
+
+You can customize the search order with the <a href="options.txt.html#%27complete%27" class="o">'complete'</a> option.
+
+The <a href="options.txt.html#%27ignorecase%27" class="o">'ignorecase'</a> option <a href="motion.txt.html#is" class="d">is</a> used.  When <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> set, <a href="change.txt.html#case" class="d">case</a> differences are ignored
+when searching for matches.
+
+<a href="insert.txt.html#A" class="d">A</a> special option for completion <a href="motion.txt.html#is" class="d">is</a> <a href="options.txt.html#%27infercase%27" class="o">'infercase'</a>.  This <a href="motion.txt.html#is" class="d">is</a> useful to find
+matches while ignoring <a href="change.txt.html#case" class="d">case</a> ('ignorecase' <a href="vim_faq.txt.html#must" class="d">must</a> be set) but still using the
+<a href="change.txt.html#case" class="d">case</a> of the <a href="motion.txt.html#word" class="d">word</a> typed so far.  Thus if you type "For" and Vim finds <a href="insert.txt.html#a" class="d">a</a> match
+"fortunately"<a href="motion.txt.html#%2C" class="d">,</a> <a href="motion.txt.html#it" class="d">it</a> will result in "Fortunately"<a href="repeat.txt.html#." class="d">.</a>
+
+
+COMPLETING SPECIFIC ITEMS
+
+If you know what you are looking for, you can use these commands to complete
+with <a href="insert.txt.html#a" class="d">a</a> certain type of item:
+
+        <a href="change.txt.html#CTRL-X" class="k">CTRL-X</a> <a href="scroll.txt.html#CTRL-F" class="k">CTRL-F</a>           file names
+        <a href="change.txt.html#CTRL-X" class="k">CTRL-X</a> <a href="various.txt.html#CTRL-L" class="k">CTRL-L</a>           whole lines
+        <a href="change.txt.html#CTRL-X" class="k">CTRL-X</a> <a href="scroll.txt.html#CTRL-D" class="k">CTRL-D</a>           <a href="map.txt.html#macro" class="d">macro</a> <a href="intro.txt.html#definitions" class="d">definitions</a> (also in included files)
+        <a href="change.txt.html#CTRL-X" class="k">CTRL-X</a> <a href="motion.txt.html#CTRL-I" class="k">CTRL-I</a>           current and included files
+        <a href="change.txt.html#CTRL-X" class="k">CTRL-X</a> <span class="k">CTRL-K</span>           words from <a href="insert.txt.html#a" class="d">a</a> dictionary
+        <a href="change.txt.html#CTRL-X" class="k">CTRL-X</a> <a href="tagsrch.txt.html#CTRL-T" class="k">CTRL-T</a>           words from <a href="insert.txt.html#a" class="d">a</a> thesaurus
+        <a href="change.txt.html#CTRL-X" class="k">CTRL-X</a> <a href="tagsrch.txt.html#CTRL-%5D" class="k">CTRL-]</a>           <a href="tagsrch.txt.html#tags" class="d">tags</a>
+        <a href="change.txt.html#CTRL-X" class="k">CTRL-X</a> <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a>           Vim command line
+
+After each of them <a href="motion.txt.html#CTRL-N" class="k">CTRL-N</a> can be used to find the next match, <a href="motion.txt.html#CTRL-P" class="k">CTRL-P</a> to find
+the previous match.
+   More information for each of these commands here: <a href="insert.txt.html#ins-completion" class="l">ins-completion</a><a href="repeat.txt.html#." class="d">.</a>
+
+
+COMPLETING FILE NAMES
+
+Let's take <a href="change.txt.html#CTRL-X" class="k">CTRL-X</a> <a href="scroll.txt.html#CTRL-F" class="k">CTRL-F</a> <a href="motion.txt.html#as" class="d">as</a> an example.  This will find file names.  It scans
+the current directory for files and displays each one that matches the <a href="motion.txt.html#word" class="d">word</a> in
+front of the cursor.
+   Suppose, for example, that you have the following files in the current
+directory:
+
+        main.c  sub_count.c  sub_done.c  sub_exit.c
+
+Now enter <a href="insert.txt.html#Insert" class="d">Insert</a> mode and start typing:
+
+<span class="h">        The exit code is in the file sub </span>
+
+At this point, you enter the command <a href="change.txt.html#CTRL-X" class="k">CTRL-X</a> <a href="scroll.txt.html#CTRL-F" class="k">CTRL-F</a>.  Vim now completes the
+current <a href="motion.txt.html#word" class="d">word</a> "sub" by looking <a href="motion.txt.html#at" class="d">at</a> the files in the current directory.  The
+first match <a href="motion.txt.html#is" class="d">is</a> sub_count.c.  This <a href="motion.txt.html#is" class="d">is</a> not the one you want, so you match the
+next file by typing <a href="motion.txt.html#CTRL-N" class="k">CTRL-N</a>.  This match <a href="motion.txt.html#is" class="d">is</a> sub_done.c.  Typing <a href="motion.txt.html#CTRL-N" class="k">CTRL-N</a> again
+takes you to sub_exit.c.  The results:
+
+<span class="h">        The exit code is in the file sub_exit.c </span>
+
+If the file name starts with <a href="pattern.txt.html#%2F" class="d">/</a> (Unix) or C:\ (MS-Windows) you can find all
+files in the file system.  For example, type "/u" and <a href="change.txt.html#CTRL-X" class="k">CTRL-X</a> <a href="scroll.txt.html#CTRL-F" class="k">CTRL-F</a>.  This
+will match "/usr" (this <a href="motion.txt.html#is" class="d">is</a> on Unix):
+
+<span class="h">        the file is found in /usr/ </span>
+
+If you now press <a href="motion.txt.html#CTRL-N" class="k">CTRL-N</a> you <a href="motion.txt.html#go" class="d">go</a> back to "/u"<a href="repeat.txt.html#." class="d">.</a>  Instead, to accept the "/usr/"
+and <a href="motion.txt.html#go" class="d">go</a> one directory level deeper, use <a href="change.txt.html#CTRL-X" class="k">CTRL-X</a> <a href="scroll.txt.html#CTRL-F" class="k">CTRL-F</a> again:
+
+<span class="h">        the file is found in /usr/X11R6/ </span>
+
+The results depend on what <a href="motion.txt.html#is" class="d">is</a> found in your file system, of course.  The
+matches are sorted alphabetically.
+
+
+COMPLETING IN SOURCE CODE
+
+Source code files are well structured.  That makes <a href="motion.txt.html#it" class="d">it</a> possible to <a href="diff.txt.html#do" class="d">do</a>
+completion in an intelligent way.  In Vim this <a href="motion.txt.html#is" class="d">is</a> called Omni completion.  In
+some other editors it's called intellisense, but that <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> trademark.
+
+The key to Omni completion <a href="motion.txt.html#is" class="d">is</a> <a href="change.txt.html#CTRL-X" class="k">CTRL-X</a> <a href="motion.txt.html#CTRL-O" class="k">CTRL-O</a>.  Obviously the <a href="insert.txt.html#O" class="d">O</a> stands for Omni
+here, so that you can remember <a href="motion.txt.html#it" class="d">it</a> easier.  Let's use an example for editing <a href="change.txt.html#C" class="d">C</a>
+source:
+
+<span class="h">        { </span>
+<span class="h">            struct foo *p; </span>
+<span class="h">            p-&gt; </span>
+
+The cursor <a href="motion.txt.html#is" class="d">is</a> after "p-&gt;"<a href="repeat.txt.html#." class="d">.</a>  Now type <a href="change.txt.html#CTRL-X" class="k">CTRL-X</a> <a href="motion.txt.html#CTRL-O" class="k">CTRL-O</a>.  Vim will offer you <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a>
+of alternatives, which are the items that "struct foo" contains.  That <a href="motion.txt.html#is" class="d">is</a>
+quite different from using <a href="motion.txt.html#CTRL-P" class="k">CTRL-P</a>, which would complete any word, while only
+members of "struct foo" are valid here.
+
+For Omni completion to work you may need to <a href="diff.txt.html#do" class="d">do</a> some setup.  At least make sure
+<a href="filetype.txt.html#filetype" class="d">filetype</a> plugins are enabled.  Your <a href="starting.txt.html#vimrc" class="d">vimrc</a> file should contain <a href="insert.txt.html#a" class="d">a</a> line like
+this: 
+<span class="e">        filetype plugin on</span>
+Or: 
+<span class="e">        filetype plugin indent on</span>
+<span class="e"></span>
+For <a href="change.txt.html#C" class="d">C</a> code you need to create <a href="insert.txt.html#a" class="d">a</a> <a href="tagsrch.txt.html#tags" class="d">tags</a> file and set the <a href="options.txt.html#%27tags%27" class="o">'tags'</a> option.  That <a href="motion.txt.html#is" class="d">is</a>
+explained <a href="insert.txt.html#ft-c-omni" class="l">ft-c-omni</a><a href="repeat.txt.html#." class="d">.</a>  For other <a href="filetype.txt.html#filetypes" class="d">filetypes</a> you may need to <a href="diff.txt.html#do" class="d">do</a> something
+similar, look below <a href="insert.txt.html#compl-omni-filetypes" class="l">compl-omni-filetypes</a><a href="repeat.txt.html#." class="d">.</a>  It only works for specific
+filetypes.  Check the value of the <a href="options.txt.html#%27omnifunc%27" class="o">'omnifunc'</a> option to find out if <a href="motion.txt.html#it" class="d">it</a> would
+work.
+
+<span class="h">==============================================================================</span>
+<a name="24.4" class="t">24.4</a>  Repeating an <a href="insert.txt.html#insert" class="d">insert</a>
+
+If you press <a href="change.txt.html#CTRL-A" class="k">CTRL-A</a>, the editor inserts the text you typed the last time you
+were in <a href="insert.txt.html#Insert" class="d">Insert</a> mode.
+   Assume, for example, that you have <a href="insert.txt.html#a" class="d">a</a> file that begins with the following:
+
+<span class="h">        "file.h" </span>
+<span class="h">        /* Main program begins */ </span>
+
+You edit this file by <a href="insert.txt.html#inserting" class="d">inserting</a> "#include " <a href="motion.txt.html#at" class="d">at</a> the beginning of the first
+line:
+
+<span class="h">        #include "file.h" </span>
+<span class="h">        /* Main program begins */ </span>
+
+You <a href="motion.txt.html#go" class="d">go</a> down to the beginning of the next line using the commands "j^"<a href="repeat.txt.html#." class="d">.</a>  You
+now start to <a href="insert.txt.html#insert" class="d">insert</a> <a href="insert.txt.html#a" class="d">a</a> new "#include" line.  So you type: 
+<span class="e"></span>
+<span class="e">        i CTRL-A</span>
+<span class="e"></span>
+The result <a href="motion.txt.html#is" class="d">is</a> <a href="motion.txt.html#as" class="d">as</a> follows:
+
+<span class="h">        #include "file.h" </span>
+<span class="h">        #include /* Main program begins */ </span>
+
+The "#include " was inserted because <a href="change.txt.html#CTRL-A" class="k">CTRL-A</a> inserts the text of the previous
+insert.  Now you type  "main.h"<a href="intro.txt.html#%3CEnter%3E" class="s">&lt;Enter&gt;</a>  to finish the line:
+
+
+<span class="h">        #include "file.h" </span>
+<span class="h">        #include "main.h" </span>
+<span class="h">        /* Main program begins */ </span>
+
+The <span class="k">CTRL-@</span> command does <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#CTRL-A" class="k">CTRL-A</a> and then exits <a href="insert.txt.html#Insert" class="d">Insert</a> mode.  That's <a href="insert.txt.html#a" class="d">a</a> quick
+way of doing exactly the same insertion again.
+
+<span class="h">==============================================================================</span>
+<a name="24.5" class="t">24.5</a>  Copying from another line
+
+The <a href="scroll.txt.html#CTRL-Y" class="k">CTRL-Y</a> command inserts the character above the cursor.  This <a href="motion.txt.html#is" class="d">is</a> useful
+when you are duplicating <a href="insert.txt.html#a" class="d">a</a> previous line.  For example, you have this line of
+<a href="change.txt.html#C" class="d">C</a> code:
+
+<span class="h">        b_array[i]-&gt;s_next = a_array[i]-&gt;s_next; </span>
+
+Now you need to type the same line, but with "s_prev" instead of "s_next"<a href="repeat.txt.html#." class="d">.</a>
+Start the new line, and press <a href="scroll.txt.html#CTRL-Y" class="k">CTRL-Y</a> 14 times, until you are <a href="motion.txt.html#at" class="d">at</a> the "<a href="pattern.txt.html#n" class="d">n</a>" of
+"next"<a href="cmdline.txt.html#%3A" class="d">:</a>
+
+<span class="h">        b_array[i]-&gt;s_next = a_array[i]-&gt;s_next; </span>
+<span class="h">        b_array[i]-&gt;s_ </span>
+
+Now you type "prev"<a href="cmdline.txt.html#%3A" class="d">:</a>
+
+<span class="h">        b_array[i]-&gt;s_next = a_array[i]-&gt;s_next; </span>
+<span class="h">        b_array[i]-&gt;s_prev </span>
+
+Continue pressing <a href="scroll.txt.html#CTRL-Y" class="k">CTRL-Y</a> until the following "next"<a href="cmdline.txt.html#%3A" class="d">:</a>
+
+<span class="h">        b_array[i]-&gt;s_next = a_array[i]-&gt;s_next; </span>
+<span class="h">        b_array[i]-&gt;s_prev = a_array[i]-&gt;s_ </span>
+
+Now type "prev;" to finish <a href="motion.txt.html#it" class="d">it</a> off.
+
+The <a href="scroll.txt.html#CTRL-E" class="k">CTRL-E</a> command acts like <a href="scroll.txt.html#CTRL-Y" class="k">CTRL-Y</a> except <a href="motion.txt.html#it" class="d">it</a> inserts the character below the
+cursor.
+
+<span class="h">==============================================================================</span>
+<a name="24.6" class="t">24.6</a>  Inserting <a href="insert.txt.html#a" class="d">a</a> <a href="sponsor.txt.html#register" class="d">register</a>
+
+The command <a href="undo.txt.html#CTRL-R" class="k">CTRL-R</a> <span class="s">{register}</span> inserts the contents of the register.  This <a href="motion.txt.html#is" class="d">is</a>
+useful to avoid having to type <a href="insert.txt.html#a" class="d">a</a> long word.  For example, you need to type
+this:
+
+<span class="h">        r = VeryLongFunction(a) + VeryLongFunction(b) + VeryLongFunction(c) </span>
+
+The function name <a href="motion.txt.html#is" class="d">is</a> defined in <a href="insert.txt.html#a" class="d">a</a> different file.  Edit that file and move the
+cursor on top of the function name there, and <a href="change.txt.html#yank" class="d">yank</a> <a href="motion.txt.html#it" class="d">it</a> into <a href="sponsor.txt.html#register" class="d">register</a> <a href="eval.txt.html#v%3A" class="d">v:</a> 
+<span class="e"></span>
+<span class="e">        "vyiw</span>
+<span class="e"></span>
+"<a href="visual.txt.html#v" class="d">v</a> <a href="motion.txt.html#is" class="d">is</a> the <a href="sponsor.txt.html#register" class="d">register</a> specification, "yiw" <a href="motion.txt.html#is" class="d">is</a> yank-inner-word.  Now edit the file
+where the new line <a href="motion.txt.html#is" class="d">is</a> to be inserted, and type the first letters:
+
+<span class="h">        r = </span>
+
+Now use <a href="undo.txt.html#CTRL-R" class="k">CTRL-R</a> <a href="visual.txt.html#v" class="d">v</a> to <a href="insert.txt.html#insert" class="d">insert</a> the function name:
+
+<span class="h">        r = VeryLongFunction </span>
+
+You continue to type the characters in between the function name, and use
+<a href="undo.txt.html#CTRL-R" class="k">CTRL-R</a> <a href="visual.txt.html#v" class="d">v</a> two times more.
+   You could have done the same with completion.  Using <a href="insert.txt.html#a" class="d">a</a> <a href="sponsor.txt.html#register" class="d">register</a> <a href="motion.txt.html#is" class="d">is</a> useful
+when there are many words that start with the same characters.
+
+If the <a href="sponsor.txt.html#register" class="d">register</a> contains characters such <a href="motion.txt.html#as" class="d">as</a> <a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a> or other special characters,
+they are interpreted <a href="motion.txt.html#as" class="d">as</a> if they had been typed from the keyboard.  If you <a href="diff.txt.html#do" class="d">do</a>
+not want this to happen (you really want the <a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a> to be inserted in the text),
+use the command <a href="undo.txt.html#CTRL-R" class="k">CTRL-R</a> <a href="undo.txt.html#CTRL-R" class="k">CTRL-R</a> <span class="s">{register}</span>.
+
+<span class="h">==============================================================================</span>
+<a name="24.7" class="t">24.7</a>  <a href="map.txt.html#Abbreviations" class="d">Abbreviations</a>
+
+An abbreviation <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> short <a href="motion.txt.html#word" class="d">word</a> that takes the place of <a href="insert.txt.html#a" class="d">a</a> long one.  For
+example, "ad" stands for "advertisement"<a href="repeat.txt.html#." class="d">.</a>  Vim enables you to type an
+abbreviation and then will automatically expand <a href="motion.txt.html#it" class="d">it</a> for you.
+   To tell Vim to expand "ad" into "advertisement" every time you <a href="insert.txt.html#insert" class="d">insert</a> it,
+use the following command: 
+<span class="e"></span>
+<span class="e">        :iabbrev ad advertisement</span>
+<span class="e"></span>
+Now, when you type "ad"<a href="motion.txt.html#%2C" class="d">,</a> the whole <a href="motion.txt.html#word" class="d">word</a> "advertisement" will be inserted into
+the text.  This <a href="motion.txt.html#is" class="d">is</a> triggered by typing <a href="insert.txt.html#a" class="d">a</a> character that can't be part of <a href="insert.txt.html#a" class="d">a</a>
+word, for example <a href="insert.txt.html#a" class="d">a</a> space:
+
+        What Is Entered         What You See
+<span class="h">        I saw the a             I saw the a </span>
+<span class="h">        I saw the ad            I saw the ad </span>
+<span class="h">        I saw the ad&lt;Space&gt;     I saw the advertisement&lt;Space&gt; </span>
+
+The expansion doesn't happen when typing just "ad"<a href="repeat.txt.html#." class="d">.</a>  That allows you to type <a href="insert.txt.html#a" class="d">a</a>
+<a href="motion.txt.html#word" class="d">word</a> like "add"<a href="motion.txt.html#%2C" class="d">,</a> which will not get expanded.  Only whole words are checked
+for abbreviations.
+
+
+ABBREVIATING SEVERAL WORDS
+
+It <a href="motion.txt.html#is" class="d">is</a> possible to define an abbreviation that results in multiple words.  For
+example, to define "JB" <a href="motion.txt.html#as" class="d">as</a> "Jack Benny"<a href="motion.txt.html#%2C" class="d">,</a> use the following command: 
+<span class="e"></span>
+<span class="e">        :iabbrev JB Jack Benny</span>
+<span class="e"></span>
+As <a href="insert.txt.html#a" class="d">a</a> programmer, <a href="insert.txt.html#I" class="d">I</a> use two rather unusual abbreviations: 
+<span class="e"></span>
+<span class="e">        :iabbrev #b /****************************************</span>
+<span class="e">        :iabbrev #e &lt;Space&gt;****************************************/</span>
+<span class="e"></span>
+These are used for creating boxed comments.  The comment starts with #b, which
+draws the top line.  <a href="insert.txt.html#I" class="d">I</a> then type the comment text and use #e to draw the
+bottom line.
+   Notice that the #e abbreviation begins with <a href="insert.txt.html#a" class="d">a</a> space.  In other words, the
+first two characters are space-star.  Usually Vim ignores spaces between the
+abbreviation and the expansion.  To avoid that problem, <a href="insert.txt.html#I" class="d">I</a> <a href="spell.txt.html#spell" class="d">spell</a> <a href="intro.txt.html#space" class="d">space</a> <a href="motion.txt.html#as" class="d">as</a> seven
+characters: <span class="s">&lt;, S, p, a, c, e, &gt;</span>.
+
+        <span class="n">Note:</span>
+        "<a href="map.txt.html#%3Aiabbrev" class="d">:iabbrev</a>" <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> long <a href="motion.txt.html#word" class="d">word</a> to type.  ":iab" works just <a href="motion.txt.html#as" class="d">as</a> well.
+        That's abbreviating the abbreviate command!
+
+
+FIXING TYPING MISTAKES
+
+It's very common to make the same typing mistake every time.  For example,
+typing "teh" instead of "the"<a href="repeat.txt.html#." class="d">.</a>  You can fix this with an abbreviation: 
+<span class="e"></span>
+<span class="e">        :abbreviate teh the</span>
+<span class="e"></span>
+You can add <a href="insert.txt.html#a" class="d">a</a> whole <a href="eval.txt.html#list" class="d">list</a> of these.  Add one each time you discover <a href="insert.txt.html#a" class="d">a</a> common
+mistake.
+
+
+LISTING ABBREVIATIONS
+
+The "<a href="map.txt.html#%3Aabbreviate" class="d">:abbreviate</a>" command lists the abbreviations:
+
+        <a href="map.txt.html#%3Aabbreviate" class="d">:abbreviate</a>
+        <a href="insert.txt.html#i" class="d">i</a>  #e             ****************************************<a href="pattern.txt.html#%2F" class="d">/</a>
+        <a href="insert.txt.html#i" class="d">i</a>  #b            <a href="pattern.txt.html#%2F" class="d">/</a>****************************************
+        <a href="insert.txt.html#i" class="d">i</a>  JB            Jack Benny
+        <a href="insert.txt.html#i" class="d">i</a>  ad            advertisement
+        <a href="change.txt.html#%21" class="d">!</a>  teh           the
+
+The "<a href="insert.txt.html#i" class="d">i</a>" in the first column indicates <a href="insert.txt.html#Insert" class="d">Insert</a> mode.  These <a href="map.txt.html#abbreviations" class="d">abbreviations</a> are
+only active in <a href="insert.txt.html#Insert" class="d">Insert</a> mode.  Other possible characters are:
+
+        <a href="change.txt.html#c" class="d">c</a>       <a href="cmdline.txt.html#Command-line" class="d">Command-line</a> mode                       <a href="map.txt.html#%3Acabbrev" class="d">:cabbrev</a>
+        <a href="change.txt.html#%21" class="d">!</a>       both <a href="insert.txt.html#Insert" class="d">Insert</a> and <a href="cmdline.txt.html#Command-line" class="d">Command-line</a> mode       <a href="map.txt.html#%3Aabbreviate" class="d">:abbreviate</a>
+
+Since <a href="map.txt.html#abbreviations" class="d">abbreviations</a> are not often useful in <a href="cmdline.txt.html#Command-line" class="d">Command-line</a> mode, you will mostly
+use the "<a href="map.txt.html#%3Aiabbrev" class="d">:iabbrev</a>" command.  That avoids, for example, that "ad" gets expanded
+when typing <a href="insert.txt.html#a" class="d">a</a> command like: 
+<span class="e"></span>
+<span class="e">        :edit ad</span>
+<span class="e"></span>
+<span class="e"></span>
+DELETING ABBREVIATIONS
+
+To get rid of an abbreviation, use the "<a href="map.txt.html#%3Aunabbreviate" class="d">:unabbreviate</a>" command.  Suppose you
+have the following abbreviation: 
+<span class="e"></span>
+<span class="e">        :abbreviate @f fresh</span>
+<span class="e"></span>
+You can remove <a href="motion.txt.html#it" class="d">it</a> with this command: 
+<span class="e"></span>
+<span class="e">        :unabbreviate @f</span>
+<span class="e"></span>
+While you type this, you will notice that @f <a href="motion.txt.html#is" class="d">is</a> expanded to "fresh"<a href="repeat.txt.html#." class="d">.</a>  Don't
+worry about this, Vim understands <a href="motion.txt.html#it" class="d">it</a> anyway (except when you have an
+abbreviation for "fresh"<a href="motion.txt.html#%2C" class="d">,</a> but that's very unlikely).
+   To remove all the abbreviations: 
+<span class="e"></span>
+<span class="e">        :abclear</span>
+<span class="e"></span>
+"<a href="map.txt.html#%3Aunabbreviate" class="d">:unabbreviate</a>" and "<a href="map.txt.html#%3Aabclear" class="d">:abclear</a>" also come in the variants for <a href="insert.txt.html#Insert" class="d">Insert</a> mode
+<a href="motion.txt.html#%28" class="d">(</a>":iunabbreviate and "<a href="map.txt.html#%3Aiabclear" class="d">:iabclear</a>"<a href="motion.txt.html#%29" class="d">)</a> and <a href="cmdline.txt.html#Command-line" class="d">Command-line</a> mode <a href="motion.txt.html#%28" class="d">(</a>":cunabbreviate" and
+"<a href="map.txt.html#%3Acabclear" class="d">:cabclear</a>").
+
+
+REMAPPING ABBREVIATIONS
+
+There <a href="motion.txt.html#is" class="d">is</a> one thing to watch out for when defining an abbreviation: The
+resulting <a href="eval.txt.html#string" class="d">string</a> should not be mapped.  For example: 
+<span class="e"></span>
+<span class="e">        :abbreviate @a adder</span>
+<span class="e">        :imap dd disk-door</span>
+<span class="e"></span>
+When you now type @a, you will get "adisk-doorer"<a href="repeat.txt.html#." class="d">.</a>  That's not what you want.
+To avoid this, use the "<a href="map.txt.html#%3Anoreabbrev" class="d">:noreabbrev</a>" command.  It does the same <a href="motion.txt.html#as" class="d">as</a>
+"<a href="map.txt.html#%3Aabbreviate" class="d">:abbreviate</a>"<a href="motion.txt.html#%2C" class="d">,</a> but avoids that the resulting <a href="eval.txt.html#string" class="d">string</a> <a href="motion.txt.html#is" class="d">is</a> used for mappings: 
+<span class="e"></span>
+<span class="e">        :noreabbrev @a adder</span>
+<span class="e"></span>
+Fortunately, it's unlikely that the result of an abbreviation <a href="motion.txt.html#is" class="d">is</a> mapped.
+
+<span class="h">==============================================================================</span>
+<a name="24.8" class="t">24.8</a>  Entering special characters
+
+The <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> command <a href="motion.txt.html#is" class="d">is</a> used to <a href="insert.txt.html#insert" class="d">insert</a> the next character literally.  In other
+words, any special meaning the character has, <a href="motion.txt.html#it" class="d">it</a> will be ignored.  For
+example: 
+<span class="e"></span>
+<span class="e">        CTRL-V &lt;Esc&gt;</span>
+<span class="e"></span>
+Inserts an <a href="intro.txt.html#escape" class="d">escape</a> character.  Thus you don't leave <a href="insert.txt.html#Insert" class="d">Insert</a> mode.  (Don't type
+the <a href="intro.txt.html#space" class="d">space</a> after <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a>, it's only to make this easier to read).
+
+        <span class="n">Note:</span>
+        On <a href="os_win32.txt.html#MS-Windows" class="d">MS-Windows</a> <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> <a href="motion.txt.html#is" class="d">is</a> used to paste text.  Use <a href="gui_w32.txt.html#CTRL-Q" class="k">CTRL-Q</a> instead of
+        <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a>.  On Unix, on the other hand, <a href="gui_w32.txt.html#CTRL-Q" class="k">CTRL-Q</a> does not work on some
+        terminals, because <a href="motion.txt.html#it" class="d">it</a> has <a href="insert.txt.html#a" class="d">a</a> special meaning.
+
+You can also use the command <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> <span class="s">{digits}</span> to <a href="insert.txt.html#insert" class="d">insert</a> <a href="insert.txt.html#a" class="d">a</a> character with the
+decimal number <span class="s">{digits}</span>.  For example, the character number 127 <a href="motion.txt.html#is" class="d">is</a> the <a href="change.txt.html#%3CDel%3E" class="s">&lt;Del&gt;</a>
+character (but not necessarily the <a href="change.txt.html#%3CDel%3E" class="s">&lt;Del&gt;</a> key!).  To <a href="insert.txt.html#insert" class="d">insert</a> <a href="change.txt.html#%3CDel%3E" class="s">&lt;Del&gt;</a> type: 
+<span class="e"></span>
+<span class="e">        CTRL-V 127</span>
+<span class="e"></span>
+You can enter characters up to 255 this way.  When you type fewer than two
+digits, <a href="insert.txt.html#a" class="d">a</a> non-digit will terminate the command.  To avoid the need of typing <a href="insert.txt.html#a" class="d">a</a>
+non-digit, prepend one or two zeros to make three digits.
+   All the next commands <a href="insert.txt.html#insert" class="d">insert</a> <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a> and then <a href="insert.txt.html#a" class="d">a</a> dot:
+
+        <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> 9.
+        <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> 09.
+        <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> 009.
+
+To enter <a href="insert.txt.html#a" class="d">a</a> character in hexadecimal, use an "<a href="change.txt.html#x" class="d">x</a>" after the <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a>: 
+<span class="e"></span>
+<span class="e">        CTRL-V x7f</span>
+<span class="e"></span>
+This also goes up to character 255 (CTRL-V xff).  You can use "<a href="insert.txt.html#o" class="d">o</a>" to type <a href="insert.txt.html#a" class="d">a</a>
+character <a href="motion.txt.html#as" class="d">as</a> an <a href="eval.txt.html#octal" class="d">octal</a> number and two more methods allow you to type up to
+<a href="insert.txt.html#a" class="d">a</a> 16 bit and <a href="insert.txt.html#a" class="d">a</a> 32 bit number (e.g., for <a href="insert.txt.html#a" class="d">a</a> <a href="mbyte.txt.html#Unicode" class="d">Unicode</a> character): 
+<span class="e"></span>
+<span class="e">        CTRL-V o123</span>
+<span class="e">        CTRL-V u1234</span>
+<span class="e">        CTRL-V U12345678</span>
+<span class="e"></span>
+<span class="h">==============================================================================</span>
+<a name="24.9" class="t">24.9</a>  <a href="digraph.txt.html#Digraphs" class="d">Digraphs</a>
+
+Some characters are not on the keyboard.  For example, the <a href="uganda.txt.html#copyright" class="d">copyright</a> character
+(©).  To type these characters in Vim, you use digraphs, where two characters
+represent one.  To enter <a href="insert.txt.html#a" class="d">a</a> ©<a href="motion.txt.html#%2C" class="d">,</a> for example, you press three keys: 
+<span class="e"></span>
+<span class="e">        CTRL-K Co</span>
+<span class="e"></span>
+To find out what <a href="digraph.txt.html#digraphs" class="d">digraphs</a> are available, use the following command: 
+<span class="e"></span>
+<span class="e">        :digraphs</span>
+<span class="e"></span>
+Vim will display the <a href="digraph.txt.html#digraph" class="d">digraph</a> table.  Here are three lines of it:
+
+<span class="h">  AC ~_ 159  NS |  160  !I ¡  161  Ct ¢  162  Pd £  163  Cu ¤  164  Ye ¥  165 </span>
+<span class="h">  BB ¦  166  SE §  167  ': ¨  168  Co ©  169  -a ª  170  &lt;&lt; «  171  NO ¬  172 </span>
+<span class="h">  -- ­  173  Rg ®  174  'm ¯  175  DG °  176  +- ±  177  2S ²  178  3S ³  179 </span>
+
+This shows, for example, that the <a href="digraph.txt.html#digraph" class="d">digraph</a> you get by typing <span class="k">CTRL-K</span> Pd <a href="motion.txt.html#is" class="d">is</a> the
+character (£).  This <a href="motion.txt.html#is" class="d">is</a> character number 163 (decimal).
+   Pd <a href="motion.txt.html#is" class="d">is</a> short for Pound.  Most <a href="digraph.txt.html#digraphs" class="d">digraphs</a> are selected to give you <a href="insert.txt.html#a" class="d">a</a> hint about
+the character they will produce.  If you look through the <a href="eval.txt.html#list" class="d">list</a> you will
+understand the logic.
+   You can exchange the first and second character, if there <a href="motion.txt.html#is" class="d">is</a> no <a href="digraph.txt.html#digraph" class="d">digraph</a> for
+that combination.  Thus <span class="k">CTRL-K</span> dP also works.  Since there <a href="motion.txt.html#is" class="d">is</a> no <a href="digraph.txt.html#digraph" class="d">digraph</a> for
+"dP" Vim will also search for <a href="insert.txt.html#a" class="d">a</a> "Pd" digraph.
+
+        <span class="n">Note:</span>
+        The <a href="digraph.txt.html#digraphs" class="d">digraphs</a> depend on the character set that Vim assumes you are
+        using.  On <a href="os_msdos.txt.html#MS-DOS" class="d">MS-DOS</a> they are different from MS-Windows.  Always use
+        "<a href="digraph.txt.html#%3Adigraphs" class="d">:digraphs</a>" to find out which <a href="digraph.txt.html#digraphs" class="d">digraphs</a> are currently available.
+
+You can define your own digraphs.  Example: 
+<span class="e"></span>
+<span class="e">        :digraph a" ä</span>
+<span class="e"></span>
+This defines that <span class="k">CTRL-K</span> <a href="insert.txt.html#a" class="d">a</a>" inserts an ä character.  You can also specify the
+character with <a href="insert.txt.html#a" class="d">a</a> decimal number.  This defines the same digraph: 
+<span class="e"></span>
+<span class="e">        :digraph a" 228</span>
+<span class="e"></span>
+More information about <a href="digraph.txt.html#digraphs" class="d">digraphs</a> here: <a href="digraph.txt.html#digraphs" class="l">digraphs</a>
+   Another way to <a href="insert.txt.html#insert" class="d">insert</a> special characters <a href="motion.txt.html#is" class="d">is</a> with <a href="insert.txt.html#a" class="d">a</a> keymap.  More about that
+here: <a href="usr_45.txt.html#45.5" class="l">45.5</a>
+
+<span class="h">==============================================================================</span>
+<a name="24.10" class="t">24.10</a> <a href="intro.txt.html#Normal" class="d">Normal</a> mode commands
+
+<a href="insert.txt.html#Insert" class="d">Insert</a> mode offers <a href="insert.txt.html#a" class="d">a</a> limited number of commands.  In <a href="intro.txt.html#Normal" class="d">Normal</a> mode you have many
+more.  When you want to use one, you usually leave <a href="insert.txt.html#Insert" class="d">Insert</a> mode with <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a>,
+execute the <a href="intro.txt.html#Normal" class="d">Normal</a> mode command, and re-enter <a href="insert.txt.html#Insert" class="d">Insert</a> mode with "<a href="insert.txt.html#i" class="d">i</a>" or "<a href="insert.txt.html#a" class="d">a</a>"<a href="repeat.txt.html#." class="d">.</a>
+   There <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> quicker way.  With <a href="motion.txt.html#CTRL-O" class="k">CTRL-O</a> <span class="s">{command}</span> you can execute any <a href="intro.txt.html#Normal" class="d">Normal</a>
+mode command from <a href="insert.txt.html#Insert" class="d">Insert</a> mode.  For example, to delete from the cursor to the
+<a href="intro.txt.html#end" class="d">end</a> of the line: 
+<span class="e"></span>
+<span class="e">        CTRL-O D</span>
+<span class="e"></span>
+You can execute only one <a href="intro.txt.html#Normal" class="d">Normal</a> mode command this way.  But you can specify <a href="insert.txt.html#a" class="d">a</a>
+<a href="sponsor.txt.html#register" class="d">register</a> or <a href="insert.txt.html#a" class="d">a</a> count.  <a href="insert.txt.html#A" class="d">A</a> more complicated example: 
+<span class="e"></span>
+<span class="e">        CTRL-O "g3dw</span>
+<span class="e"></span>
+This deletes up to the third <a href="motion.txt.html#word" class="d">word</a> into <a href="sponsor.txt.html#register" class="d">register</a> g.
+
+<span class="h">==============================================================================</span>
+
+Next chapter: <a href="usr_25.txt.html#usr_25.txt" class="l">usr_25.txt</a>  Editing formatted text
+
+Copyright: see <a href="usr_01.txt.html#manual-copyright" class="l">manual-copyright</a>  vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

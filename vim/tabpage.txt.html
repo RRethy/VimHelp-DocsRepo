@@ -1,0 +1,488 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: tabpage.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="tabpage.txt" class="t">tabpage.txt</a>   For <span class="i">Vim version 8.0.</span>  Last change: 2018 Mar 29
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Bram Moolenaar</span>
+
+
+Editing with <a href="windows.txt.html#windows" class="d">windows</a> in multiple <a href="intro.txt.html#tab" class="d">tab</a> pages.             <a name="tab-page" class="t">tab-page</a> <a name="tabpage" class="t">tabpage</a>
+
+The commands which have been added to use multiple <a href="intro.txt.html#tab" class="d">tab</a> pages are explained
+here.  Additionally, there are explanations for commands that work differently
+when used in combination with more than one <a href="intro.txt.html#tab" class="d">tab</a> page.
+
+1. Introduction                 <a href="#tab-page-intro" class="l">tab-page-intro</a>
+2. Commands                     <a href="#tab-page-commands" class="l">tab-page-commands</a>
+3. Other items                  <a href="#tab-page-other" class="l">tab-page-other</a>
+4. Setting <a href="options.txt.html#%27tabline%27" class="o">'tabline'</a>            <a href="#setting-tabline" class="l">setting-tabline</a>
+5. Setting <a href="options.txt.html#%27guitablabel%27" class="o">'guitablabel'</a>        <a href="#setting-guitablabel" class="l">setting-guitablabel</a>
+
+<span class="s">{Vi does not have any of these commands}</span>
+{not able to use multiple <a href="intro.txt.html#tab" class="d">tab</a> pages when the <a href="various.txt.html#%2Bwindows" class="l">+windows</a> feature was disabled
+<a href="motion.txt.html#at" class="d">at</a> compile time}
+
+<span class="h">==============================================================================</span>
+1. Introduction                                         <a name="tab-page-intro" class="t">tab-page-intro</a>
+
+<a href="insert.txt.html#A" class="d">A</a> <a href="intro.txt.html#tab" class="d">tab</a> page holds one or more windows.  You can easily switch between <a href="intro.txt.html#tab" class="d">tab</a>
+pages, so that you have several collections of <a href="windows.txt.html#windows" class="d">windows</a> to work on different
+things.
+
+Usually you will see <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of labels <a href="motion.txt.html#at" class="d">at</a> the top of the Vim window, one for
+each <a href="intro.txt.html#tab" class="d">tab</a> page.  With the mouse you can click on the label to jump to that <a href="intro.txt.html#tab" class="d">tab</a>
+page.  There are other ways to move between <a href="intro.txt.html#tab" class="d">tab</a> pages, see below.
+
+Most commands work only in the current <a href="intro.txt.html#tab" class="d">tab</a> page.  That includes the <a href="index.txt.html#CTRL-W" class="l">CTRL-W</a>
+commands, <a href="windows.txt.html#%3Awindo" class="l">:windo</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="windows.txt.html#%3Aall" class="l">:all</a> and <a href="windows.txt.html#%3Aball" class="l">:ball</a> (when not using the <a href="#%3Atab" class="l">:tab</a> modifier).
+The commands that are aware of other <a href="intro.txt.html#tab" class="d">tab</a> pages than the current one are
+mentioned below.
+
+Tabs are also <a href="insert.txt.html#a" class="d">a</a> <a href="todo.txt.html#nice" class="d">nice</a> way to edit <a href="insert.txt.html#a" class="d">a</a> buffer temporarily without <a href="change.txt.html#changing" class="d">changing</a> the
+current <a href="windows.txt.html#window" class="d">window</a> layout.  Open <a href="insert.txt.html#a" class="d">a</a> new <a href="intro.txt.html#tab" class="d">tab</a> page, <a href="diff.txt.html#do" class="d">do</a> whatever you want to <a href="diff.txt.html#do" class="d">do</a> and
+close the <a href="intro.txt.html#tab" class="d">tab</a> page.
+
+<span class="h">==============================================================================</span>
+2. Commands                                             <a name="tab-page-commands" class="t">tab-page-commands</a>
+
+OPENING <a href="insert.txt.html#A" class="d">A</a> NEW TAB PAGE:
+
+When <a href="starting.txt.html#starting" class="d">starting</a> Vim "vim <a href="starting.txt.html#-p" class="d">-p</a> filename <a href="eval.txt.html#..." class="d">...</a>" opens each file argument in <a href="insert.txt.html#a" class="d">a</a> separate
+<a href="intro.txt.html#tab" class="d">tab</a> page (up to <a href="options.txt.html#%27tabpagemax%27" class="o">'tabpagemax'</a>).  See <a href="starting.txt.html#-p" class="l">-p</a>
+
+<a href="insert.txt.html#A" class="d">A</a> double click with the mouse in the non-GUI <a href="intro.txt.html#tab" class="d">tab</a> pages line opens <a href="insert.txt.html#a" class="d">a</a> new, empty
+<a href="intro.txt.html#tab" class="d">tab</a> page.  It <a href="motion.txt.html#is" class="d">is</a> placed left of the position of the click.  The first click
+may select another <a href="intro.txt.html#tab" class="d">tab</a> page first, causing an extra screen update.
+
+This also works in <a href="insert.txt.html#a" class="d">a</a> few <a href="gui.txt.html#GUI" class="d">GUI</a> versions, esp. <a href="os_win32.txt.html#Win32" class="d">Win32</a> and Motif.  But only when
+clicking right of the labels.
+
+In the <a href="gui.txt.html#GUI" class="d">GUI</a> <a href="intro.txt.html#tab" class="d">tab</a> pages line you can use the right mouse button to open menu.
+<a href="#tabline-menu" class="l">tabline-menu</a><a href="repeat.txt.html#." class="d">.</a>
+
+For the related autocommands see <a href="#tabnew-autocmd" class="l">tabnew-autocmd</a><a href="repeat.txt.html#." class="d">.</a>
+
+:[count]tabe[dit]                               <a name="%3Atabe" class="t">:tabe</a> <a name="%3Atabedit" class="t">:tabedit</a> <a name="%3Atabnew" class="t">:tabnew</a>
+:[count]tabnew
+                Open <a href="insert.txt.html#a" class="d">a</a> new <a href="intro.txt.html#tab" class="d">tab</a> page with an empty window, after the current
+                <a href="intro.txt.html#tab" class="d">tab</a> page.  If <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> <a href="motion.txt.html#is" class="d">is</a> given the new <a href="intro.txt.html#tab" class="d">tab</a> page appears after
+                the <a href="intro.txt.html#tab" class="d">tab</a> page <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> otherwise the new <a href="intro.txt.html#tab" class="d">tab</a> page will appear
+                after the current one. 
+<span class="e">                    :tabnew     " opens tabpage after the current one</span>
+<span class="e">                    :.tabnew    " as above</span>
+<span class="e">                    :+tabnew    " opens tabpage after the next tab page</span>
+<span class="e">                                " note: it is one further than :tabnew</span>
+<span class="e">                    :-tabnew    " opens tabpage before the current one</span>
+<span class="e">                    :0tabnew    " opens tabpage before the first one</span>
+<span class="e">                    :$tabnew    " opens tabpage after the last one</span>
+<span class="e"></span>
+:[count]tabe[dit] <a href="editing.txt.html#%5B%2B%2Bopt%5D" class="s">[++opt]</a> <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a> <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a>
+:[count]tabnew <a href="editing.txt.html#%5B%2B%2Bopt%5D" class="s">[++opt]</a> <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a> <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a>
+                Open <a href="insert.txt.html#a" class="d">a</a> new <a href="intro.txt.html#tab" class="d">tab</a> page and edit <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a>, like with <a href="editing.txt.html#%3Aedit" class="l">:edit</a><a href="repeat.txt.html#." class="d">.</a>
+                For <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> see <a href="#%3Atabnew" class="l">:tabnew</a> above.
+
+:[count]tabf[ind] <a href="editing.txt.html#%5B%2B%2Bopt%5D" class="s">[++opt]</a> <a href="editing.txt.html#%5B%2Bcmd%5D" class="s">[+cmd]</a> <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a>                 <a name="%3Atabf" class="t">:tabf</a> <a name="%3Atabfind" class="t">:tabfind</a>
+                Open <a href="insert.txt.html#a" class="d">a</a> new <a href="intro.txt.html#tab" class="d">tab</a> page and edit <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a> in <a href="options.txt.html#%27path%27" class="o">'path'</a>, like with
+                <a href="editing.txt.html#%3Afind" class="l">:find</a><a href="repeat.txt.html#." class="d">.</a>  For <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> see <a href="#%3Atabnew" class="l">:tabnew</a> above.
+                {not available when the <a href="various.txt.html#%2Bfile_in_path" class="l">+file_in_path</a> feature was disabled
+                <a href="motion.txt.html#at" class="d">at</a> compile time}
+
+:[count]tab <span class="s">{cmd}</span>                                       <a name="%3Atab" class="t">:tab</a>
+                Execute <span class="s">{cmd}</span> and when <a href="motion.txt.html#it" class="d">it</a> opens <a href="insert.txt.html#a" class="d">a</a> new <a href="windows.txt.html#window" class="d">window</a> open <a href="insert.txt.html#a" class="d">a</a> new <a href="intro.txt.html#tab" class="d">tab</a>
+                page instead.  Doesn't work for <a href="diff.txt.html#%3Adiffsplit" class="l">:diffsplit</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="diff.txt.html#%3Adiffpatch" class="l">:diffpatch</a><a href="motion.txt.html#%2C" class="d">,</a>
+                <a href="eval.txt.html#%3Aexecute" class="l">:execute</a> and <a href="various.txt.html#%3Anormal" class="l">:normal</a><a href="repeat.txt.html#." class="d">.</a>
+                If <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> <a href="motion.txt.html#is" class="d">is</a> given the new <a href="intro.txt.html#tab" class="d">tab</a> page appears after the <a href="intro.txt.html#tab" class="d">tab</a>
+                page <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> otherwise the new <a href="intro.txt.html#tab" class="d">tab</a> page will appear after the
+                current one.
+                Examples: 
+<span class="e">                    :tab split      " opens current buffer in new tab page</span>
+<span class="e">                    :tab help gt    " opens tab page with help for "gt"</span>
+<span class="e">                    :.tab help gt   " as above</span>
+<span class="e">                    :+tab help      " opens tab page with help after the next</span>
+<span class="e">                                    " tab page</span>
+<span class="e">                    :-tab help      " opens tab page with help before the</span>
+<span class="e">                                    " current one</span>
+<span class="e">                    :0tab help      " opens tab page with help before the</span>
+<span class="e">                                    " first one</span>
+<span class="e">                    :$tab help      " opens tab page with help after the last</span>
+<span class="e">                                    " one</span>
+<span class="e"></span>
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="editing.txt.html#gf" class="d">gf</a>       Open <a href="insert.txt.html#a" class="d">a</a> new <a href="intro.txt.html#tab" class="d">tab</a> page and edit the file name under the cursor.
+                See <a href="windows.txt.html#CTRL-W_gf" class="l">CTRL-W_gf</a><a href="repeat.txt.html#." class="d">.</a>
+
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> <a href="editing.txt.html#gF" class="d">gF</a>       Open <a href="insert.txt.html#a" class="d">a</a> new <a href="intro.txt.html#tab" class="d">tab</a> page and edit the file name under the cursor
+                and jump to the line number following the file name.
+                See <a href="windows.txt.html#CTRL-W_gF" class="l">CTRL-W_gF</a><a href="repeat.txt.html#." class="d">.</a>
+
+CLOSING <a href="insert.txt.html#A" class="d">A</a> TAB PAGE:
+
+Closing the last <a href="windows.txt.html#window" class="d">window</a> of <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#tab" class="d">tab</a> page closes the <a href="intro.txt.html#tab" class="d">tab</a> page too, unless there <a href="motion.txt.html#is" class="d">is</a>
+only one <a href="intro.txt.html#tab" class="d">tab</a> page.
+
+Using the mouse: If the <a href="intro.txt.html#tab" class="d">tab</a> page line <a href="motion.txt.html#is" class="d">is</a> displayed you can click in the "<a href="change.txt.html#X" class="d">X</a>" <a href="motion.txt.html#at" class="d">at</a>
+the top right to close the current <a href="intro.txt.html#tab" class="d">tab</a> page.  <a href="insert.txt.html#A" class="d">A</a> custom <a href="options.txt.html#%27tabline%27" class="l">'tabline'</a> may show
+something else.
+
+                                                        <a name="%3Atabc" class="t">:tabc</a> <a name="%3Atabclose" class="t">:tabclose</a>
+:tabc[lose][!]  Close current <a href="intro.txt.html#tab" class="d">tab</a> page.
+                This command fails when:
+                <a href="motion.txt.html#-" class="d">-</a> There <a href="motion.txt.html#is" class="d">is</a> only one <a href="intro.txt.html#tab" class="d">tab</a> page on the screen.             <a name="E784" class="t">E784</a>
+                <a href="motion.txt.html#-" class="d">-</a> When <a href="options.txt.html#%27hidden%27" class="o">'hidden'</a> <a href="motion.txt.html#is" class="d">is</a> not set, [!] <a href="motion.txt.html#is" class="d">is</a> not used, <a href="insert.txt.html#a" class="d">a</a> buffer has
+                  changes, and there <a href="motion.txt.html#is" class="d">is</a> no other <a href="windows.txt.html#window" class="d">window</a> on this buffer.
+                Changes to the buffer are not written and won't get lost, so
+                this <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> "safe" command. 
+<span class="e">                    :tabclose       " close the current tab page</span>
+<span class="e"></span>
+:{count}tabc[lose][!]
+:tabc[lose][!] <span class="s">{count}</span>
+                Close <a href="intro.txt.html#tab" class="d">tab</a> page <span class="s">{count}</span>.  Fails in the same way <a href="motion.txt.html#as" class="d">as</a> <span class="e">:tabclose</span>
+                above. 
+<span class="e">                    :-tabclose      " close the previous tab page</span>
+<span class="e">                    :+tabclose      " close the next tab page</span>
+<span class="e">                    :1tabclose      " close the first tab page</span>
+<span class="e">                    :$tabclose      " close the last tab page</span>
+<span class="e">                    :tabclose -2    " close the two previous tab page</span>
+<span class="e">                    :tabclose +     " close the next tab page</span>
+<span class="e">                    :tabclose 3     " close the third tab page</span>
+<span class="e">                    :tabclose $     " close the last tab page</span>
+
+                                                        <a name="%3Atabo" class="t">:tabo</a> <a name="%3Atabonly" class="t">:tabonly</a>
+:tabo[nly][!]   Close all other <a href="intro.txt.html#tab" class="d">tab</a> pages.
+                When the <a href="options.txt.html#%27hidden%27" class="o">'hidden'</a> option <a href="motion.txt.html#is" class="d">is</a> set, all <a href="windows.txt.html#buffers" class="d">buffers</a> in closed <a href="windows.txt.html#windows" class="d">windows</a>
+                become hidden.
+                When <a href="options.txt.html#%27hidden%27" class="o">'hidden'</a> <a href="motion.txt.html#is" class="d">is</a> not set, and the <a href="options.txt.html#%27autowrite%27" class="o">'autowrite'</a> option <a href="motion.txt.html#is" class="d">is</a> set,
+                modified <a href="windows.txt.html#buffers" class="d">buffers</a> are written.  Otherwise, <a href="windows.txt.html#windows" class="d">windows</a> that have
+                <a href="windows.txt.html#buffers" class="d">buffers</a> that are modified are not removed, unless the [!] <a href="motion.txt.html#is" class="d">is</a>
+                given, then they become hidden.  But modified <a href="windows.txt.html#buffers" class="d">buffers</a> are
+                never abandoned, so changes cannot get lost. 
+<span class="e">                    :tabonly        " close all tab pages except the current</span>
+<span class="e">                                    " one</span>
+<span class="e"></span>
+:{count}tabo[nly][!]
+:tabo[nly][!] <span class="s">{count}</span>
+                Close all <a href="intro.txt.html#tab" class="d">tab</a> pages except <span class="s">{count}</span> one. 
+<span class="e">                    :.tabonly       " as above</span>
+<span class="e">                    :-tabonly       " close all tab pages except the previous</span>
+<span class="e">                                    " one</span>
+<span class="e">                    :+tabonly       " close all tab pages except the next one</span>
+<span class="e">                    :1tabonly       " close all tab pages except the first one</span>
+<span class="e">                    :$tabonly       " close all tab pages except the last one</span>
+<span class="e">                    :tabonly -      " close all tab pages except the previous</span>
+<span class="e">                                    " one</span>
+<span class="e">                    :tabonly +2     " close all tab pages except the two next</span>
+<span class="e">                                    " one</span>
+<span class="e">                    :tabonly 1      " close all tab pages except the first one</span>
+<span class="e">                    :tabonly $      " close all tab pages except the last one</span>
+<span class="e"></span>
+<span class="e"></span>
+SWITCHING TO ANOTHER TAB PAGE:
+
+Using the mouse: If the <a href="intro.txt.html#tab" class="d">tab</a> page line <a href="motion.txt.html#is" class="d">is</a> displayed you can click in <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#tab" class="d">tab</a> page
+label to switch to that <a href="intro.txt.html#tab" class="d">tab</a> page.  Click where there <a href="motion.txt.html#is" class="d">is</a> no label to <a href="motion.txt.html#go" class="d">go</a> to the
+next <a href="intro.txt.html#tab" class="d">tab</a> page.  <a href="options.txt.html#%27tabline%27" class="l">'tabline'</a>
+
+:tabn[ext]                              <a name="%3Atabn" class="t">:tabn</a> <a name="%3Atabnext" class="t">:tabnext</a> <a name="gt" class="t">gt</a>
+<a href="#%3CC-PageDown%3E" class="s">&lt;C-PageDown&gt;</a>                            <a name="CTRL-%3CPageDown%3E" class="t">CTRL-&lt;PageDown&gt;</a> <a name="%3CC-PageDown%3E" class="t">&lt;C-PageDown&gt;</a>
+<a href="#gt" class="d">gt</a>                                      <a name="i_CTRL-%3CPageDown%3E" class="t">i_CTRL-&lt;PageDown&gt;</a> <a name="i_%3CC-PageDown%3E" class="t">i_&lt;C-PageDown&gt;</a>
+                Go to the next <a href="intro.txt.html#tab" class="d">tab</a> page.  Wraps around from the last to the
+                first one.
+
+:{count}tabn[ext]
+:tabn[ext] <span class="s">{count}</span>
+                Go to <a href="intro.txt.html#tab" class="d">tab</a> page <span class="s">{count}</span>.  The first <a href="intro.txt.html#tab" class="d">tab</a> page has number one. 
+<span class="e">                    :-tabnext   " go to the previous tab page</span>
+<span class="e">                    :+tabnext   " go to the next tab page</span>
+<span class="e">                    :+2tabnext  " go to the two next tab page</span>
+<span class="e">                    :1tabnext   " go to the first tab page</span>
+<span class="e">                    :$tabnext   " go to the last tab page</span>
+<span class="e">                    :tabnext $  " as above</span>
+<span class="e">                    :tabnext -  " go to the previous tab page</span>
+<span class="e">                    :tabnext -1 " as above</span>
+<span class="e">                    :tabnext +  " go to the next tab page</span>
+<span class="e">                    :tabnext +1 " as above</span>
+<span class="e"></span>
+<span class="s">{count}</span><a href="#%3CC-PageDown%3E" class="s">&lt;C-PageDown&gt;</a>
+<span class="s">{count}</span>gt       Go to <a href="intro.txt.html#tab" class="d">tab</a> page <span class="s">{count}</span>.  The first <a href="intro.txt.html#tab" class="d">tab</a> page has number one.
+
+
+:tabp[revious]                          <a name="%3Atabp" class="t">:tabp</a> <a name="%3Atabprevious" class="t">:tabprevious</a> <a name="gT" class="t">gT</a> <a name="%3AtabN" class="t">:tabN</a>
+:tabN[ext]                              <a name="%3AtabNext" class="t">:tabNext</a> <a name="CTRL-%3CPageUp%3E" class="t">CTRL-&lt;PageUp&gt;</a>
+<a href="#%3CC-PageUp%3E" class="s">&lt;C-PageUp&gt;</a>                       <a name="%3CC-PageUp%3E" class="t">&lt;C-PageUp&gt;</a> <a name="i_CTRL-%3CPageUp%3E" class="t">i_CTRL-&lt;PageUp&gt;</a> <a name="i_%3CC-PageUp%3E" class="t">i_&lt;C-PageUp&gt;</a>
+<a href="#gT" class="d">gT</a>              Go to the previous <a href="intro.txt.html#tab" class="d">tab</a> page.  Wraps around from the first one
+                to the last one.
+
+:tabp[revious] <span class="s">{count}</span>
+:tabN[ext] <span class="s">{count}</span>
+<span class="s">{count}</span><a href="#%3CC-PageUp%3E" class="s">&lt;C-PageUp&gt;</a>
+<span class="s">{count}</span>gT       Go <span class="s">{count}</span> <a href="intro.txt.html#tab" class="d">tab</a> pages back.  Wraps around from the first one
+                to the last one.
+
+:tabr[ewind]                    <a name="%3Atabfir" class="t">:tabfir</a> <a name="%3Atabfirst" class="t">:tabfirst</a> <a name="%3Atabr" class="t">:tabr</a> <a name="%3Atabrewind" class="t">:tabrewind</a>
+:tabfir[st]     Go to the first <a href="intro.txt.html#tab" class="d">tab</a> page.
+
+                                                        <a name="%3Atabl" class="t">:tabl</a> <a name="%3Atablast" class="t">:tablast</a>
+:tabl[ast]      Go to the last <a href="intro.txt.html#tab" class="d">tab</a> page.
+
+
+Other commands:
+                                                        <a name="%3Atabs" class="t">:tabs</a>
+<a href="#%3Atabs" class="d">:tabs</a>           <a href="eval.txt.html#List" class="d">List</a> the <a href="intro.txt.html#tab" class="d">tab</a> pages and the <a href="windows.txt.html#windows" class="d">windows</a> they contain.
+                Shows <a href="insert.txt.html#a" class="d">a</a> "<a href="change.txt.html#%3E" class="d">&gt;</a>" for the current window.
+                Shows <a href="insert.txt.html#a" class="d">a</a> "<a href="motion.txt.html#%2B" class="d">+</a>" for modified buffers.
+                For example:
+<span class="h">                        Tab page 1 </span>
+<span class="h">                          + tabpage.txt </span>
+<span class="h">                            ex_docmd.c </span>
+<span class="h">                        Tab page 2 </span>
+<span class="h">                        &gt;   main.c </span>
+
+
+REORDERING TAB PAGES:
+
+:tabm[ove] [N]                                          <a name="%3Atabm" class="t">:tabm</a> <a name="%3Atabmove" class="t">:tabmove</a>
+:[N]tabm[ove]
+                Move the current <a href="intro.txt.html#tab" class="d">tab</a> page to after <a href="intro.txt.html#tab" class="d">tab</a> page N.  Use zero to
+                make the current <a href="intro.txt.html#tab" class="d">tab</a> page the first one.  Without <a href="pattern.txt.html#N" class="d">N</a> the <a href="intro.txt.html#tab" class="d">tab</a>
+                page <a href="motion.txt.html#is" class="d">is</a> made the last one. 
+<span class="e">                    :.tabmove   " do nothing</span>
+<span class="e">                    :-tabmove   " move the tab page to the left</span>
+<span class="e">                    :+tabmove   " move the tab page to the right</span>
+<span class="e">                    :0tabmove   " move the tab page to the beginning of the tab</span>
+<span class="e">                                " list</span>
+<span class="e">                    :tabmove 0  " as above</span>
+<span class="e">                    :tabmove    " move the tab page to the last</span>
+<span class="e">                    :$tabmove   " as above</span>
+<span class="e">                    :tabmove $  " as above</span>
+<span class="e"></span>
+:tabm[ove] +[N]
+:tabm[ove] -[N]
+                Move the current <a href="intro.txt.html#tab" class="d">tab</a> page <a href="pattern.txt.html#N" class="d">N</a> places to the right (with +) or to
+                the left (with -). 
+<span class="e">                    :tabmove -  " move the tab page to the left</span>
+<span class="e">                    :tabmove -1 " as above</span>
+<span class="e">                    :tabmove +  " move the tab page to the right</span>
+<span class="e">                    :tabmove +1 " as above</span>
+<span class="e"></span>
+<span class="e"></span>
+<span class="n">Note</span> that although <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> possible to move <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#tab" class="d">tab</a> behind the N-th one by using
+:Ntabmove. And move <a href="motion.txt.html#it" class="d">it</a> by <a href="pattern.txt.html#N" class="d">N</a> places by using :+Ntabmove. For clarification what
++N means in this context see <a href="cmdline.txt.html#%5Brange%5D" class="l">[range]</a><a href="repeat.txt.html#." class="d">.</a>
+
+
+LOOPING OVER TAB PAGES:
+
+                                                        <a name="%3Atabd" class="t">:tabd</a> <a name="%3Atabdo" class="t">:tabdo</a>
+:[range]tabd[o] <span class="s">{cmd}</span>
+                Execute <span class="s">{cmd}</span> in each <a href="intro.txt.html#tab" class="d">tab</a> page or if <a href="cmdline.txt.html#%5Brange%5D" class="s">[range]</a> <a href="motion.txt.html#is" class="d">is</a> given only in
+                <a href="intro.txt.html#tab" class="d">tab</a> pages which <a href="intro.txt.html#tab" class="d">tab</a> page number <a href="motion.txt.html#is" class="d">is</a> in the <a href="cmdline.txt.html#%5Brange%5D" class="s">[range]</a>.  It works
+                like doing this: 
+<span class="e">                        :tabfirst</span>
+<span class="e">                        :{cmd}</span>
+<span class="e">                        :tabnext</span>
+<span class="e">                        :{cmd}</span>
+<span class="e">                        etc.</span>
+               This only operates in the current <a href="windows.txt.html#window" class="d">window</a> of each <a href="intro.txt.html#tab" class="d">tab</a> page.
+                When an error <a href="motion.txt.html#is" class="d">is</a> detected on one <a href="intro.txt.html#tab" class="d">tab</a> page, further <a href="intro.txt.html#tab" class="d">tab</a> pages
+                will not be visited.
+                The last <a href="intro.txt.html#tab" class="d">tab</a> page (or where an error occurred) becomes the
+                current <a href="intro.txt.html#tab" class="d">tab</a> page.
+                <span class="s">{cmd}</span> can contain <a href="motion.txt.html#%27" class="d">'</a>|<a href="motion.txt.html#%27" class="d">'</a> to concatenate several commands.
+                <span class="s">{cmd}</span> <a href="vim_faq.txt.html#must" class="d">must</a> not open or close <a href="intro.txt.html#tab" class="d">tab</a> pages or reorder them.
+                <span class="s">{not in Vi}</span>
+                Also see <a href="windows.txt.html#%3Awindo" class="l">:windo</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="editing.txt.html#%3Aargdo" class="l">:argdo</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="windows.txt.html#%3Abufdo" class="l">:bufdo</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="quickfix.txt.html#%3Acdo" class="l">:cdo</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="quickfix.txt.html#%3Aldo" class="l">:ldo</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="quickfix.txt.html#%3Acfdo" class="l">:cfdo</a>
+                and <a href="quickfix.txt.html#%3Alfdo" class="l">:lfdo</a>
+
+<span class="h">==============================================================================</span>
+3. Other items                                          <a name="tab-page-other" class="t">tab-page-other</a>
+
+                                                        <a name="tabline-menu" class="t">tabline-menu</a>
+The <a href="gui.txt.html#GUI" class="d">GUI</a> <a href="intro.txt.html#tab" class="d">tab</a> pages line has <a href="insert.txt.html#a" class="d">a</a> popup menu.  It <a href="motion.txt.html#is" class="d">is</a> accessed with <a href="insert.txt.html#a" class="d">a</a> right click.
+The entries are:
+        Close           Close the <a href="intro.txt.html#tab" class="d">tab</a> page under the mouse pointer.  The
+                        current one if there <a href="motion.txt.html#is" class="d">is</a> no label under the mouse
+                        pointer.
+        New <a href="intro.txt.html#Tab" class="d">Tab</a>         Open <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#tab" class="d">tab</a> page, editing an empty buffer.  It appears
+                        to the left of the mouse pointer.
+        Open Tab...     Like "New <a href="intro.txt.html#Tab" class="d">Tab</a>" and additionally use <a href="insert.txt.html#a" class="d">a</a> file selector to
+                        select <a href="insert.txt.html#a" class="d">a</a> file to edit.
+
+Diff mode works per <a href="intro.txt.html#tab" class="d">tab</a> page.  You can see the diffs between several files
+within one <a href="intro.txt.html#tab" class="d">tab</a> page.  Other <a href="intro.txt.html#tab" class="d">tab</a> pages can show differences between other
+files.
+
+Variables local to <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#tab" class="d">tab</a> page start with "<a href="eval.txt.html#t%3A" class="d">t:</a>"<a href="repeat.txt.html#." class="d">.</a> <a href="eval.txt.html#tabpage-variable" class="l">tabpage-variable</a>
+
+Currently there <a href="motion.txt.html#is" class="d">is</a> only one option local to <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#tab" class="d">tab</a> page: <a href="options.txt.html#%27cmdheight%27" class="o">'cmdheight'</a>.
+
+                                                <a name="tabnew-autocmd" class="t">tabnew-autocmd</a>
+The <a href="autocmd.txt.html#TabLeave" class="d">TabLeave</a> and <a href="autocmd.txt.html#TabEnter" class="d">TabEnter</a> <a href="autocmd.txt.html#autocommand" class="d">autocommand</a> events can be used to <a href="diff.txt.html#do" class="d">do</a> something when
+switching from one <a href="intro.txt.html#tab" class="d">tab</a> page to another.  The exact order depends on what you
+are doing.  When creating <a href="insert.txt.html#a" class="d">a</a> new <a href="intro.txt.html#tab" class="d">tab</a> page this works <a href="motion.txt.html#as" class="d">as</a> if you create <a href="insert.txt.html#a" class="d">a</a> new
+<a href="windows.txt.html#window" class="d">window</a> on the same buffer and then edit another buffer.  Thus "<a href="#%3Atabnew" class="d">:tabnew</a>"
+triggers:
+        <a href="autocmd.txt.html#WinLeave" class="d">WinLeave</a>                leave current <a href="windows.txt.html#window" class="d">window</a>
+        <a href="autocmd.txt.html#TabLeave" class="d">TabLeave</a>                leave current <a href="intro.txt.html#tab" class="d">tab</a> page
+        <a href="autocmd.txt.html#WinEnter" class="d">WinEnter</a>                enter <a href="windows.txt.html#window" class="d">window</a> in new <a href="intro.txt.html#tab" class="d">tab</a> page
+        <a href="autocmd.txt.html#TabEnter" class="d">TabEnter</a>                enter new <a href="intro.txt.html#tab" class="d">tab</a> page
+        <a href="autocmd.txt.html#BufLeave" class="d">BufLeave</a>                leave current buffer
+        <a href="autocmd.txt.html#BufEnter" class="d">BufEnter</a>                enter new empty buffer
+
+When switching to another <a href="intro.txt.html#tab" class="d">tab</a> page the order is:
+        <a href="autocmd.txt.html#BufLeave" class="d">BufLeave</a>
+        <a href="autocmd.txt.html#WinLeave" class="d">WinLeave</a>
+        <a href="autocmd.txt.html#TabLeave" class="d">TabLeave</a>
+        <a href="autocmd.txt.html#TabEnter" class="d">TabEnter</a>
+        <a href="autocmd.txt.html#WinEnter" class="d">WinEnter</a>
+        <a href="autocmd.txt.html#BufEnter" class="d">BufEnter</a>
+
+<span class="h">==============================================================================</span>
+4. Setting <a href="options.txt.html#%27tabline%27" class="o">'tabline'</a>                                    <a name="setting-tabline" class="t">setting-tabline</a>
+
+The <a href="options.txt.html#%27tabline%27" class="o">'tabline'</a> option specifies what the line with <a href="intro.txt.html#tab" class="d">tab</a> pages labels looks like.
+It <a href="motion.txt.html#is" class="d">is</a> only used when there <a href="motion.txt.html#is" class="d">is</a> no <a href="gui.txt.html#GUI" class="d">GUI</a> <a href="intro.txt.html#tab" class="d">tab</a> line.
+
+You can use the <a href="options.txt.html#%27showtabline%27" class="o">'showtabline'</a> option to specify when you want the line with
+<a href="intro.txt.html#tab" class="d">tab</a> page labels to appear: never, when there <a href="motion.txt.html#is" class="d">is</a> more than one <a href="intro.txt.html#tab" class="d">tab</a> page or
+always.
+
+The highlighting of the <a href="intro.txt.html#tab" class="d">tab</a> pages line <a href="motion.txt.html#is" class="d">is</a> set with the groups TabLine
+TabLineSel and TabLineFill.  <a href="syntax.txt.html#hl-TabLine" class="l">hl-TabLine</a> <a href="syntax.txt.html#hl-TabLineSel" class="l">hl-TabLineSel</a> <a href="syntax.txt.html#hl-TabLineFill" class="l">hl-TabLineFill</a>
+
+<a href="insert.txt.html#A" class="d">A</a> "<a href="motion.txt.html#%2B" class="d">+</a>" will be shown for <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#tab" class="d">tab</a> page that has <a href="insert.txt.html#a" class="d">a</a> modified window.  The number of
+<a href="windows.txt.html#windows" class="d">windows</a> in <a href="insert.txt.html#a" class="d">a</a> <a href="#tabpage" class="d">tabpage</a> <a href="motion.txt.html#is" class="d">is</a> also shown.  Thus "3+" means three <a href="windows.txt.html#windows" class="d">windows</a> and one of
+them has <a href="insert.txt.html#a" class="d">a</a> modified buffer.
+
+The <a href="options.txt.html#%27tabline%27" class="o">'tabline'</a> option allows you to define your preferred way to <a href="intro.txt.html#tab" class="d">tab</a> pages
+labels.  This isn't easy, thus an example will be given here.
+
+For basics see the <a href="options.txt.html#%27statusline%27" class="o">'statusline'</a> option.  The same items can be used in the
+<a href="options.txt.html#%27tabline%27" class="o">'tabline'</a> option.  Additionally, the <a href="eval.txt.html#tabpagebuflist%28%29" class="l">tabpagebuflist()</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="eval.txt.html#tabpagenr%28%29" class="l">tabpagenr()</a> and
+<a href="eval.txt.html#tabpagewinnr%28%29" class="l">tabpagewinnr()</a> <a href="eval.txt.html#functions" class="d">functions</a> are useful.
+
+Since the number of <a href="intro.txt.html#tab" class="d">tab</a> labels will vary, you need to use an <a href="eval.txt.html#expression" class="d">expression</a> for
+the whole option.  Something like: 
+<span class="e">        :set tabline=%!MyTabLine()</span>
+<span class="e"></span>
+Then define the MyTabLine() function to <a href="eval.txt.html#list" class="d">list</a> all the <a href="intro.txt.html#tab" class="d">tab</a> pages labels.  <a href="insert.txt.html#A" class="d">A</a>
+convenient method <a href="motion.txt.html#is" class="d">is</a> to split <a href="motion.txt.html#it" class="d">it</a> in two parts:  First <a href="motion.txt.html#go" class="d">go</a> over all the <a href="intro.txt.html#tab" class="d">tab</a>
+pages and define labels for them.  Then get the label for each <a href="intro.txt.html#tab" class="d">tab</a> page. 
+<span class="e"></span>
+<span class="e">        function MyTabLine()</span>
+<span class="e">          let s = ''</span>
+<span class="e">          for i in range(tabpagenr('$'))</span>
+<span class="e">            " select the highlighting</span>
+<span class="e">            if i + 1 == tabpagenr()</span>
+<span class="e">              let s .= '%#TabLineSel#'</span>
+<span class="e">            else</span>
+<span class="e">              let s .= '%#TabLine#'</span>
+<span class="e">            endif</span>
+<span class="e"></span>
+<span class="e">            " set the tab page number (for mouse clicks)</span>
+<span class="e">            let s .= '%' . (i + 1) . 'T'</span>
+<span class="e"></span>
+<span class="e">            " the label is made by MyTabLabel()</span>
+<span class="e">            let s .= ' %{MyTabLabel(' . (i + 1) . ')} '</span>
+<span class="e">          endfor</span>
+<span class="e"></span>
+<span class="e">          " after the last tab fill with TabLineFill and reset tab page nr</span>
+<span class="e">          let s .= '%#TabLineFill#%T'</span>
+<span class="e"></span>
+<span class="e">          " right-align the label to close the current tab page</span>
+<span class="e">          if tabpagenr('$') &gt; 1</span>
+<span class="e">            let s .= '%=%#TabLine#%999Xclose'</span>
+<span class="e">          endif</span>
+<span class="e"></span>
+<span class="e">          return s</span>
+<span class="e">        endfunction</span>
+<span class="e"></span>
+Now the MyTabLabel() function <a href="motion.txt.html#is" class="d">is</a> called for each <a href="intro.txt.html#tab" class="d">tab</a> page to get its label. 
+<span class="e"></span>
+<span class="e">        function MyTabLabel(n)</span>
+<span class="e">          let buflist = tabpagebuflist(a:n)</span>
+<span class="e">          let winnr = tabpagewinnr(a:n)</span>
+<span class="e">          return bufname(buflist[winnr - 1])</span>
+<span class="e">        endfunction</span>
+<span class="e"></span>
+This <a href="motion.txt.html#is" class="d">is</a> just <a href="insert.txt.html#a" class="d">a</a> simplistic example that results in <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#tab" class="d">tab</a> pages line that
+resembles the default, but without adding <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%2B" class="d">+</a> for <a href="insert.txt.html#a" class="d">a</a> modified buffer or
+truncating the names.  You will want to reduce the width of labels in <a href="insert.txt.html#a" class="d">a</a>
+clever way when there <a href="motion.txt.html#is" class="d">is</a> not enough room.  Check the <a href="options.txt.html#%27columns%27" class="o">'columns'</a> option for the
+<a href="intro.txt.html#space" class="d">space</a> available.
+
+<span class="h">==============================================================================</span>
+5. Setting <a href="options.txt.html#%27guitablabel%27" class="o">'guitablabel'</a>                                <a name="setting-guitablabel" class="t">setting-guitablabel</a>
+
+When the <a href="gui.txt.html#GUI" class="d">GUI</a> <a href="intro.txt.html#tab" class="d">tab</a> pages line <a href="motion.txt.html#is" class="d">is</a> displayed, <a href="options.txt.html#%27guitablabel%27" class="o">'guitablabel'</a> can be used to
+specify the label to display for each <a href="intro.txt.html#tab" class="d">tab</a> page.  Unlike <a href="options.txt.html#%27tabline%27" class="o">'tabline'</a>, which
+specifies the whole <a href="intro.txt.html#tab" class="d">tab</a> pages line <a href="motion.txt.html#at" class="d">at</a> once, <a href="options.txt.html#%27guitablabel%27" class="o">'guitablabel'</a> <a href="motion.txt.html#is" class="d">is</a> used for each
+label separately.
+
+<a href="options.txt.html#%27guitabtooltip%27" class="o">'guitabtooltip'</a> <a href="motion.txt.html#is" class="d">is</a> very similar and <a href="motion.txt.html#is" class="d">is</a> used for the tooltip of the same label.
+This only appears when the mouse pointer hovers over the label, thus <a href="motion.txt.html#it" class="d">it</a>
+usually <a href="motion.txt.html#is" class="d">is</a> longer.  Only supported on some systems though.
+
+See the <a href="options.txt.html#%27statusline%27" class="o">'statusline'</a> option for the format of the value.
+
+The "%N" item can be used for the current <a href="intro.txt.html#tab" class="d">tab</a> page number.  The <a href="eval.txt.html#v%3Alnum" class="l">v:lnum</a>
+variable <a href="motion.txt.html#is" class="d">is</a> also set to this number when the option <a href="motion.txt.html#is" class="d">is</a> evaluated.
+The items that use <a href="insert.txt.html#a" class="d">a</a> file name refer to the current <a href="windows.txt.html#window" class="d">window</a> of the <a href="intro.txt.html#tab" class="d">tab</a> page.
+
+<span class="n">Note</span> that <a href="syntax.txt.html#syntax" class="d">syntax</a> highlighting <a href="motion.txt.html#is" class="d">is</a> not used for the option.  The %T and %X
+items are also ignored.
+
+<a href="insert.txt.html#A" class="d">A</a> simple example that puts the <a href="intro.txt.html#tab" class="d">tab</a> page number and the buffer name in the
+label: 
+<span class="e">        :set guitablabel=%N\ %f</span>
+<span class="e"></span>
+An example that resembles the default <a href="options.txt.html#%27guitablabel%27" class="o">'guitablabel'</a>: Show the number of
+<a href="windows.txt.html#windows" class="d">windows</a> in the <a href="intro.txt.html#tab" class="d">tab</a> page and <a href="insert.txt.html#a" class="d">a</a> '+' if there <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> modified buffer: 
+<span class="e"></span>
+<span class="e">        function GuiTabLabel()</span>
+<span class="e">          let label = ''</span>
+<span class="e">          let bufnrlist = tabpagebuflist(v:lnum)</span>
+<span class="e"></span>
+<span class="e">          " Add '+' if one of the buffers in the tab page is modified</span>
+<span class="e">          for bufnr in bufnrlist</span>
+<span class="e">            if getbufvar(bufnr, "&amp;modified")</span>
+<span class="e">              let label = '+'</span>
+<span class="e">              break</span>
+<span class="e">            endif</span>
+<span class="e">          endfor</span>
+<span class="e"></span>
+<span class="e">          " Append the number of windows in the tab page if more than one</span>
+<span class="e">          let wincount = tabpagewinnr(v:lnum, '$')</span>
+<span class="e">          if wincount &gt; 1</span>
+<span class="e">            let label .= wincount</span>
+<span class="e">          endif</span>
+<span class="e">          if label != ''</span>
+<span class="e">            let label .= ' '</span>
+<span class="e">          endif</span>
+<span class="e"></span>
+<span class="e">          " Append the buffer name</span>
+<span class="e">          return label . bufname(bufnrlist[tabpagewinnr(v:lnum) - 1])</span>
+<span class="e">        endfunction</span>
+<span class="e"></span>
+<span class="e">        set guitablabel=%{GuiTabLabel()}</span>
+<span class="e"></span>
+<span class="n">Note</span> that the function <a href="vim_faq.txt.html#must" class="d">must</a> be defined before setting the option, otherwise
+you get an error message for the function not being known.
+
+If you want to fall back to the default label, return an empty string.
+
+If you want to show something specific for <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#tab" class="d">tab</a> page, you might want to use <a href="insert.txt.html#a" class="d">a</a>
+<a href="intro.txt.html#tab" class="d">tab</a> page local variable. <a href="eval.txt.html#t%3Avar" class="l">t:var</a>
+
+
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

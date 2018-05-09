@@ -1,0 +1,450 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: if_lua.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="if_lua.txt" class="t">if_lua.txt</a>    For <span class="i">Vim version 8.0.</span>  Last change: 2015 Oct 16
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Luis Carvalho</span>
+
+
+The <a href="#Lua" class="d">Lua</a> Interface to Vim                                <a name="lua" class="t">lua</a> <a name="Lua" class="t">Lua</a>
+
+1. Commands                     <a href="#lua-commands" class="l">lua-commands</a>
+2. The vim module               <a href="#lua-vim" class="l">lua-vim</a>
+3. <a href="eval.txt.html#List" class="d">List</a> userdata                <a href="#lua-list" class="l">lua-list</a>
+4. Dict userdata                <a href="#lua-dict" class="l">lua-dict</a>
+5. <a href="eval.txt.html#Funcref" class="d">Funcref</a> userdata             <a href="#lua-funcref" class="l">lua-funcref</a>
+6. Buffer userdata              <a href="#lua-buffer" class="l">lua-buffer</a>
+7. Window userdata              <a href="#lua-window" class="l">lua-window</a>
+8. The luaeval function         <a href="#lua-luaeval" class="l">lua-luaeval</a>
+9. Dynamic loading              <a href="#lua-dynamic" class="l">lua-dynamic</a>
+
+<span class="s">{Vi does not have any of these commands}</span>
+
+The <a href="#Lua" class="d">Lua</a> interface <a href="motion.txt.html#is" class="d">is</a> available only when Vim was compiled with the
+<a href="various.txt.html#%2Blua" class="l">+lua</a> feature.
+
+<span class="h">==============================================================================</span>
+1. Commands                                             <a name="lua-commands" class="t">lua-commands</a>
+
+                                                        <a name="%3Alua" class="t">:lua</a>
+:[range]lua <span class="s">{chunk}</span>
+                        Execute <a href="#Lua" class="d">Lua</a> chunk <span class="s">{chunk}</span>.    <span class="s">{not in Vi}</span>
+
+Examples:
+
+<span class="e">        :lua print("Hello, Vim!")</span>
+<span class="e">        :lua local curbuf = vim.buffer() curbuf[7] = "line #7"</span>
+
+
+:[range]lua <a href="change.txt.html#%3C%3C" class="d">&lt;&lt;</a> <span class="s">{endmarker}</span>
+<span class="s">{script}</span>
+<span class="s">{endmarker}</span>
+                        Execute <a href="#Lua" class="d">Lua</a> <a href="usr_41.txt.html#script" class="d">script</a> <span class="s">{script}</span>.  <span class="s">{not in Vi}</span>
+                        <span class="n">Note:</span> This command doesn't work when the <a href="#Lua" class="d">Lua</a>
+                        feature wasn't compiled in.  To avoid errors, see
+                        <a href="if_perl.txt.html#script-here" class="l">script-here</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="s">{endmarker}</span> <a href="vim_faq.txt.html#must" class="d">must</a> NOT be preceded by any white space.  If <span class="s">{endmarker}</span> <a href="motion.txt.html#is" class="d">is</a>
+omitted from after the "<a href="change.txt.html#%3C%3C" class="d">&lt;&lt;</a>"<a href="motion.txt.html#%2C" class="d">,</a> <a href="insert.txt.html#a" class="d">a</a> dot '.' <a href="vim_faq.txt.html#must" class="d">must</a> be used after <span class="s">{script}</span>, like
+for the <a href="insert.txt.html#%3Aappend" class="l">:append</a> and <a href="insert.txt.html#%3Ainsert" class="l">:insert</a> commands.
+This form of the <a href="#%3Alua" class="l">:lua</a> command <a href="motion.txt.html#is" class="d">is</a> mainly useful for including <a href="#Lua" class="d">Lua</a> code
+in Vim scripts.
+
+Example:
+
+<span class="e">        function! CurrentLineInfo()</span>
+<span class="e">        lua &lt;&lt; EOF</span>
+<span class="e">        local linenr = vim.window().line</span>
+<span class="e">        local curline = vim.buffer()[linenr]</span>
+<span class="e">        print(string.format("Current line [%d] has %d chars",</span>
+<span class="e">                linenr, #curline))</span>
+<span class="e">        EOF</span>
+<span class="e">        endfunction</span>
+
+To see what version of <a href="#Lua" class="d">Lua</a> you have: 
+<span class="e">        :lua print(_VERSION)</span>
+<span class="e"></span>
+If you use LuaJIT you can also use this: 
+<span class="e">        :lua print(jit.version)</span>
+
+
+                                                        <a name="%3Aluado" class="t">:luado</a>
+:[range]luado <span class="s">{body}</span>    Execute <a href="#Lua" class="d">Lua</a> function "function (line, linenr) <span class="s">{body}</span>
+                        <a href="intro.txt.html#end" class="d">end</a>" for each line in the <a href="cmdline.txt.html#%5Brange%5D" class="s">[range]</a>, with the function
+                        argument being set to the text of each line in turn,
+                        without <a href="insert.txt.html#a" class="d">a</a> trailing <a href="intro.txt.html#%3CEOL%3E" class="s">&lt;EOL&gt;</a>, and the current line number.
+                        If the value returned by the function <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#string" class="d">string</a> <a href="motion.txt.html#it" class="d">it</a>
+                        becomes the text of the line in the current turn. The
+                        default for <a href="cmdline.txt.html#%5Brange%5D" class="s">[range]</a> <a href="motion.txt.html#is" class="d">is</a> the whole file: "1,$"<a href="repeat.txt.html#." class="d">.</a>
+                                                        <span class="s">{not in Vi}</span>
+
+Examples:
+
+<span class="e">        :luado return string.format("%s\t%d", line:reverse(), #line)</span>
+<span class="e"></span>
+<span class="e">        :lua require"lpeg"</span>
+<span class="e">        :lua -- balanced parenthesis grammar:</span>
+<span class="e">        :lua bp = lpeg.P{ "(" * ((1 - lpeg.S"()") + lpeg.V(1))^0 * ")" }</span>
+<span class="e">        :luado if bp:match(line) then return "--&gt;\t" .. line end</span>
+
+
+                                                        <a name="%3Aluafile" class="t">:luafile</a>
+:[range]luafile <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a>
+                        Execute <a href="#Lua" class="d">Lua</a> <a href="usr_41.txt.html#script" class="d">script</a> in <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a>. <span class="s">{not in Vi}</span>
+                        The whole argument <a href="motion.txt.html#is" class="d">is</a> used <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> single file name.
+
+Examples:
+
+<span class="e">        :luafile script.lua</span>
+<span class="e">        :luafile %</span>
+
+
+All these commands execute <a href="insert.txt.html#a" class="d">a</a> <a href="#Lua" class="d">Lua</a> chunk from either the command line (:lua and
+:luado) or <a href="insert.txt.html#a" class="d">a</a> file (:luafile) with the given line <a href="cmdline.txt.html#%5Brange%5D" class="s">[range]</a>. Similarly to the <a href="#Lua" class="d">Lua</a>
+interpreter, each chunk has its own scope and so only global <a href="eval.txt.html#variables" class="d">variables</a> are
+shared between command calls. All <a href="#Lua" class="d">Lua</a> default libraries are available. In
+addition, <a href="#Lua" class="d">Lua</a> "print" function has its output redirected to the Vim message
+area, with arguments separated by <a href="insert.txt.html#a" class="d">a</a> white <a href="intro.txt.html#space" class="d">space</a> instead of <a href="insert.txt.html#a" class="d">a</a> tab.
+
+<a href="#Lua" class="d">Lua</a> uses the "vim" module (see <a href="#lua-vim" class="l">lua-vim</a><a href="motion.txt.html#%29" class="d">)</a> to issue commands to Vim
+and manage <a href="windows.txt.html#buffers" class="d">buffers</a> <a href="motion.txt.html#%28" class="d">(</a><a href="#lua-buffer" class="l">lua-buffer</a><a href="motion.txt.html#%29" class="d">)</a> and <a href="windows.txt.html#windows" class="d">windows</a> <a href="motion.txt.html#%28" class="d">(</a><a href="#lua-window" class="l">lua-window</a>). However,
+procedures that alter buffer content, open new buffers, and change cursor
+position are restricted when the command <a href="motion.txt.html#is" class="d">is</a> executed in the <a href="eval.txt.html#sandbox" class="l">sandbox</a><a href="repeat.txt.html#." class="d">.</a>
+
+
+<span class="h">==============================================================================</span>
+2. The vim module                                       <a name="lua-vim" class="t">lua-vim</a>
+
+<a href="#Lua" class="d">Lua</a> interfaces Vim through the "vim" module. The first and last line of the
+input range are stored in "vim.firstline" and "vim.lastline" respectively. The
+module also includes routines for buffer, window, and current line queries,
+Vim evaluation and command execution, and others.
+
+        vim.list([arg])         Returns an empty <a href="eval.txt.html#list" class="d">list</a> or, if "arg" <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> <a href="#Lua" class="d">Lua</a>
+                                table with numeric keys 1, ..., <a href="pattern.txt.html#n" class="d">n</a> (a
+                                "sequence"), returns <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> <a href="motion.txt.html#l" class="d">l</a> such that l[i] <a href="change.txt.html#%3D" class="d">=</a>
+                                arg[i] for <a href="insert.txt.html#i" class="d">i</a> <a href="change.txt.html#%3D" class="d">=</a> 1, ..., <a href="pattern.txt.html#n" class="d">n</a> (see <a href="eval.txt.html#List" class="l">List</a>).
+                                Non-numeric keys are not used to initialize
+                                the list. See also <a href="#lua-eval" class="l">lua-eval</a> for conversion
+                                rules. Example: 
+<span class="e">                                        :lua t = {math.pi, false, say = 'hi'}</span>
+<span class="e">                                        :echo luaeval('vim.list(t)')</span>
+<span class="e">                                        :" [3.141593, 0], 'say' is ignored</span>
+
+        vim.dict([arg])         Returns an empty dictionary or, if "arg" <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a>
+                                <a href="#Lua" class="d">Lua</a> table, returns <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#dict" class="d">dict</a> <a href="change.txt.html#d" class="d">d</a> such that d[k] <a href="change.txt.html#%3D" class="d">=</a>
+                                arg[k] for all <a href="eval.txt.html#string" class="d">string</a> keys <a href="motion.txt.html#k" class="d">k</a> in "arg" (see
+                                <a href="eval.txt.html#Dictionary" class="l">Dictionary</a>). <a href="eval.txt.html#Number" class="d">Number</a> keys are converted to
+                                strings. Keys that are not strings are not
+                                used to initialize the dictionary. See also
+                                <a href="#lua-eval" class="l">lua-eval</a> for conversion rules. Example: 
+<span class="e">                                        :lua t = {math.pi, false, say = 'hi'}</span>
+<span class="e">                                        :echo luaeval('vim.dict(t)')</span>
+<span class="e">                                        :" {'say': 'hi'}, numeric keys ignored</span>
+
+        vim.funcref({name})     Returns <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#Funcref" class="d">Funcref</a> to function <span class="s">{name}</span> (see
+                                <a href="eval.txt.html#Funcref" class="l">Funcref</a>). It <a href="motion.txt.html#is" class="d">is</a> equivalent to Vim's
+                                "function"<a href="repeat.txt.html#." class="d">.</a> NOT IMPLEMENTED YET
+
+        vim.buffer([arg])       If "arg" <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> number, returns buffer with
+                                number "arg" in the buffer <a href="eval.txt.html#list" class="d">list</a> or, if "arg"
+                                <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> string, returns buffer whose full or short
+                                name <a href="motion.txt.html#is" class="d">is</a> "arg"<a href="repeat.txt.html#." class="d">.</a> In both cases, returns <span class="o">'nil'</span>
+                                (nil value, not string) if the buffer <a href="motion.txt.html#is" class="d">is</a> not
+                                found. Otherwise, if "toboolean(arg)" <a href="motion.txt.html#is" class="d">is</a>
+                                <span class="o">'true'</span> returns the first buffer in the buffer
+                                <a href="eval.txt.html#list" class="d">list</a> or else the current buffer.
+
+        vim.window([arg])       If "arg" <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> number, returns <a href="windows.txt.html#window" class="d">window</a> with
+                                number "arg" or <span class="o">'nil'</span> (nil value, not string)
+                                if not found. Otherwise, if "toboolean(arg)"
+                                <a href="motion.txt.html#is" class="d">is</a> <span class="o">'true'</span> returns the first <a href="windows.txt.html#window" class="d">window</a> or else the
+                                current window.
+
+        vim.type({arg})         Returns the type of <span class="s">{arg}</span>. It <a href="motion.txt.html#is" class="d">is</a> equivalent to
+                                Lua's "type" function, but returns "<a href="eval.txt.html#list" class="d">list</a>"<a href="motion.txt.html#%2C" class="d">,</a>
+                                "<a href="eval.txt.html#dict" class="d">dict</a>"<a href="motion.txt.html#%2C" class="d">,</a> "funcref"<a href="motion.txt.html#%2C" class="d">,</a> "buffer"<a href="motion.txt.html#%2C" class="d">,</a> or "<a href="windows.txt.html#window" class="d">window</a>" if
+                                <span class="s">{arg}</span> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> list, dictionary, funcref, buffer,
+                                or window, respectively. Examples: 
+<span class="e">                                        :lua l = vim.list()</span>
+<span class="e">                                        :lua print(type(l), vim.type(l))</span>
+<span class="e">                                        :" userdata list</span>
+
+        vim.command({cmd})      Executes the vim (ex-mode) command <span class="s">{cmd}</span>.
+                                Examples: 
+<span class="e">                                        :lua vim.command"set tw=60"</span>
+<span class="e">                                        :lua vim.command"normal ddp"</span>
+
+        vim.eval({expr})        Evaluates <a href="eval.txt.html#expression" class="d">expression</a> <span class="s">{expr}</span> (see <a href="eval.txt.html#expression" class="l">expression</a>),
+                                converts the result to Lua, and returns it.
+                                Vim strings and numbers are directly converted
+                                to <a href="#Lua" class="d">Lua</a> strings and numbers respectively. Vim
+                                lists and dictionaries are converted to <a href="#Lua" class="d">Lua</a>
+                                userdata (see <a href="#lua-list" class="l">lua-list</a> and <a href="#lua-dict" class="l">lua-dict</a>).
+                                Examples: 
+<span class="e">                                        :lua tw = vim.eval"&amp;tw"</span>
+<span class="e">                                        :lua print(vim.eval"{'a': 'one'}".a)</span>
+
+        vim.line()              Returns the current line (without the trailing
+                                <a href="intro.txt.html#%3CEOL%3E" class="s">&lt;EOL&gt;</a>), <a href="insert.txt.html#a" class="d">a</a> <a href="#Lua" class="d">Lua</a> string.
+
+        vim.beep()              Beeps.
+
+        vim.open({fname})       Opens <a href="insert.txt.html#a" class="d">a</a> new buffer for file <span class="s">{fname}</span> and
+                                returns it. <span class="n">Note</span> that the buffer <a href="motion.txt.html#is" class="d">is</a> not set <a href="motion.txt.html#as" class="d">as</a>
+                                current.
+
+
+<span class="h">==============================================================================</span>
+3. <a href="eval.txt.html#List" class="d">List</a> userdata                                        <a name="lua-list" class="t">lua-list</a>
+
+<a href="eval.txt.html#List" class="d">List</a> userdata represent vim lists, and the interface tries to follow closely
+Vim's <a href="syntax.txt.html#syntax" class="d">syntax</a> for lists. Since lists are objects, changes in <a href="eval.txt.html#list" class="d">list</a> references in
+<a href="#Lua" class="d">Lua</a> are reflected in Vim and vice-versa. <a href="insert.txt.html#A" class="d">A</a> <a href="eval.txt.html#list" class="d">list</a> "<a href="motion.txt.html#l" class="d">l</a>" has the following
+properties and methods:
+
+Properties
+<span class="h">----------</span>
+        <a href="insert.txt.html#o" class="d">o</a> "#l" <a href="motion.txt.html#is" class="d">is</a> the number of items in <a href="eval.txt.html#list" class="d">list</a> "<a href="motion.txt.html#l" class="d">l</a>"<a href="motion.txt.html#%2C" class="d">,</a> equivalent to "len(l)"
+            in Vim.
+        <a href="insert.txt.html#o" class="d">o</a> "l[k]" returns the k-th item in "<a href="motion.txt.html#l" class="d">l</a>"<a href="motion.txt.html#%3B" class="d">;</a> "<a href="motion.txt.html#l" class="d">l</a>" <a href="motion.txt.html#is" class="d">is</a> zero-indexed, <a href="motion.txt.html#as" class="d">as</a> in Vim.
+            To modify the k-th item, simply <a href="diff.txt.html#do" class="d">do</a> "l[k] <a href="change.txt.html#%3D" class="d">=</a> newitem"<a href="motion.txt.html#%3B" class="d">;</a> in
+            particular, "l[k] <a href="change.txt.html#%3D" class="d">=</a> nil" removes the k-th item from "<a href="motion.txt.html#l" class="d">l</a>"<a href="repeat.txt.html#." class="d">.</a>
+        <a href="insert.txt.html#o" class="d">o</a> "l()" returns an iterator for "<a href="motion.txt.html#l" class="d">l</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+Methods
+<span class="h">-------</span>
+        <a href="insert.txt.html#o" class="d">o</a> "l:add(item)" appends "item" to the <a href="intro.txt.html#end" class="d">end</a> of "<a href="motion.txt.html#l" class="d">l</a>"<a href="repeat.txt.html#." class="d">.</a>
+        <a href="insert.txt.html#o" class="d">o</a> "l:insert(item[, pos])" inserts "item" <a href="motion.txt.html#at" class="d">at</a> (optional)
+            position "pos" in the list. The default value for "pos" <a href="motion.txt.html#is" class="d">is</a> 0.
+
+Examples:
+
+<span class="e">        :let l = [1, 'item']</span>
+<span class="e">        :lua l = vim.eval('l') -- same 'l'</span>
+<span class="e">        :lua l:add(vim.list())</span>
+<span class="e">        :lua l[0] = math.pi</span>
+<span class="e">        :echo l[0] " 3.141593</span>
+<span class="e">        :lua l[0] = nil -- remove first item</span>
+<span class="e">        :lua l:insert(true, 1)</span>
+<span class="e">        :lua print(l, #l, l[0], l[1], l[-1])</span>
+<span class="e">        :lua for item in l() do print(item) end</span>
+
+
+<span class="h">==============================================================================</span>
+4. Dict userdata                                        <a name="lua-dict" class="t">lua-dict</a>
+
+Similarly to <a href="eval.txt.html#list" class="d">list</a> userdata, <a href="eval.txt.html#dict" class="d">dict</a> userdata represent vim dictionaries; since
+dictionaries are also objects, references are kept between <a href="#Lua" class="d">Lua</a> and Vim. <a href="insert.txt.html#A" class="d">A</a> <a href="eval.txt.html#dict" class="d">dict</a>
+"<a href="change.txt.html#d" class="d">d</a>" has the following properties:
+
+Properties
+<span class="h">----------</span>
+        <a href="insert.txt.html#o" class="d">o</a> "#d" <a href="motion.txt.html#is" class="d">is</a> the number of items in <a href="eval.txt.html#dict" class="d">dict</a> "<a href="change.txt.html#d" class="d">d</a>"<a href="motion.txt.html#%2C" class="d">,</a> equivalent to "len(d)"
+            in Vim.
+        <a href="insert.txt.html#o" class="d">o</a> "d.key" or "d['key']" returns the value <a href="motion.txt.html#at" class="d">at</a> entry "key" in "<a href="change.txt.html#d" class="d">d</a>"<a href="repeat.txt.html#." class="d">.</a>
+            To modify the entry <a href="motion.txt.html#at" class="d">at</a> this key, simply <a href="diff.txt.html#do" class="d">do</a> "d.key <a href="change.txt.html#%3D" class="d">=</a> newvalue"<a href="motion.txt.html#%3B" class="d">;</a> in
+            particular, "d.key <a href="change.txt.html#%3D" class="d">=</a> nil" removes the entry from "<a href="change.txt.html#d" class="d">d</a>"<a href="repeat.txt.html#." class="d">.</a>
+        <a href="insert.txt.html#o" class="d">o</a> "d()" returns an iterator for "<a href="change.txt.html#d" class="d">d</a>" and <a href="motion.txt.html#is" class="d">is</a> equivalent to "items(d)" in
+            Vim.
+
+Examples:
+
+<span class="e">        :let d = {'n':10}</span>
+<span class="e">        :lua d = vim.eval('d') -- same 'd'</span>
+<span class="e">        :lua print(d, d.n, #d)</span>
+<span class="e">        :let d.self = d</span>
+<span class="e">        :lua for k, v in d() do print(d, k, v) end</span>
+<span class="e">        :lua d.x = math.pi</span>
+<span class="e">        :lua d.self = nil -- remove entry</span>
+<span class="e">        :echo d</span>
+
+
+<span class="h">==============================================================================</span>
+5. <a href="eval.txt.html#Funcref" class="d">Funcref</a> userdata                                     <a name="lua-funcref" class="t">lua-funcref</a>
+
+<a href="eval.txt.html#Funcref" class="d">Funcref</a> userdata represent funcref <a href="eval.txt.html#variables" class="d">variables</a> in Vim. Funcrefs that were
+defined with <a href="insert.txt.html#a" class="d">a</a> "<a href="eval.txt.html#dict" class="d">dict</a>" attribute need to be obtained <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> dictionary key
+in order to have "<a href="eval.txt.html#self" class="d">self</a>" properly assigned to the dictionary (see examples
+below.) <a href="insert.txt.html#A" class="d">A</a> funcref "<a href="motion.txt.html#f" class="d">f</a>" has the following properties:
+
+Properties
+<span class="h">----------</span>
+        <a href="insert.txt.html#o" class="d">o</a> "#f" <a href="motion.txt.html#is" class="d">is</a> the name of the function referenced by "<a href="motion.txt.html#f" class="d">f</a>"
+        <a href="insert.txt.html#o" class="d">o</a> "f(...)" calls the function referenced by "<a href="motion.txt.html#f" class="d">f</a>" (with arguments)
+
+Examples:
+
+<span class="e">        :function I(x)</span>
+<span class="e">        :  return a:x</span>
+<span class="e">        :  endfunction</span>
+<span class="e">        :let R = function('I')</span>
+<span class="e">        :lua i1 = vim.funcref('I')</span>
+<span class="e">        :lua i2 = vim.eval('R')</span>
+<span class="e">        :lua print(#i1, #i2) -- both 'I'</span>
+<span class="e">        :lua print(i1, i2, #i2(i1) == #i1(i2))</span>
+<span class="e">        :function Mylen() dict</span>
+<span class="e">        :  return len(self.data)</span>
+<span class="e">        :  endfunction</span>
+<span class="e">        :let mydict = {'data': [0, 1, 2, 3]}</span>
+<span class="e">        :lua d = vim.eval('mydict'); d.len = vim.funcref('Mylen')</span>
+<span class="e">        :echo mydict.len()</span>
+<span class="e">        :lua l = d.len -- assign d as 'self'</span>
+<span class="e">        :lua print(l())</span>
+
+
+<span class="h">==============================================================================</span>
+6. Buffer userdata                                      <a name="lua-buffer" class="t">lua-buffer</a>
+
+Buffer userdata represent vim buffers. <a href="insert.txt.html#A" class="d">A</a> buffer userdata "<a href="motion.txt.html#b" class="d">b</a>" has the following
+properties and methods:
+
+Properties
+<span class="h">----------</span>
+        <a href="insert.txt.html#o" class="d">o</a> "b()" sets "<a href="motion.txt.html#b" class="d">b</a>" <a href="motion.txt.html#as" class="d">as</a> the current buffer.
+        <a href="insert.txt.html#o" class="d">o</a> "#b" <a href="motion.txt.html#is" class="d">is</a> the number of lines in buffer "<a href="motion.txt.html#b" class="d">b</a>"<a href="repeat.txt.html#." class="d">.</a>
+        <a href="insert.txt.html#o" class="d">o</a> "b[k]" represents line number k: "b[k] <a href="change.txt.html#%3D" class="d">=</a> newline" replaces line <a href="motion.txt.html#k" class="d">k</a>
+            with <a href="eval.txt.html#string" class="d">string</a> "newline" and "b[k] <a href="change.txt.html#%3D" class="d">=</a> nil" deletes line k.
+        <a href="insert.txt.html#o" class="d">o</a> "b.name" contains the short name of buffer "<a href="motion.txt.html#b" class="d">b</a>" (read-only).
+        <a href="insert.txt.html#o" class="d">o</a> "b.fname" contains the full name of buffer "<a href="motion.txt.html#b" class="d">b</a>" (read-only).
+        <a href="insert.txt.html#o" class="d">o</a> "b.number" contains the position of buffer "<a href="motion.txt.html#b" class="d">b</a>" in the buffer <a href="eval.txt.html#list" class="d">list</a>
+            (read-only).
+
+Methods
+<span class="h">-------</span>
+        <a href="insert.txt.html#o" class="d">o</a> "b:insert(newline[, pos])" inserts <a href="eval.txt.html#string" class="d">string</a> "newline" <a href="motion.txt.html#at" class="d">at</a> (optional)
+            position "pos" in the buffer. The default value for "pos" <a href="motion.txt.html#is" class="d">is</a>
+            "#b <a href="motion.txt.html#%2B" class="d">+</a> 1"<a href="repeat.txt.html#." class="d">.</a> If "pos <a href="change.txt.html#%3D%3D" class="d">==</a> <a href="motion.txt.html#0" class="d">0</a>" then "newline" becomes the first line in
+            the buffer.
+        <a href="insert.txt.html#o" class="d">o</a> "b:next()" returns the buffer next to "<a href="motion.txt.html#b" class="d">b</a>" in the buffer list.
+        <a href="insert.txt.html#o" class="d">o</a> "b:previous()" returns the buffer previous to "<a href="motion.txt.html#b" class="d">b</a>" in the buffer
+            list.
+        <a href="insert.txt.html#o" class="d">o</a> "b:isvalid()" returns <span class="o">'true'</span> (boolean) if buffer "<a href="motion.txt.html#b" class="d">b</a>" corresponds to
+            <a href="insert.txt.html#a" class="d">a</a> "real" (not freed from memory) Vim buffer.
+
+Examples:
+
+<span class="e">        :lua b = vim.buffer() -- current buffer</span>
+<span class="e">        :lua print(b.name, b.number)</span>
+<span class="e">        :lua b[1] = "first line"</span>
+<span class="e">        :lua b:insert("FIRST!", 0)</span>
+<span class="e">        :lua b[1] = nil -- delete top line</span>
+<span class="e">        :lua for i=1,3 do b:insert(math.random()) end</span>
+<span class="e">        :3,4lua for i=vim.lastline,vim.firstline,-1 do b[i] = nil end</span>
+<span class="e">        :lua vim.open"myfile"() -- open buffer and set it as current</span>
+<span class="e"></span>
+<span class="e">        function! ListBuffers()</span>
+<span class="e">        lua &lt;&lt; EOF</span>
+<span class="e">        local b = vim.buffer(true) -- first buffer in list</span>
+<span class="e">        while b ~= nil do</span>
+<span class="e">                print(b.number, b.name, #b)</span>
+<span class="e">                b = b:next()</span>
+<span class="e">        end</span>
+<span class="e">        vim.beep()</span>
+<span class="e">        EOF</span>
+<span class="e">        endfunction</span>
+
+
+<span class="h">==============================================================================</span>
+7. Window userdata                                      <a name="lua-window" class="t">lua-window</a>
+
+Window <a href="index.txt.html#objects" class="d">objects</a> represent vim windows. <a href="insert.txt.html#A" class="d">A</a> <a href="windows.txt.html#window" class="d">window</a> userdata "<a href="motion.txt.html#w" class="d">w</a>" has the following
+properties and methods:
+
+Properties
+<span class="h">----------</span>
+        <a href="insert.txt.html#o" class="d">o</a> "w()" sets "<a href="motion.txt.html#w" class="d">w</a>" <a href="motion.txt.html#as" class="d">as</a> the current window.
+        <a href="insert.txt.html#o" class="d">o</a> "w.buffer" contains the buffer of <a href="windows.txt.html#window" class="d">window</a> "<a href="motion.txt.html#w" class="d">w</a>" (read-only).
+        <a href="insert.txt.html#o" class="d">o</a> "w.line" represents the cursor line position in <a href="windows.txt.html#window" class="d">window</a> "<a href="motion.txt.html#w" class="d">w</a>"<a href="repeat.txt.html#." class="d">.</a>
+        <a href="insert.txt.html#o" class="d">o</a> "w.col" represents the cursor column position in <a href="windows.txt.html#window" class="d">window</a> "<a href="motion.txt.html#w" class="d">w</a>"<a href="repeat.txt.html#." class="d">.</a>
+        <a href="insert.txt.html#o" class="d">o</a> "w.width" represents the width of <a href="windows.txt.html#window" class="d">window</a> "<a href="motion.txt.html#w" class="d">w</a>"<a href="repeat.txt.html#." class="d">.</a>
+        <a href="insert.txt.html#o" class="d">o</a> "w.height" represents the height of <a href="windows.txt.html#window" class="d">window</a> "<a href="motion.txt.html#w" class="d">w</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+Methods
+<span class="h">-------</span>
+        <a href="insert.txt.html#o" class="d">o</a> "w:next()" returns the <a href="windows.txt.html#window" class="d">window</a> next to "<a href="motion.txt.html#w" class="d">w</a>"<a href="repeat.txt.html#." class="d">.</a>
+        <a href="insert.txt.html#o" class="d">o</a> "w:previous()" returns the <a href="windows.txt.html#window" class="d">window</a> previous to "<a href="motion.txt.html#w" class="d">w</a>"<a href="repeat.txt.html#." class="d">.</a>
+        <a href="insert.txt.html#o" class="d">o</a> "w:isvalid()" returns <span class="o">'true'</span> (boolean) if <a href="windows.txt.html#window" class="d">window</a> "<a href="motion.txt.html#w" class="d">w</a>" corresponds to
+            <a href="insert.txt.html#a" class="d">a</a> "real" (not freed from memory) Vim window.
+
+Examples:
+
+<span class="e">        :lua w = vim.window() -- current window</span>
+<span class="e">        :lua print(w.buffer.name, w.line, w.col)</span>
+<span class="e">        :lua w.width = w.width + math.random(10)</span>
+<span class="e">        :lua w.height = 2 * math.random() * w.height</span>
+<span class="e">        :lua n,w = 0,vim.window(true) while w~=nil do n,w = n + 1,w:next() end</span>
+<span class="e">        :lua print("There are " .. n .. " windows")</span>
+
+
+<span class="h">==============================================================================</span>
+8. The luaeval function                                 <a name="lua-luaeval" class="t">lua-luaeval</a> <a name="lua-eval" class="t">lua-eval</a>
+
+The (dual) equivalent of "vim.eval" for passing <a href="#Lua" class="d">Lua</a> values to Vim <a href="motion.txt.html#is" class="d">is</a>
+"luaeval"<a href="repeat.txt.html#." class="d">.</a> "luaeval" takes an <a href="eval.txt.html#expression" class="d">expression</a> <a href="eval.txt.html#string" class="d">string</a> and an optional argument and
+returns the result of the expression. It <a href="motion.txt.html#is" class="d">is</a> semantically equivalent in <a href="#Lua" class="d">Lua</a> to:
+
+<span class="e">        local chunkheader = "local _A = select(1, ...) return "</span>
+<span class="e">        function luaeval (expstr, arg)</span>
+<span class="e">            local chunk = assert(loadstring(chunkheader .. expstr, "luaeval"))</span>
+<span class="e">            return chunk(arg) -- return typval</span>
+<span class="e">        end</span>
+
+<span class="n">Note</span> that "_A" receives the argument to "luaeval"<a href="repeat.txt.html#." class="d">.</a> <a href="#Lua" class="d">Lua</a> numbers, strings, and
+list, dict, and funcref userdata are converted to their Vim respective types,
+while <a href="#Lua" class="d">Lua</a> booleans are converted to numbers. An error <a href="motion.txt.html#is" class="d">is</a> thrown if conversion
+of any of the remaining <a href="#Lua" class="d">Lua</a> types, including userdata other than lists, dicts,
+and funcrefs, <a href="motion.txt.html#is" class="d">is</a> attempted.
+
+Examples: 
+<span class="e"></span>
+<span class="e">        :echo luaeval('math.pi')</span>
+<span class="e">        :lua a = vim.list():add('newlist')</span>
+<span class="e">        :let a = luaeval('a')</span>
+<span class="e">        :echo a[0] " 'newlist'</span>
+<span class="e">        :function Rand(x,y) " random uniform between x and y</span>
+<span class="e">        :  return luaeval('(_A.y-_A.x)*math.random()+_A.x', {'x':a:x,'y':a:y})</span>
+<span class="e">        :  endfunction</span>
+<span class="e">        :echo Rand(1,10)</span>
+<span class="e"></span>
+<span class="e"></span>
+<span class="h">==============================================================================</span>
+9. Dynamic loading                                  <a name="lua-dynamic" class="t">lua-dynamic</a>
+
+On <a href="os_win32.txt.html#MS-Windows" class="d">MS-Windows</a> and <a href="os_unix.txt.html#Unix" class="d">Unix</a> the <a href="#Lua" class="d">Lua</a> library can be loaded dynamically.  The
+<a href="various.txt.html#%3Aversion" class="l">:version</a> output then includes <a href="various.txt.html#%2Blua%2Fdyn" class="l">+lua/dyn</a><a href="repeat.txt.html#." class="d">.</a>
+
+This means that Vim will search for the <a href="#Lua" class="d">Lua</a> DLL or shared library file only
+when needed.  When you don't use the <a href="#Lua" class="d">Lua</a> interface you don't need it, thus
+you can use Vim without this file.
+
+
+<span class="h">MS-Windows </span>
+
+To use the <a href="#Lua" class="d">Lua</a> interface the <a href="#Lua" class="d">Lua</a> DLL <a href="vim_faq.txt.html#must" class="d">must</a> be in your search path.  In <a href="insert.txt.html#a" class="d">a</a>
+console <a href="windows.txt.html#window" class="d">window</a> type "path" to see what directories are used.  The <a href="options.txt.html#%27luadll%27" class="o">'luadll'</a>
+option can be also used to specify the <a href="#Lua" class="d">Lua</a> DLL.  The version of the DLL <a href="vim_faq.txt.html#must" class="d">must</a>
+match the <a href="#Lua" class="d">Lua</a> version Vim was compiled with.
+
+
+<span class="h">Unix </span>
+
+The <a href="options.txt.html#%27luadll%27" class="o">'luadll'</a> option can be used to specify the <a href="#Lua" class="d">Lua</a> shared library file instead
+of DYNAMIC_LUA_DLL file what was specified <a href="motion.txt.html#at" class="d">at</a> compile time.  The version of
+the shared library <a href="vim_faq.txt.html#must" class="d">must</a> match the <a href="#Lua" class="d">Lua</a> version Vim was compiled with.
+
+
+<span class="h">==============================================================================</span>
+ vim:tw=78:ts=8:noet:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

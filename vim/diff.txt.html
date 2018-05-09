@@ -1,0 +1,458 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: diff.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="diff.txt" class="t">diff.txt</a>      For <span class="i">Vim version 8.0.</span>  Last change: 2017 Oct 03
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Bram Moolenaar</span>
+
+
+                                <a name="diff" class="t">diff</a> <a name="vimdiff" class="t">vimdiff</a> <a name="gvimdiff" class="t">gvimdiff</a> <a name="diff-mode" class="t">diff-mode</a>
+This file describes the <a href="various.txt.html#%2Bdiff" class="l">+diff</a> feature: Showing differences between two to
+eight versions of the same file.
+
+The basics are explained in <a href="motion.txt.html#section" class="d">section</a> <a href="usr_08.txt.html#08.7" class="l">08.7</a> of the user manual.
+
+1. Starting <a href="#diff" class="d">diff</a> mode           <a href="#start-vimdiff" class="l">start-vimdiff</a>
+2. Viewing diffs                <a href="#view-diffs" class="l">view-diffs</a>
+3. Jumping to diffs             <a href="#jumpto-diffs" class="l">jumpto-diffs</a>
+4. Copying diffs                <a href="#copy-diffs" class="l">copy-diffs</a>
+5. Diff <a href="options.txt.html#options" class="d">options</a>                 <a href="#diff-options" class="l">diff-options</a>
+
+<span class="s">{not in Vi}</span>
+
+<span class="h">==============================================================================</span>
+1. Starting <a href="#diff" class="d">diff</a> mode                                   <a name="start-vimdiff" class="t">start-vimdiff</a>
+
+The easiest way to start editing in <a href="#diff" class="d">diff</a> mode <a href="motion.txt.html#is" class="d">is</a> with the "<a href="#vimdiff" class="d">vimdiff</a>" command.
+This starts Vim <a href="motion.txt.html#as" class="d">as</a> usual, and additionally sets up for viewing the differences
+between the arguments. 
+<span class="e"></span>
+<span class="e">        vimdiff file1 file2 [file3 [file4]]</span>
+<span class="e"></span>
+This <a href="motion.txt.html#is" class="d">is</a> equivalent to: 
+<span class="e"></span>
+<span class="e">        vim -d file1 file2 [file3 [file4]]</span>
+<span class="e"></span>
+You may also use "<a href="#gvimdiff" class="d">gvimdiff</a>" or "vim <a href="starting.txt.html#-d" class="d">-d</a> <a href="starting.txt.html#-g" class="d">-g</a>"<a href="repeat.txt.html#." class="d">.</a>  The <a href="gui.txt.html#GUI" class="d">GUI</a> <a href="motion.txt.html#is" class="d">is</a> started then.
+You may also use "viewdiff" or "gviewdiff"<a href="repeat.txt.html#." class="d">.</a>  Vim starts in readonly mode then.
+"<a href="change.txt.html#r" class="d">r</a>" may be prepended for restricted mode (see <a href="starting.txt.html#-Z" class="l">-Z</a>).
+
+The second and following arguments may also be <a href="insert.txt.html#a" class="d">a</a> directory name.  Vim will
+then append the file name of the first argument to the directory name to find
+the file.
+
+This only works when <a href="insert.txt.html#a" class="d">a</a> standard "<a href="#diff" class="d">diff</a>" command <a href="motion.txt.html#is" class="d">is</a> available.  See <a href="options.txt.html#%27diffexpr%27" class="o">'diffexpr'</a>.
+
+Diffs are local to the current <a href="intro.txt.html#tab" class="d">tab</a> page <a href="tabpage.txt.html#tab-page" class="l">tab-page</a><a href="repeat.txt.html#." class="d">.</a>  You can't see diffs with
+<a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a> in another <a href="intro.txt.html#tab" class="d">tab</a> page.  This does make <a href="motion.txt.html#it" class="d">it</a> possible to have several
+diffs <a href="motion.txt.html#at" class="d">at</a> the same time, each in their own <a href="intro.txt.html#tab" class="d">tab</a> page.
+
+What happens <a href="motion.txt.html#is" class="d">is</a> that Vim opens <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a> for each of the files.  This <a href="motion.txt.html#is" class="d">is</a> like
+using the <a href="starting.txt.html#-O" class="l">-O</a> argument.  This uses vertical splits.  If you prefer horizontal
+splits add the <a href="starting.txt.html#-o" class="l">-o</a> argument: 
+<span class="e"></span>
+<span class="e">        vimdiff -o file1 file2 [file3 [file4]]</span>
+<span class="e"></span>
+If you always prefer horizontal splits include "horizontal" in <a href="options.txt.html#%27diffopt%27" class="o">'diffopt'</a>.
+
+In each of the edited files these <a href="options.txt.html#options" class="d">options</a> are set:
+
+        <a href="options.txt.html#%27diff%27" class="o">'diff'</a>          on
+        <a href="options.txt.html#%27scrollbind%27" class="o">'scrollbind'</a>    on
+        <a href="options.txt.html#%27cursorbind%27" class="o">'cursorbind'</a>    on
+        <a href="options.txt.html#%27scrollopt%27" class="o">'scrollopt'</a>     includes "hor"
+        <a href="options.txt.html#%27wrap%27" class="o">'wrap'</a>          off
+        <a href="options.txt.html#%27foldmethod%27" class="o">'foldmethod'</a>    "<a href="#diff" class="d">diff</a>"
+        <a href="options.txt.html#%27foldcolumn%27" class="o">'foldcolumn'</a>    value from <a href="options.txt.html#%27diffopt%27" class="o">'diffopt'</a>, default <a href="motion.txt.html#is" class="d">is</a> 2
+
+These <a href="options.txt.html#options" class="d">options</a> are set local to the window.  When editing another file they are
+reset to the global value.
+The <a href="options.txt.html#options" class="d">options</a> can still be overruled from <a href="insert.txt.html#a" class="d">a</a> <a href="options.txt.html#modeline" class="d">modeline</a> when re-editing the file.
+However, <a href="options.txt.html#%27foldmethod%27" class="o">'foldmethod'</a> and <a href="options.txt.html#%27wrap%27" class="o">'wrap'</a> won't be set from <a href="insert.txt.html#a" class="d">a</a> <a href="options.txt.html#modeline" class="d">modeline</a> when <a href="options.txt.html#%27diff%27" class="o">'diff'</a> <a href="motion.txt.html#is" class="d">is</a>
+set.
+
+The differences shown are actually the differences in the buffer.  Thus if you
+make changes after loading <a href="insert.txt.html#a" class="d">a</a> file, these will be included in the displayed
+diffs.  You might have to <a href="#do" class="d">do</a> "<a href="#%3Adiffupdate" class="d">:diffupdate</a>" now and then, not all changes are
+immediately taken into account.
+
+In your <a href="starting.txt.html#.vimrc" class="d">.vimrc</a> file you could <a href="#do" class="d">do</a> something special when Vim was started in
+<a href="#diff" class="d">diff</a> mode.  You could use <a href="insert.txt.html#a" class="d">a</a> construct like this: 
+<span class="e"></span>
+<span class="e">        if &amp;diff</span>
+<span class="e">           setup for diff mode</span>
+<span class="e">        else</span>
+<span class="e">           setup for non-diff mode</span>
+<span class="e">        endif</span>
+<span class="e"></span>
+While already in Vim you can start <a href="#diff" class="d">diff</a> mode in three ways.
+
+                                                        <a name="E98" class="t">E98</a>
+:diffs[plit] <span class="s">{filename}</span>                                 <a name="%3Adiffs" class="t">:diffs</a> <a name="%3Adiffsplit" class="t">:diffsplit</a>
+                Open <a href="insert.txt.html#a" class="d">a</a> new <a href="windows.txt.html#window" class="d">window</a> on the file <span class="s">{filename}</span>.  The <a href="options.txt.html#options" class="d">options</a> are set
+                <a href="motion.txt.html#as" class="d">as</a> for "<a href="#vimdiff" class="d">vimdiff</a>" for the current and the newly opened window.
+                Also see <a href="options.txt.html#%27diffexpr%27" class="o">'diffexpr'</a>.
+
+                                                        <a name="%3Adifft" class="t">:difft</a> <a name="%3Adiffthis" class="t">:diffthis</a>
+:difft[his]     Make the current <a href="windows.txt.html#window" class="d">window</a> part of the <a href="#diff" class="d">diff</a> windows.  This sets
+                the <a href="options.txt.html#options" class="d">options</a> like for "<a href="#vimdiff" class="d">vimdiff</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+:diffp[atch] <span class="s">{patchfile}</span>                         <a name="E816" class="t">E816</a> <a name="%3Adiffp" class="t">:diffp</a> <a name="%3Adiffpatch" class="t">:diffpatch</a>
+                Use the current buffer, patch <a href="motion.txt.html#it" class="d">it</a> with the <a href="#diff" class="d">diff</a> found in
+                <span class="s">{patchfile}</span> and open <a href="insert.txt.html#a" class="d">a</a> buffer on the result.  The <a href="options.txt.html#options" class="d">options</a> are
+                set <a href="motion.txt.html#as" class="d">as</a> for "<a href="#vimdiff" class="d">vimdiff</a>"<a href="repeat.txt.html#." class="d">.</a>
+                <span class="s">{patchfile}</span> can be in any format that the "patch" program
+                understands or <a href="options.txt.html#%27patchexpr%27" class="o">'patchexpr'</a> can handle.
+                <span class="n">Note</span> that <span class="s">{patchfile}</span> should only contain <a href="insert.txt.html#a" class="d">a</a> <a href="#diff" class="d">diff</a> for one file,
+                the current file.  If <span class="s">{patchfile}</span> contains diffs for other
+                files <a href="motion.txt.html#as" class="d">as</a> well, the results are unpredictable.  Vim changes
+                directory to /tmp to avoid files in the current directory
+                accidentally being patched.  But <a href="motion.txt.html#it" class="d">it</a> may still result in
+                <a href="various.txt.html#various" class="d">various</a> ".rej" files to be created.  And when absolute path
+                names are present these files may get patched anyway.
+
+To make these commands use <a href="insert.txt.html#a" class="d">a</a> vertical split, prepend <a href="windows.txt.html#%3Avertical" class="l">:vertical</a><a href="repeat.txt.html#." class="d">.</a>  Examples: 
+<span class="e"></span>
+<span class="e">        :vert diffsplit main.c~</span>
+<span class="e">        :vert diffpatch /tmp/diff</span>
+<span class="e"></span>
+If you always prefer <a href="insert.txt.html#a" class="d">a</a> vertical split include "vertical" in <a href="options.txt.html#%27diffopt%27" class="o">'diffopt'</a>.
+
+                                                        <a name="E96" class="t">E96</a>
+There can be up to eight <a href="windows.txt.html#buffers" class="d">buffers</a> with <a href="options.txt.html#%27diff%27" class="o">'diff'</a> set.
+
+Since the option values are remembered with the buffer, you can edit another
+file for <a href="insert.txt.html#a" class="d">a</a> moment and come back to the same file and be in <a href="#diff" class="d">diff</a> mode again.
+
+                                                        <a name="%3Adiffo" class="t">:diffo</a> <a name="%3Adiffoff" class="t">:diffoff</a>
+:diffo[ff]      Switch off <a href="#diff" class="d">diff</a> mode for the current window.  Resets related
+                <a href="options.txt.html#options" class="d">options</a> also when <a href="options.txt.html#%27diff%27" class="o">'diff'</a> was not set.
+
+:diffo[ff]!     Switch off <a href="#diff" class="d">diff</a> mode for the current <a href="windows.txt.html#window" class="d">window</a> and in all <a href="windows.txt.html#windows" class="d">windows</a>
+                in the current <a href="intro.txt.html#tab" class="d">tab</a> page where <a href="options.txt.html#%27diff%27" class="o">'diff'</a> <a href="motion.txt.html#is" class="d">is</a> set.  Resetting
+                related <a href="options.txt.html#options" class="d">options</a> only happens in <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a> that has <a href="options.txt.html#%27diff%27" class="o">'diff'</a> set,
+                if the current <a href="windows.txt.html#window" class="d">window</a> does not have <a href="options.txt.html#%27diff%27" class="o">'diff'</a> set then no <a href="options.txt.html#options" class="d">options</a>
+                in <a href="motion.txt.html#it" class="d">it</a> are changed.
+                Hidden <a href="windows.txt.html#buffers" class="d">buffers</a> are also removed from the <a href="eval.txt.html#list" class="d">list</a> of diff'ed
+                buffers.
+
+The <span class="e">:diffoff</span> command resets the relevant <a href="options.txt.html#options" class="d">options</a> to the values they had when
+using <span class="e">:diffsplit</span>, <span class="e">:diffpatch</span> <a href="motion.txt.html#%2C" class="d">,</a> <span class="e">:diffthis</span>. or <a href="starting.txt.html#starting" class="d">starting</a> Vim in <a href="#diff" class="d">diff</a> mode.
+When using <span class="e">:diffoff</span> <a href="if_cscop.txt.html#twice" class="d">twice</a> the last saved values are restored.
+Otherwise they are set to their default value:
+
+        <a href="options.txt.html#%27diff%27" class="o">'diff'</a>          off
+        <a href="options.txt.html#%27scrollbind%27" class="o">'scrollbind'</a>    off
+        <a href="options.txt.html#%27cursorbind%27" class="o">'cursorbind'</a>    off
+        <a href="options.txt.html#%27scrollopt%27" class="o">'scrollopt'</a>     without "hor"
+        <a href="options.txt.html#%27wrap%27" class="o">'wrap'</a>          on
+        <a href="options.txt.html#%27foldmethod%27" class="o">'foldmethod'</a>    "manual"
+        <a href="options.txt.html#%27foldcolumn%27" class="o">'foldcolumn'</a>    <a href="motion.txt.html#0" class="d">0</a>
+
+<span class="h">==============================================================================</span>
+2. Viewing diffs                                                <a name="view-diffs" class="t">view-diffs</a>
+
+The effect <a href="motion.txt.html#is" class="d">is</a> that the <a href="#diff" class="d">diff</a> <a href="windows.txt.html#windows" class="d">windows</a> show the same text, with the differences
+highlighted.  When <a href="scroll.txt.html#scrolling" class="d">scrolling</a> the text, the <a href="options.txt.html#%27scrollbind%27" class="o">'scrollbind'</a> option will make the
+text in other <a href="windows.txt.html#windows" class="d">windows</a> to be scrolled <a href="motion.txt.html#as" class="d">as</a> well.  With vertical splits the text
+should be aligned properly.
+
+The alignment of text will <a href="motion.txt.html#go" class="d">go</a> wrong when:
+<a href="motion.txt.html#-" class="d">-</a> <a href="options.txt.html#%27wrap%27" class="o">'wrap'</a> <a href="motion.txt.html#is" class="d">is</a> on, some lines will be wrapped and occupy two or more screen
+  lines
+<a href="motion.txt.html#-" class="d">-</a> <a href="fold.txt.html#folds" class="d">folds</a> are open in one <a href="windows.txt.html#window" class="d">window</a> but not another
+<a href="motion.txt.html#-" class="d">-</a> <a href="options.txt.html#%27scrollbind%27" class="o">'scrollbind'</a> <a href="motion.txt.html#is" class="d">is</a> off
+<a href="motion.txt.html#-" class="d">-</a> changes have been made to the text
+<a href="motion.txt.html#-" class="d">-</a> "filler" <a href="motion.txt.html#is" class="d">is</a> not present in <a href="options.txt.html#%27diffopt%27" class="o">'diffopt'</a>, deleted/inserted lines makes the
+  alignment <a href="motion.txt.html#go" class="d">go</a> wrong
+
+All the <a href="windows.txt.html#buffers" class="d">buffers</a> edited in <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a> where the <a href="options.txt.html#%27diff%27" class="o">'diff'</a> option <a href="motion.txt.html#is" class="d">is</a> set will join in
+the diff.  This <a href="motion.txt.html#is" class="d">is</a> also possible for hidden buffers.  They <a href="vim_faq.txt.html#must" class="d">must</a> have been
+edited in <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a> first for this to be possible.  To get rid of the hidden
+<a href="windows.txt.html#buffers" class="d">buffers</a> use <span class="e">:diffoff!</span>.
+
+                                        <a name="%3ADiffOrig" class="t">:DiffOrig</a> <a name="diff-original-file" class="t">diff-original-file</a>
+Since <a href="options.txt.html#%27diff%27" class="o">'diff'</a> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> window-local option, it's possible to <a href="starting.txt.html#view" class="d">view</a> the same buffer
+in <a href="#diff" class="d">diff</a> mode in one <a href="windows.txt.html#window" class="d">window</a> and "normal" in another window.  It <a href="motion.txt.html#is" class="d">is</a> also
+possible to <a href="starting.txt.html#view" class="d">view</a> the changes you have made to <a href="insert.txt.html#a" class="d">a</a> buffer since the file was
+loaded.  Since Vim doesn't allow having two <a href="windows.txt.html#buffers" class="d">buffers</a> for the same file, you
+need another buffer.  This command <a href="motion.txt.html#is" class="d">is</a> useful: 
+<span class="e">         command DiffOrig vert new | set bt=nofile | r ++edit # | 0d_</span>
+<span class="e">                \ | diffthis | wincmd p | diffthis</span>
+(this <a href="motion.txt.html#is" class="d">is</a> in <a href="usr_05.txt.html#vimrc_example.vim" class="l">vimrc_example.vim</a>).  Use "<a href="#%3ADiffOrig" class="d">:DiffOrig</a>" to see the differences
+between the current buffer and the file <a href="motion.txt.html#it" class="d">it</a> was loaded from.
+
+<a href="insert.txt.html#A" class="d">A</a> buffer that <a href="motion.txt.html#is" class="d">is</a> unloaded cannot be used for the diff.  But <a href="motion.txt.html#it" class="d">it</a> does work for
+hidden buffers.  You can use "<a href="windows.txt.html#%3Ahide" class="d">:hide</a>" to close <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a> without unloading the
+buffer.  If you don't want <a href="insert.txt.html#a" class="d">a</a> buffer to remain used for the <a href="#diff" class="d">diff</a> <a href="#do" class="d">do</a> "<a href="options.txt.html#%3Aset" class="d">:set</a>
+nodiff" before hiding it.
+
+                                                        <a name="%3Adif" class="t">:dif</a> <a name="%3Adiffupdate" class="t">:diffupdate</a>
+:dif[fupdate][!]                Update the <a href="#diff" class="d">diff</a> highlighting and folds.
+
+Vim attempts to keep the differences updated when you make changes to the
+text.  This mostly takes care of inserted and deleted lines.  Changes within <a href="insert.txt.html#a" class="d">a</a>
+line and more complicated changes <a href="#do" class="d">do</a> not cause the differences to be updated.
+To force the differences to be updated use: 
+<span class="e"></span>
+<span class="e">        :diffupdate</span>
+<span class="e"></span>
+If the <a href="change.txt.html#%21" class="d">!</a> <a href="motion.txt.html#is" class="d">is</a> included Vim will check if the file was changed externally and
+needs to be reloaded.  It will prompt for each changed file, like <span class="e">:checktime</span>
+was used.
+
+Vim will show filler lines for lines that are missing in one <a href="windows.txt.html#window" class="d">window</a> but are
+present in another.  These lines were inserted in another file or deleted in
+this file.  Removing "filler" from the <a href="options.txt.html#%27diffopt%27" class="o">'diffopt'</a> option will make Vim not
+display these filler lines.
+
+
+Folds are used to hide the text that wasn't changed.  See <a href="fold.txt.html#folding" class="l">folding</a> for all
+the commands that can be used with folds.
+
+The context of lines above <a href="insert.txt.html#a" class="d">a</a> difference that are not included in the fold can
+be set with the <a href="options.txt.html#%27diffopt%27" class="o">'diffopt'</a> option.  For example, to set the context to three
+lines: 
+<span class="e"></span>
+<span class="e">        :set diffopt=filler,context:3</span>
+<span class="e"></span>
+<span class="e"></span>
+The diffs are highlighted with these groups:
+
+<a href="syntax.txt.html#hl-DiffAdd" class="l">hl-DiffAdd</a>    DiffAdd         Added (inserted) lines.  These lines exist in
+                                this buffer but not in another.
+<a href="syntax.txt.html#hl-DiffChange" class="l">hl-DiffChange</a> DiffChange      Changed lines.
+<a href="syntax.txt.html#hl-DiffText" class="l">hl-DiffText</a>   DiffText        Changed text inside <a href="insert.txt.html#a" class="d">a</a> Changed line.  Vim
+                                finds the first character that <a href="motion.txt.html#is" class="d">is</a> different,
+                                and the last character that <a href="motion.txt.html#is" class="d">is</a> different
+                                (searching from the <a href="intro.txt.html#end" class="d">end</a> of the line).  The
+                                text in between <a href="motion.txt.html#is" class="d">is</a> highlighted.  This means
+                                that parts in the middle that are still the
+                                same are highlighted anyway.  The <a href="options.txt.html#%27diffopt%27" class="o">'diffopt'</a>
+                                flags "iwhite" and "icase" are used here.
+<a href="syntax.txt.html#hl-DiffDelete" class="l">hl-DiffDelete</a> DiffDelete      Deleted lines.  Also called filler lines,
+                                because they don't really exist in this
+                                buffer.
+
+<span class="h">==============================================================================</span>
+3. Jumping to diffs                                     <a name="jumpto-diffs" class="t">jumpto-diffs</a>
+
+Two commands can be used to jump to diffs:
+                                                                <a name="%5Bc" class="t">[c</a>
+        <a href="#%5Bc" class="d">[c</a>              Jump backwards to the previous start of <a href="insert.txt.html#a" class="d">a</a> change.
+                        When <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> <a href="motion.txt.html#is" class="d">is</a> used, <a href="#do" class="d">do</a> <a href="motion.txt.html#it" class="d">it</a> that many times.
+                                                                <a name="%5Dc" class="t">]c</a>
+        <a href="#%5Dc" class="d">]c</a>              Jump forwards to the next start of <a href="insert.txt.html#a" class="d">a</a> change.
+                        When <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> <a href="motion.txt.html#is" class="d">is</a> used, <a href="#do" class="d">do</a> <a href="motion.txt.html#it" class="d">it</a> that many times.
+
+It <a href="motion.txt.html#is" class="d">is</a> an error if there <a href="motion.txt.html#is" class="d">is</a> no change for the cursor to move to.
+
+<span class="h">==============================================================================</span>
+4. Diff <a href="uganda.txt.html#copying" class="d">copying</a>                 <a name="copy-diffs" class="t">copy-diffs</a> <a name="E99" class="t">E99</a> <a name="E100" class="t">E100</a> <a name="E101" class="t">E101</a> <a name="E102" class="t">E102</a> <a name="E103" class="t">E103</a>
+                                                                <a name="merge" class="t">merge</a>
+There are two commands to copy text from one buffer to another.  The result <a href="motion.txt.html#is" class="d">is</a>
+that the <a href="windows.txt.html#buffers" class="d">buffers</a> will be equal within the specified range.
+
+                                                        <a name="%3Adiffg" class="t">:diffg</a> <a name="%3Adiffget" class="t">:diffget</a>
+:[range]diffg[et] <span class="s">[bufspec]</span>
+                Modify the current buffer to <a href="undo.txt.html#undo" class="d">undo</a> difference with another
+                buffer.  If <span class="s">[bufspec]</span> <a href="motion.txt.html#is" class="d">is</a> given, that buffer <a href="motion.txt.html#is" class="d">is</a> used.  If
+                <span class="s">[bufspec]</span> refers to the current buffer then nothing happens.
+                Otherwise this only works if there <a href="motion.txt.html#is" class="d">is</a> one other buffer in <a href="#diff" class="d">diff</a>
+                mode.
+                See below for <a href="cmdline.txt.html#%5Brange%5D" class="s">[range]</a>.
+
+                                                <a name="%3Adiffpu" class="t">:diffpu</a> <a name="%3Adiffput" class="t">:diffput</a> <a name="E793" class="t">E793</a>
+:[range]diffpu[t] <span class="s">[bufspec]</span>
+                Modify another buffer to <a href="undo.txt.html#undo" class="d">undo</a> difference with the current
+                buffer.  Just like "<a href="#%3Adiffget" class="d">:diffget</a>" but the other buffer <a href="motion.txt.html#is" class="d">is</a> modified
+                instead of the current one.
+                When <span class="s">[bufspec]</span> <a href="motion.txt.html#is" class="d">is</a> omitted and there <a href="motion.txt.html#is" class="d">is</a> more than one other
+                buffer in <a href="#diff" class="d">diff</a> mode where <a href="options.txt.html#%27modifiable%27" class="o">'modifiable'</a> <a href="motion.txt.html#is" class="d">is</a> set this fails.
+                See below for <a href="cmdline.txt.html#%5Brange%5D" class="s">[range]</a>.
+
+                                                        <a name="do" class="t">do</a>
+<a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a>do       Same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Adiffget" class="d">:diffget</a>" without range.  The "<a href="insert.txt.html#o" class="d">o</a>" stands for "obtain"
+                <a href="motion.txt.html#%28" class="d">(</a>"dg" can't be used, <a href="motion.txt.html#it" class="d">it</a> could be the start of "dgg"!). <span class="n">Note:</span>
+                this doesn't work in <a href="visual.txt.html#Visual" class="d">Visual</a> mode.
+                If you give <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a>, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> used <a href="motion.txt.html#as" class="d">as</a> the <span class="s">[bufspec]</span> argument
+                for "<a href="#%3Adiffget" class="d">:diffget</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="dp" class="t">dp</a>
+<a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a>dp       Same <a href="motion.txt.html#as" class="d">as</a> "<a href="#%3Adiffput" class="d">:diffput</a>" without range.  <span class="n">Note:</span> this doesn't work in
+                <a href="visual.txt.html#Visual" class="d">Visual</a> mode.
+                If you give <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a>, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> used <a href="motion.txt.html#as" class="d">as</a> the <span class="s">[bufspec]</span> argument
+                for "<a href="#%3Adiffput" class="d">:diffput</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+
+When no <a href="cmdline.txt.html#%5Brange%5D" class="s">[range]</a> <a href="motion.txt.html#is" class="d">is</a> given, the <a href="#diff" class="d">diff</a> <a href="motion.txt.html#at" class="d">at</a> the cursor position or just above <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a>
+affected.  When <a href="cmdline.txt.html#%5Brange%5D" class="s">[range]</a> <a href="motion.txt.html#is" class="d">is</a> used, Vim tries to only <a href="change.txt.html#put" class="d">put</a> or get the specified
+lines.  When there are deleted lines, this may not always be possible.
+
+There can be deleted lines below the last line of the buffer.  When the cursor
+<a href="motion.txt.html#is" class="d">is</a> on the last line in the buffer and there <a href="motion.txt.html#is" class="d">is</a> no <a href="#diff" class="d">diff</a> above this line, the
+"<a href="#%3Adiffget" class="d">:diffget</a>" and "<a href="#do" class="d">do</a>" commands will obtain lines from the other buffer.
+
+To be able to get those lines from another buffer in <a href="insert.txt.html#a" class="d">a</a> <a href="cmdline.txt.html#%5Brange%5D" class="s">[range]</a> it's allowed to
+use the last line number plus one.  This command gets all diffs from the other
+buffer: 
+<span class="e"></span>
+<span class="e">        :1,$+1diffget</span>
+<span class="e"></span>
+<span class="n">Note</span> that deleted lines are displayed, but not counted <a href="motion.txt.html#as" class="d">as</a> text lines.  You
+can't move the cursor into them.  To fill the deleted lines with the lines
+from another buffer use "<a href="#%3Adiffget" class="d">:diffget</a>" on the line below them.
+                                                                <a name="E787" class="t">E787</a>
+When the buffer that <a href="motion.txt.html#is" class="d">is</a> about to be modified <a href="motion.txt.html#is" class="d">is</a> read-only and the <a href="autocmd.txt.html#autocommand" class="d">autocommand</a>
+that <a href="motion.txt.html#is" class="d">is</a> triggered by <a href="autocmd.txt.html#FileChangedRO" class="l">FileChangedRO</a> changes <a href="windows.txt.html#buffers" class="d">buffers</a> the command will fail.
+The <a href="autocmd.txt.html#autocommand" class="d">autocommand</a> <a href="vim_faq.txt.html#must" class="d">must</a> not change buffers.
+
+The <span class="s">[bufspec]</span> argument above can be <a href="insert.txt.html#a" class="d">a</a> buffer number, <a href="insert.txt.html#a" class="d">a</a> <a href="pattern.txt.html#pattern" class="d">pattern</a> for <a href="insert.txt.html#a" class="d">a</a> buffer
+name or <a href="insert.txt.html#a" class="d">a</a> part of <a href="insert.txt.html#a" class="d">a</a> buffer name.  Examples:
+
+        <a href="#%3Adiffget" class="d">:diffget</a>                Use the other buffer which <a href="motion.txt.html#is" class="d">is</a> in <a href="#diff" class="d">diff</a> mode
+        <a href="#%3Adiffget" class="d">:diffget</a> 3              Use buffer 3
+        <a href="#%3Adiffget" class="d">:diffget</a> v2             Use the buffer which matches "v2" and <a href="motion.txt.html#is" class="d">is</a> in
+                                <a href="#diff" class="d">diff</a> mode (e.g., "file.c.v2"<a href="motion.txt.html#%29" class="d">)</a>
+
+<span class="h">==============================================================================</span>
+5. Diff <a href="options.txt.html#options" class="d">options</a>                                         <a name="diff-options" class="t">diff-options</a>
+
+Also see <a href="options.txt.html#%27diffopt%27" class="l">'diffopt'</a> and the "<a href="#diff" class="d">diff</a>" item of <a href="options.txt.html#%27fillchars%27" class="l">'fillchars'</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                            <a name="diff-slow" class="t">diff-slow</a> <a name="diff_translations" class="t">diff_translations</a>
+For very long lines, the <a href="#diff" class="d">diff</a> <a href="syntax.txt.html#syntax" class="d">syntax</a> highlighting might be slow, especially
+since <a href="motion.txt.html#it" class="d">it</a> tries to match all different kind of localisations. To disable
+localisations and speed up the <a href="syntax.txt.html#syntax" class="d">syntax</a> highlighting, set the global variable
+g:diff_translations to zero: 
+<span class="e"></span>
+<span class="e">    let g:diff_translations = 0</span>
+
+After setting this variable, <a href="editing.txt.html#reload" class="d">reload</a> the <a href="syntax.txt.html#syntax" class="d">syntax</a> script: 
+<span class="e"></span>
+<span class="e">    set syntax=diff</span>
+
+
+
+<span class="c">FINDING THE DIFFERENCES                                </span> <a name="diff-diffexpr" class="t">diff-diffexpr</a>
+
+The <a href="options.txt.html#%27diffexpr%27" class="o">'diffexpr'</a> option can be set to use something else than the standard
+"<a href="#diff" class="d">diff</a>" program to compare two files and find the differences.
+
+When <a href="options.txt.html#%27diffexpr%27" class="o">'diffexpr'</a> <a href="motion.txt.html#is" class="d">is</a> empty, Vim uses this command to find the differences
+between file1 and file2: 
+<span class="e"></span>
+<span class="e">        diff file1 file2 &gt; outfile</span>
+<span class="e"></span>
+The "<a href="change.txt.html#%3E" class="d">&gt;</a>" <a href="motion.txt.html#is" class="d">is</a> replaced with the value of <a href="options.txt.html#%27shellredir%27" class="o">'shellredir'</a>.
+
+The output of "<a href="#diff" class="d">diff</a>" <a href="vim_faq.txt.html#must" class="d">must</a> be <a href="insert.txt.html#a" class="d">a</a> normal "ed" style diff.  Do NOT use <a href="insert.txt.html#a" class="d">a</a> context
+diff.  This example explains the format that Vim expects: 
+<span class="e"></span>
+<span class="e">        1a2</span>
+<span class="e">        &gt; bbb</span>
+<span class="e">        4d4</span>
+<span class="e">        &lt; 111</span>
+<span class="e">        7c7</span>
+<span class="e">        &lt; GGG</span>
+<span class="e">        ---</span>
+<span class="e">        &gt; ggg</span>
+<span class="e"></span>
+The "1a2" item appends the line "bbb"<a href="repeat.txt.html#." class="d">.</a>
+The "4d4" item deletes the line "111"<a href="repeat.txt.html#." class="d">.</a>
+The "7c7" item replaces the line "GGG" with "ggg"<a href="repeat.txt.html#." class="d">.</a>
+
+When <a href="options.txt.html#%27diffexpr%27" class="o">'diffexpr'</a> <a href="motion.txt.html#is" class="d">is</a> not empty, Vim evaluates <a href="motion.txt.html#it" class="d">it</a> to obtain <a href="insert.txt.html#a" class="d">a</a> <a href="#diff" class="d">diff</a> file in the
+format mentioned.  These <a href="eval.txt.html#variables" class="d">variables</a> are set to the file names used:
+
+        <a href="eval.txt.html#v%3Afname_in" class="d">v:fname_in</a>              original file
+        <a href="eval.txt.html#v%3Afname_new" class="d">v:fname_new</a>             new version of the same file
+        <a href="eval.txt.html#v%3Afname_out" class="d">v:fname_out</a>             resulting <a href="#diff" class="d">diff</a> file
+
+Additionally, <a href="options.txt.html#%27diffexpr%27" class="o">'diffexpr'</a> should take care of "icase" and "iwhite" in the
+<a href="options.txt.html#%27diffopt%27" class="o">'diffopt'</a> option.  <a href="options.txt.html#%27diffexpr%27" class="o">'diffexpr'</a> cannot change the value of <a href="options.txt.html#%27lines%27" class="o">'lines'</a> and
+<a href="options.txt.html#%27columns%27" class="o">'columns'</a>.
+
+Example (this does almost the same <a href="motion.txt.html#as" class="d">as</a> <a href="options.txt.html#%27diffexpr%27" class="o">'diffexpr'</a> being empty): 
+<span class="e"></span>
+<span class="e">        set diffexpr=MyDiff()</span>
+<span class="e">        function MyDiff()</span>
+<span class="e">           let opt = ""</span>
+<span class="e">           if &amp;diffopt =~ "icase"</span>
+<span class="e">             let opt = opt . "-i "</span>
+<span class="e">           endif</span>
+<span class="e">           if &amp;diffopt =~ "iwhite"</span>
+<span class="e">             let opt = opt . "-b "</span>
+<span class="e">           endif</span>
+<span class="e">           silent execute "!diff -a --binary " . opt . v:fname_in . " " . v:fname_new .</span>
+<span class="e">                \  " &gt; " . v:fname_out</span>
+<span class="e">        endfunction</span>
+<span class="e"></span>
+The "-a" argument <a href="motion.txt.html#is" class="d">is</a> used to force comparing the files <a href="motion.txt.html#as" class="d">as</a> text, comparing <a href="motion.txt.html#as" class="d">as</a>
+binaries isn't useful.  The "--binary" argument makes the files read in binary
+mode, so that <a href="insert.txt.html#a" class="d">a</a> <a href="starting.txt.html#CTRL-Z" class="k">CTRL-Z</a> doesn't <a href="intro.txt.html#end" class="d">end</a> the text on DOS.
+
+                                                <a name="E810" class="t">E810</a> <a name="E97" class="t">E97</a>
+Vim will <a href="#do" class="d">do</a> <a href="insert.txt.html#a" class="d">a</a> test if the <a href="#diff" class="d">diff</a> output looks alright.  If <a href="motion.txt.html#it" class="d">it</a> doesn't, you will
+get an error message.  Possible causes:
+<a href="motion.txt.html#-" class="d">-</a>  The "<a href="#diff" class="d">diff</a>" program cannot be executed.
+<a href="motion.txt.html#-" class="d">-</a>  The "<a href="#diff" class="d">diff</a>" program doesn't produce normal "ed" style diffs (see above).
+<a href="motion.txt.html#-" class="d">-</a>  The <a href="options.txt.html#%27shell%27" class="o">'shell'</a> and associated <a href="options.txt.html#options" class="d">options</a> are not set correctly.  Try if filtering
+   works with <a href="insert.txt.html#a" class="d">a</a> command like ":!sort"<a href="repeat.txt.html#." class="d">.</a>
+<a href="motion.txt.html#-" class="d">-</a>  You are using <a href="options.txt.html#%27diffexpr%27" class="o">'diffexpr'</a> and <a href="motion.txt.html#it" class="d">it</a> doesn't work.
+If it's not clear what the problem <a href="motion.txt.html#is" class="d">is</a> set the <a href="options.txt.html#%27verbose%27" class="o">'verbose'</a> option to one or more
+to see more messages.
+
+The self-installing Vim for <a href="os_win32.txt.html#MS-Windows" class="d">MS-Windows</a> includes <a href="insert.txt.html#a" class="d">a</a> <a href="#diff" class="d">diff</a> program.  If you don't
+have <a href="motion.txt.html#it" class="d">it</a> you might want to <a href="intro.txt.html#download" class="d">download</a> <a href="insert.txt.html#a" class="d">a</a> diff.exe.  For example from
+<a class="u" href="http://gnuwin32.sourceforge.net/packages/diffutils.htm">http://gnuwin32.sourceforge.net/packages/diffutils.htm</a>.
+
+
+<span class="c">USING PATCHES                                  </span> <a name="diff-patchexpr" class="t">diff-patchexpr</a>
+
+The <a href="options.txt.html#%27patchexpr%27" class="o">'patchexpr'</a> option can be set to use something else than the standard
+"patch" program.
+
+When <a href="options.txt.html#%27patchexpr%27" class="o">'patchexpr'</a> <a href="motion.txt.html#is" class="d">is</a> empty, Vim will call the "patch" program like this: 
+<span class="e"></span>
+<span class="e">        patch -o outfile origfile &lt; patchfile</span>
+<span class="e"></span>
+This should work fine with most versions of the "patch" program.  <span class="n">Note</span> that <a href="insert.txt.html#a" class="d">a</a>
+CR in the middle of <a href="insert.txt.html#a" class="d">a</a> line may cause problems, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> seen <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> line break.
+
+If the default doesn't work for you, set the <a href="options.txt.html#%27patchexpr%27" class="o">'patchexpr'</a> to an <a href="eval.txt.html#expression" class="d">expression</a> that
+will have the same effect.  These <a href="eval.txt.html#variables" class="d">variables</a> are set to the file names used:
+
+        <a href="eval.txt.html#v%3Afname_in" class="d">v:fname_in</a>              original file
+        <a href="eval.txt.html#v%3Afname_diff" class="d">v:fname_diff</a>            patch file
+        <a href="eval.txt.html#v%3Afname_out" class="d">v:fname_out</a>             resulting patched file
+
+Example (this does the same <a href="motion.txt.html#as" class="d">as</a> <a href="options.txt.html#%27patchexpr%27" class="o">'patchexpr'</a> being empty): 
+<span class="e"></span>
+<span class="e">        set patchexpr=MyPatch()</span>
+<span class="e">        function MyPatch()</span>
+<span class="e">           :call system("patch -o " . v:fname_out . " " . v:fname_in .</span>
+<span class="e">           \  " &lt; " . v:fname_diff)</span>
+<span class="e">        endfunction</span>
+<span class="e"></span>
+Make sure that using the "patch" program doesn't have unwanted side effects.
+For example, watch out for additionally generated files, which should be
+deleted.  It should just patch the file and nothing else.
+   Vim will change directory to "/tmp" or another temp directory before
+evaluating <a href="options.txt.html#%27patchexpr%27" class="o">'patchexpr'</a>.  This hopefully avoids that files in the current
+directory are accidentally patched.  Vim will also delete files <a href="starting.txt.html#starting" class="d">starting</a> with
+<a href="eval.txt.html#v%3Afname_in" class="d">v:fname_in</a> and ending in ".rej" and ".orig"<a href="repeat.txt.html#." class="d">.</a>
+
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

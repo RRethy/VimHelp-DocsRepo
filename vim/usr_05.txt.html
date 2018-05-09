@@ -1,0 +1,680 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: usr_05.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="usr_05.txt" class="t">usr_05.txt</a>    For <span class="i">Vim version 8.0.</span>  Last change: 2018 Feb 20
+
+                     VIM USER MANUAL <a href="motion.txt.html#-" class="d">-</a> by <a href="intro.txt.html#Bram" class="d">Bram</a> <a href="intro.txt.html#Moolenaar" class="d">Moolenaar</a>
+
+                              Set your settings
+
+
+Vim can be tuned to work like you want <a href="motion.txt.html#it" class="d">it</a> to.  This chapter shows you how to
+make Vim start with <a href="options.txt.html#options" class="d">options</a> set to different values.  Add plugins to extend
+Vim's capabilities.  Or define your own macros.
+
+<a href="#05.1" class="l">05.1</a>  The <a href="starting.txt.html#vimrc" class="d">vimrc</a> file
+<a href="#05.2" class="l">05.2</a>  The example <a href="starting.txt.html#vimrc" class="d">vimrc</a> file explained
+<a href="#05.3" class="l">05.3</a>  Simple mappings
+<a href="#05.4" class="l">05.4</a>  Adding <a href="insert.txt.html#a" class="d">a</a> package
+<a href="#05.5" class="l">05.5</a>  Adding <a href="insert.txt.html#a" class="d">a</a> <a href="#plugin" class="d">plugin</a>
+<a href="#05.6" class="l">05.6</a>  Adding <a href="insert.txt.html#a" class="d">a</a> <a href="helphelp.txt.html#help" class="d">help</a> file
+<a href="#05.7" class="l">05.7</a>  The option <a href="windows.txt.html#window" class="d">window</a>
+<a href="#05.8" class="l">05.8</a>  Often used <a href="options.txt.html#options" class="d">options</a>
+
+     Next chapter: <a href="usr_06.txt.html#usr_06.txt" class="l">usr_06.txt</a>  Using <a href="syntax.txt.html#syntax" class="d">syntax</a> highlighting
+ Previous chapter: <a href="usr_04.txt.html#usr_04.txt" class="l">usr_04.txt</a>  Making small changes
+Table of contents: <a href="usr_toc.txt.html#usr_toc.txt" class="l">usr_toc.txt</a>
+
+<span class="h">==============================================================================</span>
+<a name="05.1" class="t">05.1</a>  The <a href="starting.txt.html#vimrc" class="d">vimrc</a> file                                  <a name="vimrc-intro" class="t">vimrc-intro</a>
+
+You probably got tired of typing commands that you use very often.  To start
+Vim with all your favorite option settings and mappings, you write them in
+what <a href="motion.txt.html#is" class="d">is</a> called the <a href="starting.txt.html#vimrc" class="d">vimrc</a> file.  Vim executes the commands in this file when <a href="motion.txt.html#it" class="d">it</a>
+starts up.
+
+If you already have <a href="insert.txt.html#a" class="d">a</a> <a href="starting.txt.html#vimrc" class="d">vimrc</a> file (e.g., when your sysadmin has one setup for
+you), you can edit <a href="motion.txt.html#it" class="d">it</a> this way: 
+<span class="e"></span>
+<span class="e">        :edit $MYVIMRC</span>
+<span class="e"></span>
+If you don't have <a href="insert.txt.html#a" class="d">a</a> <a href="starting.txt.html#vimrc" class="d">vimrc</a> file yet, see <a href="starting.txt.html#vimrc" class="l">vimrc</a> to find out where you can
+create <a href="insert.txt.html#a" class="d">a</a> <a href="starting.txt.html#vimrc" class="d">vimrc</a> file.  Also, the "<a href="various.txt.html#%3Aversion" class="d">:version</a>" command mentions the name of the
+"user <a href="starting.txt.html#vimrc" class="d">vimrc</a> file" Vim looks for.
+
+For <a href="os_unix.txt.html#Unix" class="d">Unix</a> and <a href="os_mac.txt.html#Macintosh" class="d">Macintosh</a> this file <a href="motion.txt.html#is" class="d">is</a> always used and <a href="motion.txt.html#is" class="d">is</a> recommended:
+
+<span class="h">        ~/.vimrc </span>
+
+For <a href="os_msdos.txt.html#MS-DOS" class="d">MS-DOS</a> and <a href="os_win32.txt.html#MS-Windows" class="d">MS-Windows</a> you can use one of these:
+
+<span class="h">        $HOME/_vimrc </span>
+<span class="h">        $VIM/_vimrc </span>
+
+If you are creating the <a href="starting.txt.html#vimrc" class="d">vimrc</a> file for the first time, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> recommended to
+<a href="change.txt.html#put" class="d">put</a> this line <a href="motion.txt.html#at" class="d">at</a> the top: 
+<span class="e"></span>
+<span class="e">        source $VIMRUNTIME/defaults.vim</span>
+<span class="e"></span>
+This initializes Vim for new users (as opposed to traditional <a href="intro.txt.html#Vi" class="d">Vi</a> users). See
+<a href="starting.txt.html#defaults.vim" class="l">defaults.vim</a> for the details.
+
+The <a href="starting.txt.html#vimrc" class="d">vimrc</a> file can contain all the commands that you type after <a href="insert.txt.html#a" class="d">a</a> colon.  The
+most simple ones are for setting options.  For example, if you want Vim to
+always start with the <a href="options.txt.html#%27incsearch%27" class="o">'incsearch'</a> option on, add this line your <a href="starting.txt.html#vimrc" class="d">vimrc</a> file: 
+<span class="e"></span>
+<span class="e">        set incsearch</span>
+<span class="e"></span>
+For this new line to take effect you need to exit Vim and start <a href="motion.txt.html#it" class="d">it</a> again.
+Later you will learn how to <a href="diff.txt.html#do" class="d">do</a> this without <a href="starting.txt.html#exiting" class="d">exiting</a> Vim.
+
+This chapter only explains the most basic items.  For more information on how
+to write <a href="insert.txt.html#a" class="d">a</a> Vim <a href="usr_41.txt.html#script" class="d">script</a> file: <a href="usr_41.txt.html#usr_41.txt" class="l">usr_41.txt</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+<a name="05.2" class="t">05.2</a>  The example <a href="starting.txt.html#vimrc" class="d">vimrc</a> file explained                <a name="vimrc_example.vim" class="t">vimrc_example.vim</a>
+
+In the first chapter was explained how the example <a href="starting.txt.html#vimrc" class="d">vimrc</a> (included in the
+Vim distribution) file can be used to make Vim <a href="starting.txt.html#startup" class="d">startup</a> in <a href="usr_01.txt.html#not-compatible" class="d">not-compatible</a> mode
+(see <a href="usr_01.txt.html#not-compatible" class="l">not-compatible</a>).  The file can be found here:
+
+<span class="h">        $VIMRUNTIME/vimrc_example.vim </span>
+
+In this <a href="motion.txt.html#section" class="d">section</a> we will explain the <a href="various.txt.html#various" class="d">various</a> commands used in this file.  This
+will give you hints about how to set up your own preferences.  Not everything
+will be explained though.  Use the "<a href="helphelp.txt.html#%3Ahelp" class="d">:help</a>" command to find out more.
+
+
+<span class="e">        set nocompatible</span>
+<span class="e"></span>
+As mentioned in the first chapter, these manuals explain Vim working in an
+improved way, thus not completely <a href="intro.txt.html#Vi" class="d">Vi</a> compatible.  Setting the <a href="options.txt.html#%27compatible%27" class="o">'compatible'</a>
+option off, thus <a href="options.txt.html#%27nocompatible%27" class="o">'nocompatible'</a> takes care of this.
+
+
+<span class="e">        set backspace=indent,eol,start</span>
+<span class="e"></span>
+This specifies where in <a href="insert.txt.html#Insert" class="d">Insert</a> mode the <a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a> <a href="motion.txt.html#is" class="d">is</a> allowed to delete the
+character in front of the cursor.  The three items, separated by commas, tell
+Vim to delete the white <a href="intro.txt.html#space" class="d">space</a> <a href="motion.txt.html#at" class="d">at</a> the start of the line, <a href="insert.txt.html#a" class="d">a</a> line break and the
+character before where <a href="insert.txt.html#Insert" class="d">Insert</a> mode started.
+
+<span class="e"></span>
+<span class="e">        set autoindent</span>
+<span class="e"></span>
+This makes Vim use the indent of the previous line for <a href="insert.txt.html#a" class="d">a</a> newly created line.
+Thus there <a href="motion.txt.html#is" class="d">is</a> the same amount of white <a href="intro.txt.html#space" class="d">space</a> before the new line.  For example
+when pressing <a href="intro.txt.html#%3CEnter%3E" class="s">&lt;Enter&gt;</a> in <a href="insert.txt.html#Insert" class="d">Insert</a> mode, and when using the "<a href="insert.txt.html#o" class="d">o</a>" command to open <a href="insert.txt.html#a" class="d">a</a>
+new line.
+
+<span class="e"></span>
+<span class="e">        if has("vms")</span>
+<span class="e">          set nobackup</span>
+<span class="e">        else</span>
+<span class="e">          set backup</span>
+<span class="e">        endif</span>
+<span class="e"></span>
+This tells Vim to keep <a href="insert.txt.html#a" class="d">a</a> <a href="editing.txt.html#backup" class="d">backup</a> copy of <a href="insert.txt.html#a" class="d">a</a> file when overwriting it.  But not
+on the <a href="os_vms.txt.html#VMS" class="d">VMS</a> system, since <a href="motion.txt.html#it" class="d">it</a> keeps old versions of files already.  The <a href="editing.txt.html#backup" class="d">backup</a>
+file will have the same name <a href="motion.txt.html#as" class="d">as</a> the original file with "<a href="change.txt.html#%7E" class="d">~</a>" added.  See <a href="usr_07.txt.html#07.4" class="l">07.4</a>
+
+<span class="e"></span>
+<span class="e">        set history=50</span>
+<span class="e"></span>
+Keep 50 commands and 50 search patterns in the history.  Use another number if
+you want to remember fewer or more lines.
+
+<span class="e"></span>
+<span class="e">        set ruler</span>
+<span class="e"></span>
+Always display the current cursor position in the lower right corner of the
+Vim window.
+
+
+<span class="e">        set showcmd</span>
+<span class="e"></span>
+Display an incomplete command in the lower right corner of the Vim window,
+left of the ruler.  For example, when you type "2f"<a href="motion.txt.html#%2C" class="d">,</a> Vim <a href="motion.txt.html#is" class="d">is</a> waiting for you to
+type the character to find and "2f" <a href="motion.txt.html#is" class="d">is</a> displayed.  When you press "<a href="motion.txt.html#w" class="d">w</a>" next,
+the "2fw" command <a href="motion.txt.html#is" class="d">is</a> executed and the displayed "2f" <a href="motion.txt.html#is" class="d">is</a> removed.
+
+        +-------------------------------------------------+
+        |text in the Vim <a href="windows.txt.html#window" class="d">window</a>                           |
+        |<a href="change.txt.html#%7E" class="d">~</a>                                                |
+        |<a href="change.txt.html#%7E" class="d">~</a>                                                |
+        |<a href="starting.txt.html#--" class="d">--</a> VISUAL <a href="starting.txt.html#--" class="d">--</a>                   2f     43,8   17% |
+        +-------------------------------------------------+
+         ^^^^^^^^^^^                  ^^^^^^^^ ^^^^^^^^^^
+          <a href="options.txt.html#%27showmode%27" class="o">'showmode'</a>                 <a href="options.txt.html#%27showcmd%27" class="o">'showcmd'</a>  <a href="options.txt.html#%27ruler%27" class="o">'ruler'</a>
+
+
+<span class="e">        set incsearch</span>
+<span class="e"></span>
+Display the match for <a href="insert.txt.html#a" class="d">a</a> search <a href="pattern.txt.html#pattern" class="d">pattern</a> when halfway typing it.
+
+
+<span class="e">        map Q gq</span>
+<span class="e"></span>
+This defines <a href="insert.txt.html#a" class="d">a</a> key mapping.  More about that in the next section.  This
+defines the "<a href="intro.txt.html#Q" class="d">Q</a>" command to <a href="diff.txt.html#do" class="d">do</a> <a href="change.txt.html#formatting" class="d">formatting</a> with the "<a href="change.txt.html#gq" class="d">gq</a>" operator.  This <a href="motion.txt.html#is" class="d">is</a> how
+<a href="motion.txt.html#it" class="d">it</a> worked before Vim 5.0.  Otherwise the "<a href="intro.txt.html#Q" class="d">Q</a>" command starts <a href="intro.txt.html#Ex" class="d">Ex</a> mode, but you
+will not need it.
+
+
+<span class="e">        vnoremap _g y:exe "grep /" . escape(@", '\\/') . "/ *.c *.h"&lt;CR&gt;</span>
+<span class="e"></span>
+This <a href="map.txt.html#mapping" class="d">mapping</a> yanks the visually selected text and searches for <a href="motion.txt.html#it" class="d">it</a> in <a href="change.txt.html#C" class="d">C</a> files.
+This <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> complicated mapping.  You can see that mappings can be used to <a href="diff.txt.html#do" class="d">do</a>
+quite complicated things.  Still, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> just <a href="insert.txt.html#a" class="d">a</a> sequence of commands that are
+executed like you typed them.
+
+
+<span class="e">        if &amp;t_Co &gt; 2 || has("gui_running")</span>
+<span class="e">          syntax on</span>
+<span class="e">          set hlsearch</span>
+<span class="e">        endif</span>
+<span class="e"></span>
+This switches on <a href="syntax.txt.html#syntax" class="d">syntax</a> highlighting, but only if colors are available.  And
+the <a href="options.txt.html#%27hlsearch%27" class="o">'hlsearch'</a> option tells Vim to highlight matches with the last used search
+pattern.  The "if" command <a href="motion.txt.html#is" class="d">is</a> very useful to set <a href="options.txt.html#options" class="d">options</a> only when some
+condition <a href="motion.txt.html#is" class="d">is</a> met.  More about that in <a href="usr_41.txt.html#usr_41.txt" class="l">usr_41.txt</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="vimrc-filetype" class="t">vimrc-filetype</a>  
+<span class="e">        filetype plugin indent on</span>
+<span class="e"></span>
+This switches on three very clever mechanisms:
+1. Filetype detection.
+   Whenever you start editing <a href="insert.txt.html#a" class="d">a</a> file, Vim will try to figure out what kind of
+   file this is.  When you edit "main.c"<a href="motion.txt.html#%2C" class="d">,</a> Vim will see the ".c" extension and
+   recognize this <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> "<a href="change.txt.html#c" class="d">c</a>" filetype.  When you edit <a href="insert.txt.html#a" class="d">a</a> file that starts with
+   "#!/bin/sh"<a href="motion.txt.html#%2C" class="d">,</a> Vim will recognize <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> "sh" filetype.
+   The <a href="filetype.txt.html#filetype" class="d">filetype</a> detection <a href="motion.txt.html#is" class="d">is</a> used for <a href="syntax.txt.html#syntax" class="d">syntax</a> highlighting and the other two
+   items below.
+   See <a href="filetype.txt.html#filetypes" class="l">filetypes</a><a href="repeat.txt.html#." class="d">.</a>
+
+2. Using <a href="filetype.txt.html#filetype" class="d">filetype</a> <a href="#plugin" class="d">plugin</a> files
+   Many different <a href="filetype.txt.html#filetypes" class="d">filetypes</a> are edited with different options.  For example,
+   when you edit <a href="insert.txt.html#a" class="d">a</a> "<a href="change.txt.html#c" class="d">c</a>" file, it's very useful to set the <a href="options.txt.html#%27cindent%27" class="o">'cindent'</a> option to
+   automatically indent the lines.  These commonly useful option settings are
+   included with Vim in <a href="filetype.txt.html#filetype" class="d">filetype</a> plugins.  You can also add your own, see
+   <a href="usr_41.txt.html#write-filetype-plugin" class="l">write-filetype-plugin</a><a href="repeat.txt.html#." class="d">.</a>
+
+3. Using indent files
+   When editing programs, the indent of <a href="insert.txt.html#a" class="d">a</a> line can often be computed
+   automatically.  Vim comes with these indent rules for <a href="insert.txt.html#a" class="d">a</a> number of
+   filetypes.  See <a href="filetype.txt.html#%3Afiletype-indent-on" class="l">:filetype-indent-on</a> and <a href="options.txt.html#%27indentexpr%27" class="o">'indentexpr'</a>.
+
+
+<span class="e">        autocmd FileType text setlocal textwidth=78</span>
+<span class="e"></span>
+This makes Vim break text to avoid lines getting longer than 78 characters.
+But only for files that have been detected to be plain text.  There are
+actually two parts here.  "autocmd <a href="autocmd.txt.html#FileType" class="d">FileType</a> text" <a href="motion.txt.html#is" class="d">is</a> an autocommand.  This
+defines that when the file type <a href="motion.txt.html#is" class="d">is</a> set to "text" the following command <a href="motion.txt.html#is" class="d">is</a>
+automatically executed.  "setlocal textwidth=78" sets the <a href="options.txt.html#%27textwidth%27" class="o">'textwidth'</a> option
+to 78, but only locally in one file.
+
+                                                        <a name="restore-cursor" class="t">restore-cursor</a>  
+<span class="e">        autocmd BufReadPost *</span>
+<span class="e">            \ if line("'\"") &gt; 1 &amp;&amp; line("'\"") &lt;= line("$") |</span>
+<span class="e">            \   exe "normal! g`\"" |</span>
+<span class="e">            \ endif</span>
+<span class="e"></span>
+Another autocommand.  This time <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> used after reading any file.  The
+complicated stuff after <a href="motion.txt.html#it" class="d">it</a> checks if the <a href="motion.txt.html#%27" class="d">'</a>" <a href="motion.txt.html#mark" class="d">mark</a> <a href="motion.txt.html#is" class="d">is</a> defined, and jumps to <a href="motion.txt.html#it" class="d">it</a>
+if so.  The <a href="intro.txt.html#backslash" class="d">backslash</a> <a href="motion.txt.html#at" class="d">at</a> the start of <a href="insert.txt.html#a" class="d">a</a> line <a href="motion.txt.html#is" class="d">is</a> used to continue the command
+from the previous line.  That avoids <a href="insert.txt.html#a" class="d">a</a> line getting very long.
+See <a href="repeat.txt.html#line-continuation" class="l">line-continuation</a><a href="repeat.txt.html#." class="d">.</a>  This only works in <a href="insert.txt.html#a" class="d">a</a> Vim <a href="usr_41.txt.html#script" class="d">script</a> file, not when
+typing commands <a href="motion.txt.html#at" class="d">at</a> the command-line.
+
+<span class="h">==============================================================================</span>
+<a name="05.3" class="t">05.3</a>  Simple mappings
+
+<a href="insert.txt.html#A" class="d">A</a> <a href="map.txt.html#mapping" class="d">mapping</a> enables you to bind <a href="insert.txt.html#a" class="d">a</a> set of Vim commands to <a href="insert.txt.html#a" class="d">a</a> single key.  Suppose,
+for example, that you need to surround certain words with curly braces.  In
+other words, you need to change <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> such <a href="motion.txt.html#as" class="d">as</a> "amount" into "<span class="s">{amount}</span>"<a href="repeat.txt.html#." class="d">.</a>  With
+the <a href="map.txt.html#%3Amap" class="d">:map</a> command, you can tell Vim that the F5 key does this job.  The command
+<a href="motion.txt.html#is" class="d">is</a> <a href="motion.txt.html#as" class="d">as</a> follows: 
+<span class="e"></span>
+<span class="e">        :map &lt;F5&gt; i{&lt;Esc&gt;ea}&lt;Esc&gt;</span>
+
+        <span class="n">Note:</span>
+        When entering this command, you <a href="vim_faq.txt.html#must" class="d">must</a> enter <a href="term.txt.html#%3CF5%3E" class="s">&lt;F5&gt;</a> by typing four
+        characters.  Similarly, <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a> <a href="motion.txt.html#is" class="d">is</a> not entered by pressing the <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a>
+        key, but by typing five characters.  Watch out for this difference
+        when reading the manual!
+
+Let's break this down:
+    <a href="term.txt.html#%3CF5%3E" class="s">&lt;F5&gt;</a>        The F5 function key.  This <a href="motion.txt.html#is" class="d">is</a> the trigger key that causes the
+                command to be executed <a href="motion.txt.html#as" class="d">as</a> the key <a href="motion.txt.html#is" class="d">is</a> pressed.
+
+    i{&lt;Esc&gt;     <a href="insert.txt.html#Insert" class="d">Insert</a> the <a href="motion.txt.html#%7B" class="d">{</a> character.  The <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a> key ends <a href="insert.txt.html#Insert" class="d">Insert</a> mode.
+
+    <a href="motion.txt.html#e" class="d">e</a>           Move to the <a href="intro.txt.html#end" class="d">end</a> of the word.
+
+    a}&lt;Esc&gt;     Append the <a href="motion.txt.html#%7D" class="d">}</a> to the word.
+
+After you execute the "<a href="map.txt.html#%3Amap" class="d">:map</a>" command, all you have to <a href="diff.txt.html#do" class="d">do</a> to <a href="change.txt.html#put" class="d">put</a> <a href="intro.txt.html#%7B%7D" class="d">{}</a> around <a href="insert.txt.html#a" class="d">a</a>
+<a href="motion.txt.html#word" class="d">word</a> <a href="motion.txt.html#is" class="d">is</a> to <a href="change.txt.html#put" class="d">put</a> the cursor on the first character and press F5.
+
+In this example, the trigger <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> single key; <a href="motion.txt.html#it" class="d">it</a> can be any string.  But when
+you use an existing Vim command, that command will no longer be available.
+You better avoid that.
+   One key that can be used with mappings <a href="motion.txt.html#is" class="d">is</a> the backslash.  Since you
+probably want to define more than one mapping, add another character.  You
+could map "\p" to add parentheses around <a href="insert.txt.html#a" class="d">a</a> word, and "\c" to add curly braces,
+for example: 
+<span class="e"></span>
+<span class="e">        :map \p i(&lt;Esc&gt;ea)&lt;Esc&gt;</span>
+<span class="e">        :map \c i{&lt;Esc&gt;ea}&lt;Esc&gt;</span>
+<span class="e"></span>
+You need to type the \ and the <a href="change.txt.html#p" class="d">p</a> quickly after another, so that Vim knows they
+belong together.
+
+The "<a href="map.txt.html#%3Amap" class="d">:map</a>" command (with no arguments) lists your current mappings.  At
+least the ones for <a href="intro.txt.html#Normal" class="d">Normal</a> mode.  More about mappings in <a href="motion.txt.html#section" class="d">section</a> <a href="usr_40.txt.html#40.1" class="l">40.1</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+<a name="05.4" class="t">05.4</a>  Adding <a href="insert.txt.html#a" class="d">a</a> package                        <a name="add-package" class="t">add-package</a> <a name="matchit-install" class="t">matchit-install</a>
+
+<a href="insert.txt.html#A" class="d">A</a> package <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> set of files that you can add to Vim.  There are two kinds of
+packages: optional and automatically loaded on startup.
+
+The Vim <a href="intro.txt.html#distribution" class="d">distribution</a> comes with <a href="insert.txt.html#a" class="d">a</a> few <a href="repeat.txt.html#packages" class="d">packages</a> that you can optionally use.
+For example, the matchit plugin.  This <a href="#plugin" class="d">plugin</a> makes the "<a href="motion.txt.html#%25" class="d">%</a>" command jump to
+matching HTML tags, if/else/endif in Vim scripts, etc.  Very useful, although
+it's not backwards compatible (that's why <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> not enabled by default).
+
+To start using the matchit plugin, add one line to your <a href="starting.txt.html#vimrc" class="d">vimrc</a> file: 
+<span class="e">        packadd! matchit</span>
+<span class="e"></span>
+That's all!  After restarting Vim you can find <a href="helphelp.txt.html#help" class="d">help</a> about this plugin: 
+<span class="e">        :help matchit</span>
+<span class="e"></span>
+This works, because when <span class="e">:packadd</span> loaded the <a href="#plugin" class="d">plugin</a> <a href="motion.txt.html#it" class="d">it</a> also added the
+package directory in <a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a>, so that the <a href="helphelp.txt.html#help" class="d">help</a> file can be found.
+
+You can find <a href="repeat.txt.html#packages" class="d">packages</a> on the Internet in <a href="various.txt.html#various" class="d">various</a> places.  It usually comes <a href="motion.txt.html#as" class="d">as</a>
+an archive or <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> repository.  For an archive you can follow these steps:
+        1. create the package directory: 
+<span class="e">                mkdir -p ~/.vim/pack/fancy</span>
+          "fancy" can be any name of your liking.  Use one that describes the
+           package.
+        2. unpack the archive in that directory.  This assumes the top
+           directory in the archive <a href="motion.txt.html#is" class="d">is</a> "start"<a href="cmdline.txt.html#%3A" class="d">:</a> 
+<span class="e">                cd ~/.vim/pack/fancy</span>
+<span class="e">                unzip /tmp/fancy.zip</span>
+          If the archive layout <a href="motion.txt.html#is" class="d">is</a> different make sure that you <a href="intro.txt.html#end" class="d">end</a> up with <a href="insert.txt.html#a" class="d">a</a>
+           path like this:
+<span class="h">                ~/.vim/pack/fancy/start/fancytext/plugin/fancy.vim </span>
+           Here "fancytext" <a href="motion.txt.html#is" class="d">is</a> the name of the package, <a href="motion.txt.html#it" class="d">it</a> can be anything
+           else.
+
+More information about <a href="repeat.txt.html#packages" class="d">packages</a> can be found here: <a href="repeat.txt.html#packages" class="l">packages</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+<a name="05.5" class="t">05.5</a>  Adding <a href="insert.txt.html#a" class="d">a</a> <a href="#plugin" class="d">plugin</a>                                 <a name="add-plugin" class="t">add-plugin</a> <a name="plugin" class="t">plugin</a>
+
+Vim's functionality can be extended by adding plugins.  <a href="insert.txt.html#A" class="d">A</a> <a href="#plugin" class="d">plugin</a> <a href="motion.txt.html#is" class="d">is</a> nothing
+more than <a href="insert.txt.html#a" class="d">a</a> Vim <a href="usr_41.txt.html#script" class="d">script</a> file that <a href="motion.txt.html#is" class="d">is</a> loaded automatically when Vim starts.  You
+can add <a href="insert.txt.html#a" class="d">a</a> <a href="#plugin" class="d">plugin</a> very easily by dropping <a href="motion.txt.html#it" class="d">it</a> in your <a href="#plugin" class="d">plugin</a> directory.
+<span class="s">{not available when Vim was compiled without the |+eval| feature}</span>
+
+There are two types of plugins:
+
+    global plugin: Used for all kinds of files
+  <a href="filetype.txt.html#filetype" class="d">filetype</a> plugin: Only used for <a href="insert.txt.html#a" class="d">a</a> specific type of file
+
+The global plugins will be discussed first, then the <a href="filetype.txt.html#filetype" class="d">filetype</a> ones
+<a href="#add-filetype-plugin" class="l">add-filetype-plugin</a><a href="repeat.txt.html#." class="d">.</a>
+
+
+<span class="c">GLOBAL PLUGINS                                         </span> <a name="standard-plugin" class="t">standard-plugin</a>
+
+When you start Vim, <a href="motion.txt.html#it" class="d">it</a> will automatically load <a href="insert.txt.html#a" class="d">a</a> number of global plugins.
+You don't have to <a href="diff.txt.html#do" class="d">do</a> anything for this.  They add functionality that most
+people will want to use, but which was implemented <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> Vim <a href="usr_41.txt.html#script" class="d">script</a> instead of
+being compiled into Vim.  You can find them listed in the <a href="helphelp.txt.html#help" class="d">help</a> <a href="index.txt.html#index" class="d">index</a>
+<a href="/#standard-plugin-list" class="l">standard-plugin-list</a><a href="repeat.txt.html#." class="d">.</a>  Also see <a href="starting.txt.html#load-plugins" class="l">load-plugins</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="add-global-plugin" class="t">add-global-plugin</a>
+You can add <a href="insert.txt.html#a" class="d">a</a> global <a href="#plugin" class="d">plugin</a> to add functionality that will always be present
+when you use Vim.  There are only two steps for adding <a href="insert.txt.html#a" class="d">a</a> global plugin:
+1. Get <a href="insert.txt.html#a" class="d">a</a> copy of the plugin.
+2. Drop <a href="motion.txt.html#it" class="d">it</a> in the right directory.
+
+
+GETTING <a href="insert.txt.html#A" class="d">A</a> GLOBAL PLUGIN
+
+Where can you find plugins?
+<a href="motion.txt.html#-" class="d">-</a> Some come with Vim.  You can find them in the directory $VIMRUNTIME/macros
+  and its sub-directories.
+<a href="motion.txt.html#-" class="d">-</a> Download from the net.  There <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> large collection on <a class="u" href="http://www.vim.org">http://www.vim.org</a>.
+<a href="motion.txt.html#-" class="d">-</a> They are sometimes posted in <a href="insert.txt.html#a" class="d">a</a> Vim <a href="intro.txt.html#maillist" class="l">maillist</a><a href="repeat.txt.html#." class="d">.</a>
+<a href="motion.txt.html#-" class="d">-</a> You could write one yourself, see <a href="usr_41.txt.html#write-plugin" class="l">write-plugin</a><a href="repeat.txt.html#." class="d">.</a>
+
+Some plugins come <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> <a href="pi_vimball.txt.html#vimball" class="d">vimball</a> archive, see <a href="pi_vimball.txt.html#vimball" class="l">vimball</a><a href="repeat.txt.html#." class="d">.</a>
+Some plugins can be updated automatically, see <a href="pi_getscript.txt.html#getscript" class="l">getscript</a><a href="repeat.txt.html#." class="d">.</a>
+
+
+USING <a href="insert.txt.html#A" class="d">A</a> GLOBAL PLUGIN
+
+First read the text in the <a href="#plugin" class="d">plugin</a> itself to check for any special conditions.
+Then copy the file to your <a href="#plugin" class="d">plugin</a> directory:
+
+<span class="h">        system          plugin directory </span>
+        <a href="os_unix.txt.html#Unix" class="d">Unix</a>            ~/.vim/plugin/
+        PC and <a href="os_os2.txt.html#OS%2F2" class="d">OS/2</a>     $HOME/vimfiles/plugin or $VIM/vimfiles/plugin
+        <a href="os_amiga.txt.html#Amiga" class="d">Amiga</a>           s:vimfiles/plugin
+        <a href="os_mac.txt.html#Macintosh" class="d">Macintosh</a>       $VIM:vimfiles:plugin
+        <a href="os_mac.txt.html#Mac" class="d">Mac</a> OS <a href="change.txt.html#X" class="d">X</a>        ~/.vim/plugin/
+        <a href="os_risc.txt.html#RISC-OS" class="d">RISC-OS</a>         Choices:vimfiles.plugin
+
+Example for <a href="os_unix.txt.html#Unix" class="d">Unix</a> (assuming you didn't have <a href="insert.txt.html#a" class="d">a</a> <a href="#plugin" class="d">plugin</a> directory yet): 
+<span class="e"></span>
+<span class="e">        mkdir ~/.vim</span>
+<span class="e">        mkdir ~/.vim/plugin</span>
+<span class="e">        cp /tmp/yourplugin.vim ~/.vim/plugin</span>
+<span class="e"></span>
+That's all!  Now you can use the commands defined in this plugin.
+
+Instead of putting plugins directly into the plugin/ directory, you may
+better organize them by putting them into subdirectories under plugin/.
+As an example, consider using "~/.vim/plugin/perl/*.vim" for all your <a href="if_perl.txt.html#Perl" class="d">Perl</a>
+plugins.
+
+
+<span class="c">FILETYPE PLUGINS                       </span> <a name="add-filetype-plugin" class="t">add-filetype-plugin</a> <a name="ftplugins" class="t">ftplugins</a>
+
+The Vim <a href="intro.txt.html#distribution" class="d">distribution</a> comes with <a href="insert.txt.html#a" class="d">a</a> set of plugins for different <a href="filetype.txt.html#filetypes" class="d">filetypes</a> that
+you can start using with this command: 
+<span class="e"></span>
+<span class="e">        :filetype plugin on</span>
+<span class="e"></span>
+That's all!  See <a href="#vimrc-filetype" class="l">vimrc-filetype</a><a href="repeat.txt.html#." class="d">.</a>
+
+If you are missing <a href="insert.txt.html#a" class="d">a</a> <a href="#plugin" class="d">plugin</a> for <a href="insert.txt.html#a" class="d">a</a> <a href="filetype.txt.html#filetype" class="d">filetype</a> you are using, or you found <a href="insert.txt.html#a" class="d">a</a>
+better one, you can add it.  There are two steps for adding <a href="insert.txt.html#a" class="d">a</a> <a href="filetype.txt.html#filetype" class="d">filetype</a> plugin:
+1. Get <a href="insert.txt.html#a" class="d">a</a> copy of the plugin.
+2. Drop <a href="motion.txt.html#it" class="d">it</a> in the right directory.
+
+
+GETTING <a href="insert.txt.html#A" class="d">A</a> FILETYPE PLUGIN
+
+You can find them in the same places <a href="motion.txt.html#as" class="d">as</a> the global plugins.  Watch out if the
+type of file <a href="motion.txt.html#is" class="d">is</a> mentioned, then you know if the <a href="#plugin" class="d">plugin</a> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> global or <a href="insert.txt.html#a" class="d">a</a>
+<a href="filetype.txt.html#filetype" class="d">filetype</a> one.  The scripts in $VIMRUNTIME/macros are global ones, the <a href="filetype.txt.html#filetype" class="d">filetype</a>
+plugins are in $VIMRUNTIME/ftplugin.
+
+
+<span class="c">USING A FILETYPE PLUGIN                                </span> <a name="ftplugin-name" class="t">ftplugin-name</a>
+
+You can add <a href="insert.txt.html#a" class="d">a</a> <a href="filetype.txt.html#filetype" class="d">filetype</a> <a href="#plugin" class="d">plugin</a> by dropping <a href="motion.txt.html#it" class="d">it</a> in the right directory.  The
+name of this directory <a href="motion.txt.html#is" class="d">is</a> in the same directory mentioned above for global
+plugins, but the last part <a href="motion.txt.html#is" class="d">is</a> "<a href="usr_41.txt.html#ftplugin" class="d">ftplugin</a>"<a href="repeat.txt.html#." class="d">.</a>  Suppose you have found <a href="insert.txt.html#a" class="d">a</a> <a href="#plugin" class="d">plugin</a> for
+the "stuff" filetype, and you are on Unix.  Then you can move this file to the
+<a href="usr_41.txt.html#ftplugin" class="d">ftplugin</a> directory: 
+<span class="e"></span>
+<span class="e">        mv thefile ~/.vim/ftplugin/stuff.vim</span>
+<span class="e"></span>
+If that file already exists you already have <a href="insert.txt.html#a" class="d">a</a> <a href="#plugin" class="d">plugin</a> for "stuff"<a href="repeat.txt.html#." class="d">.</a>  You might
+want to check if the existing <a href="#plugin" class="d">plugin</a> doesn't conflict with the one you are
+adding.  If it's OK, you can give the new one another name: 
+<span class="e"></span>
+<span class="e">        mv thefile ~/.vim/ftplugin/stuff_too.vim</span>
+<span class="e"></span>
+The underscore <a href="motion.txt.html#is" class="d">is</a> used to separate the name of the <a href="filetype.txt.html#filetype" class="d">filetype</a> from the rest,
+which can be anything.  If you use "otherstuff.vim" <a href="motion.txt.html#it" class="d">it</a> wouldn't work, <a href="motion.txt.html#it" class="d">it</a> would
+be loaded for the "otherstuff" filetype.
+
+On <a href="os_msdos.txt.html#MS-DOS" class="d">MS-DOS</a> you cannot use long filenames.  You would run into trouble if you
+add <a href="insert.txt.html#a" class="d">a</a> second <a href="#plugin" class="d">plugin</a> and the <a href="filetype.txt.html#filetype" class="d">filetype</a> has more than six characters.  You can
+use an extra directory to get around this: 
+<span class="e"></span>
+<span class="e">        mkdir $VIM/vimfiles/ftplugin/fortran</span>
+<span class="e">        copy thefile $VIM/vimfiles/ftplugin/fortran/too.vim</span>
+<span class="e"></span>
+The generic names for the <a href="filetype.txt.html#filetype" class="d">filetype</a> plugins are: 
+<span class="e"></span>
+<span class="e">        ftplugin/&lt;filetype&gt;.vim</span>
+<span class="e">        ftplugin/&lt;filetype&gt;_&lt;name&gt;.vim</span>
+<span class="e">        ftplugin/&lt;filetype&gt;/&lt;name&gt;.vim</span>
+<span class="e"></span>
+Here "<span class="s">&lt;name&gt;</span>" can be any name that you prefer.
+Examples for the "stuff" <a href="filetype.txt.html#filetype" class="d">filetype</a> on Unix: 
+<span class="e"></span>
+<span class="e">        ~/.vim/ftplugin/stuff.vim</span>
+<span class="e">        ~/.vim/ftplugin/stuff_def.vim</span>
+<span class="e">        ~/.vim/ftplugin/stuff/header.vim</span>
+<span class="e"></span>
+The <span class="s">&lt;filetype&gt;</span> part <a href="motion.txt.html#is" class="d">is</a> the name of the <a href="filetype.txt.html#filetype" class="d">filetype</a> the <a href="#plugin" class="d">plugin</a> <a href="motion.txt.html#is" class="d">is</a> to be used for.
+Only files of this <a href="filetype.txt.html#filetype" class="d">filetype</a> will use the settings from the plugin.  The <span class="s">&lt;name&gt;</span>
+part of the <a href="#plugin" class="d">plugin</a> file doesn't matter, you can use <a href="motion.txt.html#it" class="d">it</a> to have several plugins
+for the same filetype.  <span class="n">Note</span> that <a href="motion.txt.html#it" class="d">it</a> <a href="vim_faq.txt.html#must" class="d">must</a> <a href="intro.txt.html#end" class="d">end</a> in ".vim"<a href="repeat.txt.html#." class="d">.</a>
+
+
+Further reading:
+<a href="filetype.txt.html#filetype-plugins" class="l">filetype-plugins</a>      Documentation for the <a href="filetype.txt.html#filetype" class="d">filetype</a> plugins and information
+                        about how to avoid that mappings cause problems.
+<a href="starting.txt.html#load-plugins" class="l">load-plugins</a>          When the global plugins are loaded during startup.
+<a href="filetype.txt.html#ftplugin-overrule" class="l">ftplugin-overrule</a>     Overruling the settings from <a href="insert.txt.html#a" class="d">a</a> global plugin.
+<a href="usr_41.txt.html#write-plugin" class="l">write-plugin</a>          How to write <a href="insert.txt.html#a" class="d">a</a> <a href="#plugin" class="d">plugin</a> script.
+<a href="filetype.txt.html#plugin-details" class="l">plugin-details</a>        For more information about using plugins or when your
+                        <a href="#plugin" class="d">plugin</a> doesn't work.
+<a href="filetype.txt.html#new-filetype" class="l">new-filetype</a>          How to detect <a href="insert.txt.html#a" class="d">a</a> new file type.
+
+<span class="h">==============================================================================</span>
+<a name="05.6" class="t">05.6</a>  Adding <a href="insert.txt.html#a" class="d">a</a> <a href="helphelp.txt.html#help" class="d">help</a> file                              <a name="add-local-help" class="t">add-local-help</a>
+
+If you are lucky, the <a href="#plugin" class="d">plugin</a> you installed also comes with <a href="insert.txt.html#a" class="d">a</a> <a href="helphelp.txt.html#help" class="d">help</a> file.  We
+will explain how to <a href="usr_90.txt.html#install" class="d">install</a> the <a href="helphelp.txt.html#help" class="d">help</a> file, so that you can easily find <a href="helphelp.txt.html#help" class="d">help</a>
+for your new plugin.
+   Let us use the "doit.vim" <a href="#plugin" class="d">plugin</a> <a href="motion.txt.html#as" class="d">as</a> an example.  This <a href="#plugin" class="d">plugin</a> comes with
+documentation: "doit.txt"<a href="repeat.txt.html#." class="d">.</a>  Let's first copy the <a href="#plugin" class="d">plugin</a> to the right
+directory.  This time we will <a href="diff.txt.html#do" class="d">do</a> <a href="motion.txt.html#it" class="d">it</a> from inside Vim.  (You may skip some of
+the "mkdir" commands if you already have the directory.) 
+<span class="e"></span>
+<span class="e">        :!mkdir ~/.vim</span>
+<span class="e">        :!mkdir ~/.vim/plugin</span>
+<span class="e">        :!cp /tmp/doit.vim ~/.vim/plugin</span>
+<span class="e"></span>
+The "cp" command <a href="motion.txt.html#is" class="d">is</a> for Unix, on <a href="os_msdos.txt.html#MS-DOS" class="d">MS-DOS</a> you can use "copy"<a href="repeat.txt.html#." class="d">.</a>
+
+Now create <a href="insert.txt.html#a" class="d">a</a> "doc" directory in one of the directories in <a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a>. 
+<span class="e"></span>
+<span class="e">        :!mkdir ~/.vim/doc</span>
+<span class="e"></span>
+Copy the <a href="helphelp.txt.html#help" class="d">help</a> file to the "doc" directory. 
+<span class="e"></span>
+<span class="e">        :!cp /tmp/doit.txt ~/.vim/doc</span>
+<span class="e"></span>
+Now comes the trick, which allows you to jump to the subjects in the new <a href="helphelp.txt.html#help" class="d">help</a>
+file: Generate the local <a href="tagsrch.txt.html#tags" class="d">tags</a> file with the <a href="helphelp.txt.html#%3Ahelptags" class="l">:helptags</a> command. 
+<span class="e"></span>
+<span class="e">        :helptags ~/.vim/doc</span>
+<span class="e"></span>
+Now you can use the 
+<span class="e"></span>
+<span class="e">        :help doit</span>
+<span class="e"></span>
+command to find <a href="helphelp.txt.html#help" class="d">help</a> for "doit" in the <a href="helphelp.txt.html#help" class="d">help</a> file you just added.  You can see
+an entry for the local <a href="helphelp.txt.html#help" class="d">help</a> file when you do: 
+<span class="e"></span>
+<span class="e">        :help local-additions</span>
+<span class="e"></span>
+The title lines from the local <a href="helphelp.txt.html#help" class="d">help</a> files are automagically added to this
+section.  There you can see which local <a href="helphelp.txt.html#help" class="d">help</a> files have been added and jump to
+them through the tag.
+
+For <a href="editing.txt.html#writing" class="d">writing</a> <a href="insert.txt.html#a" class="d">a</a> local <a href="helphelp.txt.html#help" class="d">help</a> file, see <a href="usr_41.txt.html#write-local-help" class="l">write-local-help</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+<a name="05.7" class="t">05.7</a>  The option <a href="windows.txt.html#window" class="d">window</a>
+
+If you are looking for an option that does what you want, you can search in
+the <a href="helphelp.txt.html#help" class="d">help</a> files here: <a href="options.txt.html#options" class="l">options</a><a href="repeat.txt.html#." class="d">.</a>  Another way <a href="motion.txt.html#is" class="d">is</a> by using this command: 
+<span class="e"></span>
+<span class="e">        :options</span>
+<span class="e"></span>
+This opens <a href="insert.txt.html#a" class="d">a</a> new window, with <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of <a href="options.txt.html#options" class="d">options</a> with <a href="insert.txt.html#a" class="d">a</a> one-line explanation.
+The <a href="options.txt.html#options" class="d">options</a> are grouped by subject.  Move the cursor to <a href="insert.txt.html#a" class="d">a</a> subject and press
+<a href="intro.txt.html#%3CEnter%3E" class="s">&lt;Enter&gt;</a> to jump there.  Press <a href="intro.txt.html#%3CEnter%3E" class="s">&lt;Enter&gt;</a> again to jump back.  Or use <a href="motion.txt.html#CTRL-O" class="k">CTRL-O</a>.
+
+You can change the value of an option.  For example, move to the "displaying
+text" subject.  Then move the cursor down to this line:
+
+<span class="h">        set wrap        nowrap </span>
+
+When you hit <a href="intro.txt.html#%3CEnter%3E" class="s">&lt;Enter&gt;</a>, the line will change to:
+
+<span class="h">        set nowrap      wrap </span>
+
+The option has now been switched off.
+
+Just above this line <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> short description of the <a href="options.txt.html#%27wrap%27" class="o">'wrap'</a> option.  Move the
+cursor one line up to place <a href="motion.txt.html#it" class="d">it</a> in this line.  Now hit <a href="intro.txt.html#%3CEnter%3E" class="s">&lt;Enter&gt;</a> and you jump to
+the full <a href="helphelp.txt.html#help" class="d">help</a> on the <a href="options.txt.html#%27wrap%27" class="o">'wrap'</a> option.
+
+For <a href="options.txt.html#options" class="d">options</a> that take <a href="insert.txt.html#a" class="d">a</a> number or <a href="eval.txt.html#string" class="d">string</a> argument you can edit the value.
+Then press <a href="intro.txt.html#%3CEnter%3E" class="s">&lt;Enter&gt;</a> to apply the new value.  For example, move the cursor <a href="insert.txt.html#a" class="d">a</a> few
+lines up to this line:
+
+<span class="h">        set so=0 </span>
+
+Position the cursor on the zero with "<a href="motion.txt.html#%24" class="d">$</a>"<a href="repeat.txt.html#." class="d">.</a>  Change <a href="motion.txt.html#it" class="d">it</a> into <a href="insert.txt.html#a" class="d">a</a> five with "r5"<a href="repeat.txt.html#." class="d">.</a>
+Then press <a href="intro.txt.html#%3CEnter%3E" class="s">&lt;Enter&gt;</a> to apply the new value.  When you now move the cursor
+around you will notice that the text starts <a href="scroll.txt.html#scrolling" class="d">scrolling</a> before you reach the
+border.  This <a href="motion.txt.html#is" class="d">is</a> what the <a href="options.txt.html#%27scrolloff%27" class="o">'scrolloff'</a> option does, <a href="motion.txt.html#it" class="d">it</a> specifies an offset
+from the <a href="windows.txt.html#window" class="d">window</a> border where <a href="scroll.txt.html#scrolling" class="d">scrolling</a> starts.
+
+<span class="h">==============================================================================</span>
+<a name="05.8" class="t">05.8</a>  Often used <a href="options.txt.html#options" class="d">options</a>
+
+There are an awful lot of options.  Most of them you will hardly ever use.
+Some of the more useful ones will be mentioned here.  Don't forget you can
+find more <a href="helphelp.txt.html#help" class="d">help</a> on these <a href="options.txt.html#options" class="d">options</a> with the "<a href="helphelp.txt.html#%3Ahelp" class="d">:help</a>" command, with single <a href="quotes.txt.html#quotes" class="d">quotes</a>
+before and after the option name.  For example: 
+<span class="e"></span>
+<span class="e">        :help 'wrap'</span>
+<span class="e"></span>
+In <a href="change.txt.html#case" class="d">case</a> you have messed up an option value, you can set <a href="motion.txt.html#it" class="d">it</a> back to the
+default by putting an ampersand (&amp;) after the option name.  Example: 
+<span class="e"></span>
+<span class="e">        :set iskeyword&amp;</span>
+<span class="e"></span>
+<span class="e"></span>
+NOT WRAPPING LINES
+
+Vim normally wraps long lines, so that you can see all of the text.  Sometimes
+it's better to let the text continue right of the window.  Then you need to
+scroll the text left-right to see all of <a href="insert.txt.html#a" class="d">a</a> long line.  Switch wrapping off
+with this command: 
+<span class="e"></span>
+<span class="e">        :set nowrap</span>
+<span class="e"></span>
+Vim will automatically scroll the text when you move to text that <a href="motion.txt.html#is" class="d">is</a> not
+displayed.  To see <a href="insert.txt.html#a" class="d">a</a> context of ten characters, <a href="diff.txt.html#do" class="d">do</a> this: 
+<span class="e"></span>
+<span class="e">        :set sidescroll=10</span>
+<span class="e"></span>
+This doesn't change the text in the file, only the way <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> displayed.
+
+
+WRAPPING MOVEMENT COMMANDS
+
+Most commands for moving around will stop moving <a href="motion.txt.html#at" class="d">at</a> the start and <a href="intro.txt.html#end" class="d">end</a> of <a href="insert.txt.html#a" class="d">a</a>
+line.  You can change that with the <a href="options.txt.html#%27whichwrap%27" class="o">'whichwrap'</a> option.  This sets <a href="motion.txt.html#it" class="d">it</a> to the
+default value: 
+<span class="e"></span>
+<span class="e">        :set whichwrap=b,s</span>
+<span class="e"></span>
+This allows the <a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a> key, when used in the first position of <a href="insert.txt.html#a" class="d">a</a> line, to move
+the cursor to the <a href="intro.txt.html#end" class="d">end</a> of the previous line.  And the <a href="motion.txt.html#%3CSpace%3E" class="s">&lt;Space&gt;</a> key moves from
+the <a href="intro.txt.html#end" class="d">end</a> of <a href="insert.txt.html#a" class="d">a</a> line to the start of the next one.
+
+To allow the cursor keys <a href="motion.txt.html#%3CLeft%3E" class="s">&lt;Left&gt;</a> and <a href="motion.txt.html#%3CRight%3E" class="s">&lt;Right&gt;</a> to also wrap, use this command: 
+<span class="e"></span>
+<span class="e">        :set whichwrap=b,s,&lt;,&gt;</span>
+<span class="e"></span>
+This <a href="motion.txt.html#is" class="d">is</a> still only for <a href="intro.txt.html#Normal" class="d">Normal</a> mode.  To let <a href="motion.txt.html#%3CLeft%3E" class="s">&lt;Left&gt;</a> and <a href="motion.txt.html#%3CRight%3E" class="s">&lt;Right&gt;</a> <a href="diff.txt.html#do" class="d">do</a> this in
+<a href="insert.txt.html#Insert" class="d">Insert</a> mode <a href="motion.txt.html#as" class="d">as</a> well: 
+<span class="e"></span>
+<span class="e">        :set whichwrap=b,s,&lt;,&gt;,[,]</span>
+<span class="e"></span>
+There are <a href="insert.txt.html#a" class="d">a</a> few other flags that can be added, see <a href="options.txt.html#%27whichwrap%27" class="o">'whichwrap'</a>.
+
+
+VIEWING TABS
+
+When there are tabs in <a href="insert.txt.html#a" class="d">a</a> file, you cannot see where they are.  To make them
+visible: 
+<span class="e"></span>
+<span class="e">        :set list</span>
+<span class="e"></span>
+Now every <a href="intro.txt.html#tab" class="d">tab</a> <a href="motion.txt.html#is" class="d">is</a> displayed <a href="motion.txt.html#as" class="d">as</a> ^I.  And <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%24" class="d">$</a> <a href="motion.txt.html#is" class="d">is</a> displayed <a href="motion.txt.html#at" class="d">at</a> the <a href="intro.txt.html#end" class="d">end</a> of each
+line, so that you can spot trailing spaces that would otherwise <a href="motion.txt.html#go" class="d">go</a> unnoticed.
+   <a href="insert.txt.html#A" class="d">A</a> disadvantage <a href="motion.txt.html#is" class="d">is</a> that this looks ugly when there are many Tabs in <a href="insert.txt.html#a" class="d">a</a> file.
+If you have <a href="insert.txt.html#a" class="d">a</a> color terminal, or are using the GUI, Vim can show the spaces
+and tabs <a href="motion.txt.html#as" class="d">as</a> highlighted characters.  Use the <a href="options.txt.html#%27listchars%27" class="o">'listchars'</a> option: 
+<span class="e"></span>
+<span class="e">        :set listchars=tab:&gt;-,trail:-</span>
+<span class="e"></span>
+Now every <a href="intro.txt.html#tab" class="d">tab</a> will be displayed <a href="motion.txt.html#as" class="d">as</a> "&gt;---" (with more or <a href="various.txt.html#less" class="d">less</a> "<a href="motion.txt.html#-" class="d">-</a>"<a href="motion.txt.html#%29" class="d">)</a> and trailing
+white <a href="intro.txt.html#space" class="d">space</a> <a href="motion.txt.html#as" class="d">as</a> "<a href="motion.txt.html#-" class="d">-</a>"<a href="repeat.txt.html#." class="d">.</a>  Looks <a href="insert.txt.html#a" class="d">a</a> lot better, doesn't it?
+
+
+KEYWORDS
+
+The <a href="options.txt.html#%27iskeyword%27" class="o">'iskeyword'</a> option specifies which characters can appear in <a href="insert.txt.html#a" class="d">a</a> word: 
+<span class="e"></span>
+<span class="e">        :set iskeyword</span>
+<span class="h">         iskeyword=@,48-57,_,192-255 </span>
+
+The "<a href="repeat.txt.html#%40" class="d">@</a>" stands for all alphabetic letters.  "48-57" stands for ASCII
+characters 48 to 57, which are the numbers <a href="motion.txt.html#0" class="d">0</a> to 9.  "192-255" are the
+printable latin characters.
+   Sometimes you will want to include <a href="insert.txt.html#a" class="d">a</a> dash in keywords, so that commands
+like "<a href="motion.txt.html#w" class="d">w</a>" consider "upper-case" to be one word.  You can <a href="diff.txt.html#do" class="d">do</a> <a href="motion.txt.html#it" class="d">it</a> like this: 
+<span class="e"></span>
+<span class="e">        :set iskeyword+=-</span>
+<span class="e">        :set iskeyword</span>
+<span class="h">         iskeyword=@,48-57,_,192-255,- </span>
+
+If you look <a href="motion.txt.html#at" class="d">at</a> the new value, you will see that Vim has added <a href="insert.txt.html#a" class="d">a</a> comma for you.
+   To remove <a href="insert.txt.html#a" class="d">a</a> character use "-="<a href="repeat.txt.html#." class="d">.</a>  For example, to remove the underscore: 
+<span class="e"></span>
+<span class="e">        :set iskeyword-=_</span>
+<span class="e">        :set iskeyword</span>
+<span class="h">         iskeyword=@,48-57,192-255,- </span>
+
+This time <a href="insert.txt.html#a" class="d">a</a> comma <a href="motion.txt.html#is" class="d">is</a> automatically deleted.
+
+
+ROOM FOR MESSAGES
+
+When Vim starts there <a href="motion.txt.html#is" class="d">is</a> one line <a href="motion.txt.html#at" class="d">at</a> the bottom that <a href="motion.txt.html#is" class="d">is</a> used for messages.
+When <a href="insert.txt.html#a" class="d">a</a> message <a href="motion.txt.html#is" class="d">is</a> long, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> either truncated, thus you can only see part of
+it, or the text scrolls and you have to press <a href="intro.txt.html#%3CEnter%3E" class="s">&lt;Enter&gt;</a> to continue.
+   You can set the <a href="options.txt.html#%27cmdheight%27" class="o">'cmdheight'</a> option to the number of lines used for
+messages.  Example: 
+<span class="e"></span>
+<span class="e">        :set cmdheight=3</span>
+<span class="e"></span>
+This does mean there <a href="motion.txt.html#is" class="d">is</a> <a href="various.txt.html#less" class="d">less</a> room to edit text, thus it's <a href="insert.txt.html#a" class="d">a</a> compromise.
+
+<span class="h">==============================================================================</span>
+
+Next chapter: <a href="usr_06.txt.html#usr_06.txt" class="l">usr_06.txt</a>  Using <a href="syntax.txt.html#syntax" class="d">syntax</a> highlighting
+
+Copyright: see <a href="usr_01.txt.html#manual-copyright" class="l">manual-copyright</a>  vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

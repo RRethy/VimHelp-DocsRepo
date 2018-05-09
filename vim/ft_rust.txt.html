@@ -1,0 +1,251 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: ft_rust.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="ft_rust.txt" class="t">ft_rust.txt</a>      Filetype <a href="usr_05.txt.html#plugin" class="d">plugin</a> for Rust
+
+<span class="h">==============================================================================</span>
+<span class="c">CONTENTS                                                     </span> <a name="rust" class="t">rust</a>
+
+1. Introduction                                                   <a href="#rust-intro" class="l">rust-intro</a>
+2. Settings                                                    <a href="#rust-settings" class="l">rust-settings</a>
+3. Commands                                                    <a href="#rust-commands" class="l">rust-commands</a>
+4. Mappings                                                    <a href="#rust-mappings" class="l">rust-mappings</a>
+
+<span class="h">==============================================================================</span>
+<span class="c">INTRODUCTION                                                     </span> <a name="rust-intro" class="t">rust-intro</a>
+
+This <a href="usr_05.txt.html#plugin" class="d">plugin</a> provides <a href="syntax.txt.html#syntax" class="d">syntax</a> and supporting functionality for the Rust
+filetype.
+
+<span class="h">==============================================================================</span>
+<span class="c">SETTINGS                                                      </span> <a name="rust-settings" class="t">rust-settings</a>
+
+This <a href="usr_05.txt.html#plugin" class="d">plugin</a> has <a href="insert.txt.html#a" class="d">a</a> few <a href="eval.txt.html#variables" class="d">variables</a> you can define in your <a href="starting.txt.html#vimrc" class="d">vimrc</a> that change the
+behavior of the plugin.
+
+<span class="c">                                                               </span> <a name="g%3Arustc_path" class="t">g:rustc_path</a>
+<span class="h">g:rustc_path</span>
+        Set this option to the path to rustc for use in the <a href="#%3ARustRun" class="l">:RustRun</a> and
+        <a href="#%3ARustExpand" class="l">:RustExpand</a> commands. If unset, "rustc" will be located in $PATH: 
+<span class="e">            let g:rustc_path = $HOME."/bin/rustc"</span>
+
+
+<span class="c">                                                 </span> <a name="g%3Arustc_makeprg_no_percent" class="t">g:rustc_makeprg_no_percent</a>
+<span class="h">g:rustc_makeprg_no_percent</span>
+        Set this option to 1 to have <a href="options.txt.html#%27makeprg%27" class="o">'makeprg'</a> default to "rustc" instead of
+        "rustc <a href="motion.txt.html#%25" class="d">%</a>"<a href="cmdline.txt.html#%3A" class="d">:</a> 
+<span class="e">            let g:rustc_makeprg_no_percent = 1</span>
+
+
+<span class="c">                                                             </span> <a name="g%3Arust_conceal" class="t">g:rust_conceal</a>
+<span class="h">g:rust_conceal</span>
+        Set this option to turn on the basic <a href="syntax.txt.html#conceal" class="l">conceal</a> support: 
+<span class="e">            let g:rust_conceal = 1</span>
+
+
+<span class="c">                                                    </span> <a name="g%3Arust_conceal_mod_path" class="t">g:rust_conceal_mod_path</a>
+<span class="h">g:rust_conceal_mod_path</span>
+        Set this option to turn on <a href="syntax.txt.html#conceal" class="l">conceal</a> for the path connecting token
+        "::"<a href="cmdline.txt.html#%3A" class="d">:</a> 
+<span class="e">            let g:rust_conceal_mod_path = 1</span>
+
+
+<span class="c">                                                         </span> <a name="g%3Arust_conceal_pub" class="t">g:rust_conceal_pub</a>
+<span class="h">g:rust_conceal_pub</span>
+        Set this option to turn on <a href="syntax.txt.html#conceal" class="l">conceal</a> for the "pub" token: 
+<span class="e">            let g:rust_conceal_pub = 1</span>
+
+
+<span class="c">                                                    </span> <a name="g%3Arust_recommended_style" class="t">g:rust_recommended_style</a>
+<span class="h">g:rust_recommended_style</span>
+        Set this option to enable vim indentation and textwidth settings to
+        conform to style conventions of the <a href="#rust" class="d">rust</a> standard library (i.e. use 4
+        spaces for indents and sets <a href="options.txt.html#%27textwidth%27" class="o">'textwidth'</a> to 99). This option <a href="motion.txt.html#is" class="d">is</a> enabled
+        by default. To disable it: 
+<span class="e">            let g:rust_recommended_style = 0</span>
+
+
+<span class="c">                                                                </span> <a name="g%3Arust_fold" class="t">g:rust_fold</a>
+<span class="h">g:rust_fold</span>
+        Set this option to turn on <a href="fold.txt.html#folding" class="l">folding</a><a href="cmdline.txt.html#%3A" class="d">:</a> 
+<span class="e">            let g:rust_fold = 1</span>
+
+<span class="h">        Value           Effect </span>
+        <a href="motion.txt.html#0" class="d">0</a>               No <a href="fold.txt.html#folding" class="d">folding</a>
+        1               Braced blocks are folded. All <a href="fold.txt.html#folds" class="d">folds</a> are open by
+                        default.
+        2               Braced blocks are folded. <a href="options.txt.html#%27foldlevel%27" class="o">'foldlevel'</a> <a href="motion.txt.html#is" class="d">is</a> left <a href="motion.txt.html#at" class="d">at</a> the
+                        global value (all <a href="fold.txt.html#folds" class="d">folds</a> are closed by default).
+
+<span class="c">                                                 </span> <a name="g%3Arust_bang_comment_leader" class="t">g:rust_bang_comment_leader</a>
+<span class="h">g:rust_bang_comment_leader</span>
+        Set this option to 1 to preserve the leader on multi-line doc comments
+        using the <a href="pattern.txt.html#%2F" class="d">/</a>*<a href="change.txt.html#%21" class="d">!</a> syntax: 
+<span class="e">            let g:rust_bang_comment_leader = 1</span>
+
+
+<span class="c">                                                </span> <a name="g%3Aftplugin_rust_source_path" class="t">g:ftplugin_rust_source_path</a>
+<span class="h">g:ftplugin_rust_source_path</span>
+        Set this option to <a href="insert.txt.html#a" class="d">a</a> path that should be prepended to <a href="options.txt.html#%27path%27" class="o">'path'</a> for Rust
+        source files: 
+<span class="e">            let g:ftplugin_rust_source_path = $HOME.'/dev/rust'</span>
+
+
+<span class="c">                                                      </span> <a name="g%3Arustfmt_command" class="t">g:rustfmt_command</a>
+<span class="h">g:rustfmt_command</span>
+        Set this option to the name of the <span class="o">'rustfmt'</span> executable in your $PATH. If
+        not specified <a href="motion.txt.html#it" class="d">it</a> defaults to <span class="o">'rustfmt'</span> <a href="cmdline.txt.html#%3A" class="d">:</a> 
+<span class="e">            let g:rustfmt_command = 'rustfmt'</span>
+
+<span class="c">                                                      </span> <a name="g%3Arustfmt_autosave" class="t">g:rustfmt_autosave</a>
+<span class="h">g:rustfmt_autosave</span>
+        Set this option to 1 to run <a href="#%3ARustFmt" class="l">:RustFmt</a> automatically when saving <a href="insert.txt.html#a" class="d">a</a>
+        buffer. If not specified <a href="motion.txt.html#it" class="d">it</a> defaults to <a href="motion.txt.html#0" class="d">0</a> <a href="cmdline.txt.html#%3A" class="d">:</a> 
+<span class="e">            let g:rustfmt_autosave = 0</span>
+
+<span class="c">                                                      </span> <a name="g%3Arustfmt_fail_silently" class="t">g:rustfmt_fail_silently</a>
+<span class="h">g:rustfmt_fail_silently</span>
+        Set this option to 1 to prevent <span class="o">'rustfmt'</span> from populating the
+        <a href="quickfix.txt.html#location-list" class="l">location-list</a> with errors. If not specified <a href="motion.txt.html#it" class="d">it</a> defaults to 0: 
+<span class="e">            let g:rustfmt_fail_silently = 0</span>
+
+<span class="c">                                                      </span> <a name="g%3Arustfmt_options" class="t">g:rustfmt_options</a>
+<span class="h">g:rustfmt_options</span>
+        Set this option to <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#string" class="d">string</a> of <a href="options.txt.html#options" class="d">options</a> to pass to <span class="o">'rustfmt'</span>. The
+        write-mode <a href="motion.txt.html#is" class="d">is</a> already set to <span class="o">'overwrite'</span>. If not specified <a href="motion.txt.html#it" class="d">it</a>
+        defaults to <a href="motion.txt.html#%27%27" class="d">''</a> <a href="cmdline.txt.html#%3A" class="d">:</a> 
+<span class="e">            let g:rustfmt_options = ''</span>
+
+
+<span class="c">                                                         </span> <a name="g%3Arust_playpen_url" class="t">g:rust_playpen_url</a>
+<span class="h">g:rust_playpen_url</span>
+        Set this option to override the URL for the playpen to use: 
+<span class="e">            let g:rust_playpen_url = 'https://play.rust-lang.org/'</span>
+
+
+<span class="c">                                                       </span> <a name="g%3Arust_shortener_url" class="t">g:rust_shortener_url</a>
+<span class="h">g:rust_shortener_url</span>
+        Set this option to override the URL for the URL shortener: 
+<span class="e">            let g:rust_shortener_url = 'https://is.gd/'</span>
+
+
+
+<span class="h">==============================================================================</span>
+<span class="c">COMMANDS                                                      </span> <a name="rust-commands" class="t">rust-commands</a>
+
+<a href="#%3ARustRun" class="d">:RustRun</a>  <span class="s">[args]</span>                                                    <a name="%3ARustRun" class="t">:RustRun</a>
+:RustRun! <span class="s">[rustc-args]</span> <span class="s">[--]</span> <span class="s">[args]</span>
+                Compiles and runs the current file. If <a href="motion.txt.html#it" class="d">it</a> has unsaved changes,
+                <a href="motion.txt.html#it" class="d">it</a> will be saved first using <a href="editing.txt.html#%3Aupdate" class="l">:update</a><a href="repeat.txt.html#." class="d">.</a> If the current file <a href="motion.txt.html#is" class="d">is</a>
+                an unnamed buffer, <a href="motion.txt.html#it" class="d">it</a> will be written to <a href="insert.txt.html#a" class="d">a</a> temporary file
+                first. The compiled binary <a href="motion.txt.html#is" class="d">is</a> always placed in <a href="insert.txt.html#a" class="d">a</a> temporary
+                directory, but <a href="motion.txt.html#is" class="d">is</a> run from the current directory.
+
+                The arguments given to <a href="#%3ARustRun" class="l">:RustRun</a> will be passed to the
+                compiled binary.
+
+                If <a href="change.txt.html#%21" class="d">!</a> <a href="motion.txt.html#is" class="d">is</a> specified, the arguments are passed to rustc instead.
+                <a href="insert.txt.html#A" class="d">A</a> "<a href="starting.txt.html#--" class="d">--</a>" argument will separate the rustc arguments from the
+                arguments passed to the binary.
+
+                If <a href="#g%3Arustc_path" class="l">g:rustc_path</a> <a href="motion.txt.html#is" class="d">is</a> defined, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> used <a href="motion.txt.html#as" class="d">as</a> the path to rustc.
+                Otherwise <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> assumed rustc can be found in $PATH.
+
+<a href="#%3ARustExpand" class="d">:RustExpand</a>  <span class="s">[args]</span>                                              <a name="%3ARustExpand" class="t">:RustExpand</a>
+:RustExpand! <span class="s">[TYPE]</span> <span class="s">[args]</span>
+                Expands the current file using --pretty and displays the
+                results in <a href="insert.txt.html#a" class="d">a</a> new split. If the current file has unsaved
+                changes, <a href="motion.txt.html#it" class="d">it</a> will be saved first using <a href="editing.txt.html#%3Aupdate" class="l">:update</a><a href="repeat.txt.html#." class="d">.</a> If the
+                current file <a href="motion.txt.html#is" class="d">is</a> an unnamed buffer, <a href="motion.txt.html#it" class="d">it</a> will be written to <a href="insert.txt.html#a" class="d">a</a>
+                temporary file first.
+
+                The arguments given to <a href="#%3ARustExpand" class="l">:RustExpand</a> will be passed to rustc.
+                This <a href="motion.txt.html#is" class="d">is</a> largely intended for specifying <a href="various.txt.html#various" class="d">various</a> --cfg
+                configurations.
+
+                If <a href="change.txt.html#%21" class="d">!</a> <a href="motion.txt.html#is" class="d">is</a> specified, the first argument <a href="motion.txt.html#is" class="d">is</a> the expansion type to
+                pass to rustc --pretty. Otherwise <a href="motion.txt.html#it" class="d">it</a> will default to
+                "expanded"<a href="repeat.txt.html#." class="d">.</a>
+
+                If <a href="#g%3Arustc_path" class="l">g:rustc_path</a> <a href="motion.txt.html#is" class="d">is</a> defined, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> used <a href="motion.txt.html#as" class="d">as</a> the path to rustc.
+                Otherwise <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> assumed rustc can be found in $PATH.
+
+<a href="#%3ARustEmitIr" class="d">:RustEmitIr</a> <span class="s">[args]</span>                                               <a name="%3ARustEmitIr" class="t">:RustEmitIr</a>
+                Compiles the current file to LLVM IR and displays the results
+                in <a href="insert.txt.html#a" class="d">a</a> new split. If the current file has unsaved changes, <a href="motion.txt.html#it" class="d">it</a>
+                will be saved first using <a href="editing.txt.html#%3Aupdate" class="l">:update</a><a href="repeat.txt.html#." class="d">.</a> If the current file <a href="motion.txt.html#is" class="d">is</a> an
+                unnamed buffer, <a href="motion.txt.html#it" class="d">it</a> will be written to <a href="insert.txt.html#a" class="d">a</a> temporary file first.
+
+                The arguments given to <a href="#%3ARustEmitIr" class="l">:RustEmitIr</a> will be passed to rustc.
+
+                If <a href="#g%3Arustc_path" class="l">g:rustc_path</a> <a href="motion.txt.html#is" class="d">is</a> defined, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> used <a href="motion.txt.html#as" class="d">as</a> the path to rustc.
+                Otherwise <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> assumed rustc can be found in $PATH.
+
+<a href="#%3ARustEmitAsm" class="d">:RustEmitAsm</a> <span class="s">[args]</span>                                             <a name="%3ARustEmitAsm" class="t">:RustEmitAsm</a>
+                Compiles the current file to assembly and displays the results
+                in <a href="insert.txt.html#a" class="d">a</a> new split. If the current file has unsaved changes, <a href="motion.txt.html#it" class="d">it</a>
+                will be saved first using <a href="editing.txt.html#%3Aupdate" class="l">:update</a><a href="repeat.txt.html#." class="d">.</a> If the current file <a href="motion.txt.html#is" class="d">is</a> an
+                unnamed buffer, <a href="motion.txt.html#it" class="d">it</a> will be written to <a href="insert.txt.html#a" class="d">a</a> temporary file first.
+
+                The arguments given to <a href="#%3ARustEmitAsm" class="l">:RustEmitAsm</a> will be passed to rustc.
+
+                If <a href="#g%3Arustc_path" class="l">g:rustc_path</a> <a href="motion.txt.html#is" class="d">is</a> defined, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> used <a href="motion.txt.html#as" class="d">as</a> the path to rustc.
+                Otherwise <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> assumed rustc can be found in $PATH.
+
+<a href="#%3ARustPlay" class="d">:RustPlay</a>                                                          <a name="%3ARustPlay" class="t">:RustPlay</a>
+                This command will only work if you have web-api.vim installed
+                (available <a href="motion.txt.html#at" class="d">at</a> <a class="u" href="https://github.com/mattn/webapi-vim">https://github.com/mattn/webapi-vim</a>).  It sends the
+                current selection, or if nothing <a href="motion.txt.html#is" class="d">is</a> selected, the entirety of the
+                current buffer to the Rust playpen, and emits <a href="insert.txt.html#a" class="d">a</a> message with the
+                shortened URL to the playpen.
+
+                <a href="#g%3Arust_playpen_url" class="l">g:rust_playpen_url</a> <a href="motion.txt.html#is" class="d">is</a> the base URL to the playpen, by default
+                "<a class="u" href="https://play.rust-lang.org/">https://play.rust-lang.org/</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+                <a href="#g%3Arust_shortener_url" class="l">g:rust_shortener_url</a> <a href="motion.txt.html#is" class="d">is</a> the base URL for the shortener, by
+                default "<a class="u" href="https://is.gd/">https://is.gd/</a>"
+
+<a href="#%3ARustFmt" class="d">:RustFmt</a>                                                       <a name="%3ARustFmt" class="t">:RustFmt</a>
+                Runs <a href="#g%3Arustfmt_command" class="l">g:rustfmt_command</a> on the current buffer. If
+                <a href="#g%3Arustfmt_options" class="l">g:rustfmt_options</a> <a href="motion.txt.html#is" class="d">is</a> set then those will be passed to the
+                executable.
+
+                If <a href="#g%3Arustfmt_fail_silently" class="l">g:rustfmt_fail_silently</a> <a href="motion.txt.html#is" class="d">is</a> <a href="motion.txt.html#0" class="d">0</a> (the default) then <a href="motion.txt.html#it" class="d">it</a>
+                will populate the <a href="quickfix.txt.html#location-list" class="l">location-list</a> with the <a href="message.txt.html#errors" class="d">errors</a> from
+                <a href="#g%3Arustfmt_command" class="l">g:rustfmt_command</a><a href="repeat.txt.html#." class="d">.</a> If <a href="#g%3Arustfmt_fail_silently" class="l">g:rustfmt_fail_silently</a> <a href="motion.txt.html#is" class="d">is</a> set to 1
+                then <a href="motion.txt.html#it" class="d">it</a> will not populate the <a href="quickfix.txt.html#location-list" class="l">location-list</a><a href="repeat.txt.html#." class="d">.</a>
+
+<a href="#%3ARustFmtRange" class="d">:RustFmtRange</a>                                                  <a name="%3ARustFmtRange" class="t">:RustFmtRange</a>
+                Runs <a href="#g%3Arustfmt_command" class="l">g:rustfmt_command</a> with selected range. See
+                <a href="#%3ARustFmt" class="l">:RustFmt</a> for any other information.
+
+<span class="h">==============================================================================</span>
+<span class="c">MAPPINGS                                                      </span> <a name="rust-mappings" class="t">rust-mappings</a>
+
+This <a href="usr_05.txt.html#plugin" class="d">plugin</a> defines mappings for <a href="motion.txt.html#%5B%5B" class="l">[[</a> and <a href="motion.txt.html#%5D%5D" class="l">]]</a> to support hanging indents.
+
+It also has <a href="insert.txt.html#a" class="d">a</a> few other mappings:
+
+                                                        <a name="rust_%3CD-r%3E" class="t">rust_&lt;D-r&gt;</a>
+<span class="s">&lt;D-r&gt;</span>                   Executes <a href="#%3ARustRun" class="l">:RustRun</a> with no arguments.
+                        <span class="n">Note:</span> This binding <a href="motion.txt.html#is" class="d">is</a> only available in MacVim.
+
+                                                        <a name="rust_%3CD-R%3E" class="t">rust_&lt;D-R&gt;</a>
+<span class="s">&lt;D-R&gt;</span>                   Populates the command line with <a href="#%3ARustRun" class="l">:RustRun</a><a href="change.txt.html#%21" class="d">!</a> using the
+                        arguments given to the last invocation, but does not
+                        execute it.
+                        <span class="n">Note:</span> This binding <a href="motion.txt.html#is" class="d">is</a> only available in MacVim.
+
+<span class="h">==============================================================================</span>
+ vim:tw=78:sw=4:noet:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

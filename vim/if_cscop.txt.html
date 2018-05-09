@@ -1,0 +1,501 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: if_cscop.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="if_cscop.txt" class="t">if_cscop.txt</a>  For <span class="i">Vim version 8.0.</span>  Last change: 2018 Jan 21
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Andy Kahn</span>
+
+                                                        <a name="cscope" class="t">cscope</a> <a name="Cscope" class="t">Cscope</a>
+This document explains how to use Vim's <a href="#cscope" class="d">cscope</a> interface.
+
+<a href="#Cscope" class="d">Cscope</a> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> tool like ctags, but think of <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#as" class="d">as</a> <a href="tagsrch.txt.html#ctags" class="d">ctags</a> on steroids since <a href="motion.txt.html#it" class="d">it</a>
+does <a href="insert.txt.html#a" class="d">a</a> lot more than what <a href="tagsrch.txt.html#ctags" class="d">ctags</a> provides.  In Vim, jumping to <a href="insert.txt.html#a" class="d">a</a> result from
+<a href="insert.txt.html#a" class="d">a</a> <a href="#cscope" class="d">cscope</a> query <a href="motion.txt.html#is" class="d">is</a> just like jumping to any tag; <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> saved on the <a href="tagsrch.txt.html#tag" class="d">tag</a> stack
+so that with the right keyboard mappings, you can jump back and forth between
+<a href="eval.txt.html#functions" class="d">functions</a> <a href="motion.txt.html#as" class="d">as</a> you normally would with <a href="tagsrch.txt.html#tags" class="l">tags</a><a href="repeat.txt.html#." class="d">.</a>
+
+1. <a href="#Cscope" class="d">Cscope</a> introduction          <a href="#cscope-intro" class="l">cscope-intro</a>
+2. <a href="#Cscope" class="d">Cscope</a> related commands      <a href="#cscope-commands" class="l">cscope-commands</a>
+3. <a href="#Cscope" class="d">Cscope</a> <a href="options.txt.html#options" class="d">options</a>               <a href="#cscope-options" class="l">cscope-options</a>
+4. How to use <a href="#cscope" class="d">cscope</a> in Vim     <a href="#cscope-howtouse" class="l">cscope-howtouse</a>
+5. Limitations                  <a href="#cscope-limitations" class="l">cscope-limitations</a>
+6. Suggested usage              <a href="#cscope-suggestions" class="l">cscope-suggestions</a>
+7. Availability <a href="change.txt.html#%26" class="d">&amp;</a> Information   <a href="#cscope-info" class="l">cscope-info</a>
+
+This <a href="motion.txt.html#is" class="d">is</a> currently for <a href="os_unix.txt.html#Unix" class="d">Unix</a> and <a href="os_win32.txt.html#Win32" class="d">Win32</a> only.
+<span class="s">{Vi does not have any of these commands}</span>
+
+<span class="h">==============================================================================</span>
+1. <a href="#Cscope" class="d">Cscope</a> introduction                                  <a name="cscope-intro" class="t">cscope-intro</a>
+
+The following text <a href="motion.txt.html#is" class="d">is</a> taken from <a href="insert.txt.html#a" class="d">a</a> version of the <a href="#cscope" class="d">cscope</a> man page:
+
+                                    -----
+
+  <a href="#Cscope" class="d">Cscope</a> <a href="motion.txt.html#is" class="d">is</a> an interactive screen-oriented tool that helps you:
+
+       Learn how <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#C" class="d">C</a> program works without endless flipping through <a href="insert.txt.html#a" class="d">a</a> thick
+       listing.
+
+       Locate the <a href="motion.txt.html#section" class="d">section</a> of code to change to fix <a href="insert.txt.html#a" class="d">a</a> bug without having to
+       learn the entire program.
+
+       Examine the effect of <a href="insert.txt.html#a" class="d">a</a> proposed change such <a href="motion.txt.html#as" class="d">as</a> adding <a href="insert.txt.html#a" class="d">a</a> value to an
+       enum variable.
+
+       Verify that <a href="insert.txt.html#a" class="d">a</a> change has been made in all source files such <a href="motion.txt.html#as" class="d">as</a> adding
+       an argument to an existing function.
+
+       Rename <a href="insert.txt.html#a" class="d">a</a> global variable in all source files.
+
+       Change <a href="insert.txt.html#a" class="d">a</a> constant to <a href="insert.txt.html#a" class="d">a</a> preprocessor symbol in selected lines of files.
+
+  It <a href="motion.txt.html#is" class="d">is</a> designed to answer questions like:
+       Where <a href="motion.txt.html#is" class="d">is</a> this symbol used?
+       Where <a href="motion.txt.html#is" class="d">is</a> <a href="motion.txt.html#it" class="d">it</a> defined?
+       Where did this variable get its value?
+       What <a href="motion.txt.html#is" class="d">is</a> this global symbol's definition?
+       Where <a href="motion.txt.html#is" class="d">is</a> this function in the source files?
+       What <a href="eval.txt.html#functions" class="d">functions</a> call this function?
+       What <a href="eval.txt.html#functions" class="d">functions</a> are called by this function?
+       Where does the message "out of <a href="intro.txt.html#space" class="d">space</a>" come from?
+       Where <a href="motion.txt.html#is" class="d">is</a> this source file in the directory structure?
+       What files include this header file?
+
+  <a href="#Cscope" class="d">Cscope</a> answers these questions from <a href="insert.txt.html#a" class="d">a</a> symbol database that <a href="motion.txt.html#it" class="d">it</a> builds the
+  first time <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> used on the source files.  On <a href="insert.txt.html#a" class="d">a</a> subsequent call, <a href="#cscope" class="d">cscope</a>
+  rebuilds the database only if <a href="insert.txt.html#a" class="d">a</a> source file has changed or the <a href="eval.txt.html#list" class="d">list</a> of
+  source files <a href="motion.txt.html#is" class="d">is</a> different.  When the database <a href="motion.txt.html#is" class="d">is</a> rebuilt the data for the
+  unchanged files <a href="motion.txt.html#is" class="d">is</a> copied from the old database, which makes rebuilding
+  much faster than the initial build.
+
+                                    -----
+
+When <a href="#cscope" class="d">cscope</a> <a href="motion.txt.html#is" class="d">is</a> normally invoked, you will get <a href="insert.txt.html#a" class="d">a</a> full-screen selection
+screen allowing you to make <a href="insert.txt.html#a" class="d">a</a> query for one of the above questions.
+However, once <a href="insert.txt.html#a" class="d">a</a> match <a href="motion.txt.html#is" class="d">is</a> found to your query and you have entered your
+text editor to edit the source file containing match, you cannot simply
+jump from <a href="tagsrch.txt.html#tag" class="d">tag</a> to <a href="tagsrch.txt.html#tag" class="d">tag</a> <a href="motion.txt.html#as" class="d">as</a> you normally would with vi's Ctrl-] or <a href="tagsrch.txt.html#%3Atag" class="d">:tag</a>
+command.
+
+Vim's <a href="#cscope" class="d">cscope</a> interface <a href="motion.txt.html#is" class="d">is</a> done by invoking <a href="#cscope" class="d">cscope</a> with its line-oriented
+interface, and then parsing the output returned from <a href="insert.txt.html#a" class="d">a</a> query.  The <a href="intro.txt.html#end" class="d">end</a>
+result <a href="motion.txt.html#is" class="d">is</a> that <a href="#cscope" class="d">cscope</a> query results become just like regular tags, so
+you can jump to them just like you <a href="diff.txt.html#do" class="d">do</a> with normal <a href="tagsrch.txt.html#tags" class="d">tags</a> (Ctrl-] or :tag)
+and then <a href="motion.txt.html#go" class="d">go</a> back by popping off the <a href="tagsrch.txt.html#tagstack" class="d">tagstack</a> with Ctrl-T.  (Please <span class="n">note</span>
+however, that you don't actually jump to <a href="insert.txt.html#a" class="d">a</a> <a href="#cscope" class="d">cscope</a> <a href="tagsrch.txt.html#tag" class="d">tag</a> simply by doing
+Ctrl-] or <a href="tagsrch.txt.html#%3Atag" class="d">:tag</a> without remapping these commands or setting an option.
+See the remaining sections on how the <a href="#cscope" class="d">cscope</a> interface works and for
+suggested use.)
+
+
+<span class="h">==============================================================================</span>
+2. <a href="#Cscope" class="d">Cscope</a> related commands                              <a name="cscope-commands" class="t">cscope-commands</a>
+
+                <a name="%3Acscope" class="t">:cscope</a> <a name="%3Acs" class="t">:cs</a> <a name="%3Ascs" class="t">:scs</a> <a name="%3Ascscope" class="t">:scscope</a> <a name="E259" class="t">E259</a> <a name="E262" class="t">E262</a> <a name="E561" class="t">E561</a> <a name="E560" class="t">E560</a>
+All <a href="#cscope" class="d">cscope</a> commands are accessed through suboptions to the <a href="#cscope" class="d">cscope</a> commands.
+        <span class="e">:cscope</span> or <span class="e">:cs</span> <a href="motion.txt.html#is" class="d">is</a> the main command
+        <span class="e">:scscope</span> or <span class="e">:scs</span> does the same and splits the <a href="windows.txt.html#window" class="d">window</a>
+        <span class="e">:lcscope</span> or <span class="e">:lcs</span> uses the location list, see <a href="#%3Alcscope" class="l">:lcscope</a>
+
+The available subcommands are:
+
+                        <a name="E563" class="t">E563</a> <a name="E564" class="t">E564</a> <a name="E566" class="t">E566</a> <a name="E568" class="t">E568</a> <a name="E622" class="t">E622</a> <a name="E623" class="t">E623</a> <a name="E625" class="t">E625</a>
+                        <a name="E626" class="t">E626</a> <a name="E609" class="t">E609</a>
+    add   <a href="cmdline.txt.html#%3A" class="d">:</a> Add <a href="insert.txt.html#a" class="d">a</a> new <a href="#cscope" class="d">cscope</a> database/connection.
+
+        USAGE   <a href="#%3Acs" class="d">:cs</a> add <span class="s">{file|dir}</span> <span class="s">[pre-path]</span> <span class="s">[flags]</span>
+
+            <span class="s">[pre-path]</span> <a href="motion.txt.html#is" class="d">is</a> the pathname used with the <a href="starting.txt.html#-P" class="d">-P</a> command to cscope.
+
+            <span class="s">[flags]</span> are any additional flags you want to pass to cscope.
+
+        EXAMPLES 
+<span class="e">            :cscope add /usr/local/cdb/cscope.out</span>
+<span class="e">            :cscope add /projects/vim/cscope.out /usr/local/vim</span>
+<span class="e">            :cscope add cscope.out /usr/local/vim -C</span>
+
+                                      <a name="cscope-find" class="t">cscope-find</a> <a name="cs-find" class="t">cs-find</a> <a name="E567" class="t">E567</a>
+    find  <a href="cmdline.txt.html#%3A" class="d">:</a> Query cscope.  All <a href="#cscope" class="d">cscope</a> query <a href="options.txt.html#options" class="d">options</a> are available
+            except option #5 <a href="motion.txt.html#%28" class="d">(</a>"Change this <a href="quickfix.txt.html#grep" class="d">grep</a> <a href="pattern.txt.html#pattern" class="d">pattern</a>").
+
+        USAGE   <a href="#%3Acs" class="d">:cs</a> find <span class="s">{querytype}</span> <span class="s">{name}</span>
+
+            <span class="s">{querytype}</span> corresponds to the actual <a href="#cscope" class="d">cscope</a> line
+            interface numbers <a href="motion.txt.html#as" class="d">as</a> well <a href="motion.txt.html#as" class="d">as</a> default nvi commands:
+
+                <a href="motion.txt.html#0" class="d">0</a> or s: Find this <a href="change.txt.html#C" class="d">C</a> symbol
+                1 or <a href="eval.txt.html#g%3A" class="d">g:</a> Find this definition
+                2 or d: Find <a href="eval.txt.html#functions" class="d">functions</a> called by this function
+                3 or c: Find <a href="eval.txt.html#functions" class="d">functions</a> calling this function
+                4 or <a href="eval.txt.html#t%3A" class="d">t:</a> Find this text <a href="eval.txt.html#string" class="d">string</a>
+                6 or e: Find this egrep <a href="pattern.txt.html#pattern" class="d">pattern</a>
+                7 or f: Find this file
+                8 or i: Find files #including this file
+                9 or a: Find places where this symbol <a href="motion.txt.html#is" class="d">is</a> assigned <a href="insert.txt.html#a" class="d">a</a> value
+
+        For all types, except 4 and 6, leading white <a href="intro.txt.html#space" class="d">space</a> for <span class="s">{name}</span> <a href="motion.txt.html#is" class="d">is</a>
+        removed.  For 4 and 6 there <a href="motion.txt.html#is" class="d">is</a> exactly one <a href="intro.txt.html#space" class="d">space</a> between <span class="s">{querytype}</span>
+        and <span class="s">{name}</span>.  Further white <a href="intro.txt.html#space" class="d">space</a> <a href="motion.txt.html#is" class="d">is</a> included in <span class="s">{name}</span>.
+
+        EXAMPLES 
+<span class="e">            :cscope find c vim_free</span>
+<span class="e">            :cscope find 3  vim_free</span>
+
+            These two examples perform the same query: <a href="eval.txt.html#functions" class="d">functions</a> calling
+            "vim_free"<a href="repeat.txt.html#." class="d">.</a> 
+<span class="e"></span>
+<span class="e">            :cscope find t initOnce</span>
+<span class="e">            :cscope find t  initOnce</span>
+
+            The first one searches for the text "initOnce"<a href="motion.txt.html#%2C" class="d">,</a> the second one for
+            " initOnce"<a href="repeat.txt.html#." class="d">.</a> 
+<span class="e"></span>
+<span class="e">            :cscope find 0 DEFAULT_TERM</span>
+
+            Executing this example on the source code for Vim 5.1 produces the
+            following output:
+
+            <a href="#Cscope" class="d">Cscope</a> tag: DEFAULT_TERM
+               <a href="pattern.txt.html#%23" class="d">#</a>   line  filename <a href="pattern.txt.html#%2F" class="d">/</a> context <a href="pattern.txt.html#%2F" class="d">/</a> line
+               1   1009  vim-5.1-gtk/src/term.c <span class="s">&lt;&lt;GLOBAL&gt;</span>&gt;
+                         #define DEFAULT_TERM (char_u *<a href="motion.txt.html#%29" class="d">)</a>"amiga"
+               2   1013  vim-5.1-gtk/src/term.c <span class="s">&lt;&lt;GLOBAL&gt;</span>&gt;
+                         #define DEFAULT_TERM (char_u *<a href="motion.txt.html#%29" class="d">)</a>"<a href="os_win32.txt.html#win32" class="d">win32</a>"
+               3   1017  vim-5.1-gtk/src/term.c <span class="s">&lt;&lt;GLOBAL&gt;</span>&gt;
+                         #define DEFAULT_TERM (char_u *<a href="motion.txt.html#%29" class="d">)</a>"pcterm"
+               4   1021  vim-5.1-gtk/src/term.c <span class="s">&lt;&lt;GLOBAL&gt;</span>&gt;
+                         #define DEFAULT_TERM (char_u *<a href="motion.txt.html#%29" class="d">)</a>"ansi"
+               5   1025  vim-5.1-gtk/src/term.c <span class="s">&lt;&lt;GLOBAL&gt;</span>&gt;
+                         #define DEFAULT_TERM (char_u *<a href="motion.txt.html#%29" class="d">)</a>"vt52"
+               6   1029  vim-5.1-gtk/src/term.c <span class="s">&lt;&lt;GLOBAL&gt;</span>&gt;
+                         #define DEFAULT_TERM (char_u *<a href="motion.txt.html#%29" class="d">)</a>"os2ansi"
+               7   1033  vim-5.1-gtk/src/term.c <span class="s">&lt;&lt;GLOBAL&gt;</span>&gt;
+                         #define DEFAULT_TERM (char_u *<a href="motion.txt.html#%29" class="d">)</a>"ansi"
+               8   1037  vim-5.1-gtk/src/term.c <span class="s">&lt;&lt;GLOBAL&gt;</span>&gt;
+                         <a href="pattern.txt.html#%23" class="d">#</a> undef DEFAULT_TERM
+               9   1038  vim-5.1-gtk/src/term.c <span class="s">&lt;&lt;GLOBAL&gt;</span>&gt;
+                         #define DEFAULT_TERM (char_u *<a href="motion.txt.html#%29" class="d">)</a>"beos-ansi"
+              10   1042  vim-5.1-gtk/src/term.c <span class="s">&lt;&lt;GLOBAL&gt;</span>&gt;
+                         #define DEFAULT_TERM (char_u *<a href="motion.txt.html#%29" class="d">)</a>"mac-ansi"
+              11   1335  vim-5.1-gtk/src/term.c <span class="s">&lt;&lt;set_termname&gt;</span>&gt;
+                         term <a href="change.txt.html#%3D" class="d">=</a> DEFAULT_TERM;
+              12   1459  vim-5.1-gtk/src/term.c <span class="s">&lt;&lt;set_termname&gt;</span>&gt;
+                         if (STRCMP(term, DEFAULT_TERM))
+              13   1826  vim-5.1-gtk/src/term.c <span class="s">&lt;&lt;termcapinit&gt;</span>&gt;
+                         term <a href="change.txt.html#%3D" class="d">=</a> DEFAULT_TERM;
+              14   1833  vim-5.1-gtk/src/term.c <span class="s">&lt;&lt;termcapinit&gt;</span>&gt;
+                         term <a href="change.txt.html#%3D" class="d">=</a> DEFAULT_TERM;
+              15   3635  vim-5.1-gtk/src/term.c <span class="s">&lt;&lt;update_tcap&gt;</span>&gt;
+                         <a href="change.txt.html#p" class="d">p</a> <a href="change.txt.html#%3D" class="d">=</a> find_builtin_term(DEFAULT_TERM);
+            Enter nr of choice (&lt;CR&gt; to abort):
+
+            The output shows several pieces of information:
+            1. The <a href="tagsrch.txt.html#tag" class="d">tag</a> number (there are 15 in this example).
+            2. The line number where the <a href="tagsrch.txt.html#tag" class="d">tag</a> occurs.
+            3. The filename where the <a href="tagsrch.txt.html#tag" class="d">tag</a> occurs.
+            4. The context of the <a href="tagsrch.txt.html#tag" class="d">tag</a> (e.g., global, or the function name).
+            5. The line from the file itself.
+
+    <a href="helphelp.txt.html#help" class="d">help</a>  <a href="cmdline.txt.html#%3A" class="d">:</a> Show <a href="insert.txt.html#a" class="d">a</a> brief synopsis.
+
+            USAGE   <a href="#%3Acs" class="d">:cs</a> <a href="helphelp.txt.html#help" class="d">help</a>
+
+                                                        <a name="E261" class="t">E261</a>
+    kill  <a href="cmdline.txt.html#%3A" class="d">:</a> Kill <a href="insert.txt.html#a" class="d">a</a> <a href="#cscope" class="d">cscope</a> connection (or kill all <a href="#cscope" class="d">cscope</a> connections).
+
+            USAGE   <a href="#%3Acs" class="d">:cs</a> kill <span class="s">{num|partial_name}</span>
+
+            To kill <a href="insert.txt.html#a" class="d">a</a> <a href="#cscope" class="d">cscope</a> connection, the connection number or <a href="insert.txt.html#a" class="d">a</a> partial
+            name <a href="vim_faq.txt.html#must" class="d">must</a> be specified.  The partial name <a href="motion.txt.html#is" class="d">is</a> simply any part of
+            the pathname of the <a href="#cscope" class="d">cscope</a> database.  Kill <a href="insert.txt.html#a" class="d">a</a> <a href="#cscope" class="d">cscope</a> connection
+            using the partial name with caution!
+
+            If the specified connection number <a href="motion.txt.html#is" class="d">is</a> -1, then _ALL_ <a href="#cscope" class="d">cscope</a>
+            connections will be killed.
+
+    reset <a href="cmdline.txt.html#%3A" class="d">:</a> Reinit all <a href="#cscope" class="d">cscope</a> connections.
+
+            USAGE   <a href="#%3Acs" class="d">:cs</a> reset
+
+    show  <a href="cmdline.txt.html#%3A" class="d">:</a> Show <a href="#cscope" class="d">cscope</a> connections.
+
+            USAGE   <a href="#%3Acs" class="d">:cs</a> show
+
+                                                        <a name="%3Alcscope" class="t">:lcscope</a> <a name="%3Alcs" class="t">:lcs</a>
+This command <a href="motion.txt.html#is" class="d">is</a> same <a href="motion.txt.html#as" class="d">as</a> the "<a href="#%3Acscope" class="d">:cscope</a>" command, except when the
+<a href="options.txt.html#%27cscopequickfix%27" class="o">'cscopequickfix'</a> option <a href="motion.txt.html#is" class="d">is</a> set, the location <a href="eval.txt.html#list" class="d">list</a> for the current <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a>
+used instead of the <a href="quickfix.txt.html#quickfix" class="d">quickfix</a> <a href="eval.txt.html#list" class="d">list</a> to show the <a href="#cscope" class="d">cscope</a> results.
+
+                                                        <a name="%3Acstag" class="t">:cstag</a> <a name="E257" class="t">E257</a> <a name="E562" class="t">E562</a>
+If you use <a href="#cscope" class="d">cscope</a> <a href="motion.txt.html#as" class="d">as</a> well <a href="motion.txt.html#as" class="d">as</a> ctags, <a href="#%3Acstag" class="l">:cstag</a> allows you to search one or
+the other before making <a href="insert.txt.html#a" class="d">a</a> jump.  For example, you can choose to first
+search your <a href="#cscope" class="d">cscope</a> database(s) for <a href="insert.txt.html#a" class="d">a</a> match, and if one <a href="motion.txt.html#is" class="d">is</a> not found, then
+your <a href="tagsrch.txt.html#tags" class="d">tags</a> file(s) will be searched.  The order in which this happens
+<a href="motion.txt.html#is" class="d">is</a> determined by the value of <a href="#csto" class="l">csto</a><a href="repeat.txt.html#." class="d">.</a>  See <a href="#cscope-options" class="l">cscope-options</a> for more
+details.
+
+<a href="#%3Acstag" class="l">:cstag</a> performs the equivalent of "<a href="#%3Acs" class="d">:cs</a> find <a href="index.txt.html#g" class="d">g</a>" on the identifier when
+searching through the <a href="#cscope" class="d">cscope</a> database(s).
+
+<a href="#%3Acstag" class="l">:cstag</a> performs the equivalent of <a href="tagsrch.txt.html#%3Atjump" class="l">:tjump</a> on the identifier when searching
+through your <a href="tagsrch.txt.html#tags" class="d">tags</a> file(s).
+
+
+<span class="h">==============================================================================</span>
+3. <a href="#Cscope" class="d">Cscope</a> <a href="options.txt.html#options" class="d">options</a>                                       <a name="cscope-options" class="t">cscope-options</a>
+
+Use the <a href="options.txt.html#%3Aset" class="l">:set</a> command to set all <a href="#cscope" class="d">cscope</a> options.  Ideally, you would <a href="diff.txt.html#do" class="d">do</a>
+this in one of your <a href="starting.txt.html#startup" class="d">startup</a> files (e.g., .vimrc).  Some <a href="#cscope" class="d">cscope</a> related
+<a href="eval.txt.html#variables" class="d">variables</a> are only valid within <a href="starting.txt.html#.vimrc" class="l">.vimrc</a><a href="repeat.txt.html#." class="d">.</a>  Setting them after vim has
+started will have no effect!
+
+                                                        <a name="cscopeprg" class="t">cscopeprg</a> <a name="csprg" class="t">csprg</a>
+<a href="options.txt.html#%27cscopeprg%27" class="o">'cscopeprg'</a> specifies the command to execute cscope.  The default <a href="motion.txt.html#is" class="d">is</a>
+"<a href="#cscope" class="d">cscope</a>"<a href="repeat.txt.html#." class="d">.</a>  For example: 
+<span class="e">        :set csprg=/usr/local/bin/cscope</span>
+
+                                            <a name="cscopequickfix" class="t">cscopequickfix</a> <a name="csqf" class="t">csqf</a> <a name="E469" class="t">E469</a>
+<span class="s">{not available when compiled without the |+quickfix| feature}</span>
+<a href="options.txt.html#%27cscopequickfix%27" class="o">'cscopequickfix'</a> specifies whether to use <a href="quickfix.txt.html#quickfix" class="d">quickfix</a> <a href="windows.txt.html#window" class="d">window</a> to show <a href="#cscope" class="d">cscope</a>
+results.  This <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of comma-separated values. Each item consists of
+<a href="#cscope-find" class="l">cscope-find</a> command (s, <a href="motion.txt.html#g%2C" class="d">g,</a> d, c, t, e, f, <a href="insert.txt.html#i" class="d">i</a> or <a href="motion.txt.html#a%29" class="d">a)</a> and flag (+, <a href="motion.txt.html#-" class="d">-</a> or 0).
+'+' indicates that results <a href="vim_faq.txt.html#must" class="d">must</a> be appended to <a href="quickfix.txt.html#quickfix" class="d">quickfix</a> window,
+'-' implies previous results clearance, '0' or command absence <a href="motion.txt.html#-" class="d">-</a> don't use
+quickfix.  Search <a href="motion.txt.html#is" class="d">is</a> performed from start until first command occurrence.
+The default value <a href="motion.txt.html#is" class="d">is</a> "" (don't use <a href="quickfix.txt.html#quickfix" class="d">quickfix</a> anyway).  The following value
+seems to be useful: 
+<span class="e">        :set cscopequickfix=s-,c-,d-,i-,t-,e-,a-</span>
+
+                                                        <a name="cscopetag" class="t">cscopetag</a> <a name="cst" class="t">cst</a>
+If <a href="options.txt.html#%27cscopetag%27" class="o">'cscopetag'</a> <a href="motion.txt.html#is" class="d">is</a> set, the commands "<a href="tagsrch.txt.html#%3Atag" class="d">:tag</a>" and <a href="tagsrch.txt.html#CTRL-%5D" class="k">CTRL-]</a> <a href="motion.txt.html#as" class="d">as</a> well <a href="motion.txt.html#as" class="d">as</a> "vim <a href="starting.txt.html#-t" class="d">-t</a>"
+will always use <a href="#%3Acstag" class="l">:cstag</a> instead of the default <a href="tagsrch.txt.html#%3Atag" class="d">:tag</a> behavior.  Effectively,
+by setting <a href="options.txt.html#%27cst%27" class="o">'cst'</a>, you will always search your <a href="#cscope" class="d">cscope</a> databases <a href="motion.txt.html#as" class="d">as</a> well <a href="motion.txt.html#as" class="d">as</a>
+your <a href="tagsrch.txt.html#tag" class="d">tag</a> files.  The default <a href="motion.txt.html#is" class="d">is</a> off.  Examples: 
+<span class="e">        :set cst</span>
+<span class="e">        :set nocst</span>
+
+                                                        <a name="cscoperelative" class="t">cscoperelative</a> <a name="csre" class="t">csre</a>
+If <a href="options.txt.html#%27cscoperelative%27" class="o">'cscoperelative'</a> <a href="motion.txt.html#is" class="d">is</a> set, then in absence of <a href="insert.txt.html#a" class="d">a</a> prefix given to <a href="#cscope" class="d">cscope</a>
+(prefix <a href="motion.txt.html#is" class="d">is</a> the argument of <a href="starting.txt.html#-P" class="d">-P</a> option of cscope), basename of cscope.out
+location (usually the project root directory) will be used <a href="motion.txt.html#as" class="d">as</a> the prefix
+to construct an absolute path.  The default <a href="motion.txt.html#is" class="d">is</a> off.  <span class="n">Note:</span> This option <a href="motion.txt.html#is" class="d">is</a>
+only effective when <a href="#cscope" class="d">cscope</a> (cscopeprg) <a href="motion.txt.html#is" class="d">is</a> initialized without <a href="insert.txt.html#a" class="d">a</a> prefix
+path (-P).  Examples: 
+<span class="e">        :set csre</span>
+<span class="e">        :set nocsre</span>
+
+                                                        <a name="cscopetagorder" class="t">cscopetagorder</a> <a name="csto" class="t">csto</a>
+The value of <a href="options.txt.html#%27csto%27" class="o">'csto'</a> determines the order in which <a href="#%3Acstag" class="l">:cstag</a> performs <a href="insert.txt.html#a" class="d">a</a> search.
+If <a href="options.txt.html#%27csto%27" class="o">'csto'</a> <a href="motion.txt.html#is" class="d">is</a> set to zero, <a href="#cscope" class="d">cscope</a> database(s) are searched first, followed
+by <a href="tagsrch.txt.html#tag" class="d">tag</a> file(s) if <a href="#cscope" class="d">cscope</a> did not return any matches.  If <a href="options.txt.html#%27csto%27" class="o">'csto'</a> <a href="motion.txt.html#is" class="d">is</a> set to
+one, <a href="tagsrch.txt.html#tag" class="d">tag</a> file(s) are searched before <a href="#cscope" class="d">cscope</a> database(s).  The default <a href="motion.txt.html#is" class="d">is</a> zero.
+Examples: 
+<span class="e">        :set csto=0</span>
+<span class="e">        :set csto=1</span>
+
+                                                <a name="cscopeverbose" class="t">cscopeverbose</a> <a name="csverb" class="t">csverb</a>
+If <a href="options.txt.html#%27cscopeverbose%27" class="o">'cscopeverbose'</a> <a href="motion.txt.html#is" class="d">is</a> not set (the default), <a href="message.txt.html#messages" class="d">messages</a> will not be printed
+indicating success or failure when adding <a href="insert.txt.html#a" class="d">a</a> <a href="#cscope" class="d">cscope</a> database.  Ideally, you
+should reset this option in your <a href="starting.txt.html#.vimrc" class="l">.vimrc</a> before adding any <a href="#cscope" class="d">cscope</a> databases,
+and after adding them, set it.  From then on, when you add more databases
+within Vim, you will get <a href="insert.txt.html#a" class="d">a</a> (hopefully) useful message should the database fail
+to be added.  Examples: 
+<span class="e">        :set csverb</span>
+<span class="e">        :set nocsverb</span>
+
+                                                      <a name="cscopepathcomp" class="t">cscopepathcomp</a> <a name="cspc" class="t">cspc</a>
+The value of <a href="options.txt.html#%27cspc%27" class="o">'cspc'</a> determines how many components of <a href="insert.txt.html#a" class="d">a</a> file's path to
+display.  With the default value of zero the entire path will be displayed.
+The value one will display only the filename with no path.  Other values
+display that many components.  For example: 
+<span class="e">        :set cspc=3</span>
+will display the last 3 components of the file's path, including the file
+name itself.
+
+<span class="h">==============================================================================</span>
+4. How to use <a href="#cscope" class="d">cscope</a> in Vim                             <a name="cscope-howtouse" class="t">cscope-howtouse</a>
+
+The first thing you need to <a href="diff.txt.html#do" class="d">do</a> <a href="motion.txt.html#is" class="d">is</a> to build <a href="insert.txt.html#a" class="d">a</a> <a href="#cscope" class="d">cscope</a> database for your
+source files.  For the most basic case, simply <a href="diff.txt.html#do" class="d">do</a> "<a href="#cscope" class="d">cscope</a> <a href="starting.txt.html#-b" class="d">-b</a>"<a href="repeat.txt.html#." class="d">.</a>  Please
+refer to the <a href="#cscope" class="d">cscope</a> man page for more details.
+
+Assuming you have <a href="insert.txt.html#a" class="d">a</a> <a href="#cscope" class="d">cscope</a> database, you need to "add" the database to Vim.
+This establishes <a href="insert.txt.html#a" class="d">a</a> <a href="#cscope" class="d">cscope</a> "connection" and makes <a href="motion.txt.html#it" class="d">it</a> available for Vim to use.
+You can <a href="diff.txt.html#do" class="d">do</a> this in your <a href="starting.txt.html#.vimrc" class="d">.vimrc</a> file, or you can <a href="diff.txt.html#do" class="d">do</a> <a href="motion.txt.html#it" class="d">it</a> manually after <a href="starting.txt.html#starting" class="d">starting</a>
+vim.  For example, to add the <a href="#cscope" class="d">cscope</a> database "cscope.out"<a href="motion.txt.html#%2C" class="d">,</a> you would do:
+
+        <a href="#%3Acs" class="d">:cs</a> add cscope.out
+
+You can double-check the result of this by executing "<a href="#%3Acs" class="d">:cs</a> show"<a href="repeat.txt.html#." class="d">.</a>  This will
+produce output which looks like this:
+
+ <a href="pattern.txt.html#%23" class="d">#</a> pid    database name                       prepend path
+ <a href="motion.txt.html#0" class="d">0</a> 28806  cscope.out                          <span class="s">&lt;none&gt;</span>
+
+<span class="n">Note:</span>
+Because of the Microsoft RTL limitations, <a href="os_win32.txt.html#Win32" class="d">Win32</a> version shows <a href="motion.txt.html#0" class="d">0</a> instead
+of the real pid.
+
+Once <a href="insert.txt.html#a" class="d">a</a> <a href="#cscope" class="d">cscope</a> connection <a href="motion.txt.html#is" class="d">is</a> established, you can make queries to <a href="#cscope" class="d">cscope</a> and
+the results will be printed to you.  Queries are made using the command
+"<a href="#%3Acs" class="d">:cs</a> find"<a href="repeat.txt.html#." class="d">.</a>  For example:
+
+        <a href="#%3Acs" class="d">:cs</a> find <a href="index.txt.html#g" class="d">g</a> ALIGN_SIZE
+
+This can get <a href="insert.txt.html#a" class="d">a</a> little cumbersome since one ends up doing <a href="insert.txt.html#a" class="d">a</a> significant
+amount of typing.  Fortunately, there are ways around this by <a href="map.txt.html#mapping" class="d">mapping</a>
+shortcut keys.  See <a href="#cscope-suggestions" class="l">cscope-suggestions</a> for suggested usage.
+
+If the results return only one match, you will automatically be taken to it.
+If there <a href="motion.txt.html#is" class="d">is</a> more than one match, you will be given <a href="insert.txt.html#a" class="d">a</a> selection screen to pick
+the match you want to <a href="motion.txt.html#go" class="d">go</a> to.  After you have jumped to the new location,
+simply hit Ctrl-T to get back to the previous one.
+
+
+<span class="h">==============================================================================</span>
+5. Limitations                                          <a name="cscope-limitations" class="t">cscope-limitations</a>
+
+<a href="#Cscope" class="d">Cscope</a> support for Vim <a href="motion.txt.html#is" class="d">is</a> only available on systems that support these four
+system calls: fork(), pipe(), execl(), waitpid().  This means <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> mostly
+limited to <a href="os_unix.txt.html#Unix" class="d">Unix</a> systems.
+
+Additionally <a href="#Cscope" class="d">Cscope</a> support works for Win32.  For more information and <a href="insert.txt.html#a" class="d">a</a>
+<a href="#cscope" class="d">cscope</a> version for <a href="os_win32.txt.html#Win32" class="d">Win32</a> see:
+
+        <a class="u" href="http://iamphet.nm.ru/cscope/index.html">http://iamphet.nm.ru/cscope/index.html</a>
+
+The DJGPP-built version from <a class="u" href="http://cscope.sourceforge.net">http://cscope.sourceforge.net</a> <a href="motion.txt.html#is" class="d">is</a> known to not
+work with Vim.
+
+Hard-coded limitation: doing <a href="insert.txt.html#a" class="d">a</a> <a href="tagsrch.txt.html#%3Atjump" class="l">:tjump</a> when <a href="#%3Acstag" class="l">:cstag</a> searches the <a href="tagsrch.txt.html#tag" class="d">tag</a> files
+<a href="motion.txt.html#is" class="d">is</a> not configurable (e.g., you can't <a href="diff.txt.html#do" class="d">do</a> <a href="insert.txt.html#a" class="d">a</a> tselect instead).
+
+<span class="h">==============================================================================</span>
+6. Suggested usage                                      <a name="cscope-suggestions" class="t">cscope-suggestions</a>
+
+Put these entries in your <a href="starting.txt.html#.vimrc" class="d">.vimrc</a> (adjust the pathname accordingly to your
+setup): 
+<span class="e"></span>
+<span class="e">        if has("cscope")</span>
+<span class="e">                set csprg=/usr/local/bin/cscope</span>
+<span class="e">                set csto=0</span>
+<span class="e">                set cst</span>
+<span class="e">                set nocsverb</span>
+<span class="e">                " add any database in current directory</span>
+<span class="e">                if filereadable("cscope.out")</span>
+<span class="e">                    cs add cscope.out</span>
+<span class="e">                " else add database pointed to by environment</span>
+<span class="e">                elseif $CSCOPE_DB != ""</span>
+<span class="e">                    cs add $CSCOPE_DB</span>
+<span class="e">                endif</span>
+<span class="e">                set csverb</span>
+<span class="e">        endif</span>
+<span class="e"></span>
+By setting <a href="options.txt.html#%27cscopetag%27" class="o">'cscopetag'</a>, we have effectively replaced all instances of the <a href="tagsrch.txt.html#%3Atag" class="d">:tag</a>
+command with :cstag.  This includes :tag, Ctrl-], and "vim <a href="starting.txt.html#-t" class="d">-t</a>"<a href="repeat.txt.html#." class="d">.</a>  In doing
+this, the regular <a href="tagsrch.txt.html#tag" class="d">tag</a> command not only searches your <a href="tagsrch.txt.html#ctags" class="d">ctags</a> generated <a href="tagsrch.txt.html#tag" class="d">tag</a>
+files, but your <a href="#cscope" class="d">cscope</a> databases <a href="motion.txt.html#as" class="d">as</a> well.
+
+Some users may want to keep the regular <a href="tagsrch.txt.html#tag" class="d">tag</a> behavior and have <a href="insert.txt.html#a" class="d">a</a> different
+shortcut to access :cstag.  For example, one could map Ctrl-_  (underscore)
+to <a href="#%3Acstag" class="d">:cstag</a> with the following command: 
+<span class="e"></span>
+<span class="e">        map &lt;C-_&gt; :cstag &lt;C-R&gt;=expand("&lt;cword&gt;")&lt;CR&gt;&lt;CR&gt;</span>
+<span class="e"></span>
+<a href="insert.txt.html#A" class="d">A</a> couple of very commonly used <a href="#cscope" class="d">cscope</a> queries (using "<a href="#%3Acs" class="d">:cs</a> find"<a href="motion.txt.html#%29" class="d">)</a> <a href="motion.txt.html#is" class="d">is</a> to
+find all <a href="eval.txt.html#functions" class="d">functions</a> calling <a href="insert.txt.html#a" class="d">a</a> certain function and to find all occurrences
+of <a href="insert.txt.html#a" class="d">a</a> particular <a href="change.txt.html#C" class="d">C</a> symbol.  To <a href="diff.txt.html#do" class="d">do</a> this, you can use these mappings <a href="motion.txt.html#as" class="d">as</a> an
+example: 
+<span class="e"></span>
+<span class="e">        map g&lt;C-]&gt; :cs find 3 &lt;C-R&gt;=expand("&lt;cword&gt;")&lt;CR&gt;&lt;CR&gt;</span>
+<span class="e">        map g&lt;C-\&gt; :cs find 0 &lt;C-R&gt;=expand("&lt;cword&gt;")&lt;CR&gt;&lt;CR&gt;</span>
+<span class="e"></span>
+These mappings for Ctrl-] (right bracket) and Ctrl-\ (backslash) allow you to
+place your cursor over the function name or <a href="change.txt.html#C" class="d">C</a> symbol and quickly query <a href="#cscope" class="d">cscope</a>
+for any matches.
+
+Or you may use the following scheme, inspired by Vim/Cscope tutorial from
+<a href="#Cscope" class="d">Cscope</a> Home Page (http://cscope.sourceforge.net/): 
+<span class="e"></span>
+<span class="e">        nmap &lt;C-_&gt;s :cs find s &lt;C-R&gt;=expand("&lt;cword&gt;")&lt;CR&gt;&lt;CR&gt;</span>
+<span class="e">        nmap &lt;C-_&gt;g :cs find g &lt;C-R&gt;=expand("&lt;cword&gt;")&lt;CR&gt;&lt;CR&gt;</span>
+<span class="e">        nmap &lt;C-_&gt;c :cs find c &lt;C-R&gt;=expand("&lt;cword&gt;")&lt;CR&gt;&lt;CR&gt;</span>
+<span class="e">        nmap &lt;C-_&gt;t :cs find t &lt;C-R&gt;=expand("&lt;cword&gt;")&lt;CR&gt;&lt;CR&gt;</span>
+<span class="e">        nmap &lt;C-_&gt;e :cs find e &lt;C-R&gt;=expand("&lt;cword&gt;")&lt;CR&gt;&lt;CR&gt;</span>
+<span class="e">        nmap &lt;C-_&gt;f :cs find f &lt;C-R&gt;=expand("&lt;cfile&gt;")&lt;CR&gt;&lt;CR&gt;</span>
+<span class="e">        nmap &lt;C-_&gt;i :cs find i ^&lt;C-R&gt;=expand("&lt;cfile&gt;")&lt;CR&gt;$&lt;CR&gt;</span>
+<span class="e">        nmap &lt;C-_&gt;d :cs find d &lt;C-R&gt;=expand("&lt;cword&gt;")&lt;CR&gt;&lt;CR&gt;</span>
+<span class="e">        nmap &lt;C-_&gt;a :cs find a &lt;C-R&gt;=expand("&lt;cword&gt;")&lt;CR&gt;&lt;CR&gt;</span>
+<span class="e"></span>
+<span class="e">        " Using 'CTRL-spacebar' then a search type makes the vim window</span>
+<span class="e">        " split horizontally, with search result displayed in</span>
+<span class="e">        " the new window.</span>
+<span class="e"></span>
+<span class="e">        nmap &lt;C-Space&gt;s :scs find s &lt;C-R&gt;=expand("&lt;cword&gt;")&lt;CR&gt;&lt;CR&gt;</span>
+<span class="e">        nmap &lt;C-Space&gt;g :scs find g &lt;C-R&gt;=expand("&lt;cword&gt;")&lt;CR&gt;&lt;CR&gt;</span>
+<span class="e">        nmap &lt;C-Space&gt;c :scs find c &lt;C-R&gt;=expand("&lt;cword&gt;")&lt;CR&gt;&lt;CR&gt;</span>
+<span class="e">        nmap &lt;C-Space&gt;t :scs find t &lt;C-R&gt;=expand("&lt;cword&gt;")&lt;CR&gt;&lt;CR&gt;</span>
+<span class="e">        nmap &lt;C-Space&gt;e :scs find e &lt;C-R&gt;=expand("&lt;cword&gt;")&lt;CR&gt;&lt;CR&gt;</span>
+<span class="e">        nmap &lt;C-Space&gt;f :scs find f &lt;C-R&gt;=expand("&lt;cfile&gt;")&lt;CR&gt;&lt;CR&gt;</span>
+<span class="e">        nmap &lt;C-Space&gt;i :scs find i ^&lt;C-R&gt;=expand("&lt;cfile&gt;")&lt;CR&gt;$&lt;CR&gt;</span>
+<span class="e">        nmap &lt;C-Space&gt;d :scs find d &lt;C-R&gt;=expand("&lt;cword&gt;")&lt;CR&gt;&lt;CR&gt;</span>
+<span class="e">        nmap &lt;C-Space&gt;a :scs find a &lt;C-R&gt;=expand("&lt;cword&gt;")&lt;CR&gt;&lt;CR&gt;</span>
+<span class="e"></span>
+<span class="e">        " Hitting CTRL-space *twice* before the search type does a vertical</span>
+<span class="e">        " split instead of a horizontal one</span>
+<span class="e"></span>
+<span class="e">        nmap &lt;C-Space&gt;&lt;C-Space&gt;s</span>
+<span class="e">                \:vert scs find s &lt;C-R&gt;=expand("&lt;cword&gt;")&lt;CR&gt;&lt;CR&gt;</span>
+<span class="e">        nmap &lt;C-Space&gt;&lt;C-Space&gt;g</span>
+<span class="e">                \:vert scs find g &lt;C-R&gt;=expand("&lt;cword&gt;")&lt;CR&gt;&lt;CR&gt;</span>
+<span class="e">        nmap &lt;C-Space&gt;&lt;C-Space&gt;c</span>
+<span class="e">                \:vert scs find c &lt;C-R&gt;=expand("&lt;cword&gt;")&lt;CR&gt;&lt;CR&gt;</span>
+<span class="e">        nmap &lt;C-Space&gt;&lt;C-Space&gt;t</span>
+<span class="e">                \:vert scs find t &lt;C-R&gt;=expand("&lt;cword&gt;")&lt;CR&gt;&lt;CR&gt;</span>
+<span class="e">        nmap &lt;C-Space&gt;&lt;C-Space&gt;e</span>
+<span class="e">                \:vert scs find e &lt;C-R&gt;=expand("&lt;cword&gt;")&lt;CR&gt;&lt;CR&gt;</span>
+<span class="e">        nmap &lt;C-Space&gt;&lt;C-Space&gt;i</span>
+<span class="e">                \:vert scs find i ^&lt;C-R&gt;=expand("&lt;cfile&gt;")&lt;CR&gt;$&lt;CR&gt;</span>
+<span class="e">        nmap &lt;C-Space&gt;&lt;C-Space&gt;d</span>
+<span class="e">                \:vert scs find d &lt;C-R&gt;=expand("&lt;cword&gt;")&lt;CR&gt;&lt;CR&gt;</span>
+<span class="e">        nmap &lt;C-Space&gt;&lt;C-Space&gt;a</span>
+<span class="e">                \:vert scs find a &lt;C-R&gt;=expand("&lt;cword&gt;")&lt;CR&gt;&lt;CR&gt;</span>
+<span class="e"></span>
+<span class="h">==============================================================================</span>
+7. <a href="#Cscope" class="d">Cscope</a> availability and information                  <a name="cscope-info" class="t">cscope-info</a>
+
+If you <a href="diff.txt.html#do" class="d">do</a> not already have <a href="#cscope" class="d">cscope</a> (it did not come with your compiler
+<a href="uganda.txt.html#license" class="d">license</a> or OS distribution), then you can <a href="intro.txt.html#download" class="d">download</a> <a href="motion.txt.html#it" class="d">it</a> for free from:
+        <a class="u" href="http://cscope.sourceforge.net/">http://cscope.sourceforge.net/</a>
+This <a href="motion.txt.html#is" class="d">is</a> released by SCO under the BSD license.
+
+In Solaris 2.x, if you have the <a href="change.txt.html#C" class="d">C</a> compiler license, you will also have
+cscope.  Both are usually located under /opt/SUNWspro/bin
+
+There <a href="motion.txt.html#is" class="d">is</a> source to an older version of <a href="insert.txt.html#a" class="d">a</a> <a href="#cscope" class="d">cscope</a> clone (called "cs"<a href="motion.txt.html#%29" class="d">)</a> available
+on the net.  Due to <a href="various.txt.html#various" class="d">various</a> reasons, this <a href="motion.txt.html#is" class="d">is</a> not supported with Vim.
+
+The <a href="#cscope" class="d">cscope</a> interface/support for Vim was originally written by
+Andy Kahn <span class="s">&lt;ackahn@netapp.com&gt;</span>.  The original structure (as well <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> tiny
+bit of code) was adapted from the <a href="#cscope" class="d">cscope</a> interface in nvi.
+                                                        <a name="cscope-win32" class="t">cscope-win32</a>
+For <a href="insert.txt.html#a" class="d">a</a> <a href="#cscope" class="d">cscope</a> version for <a href="os_win32.txt.html#Win32" class="d">Win32</a> see (seems abandoned):
+        <a class="u" href="https://code.google.com/archive/p/cscope-win32/">https://code.google.com/archive/p/cscope-win32/</a>
+
+<a href="os_win32.txt.html#Win32" class="d">Win32</a> support was added by Sergey Khorev <span class="s">&lt;sergey.khorev@gmail.com&gt;</span>.  Contact
+him if you have Win32-specific issues.
+
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

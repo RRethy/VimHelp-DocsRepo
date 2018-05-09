@@ -1,0 +1,1607 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: autocmd.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="autocmd.txt" class="t">autocmd.txt</a>   For <span class="i">Vim version 8.0.</span>  Last change: 2018 May 03
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Bram Moolenaar</span>
+
+
+Automatic commands                                      <a name="autocommand" class="t">autocommand</a>
+
+For <a href="insert.txt.html#a" class="d">a</a> basic explanation, see <a href="motion.txt.html#section" class="d">section</a> <a href="usr_40.txt.html#40.3" class="l">40.3</a> in the user manual.
+
+1.  Introduction                <a href="#autocmd-intro" class="l">autocmd-intro</a>
+2.  Defining autocommands       <a href="#autocmd-define" class="l">autocmd-define</a>
+3.  Removing autocommands       <a href="#autocmd-remove" class="l">autocmd-remove</a>
+4.  Listing autocommands        <a href="#autocmd-list" class="l">autocmd-list</a>
+5.  Events                      <a href="#autocmd-events" class="l">autocmd-events</a>
+6.  Patterns                    <a href="#autocmd-patterns" class="l">autocmd-patterns</a>
+7.  Buffer-local autocommands   <a href="#autocmd-buflocal" class="l">autocmd-buflocal</a>
+8.  Groups                      <a href="#autocmd-groups" class="l">autocmd-groups</a>
+9.  Executing autocommands      <a href="#autocmd-execute" class="l">autocmd-execute</a>
+10. Using autocommands          <a href="#autocmd-use" class="l">autocmd-use</a>
+11. Disabling autocommands      <a href="#autocmd-disable" class="l">autocmd-disable</a>
+
+<span class="s">{Vi does not have any of these commands}</span>
+
+<span class="h">==============================================================================</span>
+1. Introduction                                         <a name="autocmd-intro" class="t">autocmd-intro</a>
+
+You can specify commands to be executed automatically when reading or <a href="editing.txt.html#writing" class="d">writing</a>
+<a href="insert.txt.html#a" class="d">a</a> file, when entering or leaving <a href="insert.txt.html#a" class="d">a</a> buffer or window, and when <a href="starting.txt.html#exiting" class="d">exiting</a> Vim.
+For example, you can create an <a href="#autocommand" class="d">autocommand</a> to set the <a href="options.txt.html#%27cindent%27" class="o">'cindent'</a> option for
+files matching *.c.  You can also use autocommands to implement advanced
+features, such <a href="motion.txt.html#as" class="d">as</a> editing compressed files (see <a href="#gzip-example" class="l">gzip-example</a>).  The usual
+place to <a href="change.txt.html#put" class="d">put</a> autocommands <a href="motion.txt.html#is" class="d">is</a> in your <a href="starting.txt.html#.vimrc" class="d">.vimrc</a> or <a href="starting.txt.html#.exrc" class="d">.exrc</a> file.
+
+                                <a name="E203" class="t">E203</a> <a name="E204" class="t">E204</a> <a name="E143" class="t">E143</a> <a name="E855" class="t">E855</a> <a name="E937" class="t">E937</a> <a name="E952" class="t">E952</a>
+WARNING: Using autocommands <a href="motion.txt.html#is" class="d">is</a> very powerful, and may lead to unexpected side
+effects.  Be careful not to destroy your text.
+<a href="motion.txt.html#-" class="d">-</a> It's <a href="insert.txt.html#a" class="d">a</a> good idea to <a href="diff.txt.html#do" class="d">do</a> some <a href="eval.txt.html#testing" class="d">testing</a> on an expendable copy of <a href="insert.txt.html#a" class="d">a</a> file first.
+  For example: If you use autocommands to decompress <a href="insert.txt.html#a" class="d">a</a> file when <a href="starting.txt.html#starting" class="d">starting</a> to
+  edit it, make sure that the autocommands for compressing when <a href="editing.txt.html#writing" class="d">writing</a> work
+  correctly.
+<a href="motion.txt.html#-" class="d">-</a> Be prepared for an error halfway through (e.g., disk full).  Vim will mostly
+  be able to <a href="undo.txt.html#undo" class="d">undo</a> the changes to the buffer, but you may have to clean up the
+  changes to other files by hand (e.g., <a href="pi_gzip.txt.html#compress" class="d">compress</a> <a href="insert.txt.html#a" class="d">a</a> file that has been
+  decompressed).
+<a href="motion.txt.html#-" class="d">-</a> If the <a href="#BufRead" class="d">BufRead</a>* events allow you to edit <a href="insert.txt.html#a" class="d">a</a> compressed file, the FileRead*
+  events should <a href="diff.txt.html#do" class="d">do</a> the same (this makes <a href="recover.txt.html#recovery" class="d">recovery</a> possible in some rare cases).
+  It's <a href="insert.txt.html#a" class="d">a</a> good idea to use the same autocommands for the File* and Buf* events
+  when possible.
+
+<span class="h">==============================================================================</span>
+2. Defining autocommands                                <a name="autocmd-define" class="t">autocmd-define</a>
+
+                                                        <a name="%3Aau" class="t">:au</a> <a name="%3Aautocmd" class="t">:autocmd</a>
+:au[tocmd] <span class="s">[group]</span> <a href="#%7Bevent%7D" class="s">{event}</a> <a href="#%7Bpat%7D" class="s">{pat}</a> <span class="s">[nested]</span> <span class="s">{cmd}</span>
+                        Add <span class="s">{cmd}</span> to the <a href="eval.txt.html#list" class="d">list</a> of commands that Vim will
+                        execute automatically on <a href="#%7Bevent%7D" class="s">{event}</a> for <a href="insert.txt.html#a" class="d">a</a> file matching
+                        <a href="#%7Bpat%7D" class="s">{pat}</a> <a href="#autocmd-patterns" class="l">autocmd-patterns</a><a href="repeat.txt.html#." class="d">.</a>
+                        <span class="n">Note:</span> <a href="insert.txt.html#A" class="d">A</a> <a href="change.txt.html#quote" class="d">quote</a> character <a href="motion.txt.html#is" class="d">is</a> seen <a href="motion.txt.html#as" class="d">as</a> argument to the
+                        <a href="#%3Aautocmd" class="d">:autocmd</a> and won't start <a href="insert.txt.html#a" class="d">a</a> comment.
+                        Vim always adds the <span class="s">{cmd}</span> after existing autocommands,
+                        so that the autocommands execute in the order in which
+                        they were given.  See <a href="#autocmd-nested" class="l">autocmd-nested</a> for <span class="s">[nested]</span>.
+
+The special <a href="pattern.txt.html#pattern" class="d">pattern</a> <span class="s">&lt;buffer&gt;</span> or <a href="#%3Cbuffer%3DN%3E" class="s">&lt;buffer=N&gt;</a> defines <a href="insert.txt.html#a" class="d">a</a> buffer-local autocommand.
+See <a href="#autocmd-buflocal" class="l">autocmd-buflocal</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="n">Note:</span> The "<a href="#%3Aautocmd" class="d">:autocmd</a>" command can only be followed by another command when the
+<a href="motion.txt.html#%27" class="d">'</a>|<a href="motion.txt.html#%27" class="d">'</a> appears before <span class="s">{cmd}</span>.  This works: 
+<span class="e">        :augroup mine | au! BufRead | augroup END</span>
+But this sees "augroup" <a href="motion.txt.html#as" class="d">as</a> part of the defined command: 
+<span class="e">        :augroup mine | au! BufRead * | augroup END</span>
+<span class="e">        :augroup mine | au BufRead * set tw=70 | augroup END</span>
+Instead you can <a href="change.txt.html#put" class="d">put</a> the group name into the command: 
+<span class="e">        :au! mine BufRead *</span>
+<span class="e">        :au mine BufRead * set tw=70</span>
+Or use <span class="e">:execute</span>: 
+<span class="e">        :augroup mine | exe "au! BufRead *" | augroup END</span>
+<span class="e">        :augroup mine | exe "au BufRead * set tw=70" | augroup END</span>
+<span class="e"></span>
+<span class="n">Note</span> that special characters (e.g., "<a href="motion.txt.html#%25" class="d">%</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<span class="s">&lt;cword&gt;</span>"<a href="motion.txt.html#%29" class="d">)</a> in the "<a href="#%3Aautocmd" class="d">:autocmd</a>"
+arguments are not expanded when the <a href="#autocommand" class="d">autocommand</a> <a href="motion.txt.html#is" class="d">is</a> defined.  These will be
+expanded when the Event <a href="motion.txt.html#is" class="d">is</a> recognized, and the <span class="s">{cmd}</span> <a href="motion.txt.html#is" class="d">is</a> executed.  The only
+exception <a href="motion.txt.html#is" class="d">is</a> that "<a href="cmdline.txt.html#%3Csfile%3E" class="s">&lt;sfile&gt;</a>" <a href="motion.txt.html#is" class="d">is</a> expanded when the autocmd <a href="motion.txt.html#is" class="d">is</a> defined.  Example:
+
+<span class="e">        :au BufNewFile,BufRead *.html so &lt;sfile&gt;:h/html.vim</span>
+<span class="e"></span>
+Here Vim expands <a href="cmdline.txt.html#%3Csfile%3E" class="s">&lt;sfile&gt;</a> to the name of the file containing this line.
+
+<span class="e">:autocmd</span> adds to the <a href="eval.txt.html#list" class="d">list</a> of autocommands regardless of whether they are
+already present.  When your <a href="starting.txt.html#.vimrc" class="d">.vimrc</a> file <a href="motion.txt.html#is" class="d">is</a> sourced twice, the autocommands
+will appear twice.  To avoid this, define your autocommands in <a href="insert.txt.html#a" class="d">a</a> group, so
+that you can easily clear them: 
+<span class="e"></span>
+<span class="e">        augroup vimrc</span>
+<span class="e">          " Remove all vimrc autocommands</span>
+<span class="e">          autocmd!</span>
+<span class="e">          au BufNewFile,BufRead *.html so &lt;sfile&gt;:h/html.vim</span>
+<span class="e">        augroup END</span>
+<span class="e"></span>
+If you don't want to remove all autocommands, you can instead use <a href="insert.txt.html#a" class="d">a</a> variable
+to ensure that Vim includes the autocommands only once: 
+<span class="e"></span>
+<span class="e">        :if !exists("autocommands_loaded")</span>
+<span class="e">        :  let autocommands_loaded = 1</span>
+<span class="e">        :  au ...</span>
+<span class="e">        :endif</span>
+<span class="e"></span>
+When the <span class="s">[group]</span> argument <a href="motion.txt.html#is" class="d">is</a> not given, Vim uses the current group (as defined
+with "<a href="#%3Aaugroup" class="d">:augroup</a>"); otherwise, Vim uses the group defined with <span class="s">[group]</span>.  <span class="n">Note</span>
+that <span class="s">[group]</span> <a href="vim_faq.txt.html#must" class="d">must</a> have been defined before.  You cannot define <a href="insert.txt.html#a" class="d">a</a> new group
+with "<a href="#%3Aau" class="d">:au</a> group <a href="eval.txt.html#..." class="d">...</a>"<a href="motion.txt.html#%3B" class="d">;</a> use "<a href="#%3Aaugroup" class="d">:augroup</a>" for that.
+
+While <a href="eval.txt.html#testing" class="d">testing</a> autocommands, you might find the <a href="options.txt.html#%27verbose%27" class="o">'verbose'</a> option to be useful: 
+<span class="e">        :set verbose=9</span>
+This setting makes Vim echo the autocommands <a href="motion.txt.html#as" class="d">as</a> <a href="motion.txt.html#it" class="d">it</a> executes them.
+
+When defining an <a href="#autocommand" class="d">autocommand</a> in <a href="insert.txt.html#a" class="d">a</a> script, <a href="motion.txt.html#it" class="d">it</a> will be able to call <a href="eval.txt.html#functions" class="d">functions</a>
+local to the <a href="usr_41.txt.html#script" class="d">script</a> and use mappings local to the script.  When the event <a href="motion.txt.html#is" class="d">is</a>
+triggered and the command executed, <a href="motion.txt.html#it" class="d">it</a> will run in the context of the <a href="usr_41.txt.html#script" class="d">script</a>
+<a href="motion.txt.html#it" class="d">it</a> was defined in.  This matters if <a href="map.txt.html#%3CSID%3E" class="l">&lt;SID&gt;</a> <a href="motion.txt.html#is" class="d">is</a> used in <a href="insert.txt.html#a" class="d">a</a> command.
+
+When executing the commands, the message from one command overwrites <a href="insert.txt.html#a" class="d">a</a>
+previous message.  This <a href="motion.txt.html#is" class="d">is</a> different from when executing the commands
+manually.  Mostly the screen will not scroll up, thus there <a href="motion.txt.html#is" class="d">is</a> no <a href="message.txt.html#hit-enter" class="d">hit-enter</a>
+prompt.  When one command outputs two <a href="message.txt.html#messages" class="d">messages</a> this can happen anyway.
+
+<span class="h">==============================================================================</span>
+3. Removing autocommands                                <a name="autocmd-remove" class="t">autocmd-remove</a>
+
+:au[tocmd]! <span class="s">[group]</span> <a href="#%7Bevent%7D" class="s">{event}</a> <a href="#%7Bpat%7D" class="s">{pat}</a> <span class="s">[nested]</span> <span class="s">{cmd}</span>
+                        Remove all autocommands associated with <a href="#%7Bevent%7D" class="s">{event}</a> and
+                        <a href="#%7Bpat%7D" class="s">{pat}</a>, and add the command <span class="s">{cmd}</span>.  See
+                        <a href="#autocmd-nested" class="l">autocmd-nested</a> for <span class="s">[nested]</span>.
+
+:au[tocmd]! <span class="s">[group]</span> <a href="#%7Bevent%7D" class="s">{event}</a> <a href="#%7Bpat%7D" class="s">{pat}</a>
+                        Remove all autocommands associated with <a href="#%7Bevent%7D" class="s">{event}</a> and
+                        <a href="#%7Bpat%7D" class="s">{pat}</a>.
+
+:au[tocmd]! <span class="s">[group]</span> * <a href="#%7Bpat%7D" class="s">{pat}</a>
+                        Remove all autocommands associated with <a href="#%7Bpat%7D" class="s">{pat}</a> for all
+                        events.
+
+:au[tocmd]! <span class="s">[group]</span> <a href="#%7Bevent%7D" class="s">{event}</a>
+                        Remove ALL autocommands for <a href="#%7Bevent%7D" class="s">{event}</a>.
+                        Warning: You should not <a href="diff.txt.html#do" class="d">do</a> this without <a href="insert.txt.html#a" class="d">a</a> group for
+                        <a href="#BufRead" class="l">BufRead</a> and other common events, <a href="motion.txt.html#it" class="d">it</a> can break
+                        plugins, <a href="syntax.txt.html#syntax" class="d">syntax</a> highlighting, etc.
+
+:au[tocmd]! <span class="s">[group]</span>     Remove ALL autocommands.
+                        <span class="n">Note:</span> <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#quote" class="d">quote</a> will be seen <a href="motion.txt.html#as" class="d">as</a> argument to the <a href="#%3Aautocmd" class="d">:autocmd</a>
+                        and won't start <a href="insert.txt.html#a" class="d">a</a> comment.
+                        Warning: You should normally not <a href="diff.txt.html#do" class="d">do</a> this without <a href="insert.txt.html#a" class="d">a</a>
+                        group, <a href="motion.txt.html#it" class="d">it</a> breaks plugins, <a href="syntax.txt.html#syntax" class="d">syntax</a> highlighting, etc.
+
+When the <span class="s">[group]</span> argument <a href="motion.txt.html#is" class="d">is</a> not given, Vim uses the current group (as defined
+with "<a href="#%3Aaugroup" class="d">:augroup</a>"); otherwise, Vim uses the group defined with <span class="s">[group]</span>.
+
+<span class="h">==============================================================================</span>
+4. Listing autocommands                                 <a name="autocmd-list" class="t">autocmd-list</a>
+
+:au[tocmd] <span class="s">[group]</span> <a href="#%7Bevent%7D" class="s">{event}</a> <a href="#%7Bpat%7D" class="s">{pat}</a>
+                        Show the autocommands associated with <a href="#%7Bevent%7D" class="s">{event}</a> and
+                        <a href="#%7Bpat%7D" class="s">{pat}</a>.
+
+:au[tocmd] <span class="s">[group]</span> * <a href="#%7Bpat%7D" class="s">{pat}</a>
+                        Show the autocommands associated with <a href="#%7Bpat%7D" class="s">{pat}</a> for all
+                        events.
+
+:au[tocmd] <span class="s">[group]</span> <a href="#%7Bevent%7D" class="s">{event}</a>
+                        Show all autocommands for <a href="#%7Bevent%7D" class="s">{event}</a>.
+
+:au[tocmd] <span class="s">[group]</span>      Show all autocommands.
+
+If you provide the <span class="s">[group]</span> argument, Vim lists only the autocommands for
+<span class="s">[group]</span>; otherwise, Vim lists the autocommands for ALL groups.  <span class="n">Note</span> that this
+argument behavior differs from that for defining and removing autocommands.
+
+In order to <a href="eval.txt.html#list" class="d">list</a> buffer-local autocommands, use <a href="insert.txt.html#a" class="d">a</a> <a href="pattern.txt.html#pattern" class="d">pattern</a> in the form <span class="s">&lt;buffer&gt;</span>
+or <a href="#%3Cbuffer%3DN%3E" class="s">&lt;buffer=N&gt;</a>.  See <a href="#autocmd-buflocal" class="l">autocmd-buflocal</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="%3Aautocmd-verbose" class="t">:autocmd-verbose</a>
+When <a href="options.txt.html#%27verbose%27" class="o">'verbose'</a> <a href="motion.txt.html#is" class="d">is</a> non-zero, listing an <a href="#autocommand" class="d">autocommand</a> will also display where <a href="motion.txt.html#it" class="d">it</a>
+was last defined. Example: 
+<span class="e"></span>
+<span class="e">    :verbose autocmd BufEnter</span>
+<span class="e">    FileExplorer  BufEnter</span>
+<span class="e">        *         call s:LocalBrowse(expand("&lt;amatch&gt;"))</span>
+<span class="e">            Last set from /usr/share/vim/vim-7.0/plugin/NetrwPlugin.vim</span>
+
+See <a href="various.txt.html#%3Averbose-cmd" class="l">:verbose-cmd</a> for more information.
+
+<span class="h">==============================================================================</span>
+5. Events                                       <a name="autocmd-events" class="t">autocmd-events</a> <a name="E215" class="t">E215</a> <a name="E216" class="t">E216</a>
+
+You can specify <a href="insert.txt.html#a" class="d">a</a> comma-separated <a href="eval.txt.html#list" class="d">list</a> of event names.  No white <a href="intro.txt.html#space" class="d">space</a> can be
+used in this list.  The command applies to all the events in the list.
+
+For READING FILES there are four kinds of events possible:
+        <a href="#BufNewFile" class="d">BufNewFile</a>                      <a href="starting.txt.html#starting" class="d">starting</a> to edit <a href="insert.txt.html#a" class="d">a</a> non-existent file
+        <a href="#BufReadPre" class="d">BufReadPre</a>      <a href="#BufReadPost" class="d">BufReadPost</a>     <a href="starting.txt.html#starting" class="d">starting</a> to edit an existing file
+        <a href="#FilterReadPre" class="d">FilterReadPre</a>   <a href="#FilterReadPost" class="d">FilterReadPost</a>  read the temp file with <a href="change.txt.html#filter" class="d">filter</a> output
+        <a href="#FileReadPre" class="d">FileReadPre</a>     <a href="#FileReadPost" class="d">FileReadPost</a>    any other file read
+Vim uses only one of these four kinds when reading <a href="insert.txt.html#a" class="d">a</a> file.  The "Pre" and
+"Post" events are both triggered, before and after reading the file.
+
+<span class="n">Note</span> that the autocommands for the *ReadPre events and all the Filter events
+are not allowed to change the current buffer (you will get an error message if
+this happens).  This <a href="motion.txt.html#is" class="d">is</a> to prevent the file to be read into the wrong buffer.
+
+<span class="n">Note</span> that the <a href="options.txt.html#%27modified%27" class="o">'modified'</a> flag <a href="motion.txt.html#is" class="d">is</a> reset AFTER executing the <a href="#BufReadPost" class="d">BufReadPost</a>
+and <a href="#BufNewFile" class="d">BufNewFile</a> autocommands.  But when the <a href="options.txt.html#%27modified%27" class="o">'modified'</a> option was set by the
+autocommands, this doesn't happen.
+
+You can use the <a href="options.txt.html#%27eventignore%27" class="o">'eventignore'</a> option to ignore <a href="insert.txt.html#a" class="d">a</a> number of events or all
+events.
+                                        <a name="autocommand-events" class="t">autocommand-events</a> <a name="%7Bevent%7D" class="t">{event}</a>
+Vim recognizes the following events.  Vim ignores the <a href="change.txt.html#case" class="d">case</a> of event names
+(e.g., you can use "BUFread" or "bufread" instead of "<a href="#BufRead" class="d">BufRead</a>").
+
+First an overview by function with <a href="insert.txt.html#a" class="d">a</a> short explanation.  Then the <a href="eval.txt.html#list" class="d">list</a>
+alphabetically with full explanations <a href="#autocmd-events-abc" class="l">autocmd-events-abc</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">Name                    triggered by </span>
+
+        Reading
+<a href="#BufNewFile" class="l">BufNewFile</a>            <a href="starting.txt.html#starting" class="d">starting</a> to edit <a href="insert.txt.html#a" class="d">a</a> file that doesn't exist
+<a href="#BufReadPre" class="l">BufReadPre</a>            <a href="starting.txt.html#starting" class="d">starting</a> to edit <a href="insert.txt.html#a" class="d">a</a> new buffer, before reading the file
+<a href="#BufRead" class="l">BufRead</a>               <a href="starting.txt.html#starting" class="d">starting</a> to edit <a href="insert.txt.html#a" class="d">a</a> new buffer, after reading the file
+<a href="#BufReadPost" class="l">BufReadPost</a>           <a href="starting.txt.html#starting" class="d">starting</a> to edit <a href="insert.txt.html#a" class="d">a</a> new buffer, after reading the file
+<a href="#BufReadCmd" class="l">BufReadCmd</a>            before <a href="starting.txt.html#starting" class="d">starting</a> to edit <a href="insert.txt.html#a" class="d">a</a> new buffer <a href="#Cmd-event" class="l">Cmd-event</a>
+
+<a href="#FileReadPre" class="l">FileReadPre</a>           before reading <a href="insert.txt.html#a" class="d">a</a> file with <a href="insert.txt.html#a" class="d">a</a> "<a href="insert.txt.html#%3Aread" class="d">:read</a>" command
+<a href="#FileReadPost" class="l">FileReadPost</a>          after reading <a href="insert.txt.html#a" class="d">a</a> file with <a href="insert.txt.html#a" class="d">a</a> "<a href="insert.txt.html#%3Aread" class="d">:read</a>" command
+<a href="#FileReadCmd" class="l">FileReadCmd</a>           before reading <a href="insert.txt.html#a" class="d">a</a> file with <a href="insert.txt.html#a" class="d">a</a> "<a href="insert.txt.html#%3Aread" class="d">:read</a>" command <a href="#Cmd-event" class="l">Cmd-event</a>
+
+<a href="#FilterReadPre" class="l">FilterReadPre</a>         before reading <a href="insert.txt.html#a" class="d">a</a> file from <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#filter" class="d">filter</a> command
+<a href="#FilterReadPost" class="l">FilterReadPost</a>        after reading <a href="insert.txt.html#a" class="d">a</a> file from <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#filter" class="d">filter</a> command
+
+<a href="#StdinReadPre" class="l">StdinReadPre</a>          before reading from stdin into the buffer
+<a href="#StdinReadPost" class="l">StdinReadPost</a>         After reading from the stdin into the buffer
+
+        Writing
+<a href="#BufWrite" class="l">BufWrite</a>              <a href="starting.txt.html#starting" class="d">starting</a> to write the whole buffer to <a href="insert.txt.html#a" class="d">a</a> file
+<a href="#BufWritePre" class="l">BufWritePre</a>           <a href="starting.txt.html#starting" class="d">starting</a> to write the whole buffer to <a href="insert.txt.html#a" class="d">a</a> file
+<a href="#BufWritePost" class="l">BufWritePost</a>          after <a href="editing.txt.html#writing" class="d">writing</a> the whole buffer to <a href="insert.txt.html#a" class="d">a</a> file
+<a href="#BufWriteCmd" class="l">BufWriteCmd</a>           before <a href="editing.txt.html#writing" class="d">writing</a> the whole buffer to <a href="insert.txt.html#a" class="d">a</a> file <a href="#Cmd-event" class="l">Cmd-event</a>
+
+<a href="#FileWritePre" class="l">FileWritePre</a>          <a href="starting.txt.html#starting" class="d">starting</a> to write part of <a href="insert.txt.html#a" class="d">a</a> buffer to <a href="insert.txt.html#a" class="d">a</a> file
+<a href="#FileWritePost" class="l">FileWritePost</a>         after <a href="editing.txt.html#writing" class="d">writing</a> part of <a href="insert.txt.html#a" class="d">a</a> buffer to <a href="insert.txt.html#a" class="d">a</a> file
+<a href="#FileWriteCmd" class="l">FileWriteCmd</a>          before <a href="editing.txt.html#writing" class="d">writing</a> part of <a href="insert.txt.html#a" class="d">a</a> buffer to <a href="insert.txt.html#a" class="d">a</a> file <a href="#Cmd-event" class="l">Cmd-event</a>
+
+<a href="#FileAppendPre" class="l">FileAppendPre</a>         <a href="starting.txt.html#starting" class="d">starting</a> to append to <a href="insert.txt.html#a" class="d">a</a> file
+<a href="#FileAppendPost" class="l">FileAppendPost</a>        after appending to <a href="insert.txt.html#a" class="d">a</a> file
+<a href="#FileAppendCmd" class="l">FileAppendCmd</a>         before appending to <a href="insert.txt.html#a" class="d">a</a> file <a href="#Cmd-event" class="l">Cmd-event</a>
+
+<a href="#FilterWritePre" class="l">FilterWritePre</a>        <a href="starting.txt.html#starting" class="d">starting</a> to write <a href="insert.txt.html#a" class="d">a</a> file for <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#filter" class="d">filter</a> command or <a href="diff.txt.html#diff" class="d">diff</a>
+<a href="#FilterWritePost" class="l">FilterWritePost</a>       after <a href="editing.txt.html#writing" class="d">writing</a> <a href="insert.txt.html#a" class="d">a</a> file for <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#filter" class="d">filter</a> command or <a href="diff.txt.html#diff" class="d">diff</a>
+
+        Buffers
+<a href="#BufAdd" class="l">BufAdd</a>                just after adding <a href="insert.txt.html#a" class="d">a</a> buffer to the buffer <a href="eval.txt.html#list" class="d">list</a>
+<a href="#BufCreate" class="l">BufCreate</a>             just after adding <a href="insert.txt.html#a" class="d">a</a> buffer to the buffer <a href="eval.txt.html#list" class="d">list</a>
+<a href="#BufDelete" class="l">BufDelete</a>             before <a href="change.txt.html#deleting" class="d">deleting</a> <a href="insert.txt.html#a" class="d">a</a> buffer from the buffer <a href="eval.txt.html#list" class="d">list</a>
+<a href="#BufWipeout" class="l">BufWipeout</a>            before completely <a href="change.txt.html#deleting" class="d">deleting</a> <a href="insert.txt.html#a" class="d">a</a> buffer
+<a href="#TerminalOpen" class="l">TerminalOpen</a>          after <a href="insert.txt.html#a" class="d">a</a> <a href="terminal.txt.html#terminal" class="d">terminal</a> buffer was created
+
+<a href="#BufFilePre" class="l">BufFilePre</a>            before <a href="change.txt.html#changing" class="d">changing</a> the name of the current buffer
+<a href="#BufFilePost" class="l">BufFilePost</a>           after <a href="change.txt.html#changing" class="d">changing</a> the name of the current buffer
+
+<a href="#BufEnter" class="l">BufEnter</a>              after entering <a href="insert.txt.html#a" class="d">a</a> buffer
+<a href="#BufLeave" class="l">BufLeave</a>              before leaving to another buffer
+<a href="#BufWinEnter" class="l">BufWinEnter</a>           after <a href="insert.txt.html#a" class="d">a</a> buffer <a href="motion.txt.html#is" class="d">is</a> displayed in <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a>
+<a href="#BufWinLeave" class="l">BufWinLeave</a>           before <a href="insert.txt.html#a" class="d">a</a> buffer <a href="motion.txt.html#is" class="d">is</a> removed from <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a>
+
+<a href="#BufUnload" class="l">BufUnload</a>             before unloading <a href="insert.txt.html#a" class="d">a</a> buffer
+<a href="#BufHidden" class="l">BufHidden</a>             just after <a href="insert.txt.html#a" class="d">a</a> buffer has become hidden
+<a href="#BufNew" class="l">BufNew</a>                just after creating <a href="insert.txt.html#a" class="d">a</a> new buffer
+
+<a href="#SwapExists" class="l">SwapExists</a>            detected an existing swap file
+
+        Options
+<a href="#FileType" class="l">FileType</a>              when the <a href="options.txt.html#%27filetype%27" class="o">'filetype'</a> option has been set
+<a href="#Syntax" class="l">Syntax</a>                when the <a href="options.txt.html#%27syntax%27" class="o">'syntax'</a> option has been set
+<a href="#EncodingChanged" class="l">EncodingChanged</a>       after the <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> option has been changed
+<a href="#TermChanged" class="l">TermChanged</a>           after the value of <a href="options.txt.html#%27term%27" class="o">'term'</a> has changed
+<a href="#OptionSet" class="l">OptionSet</a>             after setting any option
+
+        Startup and exit
+<a href="#VimEnter" class="l">VimEnter</a>              after doing all the <a href="starting.txt.html#startup" class="d">startup</a> stuff
+<a href="#GUIEnter" class="l">GUIEnter</a>              after <a href="starting.txt.html#starting" class="d">starting</a> the <a href="gui.txt.html#GUI" class="d">GUI</a> successfully
+<a href="#GUIFailed" class="l">GUIFailed</a>             after <a href="starting.txt.html#starting" class="d">starting</a> the <a href="gui.txt.html#GUI" class="d">GUI</a> failed
+<a href="#TermResponse" class="l">TermResponse</a>          after the <a href="terminal.txt.html#terminal" class="d">terminal</a> response to <a href="term.txt.html#t_RV" class="l">t_RV</a> <a href="motion.txt.html#is" class="d">is</a> received
+
+<a href="#QuitPre" class="l">QuitPre</a>               when using <span class="e">:quit</span>, before deciding whether to exit
+<a href="#ExitPre" class="l">ExitPre</a>               when using <a href="insert.txt.html#a" class="d">a</a> command that may make Vim exit
+<a href="#VimLeavePre" class="l">VimLeavePre</a>           before <a href="starting.txt.html#exiting" class="d">exiting</a> Vim, before <a href="editing.txt.html#writing" class="d">writing</a> the <a href="starting.txt.html#viminfo" class="d">viminfo</a> file
+<a href="#VimLeave" class="l">VimLeave</a>              before <a href="starting.txt.html#exiting" class="d">exiting</a> Vim, after <a href="editing.txt.html#writing" class="d">writing</a> the <a href="starting.txt.html#viminfo" class="d">viminfo</a> file
+
+        Various
+<a href="#FileChangedShell" class="l">FileChangedShell</a>      Vim notices that <a href="insert.txt.html#a" class="d">a</a> file changed since editing started
+<a href="#FileChangedShellPost" class="l">FileChangedShellPost</a>  After handling <a href="insert.txt.html#a" class="d">a</a> file changed since editing started
+<a href="#FileChangedRO" class="l">FileChangedRO</a>         before making the first change to <a href="insert.txt.html#a" class="d">a</a> read-only file
+
+<a href="#DirChanged" class="l">DirChanged</a>            after the working directory has changed
+
+<a href="#ShellCmdPost" class="l">ShellCmdPost</a>          after executing <a href="insert.txt.html#a" class="d">a</a> shell command
+<a href="#ShellFilterPost" class="l">ShellFilterPost</a>       after filtering with <a href="insert.txt.html#a" class="d">a</a> shell command
+
+<a href="#CmdUndefined" class="l">CmdUndefined</a>          <a href="insert.txt.html#a" class="d">a</a> user command <a href="motion.txt.html#is" class="d">is</a> used but <a href="motion.txt.html#it" class="d">it</a> isn't defined
+<a href="#FuncUndefined" class="l">FuncUndefined</a>         <a href="insert.txt.html#a" class="d">a</a> user function <a href="motion.txt.html#is" class="d">is</a> used but <a href="motion.txt.html#it" class="d">it</a> isn't defined
+<a href="#SpellFileMissing" class="l">SpellFileMissing</a>      <a href="insert.txt.html#a" class="d">a</a> <a href="spell.txt.html#spell" class="d">spell</a> file <a href="motion.txt.html#is" class="d">is</a> used but <a href="motion.txt.html#it" class="d">it</a> can't be found
+<a href="#SourcePre" class="l">SourcePre</a>             before sourcing <a href="insert.txt.html#a" class="d">a</a> Vim <a href="usr_41.txt.html#script" class="d">script</a>
+<a href="#SourceCmd" class="l">SourceCmd</a>             before sourcing <a href="insert.txt.html#a" class="d">a</a> Vim <a href="usr_41.txt.html#script" class="d">script</a> <a href="#Cmd-event" class="l">Cmd-event</a>
+
+<a href="#VimResized" class="l">VimResized</a>            after the Vim <a href="windows.txt.html#window" class="d">window</a> size changed
+<a href="#FocusGained" class="l">FocusGained</a>           Vim got input focus
+<a href="#FocusLost" class="l">FocusLost</a>             Vim lost input focus
+<a href="#CursorHold" class="l">CursorHold</a>            the user doesn't press <a href="insert.txt.html#a" class="d">a</a> key for <a href="insert.txt.html#a" class="d">a</a> while
+<a href="#CursorHoldI" class="l">CursorHoldI</a>           the user doesn't press <a href="insert.txt.html#a" class="d">a</a> key for <a href="insert.txt.html#a" class="d">a</a> while in <a href="insert.txt.html#Insert" class="d">Insert</a> mode
+<a href="#CursorMoved" class="l">CursorMoved</a>           the cursor was moved in <a href="intro.txt.html#Normal" class="d">Normal</a> mode
+<a href="#CursorMovedI" class="l">CursorMovedI</a>          the cursor was moved in <a href="insert.txt.html#Insert" class="d">Insert</a> mode
+
+<a href="#WinNew" class="l">WinNew</a>                after creating <a href="insert.txt.html#a" class="d">a</a> new <a href="windows.txt.html#window" class="d">window</a>
+<a href="#TabNew" class="l">TabNew</a>                after creating <a href="insert.txt.html#a" class="d">a</a> new <a href="intro.txt.html#tab" class="d">tab</a> page
+<a href="#TabClosed" class="l">TabClosed</a>             after closing <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#tab" class="d">tab</a> page
+<a href="#WinEnter" class="l">WinEnter</a>              after entering another <a href="windows.txt.html#window" class="d">window</a>
+<a href="#WinLeave" class="l">WinLeave</a>              before leaving <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a>
+<a href="#TabEnter" class="l">TabEnter</a>              after entering another <a href="intro.txt.html#tab" class="d">tab</a> page
+<a href="#TabLeave" class="l">TabLeave</a>              before leaving <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#tab" class="d">tab</a> page
+<a href="#CmdwinEnter" class="l">CmdwinEnter</a>           after entering the command-line <a href="windows.txt.html#window" class="d">window</a>
+<a href="#CmdwinLeave" class="l">CmdwinLeave</a>           before leaving the command-line <a href="windows.txt.html#window" class="d">window</a>
+
+<a href="#CmdlineChanged" class="l">CmdlineChanged</a>        after <a href="insert.txt.html#a" class="d">a</a> change was made to the command-line text
+<a href="#CmdlineEnter" class="l">CmdlineEnter</a>          after the cursor moves to the command line
+<a href="#CmdlineLeave" class="l">CmdlineLeave</a>          before the cursor leaves the command line
+
+<a href="#InsertEnter" class="l">InsertEnter</a>           <a href="starting.txt.html#starting" class="d">starting</a> <a href="insert.txt.html#Insert" class="d">Insert</a> mode
+<a href="#InsertChange" class="l">InsertChange</a>          when typing <a href="insert.txt.html#%3CInsert%3E" class="s">&lt;Insert&gt;</a> while in <a href="insert.txt.html#Insert" class="d">Insert</a> or <a href="insert.txt.html#Replace" class="d">Replace</a> mode
+<a href="#InsertLeave" class="l">InsertLeave</a>           when leaving <a href="insert.txt.html#Insert" class="d">Insert</a> mode
+<a href="#InsertCharPre" class="l">InsertCharPre</a>         when <a href="insert.txt.html#a" class="d">a</a> character was typed in <a href="insert.txt.html#Insert" class="d">Insert</a> mode, before
+                        <a href="insert.txt.html#inserting" class="d">inserting</a> <a href="motion.txt.html#it" class="d">it</a>
+
+<a href="#TextChanged" class="l">TextChanged</a>           after <a href="insert.txt.html#a" class="d">a</a> change was made to the text in <a href="intro.txt.html#Normal" class="d">Normal</a> mode
+<a href="#TextChangedI" class="l">TextChangedI</a>          after <a href="insert.txt.html#a" class="d">a</a> change was made to the text in <a href="insert.txt.html#Insert" class="d">Insert</a> mode
+                        when popup menu <a href="motion.txt.html#is" class="d">is</a> not visible
+<a href="#TextChangedP" class="l">TextChangedP</a>          after <a href="insert.txt.html#a" class="d">a</a> change was made to the text in <a href="insert.txt.html#Insert" class="d">Insert</a> mode
+                        when popup menu visible
+<a href="#TextYankPost" class="l">TextYankPost</a>          after text <a href="motion.txt.html#is" class="d">is</a> yanked or deleted
+
+<a href="#ColorSchemePre" class="l">ColorSchemePre</a>        before loading <a href="insert.txt.html#a" class="d">a</a> color scheme
+<a href="#ColorScheme" class="l">ColorScheme</a>           after loading <a href="insert.txt.html#a" class="d">a</a> color scheme
+
+<a href="#RemoteReply" class="l">RemoteReply</a>           <a href="insert.txt.html#a" class="d">a</a> reply from <a href="insert.txt.html#a" class="d">a</a> server Vim was received
+
+<a href="#QuickFixCmdPre" class="l">QuickFixCmdPre</a>        before <a href="insert.txt.html#a" class="d">a</a> <a href="quickfix.txt.html#quickfix" class="d">quickfix</a> command <a href="motion.txt.html#is" class="d">is</a> run
+<a href="#QuickFixCmdPost" class="l">QuickFixCmdPost</a>       after <a href="insert.txt.html#a" class="d">a</a> <a href="quickfix.txt.html#quickfix" class="d">quickfix</a> command <a href="motion.txt.html#is" class="d">is</a> run
+
+<a href="#SessionLoadPost" class="l">SessionLoadPost</a>       after loading <a href="insert.txt.html#a" class="d">a</a> session file
+
+<a href="#MenuPopup" class="l">MenuPopup</a>             just before showing the popup menu
+<a href="#CompleteDone" class="l">CompleteDone</a>          after <a href="insert.txt.html#Insert" class="d">Insert</a> mode completion <a href="motion.txt.html#is" class="d">is</a> done
+
+<a href="#User" class="l">User</a>                  to be used in combination with "<a href="#%3Adoautocmd" class="d">:doautocmd</a>"
+
+
+The alphabetical <a href="eval.txt.html#list" class="d">list</a> of <a href="#autocommand" class="d">autocommand</a> events:            <a name="autocmd-events-abc" class="t">autocmd-events-abc</a>
+
+                                                        <a name="BufCreate" class="t">BufCreate</a> <a name="BufAdd" class="t">BufAdd</a>
+<a href="#BufAdd" class="d">BufAdd</a> or <a href="#BufCreate" class="d">BufCreate</a>             Just after creating <a href="insert.txt.html#a" class="d">a</a> new buffer which <a href="motion.txt.html#is" class="d">is</a>
+                                added to the buffer list, or adding <a href="insert.txt.html#a" class="d">a</a> buffer
+                                to the buffer list.
+                                Also used just after <a href="insert.txt.html#a" class="d">a</a> buffer in the buffer
+                                <a href="eval.txt.html#list" class="d">list</a> has been renamed.
+                                The <a href="#BufCreate" class="d">BufCreate</a> event <a href="motion.txt.html#is" class="d">is</a> for historic reasons.
+                                <span class="n">NOTE:</span> When this <a href="#autocommand" class="d">autocommand</a> <a href="motion.txt.html#is" class="d">is</a> executed, the
+                                current buffer "<a href="motion.txt.html#%25" class="d">%</a>" may be different from the
+                                buffer being created "<a href="cmdline.txt.html#%3Cafile%3E" class="s">&lt;afile&gt;</a>"<a href="repeat.txt.html#." class="d">.</a>
+                                                        <a name="BufDelete" class="t">BufDelete</a>
+<a href="#BufDelete" class="d">BufDelete</a>                       Before <a href="change.txt.html#deleting" class="d">deleting</a> <a href="insert.txt.html#a" class="d">a</a> buffer from the buffer list.
+                                The <a href="#BufUnload" class="d">BufUnload</a> may be called first (if the
+                                buffer was loaded).
+                                Also used just before <a href="insert.txt.html#a" class="d">a</a> buffer in the buffer
+                                <a href="eval.txt.html#list" class="d">list</a> <a href="motion.txt.html#is" class="d">is</a> renamed.
+                                <span class="n">NOTE:</span> When this <a href="#autocommand" class="d">autocommand</a> <a href="motion.txt.html#is" class="d">is</a> executed, the
+                                current buffer "<a href="motion.txt.html#%25" class="d">%</a>" may be different from the
+                                buffer being deleted "<a href="cmdline.txt.html#%3Cafile%3E" class="s">&lt;afile&gt;</a>" and "<a href="cmdline.txt.html#%3Cabuf%3E" class="s">&lt;abuf&gt;</a>"<a href="repeat.txt.html#." class="d">.</a>
+                                Don't change to another buffer, <a href="motion.txt.html#it" class="d">it</a> will cause
+                                problems.
+                                                        <a name="BufEnter" class="t">BufEnter</a>
+<a href="#BufEnter" class="d">BufEnter</a>                        After entering <a href="insert.txt.html#a" class="d">a</a> buffer.  Useful for setting
+                                <a href="options.txt.html#options" class="d">options</a> for <a href="insert.txt.html#a" class="d">a</a> file type.  Also executed when
+                                <a href="starting.txt.html#starting" class="d">starting</a> to edit <a href="insert.txt.html#a" class="d">a</a> buffer, after the
+                                <a href="#BufReadPost" class="d">BufReadPost</a> autocommands.
+                                                        <a name="BufFilePost" class="t">BufFilePost</a>
+<a href="#BufFilePost" class="d">BufFilePost</a>                     After <a href="change.txt.html#changing" class="d">changing</a> the name of the current buffer
+                                with the "<a href="editing.txt.html#%3Afile" class="d">:file</a>" or "<a href="editing.txt.html#%3Asaveas" class="d">:saveas</a>" command.
+                                                        <a name="BufFilePre" class="t">BufFilePre</a>
+<a href="#BufFilePre" class="d">BufFilePre</a>                      Before <a href="change.txt.html#changing" class="d">changing</a> the name of the current buffer
+                                with the "<a href="editing.txt.html#%3Afile" class="d">:file</a>" or "<a href="editing.txt.html#%3Asaveas" class="d">:saveas</a>" command.
+                                                        <a name="BufHidden" class="t">BufHidden</a>
+<a href="#BufHidden" class="d">BufHidden</a>                       Just after <a href="insert.txt.html#a" class="d">a</a> buffer has become hidden.  That
+                                is, when there are no longer <a href="windows.txt.html#windows" class="d">windows</a> that show
+                                the buffer, but the buffer <a href="motion.txt.html#is" class="d">is</a> not unloaded or
+                                deleted.  Not used for "<a href="editing.txt.html#%3Aqa" class="d">:qa</a>" or "<a href="editing.txt.html#%3Aq" class="d">:q</a>" when
+                                <a href="starting.txt.html#exiting" class="d">exiting</a> Vim.
+                                <span class="n">NOTE:</span> When this <a href="#autocommand" class="d">autocommand</a> <a href="motion.txt.html#is" class="d">is</a> executed, the
+                                current buffer "<a href="motion.txt.html#%25" class="d">%</a>" may be different from the
+                                buffer being unloaded "<a href="cmdline.txt.html#%3Cafile%3E" class="s">&lt;afile&gt;</a>"<a href="repeat.txt.html#." class="d">.</a>
+                                                        <a name="BufLeave" class="t">BufLeave</a>
+<a href="#BufLeave" class="d">BufLeave</a>                        Before leaving to another buffer.  Also when
+                                leaving or closing the current <a href="windows.txt.html#window" class="d">window</a> and the
+                                new current <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> not for the same buffer.
+                                Not used for "<a href="editing.txt.html#%3Aqa" class="d">:qa</a>" or "<a href="editing.txt.html#%3Aq" class="d">:q</a>" when <a href="starting.txt.html#exiting" class="d">exiting</a> Vim.
+                                                        <a name="BufNew" class="t">BufNew</a>
+<a href="#BufNew" class="d">BufNew</a>                          Just after creating <a href="insert.txt.html#a" class="d">a</a> new buffer.  Also used
+                                just after <a href="insert.txt.html#a" class="d">a</a> buffer has been renamed.  When
+                                the buffer <a href="motion.txt.html#is" class="d">is</a> added to the buffer <a href="eval.txt.html#list" class="d">list</a> <a href="#BufAdd" class="d">BufAdd</a>
+                                will be triggered too.
+                                <span class="n">NOTE:</span> When this <a href="#autocommand" class="d">autocommand</a> <a href="motion.txt.html#is" class="d">is</a> executed, the
+                                current buffer "<a href="motion.txt.html#%25" class="d">%</a>" may be different from the
+                                buffer being created "<a href="cmdline.txt.html#%3Cafile%3E" class="s">&lt;afile&gt;</a>"<a href="repeat.txt.html#." class="d">.</a>
+                                                        <a name="BufNewFile" class="t">BufNewFile</a>
+<a href="#BufNewFile" class="d">BufNewFile</a>                      When <a href="starting.txt.html#starting" class="d">starting</a> to edit <a href="insert.txt.html#a" class="d">a</a> file that doesn't
+                                exist.  Can be used to read in <a href="insert.txt.html#a" class="d">a</a> <a href="#skeleton" class="d">skeleton</a>
+                                file.
+                                                <a name="BufRead" class="t">BufRead</a> <a name="BufReadPost" class="t">BufReadPost</a>
+<a href="#BufRead" class="d">BufRead</a> or <a href="#BufReadPost" class="d">BufReadPost</a>          When <a href="starting.txt.html#starting" class="d">starting</a> to edit <a href="insert.txt.html#a" class="d">a</a> new buffer, after
+                                reading the file into the buffer, before
+                                executing the modelines.  See <a href="#BufWinEnter" class="l">BufWinEnter</a>
+                                for when you need to <a href="diff.txt.html#do" class="d">do</a> something after
+                                processing the modelines.
+                                This does NOT work for "<a href="insert.txt.html#%3Ar" class="d">:r</a> file"<a href="repeat.txt.html#." class="d">.</a>  Not used
+                                when the file doesn't exist.  Also used after
+                                successfully recovering <a href="insert.txt.html#a" class="d">a</a> file.
+                                Also triggered for the filetypedetect group
+                                when executing "<a href="filetype.txt.html#%3Afiletype" class="d">:filetype</a> detect" and when
+                                <a href="editing.txt.html#writing" class="d">writing</a> an unnamed buffer in <a href="insert.txt.html#a" class="d">a</a> way that the
+                                buffer gets <a href="insert.txt.html#a" class="d">a</a> name.
+                                                        <a name="BufReadCmd" class="t">BufReadCmd</a>
+<a href="#BufReadCmd" class="d">BufReadCmd</a>                      Before <a href="starting.txt.html#starting" class="d">starting</a> to edit <a href="insert.txt.html#a" class="d">a</a> new buffer.  Should
+                                read the file into the buffer. <a href="#Cmd-event" class="l">Cmd-event</a>
+                                                <a name="BufReadPre" class="t">BufReadPre</a> <a name="E200" class="t">E200</a> <a name="E201" class="t">E201</a>
+<a href="#BufReadPre" class="d">BufReadPre</a>                      When <a href="starting.txt.html#starting" class="d">starting</a> to edit <a href="insert.txt.html#a" class="d">a</a> new buffer, before
+                                reading the file into the buffer.  Not used
+                                if the file doesn't exist.
+                                                        <a name="BufUnload" class="t">BufUnload</a>
+<a href="#BufUnload" class="d">BufUnload</a>                       Before unloading <a href="insert.txt.html#a" class="d">a</a> buffer.  This <a href="motion.txt.html#is" class="d">is</a> when the
+                                text in the buffer <a href="motion.txt.html#is" class="d">is</a> going to be freed.  This
+                                may be after <a href="insert.txt.html#a" class="d">a</a> <a href="#BufWritePost" class="d">BufWritePost</a> and before <a href="insert.txt.html#a" class="d">a</a>
+                                BufDelete.  Also used for all <a href="windows.txt.html#buffers" class="d">buffers</a> that are
+                                loaded when Vim <a href="motion.txt.html#is" class="d">is</a> going to exit.
+                                <span class="n">NOTE:</span> When this <a href="#autocommand" class="d">autocommand</a> <a href="motion.txt.html#is" class="d">is</a> executed, the
+                                current buffer "<a href="motion.txt.html#%25" class="d">%</a>" may be different from the
+                                buffer being unloaded "<a href="cmdline.txt.html#%3Cafile%3E" class="s">&lt;afile&gt;</a>"<a href="repeat.txt.html#." class="d">.</a>
+                                Don't change to another buffer or window, <a href="motion.txt.html#it" class="d">it</a>
+                                will cause problems!
+                                When <a href="starting.txt.html#exiting" class="d">exiting</a> and <a href="eval.txt.html#v%3Adying" class="d">v:dying</a> <a href="motion.txt.html#is" class="d">is</a> 2 or more this
+                                event <a href="motion.txt.html#is" class="d">is</a> not triggered.
+                                                        <a name="BufWinEnter" class="t">BufWinEnter</a>
+<a href="#BufWinEnter" class="d">BufWinEnter</a>                     After <a href="insert.txt.html#a" class="d">a</a> buffer <a href="motion.txt.html#is" class="d">is</a> displayed in <a href="insert.txt.html#a" class="d">a</a> window.  This
+                                can be when the buffer <a href="motion.txt.html#is" class="d">is</a> loaded (after
+                                processing the modelines) or when <a href="insert.txt.html#a" class="d">a</a> hidden
+                                buffer <a href="motion.txt.html#is" class="d">is</a> displayed in <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a> (and <a href="motion.txt.html#is" class="d">is</a> no
+                                longer hidden).
+                                Does not happen for <a href="windows.txt.html#%3Asplit" class="l">:split</a> without
+                                arguments, since you keep editing the same
+                                buffer, or "<a href="windows.txt.html#%3Asplit" class="d">:split</a>" with <a href="insert.txt.html#a" class="d">a</a> file that's already
+                                open in <a href="insert.txt.html#a" class="d">a</a> window, because <a href="motion.txt.html#it" class="d">it</a> re-uses an
+                                existing buffer.  But <a href="motion.txt.html#it" class="d">it</a> does happen for <a href="insert.txt.html#a" class="d">a</a>
+                                "<a href="windows.txt.html#%3Asplit" class="d">:split</a>" with the name of the current buffer,
+                                since <a href="motion.txt.html#it" class="d">it</a> reloads that buffer.
+                                Does not happen for <a href="insert.txt.html#a" class="d">a</a> <a href="terminal.txt.html#terminal" class="d">terminal</a> window, because
+                                <a href="motion.txt.html#it" class="d">it</a> starts in <a href="terminal.txt.html#Terminal-Job" class="d">Terminal-Job</a> mode and <a href="intro.txt.html#Normal" class="d">Normal</a> mode
+                                commands won't work. Use <a href="#TerminalOpen" class="l">TerminalOpen</a> instead.
+                                                        <a name="BufWinLeave" class="t">BufWinLeave</a>
+<a href="#BufWinLeave" class="d">BufWinLeave</a>                     Before <a href="insert.txt.html#a" class="d">a</a> buffer <a href="motion.txt.html#is" class="d">is</a> removed from <a href="insert.txt.html#a" class="d">a</a> window.
+                                Not when it's still visible in another window.
+                                Also triggered when exiting.  It's triggered
+                                before <a href="#BufUnload" class="d">BufUnload</a> or BufHidden.
+                                <span class="n">NOTE:</span> When this <a href="#autocommand" class="d">autocommand</a> <a href="motion.txt.html#is" class="d">is</a> executed, the
+                                current buffer "<a href="motion.txt.html#%25" class="d">%</a>" may be different from the
+                                buffer being unloaded "<a href="cmdline.txt.html#%3Cafile%3E" class="s">&lt;afile&gt;</a>"<a href="repeat.txt.html#." class="d">.</a>
+                                When <a href="starting.txt.html#exiting" class="d">exiting</a> and <a href="eval.txt.html#v%3Adying" class="d">v:dying</a> <a href="motion.txt.html#is" class="d">is</a> 2 or more this
+                                event <a href="motion.txt.html#is" class="d">is</a> not triggered.
+                                                        <a name="BufWipeout" class="t">BufWipeout</a>
+<a href="#BufWipeout" class="d">BufWipeout</a>                      Before completely <a href="change.txt.html#deleting" class="d">deleting</a> <a href="insert.txt.html#a" class="d">a</a> buffer.  The
+                                <a href="#BufUnload" class="d">BufUnload</a> and <a href="#BufDelete" class="d">BufDelete</a> events may be called
+                                first (if the buffer was loaded and was in the
+                                buffer list).  Also used just before <a href="insert.txt.html#a" class="d">a</a> buffer
+                                <a href="motion.txt.html#is" class="d">is</a> renamed (also when it's not in the buffer
+                                list).
+                                <span class="n">NOTE:</span> When this <a href="#autocommand" class="d">autocommand</a> <a href="motion.txt.html#is" class="d">is</a> executed, the
+                                current buffer "<a href="motion.txt.html#%25" class="d">%</a>" may be different from the
+                                buffer being deleted "<a href="cmdline.txt.html#%3Cafile%3E" class="s">&lt;afile&gt;</a>"<a href="repeat.txt.html#." class="d">.</a>
+                                Don't change to another buffer, <a href="motion.txt.html#it" class="d">it</a> will cause
+                                problems.
+                                                <a name="BufWrite" class="t">BufWrite</a> <a name="BufWritePre" class="t">BufWritePre</a>
+<a href="#BufWrite" class="d">BufWrite</a> or <a href="#BufWritePre" class="d">BufWritePre</a>         Before <a href="editing.txt.html#writing" class="d">writing</a> the whole buffer to <a href="insert.txt.html#a" class="d">a</a> file.
+                                                        <a name="BufWriteCmd" class="t">BufWriteCmd</a>
+<a href="#BufWriteCmd" class="d">BufWriteCmd</a>                     Before <a href="editing.txt.html#writing" class="d">writing</a> the whole buffer to <a href="insert.txt.html#a" class="d">a</a> file.
+                                Should <a href="diff.txt.html#do" class="d">do</a> the <a href="editing.txt.html#writing" class="d">writing</a> of the file and reset
+                                <a href="options.txt.html#%27modified%27" class="o">'modified'</a> if successful, unless '+' <a href="motion.txt.html#is" class="d">is</a> in
+                                <a href="options.txt.html#%27cpo%27" class="o">'cpo'</a> and <a href="editing.txt.html#writing" class="d">writing</a> to another file <a href="options.txt.html#cpo-%2B" class="l">cpo-+</a><a href="repeat.txt.html#." class="d">.</a>
+                                The buffer contents should not be changed.
+                                When the command resets <a href="options.txt.html#%27modified%27" class="o">'modified'</a> the <a href="undo.txt.html#undo" class="d">undo</a>
+                                information <a href="motion.txt.html#is" class="d">is</a> adjusted to <a href="motion.txt.html#mark" class="d">mark</a> older <a href="undo.txt.html#undo" class="d">undo</a>
+                                states <a href="motion.txt.html#as" class="d">as</a> <a href="options.txt.html#%27modified%27" class="o">'modified'</a>, like <a href="editing.txt.html#%3Awrite" class="l">:write</a> does.
+                                <a href="#Cmd-event" class="l">Cmd-event</a>
+                                                        <a name="BufWritePost" class="t">BufWritePost</a>
+<a href="#BufWritePost" class="d">BufWritePost</a>                    After <a href="editing.txt.html#writing" class="d">writing</a> the whole buffer to <a href="insert.txt.html#a" class="d">a</a> file
+                                (should <a href="undo.txt.html#undo" class="d">undo</a> the commands for BufWritePre).
+                                                        <a name="CmdUndefined" class="t">CmdUndefined</a>
+<a href="#CmdUndefined" class="d">CmdUndefined</a>                    When <a href="insert.txt.html#a" class="d">a</a> user command <a href="motion.txt.html#is" class="d">is</a> used but <a href="motion.txt.html#it" class="d">it</a> isn't
+                                defined.  Useful for defining <a href="insert.txt.html#a" class="d">a</a> command only
+                                when it's used.  The <a href="pattern.txt.html#pattern" class="d">pattern</a> <a href="motion.txt.html#is" class="d">is</a> matched
+                                against the command name.  Both <a href="cmdline.txt.html#%3Camatch%3E" class="s">&lt;amatch&gt;</a> and
+                                <a href="cmdline.txt.html#%3Cafile%3E" class="s">&lt;afile&gt;</a> are set to the name of the command.
+                                <span class="n">NOTE:</span> Autocompletion won't work until the
+                                command <a href="motion.txt.html#is" class="d">is</a> defined.  An alternative <a href="motion.txt.html#is" class="d">is</a> to
+                                always define the user command and have <a href="motion.txt.html#it" class="d">it</a>
+                                invoke an autoloaded function.  See <a href="eval.txt.html#autoload" class="l">autoload</a><a href="repeat.txt.html#." class="d">.</a>
+                                                        <a name="CmdlineChanged" class="t">CmdlineChanged</a>
+<a href="#CmdlineChanged" class="d">CmdlineChanged</a>                  After <a href="insert.txt.html#a" class="d">a</a> change was made to the text in the
+                                command line.  Be careful not to mess up
+                                the command line, <a href="motion.txt.html#it" class="d">it</a> may cause Vim to lock up.
+                                <a href="cmdline.txt.html#%3Cafile%3E" class="s">&lt;afile&gt;</a> <a href="motion.txt.html#is" class="d">is</a> set to <a href="insert.txt.html#a" class="d">a</a> single character,
+                                indicating the type of command-line.
+                                <a href="cmdline.txt.html#cmdwin-char" class="l">cmdwin-char</a>
+                                                        <a name="CmdlineEnter" class="t">CmdlineEnter</a>
+<a href="#CmdlineEnter" class="d">CmdlineEnter</a>                    After moving the cursor to the command line,
+                                where the user can type <a href="insert.txt.html#a" class="d">a</a> command or search
+                                string.
+                                <a href="cmdline.txt.html#%3Cafile%3E" class="s">&lt;afile&gt;</a> <a href="motion.txt.html#is" class="d">is</a> set to <a href="insert.txt.html#a" class="d">a</a> single character,
+                                indicating the type of command-line.
+                                <a href="cmdline.txt.html#cmdwin-char" class="l">cmdwin-char</a>
+                                                        <a name="CmdlineLeave" class="t">CmdlineLeave</a>
+<a href="#CmdlineLeave" class="d">CmdlineLeave</a>                    Before leaving the command line.
+                                Also when abandoning the command line, after
+                                typing <a href="pattern.txt.html#CTRL-C" class="k">CTRL-C</a> or <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a>.
+                                When the commands result in an error the
+                                command line <a href="motion.txt.html#is" class="d">is</a> still executed.
+                                <a href="cmdline.txt.html#%3Cafile%3E" class="s">&lt;afile&gt;</a> <a href="motion.txt.html#is" class="d">is</a> set to <a href="insert.txt.html#a" class="d">a</a> single character,
+                                indicating the type of command-line.
+                                <a href="cmdline.txt.html#cmdwin-char" class="l">cmdwin-char</a>
+                                                        <a name="CmdwinEnter" class="t">CmdwinEnter</a>
+<a href="#CmdwinEnter" class="d">CmdwinEnter</a>                     After entering the command-line window.
+                                Useful for setting <a href="options.txt.html#options" class="d">options</a> specifically for
+                                this special type of window.  This <a href="motion.txt.html#is" class="d">is</a>
+                                triggered _instead_ of <a href="#BufEnter" class="d">BufEnter</a> and WinEnter.
+                                <a href="cmdline.txt.html#%3Cafile%3E" class="s">&lt;afile&gt;</a> <a href="motion.txt.html#is" class="d">is</a> set to <a href="insert.txt.html#a" class="d">a</a> single character,
+                                indicating the type of command-line.
+                                <a href="cmdline.txt.html#cmdwin-char" class="l">cmdwin-char</a>
+                                                        <a name="CmdwinLeave" class="t">CmdwinLeave</a>
+<a href="#CmdwinLeave" class="d">CmdwinLeave</a>                     Before leaving the command-line window.
+                                Useful to clean up any global setting done
+                                with CmdwinEnter.  This <a href="motion.txt.html#is" class="d">is</a> triggered _instead_
+                                of <a href="#BufLeave" class="d">BufLeave</a> and WinLeave.
+                                <a href="cmdline.txt.html#%3Cafile%3E" class="s">&lt;afile&gt;</a> <a href="motion.txt.html#is" class="d">is</a> set to <a href="insert.txt.html#a" class="d">a</a> single character,
+                                indicating the type of command-line.
+                                <a href="cmdline.txt.html#cmdwin-char" class="l">cmdwin-char</a>
+                                                        <a name="ColorScheme" class="t">ColorScheme</a>
+<a href="#ColorScheme" class="d">ColorScheme</a>                     After loading <a href="insert.txt.html#a" class="d">a</a> color scheme. <a href="syntax.txt.html#%3Acolorscheme" class="l">:colorscheme</a>
+                                The <a href="pattern.txt.html#pattern" class="d">pattern</a> <a href="motion.txt.html#is" class="d">is</a> matched against the
+                                colorscheme name. <a href="cmdline.txt.html#%3Cafile%3E" class="s">&lt;afile&gt;</a> can be used for the
+                                name of the actual file where this option was
+                                set, and <a href="cmdline.txt.html#%3Camatch%3E" class="s">&lt;amatch&gt;</a> for the new colorscheme
+                                name.
+
+                                                        <a name="ColorSchemePre" class="t">ColorSchemePre</a>
+<a href="#ColorSchemePre" class="d">ColorSchemePre</a>                  Before loading <a href="insert.txt.html#a" class="d">a</a> color scheme. <a href="syntax.txt.html#%3Acolorscheme" class="l">:colorscheme</a>
+                                Useful to setup removing things added by <a href="insert.txt.html#a" class="d">a</a>
+                                color scheme, before another one <a href="motion.txt.html#is" class="d">is</a> loaded.
+
+                                                        <a name="CompleteDone" class="t">CompleteDone</a>
+<a href="#CompleteDone" class="d">CompleteDone</a>                    After <a href="insert.txt.html#Insert" class="d">Insert</a> mode completion <a href="motion.txt.html#is" class="d">is</a> done.  Either
+                                when something was completed or abandoning
+                                completion. <a href="insert.txt.html#ins-completion" class="l">ins-completion</a>
+                                The <a href="eval.txt.html#v%3Acompleted_item" class="l">v:completed_item</a> variable contains
+                                information about the completed item.
+
+                                                        <a name="CursorHold" class="t">CursorHold</a>
+<a href="#CursorHold" class="d">CursorHold</a>                      When the user doesn't press <a href="insert.txt.html#a" class="d">a</a> key for the time
+                                specified with <a href="options.txt.html#%27updatetime%27" class="o">'updatetime'</a>.  Not re-triggered
+                                until the user has pressed <a href="insert.txt.html#a" class="d">a</a> key (i.e. doesn't
+                                fire every <a href="options.txt.html#%27updatetime%27" class="o">'updatetime'</a> ms if you leave Vim to
+                                make some coffee. :)  See <a href="windows.txt.html#CursorHold-example" class="l">CursorHold-example</a>
+                                for previewing tags.
+                                This event <a href="motion.txt.html#is" class="d">is</a> only triggered in <a href="intro.txt.html#Normal" class="d">Normal</a> mode.
+                                It <a href="motion.txt.html#is" class="d">is</a> not triggered when waiting for <a href="insert.txt.html#a" class="d">a</a> command
+                                argument to be typed, or <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#movement" class="d">movement</a> after an
+                                operator.
+                                While <a href="repeat.txt.html#recording" class="d">recording</a> the <a href="#CursorHold" class="d">CursorHold</a> event <a href="motion.txt.html#is" class="d">is</a> not
+                                triggered. <a href="repeat.txt.html#q" class="l">q</a>
+                                                        <a name="%3CCursorHold%3E" class="t">&lt;CursorHold&gt;</a>
+                                Internally the <a href="#autocommand" class="d">autocommand</a> <a href="motion.txt.html#is" class="d">is</a> triggered by the
+                                <a href="#%3CCursorHold%3E" class="s">&lt;CursorHold&gt;</a> key. In an <a href="eval.txt.html#expression" class="d">expression</a> <a href="map.txt.html#mapping" class="d">mapping</a>
+                                <a href="eval.txt.html#getchar%28%29" class="l">getchar()</a> may see this character.
+
+                                <span class="n">Note:</span> Interactive commands cannot be used for
+                                this event.  There <a href="motion.txt.html#is" class="d">is</a> no <a href="message.txt.html#hit-enter" class="d">hit-enter</a> prompt,
+                                the screen <a href="motion.txt.html#is" class="d">is</a> updated directly (when needed).
+                                <span class="n">Note:</span> In the future there will probably be
+                                another option to set the time.
+                                Hint: to force an update of the status lines
+                                use: 
+<span class="e">                                        :let &amp;ro = &amp;ro</span>
+                               {only on Amiga, Unix, Win32, <a href="os_msdos.txt.html#MSDOS" class="d">MSDOS</a> and all <a href="gui.txt.html#GUI" class="d">GUI</a>
+                                versions}
+                                                        <a name="CursorHoldI" class="t">CursorHoldI</a>
+<a href="#CursorHoldI" class="d">CursorHoldI</a>                     Just like CursorHold, but in <a href="insert.txt.html#Insert" class="d">Insert</a> mode.
+                                Not triggered when waiting for another key,
+                                e.g. after <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a>, and not when in <a href="change.txt.html#CTRL-X" class="k">CTRL-X</a> mode
+                                <a href="insert.txt.html#insert_expand" class="l">insert_expand</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="CursorMoved" class="t">CursorMoved</a>
+<a href="#CursorMoved" class="d">CursorMoved</a>                     After the cursor was moved in <a href="intro.txt.html#Normal" class="d">Normal</a> or <a href="visual.txt.html#Visual" class="d">Visual</a>
+                                mode.  Also when the text of the cursor line
+                                has been changed, e.g., with "<a href="change.txt.html#x" class="d">x</a>"<a href="motion.txt.html#%2C" class="d">,</a> "rx" or "<a href="change.txt.html#p" class="d">p</a>"<a href="repeat.txt.html#." class="d">.</a>
+                                Not triggered when there <a href="motion.txt.html#is" class="d">is</a> typeahead or when
+                                an <a href="motion.txt.html#operator" class="d">operator</a> <a href="motion.txt.html#is" class="d">is</a> pending.
+                                For an example see <a href="tips.txt.html#match-parens" class="l">match-parens</a><a href="repeat.txt.html#." class="d">.</a>
+                                Careful: This <a href="motion.txt.html#is" class="d">is</a> triggered very often, don't
+                                <a href="diff.txt.html#do" class="d">do</a> anything that the user does not expect or
+                                that <a href="motion.txt.html#is" class="d">is</a> slow.
+                                                        <a name="CursorMovedI" class="t">CursorMovedI</a>
+<a href="#CursorMovedI" class="d">CursorMovedI</a>                    After the cursor was moved in <a href="insert.txt.html#Insert" class="d">Insert</a> mode.
+                                Not triggered when the popup menu <a href="motion.txt.html#is" class="d">is</a> visible.
+                                Otherwise the same <a href="motion.txt.html#as" class="d">as</a> CursorMoved.
+                                                        <a name="EncodingChanged" class="t">EncodingChanged</a>
+<a href="#EncodingChanged" class="d">EncodingChanged</a>                 Fires off after the <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> option has been
+                                changed.  Useful to set up fonts, for example.
+                                                        <a name="FileAppendCmd" class="t">FileAppendCmd</a>
+<a href="#FileAppendCmd" class="d">FileAppendCmd</a>                   Before appending to <a href="insert.txt.html#a" class="d">a</a> file.  Should <a href="diff.txt.html#do" class="d">do</a> the
+                                appending to the file.  Use the <a href="motion.txt.html#%27%5B" class="d">'[</a> and <a href="motion.txt.html#%27%5D" class="d">']</a>
+                                marks for the range of lines.<a href="#Cmd-event" class="l">Cmd-event</a>
+                                                        <a name="FileAppendPost" class="t">FileAppendPost</a>
+<a href="#FileAppendPost" class="d">FileAppendPost</a>                  After appending to <a href="insert.txt.html#a" class="d">a</a> file.
+                                                        <a name="FileAppendPre" class="t">FileAppendPre</a>
+<a href="#FileAppendPre" class="d">FileAppendPre</a>                   Before appending to <a href="insert.txt.html#a" class="d">a</a> file.  Use the <a href="motion.txt.html#%27%5B" class="d">'[</a> and <a href="motion.txt.html#%27%5D" class="d">']</a>
+                                marks for the range of lines.
+                                                        <a name="FileChangedRO" class="t">FileChangedRO</a>
+<a href="#FileChangedRO" class="d">FileChangedRO</a>                   Before making the first change to <a href="insert.txt.html#a" class="d">a</a> read-only
+                                file.  Can be used to check-out the file from
+                                <a href="insert.txt.html#a" class="d">a</a> source <a href="intro.txt.html#control" class="d">control</a> system.  Not triggered when
+                                the change was caused by an autocommand.
+                                This event <a href="motion.txt.html#is" class="d">is</a> triggered when making the first
+                                change in <a href="insert.txt.html#a" class="d">a</a> buffer or the first change after
+                                <a href="options.txt.html#%27readonly%27" class="o">'readonly'</a> was set, just before the change <a href="motion.txt.html#is" class="d">is</a>
+                                applied to the text.
+                                WARNING: If the <a href="#autocommand" class="d">autocommand</a> moves the cursor
+                                the effect of the change <a href="motion.txt.html#is" class="d">is</a> undefined.
+                                                        <a name="E788" class="t">E788</a>
+                                It <a href="motion.txt.html#is" class="d">is</a> not allowed to change to another buffer
+                                here.  You can <a href="editing.txt.html#reload" class="d">reload</a> the buffer but not edit
+                                another one.
+                                                        <a name="E881" class="t">E881</a>
+                                If the number of lines changes saving for <a href="undo.txt.html#undo" class="d">undo</a>
+                                may fail and the change will be aborted.
+                                                        <a name="DirChanged" class="t">DirChanged</a>
+<a href="#DirChanged" class="d">DirChanged</a>                      The working directory has changed in response
+                                to the <a href="editing.txt.html#%3Acd" class="l">:cd</a> or <a href="editing.txt.html#%3Alcd" class="l">:lcd</a> commands, or <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a>
+                                result of the <a href="options.txt.html#%27autochdir%27" class="o">'autochdir'</a> option.
+                                The <a href="pattern.txt.html#pattern" class="d">pattern</a> can be:
+                                        "<a href="windows.txt.html#window" class="d">window</a>" to trigger on `:lcd
+                                        "global" to trigger on <span class="e">:cd</span>
+                                        "auto"   to trigger on <a href="options.txt.html#%27autochdir%27" class="o">'autochdir'</a>.
+                                        "drop"   to trigger on editing <a href="insert.txt.html#a" class="d">a</a> file
+                                <a href="cmdline.txt.html#%3Cafile%3E" class="s">&lt;afile&gt;</a> <a href="motion.txt.html#is" class="d">is</a> set to the new directory name.
+                                                        <a name="ExitPre" class="t">ExitPre</a>
+<a href="#ExitPre" class="d">ExitPre</a>                         When using <span class="e">:quit</span>, <span class="e">:wq</span> in <a href="insert.txt.html#a" class="d">a</a> way <a href="motion.txt.html#it" class="d">it</a> makes
+                                Vim exit, or using <span class="e">:qall</span>, just after
+                                <a href="#QuitPre" class="l">QuitPre</a><a href="repeat.txt.html#." class="d">.</a>  Can be used to close any
+                                non-essential window.
+                                                        <a name="FileChangedShell" class="t">FileChangedShell</a>
+<a href="#FileChangedShell" class="d">FileChangedShell</a>                When Vim notices that the modification time of
+                                <a href="insert.txt.html#a" class="d">a</a> file has changed since editing started.
+                                Also when the file attributes of the file
+                                change or when the size of the file changes.
+                                <a href="editing.txt.html#timestamp" class="l">timestamp</a>
+                                Mostly triggered after executing <a href="insert.txt.html#a" class="d">a</a> shell
+                                command, but also with <a href="insert.txt.html#a" class="d">a</a> <a href="editing.txt.html#%3Achecktime" class="l">:checktime</a> command
+                                or when <a href="starting.txt.html#gvim" class="d">gvim</a> regains input focus.
+                                This <a href="#autocommand" class="d">autocommand</a> <a href="motion.txt.html#is" class="d">is</a> triggered for each changed
+                                file.  It <a href="motion.txt.html#is" class="d">is</a> not used when <a href="options.txt.html#%27autoread%27" class="o">'autoread'</a> <a href="motion.txt.html#is" class="d">is</a> set
+                                and the buffer was not changed.  If <a href="insert.txt.html#a" class="d">a</a>
+                                <a href="#FileChangedShell" class="d">FileChangedShell</a> <a href="#autocommand" class="d">autocommand</a> <a href="motion.txt.html#is" class="d">is</a> present the
+                                warning message and prompt <a href="motion.txt.html#is" class="d">is</a> not given.
+                                The <a href="eval.txt.html#v%3Afcs_reason" class="l">v:fcs_reason</a> variable <a href="motion.txt.html#is" class="d">is</a> set to indicate
+                                what happened and <a href="eval.txt.html#v%3Afcs_choice" class="l">v:fcs_choice</a> can be used
+                                to tell Vim what to <a href="diff.txt.html#do" class="d">do</a> next.
+                                <span class="n">NOTE:</span> When this <a href="#autocommand" class="d">autocommand</a> <a href="motion.txt.html#is" class="d">is</a> executed, the
+                                current buffer "<a href="motion.txt.html#%25" class="d">%</a>" may be different from the
+                                buffer that was changed, which <a href="motion.txt.html#is" class="d">is</a> in "<a href="cmdline.txt.html#%3Cafile%3E" class="s">&lt;afile&gt;</a>"<a href="repeat.txt.html#." class="d">.</a>
+                                <span class="n">NOTE:</span> The commands <a href="vim_faq.txt.html#must" class="d">must</a> not change the current
+                                buffer, jump to another buffer or delete <a href="insert.txt.html#a" class="d">a</a>
+                                buffer.  <a name="E246" class="t">E246</a> <a name="E811" class="t">E811</a>
+                                <span class="n">NOTE:</span> This event never nests, to avoid an
+                                endless loop.  This means that while executing
+                                commands for the <a href="#FileChangedShell" class="d">FileChangedShell</a> event no
+                                other <a href="#FileChangedShell" class="d">FileChangedShell</a> event will be
+                                triggered.
+                                                        <a name="FileChangedShellPost" class="t">FileChangedShellPost</a>
+<a href="#FileChangedShellPost" class="d">FileChangedShellPost</a>            After handling <a href="insert.txt.html#a" class="d">a</a> file that was changed outside
+                                of Vim.  Can be used to update the statusline.
+                                                        <a name="FileEncoding" class="t">FileEncoding</a>
+<a href="#FileEncoding" class="d">FileEncoding</a>                    Obsolete.  It still works and <a href="motion.txt.html#is" class="d">is</a> equivalent
+                                to <a href="#EncodingChanged" class="l">EncodingChanged</a><a href="repeat.txt.html#." class="d">.</a>
+                                                        <a name="FileReadCmd" class="t">FileReadCmd</a>
+<a href="#FileReadCmd" class="d">FileReadCmd</a>                     Before reading <a href="insert.txt.html#a" class="d">a</a> file with <a href="insert.txt.html#a" class="d">a</a> "<a href="insert.txt.html#%3Aread" class="d">:read</a>" command.
+                                Should <a href="diff.txt.html#do" class="d">do</a> the reading of the file. <a href="#Cmd-event" class="l">Cmd-event</a>
+                                                        <a name="FileReadPost" class="t">FileReadPost</a>
+<a href="#FileReadPost" class="d">FileReadPost</a>                    After reading <a href="insert.txt.html#a" class="d">a</a> file with <a href="insert.txt.html#a" class="d">a</a> "<a href="insert.txt.html#%3Aread" class="d">:read</a>" command.
+                                <span class="n">Note</span> that Vim sets the <a href="motion.txt.html#%27%5B" class="d">'[</a> and <a href="motion.txt.html#%27%5D" class="d">']</a> marks to the
+                                first and last line of the read.  This can be
+                                used to operate on the lines just read.
+                                                        <a name="FileReadPre" class="t">FileReadPre</a>
+<a href="#FileReadPre" class="d">FileReadPre</a>                     Before reading <a href="insert.txt.html#a" class="d">a</a> file with <a href="insert.txt.html#a" class="d">a</a> "<a href="insert.txt.html#%3Aread" class="d">:read</a>" command.
+                                                        <a name="FileType" class="t">FileType</a>
+<a href="#FileType" class="d">FileType</a>                        When the <a href="options.txt.html#%27filetype%27" class="o">'filetype'</a> option has been set.  The
+                                <a href="pattern.txt.html#pattern" class="d">pattern</a> <a href="motion.txt.html#is" class="d">is</a> matched against the filetype.
+                                <a href="cmdline.txt.html#%3Cafile%3E" class="s">&lt;afile&gt;</a> can be used for the name of the file
+                                where this option was set, and <a href="cmdline.txt.html#%3Camatch%3E" class="s">&lt;amatch&gt;</a> for
+                                the new value of <a href="options.txt.html#%27filetype%27" class="o">'filetype'</a>.  Navigating to
+                                another <a href="windows.txt.html#window" class="d">window</a> or buffer <a href="motion.txt.html#is" class="d">is</a> not allowed.
+                                See <a href="filetype.txt.html#filetypes" class="l">filetypes</a><a href="repeat.txt.html#." class="d">.</a>
+                                                        <a name="FileWriteCmd" class="t">FileWriteCmd</a>
+<a href="#FileWriteCmd" class="d">FileWriteCmd</a>                    Before <a href="editing.txt.html#writing" class="d">writing</a> to <a href="insert.txt.html#a" class="d">a</a> file, when not <a href="editing.txt.html#writing" class="d">writing</a> the
+                                whole buffer.  Should <a href="diff.txt.html#do" class="d">do</a> the <a href="editing.txt.html#writing" class="d">writing</a> to the
+                                file.  Should not change the buffer.  Use the
+                                <a href="motion.txt.html#%27%5B" class="d">'[</a> and <a href="motion.txt.html#%27%5D" class="d">']</a> marks for the range of lines.
+                                <a href="#Cmd-event" class="l">Cmd-event</a>
+                                                        <a name="FileWritePost" class="t">FileWritePost</a>
+<a href="#FileWritePost" class="d">FileWritePost</a>                   After <a href="editing.txt.html#writing" class="d">writing</a> to <a href="insert.txt.html#a" class="d">a</a> file, when not <a href="editing.txt.html#writing" class="d">writing</a> the
+                                whole buffer.
+                                                        <a name="FileWritePre" class="t">FileWritePre</a>
+<a href="#FileWritePre" class="d">FileWritePre</a>                    Before <a href="editing.txt.html#writing" class="d">writing</a> to <a href="insert.txt.html#a" class="d">a</a> file, when not <a href="editing.txt.html#writing" class="d">writing</a> the
+                                whole buffer.  Use the <a href="motion.txt.html#%27%5B" class="d">'[</a> and <a href="motion.txt.html#%27%5D" class="d">']</a> marks for the
+                                range of lines.
+                                                        <a name="FilterReadPost" class="t">FilterReadPost</a>
+<a href="#FilterReadPost" class="d">FilterReadPost</a>                  After reading <a href="insert.txt.html#a" class="d">a</a> file from <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#filter" class="d">filter</a> command.
+                                Vim checks the <a href="pattern.txt.html#pattern" class="d">pattern</a> against the name of
+                                the current buffer <a href="motion.txt.html#as" class="d">as</a> with FilterReadPre.
+                                Not triggered when <a href="options.txt.html#%27shelltemp%27" class="o">'shelltemp'</a> <a href="motion.txt.html#is" class="d">is</a> off.
+                                                        <a name="FilterReadPre" class="t">FilterReadPre</a> <a name="E135" class="t">E135</a>
+<a href="#FilterReadPre" class="d">FilterReadPre</a>                   Before reading <a href="insert.txt.html#a" class="d">a</a> file from <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#filter" class="d">filter</a> command.
+                                Vim checks the <a href="pattern.txt.html#pattern" class="d">pattern</a> against the name of
+                                the current buffer, not the name of the
+                                temporary file that <a href="motion.txt.html#is" class="d">is</a> the output of the
+                                <a href="change.txt.html#filter" class="d">filter</a> command.
+                                Not triggered when <a href="options.txt.html#%27shelltemp%27" class="o">'shelltemp'</a> <a href="motion.txt.html#is" class="d">is</a> off.
+                                                        <a name="FilterWritePost" class="t">FilterWritePost</a>
+<a href="#FilterWritePost" class="d">FilterWritePost</a>                 After <a href="editing.txt.html#writing" class="d">writing</a> <a href="insert.txt.html#a" class="d">a</a> file for <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#filter" class="d">filter</a> command or
+                                making <a href="insert.txt.html#a" class="d">a</a> diff.
+                                Vim checks the <a href="pattern.txt.html#pattern" class="d">pattern</a> against the name of
+                                the current buffer <a href="motion.txt.html#as" class="d">as</a> with FilterWritePre.
+                                Not triggered when <a href="options.txt.html#%27shelltemp%27" class="o">'shelltemp'</a> <a href="motion.txt.html#is" class="d">is</a> off.
+                                                        <a name="FilterWritePre" class="t">FilterWritePre</a>
+<a href="#FilterWritePre" class="d">FilterWritePre</a>                  Before <a href="editing.txt.html#writing" class="d">writing</a> <a href="insert.txt.html#a" class="d">a</a> file for <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#filter" class="d">filter</a> command or
+                                making <a href="insert.txt.html#a" class="d">a</a> diff.
+                                Vim checks the <a href="pattern.txt.html#pattern" class="d">pattern</a> against the name of
+                                the current buffer, not the name of the
+                                temporary file that <a href="motion.txt.html#is" class="d">is</a> the output of the
+                                <a href="change.txt.html#filter" class="d">filter</a> command.
+                                Not triggered when <a href="options.txt.html#%27shelltemp%27" class="o">'shelltemp'</a> <a href="motion.txt.html#is" class="d">is</a> off.
+                                                        <a name="FocusGained" class="t">FocusGained</a>
+<a href="#FocusGained" class="d">FocusGained</a>                     When Vim got input focus.  Only for the <a href="gui.txt.html#GUI" class="d">GUI</a>
+                                version and <a href="insert.txt.html#a" class="d">a</a> few console versions where this
+                                can be detected.
+                                                        <a name="FocusLost" class="t">FocusLost</a>
+<a href="#FocusLost" class="d">FocusLost</a>                       When Vim lost input focus.  Only for the <a href="gui.txt.html#GUI" class="d">GUI</a>
+                                version and <a href="insert.txt.html#a" class="d">a</a> few console versions where this
+                                can be detected.  May also happen when <a href="insert.txt.html#a" class="d">a</a>
+                                <a href="gui_w32.txt.html#dialog" class="d">dialog</a> pops up.
+                                                        <a name="FuncUndefined" class="t">FuncUndefined</a>
+<a href="#FuncUndefined" class="d">FuncUndefined</a>                   When <a href="insert.txt.html#a" class="d">a</a> user function <a href="motion.txt.html#is" class="d">is</a> used but <a href="motion.txt.html#it" class="d">it</a> isn't
+                                defined.  Useful for defining <a href="insert.txt.html#a" class="d">a</a> function only
+                                when it's used.  The <a href="pattern.txt.html#pattern" class="d">pattern</a> <a href="motion.txt.html#is" class="d">is</a> matched
+                                against the function name.  Both <a href="cmdline.txt.html#%3Camatch%3E" class="s">&lt;amatch&gt;</a> and
+                                <a href="cmdline.txt.html#%3Cafile%3E" class="s">&lt;afile&gt;</a> are set to the name of the function.
+                                <span class="n">NOTE:</span> When <a href="editing.txt.html#writing" class="d">writing</a> Vim scripts <a href="insert.txt.html#a" class="d">a</a> better
+                                alternative <a href="motion.txt.html#is" class="d">is</a> to use an autoloaded function.
+                                See <a href="eval.txt.html#autoload-functions" class="l">autoload-functions</a><a href="repeat.txt.html#." class="d">.</a>
+                                                        <a name="GUIEnter" class="t">GUIEnter</a>
+<a href="#GUIEnter" class="d">GUIEnter</a>                        After <a href="starting.txt.html#starting" class="d">starting</a> the <a href="gui.txt.html#GUI" class="d">GUI</a> successfully, and after
+                                opening the window.  It <a href="motion.txt.html#is" class="d">is</a> triggered before
+                                <a href="#VimEnter" class="d">VimEnter</a> when using gvim.  Can be used to
+                                position the <a href="windows.txt.html#window" class="d">window</a> from <a href="insert.txt.html#a" class="d">a</a> <a href="gui.txt.html#.gvimrc" class="d">.gvimrc</a> file: 
+<span class="e">        :autocmd GUIEnter * winpos 100 50</span>
+                                                       <a name="GUIFailed" class="t">GUIFailed</a>
+<a href="#GUIFailed" class="d">GUIFailed</a>                       After <a href="starting.txt.html#starting" class="d">starting</a> the <a href="gui.txt.html#GUI" class="d">GUI</a> failed.  Vim may
+                                continue to run in the terminal, if possible
+                                (only on <a href="os_unix.txt.html#Unix" class="d">Unix</a> and alikes, when connecting the
+                                <a href="change.txt.html#X" class="d">X</a> server fails).  You may want to quit Vim: 
+<span class="e">        :autocmd GUIFailed * qall</span>
+                                                       <a name="InsertChange" class="t">InsertChange</a>
+<a href="#InsertChange" class="d">InsertChange</a>                    When typing <a href="insert.txt.html#%3CInsert%3E" class="s">&lt;Insert&gt;</a> while in <a href="insert.txt.html#Insert" class="d">Insert</a> or
+                                <a href="insert.txt.html#Replace" class="d">Replace</a> mode.  The <a href="eval.txt.html#v%3Ainsertmode" class="l">v:insertmode</a> variable
+                                indicates the new mode.
+                                Be careful not to move the cursor or <a href="diff.txt.html#do" class="d">do</a>
+                                anything else that the user does not expect.
+                                                        <a name="InsertCharPre" class="t">InsertCharPre</a>
+<a href="#InsertCharPre" class="d">InsertCharPre</a>                   When <a href="insert.txt.html#a" class="d">a</a> character <a href="motion.txt.html#is" class="d">is</a> typed in <a href="insert.txt.html#Insert" class="d">Insert</a> mode,
+                                before <a href="insert.txt.html#inserting" class="d">inserting</a> the char.
+                                The <a href="eval.txt.html#v%3Achar" class="l">v:char</a> variable indicates the char typed
+                                and can be changed during the event to <a href="insert.txt.html#insert" class="d">insert</a>
+                                <a href="insert.txt.html#a" class="d">a</a> different character.  When <a href="eval.txt.html#v%3Achar" class="l">v:char</a> <a href="motion.txt.html#is" class="d">is</a> set
+                                to more than one character this text <a href="motion.txt.html#is" class="d">is</a>
+                                inserted literally.
+                                It <a href="motion.txt.html#is" class="d">is</a> not allowed to change the text <a href="eval.txt.html#textlock" class="l">textlock</a><a href="repeat.txt.html#." class="d">.</a>
+                                The event <a href="motion.txt.html#is" class="d">is</a> not triggered when <a href="options.txt.html#%27paste%27" class="o">'paste'</a> <a href="motion.txt.html#is" class="d">is</a>
+                                set. <span class="s">{only with the +eval feature}</span>
+                                                        <a name="InsertEnter" class="t">InsertEnter</a>
+<a href="#InsertEnter" class="d">InsertEnter</a>                     Just before <a href="starting.txt.html#starting" class="d">starting</a> <a href="insert.txt.html#Insert" class="d">Insert</a> mode.  Also for
+                                <a href="insert.txt.html#Replace" class="d">Replace</a> mode and Virtual <a href="insert.txt.html#Replace" class="d">Replace</a> mode.  The
+                                <a href="eval.txt.html#v%3Ainsertmode" class="l">v:insertmode</a> variable indicates the mode.
+                                Be careful not to <a href="diff.txt.html#do" class="d">do</a> anything else that the
+                                user does not expect.
+                                The cursor <a href="motion.txt.html#is" class="d">is</a> restored afterwards.  If you <a href="diff.txt.html#do" class="d">do</a>
+                                not want that set <a href="eval.txt.html#v%3Achar" class="l">v:char</a> to <a href="insert.txt.html#a" class="d">a</a> non-empty
+                                string.
+                                                        <a name="InsertLeave" class="t">InsertLeave</a>
+<a href="#InsertLeave" class="d">InsertLeave</a>                     When leaving <a href="insert.txt.html#Insert" class="d">Insert</a> mode.  Also when using
+                                <a href="motion.txt.html#CTRL-O" class="k">CTRL-O</a> <a href="insert.txt.html#i_CTRL-O" class="l">i_CTRL-O</a><a href="repeat.txt.html#." class="d">.</a>  But not for <a href="insert.txt.html#i_CTRL-C" class="l">i_CTRL-C</a><a href="repeat.txt.html#." class="d">.</a>
+                                                        <a name="MenuPopup" class="t">MenuPopup</a>
+<a href="#MenuPopup" class="d">MenuPopup</a>                       Just before showing the popup menu (under the
+                                right mouse button).  Useful for adjusting the
+                                menu for what <a href="motion.txt.html#is" class="d">is</a> under the cursor or mouse
+                                pointer.
+                                The <a href="pattern.txt.html#pattern" class="d">pattern</a> <a href="motion.txt.html#is" class="d">is</a> matched against <a href="insert.txt.html#a" class="d">a</a> single
+                                character representing the mode:
+                                        <a href="pattern.txt.html#n" class="d">n</a>       <a href="intro.txt.html#Normal" class="d">Normal</a>
+                                        <a href="visual.txt.html#v" class="d">v</a>       <a href="visual.txt.html#Visual" class="d">Visual</a>
+                                        <a href="insert.txt.html#o" class="d">o</a>       <a href="intro.txt.html#Operator-pending" class="d">Operator-pending</a>
+                                        <a href="insert.txt.html#i" class="d">i</a>       <a href="insert.txt.html#Insert" class="d">Insert</a>
+                                        <a href="change.txt.html#c" class="d">c</a>       Command line
+                                                        <a name="OptionSet" class="t">OptionSet</a>
+<a href="#OptionSet" class="d">OptionSet</a>                       After setting an option.  The <a href="pattern.txt.html#pattern" class="d">pattern</a> <a href="motion.txt.html#is" class="d">is</a>
+                                matched against the long option name.
+                                The <a href="eval.txt.html#v%3Aoption_old" class="l">v:option_old</a> variable indicates the
+                                old option value, <a href="eval.txt.html#v%3Aoption_new" class="l">v:option_new</a> variable
+                                indicates the newly set value, the
+                                <a href="eval.txt.html#v%3Aoption_type" class="l">v:option_type</a> variable indicates whether
+                                it's global or local scoped and <a href="cmdline.txt.html#%3Camatch%3E" class="l">&lt;amatch&gt;</a>
+                                indicates what option has been set.
+
+                                Is not triggered on <a href="starting.txt.html#startup" class="d">startup</a> and for the <a href="options.txt.html#%27key%27" class="o">'key'</a>
+                                option for obvious reasons.
+
+                                Usage example: Check for the existence of the
+                                directory in the <a href="options.txt.html#%27backupdir%27" class="o">'backupdir'</a> and <a href="options.txt.html#%27undodir%27" class="o">'undodir'</a>
+                                options, create the directory if <a href="motion.txt.html#it" class="d">it</a> doesn't
+                                exist yet.
+
+                                <span class="n">Note:</span> It's <a href="insert.txt.html#a" class="d">a</a> bad idea to reset an option
+                                during this autocommand, this may break <a href="insert.txt.html#a" class="d">a</a>
+                                plugin. You can always use <span class="e">:noa</span> to prevent
+                                triggering this autocommand.
+
+                                                        <a name="QuickFixCmdPre" class="t">QuickFixCmdPre</a>
+<a href="#QuickFixCmdPre" class="d">QuickFixCmdPre</a>                  Before <a href="insert.txt.html#a" class="d">a</a> <a href="quickfix.txt.html#quickfix" class="d">quickfix</a> command <a href="motion.txt.html#is" class="d">is</a> run <a href="motion.txt.html#%28" class="d">(</a><a href="quickfix.txt.html#%3Amake" class="l">:make</a><a href="motion.txt.html#%2C" class="d">,</a>
+                                <a href="quickfix.txt.html#%3Almake" class="l">:lmake</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="quickfix.txt.html#%3Agrep" class="l">:grep</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="quickfix.txt.html#%3Algrep" class="l">:lgrep</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="quickfix.txt.html#%3Agrepadd" class="l">:grepadd</a><a href="motion.txt.html#%2C" class="d">,</a>
+                                <a href="quickfix.txt.html#%3Algrepadd" class="l">:lgrepadd</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="quickfix.txt.html#%3Avimgrep" class="l">:vimgrep</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="quickfix.txt.html#%3Alvimgrep" class="l">:lvimgrep</a><a href="motion.txt.html#%2C" class="d">,</a>
+                                <a href="quickfix.txt.html#%3Avimgrepadd" class="l">:vimgrepadd</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="quickfix.txt.html#%3Alvimgrepadd" class="l">:lvimgrepadd</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="if_cscop.txt.html#%3Acscope" class="l">:cscope</a><a href="motion.txt.html#%2C" class="d">,</a>
+                                <a href="quickfix.txt.html#%3Acfile" class="l">:cfile</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="quickfix.txt.html#%3Acgetfile" class="l">:cgetfile</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="quickfix.txt.html#%3Acaddfile" class="l">:caddfile</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="quickfix.txt.html#%3Alfile" class="l">:lfile</a><a href="motion.txt.html#%2C" class="d">,</a>
+                                <a href="quickfix.txt.html#%3Algetfile" class="l">:lgetfile</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="quickfix.txt.html#%3Aladdfile" class="l">:laddfile</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="helphelp.txt.html#%3Ahelpgrep" class="l">:helpgrep</a><a href="motion.txt.html#%2C" class="d">,</a>
+                                <a href="helphelp.txt.html#%3Alhelpgrep" class="l">:lhelpgrep</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="quickfix.txt.html#%3Acexpr" class="l">:cexpr</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="quickfix.txt.html#%3Acgetexpr" class="l">:cgetexpr</a><a href="motion.txt.html#%2C" class="d">,</a>
+                                <a href="quickfix.txt.html#%3Acaddexpr" class="l">:caddexpr</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="quickfix.txt.html#%3Acbuffer" class="l">:cbuffer</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="quickfix.txt.html#%3Acgetbuffer" class="l">:cgetbuffer</a><a href="motion.txt.html#%2C" class="d">,</a>
+                                <a href="quickfix.txt.html#%3Acaddbuffer" class="l">:caddbuffer</a>).
+                                The <a href="pattern.txt.html#pattern" class="d">pattern</a> <a href="motion.txt.html#is" class="d">is</a> matched against the command
+                                being run.  When <a href="quickfix.txt.html#%3Agrep" class="l">:grep</a> <a href="motion.txt.html#is" class="d">is</a> used but <a href="options.txt.html#%27grepprg%27" class="o">'grepprg'</a>
+                                <a href="motion.txt.html#is" class="d">is</a> set to "internal" <a href="motion.txt.html#it" class="d">it</a> still matches "<a href="quickfix.txt.html#grep" class="d">grep</a>"<a href="repeat.txt.html#." class="d">.</a>
+                                This command cannot be used to set the
+                                <a href="options.txt.html#%27makeprg%27" class="o">'makeprg'</a> and <a href="options.txt.html#%27grepprg%27" class="o">'grepprg'</a> variables.
+                                If this command causes an error, the <a href="quickfix.txt.html#quickfix" class="d">quickfix</a>
+                                command <a href="motion.txt.html#is" class="d">is</a> not executed.
+                                                        <a name="QuickFixCmdPost" class="t">QuickFixCmdPost</a>
+<a href="#QuickFixCmdPost" class="d">QuickFixCmdPost</a>                 Like QuickFixCmdPre, but after <a href="insert.txt.html#a" class="d">a</a> <a href="quickfix.txt.html#quickfix" class="d">quickfix</a>
+                                command <a href="motion.txt.html#is" class="d">is</a> run, before jumping to the first
+                                location. For <a href="quickfix.txt.html#%3Acfile" class="l">:cfile</a> and <a href="quickfix.txt.html#%3Alfile" class="l">:lfile</a> commands
+                                <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> run after error file <a href="motion.txt.html#is" class="d">is</a> read and before
+                                moving to the first error.
+                                See <a href="quickfix.txt.html#QuickFixCmdPost-example" class="l">QuickFixCmdPost-example</a><a href="repeat.txt.html#." class="d">.</a>
+                                                        <a name="QuitPre" class="t">QuitPre</a>
+<a href="#QuitPre" class="d">QuitPre</a>                         When using <span class="e">:quit</span>, <span class="e">:wq</span> or <span class="e">:qall</span>, before
+                                deciding whether <a href="motion.txt.html#it" class="d">it</a> closes the current <a href="windows.txt.html#window" class="d">window</a>
+                                or quits Vim.  Can be used to close any
+                                non-essential <a href="windows.txt.html#window" class="d">window</a> if the current <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a>
+                                the last ordinary window.
+                                Also see <a href="#ExitPre" class="l">ExitPre</a><a href="repeat.txt.html#." class="d">.</a>
+                                                        <a name="RemoteReply" class="t">RemoteReply</a>
+<a href="#RemoteReply" class="d">RemoteReply</a>                     When <a href="insert.txt.html#a" class="d">a</a> reply from <a href="insert.txt.html#a" class="d">a</a> Vim that <a href="eval.txt.html#functions" class="d">functions</a> <a href="motion.txt.html#as" class="d">as</a>
+                                server was received <a href="eval.txt.html#server2client%28%29" class="l">server2client()</a><a href="repeat.txt.html#." class="d">.</a>  The
+                                <a href="pattern.txt.html#pattern" class="d">pattern</a> <a href="motion.txt.html#is" class="d">is</a> matched against the <span class="s">{serverid}</span>.
+                                <a href="cmdline.txt.html#%3Camatch%3E" class="s">&lt;amatch&gt;</a> <a href="motion.txt.html#is" class="d">is</a> equal to the <span class="s">{serverid}</span> from which
+                                the reply was sent, and <a href="cmdline.txt.html#%3Cafile%3E" class="s">&lt;afile&gt;</a> <a href="motion.txt.html#is" class="d">is</a> the actual
+                                reply string.
+                                <span class="n">Note</span> that even if an <a href="#autocommand" class="d">autocommand</a> <a href="motion.txt.html#is" class="d">is</a> defined,
+                                the reply should be read with <a href="eval.txt.html#remote_read%28%29" class="l">remote_read()</a>
+                                to consume it.
+                                                        <a name="SessionLoadPost" class="t">SessionLoadPost</a>
+<a href="#SessionLoadPost" class="d">SessionLoadPost</a>                 After loading the session file created using
+                                the <a href="starting.txt.html#%3Amksession" class="l">:mksession</a> command.
+                                                        <a name="ShellCmdPost" class="t">ShellCmdPost</a>
+<a href="#ShellCmdPost" class="d">ShellCmdPost</a>                    After executing <a href="insert.txt.html#a" class="d">a</a> shell command with <a href="various.txt.html#%3A%21cmd" class="l">:!cmd</a><a href="motion.txt.html#%2C" class="d">,</a>
+                                <a href="various.txt.html#%3Ashell" class="l">:shell</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="quickfix.txt.html#%3Amake" class="l">:make</a> and <a href="quickfix.txt.html#%3Agrep" class="l">:grep</a><a href="repeat.txt.html#." class="d">.</a>  Can be used to
+                                check for any changed files.
+                                                        <a name="ShellFilterPost" class="t">ShellFilterPost</a>
+<a href="#ShellFilterPost" class="d">ShellFilterPost</a>                 After executing <a href="insert.txt.html#a" class="d">a</a> shell command with
+                                ":{range}!cmd"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="editing.txt.html#%3Aw" class="d">:w</a> !cmd" or "<a href="insert.txt.html#%3Ar" class="d">:r</a> !cmd"<a href="repeat.txt.html#." class="d">.</a>
+                                Can be used to check for any changed files.
+                                                        <a name="SourcePre" class="t">SourcePre</a>
+<a href="#SourcePre" class="d">SourcePre</a>                       Before sourcing <a href="insert.txt.html#a" class="d">a</a> Vim script. <a href="repeat.txt.html#%3Asource" class="l">:source</a>
+                                <a href="cmdline.txt.html#%3Cafile%3E" class="s">&lt;afile&gt;</a> <a href="motion.txt.html#is" class="d">is</a> the name of the file being sourced.
+                                                        <a name="SourceCmd" class="t">SourceCmd</a>
+<a href="#SourceCmd" class="d">SourceCmd</a>                       When sourcing <a href="insert.txt.html#a" class="d">a</a> Vim script. <a href="repeat.txt.html#%3Asource" class="l">:source</a>
+                                <a href="cmdline.txt.html#%3Cafile%3E" class="s">&lt;afile&gt;</a> <a href="motion.txt.html#is" class="d">is</a> the name of the file being sourced.
+                                The <a href="#autocommand" class="d">autocommand</a> <a href="vim_faq.txt.html#must" class="d">must</a> source this file.
+                                <a href="#Cmd-event" class="l">Cmd-event</a>
+                                                        <a name="SpellFileMissing" class="t">SpellFileMissing</a>
+<a href="#SpellFileMissing" class="d">SpellFileMissing</a>                When trying to load <a href="insert.txt.html#a" class="d">a</a> <a href="spell.txt.html#spell" class="d">spell</a> checking file and
+                                <a href="motion.txt.html#it" class="d">it</a> can't be found.  The <a href="pattern.txt.html#pattern" class="d">pattern</a> <a href="motion.txt.html#is" class="d">is</a> matched
+                                against the language.  <a href="cmdline.txt.html#%3Camatch%3E" class="s">&lt;amatch&gt;</a> <a href="motion.txt.html#is" class="d">is</a> the
+                                language, <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> also matters.  See
+                                <a href="spell.txt.html#spell-SpellFileMissing" class="l">spell-SpellFileMissing</a><a href="repeat.txt.html#." class="d">.</a>
+                                                        <a name="StdinReadPost" class="t">StdinReadPost</a>
+<a href="#StdinReadPost" class="d">StdinReadPost</a>                   After reading from the stdin into the buffer,
+                                before executing the modelines.  Only used
+                                when the "<a href="motion.txt.html#-" class="d">-</a>" argument was used when Vim was
+                                started <a href="starting.txt.html#--" class="l">--</a><a href="repeat.txt.html#." class="d">.</a>
+                                                        <a name="StdinReadPre" class="t">StdinReadPre</a>
+<a href="#StdinReadPre" class="d">StdinReadPre</a>                    Before reading from stdin into the buffer.
+                                Only used when the "<a href="motion.txt.html#-" class="d">-</a>" argument was used when
+                                Vim was started <a href="starting.txt.html#--" class="l">--</a><a href="repeat.txt.html#." class="d">.</a>
+                                                        <a name="SwapExists" class="t">SwapExists</a>
+<a href="#SwapExists" class="d">SwapExists</a>                      Detected an existing swap file when <a href="starting.txt.html#starting" class="d">starting</a>
+                                to edit <a href="insert.txt.html#a" class="d">a</a> file.  Only when <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> possible to
+                                select <a href="insert.txt.html#a" class="d">a</a> way to handle the situation, when Vim
+                                would ask the user what to do.
+                                The <a href="eval.txt.html#v%3Aswapname" class="l">v:swapname</a> variable holds the name of
+                                the swap file found, <a href="cmdline.txt.html#%3Cafile%3E" class="s">&lt;afile&gt;</a> the file being
+                                edited.  <a href="eval.txt.html#v%3Aswapcommand" class="l">v:swapcommand</a> may contain <a href="insert.txt.html#a" class="d">a</a> command
+                                to be executed in the opened file.
+                                The commands should set the <a href="eval.txt.html#v%3Aswapchoice" class="l">v:swapchoice</a>
+                                variable to <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#string" class="d">string</a> with one character to
+                                tell Vim what should be done next:
+                                        'o'     open read-only
+                                        'e'     edit the file anyway
+                                        'r'     recover
+                                        'd'     delete the swap file
+                                        'q'     quit, don't edit the file
+                                        'a'     abort, like hitting <a href="pattern.txt.html#CTRL-C" class="k">CTRL-C</a>
+                                When set to an empty <a href="eval.txt.html#string" class="d">string</a> the user will be
+                                asked, <a href="motion.txt.html#as" class="d">as</a> if there was no <a href="#SwapExists" class="d">SwapExists</a> autocmd.
+                                                        <a name="E812" class="t">E812</a>
+                                It <a href="motion.txt.html#is" class="d">is</a> not allowed to change to another buffer,
+                                change <a href="insert.txt.html#a" class="d">a</a> buffer name or change directory
+                                here.
+                                <span class="s">{only available with the +eval feature}</span>
+                                                        <a name="Syntax" class="t">Syntax</a>
+<a href="#Syntax" class="d">Syntax</a>                          When the <a href="options.txt.html#%27syntax%27" class="o">'syntax'</a> option has been set.  The
+                                <a href="pattern.txt.html#pattern" class="d">pattern</a> <a href="motion.txt.html#is" class="d">is</a> matched against the <a href="syntax.txt.html#syntax" class="d">syntax</a> name.
+                                <a href="cmdline.txt.html#%3Cafile%3E" class="s">&lt;afile&gt;</a> can be used for the name of the file
+                                where this option was set, and <a href="cmdline.txt.html#%3Camatch%3E" class="s">&lt;amatch&gt;</a> for
+                                the new value of <a href="options.txt.html#%27syntax%27" class="o">'syntax'</a>.
+                                See <a href="syntax.txt.html#%3Asyn-on" class="l">:syn-on</a><a href="repeat.txt.html#." class="d">.</a>
+                                                        <a name="TabClosed" class="t">TabClosed</a>
+<a href="#TabClosed" class="d">TabClosed</a>                       After closing <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#tab" class="d">tab</a> page.
+                                                        <a name="TabEnter" class="t">TabEnter</a>
+<a href="#TabEnter" class="d">TabEnter</a>                        Just after entering <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#tab" class="d">tab</a> page. <a href="tabpage.txt.html#tab-page" class="l">tab-page</a>
+                                After triggering the <a href="#WinEnter" class="d">WinEnter</a> and before
+                                triggering the <a href="#BufEnter" class="d">BufEnter</a> event.
+                                                        <a name="TabLeave" class="t">TabLeave</a>
+<a href="#TabLeave" class="d">TabLeave</a>                        Just before leaving <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#tab" class="d">tab</a> page. <a href="tabpage.txt.html#tab-page" class="l">tab-page</a>
+                                <a href="insert.txt.html#A" class="d">A</a> <a href="#WinLeave" class="d">WinLeave</a> event will have been triggered
+                                first.
+                                                        <a name="TabNew" class="t">TabNew</a>
+<a href="#TabNew" class="d">TabNew</a>                          When <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#tab" class="d">tab</a> page was created. <a href="tabpage.txt.html#tab-page" class="l">tab-page</a>
+                                <a href="insert.txt.html#A" class="d">A</a> <a href="#WinEnter" class="d">WinEnter</a> event will have been triggered
+                                first, <a href="#TabEnter" class="d">TabEnter</a> follows.
+                                                        <a name="TermChanged" class="t">TermChanged</a>
+<a href="#TermChanged" class="d">TermChanged</a>                     After the value of <a href="options.txt.html#%27term%27" class="o">'term'</a> has changed.  Useful
+                                for re-loading the <a href="syntax.txt.html#syntax" class="d">syntax</a> file to update the
+                                colors, fonts and other terminal-dependent
+                                settings.  Executed for all loaded buffers.
+                                                        <a name="TerminalOpen" class="t">TerminalOpen</a>
+<a href="#TerminalOpen" class="d">TerminalOpen</a>                    Just after <a href="insert.txt.html#a" class="d">a</a> <a href="terminal.txt.html#terminal" class="d">terminal</a> buffer was created, with
+                                <span class="e">:terminal</span> or <a href="eval.txt.html#term_start%28%29" class="l">term_start()</a><a href="repeat.txt.html#." class="d">.</a> This event <a href="motion.txt.html#is" class="d">is</a>
+                                triggered even if the buffer <a href="motion.txt.html#is" class="d">is</a> created
+                                without <a href="insert.txt.html#a" class="d">a</a> window, with the ++hidden option.
+                                                        <a name="TermResponse" class="t">TermResponse</a>
+<a href="#TermResponse" class="d">TermResponse</a>                    After the response to <a href="term.txt.html#t_RV" class="l">t_RV</a> <a href="motion.txt.html#is" class="d">is</a> received from
+                                the terminal.  The value of <a href="eval.txt.html#v%3Atermresponse" class="l">v:termresponse</a>
+                                can be used to <a href="diff.txt.html#do" class="d">do</a> things depending on the
+                                <a href="terminal.txt.html#terminal" class="d">terminal</a> version.  <span class="n">Note</span> that this event may be
+                                triggered halfway executing another event,
+                                especially if file I/O, <a href="insert.txt.html#a" class="d">a</a> shell command or
+                                anything else that takes time <a href="motion.txt.html#is" class="d">is</a> involved.
+                                                        <a name="TextChanged" class="t">TextChanged</a>
+<a href="#TextChanged" class="d">TextChanged</a>                     After <a href="insert.txt.html#a" class="d">a</a> change was made to the text in the
+                                current buffer in <a href="intro.txt.html#Normal" class="d">Normal</a> mode.  That <a href="motion.txt.html#is" class="d">is</a> when
+                                <a href="eval.txt.html#b%3Achangedtick" class="l">b:changedtick</a> has changed.
+                                Not triggered when there <a href="motion.txt.html#is" class="d">is</a> typeahead or when
+                                an <a href="motion.txt.html#operator" class="d">operator</a> <a href="motion.txt.html#is" class="d">is</a> pending.
+                                Careful: This <a href="motion.txt.html#is" class="d">is</a> triggered very often, don't
+                                <a href="diff.txt.html#do" class="d">do</a> anything that the user does not expect or
+                                that <a href="motion.txt.html#is" class="d">is</a> slow.
+                                                        <a name="TextChangedI" class="t">TextChangedI</a>
+<a href="#TextChangedI" class="d">TextChangedI</a>                    After <a href="insert.txt.html#a" class="d">a</a> change was made to the text in the
+                                current buffer in <a href="insert.txt.html#Insert" class="d">Insert</a> mode.
+                                Not triggered when the popup menu <a href="motion.txt.html#is" class="d">is</a> visible.
+                                Otherwise the same <a href="motion.txt.html#as" class="d">as</a> TextChanged.
+                                                        <a name="TextChangedP" class="t">TextChangedP</a>
+<a href="#TextChangedP" class="d">TextChangedP</a>                    After <a href="insert.txt.html#a" class="d">a</a> change was made to the text in the
+                                current buffer in <a href="insert.txt.html#Insert" class="d">Insert</a> mode, only when the
+                                popup menu <a href="motion.txt.html#is" class="d">is</a> visible.  Otherwise the same <a href="motion.txt.html#as" class="d">as</a>
+                                TextChanged.
+                                                        <a name="TextYankPost" class="t">TextYankPost</a>
+<a href="#TextYankPost" class="d">TextYankPost</a>                    After text has been yanked or deleted in the
+                                current buffer.  The following values of
+                                <a href="eval.txt.html#v%3Aevent" class="l">v:event</a> can be used to determine the operation
+                                that triggered this autocmd:
+                                   <a href="motion.txt.html#operator" class="d">operator</a>     The operation performed.
+                                   regcontents  Text that was stored in the
+                                                register, <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of lines,
+                                                like with: 
+<span class="e">                                                getreg(r, 1, 1)</span>
+                                  regname      Name of the <a href="sponsor.txt.html#register" class="l">register</a> or
+                                                empty <a href="eval.txt.html#string" class="d">string</a> for the unnamed
+                                                register.
+                                   regtype      Type of the register, see
+                                                <a href="eval.txt.html#getregtype%28%29" class="l">getregtype()</a><a href="repeat.txt.html#." class="d">.</a>
+                                Not triggered when <a href="change.txt.html#quote_" class="l">quote_</a> <a href="motion.txt.html#is" class="d">is</a> used nor when
+                                called recursively.
+                                It <a href="motion.txt.html#is" class="d">is</a> not allowed to change the buffer text,
+                                see <a href="eval.txt.html#textlock" class="l">textlock</a><a href="repeat.txt.html#." class="d">.</a>
+                                <span class="s">{only when compiled with the +eval feature}</span>
+                                                        <a name="User" class="t">User</a>
+<a href="#User" class="d">User</a>                            Never executed automatically.  To be used for
+                                autocommands that are only executed with
+                                "<a href="#%3Adoautocmd" class="d">:doautocmd</a>"<a href="repeat.txt.html#." class="d">.</a>
+                                <span class="n">Note</span> that when `:doautocmd <a href="#User" class="d">User</a> MyEvent` <a href="motion.txt.html#is" class="d">is</a>
+                                used while there are no matching autocommands,
+                                you will get an error.  If you don't want
+                                that, define <a href="insert.txt.html#a" class="d">a</a> dummy <a href="#autocommand" class="d">autocommand</a> yourself.
+                                                        <a name="UserGettingBored" class="t">UserGettingBored</a>
+<a href="#UserGettingBored" class="d">UserGettingBored</a>                When the user presses the same key <a href="usr_42.txt.html#42" class="d">42</a> times.
+                                Just kidding! :-)
+                                                        <a name="VimEnter" class="t">VimEnter</a>
+<a href="#VimEnter" class="d">VimEnter</a>                        After doing all the <a href="starting.txt.html#startup" class="d">startup</a> stuff, including
+                                loading <a href="starting.txt.html#.vimrc" class="d">.vimrc</a> files, executing the "<a href="starting.txt.html#-c" class="d">-c</a> cmd"
+                                arguments, creating all <a href="windows.txt.html#windows" class="d">windows</a> and loading
+                                the <a href="windows.txt.html#buffers" class="d">buffers</a> in them.
+                                Just before this event <a href="motion.txt.html#is" class="d">is</a> triggered the
+                                <a href="eval.txt.html#v%3Avim_did_enter" class="l">v:vim_did_enter</a> variable <a href="motion.txt.html#is" class="d">is</a> set, so that you
+                                can do: 
+<span class="e">                                   if v:vim_did_enter</span>
+<span class="e">                                     call s:init()</span>
+<span class="e">                                   else</span>
+<span class="e">                                     au VimEnter * call s:init()</span>
+<span class="e">                                   endif</span>
+                                                       <a name="VimLeave" class="t">VimLeave</a>
+<a href="#VimLeave" class="d">VimLeave</a>                        Before <a href="starting.txt.html#exiting" class="d">exiting</a> Vim, just after <a href="editing.txt.html#writing" class="d">writing</a> the
+                                .viminfo file.  Executed only once, like
+                                VimLeavePre.
+                                To detect an abnormal exit use <a href="eval.txt.html#v%3Adying" class="l">v:dying</a><a href="repeat.txt.html#." class="d">.</a>
+                                When <a href="eval.txt.html#v%3Adying" class="d">v:dying</a> <a href="motion.txt.html#is" class="d">is</a> 2 or more this event <a href="motion.txt.html#is" class="d">is</a> not
+                                triggered.
+                                                        <a name="VimLeavePre" class="t">VimLeavePre</a>
+<a href="#VimLeavePre" class="d">VimLeavePre</a>                     Before <a href="starting.txt.html#exiting" class="d">exiting</a> Vim, just before <a href="editing.txt.html#writing" class="d">writing</a> the
+                                .viminfo file.  This <a href="motion.txt.html#is" class="d">is</a> executed only once,
+                                if there <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> match with the name of what
+                                happens to be the current buffer when exiting.
+                                Mostly useful with <a href="insert.txt.html#a" class="d">a</a> "*" pattern. 
+<span class="e">        :autocmd VimLeavePre * call CleanupStuff()</span>
+                               To detect an abnormal exit use <a href="eval.txt.html#v%3Adying" class="l">v:dying</a><a href="repeat.txt.html#." class="d">.</a>
+                                When <a href="eval.txt.html#v%3Adying" class="d">v:dying</a> <a href="motion.txt.html#is" class="d">is</a> 2 or more this event <a href="motion.txt.html#is" class="d">is</a> not
+                                triggered.
+                                                        <a name="VimResized" class="t">VimResized</a>
+<a href="#VimResized" class="d">VimResized</a>                      After the Vim <a href="windows.txt.html#window" class="d">window</a> was resized, thus <a href="options.txt.html#%27lines%27" class="o">'lines'</a>
+                                and/or <a href="options.txt.html#%27columns%27" class="o">'columns'</a> changed.  Not when <a href="starting.txt.html#starting" class="d">starting</a>
+                                up though.
+                                                        <a name="WinEnter" class="t">WinEnter</a>
+<a href="#WinEnter" class="d">WinEnter</a>                        After entering another window.  Not done for
+                                the first window, when Vim has just started.
+                                Useful for setting the <a href="windows.txt.html#window" class="d">window</a> height.
+                                If the <a href="windows.txt.html#window" class="d">window</a> <a href="motion.txt.html#is" class="d">is</a> for another buffer, Vim
+                                executes the <a href="#BufEnter" class="d">BufEnter</a> autocommands after the
+                                <a href="#WinEnter" class="d">WinEnter</a> autocommands.
+                                <span class="n">Note:</span> For split and <a href="tabpage.txt.html#tabpage" class="d">tabpage</a> commands the
+                                <a href="#WinEnter" class="d">WinEnter</a> event <a href="motion.txt.html#is" class="d">is</a> triggered after the split
+                                or <a href="intro.txt.html#tab" class="d">tab</a> command but before the file <a href="motion.txt.html#is" class="d">is</a> loaded.
+
+                                                        <a name="WinLeave" class="t">WinLeave</a>
+<a href="#WinLeave" class="d">WinLeave</a>                        Before leaving <a href="insert.txt.html#a" class="d">a</a> window.  If the <a href="windows.txt.html#window" class="d">window</a> to be
+                                entered next <a href="motion.txt.html#is" class="d">is</a> for <a href="insert.txt.html#a" class="d">a</a> different buffer, Vim
+                                executes the <a href="#BufLeave" class="d">BufLeave</a> autocommands before the
+                                <a href="#WinLeave" class="d">WinLeave</a> autocommands (but not for "<a href="windows.txt.html#%3Anew" class="d">:new</a>").
+                                Not used for "<a href="editing.txt.html#%3Aqa" class="d">:qa</a>" or "<a href="editing.txt.html#%3Aq" class="d">:q</a>" when <a href="starting.txt.html#exiting" class="d">exiting</a> Vim.
+
+                                                        <a name="WinNew" class="t">WinNew</a>
+<a href="#WinNew" class="d">WinNew</a>                          When <a href="insert.txt.html#a" class="d">a</a> new <a href="windows.txt.html#window" class="d">window</a> was created.  Not done for
+                                the first window, when Vim has just started.
+                                Before <a href="insert.txt.html#a" class="d">a</a> <a href="#WinEnter" class="d">WinEnter</a> event.
+
+<span class="h">==============================================================================</span>
+6. Patterns                                     <a name="autocmd-patterns" class="t">autocmd-patterns</a> <a name="%7Bpat%7D" class="t">{pat}</a>
+
+The <a href="#%7Bpat%7D" class="s">{pat}</a> argument can be <a href="insert.txt.html#a" class="d">a</a> comma separated list.  This works <a href="motion.txt.html#as" class="d">as</a> if the
+command was given with each <a href="pattern.txt.html#pattern" class="d">pattern</a> separately.  Thus this command: 
+<span class="e">        :autocmd BufRead *.txt,*.info set et</span>
+Is equivalent to: 
+<span class="e">        :autocmd BufRead *.txt set et</span>
+<span class="e">        :autocmd BufRead *.info set et</span>
+<span class="e"></span>
+The file <a href="pattern.txt.html#pattern" class="d">pattern</a> <a href="#%7Bpat%7D" class="s">{pat}</a> <a href="motion.txt.html#is" class="d">is</a> tested for <a href="insert.txt.html#a" class="d">a</a> match against the file name in one of
+two ways:
+1. When there <a href="motion.txt.html#is" class="d">is</a> no '/' in the pattern, Vim checks for <a href="insert.txt.html#a" class="d">a</a> match against only
+   the tail part of the file name (without its leading directory path).
+2. When there <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> '/' in the pattern, Vim checks for <a href="insert.txt.html#a" class="d">a</a> match against both the
+   short file name (as you typed it) and the full file name (after expanding
+   <a href="motion.txt.html#it" class="d">it</a> to <a href="insert.txt.html#a" class="d">a</a> full path and resolving symbolic links).
+
+The special <a href="pattern.txt.html#pattern" class="d">pattern</a> <span class="s">&lt;buffer&gt;</span> or <a href="#%3Cbuffer%3DN%3E" class="s">&lt;buffer=N&gt;</a> <a href="motion.txt.html#is" class="d">is</a> used for buffer-local
+autocommands <a href="#autocmd-buflocal" class="l">autocmd-buflocal</a><a href="repeat.txt.html#." class="d">.</a>  This <a href="pattern.txt.html#pattern" class="d">pattern</a> <a href="motion.txt.html#is" class="d">is</a> not matched against the name
+of <a href="insert.txt.html#a" class="d">a</a> buffer.
+
+Examples: 
+<span class="e">        :autocmd BufRead *.txt          set et</span>
+Set the <a href="options.txt.html#%27et%27" class="o">'et'</a> option for all text files. 
+<span class="e"></span>
+<span class="e">        :autocmd BufRead /vim/src/*.c   set cindent</span>
+Set the <a href="options.txt.html#%27cindent%27" class="o">'cindent'</a> option for <a href="change.txt.html#C" class="d">C</a> files in the /vim/src directory. 
+<span class="e"></span>
+<span class="e">        :autocmd BufRead /tmp/*.c       set ts=5</span>
+If you have <a href="insert.txt.html#a" class="d">a</a> link from "/tmp/test.c" to "/home/nobody/vim/src/test.c"<a href="motion.txt.html#%2C" class="d">,</a> and
+you start editing "/tmp/test.c"<a href="motion.txt.html#%2C" class="d">,</a> this <a href="#autocommand" class="d">autocommand</a> will match.
+
+<span class="n">Note:</span>  To match part of <a href="insert.txt.html#a" class="d">a</a> path, but not from the root directory, use <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#%27" class="d">'</a>*<a href="motion.txt.html#%27" class="d">'</a> <a href="motion.txt.html#as" class="d">as</a>
+the first character.  Example: 
+<span class="e">        :autocmd BufRead */doc/*.txt    set tw=78</span>
+This <a href="#autocommand" class="d">autocommand</a> will for example be executed for "/tmp/doc/xx.txt" and
+"/usr/home/piet/doc/yy.txt"<a href="repeat.txt.html#." class="d">.</a>  The number of directories does not matter here.
+
+
+The file name that the <a href="pattern.txt.html#pattern" class="d">pattern</a> <a href="motion.txt.html#is" class="d">is</a> matched against <a href="motion.txt.html#is" class="d">is</a> after expanding
+wildcards.  Thus if you issue this command: 
+<span class="e">        :e $ROOTDIR/main.$EXT</span>
+The argument <a href="motion.txt.html#is" class="d">is</a> first expanded to: 
+<span class="e">        /usr/root/main.py</span>
+Before it's matched with the <a href="pattern.txt.html#pattern" class="d">pattern</a> of the autocommand.  Careful with this
+when using events like FileReadCmd, the value of <a href="cmdline.txt.html#%3Camatch%3E" class="s">&lt;amatch&gt;</a> may not be what you
+expect.
+
+
+Environment <a href="eval.txt.html#variables" class="d">variables</a> can be used in <a href="insert.txt.html#a" class="d">a</a> pattern: 
+<span class="e">        :autocmd BufRead $VIMRUNTIME/doc/*.txt  set expandtab</span>
+And <a href="change.txt.html#%7E" class="d">~</a> can be used for the <a href="intro.txt.html#home" class="d">home</a> directory (if <a href="options.txt.html#%24HOME" class="d">$HOME</a> <a href="motion.txt.html#is" class="d">is</a> defined): 
+<span class="e">        :autocmd BufWritePost ~/.vimrc   so ~/.vimrc</span>
+<span class="e">        :autocmd BufRead ~archive/*      set readonly</span>
+The environment variable <a href="motion.txt.html#is" class="d">is</a> expanded when the <a href="#autocommand" class="d">autocommand</a> <a href="motion.txt.html#is" class="d">is</a> defined, not when
+the <a href="#autocommand" class="d">autocommand</a> <a href="motion.txt.html#is" class="d">is</a> executed.  This <a href="motion.txt.html#is" class="d">is</a> different from the command!
+
+                                                        <a name="file-pattern" class="t">file-pattern</a>
+The <a href="pattern.txt.html#pattern" class="d">pattern</a> <a href="motion.txt.html#is" class="d">is</a> interpreted like mostly used in file names:
+        *       matches any sequence of characters; Unusual: includes path
+                separators
+        <a href="pattern.txt.html#%3F" class="d">?</a>       matches any single character
+        \?      matches <a href="insert.txt.html#a" class="d">a</a> '?'
+        <a href="repeat.txt.html#." class="d">.</a>       matches <a href="insert.txt.html#a" class="d">a</a> '.'
+        <a href="change.txt.html#%7E" class="d">~</a>       matches <a href="insert.txt.html#a" class="d">a</a> '~'
+        <a href="motion.txt.html#%2C" class="d">,</a>       separates patterns
+        \,      matches <a href="insert.txt.html#a" class="d">a</a> ','
+        <span class="s">{ }</span>     like \( \) in <a href="insert.txt.html#a" class="d">a</a> <a href="pattern.txt.html#pattern" class="l">pattern</a>
+        <a href="motion.txt.html#%2C" class="d">,</a>       inside <span class="s">{ }</span>: like \| in <a href="insert.txt.html#a" class="d">a</a> <a href="pattern.txt.html#pattern" class="l">pattern</a>
+        \}      literal <a href="motion.txt.html#%7D" class="d">}</a>
+        \{      literal <a href="motion.txt.html#%7B" class="d">{</a>
+        \\\{n,m\}  like \{n,m} in <a href="insert.txt.html#a" class="d">a</a> <a href="pattern.txt.html#pattern" class="l">pattern</a>
+        \       special meaning like in <a href="insert.txt.html#a" class="d">a</a> <a href="pattern.txt.html#pattern" class="l">pattern</a>
+        <span class="s">[ch]</span>    matches 'c' or 'h'
+        <span class="s">[^ch]</span>   match any character but 'c' and 'h'
+
+<span class="n">Note</span> that for all systems the '/' character <a href="motion.txt.html#is" class="d">is</a> used for path separator (even
+<a href="os_msdos.txt.html#MS-DOS" class="d">MS-DOS</a> and OS/2).  This was done because the <a href="intro.txt.html#backslash" class="d">backslash</a> <a href="motion.txt.html#is" class="d">is</a> difficult to use
+in <a href="insert.txt.html#a" class="d">a</a> <a href="pattern.txt.html#pattern" class="d">pattern</a> and to make the autocommands portable across different systems.
+
+It <a href="motion.txt.html#is" class="d">is</a> possible to use <a href="pattern.txt.html#pattern" class="l">pattern</a> items, but they may not work <a href="motion.txt.html#as" class="d">as</a> expected,
+because of the translation done for the above.
+
+                                                        <a name="autocmd-changes" class="t">autocmd-changes</a>
+Matching with the <a href="pattern.txt.html#pattern" class="d">pattern</a> <a href="motion.txt.html#is" class="d">is</a> done when an event <a href="motion.txt.html#is" class="d">is</a> triggered.  Changing the
+buffer name in one of the autocommands, or even <a href="change.txt.html#deleting" class="d">deleting</a> the buffer, does not
+change which autocommands will be executed.  Example: 
+<span class="e"></span>
+<span class="e">        au BufEnter *.foo  bdel</span>
+<span class="e">        au BufEnter *.foo  set modified</span>
+<span class="e"></span>
+This will delete the current buffer and then set <a href="options.txt.html#%27modified%27" class="o">'modified'</a> in what has become
+the current buffer instead.  Vim doesn't take into account that "*.foo"
+doesn't match with that buffer name.  It matches "*.foo" with the name of the
+buffer <a href="motion.txt.html#at" class="d">at</a> the moment the event was triggered.
+
+However, buffer-local autocommands will not be executed for <a href="insert.txt.html#a" class="d">a</a> buffer that has
+been wiped out with <a href="windows.txt.html#%3Abwipe" class="l">:bwipe</a><a href="repeat.txt.html#." class="d">.</a>  After <a href="change.txt.html#deleting" class="d">deleting</a> the buffer with <a href="windows.txt.html#%3Abdel" class="l">:bdel</a> the
+buffer actually still exists (it becomes unlisted), thus the autocommands are
+still executed.
+
+<span class="h">==============================================================================</span>
+7. Buffer-local autocommands    <a name="autocmd-buflocal" class="t">autocmd-buflocal</a> <a name="autocmd-buffer-local" class="t">autocmd-buffer-local</a>
+                                        <a name="%3Cbuffer%3DN%3E" class="t">&lt;buffer=N&gt;</a> <a name="%3Cbuffer%3Dabuf%3E" class="t">&lt;buffer=abuf&gt;</a> <a name="E680" class="t">E680</a>
+
+Buffer-local autocommands are attached to <a href="insert.txt.html#a" class="d">a</a> specific buffer.  They are useful
+if the buffer does not have <a href="insert.txt.html#a" class="d">a</a> name and when the name does not match <a href="insert.txt.html#a" class="d">a</a> specific
+pattern.  But <a href="motion.txt.html#it" class="d">it</a> also means they <a href="vim_faq.txt.html#must" class="d">must</a> be explicitly added to each buffer.
+
+Instead of <a href="insert.txt.html#a" class="d">a</a> <a href="pattern.txt.html#pattern" class="d">pattern</a> buffer-local autocommands use one of these forms:
+        <span class="s">&lt;buffer&gt;</span>        current buffer
+        <span class="s">&lt;buffer=99&gt;</span>     buffer number 99
+        <a href="#%3Cbuffer%3Dabuf%3E" class="s">&lt;buffer=abuf&gt;</a>   using <a href="cmdline.txt.html#%3Cabuf%3E" class="s">&lt;abuf&gt;</a> (only when executing autocommands)
+                        <a href="cmdline.txt.html#%3Cabuf%3E" class="l">&lt;abuf&gt;</a>
+
+Examples: 
+<span class="e">    :au CursorHold &lt;buffer&gt;  echo 'hold'</span>
+<span class="e">    :au CursorHold &lt;buffer=33&gt;  echo 'hold'</span>
+<span class="e">    :au BufNewFile * au CursorHold &lt;buffer=abuf&gt;  echo 'hold'</span>
+<span class="e"></span>
+All the commands for autocommands also work with buffer-local autocommands,
+simply use the special <a href="eval.txt.html#string" class="d">string</a> instead of the pattern.  Examples: 
+<span class="e">    :au! * &lt;buffer&gt;                  " remove buffer-local autocommands for</span>
+<span class="e">                                     " current buffer</span>
+<span class="e">    :au! * &lt;buffer=33&gt;               " remove buffer-local autocommands for</span>
+<span class="e">                                     " buffer #33</span>
+<span class="e">    :bufdo :au! CursorHold &lt;buffer&gt;  " remove autocmd for given event for all</span>
+<span class="e">                                     " buffers</span>
+<span class="e">    :au * &lt;buffer&gt;                   " list buffer-local autocommands for</span>
+<span class="e">                                     " current buffer</span>
+<span class="e"></span>
+<span class="n">Note</span> that when an <a href="#autocommand" class="d">autocommand</a> <a href="motion.txt.html#is" class="d">is</a> defined for the current buffer, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> stored
+with the buffer number.  Thus <a href="motion.txt.html#it" class="d">it</a> uses the form "<span class="s">&lt;buffer=12&gt;</span>"<a href="motion.txt.html#%2C" class="d">,</a> where 12 <a href="motion.txt.html#is" class="d">is</a> the
+number of the current buffer.  You will see this when listing autocommands,
+for example.
+
+To test for presence of buffer-local autocommands use the <a href="eval.txt.html#exists%28%29" class="l">exists()</a> function
+<a href="motion.txt.html#as" class="d">as</a> follows: 
+<span class="e">    :if exists("#CursorHold#&lt;buffer=12&gt;") | ... | endif</span>
+<span class="e">    :if exists("#CursorHold#&lt;buffer&gt;") | ... | endif    " for current buffer</span>
+<span class="e"></span>
+When <a href="insert.txt.html#a" class="d">a</a> buffer <a href="motion.txt.html#is" class="d">is</a> wiped out its buffer-local autocommands are also gone, of
+course.  <span class="n">Note</span> that when <a href="change.txt.html#deleting" class="d">deleting</a> <a href="insert.txt.html#a" class="d">a</a> buffer, e.g., with "<a href="windows.txt.html#%3Abdel" class="d">:bdel</a>"<a href="motion.txt.html#%2C" class="d">,</a> <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> only
+unlisted, the autocommands are still present.  In order to see the removal of
+buffer-local autocommands: 
+<span class="e">    :set verbose=6</span>
+<span class="e"></span>
+It <a href="motion.txt.html#is" class="d">is</a> not possible to define buffer-local autocommands for <a href="insert.txt.html#a" class="d">a</a> non-existent
+buffer.
+
+<span class="h">==============================================================================</span>
+8. Groups                                               <a name="autocmd-groups" class="t">autocmd-groups</a>
+
+Autocommands can be <a href="change.txt.html#put" class="d">put</a> together in <a href="insert.txt.html#a" class="d">a</a> group.  This <a href="motion.txt.html#is" class="d">is</a> useful for removing or
+executing <a href="insert.txt.html#a" class="d">a</a> group of autocommands.  For example, all the autocommands for
+<a href="syntax.txt.html#syntax" class="d">syntax</a> highlighting are <a href="change.txt.html#put" class="d">put</a> in the "highlight" group, to be able to execute
+"<a href="#%3Adoautoall" class="d">:doautoall</a> highlight <a href="#BufRead" class="d">BufRead</a>" when the <a href="gui.txt.html#GUI" class="d">GUI</a> starts.
+
+When no specific group <a href="motion.txt.html#is" class="d">is</a> selected, Vim uses the default group.  The default
+group does not have <a href="insert.txt.html#a" class="d">a</a> name.  You cannot execute the autocommands from the
+default group separately; you can execute them only by executing autocommands
+for all groups.
+
+Normally, when executing autocommands automatically, Vim uses the autocommands
+for all groups.  The group only matters when executing autocommands with
+"<a href="#%3Adoautocmd" class="d">:doautocmd</a>" or "<a href="#%3Adoautoall" class="d">:doautoall</a>"<a href="motion.txt.html#%2C" class="d">,</a> or when defining or <a href="change.txt.html#deleting" class="d">deleting</a> autocommands.
+
+The group name can contain any characters except white space.  The group name
+"<a href="intro.txt.html#end" class="d">end</a>" <a href="motion.txt.html#is" class="d">is</a> reserved (also in uppercase).
+
+The group name <a href="motion.txt.html#is" class="d">is</a> <a href="change.txt.html#case" class="d">case</a> sensitive.  <span class="n">Note</span> that this <a href="motion.txt.html#is" class="d">is</a> different from the event
+name!
+
+                                                        <a name="%3Aaug" class="t">:aug</a> <a name="%3Aaugroup" class="t">:augroup</a>
+:aug[roup] <span class="s">{name}</span>               Define the autocmd group name for the
+                                following "<a href="#%3Aautocmd" class="d">:autocmd</a>" commands.  The name "<a href="intro.txt.html#end" class="d">end</a>"
+                                or "END" selects the default group.
+                                To avoid confusion, the name should be
+                                different from existing <a href="#%7Bevent%7D" class="s">{event}</a> names, <a href="motion.txt.html#as" class="d">as</a> this
+                                most likely will not <a href="diff.txt.html#do" class="d">do</a> what you intended.
+
+                                        <a name="%3Aaugroup-delete" class="t">:augroup-delete</a> <a name="E367" class="t">E367</a> <a name="W19" class="t">W19</a> <a name="E936" class="t">E936</a>
+:aug[roup]! <span class="s">{name}</span>              Delete the autocmd group <span class="s">{name}</span>.  Don't use
+                                this if there <a href="motion.txt.html#is" class="d">is</a> still an <a href="#autocommand" class="d">autocommand</a> using
+                                this group!  You will get <a href="insert.txt.html#a" class="d">a</a> warning if doing
+                                <a href="motion.txt.html#it" class="d">it</a> anyway. when the group <a href="motion.txt.html#is" class="d">is</a> the current group
+                                you will get error E936.
+
+To enter autocommands for <a href="insert.txt.html#a" class="d">a</a> specific group, use this method:
+1. <a href="visual.txt.html#Select" class="d">Select</a> the group with "<a href="#%3Aaugroup" class="d">:augroup</a> <span class="s">{name}</span>"<a href="repeat.txt.html#." class="d">.</a>
+2. Delete any old autocommands with ":au!"<a href="repeat.txt.html#." class="d">.</a>
+3. Define the autocommands.
+4. Go back to the default group with "augroup END"<a href="repeat.txt.html#." class="d">.</a>
+
+Example: 
+<span class="e">        :augroup uncompress</span>
+<span class="e">        :  au!</span>
+<span class="e">        :  au BufEnter *.gz     %!gunzip</span>
+<span class="e">        :augroup END</span>
+<span class="e"></span>
+This prevents having the autocommands defined <a href="if_cscop.txt.html#twice" class="d">twice</a> (e.g., after sourcing the
+<a href="starting.txt.html#.vimrc" class="d">.vimrc</a> file again).
+
+<span class="h">==============================================================================</span>
+9. Executing autocommands                               <a name="autocmd-execute" class="t">autocmd-execute</a>
+
+Vim can also execute Autocommands non-automatically.  This <a href="motion.txt.html#is" class="d">is</a> useful if you
+have changed autocommands, or when Vim has executed the wrong autocommands
+(e.g., the file <a href="pattern.txt.html#pattern" class="d">pattern</a> match was wrong).
+
+<span class="n">Note</span> that the <a href="options.txt.html#%27eventignore%27" class="o">'eventignore'</a> option applies here too.  Events listed in this
+option will not cause any commands to be executed.
+
+                                        <a name="%3Ado" class="t">:do</a> <a name="%3Adoau" class="t">:doau</a> <a name="%3Adoautocmd" class="t">:doautocmd</a> <a name="E217" class="t">E217</a>
+:do[autocmd] [&lt;nomodeline&gt;] <span class="s">[group]</span> <a href="#%7Bevent%7D" class="s">{event}</a> <span class="s">[fname]</span>
+                        Apply the autocommands matching <span class="s">[fname]</span> (default:
+                        current file name) for <a href="#%7Bevent%7D" class="s">{event}</a> to the current buffer.
+                        You can use this when the current file name does not
+                        match the right pattern, after <a href="change.txt.html#changing" class="d">changing</a> settings, or
+                        to execute autocommands for <a href="insert.txt.html#a" class="d">a</a> certain event.
+                        It's possible to use this inside an <a href="#autocommand" class="d">autocommand</a> too,
+                        so you can base the autocommands for one extension on
+                        another extension.  Example: 
+<span class="e">                                :au BufEnter *.cpp so ~/.vimrc_cpp</span>
+<span class="e">                                :au BufEnter *.cpp doau BufEnter x.c</span>
+                       Be careful to avoid endless loops.  See
+                        <a href="#autocmd-nested" class="l">autocmd-nested</a><a href="repeat.txt.html#." class="d">.</a>
+
+                        When the <span class="s">[group]</span> argument <a href="motion.txt.html#is" class="d">is</a> not given, Vim executes
+                        the autocommands for all groups.  When the <span class="s">[group]</span>
+                        argument <a href="motion.txt.html#is" class="d">is</a> included, Vim executes only the matching
+                        autocommands for that group.  <span class="n">Note:</span> if you use an
+                        undefined group name, Vim gives you an error message.
+                                                        <a name="%3Cnomodeline%3E" class="t">&lt;nomodeline&gt;</a>
+                        After applying the autocommands the modelines are
+                        processed, so that their settings overrule the
+                        settings from autocommands, like what happens when
+                        editing <a href="insert.txt.html#a" class="d">a</a> file. This <a href="motion.txt.html#is" class="d">is</a> skipped when the <a href="#%3Cnomodeline%3E" class="s">&lt;nomodeline&gt;</a>
+                        argument <a href="motion.txt.html#is" class="d">is</a> present. You probably want to use
+                        <a href="#%3Cnomodeline%3E" class="s">&lt;nomodeline&gt;</a> for events that are not used when loading
+                        <a href="insert.txt.html#a" class="d">a</a> buffer, such <a href="motion.txt.html#as" class="d">as</a> <a href="#User" class="l">User</a><a href="repeat.txt.html#." class="d">.</a>
+                        Processing modelines <a href="motion.txt.html#is" class="d">is</a> also skipped when no
+                        matching autocommands were executed.
+
+                                                <a name="%3Adoautoa" class="t">:doautoa</a> <a name="%3Adoautoall" class="t">:doautoall</a>
+:doautoa[ll] [&lt;nomodeline&gt;] <span class="s">[group]</span> <a href="#%7Bevent%7D" class="s">{event}</a> <span class="s">[fname]</span>
+                        Like "<a href="#%3Adoautocmd" class="d">:doautocmd</a>"<a href="motion.txt.html#%2C" class="d">,</a> but apply the autocommands to each
+                        loaded buffer.  <span class="n">Note</span> that <span class="s">[fname]</span> <a href="motion.txt.html#is" class="d">is</a> used to select
+                        the autocommands, not the <a href="windows.txt.html#buffers" class="d">buffers</a> to which they are
+                        applied.
+                        Careful: Don't use this for autocommands that delete <a href="insert.txt.html#a" class="d">a</a>
+                        buffer, change to another buffer or change the
+                        contents of <a href="insert.txt.html#a" class="d">a</a> buffer; the result <a href="motion.txt.html#is" class="d">is</a> unpredictable.
+                        This command <a href="motion.txt.html#is" class="d">is</a> intended for autocommands that set
+                        options, change highlighting, and things like that.
+
+<span class="h">==============================================================================</span>
+10. Using autocommands                                  <a name="autocmd-use" class="t">autocmd-use</a>
+
+For WRITING FILES there are four possible sets of events.  Vim uses only one
+of these sets for <a href="insert.txt.html#a" class="d">a</a> write command:
+
+<a href="#BufWriteCmd" class="d">BufWriteCmd</a>     <a href="#BufWritePre" class="d">BufWritePre</a>     <a href="#BufWritePost" class="d">BufWritePost</a>    <a href="editing.txt.html#writing" class="d">writing</a> the whole buffer
+                <a href="#FilterWritePre" class="d">FilterWritePre</a>  <a href="#FilterWritePost" class="d">FilterWritePost</a> <a href="editing.txt.html#writing" class="d">writing</a> to <a href="change.txt.html#filter" class="d">filter</a> temp file
+<a href="#FileAppendCmd" class="d">FileAppendCmd</a>   <a href="#FileAppendPre" class="d">FileAppendPre</a>   <a href="#FileAppendPost" class="d">FileAppendPost</a>  appending to <a href="insert.txt.html#a" class="d">a</a> file
+<a href="#FileWriteCmd" class="d">FileWriteCmd</a>    <a href="#FileWritePre" class="d">FileWritePre</a>    <a href="#FileWritePost" class="d">FileWritePost</a>   any other file write
+
+When there <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> matching "*Cmd" autocommand, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> assumed <a href="motion.txt.html#it" class="d">it</a> will <a href="diff.txt.html#do" class="d">do</a> the
+writing.  No further <a href="editing.txt.html#writing" class="d">writing</a> <a href="motion.txt.html#is" class="d">is</a> done and the other events are not triggered.
+<a href="#Cmd-event" class="l">Cmd-event</a>
+
+<span class="n">Note</span> that the *WritePost commands should <a href="undo.txt.html#undo" class="d">undo</a> any changes to the buffer that
+were caused by the *WritePre commands; otherwise, <a href="editing.txt.html#writing" class="d">writing</a> the file will have
+the side effect of <a href="change.txt.html#changing" class="d">changing</a> the buffer.
+
+Before executing the autocommands, the buffer from which the lines are to be
+written temporarily becomes the current buffer.  Unless the autocommands
+change the current buffer or delete the previously current buffer, the
+previously current buffer <a href="motion.txt.html#is" class="d">is</a> made the current buffer again.
+
+The *WritePre and *AppendPre autocommands <a href="vim_faq.txt.html#must" class="d">must</a> not delete the buffer from
+which the lines are to be written.
+
+The <a href="motion.txt.html#%27%5B" class="d">'[</a> and <a href="motion.txt.html#%27%5D" class="d">']</a> marks have <a href="insert.txt.html#a" class="d">a</a> special position:
+<a href="motion.txt.html#-" class="d">-</a> Before the *ReadPre event the <a href="motion.txt.html#%27%5B" class="d">'[</a> <a href="motion.txt.html#mark" class="d">mark</a> <a href="motion.txt.html#is" class="d">is</a> set to the line just above where
+  the new lines will be inserted.
+<a href="motion.txt.html#-" class="d">-</a> Before the *ReadPost event the <a href="motion.txt.html#%27%5B" class="d">'[</a> <a href="motion.txt.html#mark" class="d">mark</a> <a href="motion.txt.html#is" class="d">is</a> set to the first line that was
+  just read, the <a href="motion.txt.html#%27%5D" class="d">']</a> <a href="motion.txt.html#mark" class="d">mark</a> to the last line.
+<a href="motion.txt.html#-" class="d">-</a> Before executing the *WriteCmd, *WritePre and *AppendPre autocommands the <a href="motion.txt.html#%27%5B" class="d">'[</a>
+  <a href="motion.txt.html#mark" class="d">mark</a> <a href="motion.txt.html#is" class="d">is</a> set to the first line that will be written, the <a href="motion.txt.html#%27%5D" class="d">']</a> <a href="motion.txt.html#mark" class="d">mark</a> to the last
+  line.
+Careful: <a href="motion.txt.html#%27%5B" class="d">'[</a> and <a href="motion.txt.html#%27%5D" class="d">']</a> change when using commands that change the buffer.
+
+In commands which expect <a href="insert.txt.html#a" class="d">a</a> file name, you can use "<a href="cmdline.txt.html#%3Cafile%3E" class="s">&lt;afile&gt;</a>" for the file name
+that <a href="motion.txt.html#is" class="d">is</a> being read <a href="cmdline.txt.html#%3A%3Cafile%3E" class="l">:&lt;afile&gt;</a> (you can also use "<a href="motion.txt.html#%25" class="d">%</a>" for the current file
+name).  "<a href="cmdline.txt.html#%3Cabuf%3E" class="s">&lt;abuf&gt;</a>" can be used for the buffer number of the currently effective
+buffer.  This also works for <a href="windows.txt.html#buffers" class="d">buffers</a> that doesn't have <a href="insert.txt.html#a" class="d">a</a> name.  But <a href="motion.txt.html#it" class="d">it</a> doesn't
+work for files without <a href="insert.txt.html#a" class="d">a</a> buffer (e.g., with "<a href="insert.txt.html#%3Ar" class="d">:r</a> file").
+
+                                                        <a name="gzip-example" class="t">gzip-example</a>
+Examples for reading and <a href="editing.txt.html#writing" class="d">writing</a> compressed files: 
+<span class="e">  :augroup gzip</span>
+<span class="e">  :  autocmd!</span>
+<span class="e">  :  autocmd BufReadPre,FileReadPre     *.gz set bin</span>
+<span class="e">  :  autocmd BufReadPost,FileReadPost   *.gz '[,']!gunzip</span>
+<span class="e">  :  autocmd BufReadPost,FileReadPost   *.gz set nobin</span>
+<span class="e">  :  autocmd BufReadPost,FileReadPost   *.gz execute ":doautocmd BufReadPost " . expand("%:r")</span>
+<span class="e">  :  autocmd BufWritePost,FileWritePost *.gz !mv &lt;afile&gt; &lt;afile&gt;:r</span>
+<span class="e">  :  autocmd BufWritePost,FileWritePost *.gz !gzip &lt;afile&gt;:r</span>
+<span class="e"></span>
+<span class="e">  :  autocmd FileAppendPre              *.gz !gunzip &lt;afile&gt;</span>
+<span class="e">  :  autocmd FileAppendPre              *.gz !mv &lt;afile&gt;:r &lt;afile&gt;</span>
+<span class="e">  :  autocmd FileAppendPost             *.gz !mv &lt;afile&gt; &lt;afile&gt;:r</span>
+<span class="e">  :  autocmd FileAppendPost             *.gz !gzip &lt;afile&gt;:r</span>
+<span class="e">  :augroup END</span>
+<span class="e"></span>
+The "<a href="pi_gzip.txt.html#gzip" class="d">gzip</a>" group <a href="motion.txt.html#is" class="d">is</a> used to be able to delete any existing autocommands with
+":autocmd!"<a href="motion.txt.html#%2C" class="d">,</a> for when the file <a href="motion.txt.html#is" class="d">is</a> sourced twice.
+
+<a href="motion.txt.html#%28" class="d">(</a>"<a href="cmdline.txt.html#%3Cafile%3E" class="s">&lt;afile&gt;</a>:r" <a href="motion.txt.html#is" class="d">is</a> the file name without the extension, see <a href="cmdline.txt.html#%3A_%25%3A" class="l">:_%:</a><a href="motion.txt.html#%29" class="d">)</a>
+
+The commands executed for the BufNewFile, BufRead/BufReadPost, BufWritePost,
+<a href="#FileAppendPost" class="d">FileAppendPost</a> and <a href="#VimLeave" class="d">VimLeave</a> events <a href="diff.txt.html#do" class="d">do</a> not set or reset the changed flag of the
+buffer.  When you decompress the buffer with the <a href="#BufReadPost" class="d">BufReadPost</a> autocommands, you
+can still exit with "<a href="editing.txt.html#%3Aq" class="d">:q</a>"<a href="repeat.txt.html#." class="d">.</a>  When you use "<a href="undo.txt.html#%3Aundo" class="d">:undo</a>" in <a href="#BufWritePost" class="d">BufWritePost</a> to <a href="undo.txt.html#undo" class="d">undo</a> the
+changes made by <a href="#BufWritePre" class="d">BufWritePre</a> commands, you can still <a href="diff.txt.html#do" class="d">do</a> "<a href="editing.txt.html#%3Aq" class="d">:q</a>" (this also makes
+"<a href="editing.txt.html#ZZ" class="d">ZZ</a>" work).  If you <a href="diff.txt.html#do" class="d">do</a> want the buffer to be marked <a href="motion.txt.html#as" class="d">as</a> modified, set the
+<a href="options.txt.html#%27modified%27" class="o">'modified'</a> option.
+
+To execute <a href="intro.txt.html#Normal" class="d">Normal</a> mode commands from an autocommand, use the "<a href="various.txt.html#%3Anormal" class="d">:normal</a>"
+command.  Use with care!  If the <a href="intro.txt.html#Normal" class="d">Normal</a> mode command <a href="motion.txt.html#is" class="d">is</a> not finished, the user
+needs to type characters (e.g., after "<a href="various.txt.html#%3Anormal" class="d">:normal</a> <a href="motion.txt.html#m" class="d">m</a>" you need to type <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#mark" class="d">mark</a>
+name).
+
+If you want the buffer to be unmodified after <a href="change.txt.html#changing" class="d">changing</a> it, reset the
+<a href="options.txt.html#%27modified%27" class="o">'modified'</a> option.  This makes <a href="motion.txt.html#it" class="d">it</a> possible to exit the buffer with "<a href="editing.txt.html#%3Aq" class="d">:q</a>"
+instead of ":q!"<a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="autocmd-nested" class="t">autocmd-nested</a> <a name="E218" class="t">E218</a>
+By default, autocommands <a href="diff.txt.html#do" class="d">do</a> not nest.  If you use "<a href="editing.txt.html#%3Ae" class="d">:e</a>" or "<a href="editing.txt.html#%3Aw" class="d">:w</a>" in an
+autocommand, Vim does not execute the <a href="#BufRead" class="d">BufRead</a> and <a href="#BufWrite" class="d">BufWrite</a> autocommands for
+those commands.  If you <a href="diff.txt.html#do" class="d">do</a> want this, use the "nested" flag for those commands
+in which you want nesting.  For example: 
+<span class="e">  :autocmd FileChangedShell *.c nested e!</span>
+The nesting <a href="motion.txt.html#is" class="d">is</a> limited to 10 levels to get out of recursive loops.
+
+It's possible to use the "<a href="#%3Aau" class="d">:au</a>" command in an autocommand.  This can be <a href="insert.txt.html#a" class="d">a</a>
+self-modifying command!  This can be useful for an <a href="#autocommand" class="d">autocommand</a> that should
+execute only once.
+
+If you want to skip autocommands for one command, use the <a href="#%3Anoautocmd" class="l">:noautocmd</a> command
+modifier or the <a href="options.txt.html#%27eventignore%27" class="o">'eventignore'</a> option.
+
+<span class="n">Note:</span> When reading <a href="insert.txt.html#a" class="d">a</a> file (with "<a href="insert.txt.html#%3Aread" class="d">:read</a> file" or with <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#filter" class="d">filter</a> command) and the
+last line in the file does not have an <a href="intro.txt.html#%3CEOL%3E" class="s">&lt;EOL&gt;</a>, Vim remembers this.  At the next
+write (with "<a href="editing.txt.html#%3Awrite" class="d">:write</a> file" or with <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#filter" class="d">filter</a> command), if the same line <a href="motion.txt.html#is" class="d">is</a>
+written again <a href="motion.txt.html#as" class="d">as</a> the last line in <a href="insert.txt.html#a" class="d">a</a> file AND <a href="options.txt.html#%27binary%27" class="o">'binary'</a> <a href="motion.txt.html#is" class="d">is</a> set, Vim does not
+supply an <a href="intro.txt.html#%3CEOL%3E" class="s">&lt;EOL&gt;</a>.  This makes <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#filter" class="d">filter</a> command on the just read lines write the
+same file <a href="motion.txt.html#as" class="d">as</a> was read, and makes <a href="insert.txt.html#a" class="d">a</a> write command on just filtered lines write
+the same file <a href="motion.txt.html#as" class="d">as</a> was read from the filter.  For example, another way to write
+<a href="insert.txt.html#a" class="d">a</a> compressed file: 
+<span class="e"></span>
+<span class="e">  :autocmd FileWritePre *.gz   set bin|'[,']!gzip</span>
+<span class="e">  :autocmd FileWritePost *.gz  undo|set nobin</span>
+
+                                                        <a name="autocommand-pattern" class="t">autocommand-pattern</a>
+You can specify multiple patterns, separated by commas.  Here are some
+examples: 
+<span class="e"></span>
+<span class="e">  :autocmd BufRead   *          set tw=79 nocin ic infercase fo=2croq</span>
+<span class="e">  :autocmd BufRead   .letter    set tw=72 fo=2tcrq</span>
+<span class="e">  :autocmd BufEnter  .letter    set dict=/usr/lib/dict/words</span>
+<span class="e">  :autocmd BufLeave  .letter    set dict=</span>
+<span class="e">  :autocmd BufRead,BufNewFile   *.c,*.h set tw=0 cin noic</span>
+<span class="e">  :autocmd BufEnter  *.c,*.h    abbr FOR for (i = 0; i &lt; 3; ++i)&lt;CR&gt;{&lt;CR&gt;}&lt;Esc&gt;O</span>
+<span class="e">  :autocmd BufLeave  *.c,*.h    unabbr FOR</span>
+<span class="e"></span>
+For makefiles (makefile, Makefile, imakefile, makefile.unix, etc.): 
+<span class="e"></span>
+<span class="e">  :autocmd BufEnter  ?akefile*  set include=^s\=include</span>
+<span class="e">  :autocmd BufLeave  ?akefile*  set include&amp;</span>
+<span class="e"></span>
+To always start editing <a href="change.txt.html#C" class="d">C</a> files <a href="motion.txt.html#at" class="d">at</a> the first function: 
+<span class="e"></span>
+<span class="e">  :autocmd BufRead   *.c,*.h    1;/^{</span>
+<span class="e"></span>
+Without the "1;" above, the search would start from wherever the file was
+entered, rather than from the start of the file.
+
+                                                <a name="skeleton" class="t">skeleton</a> <a name="template" class="t">template</a>
+To read <a href="insert.txt.html#a" class="d">a</a> <a href="#skeleton" class="d">skeleton</a> (template) file when opening <a href="insert.txt.html#a" class="d">a</a> new file: 
+<span class="e"></span>
+<span class="e">  :autocmd BufNewFile  *.c      0r ~/vim/skeleton.c</span>
+<span class="e">  :autocmd BufNewFile  *.h      0r ~/vim/skeleton.h</span>
+<span class="e">  :autocmd BufNewFile  *.java   0r ~/vim/skeleton.java</span>
+<span class="e"></span>
+To <a href="insert.txt.html#insert" class="d">insert</a> the current date and time in <a href="insert.txt.html#a" class="d">a</a> *.html file when <a href="editing.txt.html#writing" class="d">writing</a> it: 
+<span class="e"></span>
+<span class="e">  :autocmd BufWritePre,FileWritePre *.html   ks|call LastMod()|'s</span>
+<span class="e">  :fun LastMod()</span>
+<span class="e">  :  if line("$") &gt; 20</span>
+<span class="e">  :    let l = 20</span>
+<span class="e">  :  else</span>
+<span class="e">  :    let l = line("$")</span>
+<span class="e">  :  endif</span>
+<span class="e">  :  exe "1," . l . "g/Last modified: /s/Last modified: .*/Last modified: " .</span>
+<span class="e">  :  \ strftime("%Y %b %d")</span>
+<span class="e">  :endfun</span>
+<span class="e"></span>
+You need to have <a href="insert.txt.html#a" class="d">a</a> line "Last modified: <span class="s">&lt;date time&gt;</span>" in the first 20 lines
+of the file for this to work.  Vim replaces <span class="s">&lt;date time&gt;</span> (and anything in the
+same line after it) with the current date and time.  Explanation:
+        ks              <a href="motion.txt.html#mark" class="d">mark</a> current position with <a href="motion.txt.html#mark" class="d">mark</a> 's'
+        call LastMod()  call the LastMod() function to <a href="diff.txt.html#do" class="d">do</a> the work
+        's              return the cursor to the old position
+The LastMod() function checks if the file <a href="motion.txt.html#is" class="d">is</a> shorter than 20 lines, and then
+uses the "<a href="repeat.txt.html#%3Ag" class="d">:g</a>" command to find lines that contain "Last modified: "<a href="repeat.txt.html#." class="d">.</a>  For those
+lines the "<a href="change.txt.html#%3As" class="d">:s</a>" command <a href="motion.txt.html#is" class="d">is</a> executed to replace the existing date with the
+current one.  The "<a href="eval.txt.html#%3Aexecute" class="d">:execute</a>" command <a href="motion.txt.html#is" class="d">is</a> used to be able to use an <a href="eval.txt.html#expression" class="d">expression</a>
+for the "<a href="repeat.txt.html#%3Ag" class="d">:g</a>" and "<a href="change.txt.html#%3As" class="d">:s</a>" commands.  The date <a href="motion.txt.html#is" class="d">is</a> obtained with the <a href="eval.txt.html#strftime%28%29" class="d">strftime()</a>
+function.  You can change its argument to get another date string.
+
+When entering <a href="#%3Aautocmd" class="d">:autocmd</a> on the command-line, completion of events and command
+names may be done (with <a href="motion.txt.html#%3CTab%3E" class="s">&lt;Tab&gt;</a>, <a href="scroll.txt.html#CTRL-D" class="k">CTRL-D</a>, etc.) where appropriate.
+
+Vim executes all matching autocommands in the order that you specify them.
+It <a href="motion.txt.html#is" class="d">is</a> recommended that your first <a href="#autocommand" class="d">autocommand</a> be used for all files by using
+"*" <a href="motion.txt.html#as" class="d">as</a> the file pattern.  This means that you can define defaults you like
+here for any settings, and if there <a href="motion.txt.html#is" class="d">is</a> another matching <a href="#autocommand" class="d">autocommand</a> <a href="motion.txt.html#it" class="d">it</a> will
+override these.  But if there <a href="motion.txt.html#is" class="d">is</a> no other matching autocommand, then <a href="motion.txt.html#at" class="d">at</a> least
+your default settings are recovered (if entering this file from another for
+which autocommands did match).  <span class="n">Note</span> that "*" will also match files <a href="starting.txt.html#starting" class="d">starting</a>
+with "<a href="repeat.txt.html#." class="d">.</a>"<a href="motion.txt.html#%2C" class="d">,</a> unlike <a href="os_unix.txt.html#Unix" class="d">Unix</a> shells.
+
+                                                    <a name="autocmd-searchpat" class="t">autocmd-searchpat</a>
+Autocommands <a href="diff.txt.html#do" class="d">do</a> not change the current search patterns.  Vim saves the current
+search patterns before executing autocommands then restores them after the
+autocommands finish.  This means that autocommands <a href="diff.txt.html#do" class="d">do</a> not affect the strings
+highlighted with the <a href="options.txt.html#%27hlsearch%27" class="o">'hlsearch'</a> option.  Within autocommands, you can still
+use search patterns normally, e.g., with the "<a href="pattern.txt.html#n" class="d">n</a>" command.
+If you want an <a href="#autocommand" class="d">autocommand</a> to set the search pattern, such that <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> used
+after the <a href="#autocommand" class="d">autocommand</a> finishes, use the "<a href="eval.txt.html#%3Alet" class="d">:let</a> <a href="change.txt.html#%40%2F" class="d">@/</a> <a href="change.txt.html#%3D" class="d">=</a>" command.
+The search-highlighting cannot be switched off with "<a href="pattern.txt.html#%3Anohlsearch" class="d">:nohlsearch</a>" in an
+autocommand.  Use the 'h' flag in the <a href="options.txt.html#%27viminfo%27" class="o">'viminfo'</a> option to disable search-
+highlighting when <a href="starting.txt.html#starting" class="d">starting</a> Vim.
+
+                                                        <a name="Cmd-event" class="t">Cmd-event</a>
+When using one of the "*Cmd" events, the matching autocommands are expected to
+<a href="diff.txt.html#do" class="d">do</a> the file reading, <a href="editing.txt.html#writing" class="d">writing</a> or sourcing.  This can be used when working with
+<a href="insert.txt.html#a" class="d">a</a> special kind of file, for example on <a href="insert.txt.html#a" class="d">a</a> remote system.
+CAREFUL: If you use these events in <a href="insert.txt.html#a" class="d">a</a> wrong way, <a href="motion.txt.html#it" class="d">it</a> may have the effect of
+making <a href="motion.txt.html#it" class="d">it</a> impossible to read or write the matching files!  Make sure you test
+your autocommands properly.  Best <a href="motion.txt.html#is" class="d">is</a> to use <a href="insert.txt.html#a" class="d">a</a> <a href="pattern.txt.html#pattern" class="d">pattern</a> that will never match <a href="insert.txt.html#a" class="d">a</a>
+normal file name, for example "ftp://*"<a href="repeat.txt.html#." class="d">.</a>
+
+When defining <a href="insert.txt.html#a" class="d">a</a> <a href="#BufReadCmd" class="d">BufReadCmd</a> <a href="motion.txt.html#it" class="d">it</a> will be difficult for Vim to recover <a href="insert.txt.html#a" class="d">a</a> crashed
+editing session.  When recovering from the original file, Vim reads only those
+parts of <a href="insert.txt.html#a" class="d">a</a> file that are not found in the swap file.  Since that <a href="motion.txt.html#is" class="d">is</a> not
+possible with <a href="insert.txt.html#a" class="d">a</a> BufReadCmd, use the <a href="recover.txt.html#%3Apreserve" class="l">:preserve</a> command to make sure the
+original file isn't needed for recovery.  You might want to <a href="diff.txt.html#do" class="d">do</a> this only when
+you expect the file to be modified.
+
+For file read and write commands the <a href="eval.txt.html#v%3Acmdarg" class="l">v:cmdarg</a> variable holds the "++enc="
+and "++ff=" argument that are effective.  These should be used for the command
+that reads/writes the file.  The <a href="eval.txt.html#v%3Acmdbang" class="l">v:cmdbang</a> variable <a href="motion.txt.html#is" class="d">is</a> one when "<a href="change.txt.html#%21" class="d">!</a>" was
+used, zero otherwise.
+
+See the $VIMRUNTIME/plugin/netrwPlugin.vim for examples.
+
+<span class="h">==============================================================================</span>
+11. Disabling autocommands                              <a name="autocmd-disable" class="t">autocmd-disable</a>
+
+To disable autocommands for some time use the <a href="options.txt.html#%27eventignore%27" class="o">'eventignore'</a> option.  <span class="n">Note</span> that
+this may cause unexpected behavior, make sure you restore <a href="options.txt.html#%27eventignore%27" class="o">'eventignore'</a>
+afterwards, using <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#%3Atry" class="l">:try</a> block with <a href="eval.txt.html#%3Afinally" class="l">:finally</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="%3Anoautocmd" class="t">:noautocmd</a> <a name="%3Anoa" class="t">:noa</a>
+To disable autocommands for just one command use the "<a href="#%3Anoautocmd" class="d">:noautocmd</a>" command
+modifier.  This will set <a href="options.txt.html#%27eventignore%27" class="o">'eventignore'</a> to "all" for the duration of the
+following command.  Example: 
+<span class="e"></span>
+<span class="e">        :noautocmd w fname.gz</span>
+<span class="e"></span>
+This will write the file without triggering the autocommands defined by the
+<a href="pi_gzip.txt.html#gzip" class="d">gzip</a> plugin.
+
+
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

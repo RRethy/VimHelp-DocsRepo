@@ -1,0 +1,138 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: rileft.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="rileft.txt" class="t">rileft.txt</a>    For <span class="i">Vim version 8.0.</span>  Last change: 2006 Apr 24
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Avner Lottem</span>
+                                          updated by Nadim Shaikli
+
+
+Right to Left display mode for Vim                              <a name="rileft" class="t">rileft</a>
+
+
+These <a href="eval.txt.html#functions" class="d">functions</a> were originally created by Avner Lottem:
+   E-mail: alottem@iil.intel.com
+   Phone:  +972-4-8307322
+
+<span class="s">{Vi does not have any of these commands}</span>
+
+                                                                <a name="E26" class="t">E26</a>
+<span class="s">{only available when compiled with the |+rightleft| feature}</span>
+
+
+Introduction
+<span class="h">------------</span>
+Some languages such <a href="motion.txt.html#as" class="d">as</a> Arabic, Farsi, Hebrew (among others) require the
+ability to display their text from right-to-left.  Files in those languages
+are stored conventionally and the right-to-left requirement <a href="motion.txt.html#is" class="d">is</a> only <a href="insert.txt.html#a" class="d">a</a>
+function of the display engine (per the <a href="mbyte.txt.html#Unicode" class="d">Unicode</a> specification).  In
+right-to-left oriented files the characters appear on the screen from
+right to left.
+
+Bidirectionality (or bidi for short) <a href="motion.txt.html#is" class="d">is</a> what <a href="mbyte.txt.html#Unicode" class="d">Unicode</a> offers <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> full
+solution to these languages.  Bidi offers the user the ability to <a href="starting.txt.html#view" class="d">view</a>
+both right-to-left <a href="motion.txt.html#as" class="d">as</a> well <a href="motion.txt.html#as" class="d">as</a> left-to-right text properly <a href="motion.txt.html#at" class="d">at</a> the same time
+within the same window.  Vim currently, due to simplicity, does not offer
+bidi and <a href="motion.txt.html#is" class="d">is</a> merely opting to present <a href="insert.txt.html#a" class="d">a</a> functional means to display/enter/use
+right-to-left languages.  An older hybrid solution in which direction <a href="motion.txt.html#is" class="d">is</a>
+encoded for every character (or group of characters) are not supported either
+<a href="motion.txt.html#as" class="d">as</a> this kind of support <a href="motion.txt.html#is" class="d">is</a> out of the scope of <a href="insert.txt.html#a" class="d">a</a> simple addition to an
+existing editor (and it's not sanctioned by <a href="mbyte.txt.html#Unicode" class="d">Unicode</a> either).
+
+
+Highlights
+<span class="h">----------</span>
+<a href="insert.txt.html#o" class="d">o</a>  Editing left-to-right files <a href="motion.txt.html#as" class="d">as</a> in the original Vim, no change.
+
+<a href="insert.txt.html#o" class="d">o</a>  Viewing and editing files in right-to-left windows.  File orientation
+   <a href="motion.txt.html#is" class="d">is</a> per window, so <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> possible to <a href="starting.txt.html#view" class="d">view</a> the same file in right-to-left
+   and left-to-right modes, simultaneously.  (Useful for editing mixed files
+   in which both right-to-left and left-to-right text exist).
+
+<a href="insert.txt.html#o" class="d">o</a>  Compatibility to the original Vim.  Almost all features work in
+   right-to-left mode (see Bugs below).
+
+<a href="insert.txt.html#o" class="d">o</a>  Backing from reverse <a href="insert.txt.html#insert" class="d">insert</a> mode to the correct place in the file
+   (if possible).
+
+<a href="insert.txt.html#o" class="d">o</a>  No special terminal with right-to-left capabilities <a href="motion.txt.html#is" class="d">is</a> required.  The
+   right-to-left changes are completely hardware independent.
+
+<a href="insert.txt.html#o" class="d">o</a>  Many languages use and require right-to-left support.  These languages
+   can quite easily be supported given the inclusion of their required
+   keyboard mappings and some possible minor code change.  Some of the
+   current supported languages include <a href="motion.txt.html#-" class="d">-</a> <a href="arabic.txt.html#arabic.txt" class="l">arabic.txt</a><a href="motion.txt.html#%2C" class="d">,</a> <a href="farsi.txt.html#farsi.txt" class="l">farsi.txt</a> and
+   <a href="hebrew.txt.html#hebrew.txt" class="l">hebrew.txt</a><a href="repeat.txt.html#." class="d">.</a>
+
+
+Of Interest...
+<span class="h">--------------</span>
+
+<a href="insert.txt.html#o" class="d">o</a>  Invocations
+   -----------
+   <a href="motion.txt.html#%2B" class="d">+</a> <a href="options.txt.html#%27rightleft%27" class="o">'rightleft'</a> ('rl') sets <a href="windows.txt.html#window" class="d">window</a> orientation to right-to-left.
+   <a href="motion.txt.html#%2B" class="d">+</a> <a href="options.txt.html#%27delcombine%27" class="o">'delcombine'</a> ('deco'), boolean, if editing <a href="mbyte.txt.html#UTF-8" class="d">UTF-8</a> encoded languages,
+     allows one to remove <a href="insert.txt.html#a" class="d">a</a> composing character which gets superimposed
+     on those that proceeded them (some languages require this).
+   <a href="motion.txt.html#%2B" class="d">+</a> <a href="options.txt.html#%27rightleftcmd%27" class="o">'rightleftcmd'</a> ('rlc') sets the command-line within certain modes
+     (such <a href="motion.txt.html#as" class="d">as</a> search) to be utilized in right-to-left orientation <a href="motion.txt.html#as" class="d">as</a> well.
+
+<a href="insert.txt.html#o" class="d">o</a>  Typing backwards                                     <a name="ins-reverse" class="t">ins-reverse</a>
+   ----------------
+   In lieu of using full-fledged the <a href="options.txt.html#%27rightleft%27" class="o">'rightleft'</a> option, one can opt for
+   reverse insertion.  When the <a href="options.txt.html#%27revins%27" class="o">'revins'</a> (reverse insert) option <a href="motion.txt.html#is" class="d">is</a> set,
+   <a href="insert.txt.html#inserting" class="d">inserting</a> happens backwards.  This can be used to type right-to-left
+   text.  When <a href="insert.txt.html#inserting" class="d">inserting</a> characters the cursor <a href="motion.txt.html#is" class="d">is</a> not moved and the text
+   moves rightwards.  <a href="insert.txt.html#A" class="d">A</a> <a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a> deletes the character under the cursor.
+   <a href="index.txt.html#CTRL-W" class="k">CTRL-W</a> and <a href="scroll.txt.html#CTRL-U" class="k">CTRL-U</a> also work in the opposite direction.  <a href="motion.txt.html#%3CBS%3E" class="s">&lt;BS&gt;</a>, <a href="index.txt.html#CTRL-W" class="k">CTRL-W</a>
+   and <a href="scroll.txt.html#CTRL-U" class="k">CTRL-U</a> <a href="diff.txt.html#do" class="d">do</a> not stop <a href="motion.txt.html#at" class="d">at</a> the start of <a href="insert.txt.html#insert" class="d">insert</a> or <a href="intro.txt.html#end" class="d">end</a> of line, no matter
+   how the <a href="options.txt.html#%27backspace%27" class="o">'backspace'</a> option <a href="motion.txt.html#is" class="d">is</a> set.
+
+   There <a href="motion.txt.html#is" class="d">is</a> no reverse replace mode (yet).
+
+   If the <a href="options.txt.html#%27showmode%27" class="o">'showmode'</a> option <a href="motion.txt.html#is" class="d">is</a> set, "<a href="starting.txt.html#--" class="d">--</a> REVERSE INSERT <a href="starting.txt.html#--" class="d">--</a>" will be shown
+   in the status line when reverse <a href="insert.txt.html#Insert" class="d">Insert</a> mode <a href="motion.txt.html#is" class="d">is</a> active.
+
+<a href="insert.txt.html#o" class="d">o</a>  Pasting when in <a href="insert.txt.html#a" class="d">a</a> rightleft <a href="windows.txt.html#window" class="d">window</a>
+   ----------------------------------
+   When cutting text with the mouse and pasting <a href="motion.txt.html#it" class="d">it</a> in <a href="insert.txt.html#a" class="d">a</a> rightleft <a href="windows.txt.html#window" class="d">window</a>
+   the text will be reversed, because the characters come from the cut buffer
+   from the left to the right, while inserted in the file from the right to
+   the left.   In order to avoid it, <a href="options.txt.html#toggle" class="d">toggle</a> <a href="options.txt.html#%27revins%27" class="o">'revins'</a> before pasting.
+
+
+Bugs
+----
+<a href="insert.txt.html#o" class="d">o</a>  Does not handle <a href="change.txt.html#CTRL-A" class="k">CTRL-A</a> and <a href="change.txt.html#CTRL-X" class="k">CTRL-X</a> commands (add and subtract) correctly
+   when in rightleft window.
+
+<a href="insert.txt.html#o" class="d">o</a>  Does not support reverse <a href="insert.txt.html#insert" class="d">insert</a> and rightleft modes on the command-line.
+   However, functionality of the editor <a href="motion.txt.html#is" class="d">is</a> not reduced, because <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a>
+   possible to enter mappings, <a href="map.txt.html#abbreviations" class="d">abbreviations</a> and searches typed from the
+   left to the right on the command-line.
+
+<a href="insert.txt.html#o" class="d">o</a>  Somewhat slower in right-to-left mode, because right-to-left motion <a href="motion.txt.html#is" class="d">is</a>
+   emulated inside Vim, not by the controlling terminal.
+
+<a href="insert.txt.html#o" class="d">o</a>  When the <a href="gui_x11.txt.html#Athena" class="d">Athena</a> <a href="gui.txt.html#GUI" class="d">GUI</a> <a href="motion.txt.html#is" class="d">is</a> used, the bottom scrollbar works in the wrong
+   direction.  This <a href="motion.txt.html#is" class="d">is</a> difficult to fix.
+
+<a href="insert.txt.html#o" class="d">o</a>  When both <a href="options.txt.html#%27rightleft%27" class="o">'rightleft'</a> and <a href="options.txt.html#%27revins%27" class="o">'revins'</a> are on: <a href="options.txt.html#%27textwidth%27" class="o">'textwidth'</a> does not work.
+   Lines <a href="diff.txt.html#do" class="d">do</a> not wrap <a href="motion.txt.html#at" class="d">at</a> all; you just get <a href="insert.txt.html#a" class="d">a</a> single, long line.
+
+<a href="insert.txt.html#o" class="d">o</a>  There <a href="motion.txt.html#is" class="d">is</a> no full bidirectionality (bidi) support.
+
+
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

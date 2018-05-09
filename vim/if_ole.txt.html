@@ -1,0 +1,219 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: if_ole.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="if_ole.txt" class="t">if_ole.txt</a>    For <span class="i">Vim version 8.0.</span>  Last change: 2008 Aug 16
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Paul Moore</span>
+
+
+The OLE Interface to Vim                                <a name="ole-interface" class="t">ole-interface</a>
+
+1. Activation                   <a href="#ole-activation" class="l">ole-activation</a>
+2. Methods                      <a href="#ole-methods" class="l">ole-methods</a>
+3. The "normal" command         <a href="#ole-normal" class="l">ole-normal</a>
+4. Registration                 <a href="#ole-registration" class="l">ole-registration</a>
+5. MS <a href="visual.txt.html#Visual" class="d">Visual</a> Studio integration <a href="#MSVisualStudio" class="l">MSVisualStudio</a>
+
+<span class="s">{Vi does not have any of these commands}</span>
+
+OLE <a href="motion.txt.html#is" class="d">is</a> only available when compiled with the <a href="various.txt.html#%2Bole" class="l">+ole</a> feature.  See
+src/if_ole.INSTALL.
+An alternative <a href="motion.txt.html#is" class="d">is</a> using the <a href="remote.txt.html#client-server" class="d">client-server</a> communication <a href="remote.txt.html#clientserver" class="l">clientserver</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+1. Activation                                           <a name="ole-activation" class="t">ole-activation</a>
+
+Vim acts <a href="motion.txt.html#as" class="d">as</a> an OLE automation server, accessible from any automation client,
+for example, <a href="visual.txt.html#Visual" class="d">Visual</a> Basic, Python, or Perl.  The Vim application "name" (its
+"ProgID"<a href="motion.txt.html#%2C" class="d">,</a> in OLE terminology) <a href="motion.txt.html#is" class="d">is</a> "Vim.Application"<a href="repeat.txt.html#." class="d">.</a>
+
+Hence, in order to start <a href="insert.txt.html#a" class="d">a</a> Vim instance (or connect to an already running
+instance), code similar to the following should be used:
+
+[Visual Basic] 
+<span class="e">        Dim Vim As Object</span>
+<span class="e">        Set Vim = CreateObject("Vim.Application")</span>
+<span class="e"></span>
+[Python] 
+<span class="e">        from win32com.client.dynamic import Dispatch</span>
+<span class="e">        vim = Dispatch('Vim.Application')</span>
+<span class="e"></span>
+[Perl] 
+<span class="e">        use Win32::OLE;</span>
+<span class="e">        $vim = new Win32::OLE 'Vim.Application';</span>
+<span class="e"></span>
+[C#] 
+<span class="e">        // Add a reference to Vim in your project. </span>
+<span class="e">        // Choose the COM tab.</span>
+<span class="e">        // Select "Vim Ole Interface 1.1 Type Library"</span>
+<span class="e">        Vim.Vim vimobj = new Vim.Vim();</span>
+<span class="e"></span>
+Vim does not support acting <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> "hidden" OLE server, like some other OLE
+Automation servers.  When <a href="insert.txt.html#a" class="d">a</a> client starts up an instance of Vim, that instance
+<a href="motion.txt.html#is" class="d">is</a> immediately visible.  Simply closing the OLE connection to the Vim instance
+<a href="motion.txt.html#is" class="d">is</a> not enough to shut down the Vim instance <a href="motion.txt.html#-" class="d">-</a> <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> necessary to explicitly
+execute <a href="insert.txt.html#a" class="d">a</a> quit command (for example, :qa!, :wqa).
+
+<span class="h">==============================================================================</span>
+2. Methods                                              <a name="ole-methods" class="t">ole-methods</a>
+
+Vim exposes four methods for use by clients.
+
+                                                        <a name="ole-sendkeys" class="t">ole-sendkeys</a>
+SendKeys(keys)          Execute <a href="insert.txt.html#a" class="d">a</a> series of keys.
+
+This method takes <a href="insert.txt.html#a" class="d">a</a> single parameter, which <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#string" class="d">string</a> of keystrokes.  These
+keystrokes are executed exactly <a href="motion.txt.html#as" class="d">as</a> if they had been types in <a href="motion.txt.html#at" class="d">at</a> the keyboard.
+<a href="eval.txt.html#Special" class="d">Special</a> keys can be given using their <span class="s">&lt;..&gt;</span> names, <a href="motion.txt.html#as" class="d">as</a> for the right hand side
+of <a href="insert.txt.html#a" class="d">a</a> mapping.  <span class="n">Note:</span> Execution of the <a href="intro.txt.html#Ex" class="d">Ex</a> "normal" command <a href="motion.txt.html#is" class="d">is</a> not supported <a href="motion.txt.html#-" class="d">-</a>
+see below <a href="#ole-normal" class="l">ole-normal</a><a href="repeat.txt.html#." class="d">.</a>
+
+Examples (Visual Basic syntax) 
+<span class="e">        Vim.SendKeys "ihello&lt;Esc&gt;"</span>
+<span class="e">        Vim.SendKeys "ma1GV4jy`a"</span>
+<span class="e"></span>
+These examples assume that Vim starts in <a href="intro.txt.html#Normal" class="d">Normal</a> mode.  To force <a href="intro.txt.html#Normal" class="d">Normal</a> mode,
+start the key sequence with <span class="k">CTRL-\</span> <a href="motion.txt.html#CTRL-N" class="k">CTRL-N</a> <a href="motion.txt.html#as" class="d">as</a> in 
+<span class="e"></span>
+<span class="e">        Vim.SendKeys "&lt;C-\&gt;&lt;C-N&gt;ihello&lt;Esc&gt;"</span>
+<span class="e"></span>
+<span class="k">CTRL-\</span> <a href="motion.txt.html#CTRL-N" class="k">CTRL-N</a> returns Vim to <a href="intro.txt.html#Normal" class="d">Normal</a> mode, when in <a href="insert.txt.html#Insert" class="d">Insert</a> or <a href="cmdline.txt.html#Command-line" class="d">Command-line</a> mode.
+<span class="n">Note</span> that this doesn't work halfway <a href="insert.txt.html#a" class="d">a</a> Vim command
+
+                                                        <a name="ole-eval" class="t">ole-eval</a>
+Eval(expr)              Evaluate an expression.
+
+This method takes <a href="insert.txt.html#a" class="d">a</a> single parameter, which <a href="motion.txt.html#is" class="d">is</a> an <a href="eval.txt.html#expression" class="d">expression</a> in Vim's normal
+format (see <a href="eval.txt.html#expression" class="l">expression</a>).  It returns <a href="insert.txt.html#a" class="d">a</a> string, which <a href="motion.txt.html#is" class="d">is</a> the result of
+evaluating the expression.  <a href="insert.txt.html#A" class="d">A</a> <a href="eval.txt.html#List" class="l">List</a> <a href="motion.txt.html#is" class="d">is</a> turned into <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#string" class="d">string</a> by joining the
+items and <a href="insert.txt.html#inserting" class="d">inserting</a> line breaks.
+
+Examples (Visual Basic syntax) 
+<span class="e">        Line20 = Vim.Eval("getline(20)")</span>
+<span class="e">        Twelve = Vim.Eval("6 + 6")              ' Note this is a STRING</span>
+<span class="e">        Font = Vim.Eval("&amp;guifont")</span>
+
+                                                        <a name="ole-setforeground" class="t">ole-setforeground</a>
+SetForeground()         Make the Vim <a href="windows.txt.html#window" class="d">window</a> come to the foreground
+
+This method takes no arguments.  No value <a href="motion.txt.html#is" class="d">is</a> returned.
+
+Example (Visual Basic syntax) 
+<span class="e">        Vim.SetForeground</span>
+
+
+                                                        <a name="ole-gethwnd" class="t">ole-gethwnd</a>
+GetHwnd()               Return the handle of the Vim window.
+
+This method takes no arguments.  It returns the hwnd of the main Vimwindow.
+You can use this if you are <a href="editing.txt.html#writing" class="d">writing</a> something which needs to manipulate the
+Vim window, or to track <a href="motion.txt.html#it" class="d">it</a> in the z-order, etc.
+
+Example (Visual Basic syntax) 
+<span class="e">        Vim_Hwnd = Vim.GetHwnd</span>
+
+
+<span class="h">==============================================================================</span>
+3. The "normal" command                                 <a name="ole-normal" class="t">ole-normal</a>
+
+Due to the way Vim processes OLE Automation commands, combined with the method
+of implementation of the <a href="intro.txt.html#Ex" class="d">Ex</a> command :normal, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> not possible to execute the
+<a href="various.txt.html#%3Anormal" class="d">:normal</a> command via OLE automation.  Any attempt to <a href="diff.txt.html#do" class="d">do</a> so will fail, probably
+harmlessly, although possibly in unpredictable ways.
+
+There <a href="motion.txt.html#is" class="d">is</a> currently no practical way to trap this situation, and users <a href="vim_faq.txt.html#must" class="d">must</a>
+simply be aware of the limitation.
+<span class="h">==============================================================================</span>
+4. Registration                                 <a name="ole-registration" class="t">ole-registration</a> <a name="E243" class="t">E243</a>
+
+Before Vim will act <a href="motion.txt.html#as" class="d">as</a> an OLE server, <a href="motion.txt.html#it" class="d">it</a> <a href="vim_faq.txt.html#must" class="d">must</a> be registered in the system
+registry.  In order to <a href="diff.txt.html#do" class="d">do</a> this, Vim should be run with <a href="insert.txt.html#a" class="d">a</a> single parameter of
+"<a href="#-register" class="d">-register</a>"<a href="repeat.txt.html#." class="d">.</a>
+                                                        <a name="-register" class="t">-register</a>  
+<span class="e">        gvim -register</span>
+<span class="e"></span>
+If <a href="starting.txt.html#gvim" class="d">gvim</a> with OLE support <a href="motion.txt.html#is" class="d">is</a> run and notices that no Vim OLE server has been
+registered, <a href="motion.txt.html#it" class="d">it</a> will present <a href="insert.txt.html#a" class="d">a</a> <a href="gui_w32.txt.html#dialog" class="d">dialog</a> and offers you the choice to <a href="sponsor.txt.html#register" class="d">register</a> by
+clicking "Yes"<a href="repeat.txt.html#." class="d">.</a>
+
+In some situations registering <a href="motion.txt.html#is" class="d">is</a> not possible.  This happens when the
+registry <a href="motion.txt.html#is" class="d">is</a> not writable.  If you run into this problem you need to run <a href="starting.txt.html#gvim" class="d">gvim</a>
+<a href="motion.txt.html#as" class="d">as</a> "Administrator"<a href="repeat.txt.html#." class="d">.</a>
+
+Once vim <a href="motion.txt.html#is" class="d">is</a> registered, the application path <a href="motion.txt.html#is" class="d">is</a> stored in the registry.
+Before moving, deleting, or upgrading Vim, the registry entries should be
+removed using the "<a href="#-unregister" class="d">-unregister</a>" switch.
+                                                        <a name="-unregister" class="t">-unregister</a>  
+<span class="e">        gvim -unregister</span>
+<span class="e"></span>
+The OLE mechanism will use the first registered Vim <a href="motion.txt.html#it" class="d">it</a> finds.  If <a href="insert.txt.html#a" class="d">a</a> Vim <a href="motion.txt.html#is" class="d">is</a>
+already running, this one will be used.  If you want to have (several) Vim
+sessions open that should not react to OLE commands, use the non-OLE version,
+and <a href="change.txt.html#put" class="d">put</a> <a href="motion.txt.html#it" class="d">it</a> in <a href="insert.txt.html#a" class="d">a</a> different directory.  The OLE version should then be <a href="change.txt.html#put" class="d">put</a> in <a href="insert.txt.html#a" class="d">a</a>
+directory that <a href="motion.txt.html#is" class="d">is</a> not in your normal path, so that typing "<a href="starting.txt.html#gvim" class="d">gvim</a>" will start
+the non-OLE version.
+
+                                                        <a name="-silent" class="t">-silent</a>
+To avoid the message box that pops up to report the result, prepend "<a href="#-silent" class="d">-silent</a>"<a href="cmdline.txt.html#%3A" class="d">:</a>
+
+<span class="e">        gvim -silent -register</span>
+<span class="e">        gvim -silent -unregister</span>
+<span class="e"></span>
+<span class="h">==============================================================================</span>
+5. MS <a href="visual.txt.html#Visual" class="d">Visual</a> Studio integration                 <a name="MSVisualStudio" class="t">MSVisualStudio</a> <a name="VisVim" class="t">VisVim</a>
+
+The OLE version can be used to run Vim <a href="motion.txt.html#as" class="d">as</a> the editor in Microsoft <a href="visual.txt.html#Visual" class="d">Visual</a>
+Studio.  This <a href="motion.txt.html#is" class="d">is</a> called "<a href="#VisVim" class="d">VisVim</a>"<a href="repeat.txt.html#." class="d">.</a>  It <a href="motion.txt.html#is" class="d">is</a> included in the archive that contains
+the OLE version.  The documentation can be found in the runtime directory, the
+README_VisVim.txt file.
+
+
+<span class="h">Using Vim with Visual Studio .Net</span>
+
+With .Net you no longer really need VisVim, since .Net studio has support for
+external editors.  Follow these directions:
+
+In .Net Studio choose from the menu Tools-&gt;External Tools...
+Add
+     Title     <a href="motion.txt.html#-" class="d">-</a> Vim
+     Command   <a href="motion.txt.html#-" class="d">-</a> c:\vim\vim63\gvim.exe
+     Arguments <a href="motion.txt.html#-" class="d">-</a> <a href="remote.txt.html#--servername" class="d">--servername</a> VS_NET <a href="remote.txt.html#--remote-silent" class="d">--remote-silent</a> "+call cursor($(CurLine), $(CurCol))" $(ItemPath)
+     Init Dir  <a href="motion.txt.html#-" class="d">-</a> Empty
+
+Now, when you open <a href="insert.txt.html#a" class="d">a</a> file in .Net, you can choose from the .Net menu:
+Tools-&gt;Vim
+
+That will open the file in Vim.
+You can then add this external command <a href="motion.txt.html#as" class="d">as</a> an icon and place <a href="motion.txt.html#it" class="d">it</a> anywhere you
+like.  You might also be able to set this <a href="motion.txt.html#as" class="d">as</a> your default editor.
+
+If you refine this further, please post back to the Vim <a href="intro.txt.html#maillist" class="d">maillist</a> so we have <a href="insert.txt.html#a" class="d">a</a>
+record of it.
+
+<a href="remote.txt.html#--servername" class="d">--servername</a> VS_NET
+This will create <a href="insert.txt.html#a" class="d">a</a> new instance of vim called VS_NET.  So if you open multiple
+files from VS, they will use the same instance of Vim.  This allows you to
+have multiple copies of Vim running, but you can <a href="intro.txt.html#control" class="d">control</a> which one has VS
+files in it.
+
+<a href="remote.txt.html#--remote-silent" class="d">--remote-silent</a> "+call cursor(10, 27)"
+              <a href="motion.txt.html#-" class="d">-</a> Places the cursor on line 10 column 27
+In Vim 
+<span class="e">   :h --remote-silent for more details</span>
+<span class="e"></span>
+[.Net remarks provided by Dave Fishburn and Brian Sturk]
+
+<span class="h">==============================================================================</span>
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

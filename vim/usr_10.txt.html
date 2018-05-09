@@ -1,0 +1,838 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: usr_10.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="usr_10.txt" class="t">usr_10.txt</a>    For <span class="i">Vim version 8.0.</span>  Last change: 2006 Nov 05
+
+                     VIM USER MANUAL <a href="motion.txt.html#-" class="d">-</a> by <a href="intro.txt.html#Bram" class="d">Bram</a> <a href="intro.txt.html#Moolenaar" class="d">Moolenaar</a>
+
+                             Making big changes
+
+
+In chapter 4 several ways to make small changes were explained.  This chapter
+goes into making changes that are repeated or can affect <a href="insert.txt.html#a" class="d">a</a> large amount of
+text.  The <a href="visual.txt.html#Visual" class="d">Visual</a> mode allows doing <a href="various.txt.html#various" class="d">various</a> things with blocks of text.  Use
+an external program to <a href="diff.txt.html#do" class="d">do</a> really complicated things.
+
+<a href="#10.1" class="l">10.1</a>  Record and playback commands
+<a href="#10.2" class="l">10.2</a>  Substitution
+<a href="#10.3" class="l">10.3</a>  Command ranges
+<a href="#10.4" class="l">10.4</a>  The global command
+<a href="#10.5" class="l">10.5</a>  <a href="visual.txt.html#Visual" class="d">Visual</a> block mode
+<a href="#10.6" class="l">10.6</a>  Reading and <a href="editing.txt.html#writing" class="d">writing</a> part of <a href="insert.txt.html#a" class="d">a</a> file
+<a href="#10.7" class="l">10.7</a>  Formatting text
+<a href="#10.8" class="l">10.8</a>  Changing <a href="change.txt.html#case" class="d">case</a>
+<a href="#10.9" class="l">10.9</a>  Using an external program
+
+     Next chapter: <a href="usr_11.txt.html#usr_11.txt" class="l">usr_11.txt</a>  Recovering from <a href="insert.txt.html#a" class="d">a</a> crash
+ Previous chapter: <a href="usr_09.txt.html#usr_09.txt" class="l">usr_09.txt</a>  Using the <a href="gui.txt.html#GUI" class="d">GUI</a>
+Table of contents: <a href="usr_toc.txt.html#usr_toc.txt" class="l">usr_toc.txt</a>
+
+<span class="h">==============================================================================</span>
+<a name="10.1" class="t">10.1</a>  Record and playback commands
+
+The "<a href="repeat.txt.html#." class="d">.</a>" command repeats the preceding change.  But what if you want to <a href="diff.txt.html#do" class="d">do</a>
+something more complex than <a href="insert.txt.html#a" class="d">a</a> single change?  That's where command <a href="repeat.txt.html#recording" class="d">recording</a>
+comes in.  There are three steps:
+
+1. The "q{register}" command starts <a href="repeat.txt.html#recording" class="d">recording</a> keystrokes into the <a href="sponsor.txt.html#register" class="d">register</a>
+   named <span class="s">{register}</span>.  The <a href="sponsor.txt.html#register" class="d">register</a> name <a href="vim_faq.txt.html#must" class="d">must</a> be between <a href="insert.txt.html#a" class="d">a</a> and <a href="scroll.txt.html#z." class="d">z.</a>
+2. Type your commands.
+3. To finish recording, press <a href="repeat.txt.html#q" class="d">q</a> (without any extra character).
+
+You can now execute the <a href="map.txt.html#macro" class="d">macro</a> by typing the command "@{register}"<a href="repeat.txt.html#." class="d">.</a>
+
+Take <a href="insert.txt.html#a" class="d">a</a> look <a href="motion.txt.html#at" class="d">at</a> how to use these commands in practice.  You have <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of
+filenames that look like this:
+
+<span class="h">        stdio.h </span>
+<span class="h">        fcntl.h </span>
+<span class="h">        unistd.h </span>
+<span class="h">        stdlib.h </span>
+
+And what you want <a href="motion.txt.html#is" class="d">is</a> the following:
+
+<span class="h">        #include "stdio.h" </span>
+<span class="h">        #include "fcntl.h" </span>
+<span class="h">        #include "unistd.h" </span>
+<span class="h">        #include "stdlib.h" </span>
+
+You start by moving to the first character of the first line.  Next you
+execute the following commands:
+
+        qa                      Start <a href="repeat.txt.html#recording" class="d">recording</a> <a href="insert.txt.html#a" class="d">a</a> <a href="map.txt.html#macro" class="d">macro</a> in <a href="sponsor.txt.html#register" class="d">register</a> a.
+        <a href="motion.txt.html#%5E" class="d">^</a>                       Move to the beginning of the line.
+        i#include "<a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a>        <a href="insert.txt.html#Insert" class="d">Insert</a> the <a href="eval.txt.html#string" class="d">string</a> #include " <a href="motion.txt.html#at" class="d">at</a> the beginning
+                                of the line.
+        <a href="motion.txt.html#%24" class="d">$</a>                       Move to the <a href="intro.txt.html#end" class="d">end</a> of the line.
+        <a href="insert.txt.html#a" class="d">a</a>"<a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a>                 Append the character double quotation <a href="motion.txt.html#mark" class="d">mark</a> <a href="motion.txt.html#%28" class="d">(</a>"<a href="motion.txt.html#%29" class="d">)</a>
+                                to the <a href="intro.txt.html#end" class="d">end</a> of the line.
+        <a href="motion.txt.html#j" class="d">j</a>                       Go to the next line.
+        <a href="repeat.txt.html#q" class="d">q</a>                       Stop <a href="repeat.txt.html#recording" class="d">recording</a> the macro.
+
+Now that you have done the work once, you can repeat the change by typing the
+command "@a" three times.
+   The "@a" command can be preceded by <a href="insert.txt.html#a" class="d">a</a> count, which will cause the <a href="map.txt.html#macro" class="d">macro</a> to
+be executed that number of times.  In this <a href="change.txt.html#case" class="d">case</a> you would type: 
+<span class="e"></span>
+<span class="e">        3@a</span>
+<span class="e"></span>
+<span class="e"></span>
+MOVE AND EXECUTE
+
+You might have the lines you want to change in <a href="various.txt.html#various" class="d">various</a> places.  Just move the
+cursor to each location and use the "@a" command.  If you have done that once,
+you can <a href="diff.txt.html#do" class="d">do</a> <a href="motion.txt.html#it" class="d">it</a> again with "<a href="repeat.txt.html#%40%40" class="d">@@</a>"<a href="repeat.txt.html#." class="d">.</a>  That's <a href="insert.txt.html#a" class="d">a</a> bit easier to type.  If you now
+execute <a href="sponsor.txt.html#register" class="d">register</a> <a href="motion.txt.html#b" class="d">b</a> with "@b"<a href="motion.txt.html#%2C" class="d">,</a> the next "<a href="repeat.txt.html#%40%40" class="d">@@</a>" will use <a href="sponsor.txt.html#register" class="d">register</a> b.
+   If you compare the playback method with using "<a href="repeat.txt.html#." class="d">.</a>"<a href="motion.txt.html#%2C" class="d">,</a> there are several
+differences.  First of all, "<a href="repeat.txt.html#." class="d">.</a>" can only repeat one change.  As seen in the
+example above, "@a" can <a href="diff.txt.html#do" class="d">do</a> several changes, and move around <a href="motion.txt.html#as" class="d">as</a> well.
+Secondly, "<a href="repeat.txt.html#." class="d">.</a>" can only remember the last change.  Executing <a href="insert.txt.html#a" class="d">a</a> <a href="sponsor.txt.html#register" class="d">register</a> allows
+you to make any changes and then still use "@a" to replay the recorded
+commands.  Finally, you can use 26 different registers.  Thus you can remember
+26 different command sequences to execute.
+
+
+USING REGISTERS
+
+The <a href="change.txt.html#registers" class="d">registers</a> used for <a href="repeat.txt.html#recording" class="d">recording</a> are the same ones you used for <a href="change.txt.html#yank" class="d">yank</a> and
+delete commands.  This allows you to mix <a href="repeat.txt.html#recording" class="d">recording</a> with other commands to
+manipulate the registers.
+   Suppose you have recorded <a href="insert.txt.html#a" class="d">a</a> few commands in <a href="sponsor.txt.html#register" class="d">register</a> n.  When you execute
+this with "@n" you notice you did something wrong.  You could try <a href="repeat.txt.html#recording" class="d">recording</a>
+again, but perhaps you will make another mistake.  Instead, use this trick:
+
+        <a href="motion.txt.html#G" class="d">G</a>                       Go to the <a href="intro.txt.html#end" class="d">end</a> of the file.
+        o&lt;Esc&gt;                  Create an empty line.
+        "np                     Put the text from the <a href="pattern.txt.html#n" class="d">n</a> register.  You now see
+                                the commands you typed <a href="motion.txt.html#as" class="d">as</a> text in the file.
+        <span class="s">{edits}</span>                 Change the commands that were wrong.  This <a href="motion.txt.html#is" class="d">is</a>
+                                just like editing text.
+        <a href="motion.txt.html#0" class="d">0</a>                       Go to the start of the line.
+        "ny$                    Yank the corrected commands into the <a href="pattern.txt.html#n" class="d">n</a>
+                                register.
+        <a href="change.txt.html#dd" class="d">dd</a>                      Delete the scratch line.
+
+Now you can execute the corrected commands with "@n"<a href="repeat.txt.html#." class="d">.</a>  (If your recorded
+commands include line breaks, adjust the last two items in the example to
+include all the lines.)
+
+
+APPENDING TO <a href="insert.txt.html#A" class="d">A</a> REGISTER
+
+So far we have used <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#lowercase" class="d">lowercase</a> <a href="print.txt.html#letter" class="d">letter</a> for the <a href="sponsor.txt.html#register" class="d">register</a> name.  To append to <a href="insert.txt.html#a" class="d">a</a>
+register, use an <a href="change.txt.html#uppercase" class="d">uppercase</a> letter.
+   Suppose you have recorded <a href="insert.txt.html#a" class="d">a</a> command to change <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#word" class="d">word</a> to <a href="sponsor.txt.html#register" class="d">register</a> c.  It
+works properly, but you would like to add <a href="insert.txt.html#a" class="d">a</a> search for the next <a href="motion.txt.html#word" class="d">word</a> to
+change.  This can be done with: 
+<span class="e"></span>
+<span class="e">        qC/word&lt;Enter&gt;q</span>
+<span class="e"></span>
+You start with "qC"<a href="motion.txt.html#%2C" class="d">,</a> which records to the <a href="change.txt.html#c" class="d">c</a> <a href="sponsor.txt.html#register" class="d">register</a> and appends.  Thus
+<a href="editing.txt.html#writing" class="d">writing</a> to an <a href="change.txt.html#uppercase" class="d">uppercase</a> <a href="sponsor.txt.html#register" class="d">register</a> name means to append to the <a href="sponsor.txt.html#register" class="d">register</a> with
+the same letter, but lowercase.
+
+This works both with <a href="repeat.txt.html#recording" class="d">recording</a> and with <a href="change.txt.html#yank" class="d">yank</a> and delete commands.  For
+example, you want to collect <a href="insert.txt.html#a" class="d">a</a> sequence of lines into the <a href="insert.txt.html#a" class="d">a</a> register.  Yank
+the first line with: 
+<span class="e"></span>
+<span class="e">        "aY</span>
+<span class="e"></span>
+Now move to the second line, and type: 
+<span class="e"></span>
+<span class="e">        "AY</span>
+<span class="e"></span>
+Repeat this command for all lines.  The <a href="insert.txt.html#a" class="d">a</a> <a href="sponsor.txt.html#register" class="d">register</a> now contains all those
+lines, in the order you yanked them.
+
+<span class="h">==============================================================================</span>
+<a name="10.2" class="t">10.2</a>  Substitution                                            <a name="find-replace" class="t">find-replace</a>
+
+The "<a href="change.txt.html#%3Asubstitute" class="d">:substitute</a>" command enables you to perform <a href="eval.txt.html#string" class="d">string</a> replacements on <a href="insert.txt.html#a" class="d">a</a>
+whole range of lines.  The general form of this command <a href="motion.txt.html#is" class="d">is</a> <a href="motion.txt.html#as" class="d">as</a> follows: 
+<span class="e"></span>
+<span class="e">        :[range]substitute/from/to/[flags]</span>
+<span class="e"></span>
+This command changes the "from" <a href="eval.txt.html#string" class="d">string</a> to the "to" <a href="eval.txt.html#string" class="d">string</a> in the lines
+specified with <a href="cmdline.txt.html#%5Brange%5D" class="s">[range]</a>.  For example, you can change "Professor" to "Teacher"
+in all lines with the following command: 
+<span class="e"></span>
+<span class="e">        :%substitute/Professor/Teacher/</span>
+
+        <span class="n">Note:</span>
+        The "<a href="change.txt.html#%3Asubstitute" class="d">:substitute</a>" command <a href="motion.txt.html#is" class="d">is</a> almost never spelled out completely.
+        Most of the time, people use the abbreviated version "<a href="change.txt.html#%3As" class="d">:s</a>"<a href="repeat.txt.html#." class="d">.</a>  From here
+        on the abbreviation will be used.
+
+The "<a href="motion.txt.html#%25" class="d">%</a>" before the command specifies the command works on all lines.  Without
+<a href="insert.txt.html#a" class="d">a</a> range, "<a href="change.txt.html#%3As" class="d">:s</a>" only works on the current line.  More about ranges in the next
+<a href="motion.txt.html#section" class="d">section</a> <a href="#10.3" class="l">10.3</a><a href="repeat.txt.html#." class="d">.</a>
+
+By default, the "<a href="change.txt.html#%3Asubstitute" class="d">:substitute</a>" command changes only the first occurrence on
+each line.  For example, the preceding command changes the line:
+
+<span class="h">        Professor Smith criticized Professor Johnson today. </span>
+
+to:
+
+<span class="h">        Teacher Smith criticized Professor Johnson today. </span>
+
+To change every occurrence on the line, you need to add the <a href="index.txt.html#g" class="d">g</a> (global) flag.
+The command: 
+<span class="e"></span>
+<span class="e">        :%s/Professor/Teacher/g</span>
+<span class="e"></span>
+results in (starting with the original line):
+
+<span class="h">        Teacher Smith criticized Teacher Johnson today. </span>
+
+Other flags include <a href="change.txt.html#p" class="d">p</a> (print), which causes the "<a href="change.txt.html#%3Asubstitute" class="d">:substitute</a>" command to print
+out the last line <a href="motion.txt.html#it" class="d">it</a> changes.  The <a href="change.txt.html#c" class="d">c</a> (confirm) flag tells "<a href="change.txt.html#%3Asubstitute" class="d">:substitute</a>" to ask
+you for confirmation before <a href="motion.txt.html#it" class="d">it</a> performs each substitution.  Enter the
+following: 
+<span class="e"></span>
+<span class="e">        :%s/Professor/Teacher/c</span>
+<span class="e"></span>
+Vim finds the first occurrence of "Professor" and displays the text <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a>
+about to change.  You get the following prompt: 
+<span class="e"></span>
+<span class="e">        replace with Teacher (y/n/a/q/l/^E/^Y)?</span>
+<span class="e"></span>
+At this point, you <a href="vim_faq.txt.html#must" class="d">must</a> enter one of the following answers:
+
+        <a href="change.txt.html#y" class="d">y</a>               Yes; make this change.
+        <a href="pattern.txt.html#n" class="d">n</a>               No; skip this match.
+        <a href="insert.txt.html#a" class="d">a</a>               All; make this change and all remaining ones without
+                        further confirmation.
+        <a href="repeat.txt.html#q" class="d">q</a>               Quit; don't make any more changes.
+        <a href="motion.txt.html#l" class="d">l</a>               Last; make this change and then quit.
+        <a href="scroll.txt.html#CTRL-E" class="k">CTRL-E</a>          Scroll the text one line up.
+        <a href="scroll.txt.html#CTRL-Y" class="k">CTRL-Y</a>          Scroll the text one line down.
+
+
+The "from" part of the substitute command <a href="motion.txt.html#is" class="d">is</a> actually <a href="insert.txt.html#a" class="d">a</a> pattern.  The same
+kind <a href="motion.txt.html#as" class="d">as</a> used for the search command.  For example, this command only
+substitutes "the" when <a href="motion.txt.html#it" class="d">it</a> appears <a href="motion.txt.html#at" class="d">at</a> the start of <a href="insert.txt.html#a" class="d">a</a> line: 
+<span class="e"></span>
+<span class="e">        :s/^the/these/</span>
+<span class="e"></span>
+If you are substituting with <a href="insert.txt.html#a" class="d">a</a> "from" or "to" part that includes <a href="insert.txt.html#a" class="d">a</a> slash, you
+need to <a href="change.txt.html#put" class="d">put</a> <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#backslash" class="d">backslash</a> before it.  <a href="insert.txt.html#A" class="d">A</a> simpler way <a href="motion.txt.html#is" class="d">is</a> to use another character
+instead of the slash.  <a href="insert.txt.html#A" class="d">A</a> plus, for example: 
+<span class="e"></span>
+<span class="e">        :s+one/two+one or two+</span>
+<span class="e"></span>
+<span class="h">==============================================================================</span>
+<a name="10.3" class="t">10.3</a>  Command ranges
+
+The "<a href="change.txt.html#%3Asubstitute" class="d">:substitute</a>" command, and many other <a href="cmdline.txt.html#%3A" class="d">:</a> commands, can be applied to <a href="insert.txt.html#a" class="d">a</a>
+selection of lines.  This <a href="motion.txt.html#is" class="d">is</a> called <a href="insert.txt.html#a" class="d">a</a> range.
+   The simple form of <a href="insert.txt.html#a" class="d">a</a> range <a href="motion.txt.html#is" class="d">is</a> <span class="s">{number}</span>,<span class="s">{number}</span>.  For example: 
+<span class="e"></span>
+<span class="e">        :1,5s/this/that/g</span>
+<span class="e"></span>
+Executes the substitute command on the lines 1 to 5.  Line 5 <a href="motion.txt.html#is" class="d">is</a> included.
+The range <a href="motion.txt.html#is" class="d">is</a> always placed before the command.
+
+<a href="insert.txt.html#A" class="d">A</a> single number can be used to address one specific line: 
+<span class="e"></span>
+<span class="e">        :54s/President/Fool/</span>
+<span class="e"></span>
+Some commands work on the whole file when you <a href="diff.txt.html#do" class="d">do</a> not specify <a href="insert.txt.html#a" class="d">a</a> range.  To make
+them work on the current line the "<a href="repeat.txt.html#." class="d">.</a>" address <a href="motion.txt.html#is" class="d">is</a> used.  The "<a href="editing.txt.html#%3Awrite" class="d">:write</a>" command
+works like that.  Without <a href="insert.txt.html#a" class="d">a</a> range, <a href="motion.txt.html#it" class="d">it</a> writes the whole file.  To make <a href="motion.txt.html#it" class="d">it</a> write
+only the current line into <a href="insert.txt.html#a" class="d">a</a> file: 
+<span class="e"></span>
+<span class="e">        :.write otherfile</span>
+<span class="e"></span>
+The first line always has number one.  How about the last line?  The "<a href="motion.txt.html#%24" class="d">$</a>"
+character <a href="motion.txt.html#is" class="d">is</a> used for this.  For example, to substitute in the lines from the
+cursor to the end: 
+<span class="e"></span>
+<span class="e">        :.,$s/yes/no/</span>
+<span class="e"></span>
+The "<a href="motion.txt.html#%25" class="d">%</a>" range that we used before, <a href="motion.txt.html#is" class="d">is</a> actually <a href="insert.txt.html#a" class="d">a</a> short way to say "1,$"<a href="motion.txt.html#%2C" class="d">,</a> from
+the first to the last line.
+
+
+USING <a href="insert.txt.html#A" class="d">A</a> PATTERN IN <a href="insert.txt.html#A" class="d">A</a> RANGE
+
+Suppose you are editing <a href="insert.txt.html#a" class="d">a</a> chapter in <a href="insert.txt.html#a" class="d">a</a> book, and want to replace all
+occurrences of "grey" with "gray"<a href="repeat.txt.html#." class="d">.</a>  But only in this chapter, not in the next
+one.  You know that only chapter boundaries have the <a href="motion.txt.html#word" class="d">word</a> "Chapter" in the
+first column.  This command will work then: 
+<span class="e"></span>
+<span class="e">        :?^Chapter?,/^Chapter/s=grey=gray=g</span>
+<span class="e"></span>
+You can see <a href="insert.txt.html#a" class="d">a</a> search <a href="pattern.txt.html#pattern" class="d">pattern</a> <a href="motion.txt.html#is" class="d">is</a> used twice.  The first "?^Chapter?" finds the
+line above the current position that matches this pattern.  Thus the ?pattern?
+range <a href="motion.txt.html#is" class="d">is</a> used to search backwards.  Similarly, "/^Chapter/" <a href="motion.txt.html#is" class="d">is</a> used to search
+forward for the start of the next chapter.
+   To avoid confusion with the slashes, the "<a href="change.txt.html#%3D" class="d">=</a>" character was used in the
+substitute command here.  <a href="insert.txt.html#A" class="d">A</a> slash or another character would have worked <a href="motion.txt.html#as" class="d">as</a>
+well.
+
+
+ADD AND SUBTRACT
+
+There <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> slight error in the above command: If the title of the next chapter
+had included "grey" <a href="motion.txt.html#it" class="d">it</a> would be replaced <a href="motion.txt.html#as" class="d">as</a> well.  Maybe that's what you
+wanted, but what if you didn't?  Then you can specify an offset.
+   To search for <a href="insert.txt.html#a" class="d">a</a> <a href="pattern.txt.html#pattern" class="d">pattern</a> and then use the line above it: 
+<span class="e"></span>
+<span class="e">        /Chapter/-1</span>
+<span class="e"></span>
+You can use any number instead of the 1.  To address the second line below the
+match: 
+<span class="e"></span>
+<span class="e">        /Chapter/+2</span>
+<span class="e"></span>
+The offsets can also be used with the other items in <a href="insert.txt.html#a" class="d">a</a> range.  Look <a href="motion.txt.html#at" class="d">at</a> this
+one: 
+<span class="e"></span>
+<span class="e">        :.+3,$-5</span>
+<span class="e"></span>
+This specifies the range that starts three lines below the cursor and ends
+five lines before the last line in the file.
+
+
+USING MARKS
+
+Instead of figuring out the line numbers of certain positions, remembering them
+and typing them in <a href="insert.txt.html#a" class="d">a</a> range, you can use marks.
+   Place the marks <a href="motion.txt.html#as" class="d">as</a> mentioned in chapter 3.  For example, use "mt" to <a href="motion.txt.html#mark" class="d">mark</a>
+the top of an area and "mb" to <a href="motion.txt.html#mark" class="d">mark</a> the bottom.  Then you can use this range
+to specify the lines between the marks (including the lines with the marks): 
+<span class="e"></span>
+<span class="e">        :'t,'b</span>
+<span class="e"></span>
+<span class="e"></span>
+VISUAL MODE AND RANGES
+
+You can select text with <a href="visual.txt.html#Visual" class="d">Visual</a> mode.  If you then press "<a href="cmdline.txt.html#%3A" class="d">:</a>" to start <a href="insert.txt.html#a" class="d">a</a> colon
+command, you will see this: 
+<span class="e"></span>
+<span class="e">        :'&lt;,'&gt;</span>
+<span class="e"></span>
+Now you can type the command and <a href="motion.txt.html#it" class="d">it</a> will be applied to the range of lines that
+was visually selected.
+
+        <span class="n">Note:</span>
+        When using <a href="visual.txt.html#Visual" class="d">Visual</a> mode to select part of <a href="insert.txt.html#a" class="d">a</a> line, or using <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> to
+        select <a href="insert.txt.html#a" class="d">a</a> block of text, the colon commands will still apply to whole
+        lines.  This might change in <a href="insert.txt.html#a" class="d">a</a> future version of Vim.
+
+The <a href="motion.txt.html#%27%3C" class="d">'&lt;</a> and <a href="motion.txt.html#%27%3E" class="d">'&gt;</a> are actually marks, placed <a href="motion.txt.html#at" class="d">at</a> the start and <a href="intro.txt.html#end" class="d">end</a> of the <a href="visual.txt.html#Visual" class="d">Visual</a>
+selection.  The marks remain <a href="motion.txt.html#at" class="d">at</a> their position until another <a href="visual.txt.html#Visual" class="d">Visual</a> selection
+<a href="motion.txt.html#is" class="d">is</a> made.  Thus you can use the "<a href="motion.txt.html#%27%3C" class="d">'&lt;</a>" command to jump to position where the
+<a href="visual.txt.html#Visual" class="d">Visual</a> area started.  And you can mix the marks with other items: 
+<span class="e"></span>
+<span class="e">        :'&gt;,$</span>
+<span class="e"></span>
+This addresses the lines from the <a href="intro.txt.html#end" class="d">end</a> of the <a href="visual.txt.html#Visual" class="d">Visual</a> area to the <a href="intro.txt.html#end" class="d">end</a> of the
+file.
+
+
+<a href="insert.txt.html#A" class="d">A</a> NUMBER OF LINES
+
+When you know how many lines you want to change, you can type the number and
+then "<a href="cmdline.txt.html#%3A" class="d">:</a>"<a href="repeat.txt.html#." class="d">.</a>  For example, when you type "5:"<a href="motion.txt.html#%2C" class="d">,</a> you will get: 
+<span class="e"></span>
+<span class="e">        :.,.+4</span>
+<span class="e"></span>
+Now you can type the command you want to use.  It will use the range "<a href="repeat.txt.html#." class="d">.</a>"
+(current line) until ".+4" (four lines down).  Thus <a href="motion.txt.html#it" class="d">it</a> spans five lines.
+
+<span class="h">==============================================================================</span>
+<a name="10.4" class="t">10.4</a>  The global command
+
+The "<a href="repeat.txt.html#%3Aglobal" class="d">:global</a>" command <a href="motion.txt.html#is" class="d">is</a> one of the more powerful features of Vim.  It allows
+you to find <a href="insert.txt.html#a" class="d">a</a> match for <a href="insert.txt.html#a" class="d">a</a> <a href="pattern.txt.html#pattern" class="d">pattern</a> and execute <a href="insert.txt.html#a" class="d">a</a> command there.  The general
+form is: 
+<span class="e"></span>
+<span class="e">        :[range]global/{pattern}/{command}</span>
+<span class="e"></span>
+This <a href="motion.txt.html#is" class="d">is</a> similar to the "<a href="change.txt.html#%3Asubstitute" class="d">:substitute</a>" command.  But, instead of <a href="change.txt.html#replacing" class="d">replacing</a> the
+matched text with other text, the command <span class="s">{command}</span> <a href="motion.txt.html#is" class="d">is</a> executed.
+
+        <span class="n">Note:</span>
+        The command executed for "<a href="repeat.txt.html#%3Aglobal" class="d">:global</a>" <a href="vim_faq.txt.html#must" class="d">must</a> be one that starts with <a href="insert.txt.html#a" class="d">a</a>
+        colon.  <a href="intro.txt.html#Normal" class="d">Normal</a> mode commands can not be used directly.  The <a href="various.txt.html#%3Anormal" class="l">:normal</a>
+        command can <a href="diff.txt.html#do" class="d">do</a> this for you.
+
+Suppose you want to change "foobar" to "barfoo"<a href="motion.txt.html#%2C" class="d">,</a> but only in C++ style
+comments.  These comments start with "<a href="version7.txt.html#%2F%2F" class="d">//</a>"<a href="repeat.txt.html#." class="d">.</a>  Use this command: 
+<span class="e"></span>
+<span class="e">        :g+//+s/foobar/barfoo/g</span>
+<span class="e"></span>
+This starts with "<a href="repeat.txt.html#%3Ag" class="d">:g</a>"<a href="repeat.txt.html#." class="d">.</a>  That <a href="motion.txt.html#is" class="d">is</a> short for "<a href="repeat.txt.html#%3Aglobal" class="d">:global</a>"<a href="motion.txt.html#%2C" class="d">,</a> just like "<a href="change.txt.html#%3As" class="d">:s</a>" <a href="motion.txt.html#is" class="d">is</a> short
+for "<a href="change.txt.html#%3Asubstitute" class="d">:substitute</a>"<a href="repeat.txt.html#." class="d">.</a>  Then the pattern, enclosed in plus characters.  Since the
+<a href="pattern.txt.html#pattern" class="d">pattern</a> we are looking for contains <a href="insert.txt.html#a" class="d">a</a> slash, this uses the plus character to
+separate the pattern.  Next comes the substitute command that changes "foobar"
+into "barfoo"<a href="repeat.txt.html#." class="d">.</a>
+   The default range for the global command <a href="motion.txt.html#is" class="d">is</a> the whole file.  Thus no range
+was specified in this example.  This <a href="motion.txt.html#is" class="d">is</a> different from "<a href="change.txt.html#%3Asubstitute" class="d">:substitute</a>"<a href="motion.txt.html#%2C" class="d">,</a> which
+works on one line without <a href="insert.txt.html#a" class="d">a</a> range.
+   The command isn't perfect, since <a href="motion.txt.html#it" class="d">it</a> also matches lines where "<a href="version7.txt.html#%2F%2F" class="d">//</a>" appears
+halfway <a href="insert.txt.html#a" class="d">a</a> line, and the substitution will also take place before the "<a href="version7.txt.html#%2F%2F" class="d">//</a>"<a href="repeat.txt.html#." class="d">.</a>
+
+Just like with "<a href="change.txt.html#%3Asubstitute" class="d">:substitute</a>"<a href="motion.txt.html#%2C" class="d">,</a> any <a href="pattern.txt.html#pattern" class="d">pattern</a> can be used.  When you learn more
+complicated patterns later, you can use them here.
+
+<span class="h">==============================================================================</span>
+<a name="10.5" class="t">10.5</a>  <a href="visual.txt.html#Visual" class="d">Visual</a> block mode
+
+With <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> you can start selection of <a href="insert.txt.html#a" class="d">a</a> rectangular area of text.  There are
+<a href="insert.txt.html#a" class="d">a</a> few commands that <a href="diff.txt.html#do" class="d">do</a> something special with the text block.
+
+There <a href="motion.txt.html#is" class="d">is</a> something special about using the "<a href="motion.txt.html#%24" class="d">$</a>" command in <a href="visual.txt.html#Visual" class="d">Visual</a> block mode.
+When the last motion command used was "<a href="motion.txt.html#%24" class="d">$</a>"<a href="motion.txt.html#%2C" class="d">,</a> all lines in the <a href="visual.txt.html#Visual" class="d">Visual</a> selection
+will extend until the <a href="intro.txt.html#end" class="d">end</a> of the line, also when the line with the cursor <a href="motion.txt.html#is" class="d">is</a>
+shorter.  This remains effective until you use <a href="insert.txt.html#a" class="d">a</a> motion command that moves the
+cursor horizontally.  Thus using "<a href="motion.txt.html#j" class="d">j</a>" keeps it, "<a href="motion.txt.html#h" class="d">h</a>" stops it.
+
+
+INSERTING TEXT
+
+The command  "I{string}&lt;Esc&gt;" inserts the text <span class="s">{string}</span> in each line, just
+left of the visual block.  You start by pressing <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a> to enter visual block
+mode.  Now you move the cursor to define your block.  Next you type <a href="insert.txt.html#I" class="d">I</a> to enter
+<a href="insert.txt.html#Insert" class="d">Insert</a> mode, followed by the text to insert.  As you type, the text appears on
+the first line only.
+   After you press <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a> to <a href="intro.txt.html#end" class="d">end</a> the insert, the text will magically be
+inserted in the rest of the lines contained in the visual selection.  Example:
+
+<span class="h">        include one </span>
+<span class="h">        include two </span>
+<span class="h">        include three </span>
+<span class="h">        include four </span>
+
+Move the cursor to the "<a href="insert.txt.html#o" class="d">o</a>" of "one" and press <a href="visual.txt.html#CTRL-V" class="k">CTRL-V</a>.  Move <a href="motion.txt.html#it" class="d">it</a> down with "3j"
+to "four"<a href="repeat.txt.html#." class="d">.</a>  You now have <a href="insert.txt.html#a" class="d">a</a> block selection that spans four lines.  Now type: 
+<span class="e"></span>
+<span class="e">        Imain.&lt;Esc&gt;</span>
+<span class="e"></span>
+The result:
+
+<span class="h">        include main.one </span>
+<span class="h">        include main.two </span>
+<span class="h">        include main.three </span>
+<span class="h">        include main.four </span>
+
+If the block spans short lines that <a href="diff.txt.html#do" class="d">do</a> not extend into the block, the text <a href="motion.txt.html#is" class="d">is</a>
+not inserted in that line.  For example, make <a href="insert.txt.html#a" class="d">a</a> <a href="visual.txt.html#Visual" class="d">Visual</a> block selection that
+includes the <a href="motion.txt.html#word" class="d">word</a> "long" in the first and last line of this text, and thus has
+no text selected in the second line:
+
+<span class="h">        This is a long line </span>
+<span class="h">        short </span>
+<span class="h">        Any other long line </span>
+
+                  ^^^^ selected block
+
+Now use the command "Ivery <a href="intro.txt.html#%3CEsc%3E" class="s">&lt;Esc&gt;</a>"<a href="repeat.txt.html#." class="d">.</a>  The result is:
+
+<span class="h">        This is a very long line </span>
+<span class="h">        short </span>
+<span class="h">        Any other very long line </span>
+
+In the short line no text was inserted.
+
+If the <a href="eval.txt.html#string" class="d">string</a> you <a href="insert.txt.html#insert" class="d">insert</a> contains <a href="insert.txt.html#a" class="d">a</a> newline, the "<a href="insert.txt.html#I" class="d">I</a>" acts just like <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#Normal" class="d">Normal</a>
+<a href="insert.txt.html#insert" class="d">insert</a> command and affects only the first line of the block.
+
+The "<a href="insert.txt.html#A" class="d">A</a>" command works the same way, except that <a href="motion.txt.html#it" class="d">it</a> appends after the right
+side of the block.  And <a href="motion.txt.html#it" class="d">it</a> does <a href="insert.txt.html#insert" class="d">insert</a> text in <a href="insert.txt.html#a" class="d">a</a> short line.  Thus you can
+make <a href="insert.txt.html#a" class="d">a</a> choice whether you <a href="diff.txt.html#do" class="d">do</a> or don't want to append text to <a href="insert.txt.html#a" class="d">a</a> short line.
+   There <a href="motion.txt.html#is" class="d">is</a> one special <a href="change.txt.html#case" class="d">case</a> for "<a href="insert.txt.html#A" class="d">A</a>"<a href="cmdline.txt.html#%3A" class="d">:</a> <a href="visual.txt.html#Select" class="d">Select</a> <a href="insert.txt.html#a" class="d">a</a> <a href="visual.txt.html#Visual" class="d">Visual</a> block and then use "<a href="motion.txt.html#%24" class="d">$</a>"
+to make the block extend to the <a href="intro.txt.html#end" class="d">end</a> of each line.  Using "<a href="insert.txt.html#A" class="d">A</a>" now will append
+the text to the <a href="intro.txt.html#end" class="d">end</a> of each line.
+   Using the same example from above, and then typing "$A XXX&lt;Esc&gt;, you get
+this result:
+
+<span class="h">        This is a long line XXX </span>
+<span class="h">        short XXX </span>
+<span class="h">        Any other long line XXX </span>
+
+This really requires using the "<a href="motion.txt.html#%24" class="d">$</a>" command.  Vim remembers that <a href="motion.txt.html#it" class="d">it</a> was used.
+Making the same selection by moving the cursor to the <a href="intro.txt.html#end" class="d">end</a> of the longest line
+with other <a href="intro.txt.html#movement" class="d">movement</a> commands will not have the same result.
+
+
+CHANGING TEXT
+
+The <a href="visual.txt.html#Visual" class="d">Visual</a> block "<a href="change.txt.html#c" class="d">c</a>" command deletes the block and then throws you into <a href="insert.txt.html#Insert" class="d">Insert</a>
+mode to enable you to type in <a href="insert.txt.html#a" class="d">a</a> string.  The <a href="eval.txt.html#string" class="d">string</a> will be inserted in each
+line in the block.
+   Starting with the same selection of the "long" words <a href="motion.txt.html#as" class="d">as</a> above, then typing
+"c_LONG_&lt;Esc&gt;"<a href="motion.txt.html#%2C" class="d">,</a> you get this:
+
+<span class="h">        This is a _LONG_ line </span>
+<span class="h">        short </span>
+<span class="h">        Any other _LONG_ line </span>
+
+Just like with "<a href="insert.txt.html#I" class="d">I</a>" the short line <a href="motion.txt.html#is" class="d">is</a> not changed.  Also, you can't enter <a href="insert.txt.html#a" class="d">a</a>
+newline in the new text.
+
+The "<a href="change.txt.html#C" class="d">C</a>" command deletes text from the left edge of the block to the <a href="intro.txt.html#end" class="d">end</a> of
+line.  It then puts you in <a href="insert.txt.html#Insert" class="d">Insert</a> mode so that you can type in <a href="insert.txt.html#a" class="d">a</a> string,
+which <a href="motion.txt.html#is" class="d">is</a> added to the <a href="intro.txt.html#end" class="d">end</a> of each line.
+   Starting with the same text again, and typing "Cnew text&lt;Esc&gt;" you get:
+
+<span class="h">        This is a new text </span>
+<span class="h">        short </span>
+<span class="h">        Any other new text </span>
+
+Notice that, even though only the "long" <a href="motion.txt.html#word" class="d">word</a> was selected, the text after <a href="motion.txt.html#it" class="d">it</a>
+<a href="motion.txt.html#is" class="d">is</a> deleted <a href="motion.txt.html#as" class="d">as</a> well.  Thus only the location of the left edge of the visual
+block really matters.
+   Again, short lines that <a href="diff.txt.html#do" class="d">do</a> not reach into the block are excluded.
+
+Other commands that change the characters in the block:
+
+        <a href="change.txt.html#%7E" class="d">~</a>       swap <a href="change.txt.html#case" class="d">case</a>       (a -&gt; <a href="insert.txt.html#A" class="d">A</a> and <a href="insert.txt.html#A" class="d">A</a> -&gt; <a href="motion.txt.html#a%29" class="d">a)</a>
+        <a href="undo.txt.html#U" class="d">U</a>       make <a href="change.txt.html#uppercase" class="d">uppercase</a>  (a -&gt; <a href="insert.txt.html#A" class="d">A</a> and <a href="insert.txt.html#A" class="d">A</a> -&gt; A)
+        <a href="undo.txt.html#u" class="d">u</a>       make <a href="change.txt.html#lowercase" class="d">lowercase</a>  (a -&gt; <a href="insert.txt.html#a" class="d">a</a> and <a href="insert.txt.html#A" class="d">A</a> -&gt; <a href="motion.txt.html#a%29" class="d">a)</a>
+
+
+FILLING WITH <a href="insert.txt.html#A" class="d">A</a> CHARACTER
+
+To fill the whole block with one character, use the "<a href="change.txt.html#r" class="d">r</a>" command.  Again,
+<a href="starting.txt.html#starting" class="d">starting</a> with the same example text from above, and then typing "rx"<a href="cmdline.txt.html#%3A" class="d">:</a>
+
+<span class="h">        This is a xxxx line </span>
+<span class="h">        short </span>
+<span class="h">        Any other xxxx line </span>
+
+
+        <span class="n">Note:</span>
+        If you want to include characters beyond the <a href="intro.txt.html#end" class="d">end</a> of the line in the
+        block, check out the <a href="options.txt.html#%27virtualedit%27" class="o">'virtualedit'</a> feature in chapter 25.
+
+
+SHIFTING
+
+The command "<a href="change.txt.html#%3E" class="d">&gt;</a>" shifts the selected text to the right one <a href="intro.txt.html#shift" class="d">shift</a> amount,
+<a href="insert.txt.html#inserting" class="d">inserting</a> whitespace.  The <a href="starting.txt.html#starting" class="d">starting</a> point for this <a href="intro.txt.html#shift" class="d">shift</a> <a href="motion.txt.html#is" class="d">is</a> the left edge of
+the visual block.
+   With the same example again, "<a href="change.txt.html#%3E" class="d">&gt;</a>" gives this result:
+
+<span class="h">        This is a         long line </span>
+<span class="h">        short </span>
+<span class="h">        Any other         long line </span>
+
+The <a href="intro.txt.html#shift" class="d">shift</a> amount <a href="motion.txt.html#is" class="d">is</a> specified with the <a href="options.txt.html#%27shiftwidth%27" class="o">'shiftwidth'</a> option.  To change <a href="motion.txt.html#it" class="d">it</a> to
+use 4 spaces: 
+<span class="e"></span>
+<span class="e">        :set shiftwidth=4</span>
+<span class="e"></span>
+The "<a href="change.txt.html#%3C" class="d">&lt;</a>" command removes one <a href="intro.txt.html#shift" class="d">shift</a> amount of <a href="pattern.txt.html#whitespace" class="d">whitespace</a> <a href="motion.txt.html#at" class="d">at</a> the left
+edge of the block.  This command <a href="motion.txt.html#is" class="d">is</a> limited by the amount of text that <a href="motion.txt.html#is" class="d">is</a>
+there; so if there <a href="motion.txt.html#is" class="d">is</a> <a href="various.txt.html#less" class="d">less</a> than <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#shift" class="d">shift</a> amount of <a href="pattern.txt.html#whitespace" class="d">whitespace</a> available, <a href="motion.txt.html#it" class="d">it</a>
+removes what <a href="motion.txt.html#it" class="d">it</a> can.
+
+
+JOINING LINES
+
+The "<a href="change.txt.html#J" class="d">J</a>" command joins all selected lines together into one line.  Thus <a href="motion.txt.html#it" class="d">it</a>
+removes the line breaks.  Actually, the line break, leading white <a href="intro.txt.html#space" class="d">space</a> and
+trailing white <a href="intro.txt.html#space" class="d">space</a> <a href="motion.txt.html#is" class="d">is</a> replaced by one space.  Two spaces are used after <a href="insert.txt.html#a" class="d">a</a>
+line ending (that can be changed with the <a href="options.txt.html#%27joinspaces%27" class="o">'joinspaces'</a> option).
+   Let's use the example that we got so familiar with now.  The result of
+using the "<a href="change.txt.html#J" class="d">J</a>" command:
+
+<span class="h">        This is a long line short Any other long line </span>
+
+The "<a href="change.txt.html#J" class="d">J</a>" command doesn't require <a href="insert.txt.html#a" class="d">a</a> blockwise selection.  It works with "<a href="visual.txt.html#v" class="d">v</a>" and
+"<a href="visual.txt.html#V" class="d">V</a>" selection in exactly the same way.
+
+If you don't want the white <a href="intro.txt.html#space" class="d">space</a> to be changed, use the "<a href="change.txt.html#gJ" class="d">gJ</a>" command.
+
+<span class="h">==============================================================================</span>
+<a name="10.6" class="t">10.6</a>  Reading and <a href="editing.txt.html#writing" class="d">writing</a> part of <a href="insert.txt.html#a" class="d">a</a> file
+
+When you are <a href="editing.txt.html#writing" class="d">writing</a> an e-mail message, you may want to include another file.
+This can be done with the "<a href="insert.txt.html#%3Aread" class="d">:read</a> <span class="s">{filename}</span>" command.  The text of the file <a href="motion.txt.html#is" class="d">is</a>
+<a href="change.txt.html#put" class="d">put</a> below the cursor line.
+   Starting with this text:
+
+<span class="h">        Hi John, </span>
+<span class="h">        Here is the diff that fixes the bug: </span>
+<span class="h">        Bye, Pierre. </span>
+
+Move the cursor to the second line and type: 
+<span class="e"></span>
+<span class="e">        :read patch</span>
+<span class="e"></span>
+The file named "patch" will be inserted, with this result:
+
+<span class="h">        Hi John, </span>
+<span class="h">        Here is the diff that fixes the bug: </span>
+<span class="h">        2c2 </span>
+<span class="h">        &lt;       for (i = 0; i &lt;= length; ++i) </span>
+<span class="h">        --- </span>
+<span class="h">        &gt;       for (i = 0; i &lt; length; ++i) </span>
+<span class="h">        Bye, Pierre. </span>
+
+The "<a href="insert.txt.html#%3Aread" class="d">:read</a>" command accepts <a href="insert.txt.html#a" class="d">a</a> range.  The file will be <a href="change.txt.html#put" class="d">put</a> below the last line
+number of this range.  Thus ":$r patch" appends the file "patch" <a href="motion.txt.html#at" class="d">at</a> the <a href="intro.txt.html#end" class="d">end</a> of
+the file.
+   What if you want to read the file above the first line?  This can be done
+with the line number zero.  This line doesn't really exist, you will get an
+error message when using <a href="motion.txt.html#it" class="d">it</a> with most commands.  But this command <a href="motion.txt.html#is" class="d">is</a> allowed:
+
+<span class="e">        :0read patch</span>
+<span class="e"></span>
+The file "patch" will be <a href="change.txt.html#put" class="d">put</a> above the first line of the file.
+
+
+WRITING <a href="insert.txt.html#A" class="d">A</a> RANGE OF LINES
+
+To write <a href="insert.txt.html#a" class="d">a</a> range of lines to <a href="insert.txt.html#a" class="d">a</a> file, the "<a href="editing.txt.html#%3Awrite" class="d">:write</a>" command can be used.
+Without <a href="insert.txt.html#a" class="d">a</a> range <a href="motion.txt.html#it" class="d">it</a> writes the whole file.  With <a href="insert.txt.html#a" class="d">a</a> range only the specified
+lines are written: 
+<span class="e"></span>
+<span class="e">        :.,$write tempo</span>
+<span class="e"></span>
+This writes the lines from the cursor until the <a href="intro.txt.html#end" class="d">end</a> of the file into the file
+"tempo"<a href="repeat.txt.html#." class="d">.</a>  If this file already exists you will get an error message.  Vim
+protects you from accidentally overwriting an existing file.  If you know what
+you are doing and want to overwrite the file, append !: 
+<span class="e"></span>
+<span class="e">        :.,$write! tempo</span>
+<span class="e"></span>
+CAREFUL: The <a href="change.txt.html#%21" class="d">!</a> <a href="vim_faq.txt.html#must" class="d">must</a> follow the "<a href="editing.txt.html#%3Awrite" class="d">:write</a>" command immediately, without white
+space.  Otherwise <a href="motion.txt.html#it" class="d">it</a> becomes <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#filter" class="d">filter</a> command, which <a href="motion.txt.html#is" class="d">is</a> explained later in
+this chapter.
+
+
+APPENDING TO <a href="insert.txt.html#A" class="d">A</a> FILE
+
+In the first <a href="motion.txt.html#section" class="d">section</a> of this chapter was explained how to collect <a href="insert.txt.html#a" class="d">a</a> number of
+lines into <a href="insert.txt.html#a" class="d">a</a> register.  The same can be done to collect lines in <a href="insert.txt.html#a" class="d">a</a> file.
+Write the first line with this command: 
+<span class="e"></span>
+<span class="e">        :.write collection</span>
+<span class="e"></span>
+Now move the cursor to the second line you want to collect, and type this: 
+<span class="e"></span>
+<span class="e">        :.write &gt;&gt;collection</span>
+<span class="e"></span>
+The "<a href="change.txt.html#%3E%3E" class="d">&gt;&gt;</a>" tells Vim the "collection" file <a href="motion.txt.html#is" class="d">is</a> not to be written <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> new file,
+but the line <a href="vim_faq.txt.html#must" class="d">must</a> be appended <a href="motion.txt.html#at" class="d">at</a> the end.   You can repeat this <a href="motion.txt.html#as" class="d">as</a> many times
+<a href="motion.txt.html#as" class="d">as</a> you like.
+
+<span class="h">==============================================================================</span>
+<a name="10.7" class="t">10.7</a>  Formatting text
+
+When you are typing plain text, it's <a href="todo.txt.html#nice" class="d">nice</a> if the length of each line <a href="motion.txt.html#is" class="d">is</a>
+automatically trimmed to fit in the window.  To make this happen while
+<a href="insert.txt.html#inserting" class="d">inserting</a> text, set the <a href="options.txt.html#%27textwidth%27" class="o">'textwidth'</a> option: 
+<span class="e"></span>
+<span class="e">        :set textwidth=72</span>
+<span class="e"></span>
+You might remember that in the example <a href="starting.txt.html#vimrc" class="d">vimrc</a> file this command was used for
+every text file.  Thus if you are using that <a href="starting.txt.html#vimrc" class="d">vimrc</a> file, you were already
+using it.  To check the current value of <a href="options.txt.html#%27textwidth%27" class="o">'textwidth'</a>: 
+<span class="e"></span>
+<span class="e">        :set textwidth</span>
+<span class="e"></span>
+Now lines will be broken to take only up to 72 characters.  But when you
+<a href="insert.txt.html#insert" class="d">insert</a> text halfway <a href="insert.txt.html#a" class="d">a</a> line, or when you delete <a href="insert.txt.html#a" class="d">a</a> few words, the lines will get
+too long or too short.  Vim doesn't automatically reformat the text.
+   To tell Vim to format the current paragraph: 
+<span class="e"></span>
+<span class="e">        gqap</span>
+<span class="e"></span>
+This starts with the "<a href="change.txt.html#gq" class="d">gq</a>" command, which <a href="motion.txt.html#is" class="d">is</a> an operator.  Following <a href="motion.txt.html#is" class="d">is</a> "<a href="motion.txt.html#ap" class="d">ap</a>"<a href="motion.txt.html#%2C" class="d">,</a>
+the text object that stands for "<a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#paragraph" class="d">paragraph</a>"<a href="repeat.txt.html#." class="d">.</a>  <a href="insert.txt.html#A" class="d">A</a> <a href="motion.txt.html#paragraph" class="d">paragraph</a> <a href="motion.txt.html#is" class="d">is</a> separated from
+the next <a href="motion.txt.html#paragraph" class="d">paragraph</a> by an empty line.
+
+        <span class="n">Note:</span>
+        <a href="insert.txt.html#A" class="d">A</a> blank line, which contains white space, does NOT separate
+        paragraphs.  This <a href="motion.txt.html#is" class="d">is</a> hard to notice!
+
+Instead of "<a href="motion.txt.html#ap" class="d">ap</a>" you could use any motion or text object.  If your paragraphs
+are properly separated, you can use this command to format the whole file: 
+<span class="e"></span>
+<span class="e">        gggqG</span>
+<span class="e"></span>
+"<a href="motion.txt.html#gg" class="d">gg</a>" takes you to the first line, "<a href="change.txt.html#gq" class="d">gq</a>" <a href="motion.txt.html#is" class="d">is</a> the format <a href="motion.txt.html#operator" class="d">operator</a> and "<a href="motion.txt.html#G" class="d">G</a>" the
+motion that jumps to the last line.
+
+In <a href="change.txt.html#case" class="d">case</a> your paragraphs aren't clearly defined, you can format just the lines
+you manually select.  Move the cursor to the first line you want to format.
+Start with the command "gqj"<a href="repeat.txt.html#." class="d">.</a>  This formats the current line and the one below
+it.  If the first line was short, words from the next line will be appended.
+If <a href="motion.txt.html#it" class="d">it</a> was too long, words will be moved to the next line.  The cursor moves to
+the second line.  Now you can use "<a href="repeat.txt.html#." class="d">.</a>" to repeat the command.  Keep doing this
+until you are <a href="motion.txt.html#at" class="d">at</a> the <a href="intro.txt.html#end" class="d">end</a> of the text you want to format.
+
+<span class="h">==============================================================================</span>
+<a name="10.8" class="t">10.8</a>  Changing <a href="change.txt.html#case" class="d">case</a>
+
+You have text with <a href="motion.txt.html#section" class="d">section</a> headers in lowercase.  You want to make the <a href="motion.txt.html#word" class="d">word</a>
+"<a href="motion.txt.html#section" class="d">section</a>" all uppercase.  Do this with the "<a href="change.txt.html#gU" class="d">gU</a>" operator.  Start with the
+cursor in the first column: 
+<span class="e"></span>
+<span class="e">                             gUw</span>
+       <a href="motion.txt.html#section" class="d">section</a> header      ----&gt;      SECTION header
+
+The "<a href="change.txt.html#gu" class="d">gu</a>" <a href="motion.txt.html#operator" class="d">operator</a> does exactly the opposite: 
+<span class="e"></span>
+<span class="e">                             guw</span>
+       SECTION header      ----&gt;      <a href="motion.txt.html#section" class="d">section</a> header
+
+You can also use "<a href="change.txt.html#g%7E" class="d">g~</a>" to swap case.  All these are operators, thus they work
+with any motion command, with text <a href="index.txt.html#objects" class="d">objects</a> and in <a href="visual.txt.html#Visual" class="d">Visual</a> mode.
+   To make an <a href="motion.txt.html#operator" class="d">operator</a> work on lines you double it.  The delete <a href="motion.txt.html#operator" class="d">operator</a> <a href="motion.txt.html#is" class="d">is</a>
+"<a href="change.txt.html#d" class="d">d</a>"<a href="motion.txt.html#%2C" class="d">,</a> thus to delete <a href="insert.txt.html#a" class="d">a</a> line you use "<a href="change.txt.html#dd" class="d">dd</a>"<a href="repeat.txt.html#." class="d">.</a>  Similarly, "<a href="change.txt.html#gugu" class="d">gugu</a>" makes <a href="insert.txt.html#a" class="d">a</a> whole line
+lowercase.  This can be shortened to "<a href="change.txt.html#guu" class="d">guu</a>"<a href="repeat.txt.html#." class="d">.</a>  "<a href="change.txt.html#gUgU" class="d">gUgU</a>" <a href="motion.txt.html#is" class="d">is</a> shortened to "<a href="change.txt.html#gUU" class="d">gUU</a>" and
+"<a href="change.txt.html#g%7Eg%7E" class="d">g~g~</a>" to "<a href="change.txt.html#g%7E%7E" class="d">g~~</a>"<a href="repeat.txt.html#." class="d">.</a>  Example: 
+<span class="e"></span>
+<span class="e">                                g~~ </span>
+<span class="h">       Some GIRLS have Fun    ----&gt;   sOME girls HAVE fUN </span>
+
+<span class="h">==============================================================================</span>
+<a name="10.9" class="t">10.9</a>  Using an external program
+
+Vim has <a href="insert.txt.html#a" class="d">a</a> very powerful set of commands, <a href="motion.txt.html#it" class="d">it</a> can <a href="diff.txt.html#do" class="d">do</a> anything.  But there may
+still be something that an external command can <a href="diff.txt.html#do" class="d">do</a> better or faster.
+   The command "!{motion}{program}" takes <a href="insert.txt.html#a" class="d">a</a> block of text and filters <a href="motion.txt.html#it" class="d">it</a>
+through an external program.  In other words, <a href="motion.txt.html#it" class="d">it</a> runs the system command
+represented by <span class="s">{program}</span>, giving <a href="motion.txt.html#it" class="d">it</a> the block of text represented by <a href="intro.txt.html#%7Bmotion%7D" class="s">{motion}</a>
+<a href="motion.txt.html#as" class="d">as</a> input.  The output of this command then replaces the selected block.
+   Because this summarizes badly if you are unfamiliar with UNIX filters, take
+<a href="insert.txt.html#a" class="d">a</a> look <a href="motion.txt.html#at" class="d">at</a> an example.  The sort command sorts <a href="insert.txt.html#a" class="d">a</a> file.  If you execute the
+following command, the unsorted file input.txt will be sorted and written to
+output.txt.  (This works on both UNIX and Microsoft Windows.) 
+<span class="e"></span>
+<span class="e">        sort &lt;input.txt &gt;output.txt</span>
+<span class="e"></span>
+Now <a href="diff.txt.html#do" class="d">do</a> the same thing in Vim.  You want to sort lines 1 through 5 of <a href="insert.txt.html#a" class="d">a</a> file.
+You start by putting the cursor on line 1.  Next you execute the following
+command: 
+<span class="e"></span>
+<span class="e">        !5G</span>
+<span class="e"></span>
+The "<a href="change.txt.html#%21" class="d">!</a>" tells Vim that you are performing <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#filter" class="d">filter</a> operation.  The Vim editor
+expects <a href="insert.txt.html#a" class="d">a</a> motion command to follow, indicating which part of the file to
+filter.  The "5G" command tells Vim to <a href="motion.txt.html#go" class="d">go</a> to line 5, so <a href="motion.txt.html#it" class="d">it</a> now knows that <a href="motion.txt.html#it" class="d">it</a>
+<a href="motion.txt.html#is" class="d">is</a> to <a href="change.txt.html#filter" class="d">filter</a> lines 1 (the current line) through 5.
+   In anticipation of the filtering, the cursor drops to the bottom of the
+screen and <a href="insert.txt.html#a" class="d">a</a> <a href="change.txt.html#%21" class="d">!</a> prompt displays.  You can now type in the name of the <a href="change.txt.html#filter" class="d">filter</a>
+program, in this <a href="change.txt.html#case" class="d">case</a> "sort"<a href="repeat.txt.html#." class="d">.</a>  Therefore, your full command <a href="motion.txt.html#is" class="d">is</a> <a href="motion.txt.html#as" class="d">as</a> follows: 
+<span class="e"></span>
+<span class="e">        !5Gsort&lt;Enter&gt;</span>
+<span class="e"></span>
+The result <a href="motion.txt.html#is" class="d">is</a> that the sort program <a href="motion.txt.html#is" class="d">is</a> run on the first 5 lines.  The output
+of the program replaces these lines.
+
+        line 55                       line 11
+        line 33                       line 22
+        line 11         --&gt;           line 33
+        line 22                       line 44
+        line 44                       line 55
+        last line                     last line
+
+The "<a href="change.txt.html#%21%21" class="d">!!</a>" command filters the current line through <a href="insert.txt.html#a" class="d">a</a> filter.  In <a href="os_unix.txt.html#Unix" class="d">Unix</a> the "date"
+command prints the current time and date.  "!!date&lt;Enter&gt;" replaces the current
+line with the output of "date"<a href="repeat.txt.html#." class="d">.</a>  This <a href="motion.txt.html#is" class="d">is</a> useful to add <a href="insert.txt.html#a" class="d">a</a> <a href="editing.txt.html#timestamp" class="d">timestamp</a> to <a href="insert.txt.html#a" class="d">a</a> file.
+
+
+WHEN IT DOESN'T WORK
+
+Starting <a href="insert.txt.html#a" class="d">a</a> shell, sending <a href="motion.txt.html#it" class="d">it</a> text and capturing the output requires that Vim
+knows how the shell works exactly.  When you have problems with filtering,
+check the values of these options:
+
+        <a href="options.txt.html#%27shell%27" class="o">'shell'</a>         specifies the program that Vim uses to execute
+                        external programs.
+        <a href="options.txt.html#%27shellcmdflag%27" class="o">'shellcmdflag'</a>  argument to pass <a href="insert.txt.html#a" class="d">a</a> command to the shell
+        <a href="options.txt.html#%27shellquote%27" class="o">'shellquote'</a>    <a href="change.txt.html#quote" class="d">quote</a> to be used around the command
+        <a href="options.txt.html#%27shellxquote%27" class="o">'shellxquote'</a>   <a href="change.txt.html#quote" class="d">quote</a> to be used around the command and redirection
+        <a href="options.txt.html#%27shelltype%27" class="o">'shelltype'</a>     kind of shell (only for the Amiga)
+        <a href="options.txt.html#%27shellslash%27" class="o">'shellslash'</a>    use forward slashes in the command (only for
+                        <a href="os_win32.txt.html#MS-Windows" class="d">MS-Windows</a> and alikes)
+        <a href="options.txt.html#%27shellredir%27" class="o">'shellredir'</a>    <a href="eval.txt.html#string" class="d">string</a> used to write the command output into <a href="insert.txt.html#a" class="d">a</a> file
+
+On <a href="os_unix.txt.html#Unix" class="d">Unix</a> this <a href="motion.txt.html#is" class="d">is</a> hardly ever <a href="insert.txt.html#a" class="d">a</a> problem, because there are two kinds of shells:
+"sh" like and "csh" like.  Vim checks the <a href="options.txt.html#%27shell%27" class="o">'shell'</a> option and sets related
+<a href="options.txt.html#options" class="d">options</a> automatically, depending on whether <a href="motion.txt.html#it" class="d">it</a> sees "csh" somewhere in
+<a href="options.txt.html#%27shell%27" class="o">'shell'</a>.
+   On MS-Windows, however, there are many different shells and you might have
+to tune the <a href="options.txt.html#options" class="d">options</a> to make filtering work.  Check the <a href="helphelp.txt.html#help" class="d">help</a> for the <a href="options.txt.html#options" class="d">options</a>
+for more information.
+
+
+READING COMMAND OUTPUT
+
+To read the contents of the current directory into the file, use this:
+
+on Unix: 
+<span class="e">        :read !ls</span>
+on MS-Windows: 
+<span class="e">        :read !dir</span>
+<span class="e"></span>
+The output of the "ls" or "dir" command <a href="motion.txt.html#is" class="d">is</a> captured and inserted in the text,
+below the cursor.  This <a href="motion.txt.html#is" class="d">is</a> similar to reading <a href="insert.txt.html#a" class="d">a</a> file, except that the "<a href="change.txt.html#%21" class="d">!</a>" <a href="motion.txt.html#is" class="d">is</a>
+used to tell Vim that <a href="insert.txt.html#a" class="d">a</a> command follows.
+   The command may have arguments.  And <a href="insert.txt.html#a" class="d">a</a> range can be used to tell where Vim
+should <a href="change.txt.html#put" class="d">put</a> the lines: 
+<span class="e"></span>
+<span class="e">        :0read !date -u</span>
+<span class="e"></span>
+This inserts the current time and date in UTC format <a href="motion.txt.html#at" class="d">at</a> the top of the file.
+(Well, if you have <a href="insert.txt.html#a" class="d">a</a> date command that accepts the "<a href="starting.txt.html#-u" class="d">-u</a>" argument.)  <span class="n">Note</span> the
+difference with using "!!date"<a href="cmdline.txt.html#%3A" class="d">:</a> that replaced <a href="insert.txt.html#a" class="d">a</a> line, while "<a href="insert.txt.html#%3Aread" class="d">:read</a> !date" will
+<a href="insert.txt.html#insert" class="d">insert</a> <a href="insert.txt.html#a" class="d">a</a> line.
+
+
+WRITING TEXT TO <a href="insert.txt.html#A" class="d">A</a> COMMAND
+
+The <a href="os_unix.txt.html#Unix" class="d">Unix</a> command "wc" counts words.  To <a href="intro.txt.html#count" class="d">count</a> the words in the current file: 
+<span class="e"></span>
+<span class="e">        :write !wc</span>
+<span class="e"></span>
+This <a href="motion.txt.html#is" class="d">is</a> the same write command <a href="motion.txt.html#as" class="d">as</a> before, but instead of <a href="insert.txt.html#a" class="d">a</a> file name the "<a href="change.txt.html#%21" class="d">!</a>"
+character <a href="motion.txt.html#is" class="d">is</a> used and the name of an external command.  The written text will
+be passed to the specified command <a href="motion.txt.html#as" class="d">as</a> its standard input.  The output could
+look like this:
+
+<span class="h">       4      47     249 </span>
+
+The "wc" command isn't verbose.  This means you have 4 lines, 47 words and 249
+characters.
+
+Watch out for this mistake: 
+<span class="e"></span>
+<span class="e">        :write! wc</span>
+<span class="e"></span>
+This will write the file "wc" in the current directory, with force.  White
+<a href="intro.txt.html#space" class="d">space</a> <a href="motion.txt.html#is" class="d">is</a> important here!
+
+
+REDRAWING THE SCREEN
+
+If the external command produced an error message, the display may have been
+messed up.  Vim <a href="motion.txt.html#is" class="d">is</a> very efficient and only redraws those parts of the screen
+that <a href="motion.txt.html#it" class="d">it</a> knows need redrawing.  But <a href="motion.txt.html#it" class="d">it</a> can't know about what another program
+has written.  To tell Vim to redraw the screen: 
+<span class="e"></span>
+<span class="e">        CTRL-L</span>
+<span class="e"></span>
+<span class="h">==============================================================================</span>
+<span class="e"></span>
+Next chapter: <a href="usr_11.txt.html#usr_11.txt" class="l">usr_11.txt</a>  Recovering from <a href="insert.txt.html#a" class="d">a</a> crash
+
+Copyright: see <a href="usr_01.txt.html#manual-copyright" class="l">manual-copyright</a>  vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

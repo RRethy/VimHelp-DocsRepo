@@ -1,0 +1,548 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: tips.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="tips.txt" class="t">tips.txt</a>      For <span class="i">Vim version 8.0.</span>  Last change: 2009 Nov 07
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Bram Moolenaar</span>
+
+
+Tips and ideas for using Vim                            <a name="tips" class="t">tips</a>
+
+These are just <a href="insert.txt.html#a" class="d">a</a> few that we thought would be helpful for many users.
+You can find many more <a href="#tips" class="d">tips</a> on the wiki.  The URL can be found on
+<a class="u" href="http://www.vim.org">http://www.vim.org</a>
+
+Don't forget to browse the user manual, <a href="motion.txt.html#it" class="d">it</a> also contains lots of useful <a href="#tips" class="d">tips</a>
+<a href="usr_toc.txt.html#usr_toc.txt" class="l">usr_toc.txt</a><a href="repeat.txt.html#." class="d">.</a>
+
+Editing <a href="change.txt.html#C" class="d">C</a> programs                              <a href="#C-editing" class="l">C-editing</a>
+Finding where identifiers are used              <a href="#ident-search" class="l">ident-search</a>
+Switching screens in an xterm                   <a href="#xterm-screens" class="l">xterm-screens</a>
+Scrolling in <a href="insert.txt.html#Insert" class="d">Insert</a> mode                        <a href="#scroll-insert" class="l">scroll-insert</a>
+Smooth <a href="scroll.txt.html#scrolling" class="d">scrolling</a>                                <a href="#scroll-smooth" class="l">scroll-smooth</a>
+Correcting common typing mistakes               <a href="#type-mistakes" class="l">type-mistakes</a>
+Counting words, lines, etc.                     <a href="#count-items" class="l">count-items</a>
+Restoring the cursor position                   <a href="#restore-position" class="l">restore-position</a>
+Renaming files                                  <a href="#rename-files" class="l">rename-files</a>
+Change <a href="insert.txt.html#a" class="d">a</a> name in multiple files                 <a href="#change-name" class="l">change-name</a>
+Speeding up external commands                   <a href="#speed-up" class="l">speed-up</a>
+Useful mappings                                 <a href="#useful-mappings" class="l">useful-mappings</a>
+Compressing the <a href="helphelp.txt.html#help" class="d">help</a> files                      <a href="#gzip-helpfile" class="l">gzip-helpfile</a>
+Executing shell commands in <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a>            <a href="#shell-window" class="l">shell-window</a>
+Hex editing                                     <a href="#hex-editing" class="l">hex-editing</a>
+Using <span class="s">&lt;&gt; notation in autocommands               |autocmd-&lt;&gt;</span>|
+Highlighting matching parens                    <a href="#match-parens" class="l">match-parens</a>
+
+<span class="h">==============================================================================</span>
+Editing <a href="change.txt.html#C" class="d">C</a> programs                                      <a name="C-editing" class="t">C-editing</a>
+
+There are quite <a href="insert.txt.html#a" class="d">a</a> few features in Vim to <a href="helphelp.txt.html#help" class="d">help</a> you edit <a href="change.txt.html#C" class="d">C</a> program files.  Here
+<a href="motion.txt.html#is" class="d">is</a> an overview with <a href="tagsrch.txt.html#tags" class="d">tags</a> to jump to:
+
+<a href="usr_29.txt.html#usr_29.txt" class="l">usr_29.txt</a>            Moving through programs chapter in the user manual.
+<a href="usr_30.txt.html#usr_30.txt" class="l">usr_30.txt</a>            Editing programs chapter in the user manual.
+<a href="indent.txt.html#C-indenting" class="l">C-indenting</a>           Automatically set the indent of <a href="insert.txt.html#a" class="d">a</a> line while typing
+                        text.
+<a href="change.txt.html#%3D" class="l">=</a>                     Re-indent <a href="insert.txt.html#a" class="d">a</a> few lines.
+<a href="change.txt.html#format-comments" class="l">format-comments</a>       Format comments.
+
+<a href="tagsrch.txt.html#%3Acheckpath" class="l">:checkpath</a>            Show all recursively included files.
+<a href="tagsrch.txt.html#%5Bi" class="l">[i</a>                    Search for identifier under cursor in current and
+                        included files.
+<a href="tagsrch.txt.html#%5B_CTRL-I" class="l">[_CTRL-I</a>              Jump to match for "<a href="tagsrch.txt.html#%5Bi" class="d">[i</a>"
+<a href="tagsrch.txt.html#%5BI" class="l">[I</a>                    <a href="eval.txt.html#List" class="d">List</a> all lines in current and included files where
+                        identifier under the cursor matches.
+<a href="tagsrch.txt.html#%5Bd" class="l">[d</a>                    Search for define under cursor in current and included
+                        files.
+
+<a href="tagsrch.txt.html#CTRL-%5D" class="l">CTRL-]</a>                Jump to <a href="tagsrch.txt.html#tag" class="d">tag</a> under cursor (e.g., definition of <a href="insert.txt.html#a" class="d">a</a>
+                        function).
+<a href="tagsrch.txt.html#CTRL-T" class="l">CTRL-T</a>                Jump back to before <a href="insert.txt.html#a" class="d">a</a> <a href="tagsrch.txt.html#CTRL-%5D" class="k">CTRL-]</a> command.
+<a href="tagsrch.txt.html#%3Atselect" class="l">:tselect</a>              <a href="visual.txt.html#Select" class="d">Select</a> one <a href="tagsrch.txt.html#tag" class="d">tag</a> out of <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#list" class="d">list</a> of matching tags.
+
+<a href="pattern.txt.html#gd" class="l">gd</a>                    Go to Declaration of local variable under cursor.
+<a href="pattern.txt.html#gD" class="l">gD</a>                    Go to Declaration of global variable under cursor.
+
+<a href="editing.txt.html#gf" class="l">gf</a>                    Go to file name under the cursor.
+
+<a href="motion.txt.html#%25" class="l">%</a>                     Go to matching (), {}, [], <a href="pattern.txt.html#%2F" class="d">/</a>* */, #if, #else, #endif.
+<a href="motion.txt.html#%5B%2F" class="l">[/</a>                    Go to previous start of comment.
+<a href="motion.txt.html#%5D%2F" class="l">]/</a>                    Go to next <a href="intro.txt.html#end" class="d">end</a> of comment.
+<a href="motion.txt.html#%5B%23" class="l">[#</a>                    Go back to unclosed #if, #ifdef, or #else.
+<a href="motion.txt.html#%5D%23" class="l">]#</a>                    Go forward to unclosed #else or #endif.
+<a href="motion.txt.html#%5B%28" class="l">[(</a>                    Go back to unclosed '('
+<a href="motion.txt.html#%5D%29" class="l">])</a>                    Go forward to unclosed ')'
+<a href="motion.txt.html#%5B%7B" class="l">[{</a>                    Go back to unclosed '{'
+<a href="motion.txt.html#%5D%7D" class="l">]}</a>                    Go forward to unclosed '}'
+
+<a href="motion.txt.html#v_ab" class="l">v_ab</a>                  <a href="visual.txt.html#Select" class="d">Select</a> "<a href="insert.txt.html#a" class="d">a</a> block" from "<a href="motion.txt.html#%5B%28" class="d">[(</a>" to "<a href="motion.txt.html#%5D%29" class="d">])</a>"<a href="motion.txt.html#%2C" class="d">,</a> including braces
+<a href="motion.txt.html#v_ib" class="l">v_ib</a>                  <a href="visual.txt.html#Select" class="d">Select</a> "inner block" from "<a href="motion.txt.html#%5B%28" class="d">[(</a>" to "<a href="motion.txt.html#%5D%29" class="d">])</a>"
+<a href="motion.txt.html#v_aB" class="l">v_aB</a>                  <a href="visual.txt.html#Select" class="d">Select</a> "<a href="insert.txt.html#a" class="d">a</a> block" from "<a href="motion.txt.html#%5B%7B" class="d">[{</a>" to "<a href="motion.txt.html#%5D%7D" class="d">]}</a>"<a href="motion.txt.html#%2C" class="d">,</a> including brackets
+<a href="motion.txt.html#v_iB" class="l">v_iB</a>                  <a href="visual.txt.html#Select" class="d">Select</a> "inner block" from "<a href="motion.txt.html#%5B%7B" class="d">[{</a>" to "<a href="motion.txt.html#%5D%7D" class="d">]}</a>"
+
+<span class="h">==============================================================================</span>
+Finding where identifiers are used                      <a name="ident-search" class="t">ident-search</a>
+
+You probably already know that <a href="tagsrch.txt.html#tags" class="l">tags</a> can be used to jump to the place where <a href="insert.txt.html#a" class="d">a</a>
+function or variable <a href="motion.txt.html#is" class="d">is</a> defined.  But sometimes you wish you could jump to all
+the places where <a href="insert.txt.html#a" class="d">a</a> function or variable <a href="motion.txt.html#is" class="d">is</a> being used.  This <a href="motion.txt.html#is" class="d">is</a> possible in
+two ways:
+1. Using the <a href="quickfix.txt.html#%3Agrep" class="l">:grep</a> command.  This should work on most <a href="os_unix.txt.html#Unix" class="d">Unix</a> systems,
+   but can be slow (it reads all files) and only searches in one directory.
+2. Using ID utils.  This <a href="motion.txt.html#is" class="d">is</a> fast and works in multiple directories.  It uses <a href="insert.txt.html#a" class="d">a</a>
+   database to store locations.  You will need some additional programs for
+   this to work.  And you need to keep the database up to date.
+
+Using the GNU id-tools:
+
+What you need:
+<a href="motion.txt.html#-" class="d">-</a> The GNU id-tools installed (mkid <a href="motion.txt.html#is" class="d">is</a> needed to create ID and <a href="quickfix.txt.html#lid" class="d">lid</a> <a href="motion.txt.html#is" class="d">is</a> needed to
+  use the macros).
+<a href="motion.txt.html#-" class="d">-</a> An identifier database file called "ID" in the current directory.  You can
+  create <a href="motion.txt.html#it" class="d">it</a> with the shell command "mkid file1 file2 .."<a href="repeat.txt.html#." class="d">.</a>
+
+Put this in your .vimrc: 
+<span class="e">        map _u :call ID_search()&lt;Bar&gt;execute "/\\&lt;" . g:word . "\\&gt;"&lt;CR&gt;</span>
+<span class="e">        map _n :n&lt;Bar&gt;execute "/\\&lt;" . g:word . "\\&gt;"&lt;CR&gt;</span>
+<span class="e"></span>
+<span class="e">        function! ID_search()</span>
+<span class="e">          let g:word = expand("&lt;cword&gt;")</span>
+<span class="e">          let x = system("lid --key=none ". g:word)</span>
+<span class="e">          let x = substitute(x, "\n", " ", "g")</span>
+<span class="e">          execute "next " . x</span>
+<span class="e">        endfun</span>
+<span class="e"></span>
+To use it, place the cursor on <a href="insert.txt.html#a" class="d">a</a> word, type "_u" and vim will load the file
+that contains the word.  Search for the next occurrence of the <a href="motion.txt.html#word" class="d">word</a> in the
+same file with "<a href="pattern.txt.html#n" class="d">n</a>"<a href="repeat.txt.html#." class="d">.</a>  Go to the next file with "_n"<a href="repeat.txt.html#." class="d">.</a>
+
+This has been tested with id-utils-3.2 (which <a href="motion.txt.html#is" class="d">is</a> the name of the id-tools
+archive file on your closest gnu-ftp-mirror).
+
+[the idea for this comes from Andreas Kutschera]
+
+<span class="h">==============================================================================</span>
+Switching screens in an xterm           <a name="xterm-screens" class="t">xterm-screens</a> <a name="xterm-save-screen" class="t">xterm-save-screen</a>
+
+(From comp.editors, by Juergen Weigert, in reply to <a href="insert.txt.html#a" class="d">a</a> question)
+
+<a href="change.txt.html#%3A%3E" class="d">:&gt;</a> Another question <a href="motion.txt.html#is" class="d">is</a> that after <a href="starting.txt.html#exiting" class="d">exiting</a> vim, the screen <a href="motion.txt.html#is" class="d">is</a> left <a href="motion.txt.html#as" class="d">as</a> <a href="motion.txt.html#it" class="d">it</a>
+<a href="change.txt.html#%3A%3E" class="d">:&gt;</a> was, i.e. the contents of the file <a href="insert.txt.html#I" class="d">I</a> was viewing (editing) was left on
+<a href="change.txt.html#%3A%3E" class="d">:&gt;</a> the screen. The output from my previous like "ls" were lost,
+<a href="change.txt.html#%3A%3E" class="d">:&gt;</a> ie. no longer in the <a href="scroll.txt.html#scrolling" class="d">scrolling</a> buffer. <a href="insert.txt.html#I" class="d">I</a> know that there <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> way to
+<a href="change.txt.html#%3A%3E" class="d">:&gt;</a> restore the screen after <a href="starting.txt.html#exiting" class="d">exiting</a> vim or other <a href="intro.txt.html#vi" class="d">vi</a> like editors,
+<a href="change.txt.html#%3A%3E" class="d">:&gt;</a> <a href="insert.txt.html#I" class="d">I</a> just don't know how. Helps are appreciated. Thanks.
+<a href="cmdline.txt.html#%3A" class="d">:</a>
+:I imagine someone else can answer this.  <a href="insert.txt.html#I" class="d">I</a> assume though that vim and <a href="intro.txt.html#vi" class="d">vi</a> <a href="diff.txt.html#do" class="d">do</a>
+:the same thing <a href="motion.txt.html#as" class="d">as</a> each other for <a href="insert.txt.html#a" class="d">a</a> given xterm setup.
+
+They not necessarily <a href="diff.txt.html#do" class="d">do</a> the same thing, <a href="motion.txt.html#as" class="d">as</a> this may be <a href="insert.txt.html#a" class="d">a</a> <a href="term.txt.html#termcap" class="d">termcap</a> vs.
+<a href="term.txt.html#terminfo" class="d">terminfo</a> problem.  You should be aware that there are two databases for
+describing attributes of <a href="insert.txt.html#a" class="d">a</a> particular type of terminal: <a href="term.txt.html#termcap" class="d">termcap</a> and
+terminfo.  This can cause differences when the entries differ AND when of
+the programs in question one uses <a href="term.txt.html#terminfo" class="d">terminfo</a> and the other uses <a href="term.txt.html#termcap" class="d">termcap</a>
+(also see <a href="various.txt.html#%2Bterminfo" class="l">+terminfo</a>).
+
+In your particular problem, you are looking for the <a href="intro.txt.html#control" class="d">control</a> sequences
+^[[?47h and ^[[?47l.  These switch between xterms alternate and main screen
+buffer.  As <a href="insert.txt.html#a" class="d">a</a> quick workaround <a href="insert.txt.html#a" class="d">a</a> command sequence like 
+<span class="e">        echo -n "^[[?47h"; vim ... ; echo -n "^[[?47l"</span>
+may <a href="diff.txt.html#do" class="d">do</a> what you want.  (My <a href="intro.txt.html#notation" class="d">notation</a> ^[ means the ESC character, further down
+you'll see that the databases use \E instead).
+
+On startup, vim echoes the value of the <a href="term.txt.html#termcap" class="d">termcap</a> variable ti (terminfo:
+smcup) to the terminal.  When exiting, <a href="motion.txt.html#it" class="d">it</a> echoes te (terminfo: rmcup).  Thus
+these two <a href="eval.txt.html#variables" class="d">variables</a> are the correct place where the above mentioned <a href="intro.txt.html#control" class="d">control</a>
+sequences should go.
+
+Compare your xterm <a href="term.txt.html#termcap" class="d">termcap</a> entry (found in /etc/termcap) with your xterm
+<a href="term.txt.html#terminfo" class="d">terminfo</a> entry (retrieved with "infocmp <a href="starting.txt.html#-C" class="d">-C</a> xterm").  Both should contain
+entries similar to: 
+<span class="e">        :te=\E[2J\E[?47l\E8:ti=\E7\E[?47h:</span>
+<span class="e"></span>
+PS: If you find any difference, someone (your sysadmin?) should better check
+    the complete <a href="term.txt.html#termcap" class="d">termcap</a> and <a href="term.txt.html#terminfo" class="d">terminfo</a> database for consistency.
+
+<span class="n">NOTE</span> 1: If you recompile Vim with FEAT_XTERM_SAVE defined in feature.h, the
+builtin xterm will include the mentioned "te" and "ti" entries.
+
+<span class="n">NOTE</span> 2: If you want to disable the screen switching, and you don't want to
+change your termcap, you can add these lines to your .vimrc: 
+<span class="e">        :set t_ti= t_te=</span>
+<span class="e"></span>
+<span class="h">==============================================================================</span>
+Scrolling in <a href="insert.txt.html#Insert" class="d">Insert</a> mode                                <a name="scroll-insert" class="t">scroll-insert</a>
+
+If you are in <a href="insert.txt.html#insert" class="d">insert</a> mode and you want to see something that <a href="motion.txt.html#is" class="d">is</a> just off the
+screen, you can use <a href="change.txt.html#CTRL-X" class="k">CTRL-X</a> <a href="scroll.txt.html#CTRL-E" class="k">CTRL-E</a> and <a href="change.txt.html#CTRL-X" class="k">CTRL-X</a> <a href="scroll.txt.html#CTRL-Y" class="k">CTRL-Y</a> to scroll the screen.
+                                                <a href="insert.txt.html#i_CTRL-X_CTRL-E" class="l">i_CTRL-X_CTRL-E</a>
+
+To make this easier, you could use these mappings: 
+<span class="e">        :inoremap &lt;C-E&gt; &lt;C-X&gt;&lt;C-E&gt;</span>
+<span class="e">        :inoremap &lt;C-Y&gt; &lt;C-X&gt;&lt;C-Y&gt;</span>
+(Type this literally, make sure the '&lt;' flag <a href="motion.txt.html#is" class="d">is</a> not in <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a>).
+You then lose the ability to copy text from the line above/below the cursor
+<a href="insert.txt.html#i_CTRL-E" class="l">i_CTRL-E</a><a href="repeat.txt.html#." class="d">.</a>
+
+Also consider setting <a href="options.txt.html#%27scrolloff%27" class="o">'scrolloff'</a> to <a href="insert.txt.html#a" class="d">a</a> larger value, so that you can always see
+some context around the cursor.  If <a href="options.txt.html#%27scrolloff%27" class="o">'scrolloff'</a> <a href="motion.txt.html#is" class="d">is</a> bigger than half the <a href="windows.txt.html#window" class="d">window</a>
+height, the cursor will always be in the middle and the text <a href="motion.txt.html#is" class="d">is</a> scrolled when
+the cursor <a href="motion.txt.html#is" class="d">is</a> moved up/down.
+
+<span class="h">==============================================================================</span>
+Smooth <a href="scroll.txt.html#scrolling" class="d">scrolling</a>                                        <a name="scroll-smooth" class="t">scroll-smooth</a>
+
+If you like the <a href="scroll.txt.html#scrolling" class="d">scrolling</a> to <a href="motion.txt.html#go" class="d">go</a> <a href="insert.txt.html#a" class="d">a</a> bit smoother, you can use these mappings: 
+<span class="e">        :map &lt;C-U&gt; &lt;C-Y&gt;&lt;C-Y&gt;&lt;C-Y&gt;&lt;C-Y&gt;&lt;C-Y&gt;&lt;C-Y&gt;&lt;C-Y&gt;&lt;C-Y&gt;&lt;C-Y&gt;&lt;C-Y&gt;&lt;C-Y&gt;&lt;C-Y&gt;&lt;C-Y&gt;&lt;C-Y&gt;&lt;C-Y&gt;&lt;C-Y&gt;</span>
+<span class="e">        :map &lt;C-D&gt; &lt;C-E&gt;&lt;C-E&gt;&lt;C-E&gt;&lt;C-E&gt;&lt;C-E&gt;&lt;C-E&gt;&lt;C-E&gt;&lt;C-E&gt;&lt;C-E&gt;&lt;C-E&gt;&lt;C-E&gt;&lt;C-E&gt;&lt;C-E&gt;&lt;C-E&gt;&lt;C-E&gt;&lt;C-E&gt;</span>
+<span class="e"></span>
+(Type this literally, make sure the '&lt;' flag <a href="motion.txt.html#is" class="d">is</a> not in <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a>).
+
+<span class="h">==============================================================================</span>
+Correcting common typing mistakes                       <a name="type-mistakes" class="t">type-mistakes</a>
+
+When there are <a href="insert.txt.html#a" class="d">a</a> few words that you keep on typing in the wrong way, make
+<a href="map.txt.html#abbreviations" class="d">abbreviations</a> that correct them.  For example: 
+<span class="e">        :ab teh the</span>
+<span class="e">        :ab fro for</span>
+<span class="e"></span>
+<span class="h">==============================================================================</span>
+Counting words, lines, etc.                             <a name="count-items" class="t">count-items</a>
+
+To <a href="intro.txt.html#count" class="d">count</a> how often any <a href="pattern.txt.html#pattern" class="d">pattern</a> occurs in the current buffer use the substitute
+command and add the 'n' flag to avoid the substitution.  The reported number
+of substitutions <a href="motion.txt.html#is" class="d">is</a> the number of items.  Examples: 
+<span class="e"></span>
+<span class="e">        :%s/./&amp;/gn              characters</span>
+<span class="e">        :%s/\i\+/&amp;/gn           words</span>
+<span class="e">        :%s/^//n                lines</span>
+<span class="e">        :%s/the/&amp;/gn            "the" anywhere</span>
+<span class="e">        :%s/\&lt;the\&gt;/&amp;/gn        "the" as a word</span>
+<span class="e"></span>
+You might want to reset <a href="options.txt.html#%27hlsearch%27" class="o">'hlsearch'</a> or <a href="diff.txt.html#do" class="d">do</a> "<a href="pattern.txt.html#%3Anohlsearch" class="d">:nohlsearch</a>"<a href="repeat.txt.html#." class="d">.</a>
+Add the 'e' flag if you don't want an error when there are no matches.
+
+An alternative <a href="motion.txt.html#is" class="d">is</a> using <a href="editing.txt.html#v_g_CTRL-G" class="l">v_g_CTRL-G</a> in <a href="visual.txt.html#Visual" class="d">Visual</a> mode.
+
+If you want to find matches in multiple files use <a href="quickfix.txt.html#%3Avimgrep" class="l">:vimgrep</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="count-bytes" class="t">count-bytes</a>
+If you want to <a href="intro.txt.html#count" class="d">count</a> bytes, you can use this:
+
+        Visually select the characters (block <a href="motion.txt.html#is" class="d">is</a> also possible)
+        Use "<a href="change.txt.html#y" class="d">y</a>" to <a href="change.txt.html#yank" class="d">yank</a> the characters
+        Use the <a href="eval.txt.html#strlen%28%29" class="d">strlen()</a> function: 
+<span class="e">                :echo strlen(@")</span>
+<a href="insert.txt.html#A" class="d">A</a> line break <a href="motion.txt.html#is" class="d">is</a> counted for one byte.
+
+<span class="h">==============================================================================</span>
+Restoring the cursor position                           <a name="restore-position" class="t">restore-position</a>
+
+Sometimes you want to write <a href="insert.txt.html#a" class="d">a</a> <a href="map.txt.html#mapping" class="d">mapping</a> that makes <a href="insert.txt.html#a" class="d">a</a> change somewhere in the
+file and restores the cursor position, without <a href="scroll.txt.html#scrolling" class="d">scrolling</a> the text.  For
+example, to change the date <a href="motion.txt.html#mark" class="d">mark</a> in <a href="insert.txt.html#a" class="d">a</a> file: 
+<span class="e">   :map &lt;F2&gt; msHmtgg/Last [cC]hange:\s*/e+1&lt;CR&gt;"_D"=strftime("%Y %b %d")&lt;CR&gt;p'tzt`s</span>
+<span class="e"></span>
+Breaking up saving the position:
+        ms      store cursor position in the 's' <a href="motion.txt.html#mark" class="d">mark</a>
+        <a href="motion.txt.html#H" class="d">H</a>       <a href="motion.txt.html#go" class="d">go</a> to the first line in the <a href="windows.txt.html#window" class="d">window</a>
+        mt      store this position in the 't' <a href="motion.txt.html#mark" class="d">mark</a>
+
+Breaking up restoring the position:
+        't      <a href="motion.txt.html#go" class="d">go</a> to the line previously <a href="motion.txt.html#at" class="d">at</a> the top of the <a href="windows.txt.html#window" class="d">window</a>
+        <a href="scroll.txt.html#zt" class="d">zt</a>      scroll to move this line to the top of the <a href="windows.txt.html#window" class="d">window</a>
+        `s      jump to the original position of the cursor
+
+For something more advanced see <a href="eval.txt.html#winsaveview%28%29" class="l">winsaveview()</a> and <a href="eval.txt.html#winrestview%28%29" class="l">winrestview()</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+Renaming files                                          <a name="rename-files" class="t">rename-files</a>
+
+Say <a href="insert.txt.html#I" class="d">I</a> have <a href="insert.txt.html#a" class="d">a</a> directory with the following files in them (directory picked <a href="motion.txt.html#at" class="d">at</a>
+random :-):
+
+buffer.c
+charset.c
+digraph.c
+<a href="eval.txt.html#..." class="d">...</a>
+
+and <a href="insert.txt.html#I" class="d">I</a> want to rename *.c *.bla.  I'd <a href="diff.txt.html#do" class="d">do</a> <a href="motion.txt.html#it" class="d">it</a> like this: 
+<span class="e"></span>
+<span class="e">        $ vim</span>
+<span class="e">        :r !ls *.c</span>
+<span class="e">        :%s/\(.*\).c/mv &amp; \1.bla</span>
+<span class="e">        :w !sh</span>
+<span class="e">        :q!</span>
+<span class="e"></span>
+<span class="h">==============================================================================</span>
+Change <a href="insert.txt.html#a" class="d">a</a> name in multiple files                         <a name="change-name" class="t">change-name</a>
+
+Example for using <a href="insert.txt.html#a" class="d">a</a> <a href="usr_41.txt.html#script" class="d">script</a> file to change <a href="insert.txt.html#a" class="d">a</a> name in several files:
+
+        Create <a href="insert.txt.html#a" class="d">a</a> file "subs.vim" containing substitute commands and <a href="insert.txt.html#a" class="d">a</a> <a href="editing.txt.html#%3Aupdate" class="d">:update</a>
+        command: 
+<span class="e">                :%s/Jones/Smith/g</span>
+<span class="e">                :%s/Allen/Peter/g</span>
+<span class="e">                :update</span>
+
+        Execute Vim on all files you want to change, and source the <a href="usr_41.txt.html#script" class="d">script</a> for
+        each argument: 
+<span class="e"></span>
+<span class="e">                vim *.let</span>
+<span class="e">                argdo source subs.vim</span>
+<span class="e"></span>
+See <a href="editing.txt.html#%3Aargdo" class="l">:argdo</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+Speeding up external commands                           <a name="speed-up" class="t">speed-up</a>
+
+In some situations, execution of an external command can be very slow.  This
+can also slow down <a href="editing.txt.html#wildcard" class="d">wildcard</a> expansion on Unix.  Here are <a href="insert.txt.html#a" class="d">a</a> few suggestions to
+increase the speed.
+
+If your .cshrc (or other file, depending on the shell used) <a href="motion.txt.html#is" class="d">is</a> very long, you
+should separate <a href="motion.txt.html#it" class="d">it</a> into <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#section" class="d">section</a> for interactive use and <a href="insert.txt.html#a" class="d">a</a> <a href="motion.txt.html#section" class="d">section</a> for
+non-interactive use (often called secondary shells).  When you execute <a href="insert.txt.html#a" class="d">a</a>
+command from Vim like ":!ls"<a href="motion.txt.html#%2C" class="d">,</a> you <a href="diff.txt.html#do" class="d">do</a> not need the interactive things (for
+example, setting the prompt).  Put the stuff that <a href="motion.txt.html#is" class="d">is</a> not needed after these
+lines: 
+<span class="e"></span>
+<span class="e">        if ($?prompt == 0) then</span>
+<span class="e">                exit 0</span>
+<span class="e">        endif</span>
+<span class="e"></span>
+Another way <a href="motion.txt.html#is" class="d">is</a> to include the "<a href="starting.txt.html#-f" class="d">-f</a>" flag in the <a href="options.txt.html#%27shell%27" class="o">'shell'</a> option, e.g.: 
+<span class="e"></span>
+<span class="e">        :set shell=csh\ -f</span>
+<span class="e"></span>
+(the <a href="intro.txt.html#backslash" class="d">backslash</a> <a href="motion.txt.html#is" class="d">is</a> needed to include the <a href="intro.txt.html#space" class="d">space</a> in the option).
+This will make csh completely skip the use of the .cshrc file.  This may cause
+some things to stop working though.
+
+<span class="h">==============================================================================</span>
+Useful mappings                                         <a name="useful-mappings" class="t">useful-mappings</a>
+
+Here are <a href="insert.txt.html#a" class="d">a</a> few mappings that some people like to use.
+
+                                                        <a name="map-backtick" class="t">map-backtick</a>  
+<span class="e">        :map ' `</span>
+Make the single <a href="change.txt.html#quote" class="d">quote</a> work like <a href="insert.txt.html#a" class="d">a</a> backtick.  Puts the cursor on the column of
+<a href="insert.txt.html#a" class="d">a</a> mark, instead of going to the first non-blank character in the line.
+
+                                                        <a name="emacs-keys" class="t">emacs-keys</a>
+For Emacs-style editing on the command-line: 
+<span class="e">        " start of line</span>
+<span class="e">        :cnoremap &lt;C-A&gt;         &lt;Home&gt;</span>
+<span class="e">        " back one character</span>
+<span class="e">        :cnoremap &lt;C-B&gt;         &lt;Left&gt;</span>
+<span class="e">        " delete character under cursor</span>
+<span class="e">        :cnoremap &lt;C-D&gt;         &lt;Del&gt;</span>
+<span class="e">        " end of line</span>
+<span class="e">        :cnoremap &lt;C-E&gt;         &lt;End&gt;</span>
+<span class="e">        " forward one character</span>
+<span class="e">        :cnoremap &lt;C-F&gt;         &lt;Right&gt;</span>
+<span class="e">        " recall newer command-line</span>
+<span class="e">        :cnoremap &lt;C-N&gt;         &lt;Down&gt;</span>
+<span class="e">        " recall previous (older) command-line</span>
+<span class="e">        :cnoremap &lt;C-P&gt;         &lt;Up&gt;</span>
+<span class="e">        " back one word</span>
+<span class="e">        :cnoremap &lt;Esc&gt;&lt;C-B&gt;    &lt;S-Left&gt;</span>
+<span class="e">        " forward one word</span>
+<span class="e">        :cnoremap &lt;Esc&gt;&lt;C-F&gt;    &lt;S-Right&gt;</span>
+<span class="e"></span>
+<span class="n">NOTE:</span> This requires that the '&lt;' flag <a href="motion.txt.html#is" class="d">is</a> excluded from <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a>. <a href="intro.txt.html#%3C%3E" class="l">&lt;&gt;</a>
+
+                                                        <a name="format-bullet-list" class="t">format-bullet-list</a>
+This <a href="map.txt.html#mapping" class="d">mapping</a> will format any bullet list.  It requires that there <a href="motion.txt.html#is" class="d">is</a> an empty
+line above and below each <a href="eval.txt.html#list" class="d">list</a> entry.  The <a href="eval.txt.html#expression" class="d">expression</a> commands are used to
+be able to give comments to the parts of the mapping. 
+<span class="e"></span>
+<span class="e">        :let m =     ":map _f  :set ai&lt;CR&gt;"    " need 'autoindent' set</span>
+<span class="e">        :let m = m . "{O&lt;Esc&gt;"                " add empty line above item</span>
+<span class="e">        :let m = m . "}{)^W"                  " move to text after bullet</span>
+<span class="e">        :let m = m . "i     &lt;CR&gt;     &lt;Esc&gt;"    " add space for indent</span>
+<span class="e">        :let m = m . "gq}"                    " format text after the bullet</span>
+<span class="e">        :let m = m . "{dd"                    " remove the empty line</span>
+<span class="e">        :let m = m . "5lDJ"                   " put text after bullet</span>
+<span class="e">        :execute m                            |" define the mapping</span>
+<span class="e"></span>
+(&lt;&gt; <a href="intro.txt.html#notation" class="d">notation</a> <a href="intro.txt.html#%3C%3E" class="l">&lt;&gt;</a><a href="repeat.txt.html#." class="d">.</a>  <span class="n">Note</span> that this <a href="motion.txt.html#is" class="d">is</a> all typed literally.  ^W <a href="motion.txt.html#is" class="d">is</a> "<a href="motion.txt.html#%5E" class="d">^</a>" "<a href="motion.txt.html#W" class="d">W</a>"<a href="motion.txt.html#%2C" class="d">,</a> not
+<a href="index.txt.html#CTRL-W" class="k">CTRL-W</a>.  You can copy/paste this into Vim if '&lt;' <a href="motion.txt.html#is" class="d">is</a> not included in
+<a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a>.)
+
+<span class="n">Note</span> that the last comment starts with |"<a href="motion.txt.html#%2C" class="d">,</a> because the "<a href="eval.txt.html#%3Aexecute" class="d">:execute</a>" command
+doesn't accept <a href="insert.txt.html#a" class="d">a</a> comment directly.
+
+You also need to set <a href="options.txt.html#%27textwidth%27" class="o">'textwidth'</a> to <a href="insert.txt.html#a" class="d">a</a> non-zero value, e.g., 
+<span class="e">        :set tw=70</span>
+<span class="e"></span>
+<a href="insert.txt.html#A" class="d">A</a> <a href="map.txt.html#mapping" class="d">mapping</a> that does about the same, but takes the indent for the <a href="eval.txt.html#list" class="d">list</a> from the
+first line (Note: this <a href="map.txt.html#mapping" class="d">mapping</a> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> single long line with <a href="insert.txt.html#a" class="d">a</a> lot of spaces): 
+<span class="e">        :map _f :set ai&lt;CR&gt;}{a                                                          &lt;Esc&gt;WWmmkD`mi&lt;CR&gt;&lt;Esc&gt;kkddpJgq}'mJO&lt;Esc&gt;j</span>
+
+                                                        <a name="collapse" class="t">collapse</a>
+These two mappings reduce <a href="insert.txt.html#a" class="d">a</a> sequence of empty (;b) or blank (;n) lines into <a href="insert.txt.html#a" class="d">a</a>
+single line 
+<span class="e">    :map ;b   GoZ&lt;Esc&gt;:g/^$/.,/./-j&lt;CR&gt;Gdd</span>
+<span class="e">    :map ;n   GoZ&lt;Esc&gt;:g/^[ &lt;Tab&gt;]*$/.,/[^ &lt;Tab&gt;]/-j&lt;CR&gt;Gdd</span>
+<span class="e"></span>
+<span class="h">==============================================================================</span>
+Compressing the <a href="helphelp.txt.html#help" class="d">help</a> files                              <a name="gzip-helpfile" class="t">gzip-helpfile</a>
+
+For those of you who are really short on disk space, you can <a href="pi_gzip.txt.html#compress" class="d">compress</a> the <a href="helphelp.txt.html#help" class="d">help</a>
+files and still be able to <a href="starting.txt.html#view" class="d">view</a> them with Vim.  This makes accessing the <a href="helphelp.txt.html#help" class="d">help</a>
+files <a href="insert.txt.html#a" class="d">a</a> bit slower and requires the "<a href="pi_gzip.txt.html#gzip" class="d">gzip</a>" program.
+
+(1) Compress all the <a href="helphelp.txt.html#help" class="d">help</a> files: "<a href="pi_gzip.txt.html#gzip" class="d">gzip</a> doc/*.txt"<a href="repeat.txt.html#." class="d">.</a>
+
+(2) Edit "doc/tags" and change the ".txt" to ".txt.gz"<a href="cmdline.txt.html#%3A" class="d">:</a> 
+<span class="e">        :%s=\(\t.*\.txt\)\t=\1.gz\t=</span>
+<span class="e"></span>
+(3) Add this line to your vimrc: 
+<span class="e">        set helpfile={dirname}/help.txt.gz</span>
+<span class="e"></span>
+Where <span class="s">{dirname}</span> <a href="motion.txt.html#is" class="d">is</a> the directory where the <a href="helphelp.txt.html#help" class="d">help</a> files are.  The <a href="pi_gzip.txt.html#gzip" class="l">gzip</a> <a href="usr_05.txt.html#plugin" class="d">plugin</a>
+will take care of decompressing the files.
+You <a href="vim_faq.txt.html#must" class="d">must</a> make sure that <a href="starting.txt.html#%24VIMRUNTIME" class="d">$VIMRUNTIME</a> <a href="motion.txt.html#is" class="d">is</a> set to where the other Vim files are,
+when they are not in the same location <a href="motion.txt.html#as" class="d">as</a> the compressed "doc" directory.  See
+<a href="starting.txt.html#%24VIMRUNTIME" class="l">$VIMRUNTIME</a><a href="repeat.txt.html#." class="d">.</a>
+
+<span class="h">==============================================================================</span>
+Executing shell commands in <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a>                    <a name="shell-window" class="t">shell-window</a>
+
+There have been questions for the possibility to execute <a href="insert.txt.html#a" class="d">a</a> shell in <a href="insert.txt.html#a" class="d">a</a> <a href="windows.txt.html#window" class="d">window</a>
+inside Vim.  The answer: you can't!  Including this would add <a href="insert.txt.html#a" class="d">a</a> lot of code to
+Vim, which <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> good reason not to <a href="diff.txt.html#do" class="d">do</a> this.  After all, Vim <a href="motion.txt.html#is" class="d">is</a> an editor, <a href="motion.txt.html#it" class="d">it</a>
+<a href="motion.txt.html#is" class="d">is</a> not supposed to <a href="diff.txt.html#do" class="d">do</a> non-editing tasks.  However, to get something like this,
+you might try splitting your terminal screen or display <a href="windows.txt.html#window" class="d">window</a> with the
+"splitvt" program.  You can probably find <a href="motion.txt.html#it" class="d">it</a> on some <a href="pi_netrw.txt.html#ftp" class="d">ftp</a> server.  The person
+that knows more about this <a href="motion.txt.html#is" class="d">is</a> Sam Lantinga <span class="s">&lt;slouken@cs.ucdavis.edu&gt;</span>.
+An alternative <a href="motion.txt.html#is" class="d">is</a> the "<a href="windows.txt.html#window" class="d">window</a>" command, found on BSD <a href="os_unix.txt.html#Unix" class="d">Unix</a> systems, which
+supports multiple overlapped windows.  Or the "screen" program, found <a href="motion.txt.html#at" class="d">at</a>
+www.uni-erlangen.de, which supports <a href="insert.txt.html#a" class="d">a</a> stack of windows.
+
+<span class="h">==============================================================================</span>
+Hex editing                                     <a name="hex-editing" class="t">hex-editing</a> <a name="using-xxd" class="t">using-xxd</a>
+
+See <a href="motion.txt.html#section" class="d">section</a> <a href="usr_23.txt.html#23.4" class="l">23.4</a> of the user manual.
+
+If one has <a href="insert.txt.html#a" class="d">a</a> particular extension that one uses for binary files (such <a href="motion.txt.html#as" class="d">as</a> exe,
+bin, etc), you may find <a href="motion.txt.html#it" class="d">it</a> helpful to automate the process with the following
+bit of autocmds for your <span class="s">&lt;.vimrc&gt;</span>.  Change that "*.bin" to whatever
+comma-separated <a href="eval.txt.html#list" class="d">list</a> of extension(s) you find yourself wanting to edit: 
+<span class="e"></span>
+<span class="e">        " vim -b : edit binary using xxd-format!</span>
+<span class="e">        augroup Binary</span>
+<span class="e">          au!</span>
+<span class="e">          au BufReadPre  *.bin let &amp;bin=1</span>
+<span class="e">          au BufReadPost *.bin if &amp;bin | %!xxd</span>
+<span class="e">          au BufReadPost *.bin set ft=xxd | endif</span>
+<span class="e">          au BufWritePre *.bin if &amp;bin | %!xxd -r</span>
+<span class="e">          au BufWritePre *.bin endif</span>
+<span class="e">          au BufWritePost *.bin if &amp;bin | %!xxd</span>
+<span class="e">          au BufWritePost *.bin set nomod | endif</span>
+<span class="e">        augroup END</span>
+<span class="e"></span>
+<span class="h">==============================================================================</span>
+Using <span class="s">&lt;&gt; notation in autocommands                       *autocmd-&lt;&gt;</span>*
+
+The <a href="intro.txt.html#%3C%3E" class="d">&lt;&gt;</a> <a href="intro.txt.html#notation" class="d">notation</a> <a href="motion.txt.html#is" class="d">is</a> not recognized in the argument of an :autocmd.  To avoid
+having to use special characters, you could use <a href="insert.txt.html#a" class="d">a</a> self-destroying <a href="map.txt.html#mapping" class="d">mapping</a> to
+get the <a href="intro.txt.html#%3C%3E" class="d">&lt;&gt;</a> <a href="intro.txt.html#notation" class="d">notation</a> and then call the <a href="map.txt.html#mapping" class="d">mapping</a> from the autocmd.  Example:
+
+                                                <a name="map-self-destroy" class="t">map-self-destroy</a>  
+<span class="e"> " This is for automatically adding the name of the file to the menu list.</span>
+<span class="e"> " It uses a self-destroying mapping!</span>
+<span class="e"> " 1. use a line in the buffer to convert the 'dots' in the file name to \.</span>
+<span class="e"> " 2. store that in register '"'</span>
+<span class="e"> " 3. add that name to the Buffers menu list</span>
+<span class="e"> " WARNING: this does have some side effects, like overwriting the</span>
+<span class="e"> " current register contents and removing any mapping for the "i" command.</span>
+<span class="e"> "</span>
+<span class="e"> autocmd BufNewFile,BufReadPre * nmap i :nunmap i&lt;CR&gt;O&lt;C-R&gt;%&lt;Esc&gt;:.g/\./s/\./\\./g&lt;CR&gt;0"9y$u:menu Buffers.&lt;C-R&gt;9 :buffer &lt;C-R&gt;%&lt;C-V&gt;&lt;CR&gt;&lt;CR&gt;</span>
+<span class="e"> autocmd BufNewFile,BufReadPre * normal i</span>
+<span class="e"></span>
+Another method, perhaps better, <a href="motion.txt.html#is" class="d">is</a> to use the "<a href="eval.txt.html#%3Aexecute" class="d">:execute</a>" command.  In the
+<a href="eval.txt.html#string" class="d">string</a> you can use the <a href="intro.txt.html#%3C%3E" class="d">&lt;&gt;</a> <a href="intro.txt.html#notation" class="d">notation</a> by preceding <a href="motion.txt.html#it" class="d">it</a> with <a href="insert.txt.html#a" class="d">a</a> backslash.  Don't
+forget to double the number of existing backslashes and <a href="change.txt.html#put" class="d">put</a> <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#backslash" class="d">backslash</a> before
+<a href="motion.txt.html#%27" class="d">'</a>"<a href="motion.txt.html#%27." class="d">'.</a>
+
+<span class="e">  autocmd BufNewFile,BufReadPre * exe "normal O\&lt;C-R&gt;%\&lt;Esc&gt;:.g/\\./s/\\./\\\\./g\&lt;CR&gt;0\"9y$u:menu Buffers.\&lt;C-R&gt;9 :buffer \&lt;C-R&gt;%\&lt;C-V&gt;\&lt;CR&gt;\&lt;CR&gt;"</span>
+<span class="e"></span>
+For <a href="insert.txt.html#a" class="d">a</a> real buffer menu, user <a href="eval.txt.html#functions" class="d">functions</a> should be used (see <a href="eval.txt.html#%3Afunction" class="l">:function</a>), but
+then the <a href="intro.txt.html#%3C%3E" class="d">&lt;&gt;</a> <a href="intro.txt.html#notation" class="d">notation</a> isn't used, which defeats using <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#as" class="d">as</a> an example here.
+
+<span class="h">==============================================================================</span>
+Highlighting matching parens                                    <a name="match-parens" class="t">match-parens</a>
+
+This example shows the use of <a href="insert.txt.html#a" class="d">a</a> few advanced tricks:
+<a href="motion.txt.html#-" class="d">-</a> using the <a href="autocmd.txt.html#CursorMoved" class="l">CursorMoved</a> <a href="autocmd.txt.html#autocommand" class="d">autocommand</a> event
+<a href="motion.txt.html#-" class="d">-</a> using <a href="eval.txt.html#searchpairpos%28%29" class="l">searchpairpos()</a> to find <a href="insert.txt.html#a" class="d">a</a> matching paren
+<a href="motion.txt.html#-" class="d">-</a> using <a href="eval.txt.html#synID%28%29" class="l">synID()</a> to detect whether the cursor <a href="motion.txt.html#is" class="d">is</a> in <a href="insert.txt.html#a" class="d">a</a> <a href="eval.txt.html#string" class="d">string</a> or comment
+<a href="motion.txt.html#-" class="d">-</a> using <a href="pattern.txt.html#%3Amatch" class="l">:match</a> to highlight something
+<a href="motion.txt.html#-" class="d">-</a> using <a href="insert.txt.html#a" class="d">a</a> <a href="pattern.txt.html#pattern" class="l">pattern</a> to match <a href="insert.txt.html#a" class="d">a</a> specific position in the file.
+
+This should be <a href="change.txt.html#put" class="d">put</a> in <a href="insert.txt.html#a" class="d">a</a> Vim <a href="usr_41.txt.html#script" class="d">script</a> file, since <a href="motion.txt.html#it" class="d">it</a> uses <a href="map.txt.html#script-local" class="d">script-local</a> variables.
+It skips matches in strings or comments, unless the cursor started in <a href="eval.txt.html#string" class="d">string</a>
+or comment.  This requires <a href="syntax.txt.html#syntax" class="d">syntax</a> highlighting.
+
+<a href="insert.txt.html#A" class="d">A</a> slightly more advanced version <a href="motion.txt.html#is" class="d">is</a> used in the <a href="pi_paren.txt.html#matchparen" class="l">matchparen</a> plugin.
+
+<span class="e">        let s:paren_hl_on = 0</span>
+<span class="e">        function s:Highlight_Matching_Paren()</span>
+<span class="e">          if s:paren_hl_on</span>
+<span class="e">            match none</span>
+<span class="e">            let s:paren_hl_on = 0</span>
+<span class="e">          endif</span>
+<span class="e"></span>
+<span class="e">          let c_lnum = line('.')</span>
+<span class="e">          let c_col = col('.')</span>
+<span class="e"></span>
+<span class="e">          let c = getline(c_lnum)[c_col - 1]</span>
+<span class="e">          let plist = split(&amp;matchpairs, ':\|,')</span>
+<span class="e">          let i = index(plist, c)</span>
+<span class="e">          if i &lt; 0</span>
+<span class="e">            return</span>
+<span class="e">          endif</span>
+<span class="e">          if i % 2 == 0</span>
+<span class="e">            let s_flags = 'nW'</span>
+<span class="e">            let c2 = plist[i + 1]</span>
+<span class="e">          else</span>
+<span class="e">            let s_flags = 'nbW'</span>
+<span class="e">            let c2 = c</span>
+<span class="e">            let c = plist[i - 1]</span>
+<span class="e">          endif</span>
+<span class="e">          if c == '['</span>
+<span class="e">            let c = '\['</span>
+<span class="e">            let c2 = '\]'</span>
+<span class="e">          endif</span>
+<span class="e">          let s_skip ='synIDattr(synID(line("."), col("."), 0), "name") ' .</span>
+<span class="e">                \ '=~?  "string\\|comment"'</span>
+<span class="e">          execute 'if' s_skip '| let s_skip = 0 | endif'</span>
+<span class="e"></span>
+<span class="e">          let [m_lnum, m_col] = searchpairpos(c, '', c2, s_flags, s_skip)</span>
+<span class="e"></span>
+<span class="e">          if m_lnum &gt; 0 &amp;&amp; m_lnum &gt;= line('w0') &amp;&amp; m_lnum &lt;= line('w$')</span>
+<span class="e">            exe 'match Search /\(\%' . c_lnum . 'l\%' . c_col .</span>
+<span class="e">                  \ 'c\)\|\(\%' . m_lnum . 'l\%' . m_col . 'c\)/'</span>
+<span class="e">            let s:paren_hl_on = 1</span>
+<span class="e">          endif</span>
+<span class="e">        endfunction</span>
+<span class="e"></span>
+<span class="e">        autocmd CursorMoved,CursorMovedI * call s:Highlight_Matching_Paren()</span>
+<span class="e">        autocmd InsertEnter * match none</span>
+
+
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

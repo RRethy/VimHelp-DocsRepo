@@ -1,0 +1,166 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: pi_zip.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="pi_zip.txt" class="t">pi_zip.txt</a>    For <span class="i">Vim version 8.0.</span>  Last change: 2016 Sep 13
+
+                                +====================+
+                                | Zip File Interface |
+                                +====================+
+
+Author:  Charles E. Campbell  <span class="s">&lt;NdrOchip@ScampbellPfamily.AbizM&gt;</span>
+          (remove NOSPAM from Campbell's email first)
+Copyright: Copyright (C) 2005-2015 Charles <a href="motion.txt.html#E" class="d">E</a> Campbell    <a name="zip-copyright" class="t">zip-copyright</a>
+        The VIM LICENSE (see <a href="uganda.txt.html#copyright" class="l">copyright</a><a href="motion.txt.html#%29" class="d">)</a> applies to the files in this
+        package, including zipPlugin.vim, zip.vim, and pi_zip.vim.  except use
+        "zip.vim" instead of "VIM"<a href="repeat.txt.html#." class="d">.</a>  Like anything else that's free, zip.vim
+        and its associated files are provided *<a href="motion.txt.html#as" class="d">as</a> <a href="motion.txt.html#is" class="d">is</a>* and comes with no
+        warranty of any kind, either expressed or implied.  No guarantees of
+        merchantability.  No guarantees of suitability for any purpose.  By
+        using this plugin, you agree that in no event will the <a href="uganda.txt.html#copyright" class="d">copyright</a>
+        holder be liable for any damages resulting from the use of this
+        software. Use <a href="motion.txt.html#at" class="d">at</a> your own risk!
+
+<span class="h">==============================================================================</span>
+1. <a href="quickref.txt.html#Contents" class="d">Contents</a>                                             <a name="zip" class="t">zip</a> <a name="zip-contents" class="t">zip-contents</a>
+   1. Contents................................................<a href="#zip-contents" class="l">zip-contents</a>
+   2. Usage...................................................<a href="#zip-usage" class="l">zip-usage</a>
+   3. Additional Extensions...................................<a href="#zip-extension" class="l">zip-extension</a>
+   4. History.................................................<a href="#zip-history" class="l">zip-history</a>
+
+<span class="h">==============================================================================</span>
+2. Usage                                                <a name="zip-usage" class="t">zip-usage</a> <a name="zip-manual" class="t">zip-manual</a>
+
+   When one edits <a href="insert.txt.html#a" class="d">a</a> *.zip file, this <a href="usr_05.txt.html#plugin" class="d">plugin</a> will handle displaying <a href="insert.txt.html#a" class="d">a</a>
+   contents page.  <a href="visual.txt.html#Select" class="d">Select</a> <a href="insert.txt.html#a" class="d">a</a> file to edit by moving the cursor atop
+   the desired file, then hit the <span class="s">&lt;return&gt;</span> key.  After editing, one may
+   also write to the file.  Currently, one may not make <a href="insert.txt.html#a" class="d">a</a> new file in
+   <a href="#zip" class="d">zip</a> archives via the plugin.
+
+                                                                <a name="zip-x" class="t">zip-x</a>
+   <a href="change.txt.html#x" class="d">x</a> <a href="cmdline.txt.html#%3A" class="d">:</a> may extract <a href="insert.txt.html#a" class="d">a</a> listed file when the cursor <a href="motion.txt.html#is" class="d">is</a> atop <a href="motion.txt.html#it" class="d">it</a>
+
+   OPTIONS
+
+<span class="c">                                                       </span> <a name="g%3Azip_nomax" class="t">g:zip_nomax</a>
+
+   If this variable exists and <a href="motion.txt.html#is" class="d">is</a> true, the file <a href="windows.txt.html#window" class="d">window</a> will not be
+   automatically maximized when opened.
+
+                                                        <a name="g%3Azip_shq" class="t">g:zip_shq</a>
+   Different operating systems may use one or more shells to execute
+   commands.  Zip will try to guess the correct quoting mechanism to
+   allow spaces and whatnot in filenames; however, if <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> incorrectly
+   guessing the <a href="change.txt.html#quote" class="d">quote</a> to use for your setup, you may use 
+<span class="e">        g:zip_shq</span>
+  which by default <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> single <a href="change.txt.html#quote" class="d">quote</a> under <a href="os_unix.txt.html#Unix" class="d">Unix</a> (') and <a href="insert.txt.html#a" class="d">a</a> double <a href="change.txt.html#quote" class="d">quote</a>
+   under Windows <a href="motion.txt.html#%28" class="d">(</a>").  If you'd rather have no quotes, simply set
+   <a href="#g%3Azip_shq" class="d">g:zip_shq</a> to the empty <a href="eval.txt.html#string" class="d">string</a> (let g:zip_shq= ""<a href="motion.txt.html#%29" class="d">)</a> in your <span class="s">&lt;.vimrc&gt;</span>.
+
+<span class="c">                                                       </span> <a name="g%3Azip_unzipcmd" class="t">g:zip_unzipcmd</a>
+   Use this option to specify the program which does the duty of "unzip"<a href="repeat.txt.html#." class="d">.</a>
+   It's used during browsing. By default: 
+<span class="e">        let g:zip_unzipcmd= "unzip"</span>
+
+                                                        <a name="g%3Azip_zipcmd" class="t">g:zip_zipcmd</a>
+   Use this option to specify the program which does the duty of "<a href="#zip" class="d">zip</a>"<a href="repeat.txt.html#." class="d">.</a>
+   It's used during the <a href="editing.txt.html#writing" class="d">writing</a> (updating) of <a href="insert.txt.html#a" class="d">a</a> file already in <a href="insert.txt.html#a" class="d">a</a> <a href="#zip" class="d">zip</a>
+   file; by default: 
+<span class="e">        let g:zip_zipcmd= "zip"</span>
+
+                                                        <a name="g%3Azip_extractcmd" class="t">g:zip_extractcmd</a>
+   This option specifies the program (and any <a href="options.txt.html#options" class="d">options</a> needed) used to
+   extract <a href="insert.txt.html#a" class="d">a</a> file from <a href="insert.txt.html#a" class="d">a</a> <a href="#zip" class="d">zip</a> archive.  By default, 
+<span class="e">        let g:zip_extractcmd= g:zip_unzipcmd</span>
+
+<span class="h">   PREVENTING LOADING</span>
+
+   If for some reason you <a href="diff.txt.html#do" class="d">do</a> not wish to use vim to examine zipped files,
+   you may <a href="change.txt.html#put" class="d">put</a> the following two <a href="eval.txt.html#variables" class="d">variables</a> into your <span class="s">&lt;.vimrc&gt;</span> to prevent
+   the <a href="#zip" class="d">zip</a> <a href="usr_05.txt.html#plugin" class="d">plugin</a> from loading: 
+<span class="e"></span>
+<span class="e">        let g:loaded_zipPlugin= 1</span>
+<span class="e">        let g:loaded_zip      = 1</span>
+
+
+<span class="h">==============================================================================</span>
+3. Additional Extensions                                        <a name="zip-extension" class="t">zip-extension</a>
+
+   Apparently there are <a href="insert.txt.html#a" class="d">a</a> number of archivers which generate <a href="#zip" class="d">zip</a> files that
+   don't use the .zip extension (.jar, .xpi, etc).  To handle such files,
+   place <a href="insert.txt.html#a" class="d">a</a> line in your <span class="s">&lt;.vimrc&gt;</span> file: 
+<span class="e"></span>
+<span class="e">        au BufReadCmd *.jar,*.xpi call zip#Browse(expand("&lt;amatch&gt;"))</span>
+
+   One can simply extend this line to accommodate additional extensions that
+   should be treated <a href="motion.txt.html#as" class="d">as</a> <a href="#zip" class="d">zip</a> files.
+
+   Alternatively, one may change <a name="g%3AzipPlugin_ext" class="t">g:zipPlugin_ext</a> in one's .vimrc.
+   Currently (11/30/15) <a href="motion.txt.html#it" class="d">it</a> holds: 
+<span class="e"></span>
+<span class="e">        let g:zipPlugin_ext= '*.zip,*.jar,*.xpi,*.ja,*.war,*.ear,*.celzip,</span>
+<span class="e">       \ *.oxt,*.kmz,*.wsz,*.xap,*.docx,*.docm,*.dotx,*.dotm,*.potx,*.potm,</span>
+<span class="e">       \ *.ppsx,*.ppsm,*.pptx,*.pptm,*.ppam,*.sldx,*.thmx,*.xlam,*.xlsx,*.xlsm,</span>
+<span class="e">       \ *.xlsb,*.xltx,*.xltm,*.xlam,*.crtx,*.vdw,*.glox,*.gcsx,*.gqsx,*.epub'</span>
+<span class="e"></span>
+<span class="h">==============================================================================</span>
+4. History                                                      <a name="zip-history" class="t">zip-history</a> {{{1
+   v28 Oct 08, 2014 * changed the sanity checks for executables to reflect
+                      the command actually to be attempted in zip#Read()
+                      and zip#Write()
+                    * added the extraction of <a href="insert.txt.html#a" class="d">a</a> file capability
+       Nov 30, 2015 * added *.epub to the <a href="#g%3AzipPlugin_ext" class="l">g:zipPlugin_ext</a> <a href="eval.txt.html#list" class="d">list</a>
+       Sep 13, 2016 * added *.apk to the <a href="#g%3AzipPlugin_ext" class="l">g:zipPlugin_ext</a> <a href="eval.txt.html#list" class="d">list</a> and
+                      sorted the suffices.
+   v27 Jul 02, 2013 * sanity check: zipfile <a href="vim_faq.txt.html#must" class="d">must</a> have "PK" <a href="motion.txt.html#as" class="d">as</a> its first
+                      two bytes.
+                    * modified to allow zipfile: entries in <a href="quickfix.txt.html#quickfix" class="d">quickfix</a> lists
+   v26 Nov 15, 2012 * (Jason Spiro) provided <a href="insert.txt.html#a" class="d">a</a> lot of new extensions that
+                      are synonyms for .zip
+   v25 Jun 27, 2011 * using keepj with unzip <a href="starting.txt.html#-Z" class="d">-Z</a>
+                      (consistent with the <a href="starting.txt.html#-p" class="d">-p</a> variant)
+                    * (Ben Staniford) now uses
+                        has("win32unix"<a href="motion.txt.html#%29" class="d">)</a> &amp;&amp; executable("cygpath"<a href="motion.txt.html#%29" class="d">)</a>
+                      before converting to cygwin-style paths
+   v24 Jun 21, 2010 * (Cédric Bosdonnat) unzip seems to need its filenames
+                      fnameescape'd <a href="motion.txt.html#as" class="d">as</a> well <a href="motion.txt.html#as" class="d">as</a> shellquote'd
+                    * (Motoya Kurotsu) inserted keepj before 0d to protect
+                      jump <a href="eval.txt.html#list" class="d">list</a>
+   v17 May 09, 2008 * arno caught <a href="insert.txt.html#a" class="d">a</a> security bug
+   v15 Sep 07, 2007 * &amp;shq now used if not the empty <a href="eval.txt.html#string" class="d">string</a> for <a href="#g%3Azip_shq" class="d">g:zip_shq</a>
+   v14 May 07, 2007 * using b:zipfile instead of w:zipfile to avoid problem
+                      when editing alternate file to bring up <a href="insert.txt.html#a" class="d">a</a> zipfile
+   v10 May 02, 2006 * now using "redraw then echo" to show messages, instead
+                      of "echo and prompt user"
+                    * <a href="#g%3Azip_shq" class="d">g:zip_shq</a> provided to allow for quoting <a href="intro.txt.html#control" class="d">control</a> for the
+                      command being passed via <a href="insert.txt.html#%3Ar%21" class="d">:r!</a> <a href="eval.txt.html#..." class="d">...</a> commands.
+   v8 Apr 10, 2006 * <a href="intro.txt.html#Bram" class="d">Bram</a> <a href="intro.txt.html#Moolenaar" class="d">Moolenaar</a> reported that he received an error message
+                     due to "<a href="pattern.txt.html#Pattern" class="d">Pattern</a> not found: ^.*\%0c"<a href="motion.txt.html#%3B" class="d">;</a> this was caused by
+                     stridx finding <a href="insert.txt.html#a" class="d">a</a> Name... <a href="motion.txt.html#at" class="d">at</a> the beginning of the line;
+                     zip.vim tried 4,$s/^.*\%0c//, but that doesn't work.
+                     Fixed.
+   v7 Mar 22, 2006 * escaped some characters that can cause filename handling
+                     problems.
+   v6 Dec 21, 2005 * <a href="editing.txt.html#writing" class="d">writing</a> to files not in directories caused problems <a href="motion.txt.html#-" class="d">-</a>
+                     fixed (pointed out by Christian Robinson)
+   v5 Nov 22, 2005 * report option workaround installed
+   v3 Oct 18, 2005 * <a href="cmdline.txt.html#%3Camatch%3E" class="s">&lt;amatch&gt;</a> used instead of <a href="cmdline.txt.html#%3Cafile%3E" class="s">&lt;afile&gt;</a> in autocmds
+   v2 Sep 16, 2005 * silenced some commands (avoiding <a href="message.txt.html#hit-enter" class="d">hit-enter</a> prompt)
+<span class="c">                  </span> * began <a href="eval.txt.html#testing" class="d">testing</a> under Windows; works thus far
+                   * <a href="filetype.txt.html#filetype" class="d">filetype</a> detection fixed
+      Nov 03, 2005 * handles <a href="editing.txt.html#writing" class="d">writing</a> zipfiles across <a href="insert.txt.html#a" class="d">a</a> <a href="pi_netrw.txt.html#network" class="d">network</a> using
+                     netrw#NetWrite()
+   v1 Sep 15, 2005 * Initial release, had browsing, reading, and <a href="editing.txt.html#writing" class="d">writing</a>
+
+<span class="h">==============================================================================</span>
+vim:tw=78:ts=8:ft=help:fdm=marker
+
+</pre>
+</div>
+</div>
+</body>
+</html>

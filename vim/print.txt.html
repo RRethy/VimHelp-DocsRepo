@@ -1,0 +1,769 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: print.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="print.txt" class="t">print.txt</a>     For <span class="i">Vim version 8.0.</span>  Last change: 2010 Jul 20
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Bram Moolenaar</span>
+
+
+Printing                                                <a name="printing" class="t">printing</a>
+
+1. Introduction                         <a href="#print-intro" class="l">print-intro</a>
+2. Print <a href="options.txt.html#options" class="d">options</a>                        <a href="#print-options" class="l">print-options</a>
+3. PostScript Printing                  <a href="#postscript-printing" class="l">postscript-printing</a>
+4. PostScript Printing Encoding         <a href="#postscript-print-encoding" class="l">postscript-print-encoding</a>
+5. PostScript CJK Printing              <a href="#postscript-cjk-printing" class="l">postscript-cjk-printing</a>
+6. PostScript Printing Troubleshooting  <a href="#postscript-print-trouble" class="l">postscript-print-trouble</a>
+7. PostScript Utilities                 <a href="#postscript-print-util" class="l">postscript-print-util</a>
+8. Formfeed Characters                  <a href="#printing-formfeed" class="l">printing-formfeed</a>
+
+<span class="s">{Vi has None of this}</span>
+<span class="s">{only available when compiled with the |+printer| feature}</span>
+
+<span class="h">==============================================================================</span>
+1. Introduction                                         <a name="print-intro" class="t">print-intro</a>
+
+On <a href="os_win32.txt.html#MS-Windows" class="d">MS-Windows</a> Vim can print your text on any installed printer.  On other
+systems <a href="insert.txt.html#a" class="d">a</a> PostScript file <a href="motion.txt.html#is" class="d">is</a> produced.  This can be directly sent to <a href="insert.txt.html#a" class="d">a</a>
+PostScript printer.  For other printers <a href="insert.txt.html#a" class="d">a</a> program like ghostscript needs to be
+used.
+
+<span class="n">Note:</span> If you have problems <a href="#printing" class="d">printing</a> with <a href="#%3Ahardcopy" class="l">:hardcopy</a><a href="motion.txt.html#%2C" class="d">,</a> an alternative <a href="motion.txt.html#is" class="d">is</a> to use
+<a href="syntax.txt.html#%3ATOhtml" class="l">:TOhtml</a> and print the resulting html file from <a href="insert.txt.html#a" class="d">a</a> browser.
+
+                                        <a name="%3Aha" class="t">:ha</a> <a name="%3Ahardcopy" class="t">:hardcopy</a> <a name="E237" class="t">E237</a> <a name="E238" class="t">E238</a> <a name="E324" class="t">E324</a>
+:[range]ha[rdcopy][!] <span class="s">[arguments]</span>
+                        Send <a href="cmdline.txt.html#%5Brange%5D" class="s">[range]</a> lines (default whole file) to the
+                        printer.
+
+                        On <a href="os_win32.txt.html#MS-Windows" class="d">MS-Windows</a> <a href="insert.txt.html#a" class="d">a</a> <a href="gui_w32.txt.html#dialog" class="d">dialog</a> <a href="motion.txt.html#is" class="d">is</a> displayed to allow selection
+                        of printer, paper size etc.  To skip the dialog, use
+                        the [!].  In this <a href="change.txt.html#case" class="d">case</a> the printer defined by
+                        <a href="options.txt.html#%27printdevice%27" class="o">'printdevice'</a> <a href="motion.txt.html#is" class="d">is</a> used, or, if <a href="options.txt.html#%27printdevice%27" class="o">'printdevice'</a> <a href="motion.txt.html#is" class="d">is</a> empty,
+                        the system default printer.
+
+                        For systems other than MS-Windows, PostScript <a href="motion.txt.html#is" class="d">is</a>
+                        written in <a href="insert.txt.html#a" class="d">a</a> temp file and <a href="options.txt.html#%27printexpr%27" class="o">'printexpr'</a> <a href="motion.txt.html#is" class="d">is</a> used to
+                        actually print it.  Then <span class="s">[arguments]</span> can be used by
+                        <a href="options.txt.html#%27printexpr%27" class="o">'printexpr'</a> through <a href="eval.txt.html#v%3Acmdarg" class="l">v:cmdarg</a><a href="repeat.txt.html#." class="d">.</a>  Otherwise <span class="s">[arguments]</span>
+                        <a href="motion.txt.html#is" class="d">is</a> ignored.  <a href="options.txt.html#%27printoptions%27" class="o">'printoptions'</a> can be used to specify
+                        paper size, duplex, etc.
+
+:[range]ha[rdcopy][!] &gt;{filename}
+                        As above, but write the resulting PostScript in file
+                        <span class="s">{filename}</span>.
+                        Things like "<a href="motion.txt.html#%25" class="d">%</a>" are expanded <a href="cmdline.txt.html#cmdline-special" class="l">cmdline-special</a>
+                        Careful: An existing file <a href="motion.txt.html#is" class="d">is</a> silently overwritten.
+                        {only available when compiled with the <a href="various.txt.html#%2Bpostscript" class="l">+postscript</a>
+                        feature}
+                        On <a href="os_win32.txt.html#MS-Windows" class="d">MS-Windows</a> use the "print to file" feature of the
+                        printer driver.
+
+Progress <a href="motion.txt.html#is" class="d">is</a> displayed during <a href="#printing" class="d">printing</a> <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> page number and <a href="insert.txt.html#a" class="d">a</a> percentage.  To
+abort <a href="#printing" class="d">printing</a> use the interrupt key (CTRL-C or, on MS-systems, <a href="scroll.txt.html#CTRL-B" class="k">CTRL-B</a>reak).
+
+Printer output <a href="motion.txt.html#is" class="d">is</a> controlled by the <a href="options.txt.html#%27printfont%27" class="o">'printfont'</a> and <a href="options.txt.html#%27printoptions%27" class="o">'printoptions'</a> options.
+<a href="options.txt.html#%27printheader%27" class="o">'printheader'</a> specifies the format of <a href="insert.txt.html#a" class="d">a</a> page header.
+
+The printed file <a href="motion.txt.html#is" class="d">is</a> always limited to the selected margins, irrespective of
+the current window's <a href="options.txt.html#%27wrap%27" class="o">'wrap'</a> or <a href="options.txt.html#%27linebreak%27" class="o">'linebreak'</a> settings.  The "wrap" item in
+<a href="options.txt.html#%27printoptions%27" class="o">'printoptions'</a> can be used to switch wrapping off.
+The current highlighting colors are used in the printout, with the following
+considerations:
+1) The normal background <a href="motion.txt.html#is" class="d">is</a> always rendered <a href="motion.txt.html#as" class="d">as</a> white (i.e. blank paper).
+2) White text or the default foreground <a href="motion.txt.html#is" class="d">is</a> rendered <a href="motion.txt.html#as" class="d">as</a> black, so that <a href="motion.txt.html#it" class="d">it</a> shows
+   up!
+3) If <a href="options.txt.html#%27background%27" class="o">'background'</a> <a href="motion.txt.html#is" class="d">is</a> "dark"<a href="motion.txt.html#%2C" class="d">,</a> then the colours are darkened to compensate for
+   the fact that otherwise they would be too bright to show up clearly on
+   white paper.
+
+<span class="h">==============================================================================</span>
+2. Print <a href="options.txt.html#options" class="d">options</a>                                        <a name="print-options" class="t">print-options</a>
+
+Here are the details for the <a href="options.txt.html#options" class="d">options</a> that change the way <a href="#printing" class="d">printing</a> <a href="motion.txt.html#is" class="d">is</a> done.
+For generic info about setting <a href="options.txt.html#options" class="d">options</a> see <a href="options.txt.html#options.txt" class="l">options.txt</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="pdev-option" class="t">pdev-option</a>
+<a href="options.txt.html#%27printdevice%27" class="o">'printdevice'</a> <a href="options.txt.html#%27pdev%27" class="o">'pdev'</a>    <a href="eval.txt.html#string" class="d">string</a>  (default empty)
+                        global
+This defines the name of the printer to be used when the <a href="#%3Ahardcopy" class="l">:hardcopy</a> command
+<a href="motion.txt.html#is" class="d">is</a> issued with <a href="insert.txt.html#a" class="d">a</a> bang (!) to skip the printer selection dialog.  On Win32, <a href="motion.txt.html#it" class="d">it</a>
+should be the printer name exactly <a href="motion.txt.html#as" class="d">as</a> <a href="motion.txt.html#it" class="d">it</a> appears in the standard printer
+dialog.
+If the option <a href="motion.txt.html#is" class="d">is</a> empty, then vim will use the system default printer for
+":hardcopy!"
+
+                                                        <a name="penc-option" class="t">penc-option</a> <a name="E620" class="t">E620</a>
+<a href="options.txt.html#%27printencoding%27" class="o">'printencoding'</a> <a href="options.txt.html#%27penc%27" class="o">'penc'</a>  <a href="eval.txt.html#String" class="d">String</a>  (default empty, except for:
+                                        Windows, OS/2: cp1252,
+                                        Macintosh: mac-roman,
+                                        VMS: dec-mcs,
+                                        HPUX: hp-roman8,
+                                        EBCDIC: ebcdic-uk)
+                        global
+Sets the character encoding used when printing.  This option tells Vim which
+print character encoding file from the "print" directory in <a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a> to
+use.
+
+This option will accept any value from <a href="mbyte.txt.html#encoding-names" class="l">encoding-names</a><a href="repeat.txt.html#." class="d">.</a>  Any recognized names
+are converted to Vim standard names <a href="motion.txt.html#-" class="d">-</a> see <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> for more details.  Names
+not recognized by Vim will just be converted to lower <a href="change.txt.html#case" class="d">case</a> and underscores
+replaced with '-' signs.
+
+If <a href="options.txt.html#%27printencoding%27" class="o">'printencoding'</a> <a href="motion.txt.html#is" class="d">is</a> empty or Vim cannot find the file then <a href="motion.txt.html#it" class="d">it</a> will use
+<a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> (if Vim <a href="motion.txt.html#is" class="d">is</a> compiled with <a href="various.txt.html#%2Bmulti_byte" class="l">+multi_byte</a> and <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> set an 8-bit
+encoding) to find the print character encoding file.  If Vim <a href="motion.txt.html#is" class="d">is</a> unable to find
+<a href="insert.txt.html#a" class="d">a</a> character encoding file then <a href="motion.txt.html#it" class="d">it</a> will use the "latin1" print character
+encoding file.
+
+When <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> <a href="motion.txt.html#is" class="d">is</a> set to <a href="insert.txt.html#a" class="d">a</a> <a href="mbyte.txt.html#multi-byte" class="d">multi-byte</a> encoding, Vim will try to convert
+characters to the <a href="#printing" class="d">printing</a> encoding for <a href="#printing" class="d">printing</a> (if <a href="options.txt.html#%27printencoding%27" class="o">'printencoding'</a> <a href="motion.txt.html#is" class="d">is</a> empty
+then the conversion will be to latin1).  Conversion to <a href="insert.txt.html#a" class="d">a</a> <a href="#printing" class="d">printing</a> encoding
+other than latin1 will require Vim to be compiled with the <a href="various.txt.html#%2Biconv" class="l">+iconv</a> feature.
+If no conversion <a href="motion.txt.html#is" class="d">is</a> possible then <a href="#printing" class="d">printing</a> will fail.  Any characters that
+cannot be converted will be replaced with upside down question marks.
+
+Four print character encoding files are provided to support default Mac, VMS,
+HPUX, and EBCDIC character encodings and are used by default on these
+platforms.  Code page 1252 print character encoding <a href="motion.txt.html#is" class="d">is</a> used by default on
+Windows and <a href="os_os2.txt.html#OS%2F2" class="d">OS/2</a> platforms.
+
+                                                        <a name="pexpr-option" class="t">pexpr-option</a>
+<a href="options.txt.html#%27printexpr%27" class="o">'printexpr'</a> <a href="options.txt.html#%27pexpr%27" class="o">'pexpr'</a>     <a href="eval.txt.html#String" class="d">String</a>  (default: see below)
+                        global
+Expression that <a href="motion.txt.html#is" class="d">is</a> evaluated to print the PostScript produced with
+<a href="#%3Ahardcopy" class="l">:hardcopy</a><a href="repeat.txt.html#." class="d">.</a>
+The file name to be printed <a href="motion.txt.html#is" class="d">is</a> in <a href="eval.txt.html#v%3Afname_in" class="l">v:fname_in</a><a href="repeat.txt.html#." class="d">.</a>
+The arguments to the "<a href="#%3Ahardcopy" class="d">:hardcopy</a>" command are in <a href="eval.txt.html#v%3Acmdarg" class="l">v:cmdarg</a><a href="repeat.txt.html#." class="d">.</a>
+The <a href="eval.txt.html#expression" class="d">expression</a> <a href="vim_faq.txt.html#must" class="d">must</a> take care of <a href="change.txt.html#deleting" class="d">deleting</a> the file after <a href="#printing" class="d">printing</a> it.
+When there <a href="motion.txt.html#is" class="d">is</a> an error, the <a href="eval.txt.html#expression" class="d">expression</a> <a href="vim_faq.txt.html#must" class="d">must</a> return <a href="insert.txt.html#a" class="d">a</a> non-zero number.
+If there <a href="motion.txt.html#is" class="d">is</a> no error, return zero or an empty string.
+The default for non <a href="os_win32.txt.html#MS-Windows" class="d">MS-Windows</a> or <a href="os_vms.txt.html#VMS" class="d">VMS</a> systems <a href="motion.txt.html#is" class="d">is</a> to simply use "lpr" to print
+the file: 
+<span class="e"></span>
+<span class="e">    system('lpr' . (&amp;printdevice == '' ? '' : ' -P' . &amp;printdevice)</span>
+<span class="e">        . ' ' . v:fname_in) . delete(v:fname_in) + v:shell_error</span>
+<span class="e"></span>
+On MS-Dos, <a href="os_win32.txt.html#MS-Windows" class="d">MS-Windows</a> and <a href="os_os2.txt.html#OS%2F2" class="d">OS/2</a> machines the default <a href="motion.txt.html#is" class="d">is</a> to copy the file to the
+currently specified printdevice: 
+<span class="e"></span>
+<span class="e">    system('copy' . ' ' . v:fname_in . (&amp;printdevice == ''</span>
+<span class="e">                ? ' LPT1:' : (' \"' . &amp;printdevice . '\"')))</span>
+<span class="e">                . delete(v:fname_in)</span>
+<span class="e"></span>
+On <a href="os_vms.txt.html#VMS" class="d">VMS</a> machines the default <a href="motion.txt.html#is" class="d">is</a> to send the file to either the default or
+currently specified printdevice: 
+<span class="e"></span>
+<span class="e">    system('print' . (&amp;printdevice == '' ? '' : ' /queue=' .</span>
+<span class="e">                &amp;printdevice) . ' ' . v:fname_in) . delete(v:fname_in)</span>
+<span class="e"></span>
+If you change this option, using <a href="insert.txt.html#a" class="d">a</a> function <a href="motion.txt.html#is" class="d">is</a> an <a href="starting.txt.html#easy" class="d">easy</a> way to avoid having to
+<a href="intro.txt.html#escape" class="d">escape</a> all the spaces.  Example: 
+<span class="e"></span>
+<span class="e">        :set printexpr=PrintFile(v:fname_in)</span>
+<span class="e">        :function PrintFile(fname)</span>
+<span class="e">        :  call system("ghostview " . a:fname)</span>
+<span class="e">        :  call delete(a:fname)</span>
+<span class="e">        :  return v:shell_error</span>
+<span class="e">        :endfunc</span>
+<span class="e"></span>
+Be aware that some print programs return <a href="intro.txt.html#control" class="d">control</a> before they have read the
+file.  If you delete the file too soon <a href="motion.txt.html#it" class="d">it</a> will not be printed.  These programs
+usually offer an option to have them remove the file when <a href="#printing" class="d">printing</a> <a href="motion.txt.html#is" class="d">is</a> done.
+                                                        <a name="E365" class="t">E365</a>
+If evaluating the <a href="eval.txt.html#expression" class="d">expression</a> fails or <a href="motion.txt.html#it" class="d">it</a> results in <a href="insert.txt.html#a" class="d">a</a> non-zero number, you get
+an error message.  In that <a href="change.txt.html#case" class="d">case</a> Vim will delete the file.  In the default
+value for non-MS-Windows <a href="insert.txt.html#a" class="d">a</a> trick <a href="motion.txt.html#is" class="d">is</a> used: Adding "<a href="eval.txt.html#v%3Ashell_error" class="d">v:shell_error</a>" will result
+in <a href="insert.txt.html#a" class="d">a</a> non-zero number when the <a href="eval.txt.html#system%28%29" class="d">system()</a> call fails.
+
+This option cannot be set from <a href="insert.txt.html#a" class="d">a</a> <a href="options.txt.html#modeline" class="l">modeline</a> or in the <a href="eval.txt.html#sandbox" class="l">sandbox</a><a href="motion.txt.html#%2C" class="d">,</a> for security
+reasons.
+
+                                                        <a name="pfn-option" class="t">pfn-option</a> <a name="E613" class="t">E613</a>
+<a href="options.txt.html#%27printfont%27" class="o">'printfont'</a> <a href="options.txt.html#%27pfn%27" class="o">'pfn'</a>       <a href="eval.txt.html#string" class="d">string</a>  (default "courier"<a href="motion.txt.html#%29" class="d">)</a>
+                        global
+This <a href="motion.txt.html#is" class="d">is</a> the name of the font that will be used for the <a href="#%3Ahardcopy" class="l">:hardcopy</a> command's
+output.  It has the same format <a href="motion.txt.html#as" class="d">as</a> the <a href="options.txt.html#%27guifont%27" class="o">'guifont'</a> option, except that only one
+font may be named, and the special "guifont=*" <a href="syntax.txt.html#syntax" class="d">syntax</a> <a href="motion.txt.html#is" class="d">is</a> not available.
+
+In the <a href="os_win32.txt.html#Win32" class="d">Win32</a> <a href="gui.txt.html#GUI" class="d">GUI</a> version this specifies <a href="insert.txt.html#a" class="d">a</a> font name with its extra attributes,
+<a href="motion.txt.html#as" class="d">as</a> with the <a href="options.txt.html#%27guifont%27" class="o">'guifont'</a> option.
+
+For other systems, only ":h11" <a href="motion.txt.html#is" class="d">is</a> recognized, where "11" <a href="motion.txt.html#is" class="d">is</a> the point size of
+the font.  When omitted, the point size <a href="motion.txt.html#is" class="d">is</a> 10.
+
+                                                        <a name="pheader-option" class="t">pheader-option</a>
+<a href="options.txt.html#%27printheader%27" class="o">'printheader'</a> <a href="options.txt.html#%27pheader%27" class="o">'pheader'</a>  <a href="eval.txt.html#string" class="d">string</a>  (default "%&lt;%f%h%m%=Page %N"<a href="motion.txt.html#%29" class="d">)</a>
+                         global
+This defines the format of the header produced in <a href="#%3Ahardcopy" class="l">:hardcopy</a> output.  The
+option <a href="motion.txt.html#is" class="d">is</a> defined in the same way <a href="motion.txt.html#as" class="d">as</a> the <a href="options.txt.html#%27statusline%27" class="o">'statusline'</a> option.  If Vim has not
+been compiled with the <a href="various.txt.html#%2Bstatusline" class="l">+statusline</a> feature, this option has no effect and <a href="insert.txt.html#a" class="d">a</a>
+simple default header <a href="motion.txt.html#is" class="d">is</a> used, which shows the page number.  The same simple
+header <a href="motion.txt.html#is" class="d">is</a> used when this option <a href="motion.txt.html#is" class="d">is</a> empty.
+
+                                                        <a name="pmbcs-option" class="t">pmbcs-option</a>
+<a href="options.txt.html#%27printmbcharset%27" class="o">'printmbcharset'</a> <a href="options.txt.html#%27pmbcs%27" class="o">'pmbcs'</a>  <a href="eval.txt.html#string" class="d">string</a> (default ""<a href="motion.txt.html#%29" class="d">)</a>
+                          global
+Sets the CJK character set to be used when generating CJK output from
+<a href="#%3Ahardcopy" class="l">:hardcopy</a><a href="repeat.txt.html#." class="d">.</a>  The following predefined values are currently recognised by Vim:
+
+<span class="h">                Value           Description </span>
+  <a href="mbyte.txt.html#Chinese" class="d">Chinese</a>       GB_2312-80
+  (Simplified)  GBT_12345-90
+                MAC             Apple <a href="os_mac.txt.html#Mac" class="d">Mac</a> Simplified <a href="mbyte.txt.html#Chinese" class="d">Chinese</a>
+                GBT-90_MAC      GB/T 12345-90 Apple <a href="os_mac.txt.html#Mac" class="d">Mac</a> Simplified
+                                  <a href="mbyte.txt.html#Chinese" class="d">Chinese</a>
+                GBK             GBK (GB 13000.1-93)
+                ISO10646        ISO 10646-1:1993
+
+  <a href="mbyte.txt.html#Chinese" class="d">Chinese</a>       CNS_1993        CNS 11643-1993, Planes 1 <a href="change.txt.html#%26" class="d">&amp;</a> 2
+  (Traditional) BIG5
+                ETEN            Big5 with ETen extensions
+                ISO10646        ISO 10646-1:1993
+
+  <a href="mbyte.txt.html#Japanese" class="d">Japanese</a>      JIS_C_1978
+                JIS_X_1983
+                JIS_X_1990
+                MSWINDOWS       Win3.1/95J (JIS <a href="change.txt.html#X" class="d">X</a> 1997 <a href="motion.txt.html#%2B" class="d">+</a> NEC <a href="motion.txt.html#%2B" class="d">+</a>
+                                  IBM extensions)
+                KANJITALK6      Apple <a href="os_mac.txt.html#Mac" class="d">Mac</a> KanjiTalk V6.x
+                KANJITALK7      Apple <a href="os_mac.txt.html#Mac" class="d">Mac</a> KanjiTalk V7.x
+
+  <a href="mbyte.txt.html#Korean" class="d">Korean</a>        KS_X_1992
+                MAC             Apple <a href="os_mac.txt.html#Macintosh" class="d">Macintosh</a> <a href="mbyte.txt.html#Korean" class="d">Korean</a>
+                MSWINDOWS       KS <a href="change.txt.html#X" class="d">X</a> 1992 with MS extensions
+                ISO10646        ISO 10646-1:1993
+
+Only certain combinations of the above values and <a href="options.txt.html#%27printencoding%27" class="o">'printencoding'</a> are
+possible.  The following tables show the valid combinations:
+
+<span class="h">                                euc-cn   gbk    ucs-2   utf-8 </span>
+  <a href="mbyte.txt.html#Chinese" class="d">Chinese</a>       GB_2312-80         <a href="change.txt.html#x" class="d">x</a>
+  (Simplified)  GBT_12345-90       <a href="change.txt.html#x" class="d">x</a>
+                MAC                <a href="change.txt.html#x" class="d">x</a>
+                GBT-90_MAC         <a href="change.txt.html#x" class="d">x</a>
+                GBK                        <a href="change.txt.html#x" class="d">x</a>
+                ISO10646                          <a href="change.txt.html#x" class="d">x</a>       <a href="change.txt.html#x" class="d">x</a>
+
+<span class="h">                                euc-tw   big5   ucs-2   utf-8 </span>
+  <a href="mbyte.txt.html#Chinese" class="d">Chinese</a>       CNS_1993           <a href="change.txt.html#x" class="d">x</a>
+  (Traditional) BIG5                       <a href="change.txt.html#x" class="d">x</a>
+                ETEN                       <a href="change.txt.html#x" class="d">x</a>
+                ISO10646                          <a href="change.txt.html#x" class="d">x</a>       <a href="change.txt.html#x" class="d">x</a>
+
+<span class="h">                                euc-jp   sjis   ucs-2   utf-8 </span>
+  <a href="mbyte.txt.html#Japanese" class="d">Japanese</a>      JIS_C_1978         <a href="change.txt.html#x" class="d">x</a>       <a href="change.txt.html#x" class="d">x</a>
+                JIS_X_1983         <a href="change.txt.html#x" class="d">x</a>       <a href="change.txt.html#x" class="d">x</a>
+                JIS_X_1990         <a href="change.txt.html#x" class="d">x</a>              <a href="change.txt.html#x" class="d">x</a>       <a href="change.txt.html#x" class="d">x</a>
+                MSWINDOWS          <a href="change.txt.html#x" class="d">x</a>
+                KANJITALK6         <a href="change.txt.html#x" class="d">x</a>
+                KANJITALK7         <a href="change.txt.html#x" class="d">x</a>
+
+<span class="h">                                euc-kr   cp949  ucs-2   utf-8 </span>
+  <a href="mbyte.txt.html#Korean" class="d">Korean</a>        KS_X_1992          <a href="change.txt.html#x" class="d">x</a>
+                MAC                <a href="change.txt.html#x" class="d">x</a>
+                MSWINDOWS                  <a href="change.txt.html#x" class="d">x</a>
+                ISO10646                          <a href="change.txt.html#x" class="d">x</a>       <a href="change.txt.html#x" class="d">x</a>
+
+To set up the correct encoding and character set for <a href="#printing" class="d">printing</a> some
+<a href="mbyte.txt.html#Japanese" class="d">Japanese</a> text you would <a href="diff.txt.html#do" class="d">do</a> the following; 
+<span class="e">        :set printencoding=euc-jp</span>
+<span class="e">        :set printmbcharset=JIS_X_1983</span>
+<span class="e"></span>
+If <a href="options.txt.html#%27printmbcharset%27" class="o">'printmbcharset'</a> <a href="motion.txt.html#is" class="d">is</a> not one of the above values then <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> assumed to
+specify <a href="insert.txt.html#a" class="d">a</a> custom <a href="mbyte.txt.html#multi-byte" class="d">multi-byte</a> character set and no check will be made that <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a>
+compatible with the value for <a href="options.txt.html#%27printencoding%27" class="o">'printencoding'</a>.  Vim will look for <a href="insert.txt.html#a" class="d">a</a> file
+defining the character set in the "print" directory in <a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a>.
+
+                                                        <a name="pmbfn-option" class="t">pmbfn-option</a>
+<a href="options.txt.html#%27printmbfont%27" class="o">'printmbfont'</a> <a href="options.txt.html#%27pmbfn%27" class="o">'pmbfn'</a>   <a href="eval.txt.html#string" class="d">string</a> (default ""<a href="motion.txt.html#%29" class="d">)</a>
+                        global
+This <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> comma-separated <a href="eval.txt.html#list" class="d">list</a> of fields for font names to be used when
+generating CJK output from <a href="#%3Ahardcopy" class="l">:hardcopy</a><a href="repeat.txt.html#." class="d">.</a>  Each font name has to be preceded
+with <a href="insert.txt.html#a" class="d">a</a> <a href="#letter" class="d">letter</a> indicating the style the font <a href="motion.txt.html#is" class="d">is</a> to be used for <a href="motion.txt.html#as" class="d">as</a> follows:
+
+  r:{font-name}         font to use for normal characters
+  b:{font-name}         font to use for <a href="syntax.txt.html#bold" class="d">bold</a> characters
+  i:{font-name}         font to use for <a href="syntax.txt.html#italic" class="d">italic</a> characters
+  o:{font-name}         font to use for bold-italic characters
+
+<a href="insert.txt.html#A" class="d">A</a> field with the r: prefix <a href="vim_faq.txt.html#must" class="d">must</a> be specified when doing CJK printing.  The
+other fontname specifiers are optional.  If <a href="insert.txt.html#a" class="d">a</a> specifier <a href="motion.txt.html#is" class="d">is</a> missing then
+another font will be used <a href="motion.txt.html#as" class="d">as</a> follows:
+
+  if <a href="eval.txt.html#b%3A" class="d">b:</a> <a href="motion.txt.html#is" class="d">is</a> missing, then use r:
+  if i: <a href="motion.txt.html#is" class="d">is</a> missing, then use r:
+  if o: <a href="motion.txt.html#is" class="d">is</a> missing, then use <a href="eval.txt.html#b%3A" class="d">b:</a>
+
+Some CJK fonts <a href="diff.txt.html#do" class="d">do</a> not contain characters for codes in the ASCII code range.
+Also, some characters in the CJK ASCII code ranges differ in <a href="insert.txt.html#a" class="d">a</a> few code points
+from traditional ASCII characters.  There are two additional fields to <a href="intro.txt.html#control" class="d">control</a>
+<a href="#printing" class="d">printing</a> of characters in the ASCII code range.
+
+  c:yes                 Use Courier font for characters in the ASCII
+  c:no (default)        code range.
+
+  a:yes                 Use ASCII character set for codes in the ASCII
+  a:no (default)        code range.
+
+The following <a href="motion.txt.html#is" class="d">is</a> an example of specifying two <a href="mbyte.txt.html#multi-byte" class="d">multi-byte</a> fonts, one for normal
+and <a href="syntax.txt.html#italic" class="d">italic</a> <a href="#printing" class="d">printing</a> and one for <a href="syntax.txt.html#bold" class="d">bold</a> and bold-italic printing, and using
+Courier to print codes in the ASCII code range but using the national
+character set: 
+<span class="e">        :set printmbfont=r:WadaMin-Regular,b:WadaMin-Bold,c:yes</span>
+
+                                                        <a name="popt-option" class="t">popt-option</a>
+<a href="options.txt.html#%27printoptions%27" class="o">'printoptions'</a> <a href="options.txt.html#%27popt%27" class="o">'popt'</a>   <a href="eval.txt.html#string" class="d">string</a> (default ""<a href="motion.txt.html#%29" class="d">)</a>
+                        global
+This <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> comma-separated <a href="eval.txt.html#list" class="d">list</a> of items that <a href="intro.txt.html#control" class="d">control</a> the format of the output
+of <a href="#%3Ahardcopy" class="l">:hardcopy</a><a href="cmdline.txt.html#%3A" class="d">:</a>
+
+  left:{spec}           left margin (default: 10pc)
+  right:{spec}          right margin (default: 5pc)
+  top:{spec}            top margin (default: 5pc)
+  bottom:{spec}         bottom margin (default: 5pc)
+                        <span class="s">{spec}</span> <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> number followed by "in" for inches, "pt"
+                        for points (1 point <a href="motion.txt.html#is" class="d">is</a> 1/72 of an inch), "mm" for
+                        millimeters or "pc" for <a href="insert.txt.html#a" class="d">a</a> percentage of the media
+                        size.
+                        Weird example:
+                            left:2in,top:30pt,right:16mm,bottom:3pc
+                        If the unit <a href="motion.txt.html#is" class="d">is</a> not recognized there <a href="motion.txt.html#is" class="d">is</a> no error and
+                        the default value <a href="motion.txt.html#is" class="d">is</a> used.
+
+  header:{nr}           <a href="eval.txt.html#Number" class="d">Number</a> of lines to reserve for the header.
+                        Only the first line <a href="motion.txt.html#is" class="d">is</a> actually filled, thus when <span class="s">{nr}</span>
+                        <a href="motion.txt.html#is" class="d">is</a> 2 there <a href="motion.txt.html#is" class="d">is</a> one empty line.  The header <a href="motion.txt.html#is" class="d">is</a> formatted
+                        according to <a href="options.txt.html#%27printheader%27" class="o">'printheader'</a>.
+  header:0              Do not print <a href="insert.txt.html#a" class="d">a</a> header.
+  header:2  (default)   Use two lines for the header
+
+  syntax:n              Do not use <a href="syntax.txt.html#syntax" class="d">syntax</a> highlighting.  This <a href="motion.txt.html#is" class="d">is</a> faster and
+                        thus useful when <a href="#printing" class="d">printing</a> large files.
+  syntax:y              Do <a href="syntax.txt.html#syntax" class="d">syntax</a> highlighting.
+  syntax:a  (default)   Use <a href="syntax.txt.html#syntax" class="d">syntax</a> highlighting if the printer appears to be
+                        able to print color or grey.
+
+  number:y              Include line numbers in the printed output.
+  number:n  (default)   No line numbers.
+
+  wrap:y    (default)   Wrap long lines.
+  wrap:n                Truncate long lines.
+
+  duplex:off            Print on one side.
+  duplex:long (default) Print on both sides (when possible), bind on long
+                        side.
+  duplex:short          Print on both sides (when possible), bind on short
+                        side.
+
+  collate:y  (default)  Collating: 1 2 3, 1 2 3, 1 2 3
+  collate:n             No collating: 1 1 1, 2 2 2, 3 3 3
+
+  jobsplit:n (default)  Do all copies in one print <a href="channel.txt.html#job" class="d">job</a>
+  jobsplit:y            Do each copy <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> separate print job.  Useful when
+                        doing N-up postprocessing.
+
+  portrait:y (default)  Orientation <a href="motion.txt.html#is" class="d">is</a> portrait.
+  portrait:n            Orientation <a href="motion.txt.html#is" class="d">is</a> landscape.
+                                                <a name="a4" class="t">a4</a> <a name="letter" class="t">letter</a>
+  paper:A4   (default)  Paper size: A4
+  paper:{name}          Paper size from this table:
+<span class="h">                        {name}      size in cm       size in inch </span>
+                        10x14       <a href="usr_25.txt.html#25.4" class="d">25.4</a>  <a href="change.txt.html#x" class="d">x</a> 35.57    10    <a href="change.txt.html#x" class="d">x</a> 14
+                        A3          29.7  <a href="change.txt.html#x" class="d">x</a> <a href="usr_42.txt.html#42" class="d">42</a>       11.69 <a href="change.txt.html#x" class="d">x</a> 16.54
+                        A4          21    <a href="change.txt.html#x" class="d">x</a> 29.7      8.27 <a href="change.txt.html#x" class="d">x</a> 11.69
+                        A5          14.8  <a href="change.txt.html#x" class="d">x</a> 21        5.83 <a href="change.txt.html#x" class="d">x</a>  8.27
+                        B4          25    <a href="change.txt.html#x" class="d">x</a> 35.3     10.12 <a href="change.txt.html#x" class="d">x</a> 14.33
+                        B5          17.6  <a href="change.txt.html#x" class="d">x</a> 25        7.17 <a href="change.txt.html#x" class="d">x</a> 10.12
+                        executive   18.42 <a href="change.txt.html#x" class="d">x</a> 26.67     7.25 <a href="change.txt.html#x" class="d">x</a> <a href="usr_10.txt.html#10.5" class="d">10.5</a>
+                        folio       21    <a href="change.txt.html#x" class="d">x</a> 33        8.27 <a href="change.txt.html#x" class="d">x</a> 13
+                        ledger      43.13 <a href="change.txt.html#x" class="d">x</a> 27.96    17    <a href="change.txt.html#x" class="d">x</a> 11
+                        legal       21.59 <a href="change.txt.html#x" class="d">x</a> 35.57     8.5  <a href="change.txt.html#x" class="d">x</a> 14
+                        <a href="#letter" class="d">letter</a>      21.59 <a href="change.txt.html#x" class="d">x</a> 27.96     8.5  <a href="change.txt.html#x" class="d">x</a> 11
+                        quarto      21.59 <a href="change.txt.html#x" class="d">x</a> <a href="usr_27.txt.html#27.5" class="d">27.5</a>      8.5  <a href="change.txt.html#x" class="d">x</a> 10.83
+                        statement   13.97 <a href="change.txt.html#x" class="d">x</a> 21.59     5.5  <a href="change.txt.html#x" class="d">x</a>  8.5
+                        tabloid     27.96 <a href="change.txt.html#x" class="d">x</a> 43.13    11    <a href="change.txt.html#x" class="d">x</a> 17
+
+  formfeed:n (default)  Treat form feed characters (0x0c) <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> normal print
+                        character.
+  formfeed:y            When <a href="insert.txt.html#a" class="d">a</a> form feed character <a href="motion.txt.html#is" class="d">is</a> encountered, continue
+                        <a href="#printing" class="d">printing</a> of the current line <a href="motion.txt.html#at" class="d">at</a> the beginning of the
+                        first line on <a href="insert.txt.html#a" class="d">a</a> new page.
+
+The item indicated with (default) <a href="motion.txt.html#is" class="d">is</a> used when the item <a href="motion.txt.html#is" class="d">is</a> not present.  The
+values are not always used, especially when using <a href="insert.txt.html#a" class="d">a</a> <a href="gui_w32.txt.html#dialog" class="d">dialog</a> to select the
+printer and options.
+Example: 
+<span class="e">        :set printoptions=paper:letter,duplex:off</span>
+<span class="e"></span>
+<span class="h">==============================================================================</span>
+3. PostScript Printing                                  <a name="postscript-printing" class="t">postscript-printing</a>
+                                                <a name="E455" class="t">E455</a> <a name="E456" class="t">E456</a> <a name="E457" class="t">E457</a> <a name="E624" class="t">E624</a>
+Provided you have enough disk <a href="intro.txt.html#space" class="d">space</a> there should be no problems generating <a href="insert.txt.html#a" class="d">a</a>
+PostScript file.  You need to have the runtime files correctly installed (if
+you can find the <a href="helphelp.txt.html#help" class="d">help</a> files, they probably are).
+
+There are currently <a href="insert.txt.html#a" class="d">a</a> number of limitations with PostScript printing:
+
+<a href="motion.txt.html#-" class="d">-</a> <a href="options.txt.html#%27printfont%27" class="o">'printfont'</a> <a href="motion.txt.html#-" class="d">-</a> The font name <a href="motion.txt.html#is" class="d">is</a> ignored (the Courier family <a href="motion.txt.html#is" class="d">is</a> always used <a href="motion.txt.html#-" class="d">-</a>
+  <a href="motion.txt.html#it" class="d">it</a> should be available on all PostScript printers) but the font size <a href="motion.txt.html#is" class="d">is</a>
+  used.
+
+<a href="motion.txt.html#-" class="d">-</a> <a href="options.txt.html#%27printoptions%27" class="o">'printoptions'</a> <a href="motion.txt.html#-" class="d">-</a> The duplex setting <a href="motion.txt.html#is" class="d">is</a> used when generating PostScript
+  output, but <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> up to the printer to take notice of the setting.  If the
+  printer does not support duplex <a href="#printing" class="d">printing</a> then <a href="motion.txt.html#it" class="d">it</a> should be silently ignored.
+  Some printers, however, don't print <a href="motion.txt.html#at" class="d">at</a> all.
+
+<a href="motion.txt.html#-" class="d">-</a> 8-bit support <a href="motion.txt.html#-" class="d">-</a> While <a href="insert.txt.html#a" class="d">a</a> number of 8-bit print character encodings are
+  supported <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> possible that some characters will not print.  Whether <a href="insert.txt.html#a" class="d">a</a>
+  character will print depends on the font in the printer knowing the
+  character.  Missing characters will be replaced with an upside down question
+  mark, or <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#space" class="d">space</a> if that character <a href="motion.txt.html#is" class="d">is</a> also not known by the font.  It may be
+  possible to get all the characters in an encoding to print by installing <a href="insert.txt.html#a" class="d">a</a>
+  new version of the Courier font family.
+
+<a href="motion.txt.html#-" class="d">-</a> Multi-byte support <a href="motion.txt.html#-" class="d">-</a> Currently Vim will try to convert <a href="mbyte.txt.html#multi-byte" class="d">multi-byte</a> characters
+  to the 8-bit encoding specified by <a href="options.txt.html#%27printencoding%27" class="o">'printencoding'</a> (or latin1 if <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a>
+  empty).  Any characters that are not successfully converted are shown <a href="motion.txt.html#as" class="d">as</a>
+  unknown characters.  Printing will fail if Vim cannot convert the <a href="mbyte.txt.html#multi-byte" class="d">multi-byte</a>
+  to the 8-bit encoding.
+
+<span class="h">==============================================================================</span>
+4. Custom 8-bit Print Character Encodings       <a name="postscript-print-encoding" class="t">postscript-print-encoding</a>
+                                                                <a name="E618" class="t">E618</a> <a name="E619" class="t">E619</a>
+To use your own print character encoding when <a href="#printing" class="d">printing</a> 8-bit character data
+you need to define your own PostScript font encoding vector.  Details on how
+to define <a href="insert.txt.html#a" class="d">a</a> font encoding vector <a href="motion.txt.html#is" class="d">is</a> beyond the scope of this <a href="helphelp.txt.html#help" class="d">help</a> file, but
+you can find details in the PostScript Language Reference Manual, 3rd Edition,
+published by Addison-Wesley and available in PDF form <a href="motion.txt.html#at" class="d">at</a>
+<a class="u" href="http://www.adobe.com/">http://www.adobe.com/</a>.  The following describes what you need to <a href="diff.txt.html#do" class="d">do</a> for Vim to
+locate and use your print character encoding.
+
+i.   Decide on <a href="insert.txt.html#a" class="d">a</a> unique name for your encoding vector, one that does not clash
+     with any of the recognized or standard encoding names that Vim uses (see
+     <a href="mbyte.txt.html#encoding-names" class="l">encoding-names</a> for <a href="insert.txt.html#a" class="d">a</a> list), and that no one else <a href="motion.txt.html#is" class="d">is</a> likely to use.
+ii.  Copy $VIMRUNTIME/print/latin1.ps to the print subdirectory in your
+     <a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a> and rename <a href="motion.txt.html#it" class="d">it</a> with your unique name.
+iii. Edit your renamed copy of latin1.ps, <a href="change.txt.html#replacing" class="d">replacing</a> all occurrences of latin1
+     with your unique name (don't forget the line <a href="starting.txt.html#starting" class="d">starting</a> %%Title:), and
+     modify the array of glyph names to define your new encoding vector.  The
+     array <a href="vim_faq.txt.html#must" class="d">must</a> have exactly 256 entries or you will not be able to print!
+iv.  Within Vim, set <a href="options.txt.html#%27printencoding%27" class="o">'printencoding'</a> to your unique encoding name and then
+     print your file.  Vim will now use your custom print character encoding.
+
+Vim will report an error with the resource file if you change the order or
+content of the first 3 lines, other than the name of the encoding on the line
+<a href="starting.txt.html#starting" class="d">starting</a> %%Title: or the version number on the line <a href="starting.txt.html#starting" class="d">starting</a> %%Version:.
+
+[Technical explanation for those that know PostScript <a href="motion.txt.html#-" class="d">-</a> Vim looks for <a href="insert.txt.html#a" class="d">a</a> file
+with the same name <a href="motion.txt.html#as" class="d">as</a> the encoding <a href="motion.txt.html#it" class="d">it</a> will use when printing.  The file
+defines <a href="insert.txt.html#a" class="d">a</a> new PostScript Encoding resource called /VIM-name, where name <a href="motion.txt.html#is" class="d">is</a> the
+print character encoding Vim will use.]
+
+<span class="h">==============================================================================</span>
+5. PostScript CJK Printing                      <a name="postscript-cjk-printing" class="t">postscript-cjk-printing</a>
+                                                        <a name="E673" class="t">E673</a> <a name="E674" class="t">E674</a> <a name="E675" class="t">E675</a>
+
+Vim supports <a href="#printing" class="d">printing</a> of Chinese, Japanese, and <a href="mbyte.txt.html#Korean" class="d">Korean</a> files.  Setting up Vim
+to correctly print CJK files requires setting up <a href="insert.txt.html#a" class="d">a</a> few more options.
+
+Each of these countries has many standard character sets and encodings which
+require that both be specified when printing.  In addition, CJK fonts normally
+<a href="diff.txt.html#do" class="d">do</a> not have the concept of <a href="syntax.txt.html#italic" class="d">italic</a> glyphs and use different weight or stroke
+style to achieve emphasis when printing.  This in turn requires <a href="insert.txt.html#a" class="d">a</a> different
+approach to specifying fonts to use when printing.
+
+The encoding and character set are specified with the <a href="options.txt.html#%27printencoding%27" class="o">'printencoding'</a> and
+<a href="options.txt.html#%27printmbcharset%27" class="o">'printmbcharset'</a> options.  If <a href="options.txt.html#%27printencoding%27" class="o">'printencoding'</a> <a href="motion.txt.html#is" class="d">is</a> not specified then <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a>
+<a href="motion.txt.html#is" class="d">is</a> used <a href="motion.txt.html#as" class="d">as</a> normal.  If <a href="options.txt.html#%27printencoding%27" class="o">'printencoding'</a> <a href="motion.txt.html#is" class="d">is</a> specified then characters will be
+translated to this encoding for printing.  You should ensure that the encoding
+<a href="motion.txt.html#is" class="d">is</a> compatible with the character set needed for the file contents or some
+characters may not appear when printed.
+
+The fonts to use for CJK <a href="#printing" class="d">printing</a> are specified with <a href="options.txt.html#%27printmbfont%27" class="o">'printmbfont'</a>.  This
+option allows you to specify different fonts to use when <a href="#printing" class="d">printing</a> characters
+which are <a href="syntax.txt.html#syntax" class="d">syntax</a> highlighted with the font styles normal, italic, <a href="syntax.txt.html#bold" class="d">bold</a> and
+bold-italic.
+
+No CJK fonts are supplied with Vim.  There are some free Korean, Japanese, and
+Traditional <a href="mbyte.txt.html#Chinese" class="d">Chinese</a> fonts available at:
+
+  <a class="u" href="http://examples.oreilly.com/cjkvinfo/adobe/samples/">http://examples.oreilly.com/cjkvinfo/adobe/samples/</a>
+
+You can find descriptions of the <a href="various.txt.html#various" class="d">various</a> fonts in the read me file <a href="motion.txt.html#at" class="d">at</a>
+
+  <a class="u" href="http://examples.oreilly.de/english_examples/cjkvinfo/adobe/00README">http://examples.oreilly.de/english_examples/cjkvinfo/adobe/00README</a>
+
+Please read your printer documentation on how to <a href="usr_90.txt.html#install" class="d">install</a> new fonts.
+
+CJK fonts can be large containing several thousand glyphs, and <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> not
+uncommon to find that they only contain <a href="insert.txt.html#a" class="d">a</a> subset of <a href="insert.txt.html#a" class="d">a</a> national standard.  It
+<a href="motion.txt.html#is" class="d">is</a> not unusual to find the fonts to not include characters for codes in the
+ASCII code range.  If you find half-width Roman characters are not appearing
+in your printout then you should configure Vim to use the Courier font the
+half-width ASCII characters with <a href="options.txt.html#%27printmbfont%27" class="o">'printmbfont'</a>.  If your font does not include
+other characters then you will need to find another font that does.
+
+Another issue with ASCII characters, <a href="motion.txt.html#is" class="d">is</a> that the <a href="various.txt.html#various" class="d">various</a> national character
+sets specify <a href="insert.txt.html#a" class="d">a</a> couple of different glyphs in the ASCII code range.  If you
+print ASCII text using the national character set you may see some unexpected
+characters.  If you want true ASCII code <a href="#printing" class="d">printing</a> then you need to configure
+Vim to output ASCII characters for the ASCII code range with <a href="options.txt.html#%27printmbfont%27" class="o">'printmbfont'</a>.
+
+It <a href="motion.txt.html#is" class="d">is</a> possible to define your own <a href="mbyte.txt.html#multi-byte" class="d">multi-byte</a> character set although this
+should not be attempted lightly.  <a href="insert.txt.html#A" class="d">A</a> discussion on the process if beyond the
+scope of these <a href="helphelp.txt.html#help" class="d">help</a> files.  You can find details on CMap (character map) files
+in the document 'Adobe CMap and CIDFont Files Specification, Version 1.0',
+available from <a class="u" href="http://www.adobe.com">http://www.adobe.com</a> <a href="motion.txt.html#as" class="d">as</a> <a href="insert.txt.html#a" class="d">a</a> PDF file.
+
+<span class="h">==============================================================================</span>
+6. PostScript Printing Troubleshooting          <a name="postscript-print-trouble" class="t">postscript-print-trouble</a>
+                                                                        <a name="E621" class="t">E621</a>
+Usually the only sign of <a href="insert.txt.html#a" class="d">a</a> problem when <a href="#printing" class="d">printing</a> with PostScript <a href="motion.txt.html#is" class="d">is</a> that your
+printout does not appear.  If you are lucky you may get <a href="insert.txt.html#a" class="d">a</a> printed page that
+tells you the PostScript <a href="motion.txt.html#operator" class="d">operator</a> that generated the error that prevented the
+print <a href="channel.txt.html#job" class="d">job</a> completing.
+
+There are <a href="insert.txt.html#a" class="d">a</a> number of possible causes <a href="motion.txt.html#as" class="d">as</a> to why the <a href="#printing" class="d">printing</a> may have failed:
+
+<a href="motion.txt.html#-" class="d">-</a> Wrong version of the prolog resource file.  The prolog resource file
+  contains some PostScript that Vim needs to be able to print.  Each version
+  of Vim needs one particular version.  Make sure you have correctly installed
+  the runtime files, and don't have any old versions of <a href="insert.txt.html#a" class="d">a</a> file called prolog
+  in the print directory in your <a href="options.txt.html#%27runtimepath%27" class="o">'runtimepath'</a> directory.
+
+<a href="motion.txt.html#-" class="d">-</a> Paper size.  Some PostScript printers will abort <a href="#printing" class="d">printing</a> <a href="insert.txt.html#a" class="d">a</a> file if they <a href="diff.txt.html#do" class="d">do</a>
+  not support the requested paper size.  By default Vim uses A4 paper.  Find
+  out what size paper your printer normally uses and set the appropriate paper
+  size with <a href="options.txt.html#%27printoptions%27" class="o">'printoptions'</a>.  If you cannot find the name of the paper used,
+  measure <a href="insert.txt.html#a" class="d">a</a> sheet and compare <a href="motion.txt.html#it" class="d">it</a> with the table of supported paper sizes listed
+  for <a href="options.txt.html#%27printoptions%27" class="o">'printoptions'</a>, using the paper that <a href="motion.txt.html#is" class="d">is</a> closest in both width AND height.
+  <span class="n">Note:</span> The dimensions of actual paper may vary slightly from the ones listed.
+  If there <a href="motion.txt.html#is" class="d">is</a> no paper listed close enough, then you may want to try psresize
+  from PSUtils, discussed below.
+
+<a href="motion.txt.html#-" class="d">-</a> Two-sided <a href="#printing" class="d">printing</a> (duplex).  Normally <a href="insert.txt.html#a" class="d">a</a> PostScript printer that does not
+  support two-sided <a href="#printing" class="d">printing</a> will ignore any request to <a href="diff.txt.html#do" class="d">do</a> it.  However, some
+  printers may abort the <a href="channel.txt.html#job" class="d">job</a> altogether.  Try <a href="#printing" class="d">printing</a> with duplex turned off.
+  <span class="n">Note:</span> Duplex prints can be achieved manually using PS utils <a href="motion.txt.html#-" class="d">-</a> see below.
+
+<a href="motion.txt.html#-" class="d">-</a> Collated printing.  As with Duplex printing, most PostScript printers that
+  <a href="diff.txt.html#do" class="d">do</a> not support collating printouts will ignore <a href="insert.txt.html#a" class="d">a</a> request to <a href="diff.txt.html#do" class="d">do</a> so.  Some may
+  not.  Try <a href="#printing" class="d">printing</a> with collation turned off.
+
+<a href="motion.txt.html#-" class="d">-</a> <a href="autocmd.txt.html#Syntax" class="d">Syntax</a> highlighting.  Some print management code may prevent the generated
+  PostScript file from being printed on <a href="insert.txt.html#a" class="d">a</a> black and white printer when <a href="syntax.txt.html#syntax" class="d">syntax</a>
+  highlighting <a href="motion.txt.html#is" class="d">is</a> turned on, even if solid black <a href="motion.txt.html#is" class="d">is</a> the only color used.  Try
+  <a href="#printing" class="d">printing</a> with <a href="syntax.txt.html#syntax" class="d">syntax</a> highlighting turned off.
+
+<a href="insert.txt.html#A" class="d">A</a> safe printoptions setting to try is: 
+<span class="e"></span>
+<span class="e">        :set printoptions=paper:A4,duplex:off,collate:n,syntax:n</span>
+<span class="e"></span>
+<a href="insert.txt.html#Replace" class="d">Replace</a> "A4" with the paper size that best matches your printer paper.
+
+<span class="h">==============================================================================</span>
+7. PostScript Utilities                         <a name="postscript-print-util" class="t">postscript-print-util</a>
+
+7.1 Ghostscript
+
+Ghostscript <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> PostScript and PDF interpreter that can be used to display
+and print on non-PostScript printers PostScript and PDF files.  It can also
+generate PDF files from PostScript.
+
+Ghostscript will run on <a href="insert.txt.html#a" class="d">a</a> wide variety of platforms.
+
+There are three available versions:
+
+<a href="motion.txt.html#-" class="d">-</a> AFPL Ghostscript (formerly Aladdin Ghostscript) which <a href="motion.txt.html#is" class="d">is</a> free for
+  non-commercial use.  It can be obtained from:
+
+    <a class="u" href="http://www.cs.wisc.edu/~ghost/">http://www.cs.wisc.edu/~ghost/</a>
+
+<a href="motion.txt.html#-" class="d">-</a> GNU Ghostscript which <a href="motion.txt.html#is" class="d">is</a> available under the GNU General Public License.  It
+  can be obtained from:
+
+    <a class="u" href="ftp://mirror.cs.wisc.edu/pub/mirrors/ghost/gnu/">ftp://mirror.cs.wisc.edu/pub/mirrors/ghost/gnu/</a>
+
+<a href="motion.txt.html#-" class="d">-</a> <a href="insert.txt.html#A" class="d">A</a> commercial version for inclusion in commercial products.
+
+Additional information on Ghostscript can also be found at:
+
+  <a class="u" href="http://www.ghostscript.com/">http://www.ghostscript.com/</a>
+
+Support for <a href="insert.txt.html#a" class="d">a</a> number of non PostScript printers <a href="motion.txt.html#is" class="d">is</a> provided in the
+<a href="intro.txt.html#distribution" class="d">distribution</a> <a href="motion.txt.html#as" class="d">as</a> standard, but if you cannot find support for your printer
+check the Ghostscript site for other printers not included by default.
+
+
+7.2 Ghostscript Previewers.
+
+The interface to Ghostscript <a href="motion.txt.html#is" class="d">is</a> very primitive so <a href="insert.txt.html#a" class="d">a</a> number of graphical front
+ends have been created.  These allow easier PostScript file selection,
+previewing <a href="motion.txt.html#at" class="d">at</a> different zoom levels, and printing.  Check supplied
+documentation for full details.
+
+<a href="options.txt.html#X11" class="d">X11</a>
+
+<a href="motion.txt.html#-" class="d">-</a> Ghostview.  Obtainable from:
+
+    <a class="u" href="http://www.cs.wisc.edu/~ghost/gv/">http://www.cs.wisc.edu/~ghost/gv/</a>
+
+<a href="motion.txt.html#-" class="d">-</a> gv.  Derived from Ghostview.  Obtainable from:
+
+    <a class="u" href="http://wwwthep.physik.uni-mainz.de/~plass/gv/">http://wwwthep.physik.uni-mainz.de/~plass/gv/</a>
+
+  Copies (possibly not the most recent) can be found at:
+
+    <a class="u" href="http://www.cs.wisc.edu/~ghost/gv/">http://www.cs.wisc.edu/~ghost/gv/</a>
+
+OpenVMS
+
+<a href="motion.txt.html#-" class="d">-</a> Is apparently supported in the main code now (untested).  See:
+
+    <a class="u" href="http://wwwthep.physik.uni-mainz.de/~plass/gv/">http://wwwthep.physik.uni-mainz.de/~plass/gv/</a>
+
+Windows and <a href="os_os2.txt.html#OS%2F2" class="d">OS/2</a>
+
+<a href="motion.txt.html#-" class="d">-</a> GSview.  Obtainable from:
+
+    <a class="u" href="http://www.cs.wisc.edu/~ghost/gsview/">http://www.cs.wisc.edu/~ghost/gsview/</a>
+
+<a href="os_dos.txt.html#DOS" class="d">DOS</a>
+
+<a href="motion.txt.html#-" class="d">-</a> ps_view.  Obtainable from:
+
+    <a class="u" href="ftp://ftp.pg.gda.pl/pub/TeX/support/ps_view/">ftp://ftp.pg.gda.pl/pub/TeX/support/ps_view/</a>
+    <a class="u" href="ftp://ftp.dante.de/tex-archive/support/ps_view/">ftp://ftp.dante.de/tex-archive/support/ps_view/</a>
+
+Linux
+
+<a href="motion.txt.html#-" class="d">-</a> GSview.  Linux version of the popular Windows and <a href="os_os2.txt.html#OS%2F2" class="d">OS/2</a> previewer.
+  Obtainable from:
+
+    <a class="u" href="http://www.cs.wisc.edu/~ghost/gsview/">http://www.cs.wisc.edu/~ghost/gsview/</a>
+
+<a href="motion.txt.html#-" class="d">-</a> BMV.  Different from Ghostview and <a href="visual.txt.html#gv" class="d">gv</a> in that <a href="motion.txt.html#it" class="d">it</a> doesn't use <a href="change.txt.html#X" class="d">X</a> but svgalib.
+  Obtainable from:
+
+    <a class="u" href="ftp://sunsite.unc.edu/pub/Linux/apps/graphics/viewers/svga/bmv-1.2.tgz">ftp://sunsite.unc.edu/pub/Linux/apps/graphics/viewers/svga/bmv-1.2.tgz</a>
+
+
+7.3 PSUtils
+
+PSUtils <a href="motion.txt.html#is" class="d">is</a> <a href="insert.txt.html#a" class="d">a</a> collection of utility programs for manipulating PostScript
+documents.  Binary distributions are available for many platforms, <a href="motion.txt.html#as" class="d">as</a> well <a href="motion.txt.html#as" class="d">as</a>
+the full source.  PSUtils can be found at:
+
+  <a class="u" href="http://knackered.org/angus/psutils">http://knackered.org/angus/psutils</a>
+
+The utilities of interest include:
+
+<a href="motion.txt.html#-" class="d">-</a> psnup.     Convert PS files for N-up printing.
+<a href="motion.txt.html#-" class="d">-</a> psselect.  <a href="visual.txt.html#Select" class="d">Select</a> page range and order of printing.
+<a href="motion.txt.html#-" class="d">-</a> psresize.  Change the page size.
+<a href="motion.txt.html#-" class="d">-</a> psbook.    Reorder and lay out pages ready for making <a href="insert.txt.html#a" class="d">a</a> book.
+
+The output of one program can be used <a href="motion.txt.html#as" class="d">as</a> the input to the next, allowing for
+complex print document creation.
+
+
+N-UP PRINTING
+
+The psnup utility takes an existing PostScript file generated from Vim and
+convert <a href="motion.txt.html#it" class="d">it</a> to an n-up version.  The simplest way to create <a href="insert.txt.html#a" class="d">a</a> 2-up printout <a href="motion.txt.html#is" class="d">is</a>
+to first create <a href="insert.txt.html#a" class="d">a</a> PostScript file with: 
+<span class="e"></span>
+<span class="e">        :hardcopy &gt; test.ps</span>
+<span class="e"></span>
+Then on your command line execute: 
+<span class="e"></span>
+<span class="e">        psnup -n 2 test.ps final.ps</span>
+<span class="e"></span>
+<span class="n">Note:</span> You may get warnings from some Ghostscript previewers for files produced
+by psnup <a href="motion.txt.html#-" class="d">-</a> these may safely be ignored.
+
+Finally print the file final.ps to your PostScript printer with your
+platform's print command.  (You will need to delete the two PostScript files
+afterwards yourself.)  <a href="options.txt.html#%27printexpr%27" class="o">'printexpr'</a> could be modified to perform this extra
+step before printing.
+
+
+ALTERNATE DUPLEX PRINTING
+
+It <a href="motion.txt.html#is" class="d">is</a> possible to achieve <a href="insert.txt.html#a" class="d">a</a> poor man's version of duplex <a href="#printing" class="d">printing</a> using the PS
+utility psselect.  This utility has <a href="options.txt.html#options" class="d">options</a> <a href="starting.txt.html#-e" class="d">-e</a> and <a href="starting.txt.html#-o" class="d">-o</a> for <a href="#printing" class="d">printing</a> just the
+even or odd pages of <a href="insert.txt.html#a" class="d">a</a> PS file respectively.
+
+First generate <a href="insert.txt.html#a" class="d">a</a> PS file with the <span class="o">'hardcopy'</span> command, then generate new
+files with all the odd and even numbered pages with: 
+<span class="e"></span>
+<span class="e">        psselect -o test.ps odd.ps</span>
+<span class="e">        psselect -e test.ps even.ps</span>
+<span class="e"></span>
+Next print odd.ps with your platform's normal print command.  Then take the
+print output, turn <a href="motion.txt.html#it" class="d">it</a> over and place <a href="motion.txt.html#it" class="d">it</a> back in the paper feeder.  Now print
+even.ps with your platform's print command.  All the even pages should now
+appear on the back of the odd pages.
+
+There are <a href="insert.txt.html#a" class="d">a</a> couple of points to bear in mind:
+
+1. Position of the first page.  If the first page <a href="motion.txt.html#is" class="d">is</a> on top of the printout
+   when <a href="#printing" class="d">printing</a> the odd pages then you need to reverse the order that the odd
+   pages are printed.  This can be done with the <a href="starting.txt.html#-r" class="d">-r</a> option to psselect.  This
+   will ensure page 2 <a href="motion.txt.html#is" class="d">is</a> printed on the back of page 1.
+   <span class="n">Note:</span> <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> better to reverse the odd numbered pages rather than the even
+   numbered in <a href="change.txt.html#case" class="d">case</a> there are an odd number of pages in the original PS file.
+
+2. Paper flipping.  When turning over the paper with the odd pages printed on
+   them you may have to either flip them horizontally (along the long edge) or
+   vertically (along the short edge), <a href="motion.txt.html#as" class="d">as</a> well <a href="motion.txt.html#as" class="d">as</a> possibly rotating them 180
+   degrees.  All this depends on the printer <a href="motion.txt.html#-" class="d">-</a> <a href="motion.txt.html#it" class="d">it</a> will be more obvious for
+   desktop ink jets than for small office laser printers where the paper path
+   <a href="motion.txt.html#is" class="d">is</a> hidden from view.
+
+
+<span class="h">==============================================================================</span>
+8. Formfeed Characters                                  <a name="printing-formfeed" class="t">printing-formfeed</a>
+
+By default Vim does not <a href="diff.txt.html#do" class="d">do</a> any special processing of <a href="intro.txt.html#formfeed" class="l">formfeed</a> <a href="intro.txt.html#control" class="d">control</a>
+characters.  Setting the <a href="options.txt.html#%27printoptions%27" class="o">'printoptions'</a> <a href="intro.txt.html#formfeed" class="d">formfeed</a> item will make Vim recognize
+<a href="intro.txt.html#formfeed" class="d">formfeed</a> characters and continue <a href="#printing" class="d">printing</a> the current line <a href="motion.txt.html#at" class="d">at</a> the beginning
+of the first line on <a href="insert.txt.html#a" class="d">a</a> new page.  The use of <a href="intro.txt.html#formfeed" class="d">formfeed</a> characters provides
+rudimentary print <a href="intro.txt.html#control" class="d">control</a> but there are certain things to be aware of.
+
+Vim will always start <a href="#printing" class="d">printing</a> <a href="insert.txt.html#a" class="d">a</a> line (including <a href="insert.txt.html#a" class="d">a</a> line number if enabled)
+containing <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#formfeed" class="d">formfeed</a> character, even if <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> the first character on the
+line.  This means if <a href="insert.txt.html#a" class="d">a</a> line <a href="starting.txt.html#starting" class="d">starting</a> with <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#formfeed" class="d">formfeed</a> character <a href="motion.txt.html#is" class="d">is</a> the first
+line of <a href="insert.txt.html#a" class="d">a</a> page then Vim will print <a href="insert.txt.html#a" class="d">a</a> blank page.
+
+Since the line number <a href="motion.txt.html#is" class="d">is</a> printed <a href="motion.txt.html#at" class="d">at</a> the start of <a href="#printing" class="d">printing</a> the line containing
+the <a href="intro.txt.html#formfeed" class="d">formfeed</a> character, the remainder of the line printed on the new page
+will not have <a href="insert.txt.html#a" class="d">a</a> line number printed for <a href="motion.txt.html#it" class="d">it</a> (in the same way <a href="motion.txt.html#as" class="d">as</a> the wrapped
+lines of <a href="insert.txt.html#a" class="d">a</a> long line when wrap in <a href="options.txt.html#%27printoptions%27" class="o">'printoptions'</a> <a href="motion.txt.html#is" class="d">is</a> enabled).
+
+If the <a href="intro.txt.html#formfeed" class="d">formfeed</a> character <a href="motion.txt.html#is" class="d">is</a> the last character on <a href="insert.txt.html#a" class="d">a</a> line, then <a href="#printing" class="d">printing</a> will
+continue on the second line of the new page, not the first.  This <a href="motion.txt.html#is" class="d">is</a> due to
+Vim processing the <a href="intro.txt.html#end" class="d">end</a> of the line after the <a href="intro.txt.html#formfeed" class="d">formfeed</a> character and moving
+down <a href="insert.txt.html#a" class="d">a</a> line to continue printing.
+
+Due to the points made above <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> recommended that when <a href="intro.txt.html#formfeed" class="d">formfeed</a> character
+processing <a href="motion.txt.html#is" class="d">is</a> enabled, <a href="#printing" class="d">printing</a> of line numbers <a href="motion.txt.html#is" class="d">is</a> disabled, and that form
+feed characters are not the last character on <a href="insert.txt.html#a" class="d">a</a> line.  Even then you may need
+to adjust the number of lines before <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#formfeed" class="d">formfeed</a> character to prevent
+accidental blank pages.
+
+<span class="h">==============================================================================</span>
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>

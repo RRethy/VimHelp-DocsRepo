@@ -1,0 +1,420 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+<title>Vim: undo.txt</title>
+</head><body>
+<div id="d1">
+<div id="d2">
+<pre>
+<a name="undo.txt" class="t">undo.txt</a>      For <span class="i">Vim version 8.0.</span>  Last change: 2014 May 24
+
+
+                  <span class="i">VIM REFERENCE MANUAL    by Bram Moolenaar</span>
+
+
+Undo and <a href="#redo" class="d">redo</a>                                           <a name="undo-redo" class="t">undo-redo</a>
+
+The basics are explained in <a href="motion.txt.html#section" class="d">section</a> <a href="usr_02.txt.html#02.5" class="l">02.5</a> of the user manual.
+
+1. Undo and <a href="#redo" class="d">redo</a> commands       <a href="#undo-commands" class="l">undo-commands</a>
+2. Two ways of <a href="#undo" class="d">undo</a>             <a href="#undo-two-ways" class="l">undo-two-ways</a>
+3. Undo blocks                  <a href="#undo-blocks" class="l">undo-blocks</a>
+4. Undo branches                <a href="#undo-branches" class="l">undo-branches</a>
+5. Undo persistence             <a href="#undo-persistence" class="l">undo-persistence</a>
+6. Remarks about <a href="#undo" class="d">undo</a>           <a href="#undo-remarks" class="l">undo-remarks</a>
+
+<span class="h">==============================================================================</span>
+1. Undo and <a href="#redo" class="d">redo</a> commands                               <a name="undo-commands" class="t">undo-commands</a>
+
+<a href="#%3CUndo%3E" class="s">&lt;Undo&gt;</a>          or                                      <a name="undo" class="t">undo</a> <a name="%3CUndo%3E" class="t">&lt;Undo&gt;</a> <a name="u" class="t">u</a>
+<a href="#u" class="d">u</a>                       Undo <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> changes.  <span class="s">{Vi: only one level}</span>
+
+                                                        <a name="%3Au" class="t">:u</a> <a name="%3Aun" class="t">:un</a> <a name="%3Aundo" class="t">:undo</a>
+:u[ndo]                 Undo one change.  <span class="s">{Vi: only one level}</span>
+                                                                <a name="E830" class="t">E830</a>
+:u[ndo] <span class="s">{N}</span>             Jump to after change number <span class="s">{N}</span>.  See <a href="#undo-branches" class="l">undo-branches</a>
+                        for the meaning of <span class="s">{N}</span>.  <span class="s">{not in Vi}</span>
+
+                                                        <a name="CTRL-R" class="t">CTRL-R</a>
+<a href="#CTRL-R" class="k">CTRL-R</a>                  Redo <a href="intro.txt.html#%5Bcount%5D" class="s">[count]</a> changes which were undone.  {Vi: redraw
+                        screen}
+
+                                                        <a name="%3Ared" class="t">:red</a> <a name="%3Aredo" class="t">:redo</a> <a name="redo" class="t">redo</a>
+:red[o]                 Redo one change which was undone.  <span class="s">{Vi: no redo}</span>
+
+                                                        <a name="U" class="t">U</a>
+<a href="#U" class="d">U</a>                       Undo all latest changes on one line, the line where
+                        the latest change was made. <a href="#U" class="l">U</a> itself also counts <a href="motion.txt.html#as" class="d">as</a>
+                        <a href="insert.txt.html#a" class="d">a</a> change, and thus <a href="#U" class="l">U</a> undoes <a href="insert.txt.html#a" class="d">a</a> previous <a href="#U" class="l">U</a><a href="repeat.txt.html#." class="d">.</a>
+                        <span class="s">{Vi: while not moved off of the last modified line}</span>
+
+The last changes are remembered.  You can use the <a href="#undo" class="d">undo</a> and <a href="#redo" class="d">redo</a> commands above
+to revert the text to how <a href="motion.txt.html#it" class="d">it</a> was before each change.  You can also apply the
+changes again, getting back the text before the undo.
+
+The "<a href="#U" class="d">U</a>" command <a href="motion.txt.html#is" class="d">is</a> treated by undo/redo just like any other command.  Thus <a href="insert.txt.html#a" class="d">a</a>
+"<a href="#u" class="d">u</a>" command undoes <a href="insert.txt.html#a" class="d">a</a> "<a href="#U" class="d">U</a>" command and <a href="insert.txt.html#a" class="d">a</a> 'CTRL-R' command redoes <a href="motion.txt.html#it" class="d">it</a> again.  When
+mixing "<a href="#U" class="d">U</a>"<a href="motion.txt.html#%2C" class="d">,</a> "<a href="#u" class="d">u</a>" and 'CTRL-R' you will notice that the "<a href="#U" class="d">U</a>" command will
+restore the situation of <a href="insert.txt.html#a" class="d">a</a> line to before the previous "<a href="#U" class="d">U</a>" command.  This may
+be confusing.  Try <a href="motion.txt.html#it" class="d">it</a> out to get used to it.
+The "<a href="#U" class="d">U</a>" command will always <a href="motion.txt.html#mark" class="d">mark</a> the buffer <a href="motion.txt.html#as" class="d">as</a> changed.  When "<a href="#U" class="d">U</a>" changes the
+buffer back to how <a href="motion.txt.html#it" class="d">it</a> was without changes, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> still considered changed.
+Use "<a href="#u" class="d">u</a>" to <a href="#undo" class="d">undo</a> changes until the buffer becomes unchanged.
+
+<span class="h">==============================================================================</span>
+2. Two ways of <a href="#undo" class="d">undo</a>                                     <a name="undo-two-ways" class="t">undo-two-ways</a>
+
+How <a href="#undo" class="d">undo</a> and <a href="#redo" class="d">redo</a> commands work depends on the 'u' flag in <a href="options.txt.html#%27cpoptions%27" class="o">'cpoptions'</a>.
+There <a href="motion.txt.html#is" class="d">is</a> the Vim way ('u' excluded) and the Vi-compatible way ('u' included).
+In the Vim way, "uu" undoes two changes.  In the Vi-compatible way, "uu" does
+nothing (undoes an undo).
+
+'u' excluded, the Vim way:
+You can <a href="motion.txt.html#go" class="d">go</a> back in time with the <a href="#undo" class="d">undo</a> command.  You can then <a href="motion.txt.html#go" class="d">go</a> forward again
+with the <a href="#redo" class="d">redo</a> command.  If you make <a href="insert.txt.html#a" class="d">a</a> new change after the <a href="#undo" class="d">undo</a> command,
+the <a href="#redo" class="d">redo</a> will not be possible anymore.
+
+'u' included, the Vi-compatible way:
+The <a href="#undo" class="d">undo</a> command undoes the previous change, and also the previous <a href="#undo" class="d">undo</a> command.
+The <a href="#redo" class="d">redo</a> command repeats the previous <a href="#undo" class="d">undo</a> command.  It does NOT repeat <a href="insert.txt.html#a" class="d">a</a>
+change command, use "<a href="repeat.txt.html#." class="d">.</a>" for that.
+
+<span class="h">Examples        Vim way                 Vi-compatible way       </span>
+"uu"            two times <a href="#undo" class="d">undo</a>          no-op
+"<a href="#u" class="d">u</a> <a href="#CTRL-R" class="k">CTRL-R</a>"      no-op                   two times <a href="#undo" class="d">undo</a>
+
+Rationale:  <a href="intro.txt.html#Nvi" class="d">Nvi</a> uses the "<a href="repeat.txt.html#." class="d">.</a>" command instead of <a href="#CTRL-R" class="k">CTRL-R</a>.  Unfortunately, this
+            <a href="motion.txt.html#is" class="d">is</a> not <a href="intro.txt.html#Vi" class="d">Vi</a> compatible.  For example "dwdwu." in <a href="intro.txt.html#Vi" class="d">Vi</a> deletes two
+            words, in <a href="intro.txt.html#Nvi" class="d">Nvi</a> <a href="motion.txt.html#it" class="d">it</a> does nothing.
+
+<span class="h">==============================================================================</span>
+3. Undo blocks                                          <a name="undo-blocks" class="t">undo-blocks</a>
+
+One <a href="#undo" class="d">undo</a> command normally undoes <a href="insert.txt.html#a" class="d">a</a> typed command, no matter how many changes
+that command makes.  This sequence of undo-able changes forms an <a href="#undo" class="d">undo</a> block.
+Thus if the typed key(s) call <a href="insert.txt.html#a" class="d">a</a> function, all the commands in the function are
+undone together.
+
+If you want to write <a href="insert.txt.html#a" class="d">a</a> function or <a href="usr_41.txt.html#script" class="d">script</a> that doesn't create <a href="insert.txt.html#a" class="d">a</a> new undoable
+change but joins in with the previous change use this command:
+
+                                                <a name="%3Aundoj" class="t">:undoj</a> <a name="%3Aundojoin" class="t">:undojoin</a> <a name="E790" class="t">E790</a>
+:undoj[oin]             Join further changes with the previous <a href="#undo" class="d">undo</a> block.
+                        Warning: Use with care, <a href="motion.txt.html#it" class="d">it</a> may prevent the user from
+                        properly undoing changes.  Don't use this after <a href="#undo" class="d">undo</a>
+                        or redo.
+                        <span class="s">{not in Vi}</span>
+
+This <a href="motion.txt.html#is" class="d">is</a> most useful when you need to prompt the user halfway through <a href="insert.txt.html#a" class="d">a</a> change.
+For example in <a href="insert.txt.html#a" class="d">a</a> function that calls <a href="eval.txt.html#getchar%28%29" class="l">getchar()</a><a href="repeat.txt.html#." class="d">.</a>  Do make sure that there was
+<a href="insert.txt.html#a" class="d">a</a> related change before this that you <a href="vim_faq.txt.html#must" class="d">must</a> join with.
+
+This doesn't work by itself, because the next key press will start <a href="insert.txt.html#a" class="d">a</a> new
+change again.  But you can <a href="diff.txt.html#do" class="d">do</a> something like this: 
+<span class="e"></span>
+<span class="e">        :undojoin | delete</span>
+<span class="e"></span>
+After this an "<a href="#u" class="d">u</a>" command will <a href="#undo" class="d">undo</a> the delete command and the previous
+change.
+
+To <a href="diff.txt.html#do" class="d">do</a> the opposite, break <a href="insert.txt.html#a" class="d">a</a> change into two <a href="#undo" class="d">undo</a> blocks, in <a href="insert.txt.html#Insert" class="d">Insert</a> mode use
+<a href="editing.txt.html#CTRL-G" class="k">CTRL-G</a> u.  This <a href="motion.txt.html#is" class="d">is</a> useful if you want an <a href="insert.txt.html#insert" class="d">insert</a> command to be undoable in
+parts.  E.g., for each sentence.  <a href="insert.txt.html#i_CTRL-G_u" class="l">i_CTRL-G_u</a>
+Setting the value of <a href="options.txt.html#%27undolevels%27" class="o">'undolevels'</a> also breaks undo.  Even when the new value
+<a href="motion.txt.html#is" class="d">is</a> equal to the old value.
+
+<span class="h">==============================================================================</span>
+4. Undo branches                                <a name="undo-branches" class="t">undo-branches</a> <a name="undo-tree" class="t">undo-tree</a>
+
+Above we only discussed one line of undo/redo.  But <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> also possible to
+branch off.  This happens when you <a href="#undo" class="d">undo</a> <a href="insert.txt.html#a" class="d">a</a> few changes and then make <a href="insert.txt.html#a" class="d">a</a> new
+change.  The undone changes become <a href="insert.txt.html#a" class="d">a</a> branch.  You can <a href="motion.txt.html#go" class="d">go</a> to that branch with
+the following commands.
+
+This <a href="motion.txt.html#is" class="d">is</a> explained in the user manual: <a href="usr_32.txt.html#usr_32.txt" class="l">usr_32.txt</a><a href="repeat.txt.html#." class="d">.</a>
+
+                                                        <a name="%3Aundol" class="t">:undol</a> <a name="%3Aundolist" class="t">:undolist</a>
+:undol[ist]             <a href="eval.txt.html#List" class="d">List</a> the leafs in the tree of changes.  Example:
+<span class="h">                           number changes  when               saved </span>
+                               88      88  2010/01/04 14:25:53
+                              108     107  08/07 12:47:51
+                              136      46  13:33:01             7
+                              166     164  3 seconds ago
+
+                        The "number" column <a href="motion.txt.html#is" class="d">is</a> the change number.  This number
+                        continuously increases and can be used to identify <a href="insert.txt.html#a" class="d">a</a>
+                        specific undo-able change, see <a href="#%3Aundo" class="l">:undo</a><a href="repeat.txt.html#." class="d">.</a>
+                        The "changes" column <a href="motion.txt.html#is" class="d">is</a> the number of changes to this
+                        leaf from the root of the tree.
+                        The "when" column <a href="motion.txt.html#is" class="d">is</a> the date and time when this
+                        change was made.  The four possible formats are:
+                            <a href="pattern.txt.html#N" class="d">N</a> seconds ago
+                            HH:MM:SS             hour, minute, seconds
+                            MM/DD HH:MM:SS       idem, with month and day
+                            YYYY/MM/DD HH:MM:SS  idem, with year
+                        The "saved" column specifies, if this change was
+                        written to disk and which file write <a href="motion.txt.html#it" class="d">it</a> was. This can
+                        be used with the <a href="#%3Alater" class="l">:later</a> and <a href="#%3Aearlier" class="l">:earlier</a> commands.
+                        For more details use the <a href="eval.txt.html#undotree%28%29" class="l">undotree()</a> function.
+
+                                                        <a name="g-" class="t">g-</a>
+<a href="#g-" class="d">g-</a>                      Go to older text state.  With <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> repeat that many
+                        times.  <span class="s">{not in Vi}</span>
+                                                        <a name="%3Aea" class="t">:ea</a> <a name="%3Aearlier" class="t">:earlier</a>
+<a href="#%3Aearlier" class="d">:earlier</a> <span class="s">{count}</span>        Go to older text state <span class="s">{count}</span> times.
+<a href="#%3Aearlier" class="d">:earlier</a> <span class="s">{N}</span>s           Go to older text state about <span class="s">{N}</span> seconds before.
+<a href="#%3Aearlier" class="d">:earlier</a> <span class="s">{N}</span>m           Go to older text state about <span class="s">{N}</span> minutes before.
+<a href="#%3Aearlier" class="d">:earlier</a> <span class="s">{N}</span>h           Go to older text state about <span class="s">{N}</span> hours before.
+<a href="#%3Aearlier" class="d">:earlier</a> <span class="s">{N}</span>d           Go to older text state about <span class="s">{N}</span> days before.
+
+<a href="#%3Aearlier" class="d">:earlier</a> <span class="s">{N}</span>f           Go to older text state <span class="s">{N}</span> file writes before.
+                        When changes were made since the last write
+                        "<a href="#%3Aearlier" class="d">:earlier</a> 1f" will revert the text to the state when
+                        <a href="motion.txt.html#it" class="d">it</a> was written.  Otherwise <a href="motion.txt.html#it" class="d">it</a> will <a href="motion.txt.html#go" class="d">go</a> to the write
+                        before that.
+                        When <a href="motion.txt.html#at" class="d">at</a> the state of the first file write, or when
+                        the file was not written, "<a href="#%3Aearlier" class="d">:earlier</a> 1f" will <a href="motion.txt.html#go" class="d">go</a> to
+                        before the first change.
+
+                                                        <a name="g%2B" class="t">g+</a>
+<a href="#g%2B" class="d">g+</a>                      Go to newer text state.  With <a href="insert.txt.html#a" class="d">a</a> <a href="intro.txt.html#count" class="d">count</a> repeat that many
+                        times.  <span class="s">{not in Vi}</span>
+                                                        <a name="%3Alat" class="t">:lat</a> <a name="%3Alater" class="t">:later</a>
+<a href="#%3Alater" class="d">:later</a> <span class="s">{count}</span>          Go to newer text state <span class="s">{count}</span> times.
+<a href="#%3Alater" class="d">:later</a> <span class="s">{N}</span>s             Go to newer text state about <span class="s">{N}</span> seconds later.
+<a href="#%3Alater" class="d">:later</a> <span class="s">{N}</span>m             Go to newer text state about <span class="s">{N}</span> minutes later.
+<a href="#%3Alater" class="d">:later</a> <span class="s">{N}</span>h             Go to newer text state about <span class="s">{N}</span> hours later.
+<a href="#%3Alater" class="d">:later</a> <span class="s">{N}</span>d             Go to newer text state about <span class="s">{N}</span> days later.
+
+<a href="#%3Alater" class="d">:later</a> <span class="s">{N}</span>f             Go to newer text state <span class="s">{N}</span> file writes later.
+                        When <a href="motion.txt.html#at" class="d">at</a> the state of the last file write, "<a href="#%3Alater" class="d">:later</a> 1f"
+                        will <a href="motion.txt.html#go" class="d">go</a> to the newest text state.
+
+
+<span class="n">Note</span> that text states will become unreachable when <a href="#undo" class="d">undo</a> information <a href="motion.txt.html#is" class="d">is</a> cleared
+for <a href="options.txt.html#%27undolevels%27" class="o">'undolevels'</a>.
+
+Don't be surprised when moving through time shows multiple changes to take
+place <a href="motion.txt.html#at" class="d">at</a> <a href="insert.txt.html#a" class="d">a</a> time.  This happens when moving through the <a href="#undo" class="d">undo</a> tree and then
+making <a href="insert.txt.html#a" class="d">a</a> new change.
+
+EXAMPLE
+
+Start with this text:
+<span class="h">        one two three </span>
+
+Delete the first <a href="motion.txt.html#word" class="d">word</a> by pressing "<a href="change.txt.html#x" class="d">x</a>" three times:
+<span class="h">        ne two three </span>
+<span class="h">        e two three </span>
+<span class="h">         two three </span>
+
+Now <a href="#undo" class="d">undo</a> that by pressing "<a href="#u" class="d">u</a>" three times:
+<span class="h">        e two three </span>
+<span class="h">        ne two three </span>
+<span class="h">        one two three </span>
+
+Delete the second <a href="motion.txt.html#word" class="d">word</a> by pressing "<a href="change.txt.html#x" class="d">x</a>" three times:
+<span class="h">        one wo three </span>
+<span class="h">        one o three </span>
+<span class="h">        one  three </span>
+
+Now <a href="#undo" class="d">undo</a> that by using "<a href="#g-" class="d">g-</a>" three times:
+<span class="h">        one o three </span>
+<span class="h">        one wo three </span>
+<span class="h">         two three </span>
+
+You are now back in the first <a href="#undo" class="d">undo</a> branch, after <a href="change.txt.html#deleting" class="d">deleting</a> "one"<a href="repeat.txt.html#." class="d">.</a>  Repeating
+"<a href="#g-" class="d">g-</a>" will now bring you back to the original text:
+<span class="h">        e two three </span>
+<span class="h">        ne two three </span>
+<span class="h">        one two three </span>
+
+Jump to the last change with "<a href="#%3Alater" class="d">:later</a> 1h"<a href="cmdline.txt.html#%3A" class="d">:</a>
+<span class="h">        one  three </span>
+
+And back to the start again with "<a href="#%3Aearlier" class="d">:earlier</a> 1h"<a href="cmdline.txt.html#%3A" class="d">:</a>
+<span class="h">        one two three </span>
+
+
+<span class="n">Note</span> that using "<a href="#u" class="d">u</a>" and <a href="#CTRL-R" class="k">CTRL-R</a> will not get you to all possible text states
+while <a href="repeat.txt.html#repeating" class="d">repeating</a> "<a href="#g-" class="d">g-</a>" and "<a href="#g%2B" class="d">g+</a>" does.
+
+<span class="h">==============================================================================</span>
+5. Undo persistence             <a name="undo-persistence" class="t">undo-persistence</a> <a name="persistent-undo" class="t">persistent-undo</a>
+
+When unloading <a href="insert.txt.html#a" class="d">a</a> buffer Vim normally destroys the tree of undos created for
+that buffer.  By setting the <a href="options.txt.html#%27undofile%27" class="o">'undofile'</a> option, Vim will automatically save
+your <a href="#undo" class="d">undo</a> <a href="cmdline.txt.html#history" class="d">history</a> when you write <a href="insert.txt.html#a" class="d">a</a> file and restore <a href="#undo" class="d">undo</a> <a href="cmdline.txt.html#history" class="d">history</a> when you edit
+the file again.
+
+The <a href="options.txt.html#%27undofile%27" class="o">'undofile'</a> option <a href="motion.txt.html#is" class="d">is</a> checked after <a href="editing.txt.html#writing" class="d">writing</a> <a href="insert.txt.html#a" class="d">a</a> file, before the <a href="autocmd.txt.html#BufWritePost" class="d">BufWritePost</a>
+autocommands.  If you want to <a href="intro.txt.html#control" class="d">control</a> what files to write <a href="#undo" class="d">undo</a> information
+for, you can use <a href="insert.txt.html#a" class="d">a</a> <a href="autocmd.txt.html#BufWritePre" class="d">BufWritePre</a> autocommand: 
+<span class="e">        au BufWritePre /tmp/* setlocal noundofile</span>
+<span class="e"></span>
+Vim saves <a href="#undo" class="d">undo</a> trees in <a href="insert.txt.html#a" class="d">a</a> separate <a href="#undo" class="d">undo</a> file, one for each edited file, using
+<a href="insert.txt.html#a" class="d">a</a> simple scheme that maps filesystem paths directly to <a href="#undo" class="d">undo</a> files. Vim will
+detect if an <a href="#undo" class="d">undo</a> file <a href="motion.txt.html#is" class="d">is</a> no longer synchronized with the file <a href="motion.txt.html#it" class="d">it</a> was written
+for (with <a href="insert.txt.html#a" class="d">a</a> hash of the file contents) and ignore <a href="motion.txt.html#it" class="d">it</a> when the file was changed
+after the <a href="#undo" class="d">undo</a> file was written, to prevent corruption.  An <a href="#undo" class="d">undo</a> file <a href="motion.txt.html#is" class="d">is</a> also
+ignored if its owner differs from the owner of the edited file, except when
+the owner of the <a href="#undo" class="d">undo</a> file <a href="motion.txt.html#is" class="d">is</a> the current user.  Set <a href="options.txt.html#%27verbose%27" class="o">'verbose'</a> to get <a href="insert.txt.html#a" class="d">a</a>
+message about that when opening <a href="insert.txt.html#a" class="d">a</a> file.
+
+Undo files are normally saved in the same directory <a href="motion.txt.html#as" class="d">as</a> the file.  This can be
+changed with the <a href="options.txt.html#%27undodir%27" class="o">'undodir'</a> option.
+
+When the file <a href="motion.txt.html#is" class="d">is</a> encrypted, the text in the <a href="#undo" class="d">undo</a> file <a href="motion.txt.html#is" class="d">is</a> also crypted.  The
+same key and method <a href="motion.txt.html#is" class="d">is</a> used. <a href="editing.txt.html#encryption" class="l">encryption</a>
+
+You can also save and restore <a href="#undo" class="d">undo</a> histories by using "<a href="#%3Awundo" class="d">:wundo</a>" and "<a href="#%3Arundo" class="d">:rundo</a>"
+respectively:
+                                                        <a name="%3Awundo" class="t">:wundo</a> <a name="%3Arundo" class="t">:rundo</a>
+:wundo[!] <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a>
+                Write <a href="#undo" class="d">undo</a> <a href="cmdline.txt.html#history" class="d">history</a> to <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a>.
+                When <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a> exists and <a href="motion.txt.html#it" class="d">it</a> does not look like an <a href="#undo" class="d">undo</a> file
+                (the magic number <a href="motion.txt.html#at" class="d">at</a> the start of the file <a href="motion.txt.html#is" class="d">is</a> wrong), then
+                this fails, unless the <a href="change.txt.html#%21" class="d">!</a> was added.
+                If <a href="motion.txt.html#it" class="d">it</a> exists and does look like an <a href="#undo" class="d">undo</a> file <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a>
+                overwritten. If there <a href="motion.txt.html#is" class="d">is</a> no undo-history, nothing will be 
+                written.
+                Implementation detail: Overwriting happens by first <a href="change.txt.html#deleting" class="d">deleting</a>
+                the existing file and then creating <a href="insert.txt.html#a" class="d">a</a> new file with the same
+                name. So <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> not possible to overwrite an existing undofile
+                in <a href="insert.txt.html#a" class="d">a</a> write-protected directory.
+                <span class="s">{not in Vi}</span>
+
+<a href="#%3Arundo" class="d">:rundo</a> <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a>   Read <a href="#undo" class="d">undo</a> <a href="cmdline.txt.html#history" class="d">history</a> from <a href="editing.txt.html#%7Bfile%7D" class="s">{file}</a>.
+                <span class="s">{not in Vi}</span>
+
+You can use these in autocommands to explicitly specify the name of the
+<a href="cmdline.txt.html#history" class="d">history</a> file.  E.g.: 
+<span class="e"></span>
+<span class="e">        au BufReadPost * call ReadUndo()</span>
+<span class="e">        au BufWritePost * call WriteUndo()</span>
+<span class="e">        func ReadUndo()</span>
+<span class="e">          if filereadable(expand('%:h'). '/UNDO/' . expand('%:t'))</span>
+<span class="e">            rundo %:h/UNDO/%:t</span>
+<span class="e">          endif</span>
+<span class="e">        endfunc</span>
+<span class="e">        func WriteUndo()</span>
+<span class="e">          let dirname = expand('%:h') . '/UNDO'</span>
+<span class="e">          if !isdirectory(dirname)</span>
+<span class="e">            call mkdir(dirname)</span>
+<span class="e">          endif</span>
+<span class="e">          wundo %:h/UNDO/%:t</span>
+<span class="e">        endfunc</span>
+<span class="e"></span>
+You should keep <a href="options.txt.html#%27undofile%27" class="o">'undofile'</a> off, otherwise you <a href="intro.txt.html#end" class="d">end</a> up with two <a href="#undo" class="d">undo</a> files for
+every write.
+
+You can use the <a href="eval.txt.html#undofile%28%29" class="l">undofile()</a> function to find out the file name that Vim would
+use.
+
+<span class="n">Note</span> that while reading/writing files and <a href="options.txt.html#%27undofile%27" class="o">'undofile'</a> <a href="motion.txt.html#is" class="d">is</a> set most <a href="message.txt.html#errors" class="d">errors</a> will
+be silent, unless <a href="options.txt.html#%27verbose%27" class="o">'verbose'</a> <a href="motion.txt.html#is" class="d">is</a> set.  With <a href="#%3Awundo" class="d">:wundo</a> and <a href="#%3Arundo" class="d">:rundo</a> you will get more
+error messages, e.g., when the file cannot be read or written.
+
+<span class="n">NOTE:</span> <a href="#undo" class="d">undo</a> files are never deleted by Vim.  You need to delete them yourself.
+
+Reading an existing <a href="#undo" class="d">undo</a> file may fail for several reasons:
+<a name="E822" class="t">E822</a>  It cannot be opened, because the file permissions don't allow it.
+<a name="E823" class="t">E823</a>  The magic number <a href="motion.txt.html#at" class="d">at</a> the start of the file doesn't match.  This usually
+        means <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> not an <a href="#undo" class="d">undo</a> file.
+<a name="E824" class="t">E824</a>  The version number of the <a href="#undo" class="d">undo</a> file indicates that it's written by <a href="insert.txt.html#a" class="d">a</a>
+        newer version of Vim.  You need that newer version to open it.  Don't
+        write the buffer if you want to keep the <a href="#undo" class="d">undo</a> info in the file.
+"File contents changed, cannot use <a href="#undo" class="d">undo</a> info"
+        The file text differs from when the <a href="#undo" class="d">undo</a> file was written.  This means
+        the <a href="#undo" class="d">undo</a> file cannot be used, <a href="motion.txt.html#it" class="d">it</a> would corrupt the text.  This also
+        happens when <a href="options.txt.html#%27encoding%27" class="o">'encoding'</a> differs from when the <a href="#undo" class="d">undo</a> file was written.
+<a name="E825" class="t">E825</a>  The <a href="#undo" class="d">undo</a> file does not contain valid contents and cannot be used.
+<a name="E826" class="t">E826</a>  The <a href="#undo" class="d">undo</a> file <a href="motion.txt.html#is" class="d">is</a> encrypted but decryption failed.
+<a name="E827" class="t">E827</a>  The <a href="#undo" class="d">undo</a> file <a href="motion.txt.html#is" class="d">is</a> encrypted but this version of Vim does not support
+        encryption.  Open the file with another Vim.
+<a name="E832" class="t">E832</a>  The <a href="#undo" class="d">undo</a> file <a href="motion.txt.html#is" class="d">is</a> encrypted but <a href="options.txt.html#%27key%27" class="o">'key'</a> <a href="motion.txt.html#is" class="d">is</a> not set, the text file <a href="motion.txt.html#is" class="d">is</a> not
+        encrypted.  This would happen if the text file was written by Vim
+        encrypted <a href="motion.txt.html#at" class="d">at</a> first, and later overwritten by not encrypted text.
+        You probably want to delete this <a href="#undo" class="d">undo</a> file.
+"Not reading <a href="#undo" class="d">undo</a> file, owner differs"
+        The <a href="#undo" class="d">undo</a> file <a href="motion.txt.html#is" class="d">is</a> owned by someone else than the owner of the text
+        file.  For safety the <a href="#undo" class="d">undo</a> file <a href="motion.txt.html#is" class="d">is</a> not used.
+
+Writing an <a href="#undo" class="d">undo</a> file may fail for these reasons:
+<a name="E828" class="t">E828</a>  The file to be written cannot be created.  Perhaps you <a href="diff.txt.html#do" class="d">do</a> not have
+        write permissions in the directory.
+"Cannot write <a href="#undo" class="d">undo</a> file in any directory in <a href="options.txt.html#%27undodir%27" class="o">'undodir'</a>"
+        None of the directories in <a href="options.txt.html#%27undodir%27" class="o">'undodir'</a> can be used.
+"Will not overwrite with <a href="#undo" class="d">undo</a> file, cannot read"
+        <a href="insert.txt.html#A" class="d">A</a> file exists with the name of the <a href="#undo" class="d">undo</a> file to be written, but <a href="motion.txt.html#it" class="d">it</a>
+        cannot be read.  You may want to delete this file or rename it.
+"Will not overwrite, this <a href="motion.txt.html#is" class="d">is</a> not an <a href="#undo" class="d">undo</a> file"
+        <a href="insert.txt.html#A" class="d">A</a> file exists with the name of the <a href="#undo" class="d">undo</a> file to be written, but <a href="motion.txt.html#it" class="d">it</a>
+        does not start with the right magic number.  You may want to delete
+        this file or rename it.
+"Skipping <a href="#undo" class="d">undo</a> file write, nothing to <a href="#undo" class="d">undo</a>"
+        There <a href="motion.txt.html#is" class="d">is</a> no <a href="#undo" class="d">undo</a> information to be written, nothing has been changed
+        or <a href="options.txt.html#%27undolevels%27" class="o">'undolevels'</a> <a href="motion.txt.html#is" class="d">is</a> negative.
+<a name="E829" class="t">E829</a>  An error occurred while <a href="editing.txt.html#writing" class="d">writing</a> the <a href="#undo" class="d">undo</a> file.  You may want to try
+        again.
+
+<span class="h">==============================================================================</span>
+6. Remarks about <a href="#undo" class="d">undo</a>                                   <a name="undo-remarks" class="t">undo-remarks</a>
+
+The number of changes that are remembered <a href="motion.txt.html#is" class="d">is</a> set with the <a href="options.txt.html#%27undolevels%27" class="o">'undolevels'</a> option.
+If <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> zero, the Vi-compatible way <a href="motion.txt.html#is" class="d">is</a> always used.  If <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> negative no
+<a href="#undo" class="d">undo</a> <a href="motion.txt.html#is" class="d">is</a> possible.  Use this if you are running out of memory.
+
+                                                        <a name="clear-undo" class="t">clear-undo</a>
+When you set <a href="options.txt.html#%27undolevels%27" class="o">'undolevels'</a> to -1 the <a href="#undo" class="d">undo</a> information <a href="motion.txt.html#is" class="d">is</a> not immediately
+cleared, this happens <a href="motion.txt.html#at" class="d">at</a> the next change.  To force clearing the <a href="#undo" class="d">undo</a>
+information you can use these commands: 
+<span class="e">        :let old_undolevels = &amp;undolevels</span>
+<span class="e">        :set undolevels=-1</span>
+<span class="e">        :exe "normal a \&lt;BS&gt;\&lt;Esc&gt;"</span>
+<span class="e">        :let &amp;undolevels = old_undolevels</span>
+<span class="e">        :unlet old_undolevels</span>
+<span class="e"></span>
+Marks for the buffer ('a to 'z) are also saved and restored, together with the
+text.  <span class="s">{Vi does this a little bit different}</span>
+
+When all changes have been undone, the buffer <a href="motion.txt.html#is" class="d">is</a> not considered to be changed.
+It <a href="motion.txt.html#is" class="d">is</a> then possible to exit Vim with "<a href="editing.txt.html#%3Aq" class="d">:q</a>" instead of ":q!" <span class="s">{not in Vi}</span>.  <span class="n">Note</span>
+that this <a href="motion.txt.html#is" class="d">is</a> relative to the last write of the file.  Typing "<a href="#u" class="d">u</a>" after "<a href="editing.txt.html#%3Aw" class="d">:w</a>"
+actually changes the buffer, compared to what was written, so the buffer <a href="motion.txt.html#is" class="d">is</a>
+considered changed then.
+
+When manual <a href="fold.txt.html#folding" class="l">folding</a> <a href="motion.txt.html#is" class="d">is</a> being used, the <a href="fold.txt.html#folds" class="d">folds</a> are not saved and restored.
+Only changes completely within <a href="insert.txt.html#a" class="d">a</a> fold will keep the fold <a href="motion.txt.html#as" class="d">as</a> <a href="motion.txt.html#it" class="d">it</a> was, because
+the first and last line of the fold don't change.
+
+The numbered <a href="change.txt.html#registers" class="d">registers</a> can also be used for undoing deletes.  Each time you
+delete text, <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> <a href="change.txt.html#put" class="d">put</a> into <a href="sponsor.txt.html#register" class="d">register</a> "1.  The contents of <a href="sponsor.txt.html#register" class="d">register</a> "1 are
+shifted to "2, etc.  The contents of <a href="sponsor.txt.html#register" class="d">register</a> "9 are lost.  You can now get
+back the most recent deleted text with the <a href="change.txt.html#put" class="d">put</a> command: <a href="motion.txt.html#%27" class="d">'</a>"1P'.  (also, if the
+deleted text was the result of the last delete or copy operation, 'P' or 'p'
+also works <a href="motion.txt.html#as" class="d">as</a> this puts the contents of the unnamed register).  You can get
+back the text of three deletes ago with <a href="motion.txt.html#%27" class="d">'</a>"3P'.
+
+                                                <a name="redo-register" class="t">redo-register</a>
+If you want to get back more than one part of deleted text, you can use <a href="insert.txt.html#a" class="d">a</a>
+special feature of the repeat command "<a href="repeat.txt.html#." class="d">.</a>"<a href="repeat.txt.html#." class="d">.</a>  It will increase the number of the
+<a href="sponsor.txt.html#register" class="d">register</a> used.  So if you first <a href="diff.txt.html#do" class="d">do</a> ""1P"<a href="motion.txt.html#%2C" class="d">,</a> the following "<a href="repeat.txt.html#." class="d">.</a>" will result in <a href="insert.txt.html#a" class="d">a</a>
+<a href="motion.txt.html#%27" class="d">'</a>"2P'.  Repeating this will result in all numbered <a href="change.txt.html#registers" class="d">registers</a> being inserted.
+
+Example:        If you deleted text with 'dd....' <a href="motion.txt.html#it" class="d">it</a> can be restored with
+                <a href="motion.txt.html#%27" class="d">'</a>"1P....'.
+
+If you don't know in which <a href="sponsor.txt.html#register" class="d">register</a> the deleted text is, you can use the
+<a href="change.txt.html#%3Adisplay" class="d">:display</a> command.  An alternative <a href="motion.txt.html#is" class="d">is</a> to try the first <a href="sponsor.txt.html#register" class="d">register</a> with <a href="motion.txt.html#%27" class="d">'</a>"1P', and
+if <a href="motion.txt.html#it" class="d">it</a> <a href="motion.txt.html#is" class="d">is</a> not what you want <a href="diff.txt.html#do" class="d">do</a> 'u.'.  This will remove the contents of the
+first put, and repeat the <a href="change.txt.html#put" class="d">put</a> command for the second register.  Repeat the
+'u.' until you got what you want.
+
+ vim:tw=78:ts=8:ft=help:norl:
+
+</pre>
+</div>
+</div>
+</body>
+</html>
