@@ -8,7 +8,7 @@
                 <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
 
     <div class="container">
-      <h1>Vim documentation: if_pyth</h1>
+      <h1>Nvim documentation: if_pyth</h1>
 <A NAME="top"></A>
 <A HREF="index.html">main help file</A>
 
@@ -21,7 +21,7 @@
 
 
 
-The <A HREF="#Python">Python</A> Interface to Vim				*<A NAME="python"></A><B>python</B>* *<A NAME="Python"></A><B>Python</B>*
+The <A HREF="#Python">Python</A> Interface to Vim				*<A NAME="if_pyth"></A><B>if_pyth</B>* *<A NAME="python"></A><B>python</B>* *<A NAME="Python"></A><B>Python</B>*
 
 See |<A HREF="provider.html#provider-python">provider-python</A>| for more information. {Nvim}
 
@@ -61,8 +61,9 @@ Example:
 <B>	endfunction</B>
 
 To see what version of <A HREF="#Python">Python</A> you have:
-<B>	:python import sys</B>
 <B>	:python print(sys.version)</B>
+
+There is no need to import sys, it's done by default.
 
 Note: <A HREF="#Python">Python</A> is very sensitive to the indenting.  Make sure the &quot;class&quot; line
 and &quot;EOF&quot; <A HREF="diff.html#do">do</A> not have any indent.
@@ -83,6 +84,18 @@ Examples:
 <B>	:pydo return "%s\t%d" % (line[::-1], len(line))</B>
 <B>	:pydo if line: return "%4d: %s" % (linenr, line)</B>
  
+One can use `:pydo` in possible conjunction with `:py` to <A HREF="change.html#filter">filter</A> a range using
+<A HREF="#python">python</A>. For example:
+
+<B>	:py3 &lt;&lt; EOF</B>
+<B>	needle = vim.eval('@a')</B>
+<B>	replacement = vim.eval('@b')</B>
+
+<B>	def py_vim_string_replace(str):</B>
+<B>		return str.replace(needle, replacement)</B>
+<B>	EOF</B>
+<B>	:'&lt;,'&gt;py3do return py_vim_string_replace(line)</B>
+ 
 
 							*<A NAME=":pyfile"></A><B>:pyfile</B>* *<A NAME=":pyf"></A><B>:pyf</B>*
 :[range]pyf[ile] <A HREF="editing.html#{file}">{file}</A>
@@ -100,7 +113,6 @@ In the <A HREF="change.html#case">case</A> of <A HREF="#:pyfile">:pyfile</A>, th
 
 To pass arguments you need to set sys.argv[] explicitly.  Example:
 
-<B>	:python import sys</B>
 <B>	:python sys.argv = ["foo", "bar"]</B>
 <B>	:pyfile myscript.py</B>
 
@@ -142,7 +154,7 @@ Note that &quot;EOF&quot; must be at the start of the line.
 
 ==============================================================================
 
-2. The vim module					*<A NAME="python-vim"></A><B>python-vim</B>*
+2. The vim module					*<A NAME="python-vim"></A><B>python-vim</B>* *<A NAME="python2"></A><B>python2</B>*
 
 <A HREF="#Python">Python</A> code gets all of its access to vim (with one exception - see
 |<A HREF="#python-output">python-output</A>| below) via the &quot;vim&quot; module.  The vim module implements two
@@ -767,12 +779,31 @@ Raising SystemExit exception in <A HREF="#python">python</A> isn't endorsed way 
 You can test what <A HREF="#Python">Python</A> version is available with:
 <B>	if has('python')</B>
 <B>	  echo 'there is Python 2.x'</B>
-<B>  	elseif has('python3')</B>
+<B>	endif</B>
+<B>  	if has('python3')</B>
 <B>	  echo 'there is Python 3.x'</B>
 <B>	endif</B>
 
 Note however, that if <A HREF="#Python">Python</A> 2 and 3 are both available, but not loaded,
 these <A HREF="eval.html#has()">has()</A> calls will try to load them.
+
+To avoid loading the dynamic library, only check if Vim was compiled with
+<A HREF="#python">python</A> support:
+<B>	if has('python_compiled')</B>
+<B>	  echo 'compiled with Python 2.x support'</B>
+<B>	  if has('python_dynamic')</B>
+<B>	    echo 'Python 2.x dynamically loaded'</B>
+<B>	  endif</B>
+<B>	endif</B>
+<B>  	if has('python3_compiled')</B>
+<B>	  echo 'compiled with Python 3.x support'</B>
+<B>	  if has('python3_dynamic')</B>
+<B>	    echo 'Python 3.x dynamically loaded'</B>
+<B>	  endif</B>
+<B>	endif</B>
+
+This also tells you whether <A HREF="#Python">Python</A> is dynamically loaded, which will fail if
+the runtime library cannot be found.
 
 ==============================================================================
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>

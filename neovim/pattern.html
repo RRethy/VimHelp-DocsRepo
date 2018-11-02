@@ -8,7 +8,7 @@
                 <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
 
     <div class="container">
-      <h1>Vim documentation: pattern</h1>
+      <h1>Nvim documentation: pattern</h1>
 <A NAME="top"></A>
 <A HREF="index.html">main help file</A>
 
@@ -320,6 +320,15 @@ Note that if you type with ten fingers, the characters are easy to remember:
 the &quot;<A HREF="##">#</A>&quot; is under your left hand middle finger (search to the left and up) and
 the &quot;*&quot; is under your right hand middle finger (search to the right and down).
 (this depends on your keyboard layout though).
+
+
+								*<A NAME="E956"></A><B>E956</B>*
+In very rare cases a regular <A HREF="eval.html#expression">expression</A> is used recursively.  This can happen
+when executing a <A HREF="#pattern">pattern</A> takes a long time and when checkig for <A HREF="message.html#messages">messages</A> on
+channels a callback is invoked that also uses a <A HREF="#pattern">pattern</A> or an <A HREF="autocmd.html#autocommand">autocommand</A> is
+triggered.  In most cases this should be fine, but if a <A HREF="#pattern">pattern</A> is in use when
+it's used again <A HREF="motion.html#it">it</A> fails.  Usually this means there is something wrong with
+the <A HREF="#pattern">pattern</A>.
 
 ==============================================================================
 
@@ -983,7 +992,7 @@ $	At end of <A HREF="#pattern">pattern</A> or in front of &quot;\|&quot;, &quot;
 	Similar to moving the cursor for &quot;\&#37;#&quot; |<A HREF="#/\&#37;#">/\&#37;#</A>|.
 
 
-						*<A NAME="/\&#37;l"></A><B>/\&#37;l</B>* *<A NAME="/\&#37;&gt;l"></A><B>/\&#37;&gt;l</B>* *<A NAME="/\&#37;&lt;l"></A><B>/\&#37;&lt;l</B>*
+						*<A NAME="/\&#37;l"></A><B>/\&#37;l</B>* *<A NAME="/\&#37;&gt;l"></A><B>/\&#37;&gt;l</B>* *<A NAME="/\&#37;&lt;l"></A><B>/\&#37;&lt;l</B>* *<A NAME="E951"></A><B>E951</B>*
 \&#37;23l	Matches in a specific line.
 \&#37;&lt;23l	Matches above a specific line (lower line number).
 \&#37;&gt;23l	Matches below a specific line (higher line number).
@@ -1217,41 +1226,43 @@ match ASCII characters, <A HREF="motion.html#as">as</A> indicated by the range.
 	- A character class <A HREF="eval.html#expression">expression</A> is evaluated to the set of characters
 	  belonging to that character class.  The following character classes
 	  are supported:
-<B><FONT color="#54A23D">			  Name		Contents </FONT></B>
+<B><FONT color="#54A23D">		  Name	      Func	Contents </FONT></B>
 
-*<A NAME="[:alnum:]"></A><B>[:alnum:]</B>*		  <A HREF="#[:alnum:]">[:alnum:]</A>     ASCII letters and digits
+*<A NAME="[:alnum:]"></A><B>[:alnum:]</B>*	  <A HREF="#[:alnum:]">[:alnum:]</A>   isalnum	ASCII letters and digits
 
-*<A NAME="[:alpha:]"></A><B>[:alpha:]</B>*		  <A HREF="#[:alpha:]">[:alpha:]</A>     ASCII letters
+*<A NAME="[:alpha:]"></A><B>[:alpha:]</B>*	  <A HREF="#[:alpha:]">[:alpha:]</A>   isalpha  	ASCII letters
 
-*<A NAME="[:blank:]"></A><B>[:blank:]</B>*		  <A HREF="#[:blank:]">[:blank:]</A>     space and <A HREF="intro.html#tab">tab</A> characters
+*<A NAME="[:blank:]"></A><B>[:blank:]</B>*	  <A HREF="#[:blank:]">[:blank:]</A>     	space and <A HREF="intro.html#tab">tab</A>
 
-*<A NAME="[:cntrl:]"></A><B>[:cntrl:]</B>*		  <A HREF="#[:cntrl:]">[:cntrl:]</A>     <A HREF="intro.html#control">control</A> characters
+*<A NAME="[:cntrl:]"></A><B>[:cntrl:]</B>*	  <A HREF="#[:cntrl:]">[:cntrl:]</A>   iscntrl 	ASCII <A HREF="intro.html#control">control</A> characters
 
-*<A NAME="[:digit:]"></A><B>[:digit:]</B>*		  <A HREF="#[:digit:]">[:digit:]</A>     decimal digits
+*<A NAME="[:digit:]"></A><B>[:digit:]</B>*	  <A HREF="#[:digit:]">[:digit:]</A>     	decimal digits '<A HREF="motion.html#0">0</A>' to '9'
 
-*<A NAME="[:graph:]"></A><B>[:graph:]</B>*		  <A HREF="#[:graph:]">[:graph:]</A>     printable characters excluding space
+*<A NAME="[:graph:]"></A><B>[:graph:]</B>*	  <A HREF="#[:graph:]">[:graph:]</A>   isgraph	ASCII printable characters excluding
+					space
 
-*<A NAME="[:lower:]"></A><B>[:lower:]</B>*		  <A HREF="#[:lower:]">[:lower:]</A>     <A HREF="change.html#lowercase">lowercase</A> letters (all letters when
+*<A NAME="[:lower:]"></A><B>[:lower:]</B>*	  <A HREF="#[:lower:]">[:lower:]</A>   (1)	<A HREF="change.html#lowercase">lowercase</A> letters (all letters when
 					<A HREF="options.html#'ignorecase'">'ignorecase'</A> is used)
 
-*<A NAME="[:print:]"></A><B>[:print:]</B>*		  <A HREF="#[:print:]">[:print:]</A>     printable characters including space
+*<A NAME="[:print:]"></A><B>[:print:]</B>*	  <A HREF="#[:print:]">[:print:]</A>   (2) 	printable characters including space
 
-*<A NAME="[:punct:]"></A><B>[:punct:]</B>*		  <A HREF="#[:punct:]">[:punct:]</A>     ASCII punctuation characters
+*<A NAME="[:punct:]"></A><B>[:punct:]</B>*	  <A HREF="#[:punct:]">[:punct:]</A>   ispunct	ASCII punctuation characters
 
-*<A NAME="[:space:]"></A><B>[:space:]</B>*		  <A HREF="#[:space:]">[:space:]</A>     <A HREF="#whitespace">whitespace</A> characters
+*<A NAME="[:space:]"></A><B>[:space:]</B>*	  <A HREF="#[:space:]">[:space:]</A>     	<A HREF="#whitespace">whitespace</A> characters: space, <A HREF="intro.html#tab">tab</A>, CR,
+					NL, vertical <A HREF="intro.html#tab">tab</A>, form feed
 
-*<A NAME="[:upper:]"></A><B>[:upper:]</B>*		  <A HREF="#[:upper:]">[:upper:]</A>     <A HREF="change.html#uppercase">uppercase</A> letters (all letters when
+*<A NAME="[:upper:]"></A><B>[:upper:]</B>*	  <A HREF="#[:upper:]">[:upper:]</A>   (3)	<A HREF="change.html#uppercase">uppercase</A> letters (all letters when
 					<A HREF="options.html#'ignorecase'">'ignorecase'</A> is used)
 
-*<A NAME="[:xdigit:]"></A><B>[:xdigit:]</B>*		  <A HREF="#[:xdigit:]">[:xdigit:]</A>    hexadecimal digits
+*<A NAME="[:xdigit:]"></A><B>[:xdigit:]</B>*	  <A HREF="#[:xdigit:]">[:xdigit:]</A>    	hexadecimal digits: 0-9, a-f, A-F
 
-*<A NAME="[:return:]"></A><B>[:return:]</B>*		  <A HREF="#[:return:]">[:return:]</A>	the <A HREF="motion.html#&lt;CR&gt;">&lt;CR&gt;</A> character
+*<A NAME="[:return:]"></A><B>[:return:]</B>*	  <A HREF="#[:return:]">[:return:]</A>		the <A HREF="motion.html#&lt;CR&gt;">&lt;CR&gt;</A> character
 
-*<A NAME="[:tab:]"></A><B>[:tab:]</B>*		  <A HREF="#[:tab:]">[:tab:]</A>	the <A HREF="motion.html#&lt;Tab&gt;">&lt;Tab&gt;</A> character
+*<A NAME="[:tab:]"></A><B>[:tab:]</B>*	  <A HREF="#[:tab:]">[:tab:]</A>		the <A HREF="motion.html#&lt;Tab&gt;">&lt;Tab&gt;</A> character
 
-*<A NAME="[:escape:]"></A><B>[:escape:]</B>*		  <A HREF="#[:escape:]">[:escape:]</A>	the <A HREF="intro.html#&lt;Esc&gt;">&lt;Esc&gt;</A> character
+*<A NAME="[:escape:]"></A><B>[:escape:]</B>*	  <A HREF="#[:escape:]">[:escape:]</A>		the <A HREF="intro.html#&lt;Esc&gt;">&lt;Esc&gt;</A> character
 
-*<A NAME="[:backspace:]"></A><B>[:backspace:]</B>*		  <A HREF="#[:backspace:]">[:backspace:]</A>	the <A HREF="motion.html#&lt;BS&gt;">&lt;BS&gt;</A> character
+*<A NAME="[:backspace:]"></A><B>[:backspace:]</B>*	  <A HREF="#[:backspace:]">[:backspace:]</A>		the <A HREF="motion.html#&lt;BS&gt;">&lt;BS&gt;</A> character
 	  The brackets in character class expressions are additional to the
 	  brackets delimiting a collection.  For example, the following is a
 	  plausible <A HREF="#pattern">pattern</A> for a Unix filename: &quot;[-./[:alnum:]_~]\+&quot; That is,
@@ -1262,6 +1273,13 @@ match ASCII characters, <A HREF="motion.html#as">as</A> indicated by the range.
 	  <A HREF="#regexp">regexp</A> engine.  See |<A HREF="#two-engines">two-engines</A>|.  In the future these items may
 	  work for <A HREF="mbyte.html#multi-byte">multi-byte</A> characters.  For now, to get all &quot;alpha&quot;
 	  characters you can use: [[:lower:][:upper:]].
+
+	  The &quot;Func&quot; column shows what library function is used.  The
+	  implementation depends on the system.  Otherwise:
+	  (1) Uses islower() for ASCII and Vim builtin rules for other
+	  characters when built with the |<A HREF="various.html#+multi_byte">+multi_byte</A>| feature.
+	  (2) Uses Vim builtin rules
+	  (3) As with (1) but using isupper()
 
 							*<A NAME="/[[="></A><B>/[[=</B>* *<A NAME="[==]"></A><B>[==]</B>*
 	- An equivalence class.  This means that characters are matched that
@@ -1304,7 +1322,8 @@ match ASCII characters, <A HREF="motion.html#as">as</A> indicated by the range.
 	- Matching with a collection can be slow, because each character in
 	  the text has to be compared with each character in the collection.
 	  Use one of the other atoms above when possible.  Example: &quot;\d&quot; is
-	  much faster than &quot;[0-9]&quot; and matches the same characters.
+	  much faster than &quot;[0-9]&quot; and matches the same characters.  However,
+	  the new |<A HREF="#NFA">NFA</A>| <A HREF="#regexp">regexp</A> engine deals with this better than the old one.
 
 
 						*<A NAME="/\&#37;[]"></A><B>/\&#37;[]</B>* *<A NAME="E69"></A><B>E69</B>* *<A NAME="E70"></A><B>E70</B>* *<A NAME="E369"></A><B>E369</B>*
@@ -1369,7 +1388,7 @@ Examples:
 Technical detail:				*<A NAME="NL-used-for-Nul"></A><B>NL-used-for-Nul</B>*
 <A HREF="intro.html#&lt;Nul&gt;">&lt;Nul&gt;</A> characters in the file are stored <A HREF="motion.html#as">as</A> <A HREF="motion.html#&lt;NL&gt;">&lt;NL&gt;</A> in memory.  In the display
 they are shown <A HREF="motion.html#as">as</A> &quot;^@&quot;.  The translation is done when reading and <A HREF="editing.html#writing">writing</A>
-files.  To match a <A HREF="intro.html#&lt;Nul&gt;">&lt;Nul&gt;</A> with a search <A HREF="#pattern">pattern</A> you can just enter <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="88cbdcdac4a5c8">[email&#160;protected]</a> or
+files.  To match a <A HREF="intro.html#&lt;Nul&gt;">&lt;Nul&gt;</A> with a search <A HREF="#pattern">pattern</A> you can just enter <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="93d0c7c1dfbed3">[email&#160;protected]</a> or
 &quot;<A HREF="visual.html#CTRL-V">CTRL-V</A> 000&quot;.  This is probably just what you expect.  Internally the
 character is replaced with a <A HREF="motion.html#&lt;NL&gt;">&lt;NL&gt;</A> in the search <A HREF="#pattern">pattern</A>.  What is unusual is
 that typing <A HREF="visual.html#CTRL-V">CTRL-V</A> <A HREF="motion.html#CTRL-J">CTRL-J</A> also inserts a <A HREF="motion.html#&lt;NL&gt;">&lt;NL&gt;</A>, thus also searches for a <A HREF="intro.html#&lt;Nul&gt;">&lt;Nul&gt;</A>
@@ -1563,5 +1582,5 @@ Finally, these constructs are unique to Perl:
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
-  <script data-cfasync="false" src="/cdn-cgi/scripts/d07b1474/cloudflare-static/email-decode.min.js"></script></body>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
 </html>

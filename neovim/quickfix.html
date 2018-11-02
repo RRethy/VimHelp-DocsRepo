@@ -8,7 +8,7 @@
                 <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
 
     <div class="container">
-      <h1>Vim documentation: quickfix</h1>
+      <h1>Nvim documentation: quickfix</h1>
 <A NAME="top"></A>
 <A HREF="index.html">main help file</A>
 
@@ -51,7 +51,7 @@ compiler (see |<A HREF="#errorformat">errorformat</A>| below).
 
 							*<A NAME="quickfix-ID"></A><B>quickfix-ID</B>*
 Each <A HREF="#quickfix">quickfix</A> <A HREF="eval.html#list">list</A> has a unique identifier called the <A HREF="#quickfix">quickfix</A> ID and this
-number will not change within a Vim session. The <A HREF="eval.html#getqflist()">getqflist()</A> function can be
+number will not change within a Vim session. The |<A HREF="eval.html#getqflist()">getqflist()</A>| function can be
 used to get the identifier assigned to a <A HREF="eval.html#list">list</A>. There is also a <A HREF="#quickfix">quickfix</A> <A HREF="eval.html#list">list</A>
 number which may change whenever more than ten lists are added to a <A HREF="#quickfix">quickfix</A>
 stack.
@@ -69,6 +69,15 @@ separate location <A HREF="eval.html#list">list</A>.  A location <A HREF="eval.h
 When a <A HREF="windows.html#window">window</A> with a location <A HREF="eval.html#list">list</A> is split, the new <A HREF="windows.html#window">window</A> gets a copy of the
 location <A HREF="eval.html#list">list</A>.  When there are no longer any references to a location <A HREF="eval.html#list">list</A>,
 the location <A HREF="eval.html#list">list</A> is destroyed.
+
+
+						*<A NAME="quickfix-changedtick"></A><B>quickfix-changedtick</B>*
+Every <A HREF="#quickfix">quickfix</A> and location <A HREF="eval.html#list">list</A> has a read-only changedtick variable that
+tracks the total number of changes made to the <A HREF="eval.html#list">list</A>.  Every time the <A HREF="#quickfix">quickfix</A>
+<A HREF="eval.html#list">list</A> is modified, this <A HREF="intro.html#count">count</A> is incremented. This can be used to perform an
+action only when the list has changed.  The |<A HREF="eval.html#getqflist()">getqflist()</A>| and |<A HREF="eval.html#getloclist()">getloclist()</A>|
+<A HREF="eval.html#functions">functions</A> can be used to query the current value of changedtick.  You cannot
+change the changedtick variable.
 
 The following <A HREF="#quickfix">quickfix</A> commands can be used.  The location <A HREF="eval.html#list">list</A> commands are
 similar to the <A HREF="#quickfix">quickfix</A> commands, <A HREF="change.html#replacing">replacing</A> the '<A HREF="change.html#c">c</A>' prefix in the <A HREF="#quickfix">quickfix</A>
@@ -338,6 +347,10 @@ processing a <A HREF="#quickfix">quickfix</A> or location <A HREF="eval.html#lis
 			from the last error backwards, -1 being the last error.
 			The <A HREF="options.html#'switchbuf'">'switchbuf'</A> settings are respected when jumping
 			to a buffer.
+			The |<A HREF="various.html#:filter">:filter</A>| command can be used to display only the
+			<A HREF="#quickfix">quickfix</A> entries matching a supplied <A HREF="pattern.html#pattern">pattern</A>. The
+			<A HREF="pattern.html#pattern">pattern</A> is matched against the filename, module name,
+			<A HREF="pattern.html#pattern">pattern</A> and text of the entry.
 
 :cl[ist] +{count}	<A HREF="eval.html#List">List</A> the current and next {count} valid <A HREF="message.html#errors">errors</A>.  This
 			is similar to &quot;<A HREF="#:clist">:clist</A> from from+count&quot;, where &quot;from&quot;
@@ -357,8 +370,7 @@ processing a <A HREF="#quickfix">quickfix</A> or location <A HREF="eval.html#lis
 <B><FONT color="#54A23D">        8387:   symbol:   method Fmainx() </FONT></B>
 
 
-							*<A NAME=":lli"></A><B>:lli</B>* *<A NAME=":llist"></A><B>:llist</B>*
-:lli[st] [from] [, [to]]
+:lli[st] [from] [, [to]]				*<A NAME=":lli"></A><B>:lli</B>* *<A NAME=":llist"></A><B>:llist</B>*
 			Same <A HREF="motion.html#as">as</A> &quot;<A HREF="#:clist">:clist</A>&quot;, except the location <A HREF="eval.html#list">list</A> for the
 			current <A HREF="windows.html#window">window</A> is used instead of the <A HREF="#quickfix">quickfix</A> <A HREF="eval.html#list">list</A>.
 
@@ -392,6 +404,55 @@ use this code:
 <B>	au QuickfixCmdPost make call QfMakeConv()</B>
 Another option is using <A HREF="options.html#'makeencoding'">'makeencoding'</A>.
 
+
+							*<A NAME="quickfix-title"></A><B>quickfix-title</B>*
+Every <A HREF="#quickfix">quickfix</A> and location <A HREF="eval.html#list">list</A> has a title. By default the title is set to
+the command that created the list. The |<A HREF="eval.html#getqflist()">getqflist()</A>| and |<A HREF="eval.html#getloclist()">getloclist()</A>|
+<A HREF="eval.html#functions">functions</A> can be used to get the title of a <A HREF="#quickfix">quickfix</A> and a location <A HREF="eval.html#list">list</A>
+respectively. The |<A HREF="eval.html#setqflist()">setqflist()</A>| and |<A HREF="eval.html#setloclist()">setloclist()</A>| <A HREF="eval.html#functions">functions</A> can be used to
+modify the title of a <A HREF="#quickfix">quickfix</A> and location <A HREF="eval.html#list">list</A> respectively. Examples:
+<B>	call setqflist([], 'a', {'title' : 'Cmd output'})</B>
+<B>	echo getqflist({'title' : 1})</B>
+<B>	call setloclist(3, [], 'a', {'title' : 'Cmd output'})</B>
+<B>	echo getloclist(3, {'title' : 1})</B>
+ 
+
+							*<A NAME="quickfix-size"></A><B>quickfix-size</B>*
+You can get the number of entries (size) in a <A HREF="#quickfix">quickfix</A> and a location <A HREF="eval.html#list">list</A>
+using the |<A HREF="eval.html#getqflist()">getqflist()</A>| and |<A HREF="eval.html#getloclist()">getloclist()</A>| <A HREF="eval.html#functions">functions</A> respectively. Examples:
+<B>	echo getqflist({'size' : 1})</B>
+<B>	echo getloclist(5, {'size' : 1})</B>
+ 
+
+							*<A NAME="quickfix-context"></A><B>quickfix-context</B>*
+Any Vim type can be associated <A HREF="motion.html#as">as</A> a context with a <A HREF="#quickfix">quickfix</A> or location <A HREF="eval.html#list">list</A>.
+The |<A HREF="eval.html#setqflist()">setqflist()</A>| and the |<A HREF="eval.html#setloclist()">setloclist()</A>| <A HREF="eval.html#functions">functions</A> can be used to associate a
+context with a <A HREF="#quickfix">quickfix</A> and a location list respectively. The |<A HREF="eval.html#getqflist()">getqflist()</A>|
+and the |<A HREF="eval.html#getloclist()">getloclist()</A>| <A HREF="eval.html#functions">functions</A> can be used to retrieve the context of a
+<A HREF="#quickfix">quickfix</A> and a location <A HREF="eval.html#list">list</A> respectively. This is useful for a Vim <A HREF="usr_05.html#plugin">plugin</A>
+dealing with multiple quickfix/location lists.
+Examples:
+
+<B>	let somectx = {'name' : 'Vim', 'type' : 'Editor'}</B>
+<B>	call setqflist([], 'a', {'context' : somectx})</B>
+<B>	echo getqflist({'context' : 1})</B>
+
+<B>	let newctx = ['red', 'green', 'blue']</B>
+<B>	call setloclist(2, [], 'a', {'id' : qfid, 'context' : newctx})</B>
+<B>	echo getloclist(2, {'id' : qfid, 'context' : 1})</B>
+ 
+
+							*<A NAME="quickfix-parse"></A><B>quickfix-parse</B>*
+You can parse a <A HREF="eval.html#list">list</A> of lines using <A HREF="options.html#'errorformat'">'errorformat'</A> without creating or
+modifying a <A HREF="#quickfix">quickfix</A> list using the |<A HREF="eval.html#getqflist()">getqflist()</A>| function. Examples:
+<B>	echo getqflist({'lines' : ["F1:10:Line10", "F2:20:Line20"]})</B>
+<B>	echo getqflist({'lines' : systemlist('grep -Hn quickfix *')})</B>
+This returns a dictionary where the 'items' key contains the <A HREF="eval.html#list">list</A> of <A HREF="#quickfix">quickfix</A>
+entries parsed from lines. The following shows how to use a custom
+<A HREF="options.html#'errorformat'">'errorformat'</A> to parse the lines without modifying the <A HREF="options.html#'errorformat'">'errorformat'</A> option:
+<B>	echo getqflist({'efm' : '%f#%l#%m', 'lines' : ['F1#10#Line']})</B>
+ 
+
 EXECUTE A COMMAND IN ALL THE BUFFERS IN QUICKFIX OR LOCATION LIST:
 
 							*<A NAME=":cdo"></A><B>:cdo</B>*
@@ -418,8 +479,7 @@ EXECUTE A COMMAND IN ALL THE BUFFERS IN QUICKFIX OR LOCATION LIST:
 			<A HREF="autocmd.html#autocommand">autocommand</A> event is disabled by adding <A HREF="motion.html#it">it</A> to
 			<A HREF="options.html#'eventignore'">'eventignore'</A>.  This considerably speeds up editing
 			each buffer.
-			{not in Vi} {not available when compiled without the
-			|<A HREF="various.html#+listcmds">+listcmds</A>| feature}
+			{not in Vi}
 			Also see |<A HREF="windows.html#:bufdo">:bufdo</A>|, |<A HREF="tabpage.html#:tabdo">:tabdo</A>|, |<A HREF="editing.html#:argdo">:argdo</A>|, |<A HREF="windows.html#:windo">:windo</A>|,
 			|<A HREF="#:ldo">:ldo</A>|, |<A HREF="#:cfdo">:cfdo</A>| and |<A HREF="#:lfdo">:lfdo</A>|.
 
@@ -433,8 +493,7 @@ EXECUTE A COMMAND IN ALL THE BUFFERS IN QUICKFIX OR LOCATION LIST:
 <B>				:{cmd}</B>
 <B>				etc.</B>
  			Otherwise <A HREF="motion.html#it">it</A> works the same <A HREF="motion.html#as">as</A> `:cdo`.
-			{not in Vi} {not available when compiled without the
-			|<A HREF="various.html#+listcmds">+listcmds</A>| feature}
+			{not in Vi}
 
 
 							*<A NAME=":ldo"></A><B>:ldo</B>*
@@ -448,8 +507,7 @@ EXECUTE A COMMAND IN ALL THE BUFFERS IN QUICKFIX OR LOCATION LIST:
 <B>				etc.</B>
  			Only valid entries in the location <A HREF="eval.html#list">list</A> are used.
 			Otherwise <A HREF="motion.html#it">it</A> works the same <A HREF="motion.html#as">as</A> `:cdo`.
-			{not in Vi} {not available when compiled without the
-			|<A HREF="various.html#+listcmds">+listcmds</A>| feature}
+			{not in Vi}
 
 
 							*<A NAME=":lfdo"></A><B>:lfdo</B>*
@@ -462,8 +520,7 @@ EXECUTE A COMMAND IN ALL THE BUFFERS IN QUICKFIX OR LOCATION LIST:
 <B>				:{cmd}</B>
 <B>				etc.</B>
  			Otherwise <A HREF="motion.html#it">it</A> works the same <A HREF="motion.html#as">as</A> `:ldo`.
-			{not in Vi} {not available when compiled without the
-			|<A HREF="various.html#+listcmds">+listcmds</A>| feature}
+			{not in Vi}
 
 =============================================================================
 
@@ -488,7 +545,9 @@ EXECUTE A COMMAND IN ALL THE BUFFERS IN QUICKFIX OR LOCATION LIST:
 			which will indicate the command that produced the
 			<A HREF="#quickfix">quickfix</A> <A HREF="eval.html#list">list</A>. This can be used to compose a custom
 			status line if the value of <A HREF="options.html#'statusline'">'statusline'</A> is adjusted
-			properly.
+			properly. Whenever this buffer is modified by a
+			<A HREF="#quickfix">quickfix</A> command or function, the |<A HREF="eval.html#b:changedtick">b:changedtick</A>|
+			variable is incremented.
 
 
 							*<A NAME=":lop"></A><B>:lop</B>* *<A NAME=":lopen"></A><B>:lopen</B>*
@@ -605,6 +664,120 @@ In all of the above cases, if the location <A HREF="eval.html#list">list</A> for
 yet set, then <A HREF="motion.html#it">it</A> is set to the location <A HREF="eval.html#list">list</A> displayed in the location <A HREF="eval.html#list">list</A>
 <A HREF="windows.html#window">window</A>.
 
+
+							*<A NAME="quickfix-window-ID"></A><B>quickfix-window-ID</B>*
+You can use the |<A HREF="eval.html#getqflist()">getqflist()</A>| and |<A HREF="eval.html#getloclist()">getloclist()</A>| <A HREF="eval.html#functions">functions</A> to obtain the
+<A HREF="windows.html#window">window</A> ID of the <A HREF="#quickfix">quickfix</A> <A HREF="windows.html#window">window</A> and location <A HREF="eval.html#list">list</A> <A HREF="windows.html#window">window</A> respectively (if
+present).  Examples:
+<B>	echo getqflist({'winid' : 1}).winid</B>
+<B>	echo getloclist(2, {'winid' : 1}).winid</B>
+ 
+
+							*<A NAME="getqflist-examples"></A><B>getqflist-examples</B>*
+The |<A HREF="eval.html#getqflist()">getqflist()</A>| and |<A HREF="eval.html#getloclist()">getloclist()</A>| <A HREF="eval.html#functions">functions</A> can be used to get the various
+attributes of a <A HREF="#quickfix">quickfix</A> and location <A HREF="eval.html#list">list</A> respectively. Some examples for
+using these <A HREF="eval.html#functions">functions</A> are below:
+
+<B>    " get the title of the current quickfix list</B>
+<B>    :echo getqflist({'title' : 0}).title</B>
+
+<B>    " get the identifier of the current quickfix list</B>
+<B>    :let qfid = getqflist({'id' : 0}).id</B>
+
+<B>    " get the identifier of the fourth quickfix list in the stack</B>
+<B>    :let qfid = getqflist({'nr' : 4, 'id' : 0}).id</B>
+
+<B>    " check whether a quickfix list with a specific identifier exists</B>
+<B>    :if getqflist({'id' : qfid}).id == qfid</B>
+
+<B>    " get the index of the current quickfix list in the stack</B>
+<B>    :let qfnum = getqflist({'nr' : 0}).nr</B>
+
+<B>    " get the items of a quickfix list specified by an identifier</B>
+<B>    :echo getqflist({'id' : qfid, 'items' : 0}).items</B>
+
+<B>    " get the number of entries in a quickfix list specified by an id</B>
+<B>    :echo getqflist({'id' : qfid, 'size' : 0}).size</B>
+
+<B>    " get the context of the third quickfix list in the stack</B>
+<B>    :echo getqflist({'nr' : 3, 'context' : 0}).context</B>
+
+<B>    " get the number of quickfix lists in the stack</B>
+<B>    :echo getqflist({'nr' : '$'}).nr</B>
+
+<B>    " get the number of times the current quickfix list is changed</B>
+<B>    :echo getqflist({'changedtick' : 0}).changedtick</B>
+
+<B>    " get the current entry in a quickfix list specified by an identifier</B>
+<B>    :echo getqflist({'id' : qfid, 'idx' : 0}).idx</B>
+
+<B>    " get all the quickfix list attributes using an identifier</B>
+<B>    :echo getqflist({'id' : qfid, 'all' : 0})</B>
+
+<B>    " parse text from a List of lines and return a quickfix list</B>
+<B>    :let myList = ["a.java:10:L10", "b.java:20:L20"]</B>
+<B>    :echo getqflist({'lines' : myList}).items</B>
+
+<B>    " parse text using a custom 'efm' and return a quickfix list</B>
+<B>    :echo getqflist({'lines' : ['a.c#10#Line 10'], 'efm':'%f#%l#%m'}).items</B>
+
+<B>    " get the quickfix list window id</B>
+<B>    :echo getqflist({'winid' : 0}).winid</B>
+
+<B>    " get the context of the current location list</B>
+<B>    :echo getloclist(0, {'context' : 0}).context</B>
+
+<B>    " get the location list window id of the third window</B>
+<B>    :echo getloclist(3, {'winid' : 0}).winid</B>
+ 
+
+							*<A NAME="setqflist-examples"></A><B>setqflist-examples</B>*
+The |<A HREF="eval.html#setqflist()">setqflist()</A>| and |<A HREF="eval.html#setloclist()">setloclist()</A>| <A HREF="eval.html#functions">functions</A> can be used to set the various
+attributes of a <A HREF="#quickfix">quickfix</A> and location <A HREF="eval.html#list">list</A> respectively. Some examples for
+using these <A HREF="eval.html#functions">functions</A> are below:
+
+<B>    " create an empty quickfix list with a title and a context</B>
+<B>    :let t = 'Search results'</B>
+<B>    :let c = {'cmd' : 'grep'}</B>
+<B>    :call setqflist([], ' ', {'title' : t, 'context' : c})</B>
+
+<B>    " set the title of the current quickfix list</B>
+<B>    :call setqflist([], 'a', {'title' : 'Mytitle'})</B>
+
+<B>    " set the context of a quickfix list specified by an identifier</B>
+<B>    :call setqflist([], 'a', {'id' : qfid, 'context' : {'val' : 100}})</B>
+
+<B>    " create a new quickfix list from a command output</B>
+<B>    :call setqflist([], ' ', {'lines' : systemlist('grep -Hn main *.c')})</B>
+
+<B>    " parse text using a custom efm and add to a particular quickfix list</B>
+<B>    :call setqflist([], 'a', {'id' : qfid,</B>
+<B>		\ 'lines' : ["a.c#10#L10", "b.c#20#L20"], 'efm':'%f#%l#%m'})</B>
+
+<B>    " add items to the quickfix list specified by an identifier</B>
+<B>    :let newItems = [{'filename' : 'a.txt', 'lnum' : 10, 'text' : "Apple"},</B>
+<B>		    \ {'filename' : 'b.txt', 'lnum' : 20, 'text' : "Orange"}]</B>
+<B>    :call setqflist([], 'a', {'id' : qfid, 'items' : newItems})</B>
+
+<B>    " empty a quickfix list specified by an identifier</B>
+<B>    :call setqflist([], 'r', {'id' : qfid, 'items' : []})</B>
+
+<B>    " free all the quickfix lists in the stack</B>
+<B>    :call setqflist([], 'f')</B>
+
+<B>    " set the title of the fourth quickfix list</B>
+<B>    :call setqflist([], 'a', {'nr' : 4, 'title' : 'SomeTitle'})</B>
+
+<B>    " create a new quickfix list at the end of the stack</B>
+<B>    :call setqflist([], ' ', {'nr' : '$',</B>
+<B>			\ 'lines' : systemlist('grep -Hn class *.java')})</B>
+
+<B>    " create a new location list from a command output</B>
+<B>    :call setloclist(0, [], ' ', {'lines' : systemlist('grep -Hn main *.c')})</B>
+
+<B>    " replace the location list entries for the third window</B>
+<B>    :call setloclist(3, [], 'r', {'items' : newItems})</B>
+ 
 =============================================================================
 
 3. Using more than one <A HREF="eval.html#list">list</A> of <A HREF="message.html#errors">errors</A>			*<A NAME="quickfix-error-lists"></A><B>quickfix-error-lists</B>*
@@ -656,6 +829,14 @@ When &quot;<A HREF="#:colder">:colder</A>&quot; has been used and &quot;<A HREF=
 browsing with &quot;<A HREF="#:grep">:grep</A>&quot; |<A HREF="#grep">grep</A>|.  If you want to keep the more recent error
 lists, use &quot;<A HREF="#:cnewer">:cnewer</A> 99&quot; first.
 
+To get the number of lists in the <A HREF="#quickfix">quickfix</A> and location <A HREF="eval.html#list">list</A> stack, you can
+use the |<A HREF="eval.html#getqflist()">getqflist()</A>| and |<A HREF="eval.html#getloclist()">getloclist()</A>| <A HREF="eval.html#functions">functions</A> respectively with the list
+number set to the special value '<A HREF="motion.html#$">$</A>'. Examples:
+<B>	echo getqflist({'nr' : '$'}).nr</B>
+<B>	echo getloclist(3, {'nr' : '$'}).nr</B>
+To get the number of the current <A HREF="eval.html#list">list</A> in the stack:
+<B>	echo getqflist({'nr' : 0}).nr</B>
+ 
 =============================================================================
 
 4. Using <A HREF="#:make">:make</A>						*<A NAME=":make_makeprg"></A><B>:make_makeprg</B>*
@@ -1170,7 +1351,7 @@ or
 to indicate the column of the error.  This is to be used in a multi-line error
 message.  See |<A HREF="#errorformat-javac">errorformat-javac</A>| for a  useful example.
 
-The &quot;&#37;s&quot; conversion specifies the text to search for to locate the error line.
+The &quot;&#37;s&quot; conversion specifies the text to search for, to locate the error line.
 The text is used <A HREF="motion.html#as">as</A> a literal <A HREF="eval.html#string">string</A>.  The anchors &quot;<A HREF="motion.html#^">^</A>&quot; and &quot;<A HREF="motion.html#$">$</A>&quot; are added to
 the text to locate the error line exactly matching the search text and the
 text is prefixed with the &quot;\V&quot; atom to make <A HREF="motion.html#it">it</A> &quot;very nomagic&quot;.  The &quot;&#37;s&quot;
@@ -1349,9 +1530,9 @@ other headers that can be skipped.
 The scanf()-like &quot;&#37;*[]&quot; <A HREF="intro.html#notation">notation</A> is supported for backward-compatibility
 with previous versions of Vim.  However, <A HREF="motion.html#it">it</A> is also possible to specify
 (nearly) any Vim supported regular <A HREF="eval.html#expression">expression</A> in format strings.
-Since <A HREF="intro.html#meta">meta</A> characters of the regular <A HREF="eval.html#expression">expression</A> language can be part of
+Since meta characters of the regular <A HREF="eval.html#expression">expression</A> language can be part of
 ordinary matching strings or file names (and therefore internally have to
-be escaped), <A HREF="intro.html#meta">meta</A> symbols have to be written with leading '<A HREF="motion.html#&#37;">&#37;</A>':
+be escaped), meta symbols have to be written with leading '<A HREF="motion.html#&#37;">&#37;</A>':
 	&#37;\		The single '\' character.  Note that this has to be
 			escaped (&quot;&#37;\\&quot;) in &quot;<A HREF="options.html#:set">:set</A> <A HREF="options.html#'errorformat'">errorformat</A>=&quot; <A HREF="intro.html#definitions">definitions</A>.
 	<A HREF="motion.html#&#37;">&#37;</A>.		The single '<A HREF="repeat.html#.">.</A>' character.
@@ -1445,6 +1626,23 @@ into this format.  You can use this program with the &quot;<A HREF="#:make">:mak
 The backslashes before the pipe character are required to avoid <A HREF="motion.html#it">it</A> to be
 recognized <A HREF="motion.html#as">as</A> a command separator.  The <A HREF="intro.html#backslash">backslash</A> before each space is
 required for the set command.
+
+
+					    *<A NAME="cfilter-plugin"></A><B>cfilter-plugin</B>* *<A NAME="Cfilter"></A><B>Cfilter</B>* *<A NAME="Lfilter"></A><B>Lfilter</B>*
+If you have too many matching <A HREF="message.html#messages">messages</A>, you can use the cfilter <A HREF="usr_05.html#plugin">plugin</A> to
+reduce the number of entries.  Load the <A HREF="usr_05.html#plugin">plugin</A> with:
+<B>   packadd cfilter</B>
+
+Then you can use these command:
+<B>   :Cfilter[!] /{pat}/</B>
+<B>   :Lfilter[!] /{pat}/</B>
+
+:Cfilter creates a new <A HREF="#quickfix">quickfix</A> <A HREF="eval.html#list">list</A> from entries matching <A HREF="autocmd.html#{pat}">{pat}</A> in the
+current <A HREF="#quickfix">quickfix</A> <A HREF="eval.html#list">list</A>. Both the file name and the text of the entries are
+matched against <A HREF="autocmd.html#{pat}">{pat}</A>. If ! is supplied, then entries not matching <A HREF="autocmd.html#{pat}">{pat}</A> are
+used.
+
+:Lfilter does the same <A HREF="motion.html#as">as</A> :Cfilter but operates on the current location <A HREF="eval.html#list">list</A>.
 
 =============================================================================
 

@@ -8,7 +8,7 @@
                 <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
 
     <div class="container">
-      <h1>Vim documentation: msgpack_rpc</h1>
+      <h1>Nvim documentation: msgpack_rpc</h1>
 <A NAME="top"></A>
 <A HREF="index.html">main help file</A>
 
@@ -80,18 +80,15 @@ To get a formatted dump of the <A HREF="api.html#API">API</A> using <A HREF="if_
 3. Connecting						      *<A NAME="rpc-connecting"></A><B>rpc-connecting</B>*
 
 See |<A HREF="channel.html#channel-intro">channel-intro</A>|, for various ways to open a channel. Most of the channel
-opening <A HREF="eval.html#functions">functions</A> take an `rpc` key in the <A HREF="options.html#options">options</A> dictionary, to enable <A HREF="#rpc">rpc</A>.
+opening <A HREF="eval.html#functions">functions</A> take an `rpc` key in the <A HREF="options.html#options">options</A> dictionary, to enable <A HREF="#RPC">RPC</A>.
 
-Additionally, <A HREF="#rpc">rpc</A> channels can be opened by other processes connecting to
+Additionally, <A HREF="#RPC">RPC</A> channels can be opened by other processes connecting to
 TCP/IP sockets or named pipes listened to by <A HREF="nvim.html#nvim">nvim</A>.
 
-An <A HREF="#rpc">rpc</A> socket is automatically created with each instance. The socket
- location is stored in |<A HREF="eval.html#v:servername">v:servername</A>|. By default this is a named pipe
-with an automatically generated address. See |<A HREF="intro.html#XXX">XXX</A>|.
-
-To make Nvim listen on a TCP/IP socket instead, specify YXXY--listen|:
+Nvim creates a default <A HREF="#RPC">RPC</A> socket at |<A HREF="starting.html#startup">startup</A>|, given by |<A HREF="eval.html#v:servername">v:servername</A>|. To
+start with a TCP/IP socket instead, use |<A HREF="starting.html#--listen">--listen</A>| with a TCP-style address:
 <B>    nvim --listen 127.0.0.1:6666</B>
- Also, more sockets and named pipes can be listened on using |<A HREF="eval.html#serverstart()">serverstart()</A>|.
+Additional sockets and named pipes can be started with |<A HREF="eval.html#serverstart()">serverstart()</A>|.
 
 Note that localhost TCP sockets are generally <A HREF="various.html#less">less</A> secure than named pipes,
 and can lead to vunerabilities like remote code execution.
@@ -211,10 +208,10 @@ prefix is stripped off.
 5. Types							    *<A NAME="rpc-types"></A><B>rpc-types</B>*
 
 The Nvim C <A HREF="api.html#API">API</A> uses custom types for all <A HREF="eval.html#functions">functions</A>. |<A HREF="api.html#api-types">api-types</A>|
-At the <A HREF="#RPC">RPC</A> layer, the types can be split into two groups:
+At the <A HREF="#RPC">RPC</A> layer, types form two groups:
 
-  - Basic types that map natively to msgpack (and probably have a default
-    representation in msgpack-supported programming languages)
+  - Basic types that map natively to msgpack (and have a default
+    representation in most msgpack-supported programming languages)
   - Special Nvim types that map to msgpack EXT with custom type codes.
 
 <B><FONT color="#54A23D">Basic types </FONT></B>
@@ -226,6 +223,8 @@ At the <A HREF="#RPC">RPC</A> layer, the types can be split into two groups:
   <A HREF="eval.html#String">String</A>                            -&gt; msgpack <A HREF="eval.html#string">string</A>
   Array                             -&gt; msgpack array
   <A HREF="eval.html#Dictionary">Dictionary</A>                        -&gt; msgpack map
+
+  Note: in function calls, empty Array is accepted for <A HREF="eval.html#Dictionary">Dictionary</A> parameter.
 
 <B><FONT color="#54A23D">Special types (msgpack EXT) </FONT></B>
 

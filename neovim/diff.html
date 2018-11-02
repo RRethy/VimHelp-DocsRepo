@@ -8,7 +8,7 @@
                 <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
 
     <div class="container">
-      <h1>Vim documentation: diff</h1>
+      <h1>Nvim documentation: diff</h1>
 <A NAME="top"></A>
 <A HREF="index.html">main help file</A>
 
@@ -22,7 +22,7 @@
 
 
 							*<A NAME="diff"></A><B>diff</B>* *<A NAME="diff-mode"></A><B>diff-mode</B>*
-This file describes the |<A HREF="intro.html#+diff">+diff</A>| feature: Showing differences between two to
+This file describes the <A HREF="#diff">diff</A> feature: Showing differences between two to
 eight versions of the same file.
 
 The basics are explained in section |<A HREF="usr_08.html#08.7">08.7</A>| of the user manual.
@@ -191,7 +191,7 @@ loaded.  Since Vim doesn't allow having two <A HREF="windows.html#buffers">buffe
 need another buffer.  This command is useful:
 <B>	 command DiffOrig vert new | set buftype=nofile | read ++edit # | 0d_</B>
 <B>		\ | diffthis | wincmd p | diffthis</B>
-(this is in |<A HREF="vimrc_example.html">vimrc_example.vim</A>|).  Use &quot;<A HREF="#:DiffOrig">:DiffOrig</A>&quot; to see the differences
+Use &quot;<A HREF="#:DiffOrig">:DiffOrig</A>&quot; to see the differences
 between the current buffer and the file <A HREF="motion.html#it">it</A> was loaded from.
 
 A buffer that is unloaded cannot be used for the <A HREF="#diff">diff</A>.  But <A HREF="motion.html#it">it</A> does work for
@@ -412,11 +412,15 @@ Example (this does almost the same <A HREF="motion.html#as">as</A> <A HREF="opti
 <B>	   endif</B>
 <B>	   silent execute "!diff -a --binary " . opt . v:fname_in . " " . v:fname_new .</B>
 <B>		\  " &gt; " . v:fname_out</B>
+<B>	   redraw!</B>
 <B>	endfunction</B>
 
 The &quot;-a&quot; argument is used to force comparing the files <A HREF="motion.html#as">as</A> text, comparing <A HREF="motion.html#as">as</A>
 binaries isn't useful.  The &quot;--binary&quot; argument makes the files read in binary
 mode, so that a <A HREF="starting.html#CTRL-Z">CTRL-Z</A> doesn't end the text on DOS.
+
+The `redraw!` command may not be needed, depending on whether executing a
+shell command shows something on the display or not.
 
 
 						*<A NAME="E810"></A><B>E810</B>* *<A NAME="E97"></A><B>E97</B>*

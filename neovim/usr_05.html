@@ -8,7 +8,7 @@
                 <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
 
     <div class="container">
-      <h1>Vim documentation: usr_05</h1>
+      <h1>Nvim documentation: usr_05</h1>
 <A NAME="top"></A>
 <A HREF="index.html">main help file</A>
 
@@ -76,10 +76,9 @@ to write a Vim <A HREF="usr_41.html#script">script</A> file: |<A HREF="usr_41.ht
 
 *<A NAME="05.2"></A><B>05.2</B>*	The example <A HREF="starting.html#vimrc">vimrc</A> file explained		*<A NAME="vimrc_example.vim"></A><B>vimrc_example.vim</B>*
 
-In the first chapter was explained how the example <A HREF="starting.html#vimrc">vimrc</A> file can be used.
-The file can be found here:
+In the first chapter was explained how to create a <A HREF="starting.html#vimrc">vimrc</A> file.
 
-<B><FONT color="#54A23D">	$VIMRUNTIME/vimrc_example.vim </FONT></B>
+<B>	:exe 'edit' stdpath('config').'/init.vim'</B>
 
 In this section we will explain the various commands used in this file.  This
 will give you hints about how to set up your own preferences.  Not everything
@@ -197,7 +196,7 @@ This switches on three very clever mechanisms:
 
 This makes Vim break text to avoid lines getting longer than 78 characters.
 But only for files that have been detected to be plain text.  There are
-actually two parts here.  &quot;autocmd <A HREF="autocmd.html#FileType">FileType</A> text&quot; is an <A HREF="autocmd.html#autocommand">autocommand</A>.  This
+actually two parts here.  &quot;<A HREF="autocmd.html#autocmd">autocmd</A> <A HREF="autocmd.html#FileType">FileType</A> text&quot; is an <A HREF="autocmd.html#autocommand">autocommand</A>.  This
 defines that when the file type is set to &quot;text&quot; the following command is
 automatically executed.  &quot;setlocal textwidth=78&quot; sets the <A HREF="options.html#'textwidth'">'textwidth'</A> option
 to 78, but only locally in one file.
@@ -343,13 +342,12 @@ when you use Vim.  There are only two steps for adding a global <A HREF="#plugin
 GETTING A GLOBAL PLUGIN
 
 Where can you find plugins?
+- Some are always loaded, you can see them in the directory $VIMRUNTIME/plugin.
 - Some come with Vim.  You can find them in the directory $VIMRUNTIME/macros
-  and its sub-directories.
+  and its sub-directories and under $VIM/vimfiles/pack/dist/opt/.
  - Download from the net. There is a large collection on	<A HREF="http://www.vim.org">http://www.vim.org</A>.
 - They are sometimes posted in a Vim |<A HREF="intro.html#maillist">maillist</A>|.
 - You could write one yourself, see |<A HREF="usr_41.html#write-plugin">write-plugin</A>|.
-
-Some plugins come <A HREF="motion.html#as">as</A> a vimball archive, see |<A HREF="intro.html#vimball">vimball</A>|.
 
 
 USING A GLOBAL PLUGIN
@@ -604,7 +602,7 @@ KEYWORDS
 The <A HREF="options.html#'iskeyword'">'iskeyword'</A> option specifies which characters can appear in a <A HREF="motion.html#word">word</A>:
 
 <B>	:set iskeyword</B>
-<B><FONT color="#54A23D"> 	  <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c0a9b3aba5b9b7afb2a4fd80">[email&#160;protected]</a>,48-57,_,192-255 </FONT></B>
+<B><FONT color="#54A23D"> 	  <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="84edf7efe1fdf3ebf6e0b9c4">[email&#160;protected]</a>,48-57,_,192-255 </FONT></B>
 
 The &quot;<A HREF="repeat.html#@">@</A>&quot; stands for all alphabetic letters.  &quot;48-57&quot; stands for ASCII
 characters 48 to 57, which are the numbers 0 to 9.  &quot;192-255&quot; are the
@@ -614,14 +612,14 @@ like &quot;<A HREF="motion.html#w">w</A>&quot; consider &quot;upper-case&quot; t
 
 <B>	:set iskeyword+=-</B>
 <B>	:set iskeyword</B>
-<B><FONT color="#54A23D"> 	  <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="80e9f3ebe5f9f7eff2e4bdc0">[email&#160;protected]</a>,48-57,_,192-255,- </FONT></B>
+<B><FONT color="#54A23D"> 	  <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6009130b0519170f12045d20">[email&#160;protected]</a>,48-57,_,192-255,- </FONT></B>
 
 If you look at the new value, you will see that Vim has added a comma for you.
    To remove a character use &quot;-=&quot;.  For example, to remove the underscore:
 
 <B>	:set iskeyword-=_</B>
 <B>	:set iskeyword</B>
-<B><FONT color="#54A23D"> 	  <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="bcd5cfd7d9c5cbd3ced881fc">[email&#160;protected]</a>,48-57,192-255,- </FONT></B>
+<B><FONT color="#54A23D"> 	  <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1c756f7779656b736e78215c">[email&#160;protected]</a>,48-57,192-255,- </FONT></B>
 
 This time a comma is automatically deleted.
 
@@ -642,9 +640,9 @@ This does mean there is <A HREF="various.html#less">less</A> room to edit text, 
 
 Next chapter: |<A HREF="usr_06.html">usr_06.txt</A>|  Using <A HREF="syntax.html#syntax">syntax</A> highlighting
 
-Copyright: see |<A HREF="usr_01.html#manual-copyright">manual-copyright</A>|  vim:tw=78:ts=8:ft=help:norl:
+Copyright: see |<A HREF="usr_01.html#manual-copyright">manual-copyright</A>|  vim:tw=78:ts=8:noet:ft=help:norl:
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
-  <script data-cfasync="false" src="/cdn-cgi/scripts/d07b1474/cloudflare-static/email-decode.min.js"></script></body>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
 </html>

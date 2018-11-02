@@ -8,7 +8,7 @@
                 <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
 
     <div class="container">
-      <h1>Vim documentation: syntax</h1>
+      <h1>Nvim documentation: syntax</h1>
 <A NAME="top"></A>
 <A HREF="index.html">main help file</A>
 
@@ -1358,7 +1358,7 @@ doxygen_javadoc_autobrief	1	Set to 0 to disable javadoc autobrief
 doxygen_end_punctuation		'[.]'	Set to <A HREF="pattern.html#regexp">regexp</A> match for the ending
 					punctuation of brief
 
-There are also some hilight groups worth mentioning <A HREF="motion.html#as">as</A> they can be useful in
+There are also some highlight groups worth mentioning <A HREF="motion.html#as">as</A> they can be useful in
 configuration.
 
 <B><FONT color="#54A23D">Highlight			Effect </FONT></B>
@@ -1856,7 +1856,7 @@ Functions and variable names are the same color by default, because VIM
 doesn't specify different colors for Functions and Identifiers.  To change
 this (which is recommended if you want function names to be recognizable in a
 different color) you need to add the following line to your <A HREF="starting.html#vimrc">vimrc</A>:
-<B>  :hi Function term=underline cterm=bold ctermfg=LightGray</B>
+<B>  :hi Function cterm=bold ctermfg=LightGray</B>
 
 Of course, the ctermfg can be a different color if you choose.
 
@@ -2086,7 +2086,7 @@ set &quot;lite_minlines&quot; to the value you desire.  Example:
 
 LPC						*<A NAME="lpc.vim"></A><B>lpc.vim</B>* *<A NAME="ft-lpc-syntax"></A><B>ft-lpc-syntax</B>*
 
-LPC stands for a simple, memory-efficient language: Lars Pensj| C.  The
+LPC stands for a simple, memory-efficient language: Lars Pensjö C.  The
 file name of LPC is usually *.c.  Recognizing these files <A HREF="motion.html#as">as</A> LPC would bother
 users <A HREF="editing.html#writing">writing</A> only C programs.	If you want to use LPC <A HREF="#syntax">syntax</A> in Vim, you
 should set a variable in your <A HREF="starting.html#vimrc">vimrc</A> file:
@@ -2332,9 +2332,8 @@ with the correct typesetting of your file, is to define an eye-catching
 highlighting definition for the <A HREF="#syntax">syntax</A> groups &quot;nroffDefinition&quot; and
 &quot;nroffDefSpecial&quot; in your configuration files.  For example:
 
-<B>  hi def nroffDefinition term=italic cterm=italic gui=reverse</B>
-<B>  hi def nroffDefSpecial term=italic,bold cterm=italic,bold</B>
-<B>			 \ gui=reverse,bold</B>
+<B>  hi def nroffDefinition cterm=italic gui=reverse</B>
+<B>  hi def nroffDefSpecial cterm=italic,bold gui=reverse,bold</B>
 
 If you want to navigate preprocessor entries in your source file <A HREF="motion.html#as">as</A> easily <A HREF="motion.html#as">as</A>
 with section markers, you can activate the following option in your <A HREF="starting.html#vimrc">vimrc</A>
@@ -2484,7 +2483,7 @@ If while <A HREF="scroll.html#scrolling">scrolling</A> all of a sudden the whole
 then you should try and switch off one of those.  Let me know if you can figure
 out the line that causes the mistake.
 
-One triggers on &quot;^\s*sub\s*&quot; and the other on &quot;^[<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d0f490">[email&#160;protected]</a>&#37;]&quot; more or <A HREF="various.html#less">less</A>.
+One triggers on &quot;^\s*sub\s*&quot; and the other on &quot;^[<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="311571">[email&#160;protected]</a>&#37;]&quot; more or <A HREF="various.html#less">less</A>.
 
 <B>	:let perl_no_sync_on_sub</B>
 <B>	:let perl_no_sync_on_global_var</B>
@@ -2775,6 +2774,51 @@ commands than are actually available to you by the game.
 
 
 
+<A HREF="change.html#R">R</A>							*<A NAME="r.vim"></A><B>r.vim</B>* *<A NAME="ft-r-syntax"></A><B>ft-r-syntax</B>*
+
+The parsing of <A HREF="change.html#R">R</A> code for <A HREF="#syntax">syntax</A> highlight starts 40 lines backwards, but you
+can set a different value in your |<A HREF="starting.html#vimrc">vimrc</A>|. Example:
+<B>	let r_syntax_minlines = 60</B>
+
+You can also turn off <A HREF="#syntax">syntax</A> highlighting of ROxygen:
+<B>	let r_syntax_hl_roxygen = 0</B>
+
+enable <A HREF="fold.html#folding">folding</A> of code delimited by parentheses, square brackets and curly
+braces:
+<B>	let r_syntax_folding = 1</B>
+
+and highlight <A HREF="motion.html#as">as</A> <A HREF="eval.html#functions">functions</A> all keywords followed by an opening parenthesis:
+<B>	let r_syntax_fun_pattern = 1</B>
+
+
+
+<A HREF="change.html#R">R</A> MARKDOWN					*<A NAME="rmd.vim"></A><B>rmd.vim</B>* *<A NAME="ft-rmd-syntax"></A><B>ft-rmd-syntax</B>*
+
+To disable <A HREF="#syntax">syntax</A> highlight of YAML header, add to your YXXYvimrc|:
+<B>	let rmd_syn_hl_yaml = 0</B>
+
+To disable <A HREF="#syntax">syntax</A> highlighting of citation keys:
+<B>	let rmd_syn_hl_citations = 0</B>
+
+To highlight <A HREF="change.html#R">R</A> code in knitr chunk headers:
+<B>	let rmd_syn_hl_chunk = 1</B>
+
+By default, chunks of <A HREF="change.html#R">R</A> code will be highlighted following the rules of <A HREF="change.html#R">R</A>
+language. If you want proper <A HREF="#syntax">syntax</A> highlighting of chunks of other languages,
+you should add them to either `markdown_fenced_languages` or
+`rmd_fenced_languages`. For example to properly highlight both <A HREF="change.html#R">R</A> and <A HREF="if_pyth.html#Python">Python</A>,
+you may add this to your YXXYvimrc|:
+<B>	let rmd_fenced_languages = ['r', 'python']</B>
+
+
+
+<A HREF="change.html#R">R</A> RESTRUCTURED TEXT				*<A NAME="rrst.vim"></A><B>rrst.vim</B>* *<A NAME="ft-rrst-syntax"></A><B>ft-rrst-syntax</B>*
+
+To highlight <A HREF="change.html#R">R</A> code in knitr chunk headers, add to your YXXYvimrc|:
+<B>	let rrst_syn_hl_chunk = 1</B>
+
+
+
 READLINE				*<A NAME="readline.vim"></A><B>readline.vim</B>* *<A NAME="ft-readline-syntax"></A><B>ft-readline-syntax</B>*
 
 The readline library is primarily used by the BASH shell, which adds quite a
@@ -2924,13 +2968,10 @@ largest class or module.
 
 SCHEME						*<A NAME="scheme.vim"></A><B>scheme.vim</B>* *<A NAME="ft-scheme-syntax"></A><B>ft-scheme-syntax</B>*
 
-By default only R5RS keywords are highlighted and properly indented.
+By default only R7RS keywords are highlighted and properly indented.
 
-MzScheme-specific stuff will be used if b:is_mzscheme or g:is_mzscheme
-<A HREF="eval.html#variables">variables</A> are defined.
-
-Also <A HREF="#scheme.vim">scheme.vim</A> supports keywords of the Chicken Scheme-&gt;C compiler.  Define
-b:is_chicken or g:is_chicken, if you need them.
+<A HREF="#scheme.vim">scheme.vim</A> also supports extensions of the CHICKEN Scheme-&gt;C compiler.
+Define b:is_chicken or g:is_chicken, if you need them.
 
 
 
@@ -3017,7 +3058,7 @@ You can also disable this rendering by adding the following line to your
 <A HREF="starting.html#vimrc">vimrc</A> file:
 <B>   let sgml_no_rendering=1</B>
 
-(Adapted from the html.vim help text by Claudio Fleiner <A HREF="/cdn-cgi/l/email-protection#3a59565b4f5e53557a5c565f53545f4814595557">&lt;<span class="__cf_email__" data-cfemail="0b68676a7e6f62644b6d676e62656e7925686466">[email&#160;protected]</span>&gt;</A>) 
+(Adapted from the html.vim help text by Claudio Fleiner <A HREF="/cdn-cgi/l/email-protection#bdded1dcc8d9d4d2fddbd1d8d4d3d8cf93ded2d0">&lt;<span class="__cf_email__" data-cfemail="ea89868b9f8e8385aa8c868f83848f98c4898587">[email&#160;protected]</span>&gt;</A>) 
 
 
 
@@ -3029,17 +3070,17 @@ This covers <A HREF="#syntax">syntax</A> highlighting for the older Unix (Bourne
 shells such <A HREF="motion.html#as">as</A> bash, dash, posix, and the Korn shells.
 
 Vim attempts to determine which shell type is in use by specifying that
-various filenames are of specific types:
+various filenames are of specific types, e.g.:
 
 <B>    ksh : .kshrc* *.ksh</B>
 <B>    bash: .bashrc* bashrc bash.bashrc .bash_profile* *.bash</B>
  
-If none of these cases pertain, then the first line of the file is examined
-(ex. looking for /bin/sh  /bin/ksh  /bin/bash).  If the first line specifies a
-shelltype, then that shelltype is used.  However some files (ex. .profile) are
-known to be shell files but the type is not apparent.  Furthermore, on many
-systems sh is symbolically linked to &quot;bash&quot; (Linux, Windows+cygwin) or &quot;ksh&quot;
-(Posix).
+See $VIMRUNTIME/filetype.vim for the full <A HREF="eval.html#list">list</A> of patterns.  If none of these
+cases pertain, then the first line of the file is examined (ex. looking for
+/bin/sh  /bin/ksh  /bin/bash).  If the first line specifies a shelltype, then
+that shelltype is used.  However some files (ex. .profile) are known to be
+shell files but the type is not apparent.  Furthermore, on many systems sh is
+symbolically linked to &quot;bash&quot; (Linux, Windows+cygwin) or &quot;ksh&quot; (Posix).
 
 One may specify a global default by instantiating one of the following
 <A HREF="eval.html#variables">variables</A> in your <A HREF="starting.html#vimrc">vimrc</A>:
@@ -3115,8 +3156,8 @@ file into $HOME/.config/nvim/after/syntax/sh/awkembed.vim:
 <B>      unlet b:current_syntax</B>
 <B>    endif</B>
 <B>    syn include @AWKScript syntax/awk.vim</B>
-<B>    syn region AWKScriptCode matchgroup=AWKCommand start=+[=\\]\@&lt;!'+ skip=+\\'+ end=+'+ <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="12717d7c66737b7c612f525345594171607b6266">[email&#160;protected]</a> contained</B>
-<B>    syn region AWKScriptEmbedded matchgroup=AWKCommand start=+\&lt;awk\&gt;+ skip=+\\$+ end=+[=\\]\@&lt;!'+me=e-1 <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="aac9c5c4decbc3c4d997ead9c2e3cee6c3d9de">[email&#160;protected]</a>,@shExprList2 nextgroup=AWKScriptCode</B>
+<B>    syn region AWKScriptCode matchgroup=AWKCommand start=+[=\\]\@&lt;!'+ skip=+\\'+ end=+'+ <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="ea8985849e8b838499d7aaabbda1b98998839a9e">[email&#160;protected]</a> contained</B>
+<B>    syn region AWKScriptEmbedded matchgroup=AWKCommand start=+\&lt;awk\&gt;+ skip=+\\$+ end=+[=\\]\@&lt;!'+me=e-1 <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="3754585943565e59440a77445f7e537b5e4443">[email&#160;protected]</a>,@shExprList2 nextgroup=AWKScriptCode</B>
 <B>    syn cluster shCommandSubList add=AWKScriptEmbedded</B>
 <B>    hi def link AWKCommand Type</B>
  
@@ -3336,6 +3377,12 @@ techniques in |<A HREF="#mysyntaxfile-add">mysyntaxfile-add</A>| to extend or mo
 by syntax/tex.vim.  Please consider uploading any extensions that you write,
 which typically would go in $HOME/after/syntax/tex/[pkgname].vim, to
 	<A HREF="http://vim.sf.net/">http://vim.sf.net/</A>.
+
+I've included some support for various popular <A HREF="repeat.html#packages">packages</A> on my website:
+
+<B>	http://www.drchip.org/astronaut/vim/index.html#LATEXPKGS</B>
+ 
+The <A HREF="#syntax">syntax</A> files there go into your .../after/syntax/tex/ directory.
 
 
 					*<A NAME="tex-error"></A><B>tex-error</B>* *<A NAME="g:tex_no_error"></A><B>g:tex_no_error</B>*
@@ -4529,7 +4576,7 @@ nextgroup=.., add=..  or remove=.. <A HREF="eval.html#list">list</A> with a &quo
 this <A HREF="intro.html#notation">notation</A> to implicitly declare a cluster before specifying its contents.
 
 Example:
-<B>   :syntax match Thing "# [^#]\+ #" <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="ed8e8283998c84839ed0adb98584838aa088808f889f9e">[email&#160;protected]</a></B>
+<B>   :syntax match Thing "# [^#]\+ #" <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="22414d4c56434b4c511f62764a4b4c456f474f40475051">[email&#160;protected]</a></B>
 <B>   :syntax cluster ThingMembers contains=ThingMember1,ThingMember2</B>
 
 As the previous example suggests, modifications to a cluster are effectively
@@ -4538,7 +4585,7 @@ to speak:
 <B>   :syntax keyword A aaa</B>
 <B>   :syntax keyword B bbb</B>
 <B>   :syntax cluster AandB contains=A</B>
-<B>   :syntax match Stuff "( aaa bbb )" <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6d0e0203190c04031e502d2c0c03092f">[email&#160;protected]</a></B>
+<B>   :syntax match Stuff "( aaa bbb )" <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e3808c8d97828a8d90dea3a2828d87a1">[email&#160;protected]</a></B>
 <B>   :syntax cluster AandB add=B	  " now both keywords are matched in Stuff</B>
 
 This also has implications for nested clusters:
@@ -4546,7 +4593,7 @@ This also has implications for nested clusters:
 <B>   :syntax keyword B bbb</B>
 <B>   :syntax cluster SmallGroup contains=B</B>
 <B>   :syntax cluster BigGroup contains=A,@SmallGroup</B>
-<B>   :syntax match Stuff "( aaa bbb )" <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4b2824253f2a222538760b09222c0c39243e3b">[email&#160;protected]</a></B>
+<B>   :syntax match Stuff "( aaa bbb )" <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="aecdc1c0dacfc7c0dd93eeecc7c9e9dcc1dbde">[email&#160;protected]</a></B>
 <B>   :syntax cluster BigGroup remove=B	" no effect, since B isn't in BigGroup</B>
 <B>   :syntax cluster SmallGroup remove=B	" now bbb isn't matched within Stuff</B>
  
@@ -4583,7 +4630,7 @@ two different ways:
 
 <B>   " In perl.vim:</B>
 <B>   :syntax include @Pod &lt;sfile&gt;:p:h/pod.vim</B>
-<B>   :syntax region perlPOD start="^=head" end="^=cut" <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d4b7bbbaa0b5bdbaa7e99484bbb0">[email&#160;protected]</a></B>
+<B>   :syntax region perlPOD start="^=head" end="^=cut" <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4b2824253f2a222538760b1b242f">[email&#160;protected]</a></B>
  
 	  When {file-name} is an absolute path (starts with &quot;<A HREF="pattern.html#/">/</A>&quot;, &quot;c:&quot;, &quot;$VAR&quot;
 	  or &quot;<A HREF="cmdline.html#&lt;sfile&gt;">&lt;sfile&gt;</A>&quot;) that file is sourced.  When <A HREF="motion.html#it">it</A> is a relative path
@@ -4861,7 +4908,9 @@ in their own color.
 <B>				runtime colors/evening.vim</B>
 <B>				hi Statement ctermfg=Blue guifg=Blue</B>
 
- 			After the color scheme has been loaded the
+ 			Before the color scheme will be loaded the
+			|<A HREF="autocmd.html#ColorSchemePre">ColorSchemePre</A>| <A HREF="autocmd.html#autocommand">autocommand</A> event is triggered.
+			After the color scheme has been loaded the
 			|<A HREF="autocmd.html#ColorScheme">ColorScheme</A>| <A HREF="autocmd.html#autocommand">autocommand</A> event is triggered.
 			For info about <A HREF="editing.html#writing">writing</A> a colorscheme file:
 <B>				:edit $VIMRUNTIME/colors/README.txt</B>
@@ -4903,14 +4952,14 @@ a file with &quot;<A HREF="#:highlight">:highlight</A>&quot; commands such <A HR
 Note that all settings that are not included remain the same, only the
 specified field is used, and settings are merged with previous ones.  So, the
 result is like this single command has been used:
-<B>   :hi Comment	term=bold ctermfg=Cyan guifg=#80a0ff gui=bold</B>
+<B>   :hi Comment	ctermfg=Cyan guifg=#80a0ff gui=bold</B>
  
 
 							*<A NAME=":highlight-verbose"></A><B>:highlight-verbose</B>*
 When listing a highlight group and <A HREF="options.html#'verbose'">'verbose'</A> is non-zero, the listing will
 also tell where <A HREF="motion.html#it">it</A> was last set.  Example:
 <B>	:verbose hi Comment</B>
-<B><FONT color="#54A23D"> 	Comment        xxx term=bold ctermfg=4 guifg=Blue </FONT></B>
+<B><FONT color="#54A23D"> 	Comment        xxx ctermfg=4 guifg=Blue </FONT></B>
 <B><FONT color="#54A23D">	   Last set from /home/mool/vim/vim7/runtime/syntax/syncolor.vim </FONT></B>
 
 When &quot;<A HREF="#:hi">:hi</A> clear&quot; is used then the <A HREF="usr_41.html#script">script</A> where this command is used will be
@@ -4918,27 +4967,26 @@ mentioned for the default values. See |<A HREF="various.html#:verbose-cmd">:verb
 
 
 					*<A NAME="highlight-args"></A><B>highlight-args</B>* *<A NAME="E416"></A><B>E416</B>* *<A NAME="E417"></A><B>E417</B>* *<A NAME="E423"></A><B>E423</B>*
-There are three types of terminals for highlighting:
-term	a normal <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> (vt100, xterm)
-cterm	a color <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> (Windows console, <A HREF="#color-xterm">color-xterm</A>)
-<A HREF="gui.html#gui">gui</A>	the <A HREF="gui.html#GUI">GUI</A>
+There are two types of UIs for highlighting:
+cterm	<A HREF="nvim_terminal_emulator.html#terminal">terminal</A> UI (|<A HREF="term.html#TUI">TUI</A>|)
+<A HREF="gui.html#gui">gui</A>	<A HREF="gui.html#GUI">GUI</A> or RGB-capable <A HREF="term.html#TUI">TUI</A> ('termguicolors')
 
 For each type the highlighting can be given.  This makes <A HREF="motion.html#it">it</A> possible to use
-the same <A HREF="#syntax">syntax</A> file on all terminals, and use the optimal highlighting.
+the same <A HREF="#syntax">syntax</A> file on all UIs.
 
-1. highlight arguments for normal terminals
+1. <A HREF="term.html#TUI">TUI</A> highlight arguments
 
 
 					*<A NAME="bold"></A><B>bold</B>* *<A NAME="underline"></A><B>underline</B>* *<A NAME="undercurl"></A><B>undercurl</B>*
 
 					*<A NAME="inverse"></A><B>inverse</B>* *<A NAME="italic"></A><B>italic</B>* *<A NAME="standout"></A><B>standout</B>*
 
-term={attr-list}			*<A NAME="attr-list"></A><B>attr-list</B>* *<A NAME="highlight-term"></A><B>highlight-term</B>* *<A NAME="E418"></A><B>E418</B>*
+cterm={attr-list}			*<A NAME="attr-list"></A><B>attr-list</B>* *<A NAME="highlight-cterm"></A><B>highlight-cterm</B>* *<A NAME="E418"></A><B>E418</B>*
 	<A HREF="#attr-list">attr-list</A> is a comma separated <A HREF="eval.html#list">list</A> (without spaces) of the
 	following items (in any order):
 		<A HREF="#bold">bold</A>
 		<A HREF="#underline">underline</A>
-		<A HREF="#undercurl">undercurl</A>	a curly <A HREF="#underline">underline</A>
+		<A HREF="#undercurl">undercurl</A>	curly <A HREF="#underline">underline</A>
 		reverse
 		<A HREF="#inverse">inverse</A>		same <A HREF="motion.html#as">as</A> reverse
 		<A HREF="#italic">italic</A>
@@ -4947,8 +4995,8 @@ term={attr-list}			*<A NAME="attr-list"></A><B>attr-list</B>* *<A NAME="highligh
 
 	Note that &quot;<A HREF="#bold">bold</A>&quot; can be used here and by using a <A HREF="#bold">bold</A> font.  They
 	have the same effect.
-	If running in a <A HREF="nvim_terminal_emulator.html#terminal">terminal</A>, &quot;<A HREF="#undercurl">undercurl</A>&quot; acts <A HREF="motion.html#as">as</A> an alias for &quot;<A HREF="#underline">underline</A>&quot;.
-	It is set using |<A HREF="#highlight-guisp">highlight-guisp</A>|.
+	&quot;<A HREF="#undercurl">undercurl</A>&quot; falls back to &quot;<A HREF="#underline">underline</A>&quot; in a <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> that does not
+	support <A HREF="motion.html#it">it</A>.  The color is set using |<A HREF="#highlight-guisp">highlight-guisp</A>|.
 
 
 start={term-list}				*<A NAME="highlight-start"></A><B>highlight-start</B>* *<A NAME="E422"></A><B>E422</B>*
@@ -4972,18 +5020,6 @@ stop={term-list}				*<A NAME="term-list"></A><B>term-list</B>* *<A NAME="highlig
 		start=&lt;Esc&gt;[27h;&lt;Esc&gt;[&lt;Space&gt;r;
 
 
-2. highlight arguments for color terminals
-
-
-cterm={attr-list}					*<A NAME="highlight-cterm"></A><B>highlight-cterm</B>*
-	See above for the description of {attr-list} |<A HREF="#attr-list">attr-list</A>|.
-	The &quot;cterm&quot; argument is likely to be different from &quot;term&quot;, when
-	colors are used.  For example, in a normal <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> comments could
-	be underlined, in a color <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> they can be made Blue.
-	Note: Many terminals (e.g., DOS console) can't mix these attributes
-	with <A HREF="#coloring">coloring</A>.	Use only one of &quot;cterm=&quot; OR &quot;ctermfg=&quot; OR &quot;ctermbg=&quot;.
-
-
 ctermfg={color-nr}				*<A NAME="highlight-ctermfg"></A><B>highlight-ctermfg</B>* *<A NAME="E421"></A><B>E421</B>*
 
 ctermbg={color-nr}				*<A NAME="highlight-ctermbg"></A><B>highlight-ctermbg</B>*
@@ -4994,7 +5030,7 @@ ctermbg={color-nr}				*<A NAME="highlight-ctermbg"></A><B>highlight-ctermbg</B>*
 	&quot;cterm&quot;.  For example, on some systems &quot;cterm=bold ctermfg=3&quot; gives
 	another color, on others you just get color 3.
 
-	The following names are recognized, with the color number used:
+	The following (case-insensitive) names are recognized:
 
 
 							*<A NAME="cterm-colors"></A><B>cterm-colors</B>*
@@ -5026,7 +5062,6 @@ ctermbg={color-nr}				*<A NAME="highlight-ctermbg"></A><B>highlight-ctermbg</B>*
 	&quot;cterm=&quot; argument AFTER the &quot;ctermfg=&quot; or &quot;ctermbg=&quot; argument.	Or use
 	a number instead of a color name.
 
-	The <A HREF="change.html#case">case</A> of the color names is ignored.
 	Note that for 16 color ansi style terminals (including xterms), the
 	numbers in the NR-8 column is used.  Here '*' means 'add 8' so that Blue
 	is 12, DarkGray is 8 etc.
@@ -5067,7 +5102,7 @@ ctermbg={color-nr}				*<A NAME="highlight-ctermbg"></A><B>highlight-ctermbg</B>*
 	&quot;fg&quot; and &quot;bg&quot; colors will not be adjusted.
 
 
-3. highlight arguments for the <A HREF="gui.html#GUI">GUI</A>
+2. <A HREF="gui.html#GUI">GUI</A> highlight arguments
 
 
 gui={attr-list}						*<A NAME="highlight-gui"></A><B>highlight-gui</B>*
@@ -5106,7 +5141,8 @@ guibg={color-name}					*<A NAME="highlight-guibg"></A><B>highlight-guibg</B>*
 
 guisp={color-name}					*<A NAME="highlight-guisp"></A><B>highlight-guisp</B>*
 	These give the foreground (guifg), background (guibg) and special
-	(guisp) color to use in the <A HREF="gui.html#GUI">GUI</A>.  &quot;guisp&quot; is used for <A HREF="#undercurl">undercurl</A>.
+	(guisp) color to use in the <A HREF="gui.html#GUI">GUI</A>.  &quot;guisp&quot; is used for <A HREF="#undercurl">undercurl</A>
+	and <A HREF="#underline">underline</A>.
 	There are a few special names:
 		NONE		no color (transparent)
 		bg		use normal background color
@@ -5153,18 +5189,17 @@ Conceal		placeholder characters substituted for concealed
 		text (see <A HREF="options.html#'conceallevel'">'conceallevel'</A>)
 
 							*<A NAME="hl-Cursor"></A><B>hl-Cursor</B>*
-Cursor		the character under the cursor
+Cursor		character under the cursor
 
 							*<A NAME="hl-CursorIM"></A><B>hl-CursorIM</B>*
 CursorIM	like Cursor, but used when in <A HREF="mbyte.html#IME">IME</A> mode |<A HREF="mbyte.html#CursorIM">CursorIM</A>|
 
 							*<A NAME="hl-CursorColumn"></A><B>hl-CursorColumn</B>*
-CursorColumn	the screen column that the cursor is in when <A HREF="options.html#'cursorcolumn'">'cursorcolumn'</A> is
-		set
+CursorColumn	Screen-column at the cursor, when <A HREF="options.html#'cursorcolumn'">'cursorcolumn'</A> is set.
 
 							*<A NAME="hl-CursorLine"></A><B>hl-CursorLine</B>*
-CursorLine	the screen line that the cursor is in when <A HREF="options.html#'cursorline'">'cursorline'</A> is
-		set
+CursorLine	Screen-line at the cursor, when <A HREF="options.html#'cursorline'">'cursorline'</A> is set.
+		Low-priority if foreground (ctermfg OR guifg) is not set.
 
 							*<A NAME="hl-Directory"></A><B>hl-Directory</B>*
 Directory	directory names (and other special names in listings)
@@ -5300,6 +5335,13 @@ StatusLine	status line of current <A HREF="windows.html#window">window</A>
 StatusLineNC	status lines of not-current <A HREF="windows.html#windows">windows</A>
 		Note: if this is equal to &quot;StatusLine&quot; Vim will use &quot;^^^&quot; in
 		the status line of the current <A HREF="windows.html#window">window</A>.
+
+							*<A NAME="hl-StatusLineTerm"></A><B>hl-StatusLineTerm</B>*
+StatusLineTerm	status line of current <A HREF="windows.html#window">window</A>, if <A HREF="motion.html#it">it</A> is a |<A HREF="nvim_terminal_emulator.html#terminal">terminal</A>| <A HREF="windows.html#window">window</A>.
+
+							*<A NAME="hl-StatusLineTermNC"></A><B>hl-StatusLineTermNC</B>*
+StatusLineTermNC   status lines of not-current <A HREF="windows.html#windows">windows</A> that is a |<A HREF="nvim_terminal_emulator.html#terminal">terminal</A>|
+		<A HREF="windows.html#window">window</A>.
 
 							*<A NAME="hl-TabLine"></A><B>hl-TabLine</B>*
 TabLine		<A HREF="intro.html#tab">tab</A> pages line, not active <A HREF="intro.html#tab">tab</A> page label
@@ -5516,7 +5558,7 @@ types: types.vim
 types.vim: *.[ch]
 	<A HREF="tagsrch.html#ctags">ctags</A> --c-kinds=gstu -o- *.[ch] YXXY\
 		awk 'BEGIN{printf(&quot;syntax keyword Type\t&quot;)}\
-			{printf(&quot;&#37;s &quot;<A HREF="motion.html#,">,</A> $$1)}END{print &quot;&quot;}' <A HREF="change.html#&gt;">&gt;</A> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="476307">[email&#160;protected]</a>
+			{printf(&quot;&#37;s &quot;<A HREF="motion.html#,">,</A> $$1)}END{print &quot;&quot;}' <A HREF="change.html#&gt;">&gt;</A> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="ceea8e">[email&#160;protected]</a>
 
 And put these lines in your <A HREF="starting.html#vimrc">vimrc</A>:
 
@@ -5568,7 +5610,7 @@ To test your color setup, a file has been included in the Vim <A HREF="intro.htm
 To use <A HREF="motion.html#it">it</A>, execute this command:
 <B>   :runtime syntax/colortest.vim</B>
 
-Nvim uses |<A HREF="intro.html#256-color">256-color</A>| and |<A HREF="term.html#true-color">true-color</A>| <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> capabilities whereever possible.
+Nvim uses 256-color and |<A HREF="term.html#true-color">true-color</A>| <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> capabilities whereever possible.
 
 ==============================================================================
 
@@ -5632,5 +5674,5 @@ literal text specify the size of that text (in bytes):
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
-  <script data-cfasync="false" src="/cdn-cgi/scripts/d07b1474/cloudflare-static/email-decode.min.js"></script></body>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
 </html>

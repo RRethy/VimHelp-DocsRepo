@@ -8,7 +8,7 @@
                 <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
 
     <div class="container">
-      <h1>Vim documentation: tabpage</h1>
+      <h1>Nvim documentation: tabpage</h1>
 <A NAME="top"></A>
 <A HREF="index.html">main help file</A>
 
@@ -234,7 +234,8 @@ next tab page.  |<A HREF="options.html#'tabline'">'tabline'</A>|
 :tabN[ext] {count}
 {count}&lt;C-PageUp&gt;
 {count}gT	Go {count} <A HREF="intro.html#tab">tab</A> pages back.  Wraps around from the first one
-		to the last one.
+		to the last one.  Note that the use of {count} is different
+		from |<A HREF="#:tabnext">:tabnext</A>|, where <A HREF="motion.html#it">it</A> is used <A HREF="motion.html#as">as</A> the tab page number.
 
 
 :tabr[ewind]			*<A NAME=":tabfir"></A><B>:tabfir</B>* *<A NAME=":tabfirst"></A><B>:tabfirst</B>* *<A NAME=":tabr"></A><B>:tabr</B>* *<A NAME=":tabrewind"></A><B>:tabrewind</B>*
@@ -265,8 +266,10 @@ REORDERING TAB PAGES:
 :tabm[ove] [N]						*<A NAME=":tabm"></A><B>:tabm</B>* *<A NAME=":tabmove"></A><B>:tabmove</B>*
 :[N]tabm[ove]
 		Move the current <A HREF="intro.html#tab">tab</A> page to after <A HREF="intro.html#tab">tab</A> page N.  Use zero to
-		make the current <A HREF="intro.html#tab">tab</A> page the first one.  Without N the <A HREF="intro.html#tab">tab</A>
-		page is made the last one.
+		make the current <A HREF="intro.html#tab">tab</A> page the first one.  N is counted before
+		the move, thus if the second <A HREF="intro.html#tab">tab</A> is the current one,
+		`:tabmove 1` and `:tabmove 2`  have no effect.
+		Without N the <A HREF="intro.html#tab">tab</A> page is made the last one.
 <B>		    :.tabmove   " do nothing</B>
 <B>		    :-tabmove   " move the tab page to the left</B>
 <B>		    :+tabmove   " move the tab page to the right</B>

@@ -8,7 +8,7 @@
                 <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
 
     <div class="container">
-      <h1>Vim documentation: recover</h1>
+      <h1>Nvim documentation: recover</h1>
 <A NAME="top"></A>
 <A HREF="index.html">main help file</A>
 
@@ -45,6 +45,9 @@ You can see the name of the current swap file being used with the command:
 
 
 	:sw[apname]					*<A NAME=":sw"></A><B>:sw</B>* *<A NAME=":swapname"></A><B>:swapname</B>*
+
+Or you can use the |<A HREF="intro.html#swapname()">swapname()</A>| function, which also allows for seeing the
+swap file name of other <A HREF="windows.html#buffers">buffers</A>.
 
 The name of the swap file is normally the same <A HREF="motion.html#as">as</A> the file you are editing,
 with the extension &quot;.swp&quot;.
@@ -83,10 +86,8 @@ following ones in your <A HREF="starting.html#vimrc">vimrc</A>:
 This is also very handy when editing files on floppy.  Of course you will have
 to create that &quot;tmp&quot; directory for this to work!
 
-For read-only files, a swap file is not used.  Unless the file is big, causing
-the amount of memory used to be higher than given with <A HREF="options.html#'maxmem'">'maxmem'</A> or
-<A HREF="options.html#'maxmemtot'">'maxmemtot'</A>.  And when making a change to a read-only file, the swap file is
-created anyway.
+For read-only files, a swap file is not used right away. The swap file is
+created only when making changes.
 
 The <A HREF="options.html#'swapfile'">'swapfile'</A> option can be reset to avoid creating a swapfile.  And the
 |<A HREF="#:noswapfile">:noswapfile</A>| modifier can be used to not create a swapfile for a new buffer.

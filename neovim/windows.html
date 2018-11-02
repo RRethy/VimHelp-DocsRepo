@@ -8,7 +8,7 @@
                 <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
 
     <div class="container">
-      <h1>Vim documentation: windows</h1>
+      <h1>Nvim documentation: windows</h1>
 <A NAME="top"></A>
 <A HREF="index.html">main help file</A>
 
@@ -1173,11 +1173,9 @@ list of <A HREF="#buffers">buffers</A>. |<A HREF="#unlisted-buffer">unlisted-buf
 <B>                    :%bdelete      " delete all buffers</B>
  
 
-:bdelete[!] {bufname}						*<A NAME="E93"></A><B>E93</B>* *<A NAME="E94"></A><B>E94</B>*
-		Like &quot;:bdelete[!] [N]&quot;, but buffer given by name.  Note that a
-		buffer whose name is a number cannot be referenced by that
-		name; use the buffer number instead.  <A HREF="insert.html#Insert">Insert</A> a <A HREF="intro.html#backslash">backslash</A>
-		before a space in a buffer name.
+:bdelete[!] <A HREF="#{bufname}">{bufname}</A>						*<A NAME="E93"></A><B>E93</B>* *<A NAME="E94"></A><B>E94</B>*
+		Like &quot;:bdelete[!] [N]&quot;, but buffer given by name, see
+		|<A HREF="#{bufname}">{bufname}</A>|.
 
 :bdelete[!] N1 N2 <A HREF="eval.html#...">...</A>
 		Do &quot;:bdelete[!]&quot; for buffer N1, N2, etc.  The arguments can be
@@ -1190,7 +1188,7 @@ list of <A HREF="#buffers">buffers</A>. |<A HREF="#unlisted-buffer">unlisted-buf
 
 
 :[N]bw[ipeout][!]			*<A NAME=":bw"></A><B>:bw</B>* *<A NAME=":bwipe"></A><B>:bwipe</B>* *<A NAME=":bwipeout"></A><B>:bwipeout</B>* *<A NAME="E517"></A><B>E517</B>*
-:bw[ipeout][!] {bufname}
+:bw[ipeout][!] <A HREF="#{bufname}">{bufname}</A>
 :N,Mbw[ipeout][!]
 :bw[ipeout][!] N1 N2 <A HREF="eval.html#...">...</A>
 		Like |<A HREF="#:bdelete">:bdelete</A>|, but really delete the buffer.  Everything
@@ -1214,11 +1212,9 @@ list of <A HREF="#buffers">buffers</A>. |<A HREF="#unlisted-buffer">unlisted-buf
 		This is the most recent entry in the jump <A HREF="eval.html#list">list</A> that points
 		into a loaded buffer.
 
-:bunload[!] {bufname}
-		Like &quot;:bunload[!] [N]&quot;, but buffer given by name.  Note that a
-		buffer whose name is a number cannot be referenced by that
-		name; use the buffer number instead.  <A HREF="insert.html#Insert">Insert</A> a <A HREF="intro.html#backslash">backslash</A>
-		before a space in a buffer name.
+:bunload[!] <A HREF="#{bufname}">{bufname}</A>
+		Like &quot;:bunload[!] [N]&quot;, but buffer given by name.
+		Also see |<A HREF="#{bufname}">{bufname}</A>|.
 
 :N,Mbunload[!]	Do &quot;:bunload[!]&quot; for all <A HREF="#buffers">buffers</A> in the range N to <A HREF="motion.html#M">M</A>
 		|<A HREF="motion.html#inclusive">inclusive</A>|.
@@ -1237,10 +1233,17 @@ list of <A HREF="#buffers">buffers</A>. |<A HREF="#unlisted-buffer">unlisted-buf
 		<A HREF="eval.html#list">list</A>, without setting the <A HREF="options.html#'buflisted'">'buflisted'</A> flag.
 		Also see |<A HREF="editing.html#+cmd">+cmd</A>|.
 
-:[N]b[uffer][!] <A HREF="editing.html#[+cmd]">[+cmd]</A> {bufname}
-		Edit buffer for {bufname} from the buffer <A HREF="eval.html#list">list</A>.  See
-		|<A HREF="#:buffer-!">:buffer-!</A>| for [!].  This will also edit a buffer that is not
-		in the buffer <A HREF="eval.html#list">list</A>, without setting the <A HREF="options.html#'buflisted'">'buflisted'</A> flag.
+
+:[N]b[uffer][!] <A HREF="editing.html#[+cmd]">[+cmd]</A> <A HREF="#{bufname}">{bufname}</A>				*<A NAME="{bufname}"></A><B>{bufname}</B>*
+		Edit buffer for <A HREF="#{bufname}">{bufname}</A> from the buffer <A HREF="eval.html#list">list</A>.  A partial
+		name also works, so long <A HREF="motion.html#as">as</A> <A HREF="motion.html#it">it</A> is unique in the <A HREF="eval.html#list">list</A> of
+		<A HREF="#buffers">buffers</A>.
+		Note that a buffer whose name is a number cannot be referenced
+		by that name; use the buffer number instead.
+		<A HREF="insert.html#Insert">Insert</A> a <A HREF="intro.html#backslash">backslash</A> before a space in a buffer name.
+		See |<A HREF="#:buffer-!">:buffer-!</A>| for [!].
+		This will also edit a buffer that is not in the buffer <A HREF="eval.html#list">list</A>,
+		without setting the <A HREF="options.html#'buflisted'">'buflisted'</A> flag.
 		Also see |<A HREF="editing.html#+cmd">+cmd</A>|.
 
 
@@ -1252,8 +1255,8 @@ list of <A HREF="#buffers">buffers</A>. |<A HREF="#unlisted-buffer">unlisted-buf
 		setting the <A HREF="options.html#'buflisted'">'buflisted'</A> flag.
 		Also see |<A HREF="editing.html#+cmd">+cmd</A>|.
 
-:[N]sb[uffer] <A HREF="editing.html#[+cmd]">[+cmd]</A> {bufname}
-		Split <A HREF="#window">window</A> and edit buffer for {bufname} from the buffer
+:[N]sb[uffer] <A HREF="editing.html#[+cmd]">[+cmd]</A> <A HREF="#{bufname}">{bufname}</A>
+		Split <A HREF="#window">window</A> and edit buffer for |<A HREF="#{bufname}">{bufname}</A>| from the buffer
 		<A HREF="eval.html#list">list</A>.  This will also edit a buffer that is not in the buffer
 		<A HREF="eval.html#list">list</A>, without setting the <A HREF="options.html#'buflisted'">'buflisted'</A> flag.
 		Note: If what you want to <A HREF="diff.html#do">do</A> is split the buffer, make a copy

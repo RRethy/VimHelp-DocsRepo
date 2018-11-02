@@ -8,7 +8,7 @@
                 <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
 
     <div class="container">
-      <h1>Vim documentation: job_control</h1>
+      <h1>Nvim documentation: job_control</h1>
 <A NAME="top"></A>
 <A HREF="index.html">main help file</A>
 
@@ -34,12 +34,14 @@ Concepts
 
 Job Id							*<A NAME="job-id"></A><B>job-id</B>*
 
-When a job starts <A HREF="motion.html#it">it</A> is assigned a number, unique for the life of the current
-Nvim session. Functions like |<A HREF="eval.html#jobstart()">jobstart()</A>| return job ids. Functions like
+Each job is identified by an integer id, unique for the life of the current
+Nvim session. Each <A HREF="#job-id">job-id</A> is a valid |channel-id|: they share the same &quot;key
+space&quot;. Functions like |<A HREF="eval.html#jobstart()">jobstart()</A>| return job ids; <A HREF="eval.html#functions">functions</A> like
 |<A HREF="deprecated.html#jobsend()">jobsend()</A>|, |<A HREF="eval.html#jobstop()">jobstop()</A>|, |<A HREF="eval.html#rpcnotify()">rpcnotify()</A>|, and |<A HREF="eval.html#rpcrequest()">rpcrequest()</A>| take job ids.
 
-The job's stdio streams are represented <A HREF="motion.html#as">as</A> a |<A HREF="channel.html#channel">channel</A>|. It is possible to send
-and recieve raw bytes, or use |<A HREF="msgpack_rpc.html#msgpack-rpc">msgpack-rpc</A>|.
+Job stdio streams form a |<A HREF="channel.html#channel">channel</A>| which can send and receive raw bytes or
+|<A HREF="msgpack_rpc.html#msgpack-rpc">msgpack-rpc</A>| <A HREF="message.html#messages">messages</A>.
+
 ==============================================================================
 
 Usage							*<A NAME="job-control-usage"></A><B>job-control-usage</B>*

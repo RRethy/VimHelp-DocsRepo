@@ -8,7 +8,7 @@
                 <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
 
     <div class="container">
-      <h1>Vim documentation: insert</h1>
+      <h1>Nvim documentation: insert</h1>
 <A NAME="top"></A>
 <A HREF="index.html">main help file</A>
 
@@ -43,7 +43,7 @@ character.  Useful for editing a table.
 In <A HREF="#Insert">Insert</A> and <A HREF="#Replace">Replace</A> mode, the following characters have a special meaning;
 other characters are inserted directly.  To insert one of these special
 characters into the buffer, precede <A HREF="motion.html#it">it</A> with <A HREF="visual.html#CTRL-V">CTRL-V</A>.  To insert a <A HREF="intro.html#&lt;Nul&gt;">&lt;Nul&gt;</A>
-character use &quot;<A HREF="visual.html#CTRL-V">CTRL-V</A> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b9faedebf594f9">[email&#160;protected]</a>&quot; or &quot;<A HREF="visual.html#CTRL-V">CTRL-V</A> 000&quot;.  On some systems, you have to
+character use &quot;<A HREF="visual.html#CTRL-V">CTRL-V</A> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2f6c7b7d63026f">[email&#160;protected]</a>&quot; or &quot;<A HREF="visual.html#CTRL-V">CTRL-V</A> 000&quot;.  On some systems, you have to
 use &quot;<A HREF="visual.html#CTRL-V">CTRL-V</A> 003&quot; to insert a <A HREF="pattern.html#CTRL-C">CTRL-C</A>.  Note: When <A HREF="visual.html#CTRL-V">CTRL-V</A> is mapped you can
 often use CTRL-Q instead |<A HREF="#i_CTRL-Q">i_CTRL-Q</A>|.
 
@@ -62,7 +62,7 @@ See |<A HREF="options.html#'insertmode'">'insertmode'</A>|.
 		Note: If your <A HREF="intro.html#&lt;Esc&gt;">&lt;Esc&gt;</A> key is hard to hit, try CTRL-[ instead.
 
 						*<A NAME="i_META"></A><B>i_META</B>* *<A NAME="i_ALT"></A><B>i_ALT</B>*
-                |<A HREF="intro.html#ALT">ALT</A>| (|<A HREF="intro.html#META">META</A>|) acts like <A HREF="intro.html#&lt;Esc&gt;">&lt;Esc&gt;</A> if the chord is not mapped.
+                <A HREF="intro.html#ALT">ALT</A> (|<A HREF="intro.html#META">META</A>|) acts like <A HREF="intro.html#&lt;Esc&gt;">&lt;Esc&gt;</A> if the chord is not mapped.
 		For example &lt;A-x&gt; acts like &lt;Esc&gt;x if &lt;A-x&gt; does not have an
                 insert-mode <A HREF="map.html#mapping">mapping</A>.
 
@@ -72,8 +72,8 @@ See |<A HREF="options.html#'insertmode'">'insertmode'</A>|.
 		event.
 
 
-						*<A NAME="i_CTRL-@"></A><B><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="82ebddc1d6d0ceafc2">[email&#160;protected]</a></B>*
-<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="75362127395835">[email&#160;protected]</a>		<A HREF="#Insert">Insert</A> previously inserted text and stop insert.
+						*<A NAME="i_CTRL-@"></A><B><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2e47716d7a7c62036e">[email&#160;protected]</a></B>*
+<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="04475056482944">[email&#160;protected]</a>		<A HREF="#Insert">Insert</A> previously inserted text and stop insert.
 
 
 						*<A NAME="i_CTRL-A"></A><B>i_CTRL-A</B>*
@@ -497,12 +497,12 @@ An example for using <A HREF="editing.html#CTRL-G">CTRL-G</A> <A HREF="undo.html
 <B>	inoremap ( ()&lt;C-G&gt;U&lt;Left&gt;</B>
 
 This makes <A HREF="motion.html#it">it</A> possible to use the cursor keys in <A HREF="#Insert">Insert</A> mode, without breaking
-the <A HREF="undo.html#undo">undo</A> sequence and therefore using |<A HREF="repeat.html#.">.</A>| (redo) will work <A HREF="motion.html#as">as</A> expected. 
+the <A HREF="undo.html#undo">undo</A> sequence and therefore using |<A HREF="repeat.html#.">.</A>| (redo) will work <A HREF="motion.html#as">as</A> expected.
 Also entering a text like (with the &quot;<A HREF="motion.html#(">(</A>&quot; <A HREF="map.html#mapping">mapping</A> from above):
 
-<B>   Lorem ipsum (dolor</B>
+   Lorem ipsum (dolor
 
-will be repeatable by the |.|to the expected
+will be repeatable by using |<A HREF="repeat.html#.">.</A>| to the expected
 
    Lorem ipsum (dolor)
 
@@ -1150,13 +1150,13 @@ The function must return the column where the completion starts.  It must be a
 number between zero and the cursor column &quot;col('.')&quot;.  This involves looking
 at the characters just before the cursor and including those characters that
 could be part of the completed item.  The text between this column and the
-cursor column will be replaced with the matches.
+cursor column will be replaced with the matches.  If the returned value is
+larger than the cursor column, the cursor column is used.
 
-Special return values:
-   -1 If no completion can be done, the completion will be cancelled with an
-      error message.
-   -2 To cancel silently and stay in completion mode.
-   -3 To cancel silently and leave completion mode.
+Negative return values:
+   -2 	To cancel silently and stay in completion mode.
+   -3 	To cancel silently and leave completion mode.
+   Another negative value: completion starts at the cursor column
 
 On the second invocation the arguments are:
    a:findstart  0
@@ -1406,7 +1406,8 @@ because <A HREF="motion.html#it">it</A> adds extra information that is needed fo
 For version 5.5.4 you should add a patch that adds the &quot;typename:&quot; field:
 	<A HREF="ftp://ftp.vim.org/pub/vim/unstable/patches/ctags-5.5.4.patch">ftp://ftp.vim.org/pub/vim/unstable/patches/ctags-5.5.4.patch</A>
 A compiled .exe for MS-Windows can be found at:
-	<A HREF="http://georgevreilly.com/vim/ctags.html">http://georgevreilly.com/vim/ctags.html</A>
+	<A HREF="http://ctags.sourceforge.net/">http://ctags.sourceforge.net/</A>
+	https://github.com/universal-ctags/ctags-win32
 
 If you want to complete system <A HREF="eval.html#functions">functions</A> you can <A HREF="diff.html#do">do</A> something like this.  Use
 <A HREF="tagsrch.html#ctags">ctags</A> to generate a <A HREF="tagsrch.html#tags">tags</A> file for all the system header files:
@@ -1646,15 +1647,15 @@ that begin with the <A HREF="filetype.html#filetype">filetype</A>, &quot;php&quo
 groups are included by default with the PHP: phpEnvVar, phpIntVar,
 phpFunctions.
 
-If you wish non-filetype <A HREF="syntax.html#syntax">syntax</A> items to also be included, you can use a 
-regular <A HREF="eval.html#expression">expression</A> <A HREF="syntax.html#syntax">syntax</A> (added in version 13.0 of autoload\syntaxcomplete.vim)
-to add items.  Looking at the output from &quot;<A HREF="syntax.html#:syntax">:syntax</A> list&quot; while editing a PHP file 
-I can see some of these entries:
+If you wish non-filetype <A HREF="syntax.html#syntax">syntax</A> items to also be included, you can use a
+regular <A HREF="eval.html#expression">expression</A> <A HREF="syntax.html#syntax">syntax</A> (added in version 13.0 of
+autoload/syntaxcomplete.vim) to add items.  Looking at the output from
+&quot;<A HREF="syntax.html#:syntax">:syntax</A> list&quot; while editing a PHP file I can see some of these entries:
 <B>    htmlArg,htmlTag,htmlTagName,javaScriptStatement,javaScriptGlobalObjects</B>
 
 To pick up any JavaScript and HTML keyword <A HREF="syntax.html#syntax">syntax</A> groups while editing a PHP
-file, you can use 3 different regexs, one for each language.  Or you can 
-simply restrict the include groups to a particular value, without using 
+file, you can use 3 different regexs, one for each language.  Or you can
+simply restrict the include groups to a particular value, without using
 a regex <A HREF="eval.html#string">string</A>:
 <B>    let g:omni_syntax_group_include_php = 'php\w\+,javaScript\w\+,html\w\+'</B>
 <B>    let g:omni_syntax_group_include_php = 'phpFunctions,phpMethods'</B>
@@ -1667,9 +1668,9 @@ highlight.  These items will be available within the omni completion <A HREF="ev
 
 Some people may find this <A HREF="eval.html#list">list</A> unwieldy or are only interested in certain
 items.  There are two ways to prune this <A HREF="eval.html#list">list</A> (if necessary).  If you find
-certain <A HREF="syntax.html#syntax">syntax</A> groups you <A HREF="diff.html#do">do</A> not wish displayed you can use two different 
-methods to identify these groups.  The first specifically lists the <A HREF="syntax.html#syntax">syntax</A> 
-groups by name.  The second uses a regular <A HREF="eval.html#expression">expression</A> to identify both 
+certain <A HREF="syntax.html#syntax">syntax</A> groups you <A HREF="diff.html#do">do</A> not wish displayed you can use two different
+methods to identify these groups.  The first specifically lists the <A HREF="syntax.html#syntax">syntax</A>
+groups by name.  The second uses a regular <A HREF="eval.html#expression">expression</A> to identify both
 <A HREF="syntax.html#syntax">syntax</A> groups.  Simply add one the following to your <A HREF="starting.html#vimrc">vimrc</A>:
 <B>    let g:omni_syntax_group_exclude_php = 'phpCoreConstant,phpConstant'</B>
 <B>    let g:omni_syntax_group_exclude_php = 'php\w*Constant'</B>
@@ -1692,22 +1693,22 @@ on <A HREF="motion.html#word">word</A> characters.   This can be controlled addi
 
 For <A HREF="usr_05.html#plugin">plugin</A> developers, the <A HREF="usr_05.html#plugin">plugin</A> exposes a public function OmniSyntaxList.
 This function can be used to request a <A HREF="eval.html#List">List</A> of <A HREF="syntax.html#syntax">syntax</A> items.  When editing a
-SQL file (:e syntax.sql) you can use the &quot;<A HREF="syntax.html#:syntax">:syntax</A> list&quot; command to see the 
+SQL file (:e syntax.sql) you can use the &quot;<A HREF="syntax.html#:syntax">:syntax</A> list&quot; command to see the
 various groups and <A HREF="syntax.html#syntax">syntax</A> items.  For example:
-<B>    syntax list </B>
+<B>    syntax list</B>
 
 Yields data similar to this:
-<B>    sqlOperator    xxx some prior all like and any escape exists in is not </B>
-<B>                       or intersect minus between distinct</B>
-<B>                       links to Operator</B>
-<B>    sqlType        xxx varbit varchar nvarchar bigint int uniqueidentifier </B>
-<B>                       date money long tinyint unsigned xml text smalldate </B>
-<B>                       double datetime nchar smallint numeric time bit char </B>
-<B>                       varbinary binary smallmoney</B>
-<B>                       image float integer timestamp real decimal</B>
+<B><FONT color="#54A23D">    sqlOperator    xxx some prior all like and any escape exists in is not </FONT></B>
+<B><FONT color="#54A23D">                       or intersect minus between distinct </FONT></B>
+<B><FONT color="#54A23D">                       links to Operator </FONT></B>
+<B><FONT color="#54A23D">    sqlType        xxx varbit varchar nvarchar bigint int uniqueidentifier </FONT></B>
+<B><FONT color="#54A23D">                       date money long tinyint unsigned xml text smalldate </FONT></B>
+<B><FONT color="#54A23D">                       double datetime nchar smallint numeric time bit char </FONT></B>
+<B><FONT color="#54A23D">                       varbinary binary smallmoney </FONT></B>
+<B><FONT color="#54A23D">                       image float integer timestamp real decimal </FONT></B>
 
 There are two <A HREF="syntax.html#syntax">syntax</A> groups listed here: sqlOperator and sqlType.  To retrieve
-a <A HREF="eval.html#List">List</A> of <A HREF="syntax.html#syntax">syntax</A> items you can call OmniSyntaxList a number of different 
+a <A HREF="eval.html#List">List</A> of <A HREF="syntax.html#syntax">syntax</A> items you can call OmniSyntaxList a number of different
 ways.  To retrieve all <A HREF="syntax.html#syntax">syntax</A> items regardless of <A HREF="syntax.html#syntax">syntax</A> group: 
 <B>    echo OmniSyntaxList( [] )</B>
 
@@ -1724,7 +1725,6 @@ From within a <A HREF="usr_05.html#plugin">plugin</A>, you would typically assig
 <B>    let myKeywords = []</B>
 <B>    let myKeywords = OmniSyntaxList( ['sqlKeyword'] )</B>
 
-<B>    </B>
 
 
 SQL							*<A NAME="ft-sql-omni"></A><B>ft-sql-omni</B>*
@@ -2141,5 +2141,5 @@ file.  In the table is an explanation for some of the items.  The others are
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
-  <script data-cfasync="false" src="/cdn-cgi/scripts/d07b1474/cloudflare-static/email-decode.min.js"></script></body>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
 </html>

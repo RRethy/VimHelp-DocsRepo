@@ -8,7 +8,7 @@
                 <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
 
     <div class="container">
-      <h1>Vim documentation: if_lua</h1>
+      <h1>Nvim documentation: if_lua</h1>
 <A NAME="top"></A>
 <A HREF="index.html">main help file</A>
 
@@ -340,14 +340,22 @@ semantically equivalent in <A HREF="#Lua">Lua</A> to:
 <B>	    return chunk(arg) -- return typval</B>
 <B>	end</B>
 
-Note that &quot;_A&quot; receives the argument to &quot;luaeval&quot;. <A HREF="#Lua">Lua</A> nils, numbers, strings, 
-tables and booleans are converted to their respective VimL types. An error is 
-thrown if conversion of any of the remaining <A HREF="#Lua">Lua</A> types is attempted.
+<A HREF="#Lua">Lua</A> nils, numbers, strings, tables and booleans are converted to their
+respective VimL types. An error is thrown if conversion of any other <A HREF="#Lua">Lua</A> types
+is attempted.
 
-Note 2: <A HREF="#lua">lua</A> tables are used <A HREF="motion.html#as">as</A> both dictionaries and lists, thus making <A HREF="motion.html#it">it</A> 
-impossible to determine whether empty table is meant to be empty <A HREF="eval.html#list">list</A> or empty 
-dictionary. Additionally <A HREF="#lua">lua</A> does not have integer numbers. To distinguish 
-between these cases there is the following agreement:
+The magic global &quot;_A&quot; contains the second argument to <A HREF="#luaeval()">luaeval()</A>.
+
+Example:
+<B>	 :echo luaeval('_A[1] + _A[2]', [40, 2])</B>
+<B>	 42</B>
+<B>	 :echo luaeval('string.match(_A, "[a-z]+")', 'XYXfoo123')</B>
+<B>	 foo</B>
+
+<A HREF="#Lua">Lua</A> tables are used <A HREF="motion.html#as">as</A> both dictionaries and lists, so <A HREF="motion.html#it">it</A> is impossible to
+determine whether empty table is meant to be empty <A HREF="eval.html#list">list</A> or empty dictionary.
+Additionally <A HREF="#lua">lua</A> does not have integer numbers. To distinguish between these
+cases there is the following agreement:
 
 0. Empty table is empty <A HREF="eval.html#list">list</A>.
 1. Table with N incrementally growing integral numbers, starting from 1 and 

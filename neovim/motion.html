@@ -8,7 +8,7 @@
                 <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
 
     <div class="container">
-      <h1>Vim documentation: motion</h1>
+      <h1>Nvim documentation: motion</h1>
 <A NAME="top"></A>
 <A HREF="index.html">main help file</A>
 
@@ -68,7 +68,7 @@ or change text.  The following operators are available:
 	|<A HREF="change.html#&gt;">&gt;</A>|	&gt;	<A HREF="intro.html#shift">shift</A> right
 	|<A HREF="change.html#&lt;">&lt;</A>|	&lt;	<A HREF="intro.html#shift">shift</A> left
 	|<A HREF="fold.html#zf">zf</A>|	zf	define a fold
-	|<A HREF="map.html#g@"><span class="__cf_email__" data-cfemail="1c7b5c">[email&#160;protected]</span></A>|	<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="791e39">[email&#160;protected]</a>	call function set with the <A HREF="options.html#'operatorfunc'">'operatorfunc'</A> option
+	|<A HREF="map.html#g@"><span class="__cf_email__" data-cfemail="a2c5e2">[email&#160;protected]</span></A>|	<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d8bf98">[email&#160;protected]</a>	call function set with the <A HREF="options.html#'operatorfunc'">'operatorfunc'</A> option
 
 If the motion includes a <A HREF="intro.html#count">count</A> and the <A HREF="#operator">operator</A> also had a <A HREF="intro.html#count">count</A> before <A HREF="#it">it</A>,
 the two counts are multiplied.  For example: &quot;2d3w&quot; deletes six words.
@@ -903,9 +903,8 @@ g'{mark}  g`{mark}
 			Jump to the {mark}, but don't change the <A HREF="#jumplist">jumplist</A> when
 			jumping within the current buffer.  Example:
 <B>				g`"</B>
- 			jumps to the last known position in a file.  See
-			$VIMRUNTIME/vimrc_example.vim.
-			Also see |<A HREF="#:keepjumps">:keepjumps</A>|.
+ 			jumps to the last known position in a file.
+			See also |<A HREF="#:keepjumps">:keepjumps</A>|.
 
 
 						*<A NAME=":marks"></A><B>:marks</B>*
@@ -1152,12 +1151,13 @@ These commands are not marks themselves, but jump to a <A HREF="#mark">mark</A>:
 
 8. Jumps					*<A NAME="jump-motions"></A><B>jump-motions</B>*
 
-A &quot;jump&quot; is one of the following commands: &quot;&#39;&#34;', &quot;<A HREF="#`">`</A>&quot;, &quot;<A HREF="#G">G</A>&quot;, &quot;<A HREF="pattern.html#/">/</A>&quot;, &quot;<A HREF="pattern.html#?">?</A>&quot;, &quot;<A HREF="pattern.html#n">n</A>&quot;,
-&quot;<A HREF="pattern.html#N">N</A>&quot;, &quot;<A HREF="#&#37;">&#37;</A>&quot;, &quot;<A HREF="#(">(</A>&quot;, &quot;<A HREF="#)">)</A>&quot;, &quot;<A HREF="#[[">[[</A>&quot;, &quot;<A HREF="#]]">]]</A>&quot;, &quot;<A HREF="#{">{</A>&quot;, &quot;<A HREF="#}">}</A>&quot;, &quot;<A HREF="change.html#:s">:s</A>&quot;, &quot;<A HREF="tagsrch.html#:tag">:tag</A>&quot;, &quot;<A HREF="#L">L</A>&quot;, &quot;<A HREF="#M">M</A>&quot;, &quot;<A HREF="#H">H</A>&quot; and
-the commands that start editing a new file.  If you make the cursor &quot;jump&quot;
-with one of these commands, the position of the cursor before the jump is
+A &quot;jump&quot; is a command that normally moves the cursor several lines away.  If
+you make the cursor &quot;jump&quot; the position of the cursor before the jump is
 remembered.  You can return to that position with the &quot;'&#39;&#34;' and &quot;<A HREF="#``">``</A>&quot; command,
-unless the line containing that position was changed or deleted.
+unless the line containing that position was changed or deleted.  The
+following commands are &quot;jump&quot; commands: &quot;&#39;&#34;', &quot;<A HREF="#`">`</A>&quot;, &quot;<A HREF="#G">G</A>&quot;, &quot;<A HREF="pattern.html#/">/</A>&quot;, &quot;<A HREF="pattern.html#?">?</A>&quot;, &quot;<A HREF="pattern.html#n">n</A>&quot;, &quot;<A HREF="pattern.html#N">N</A>&quot;,
+&quot;<A HREF="#&#37;">&#37;</A>&quot;, &quot;<A HREF="#(">(</A>&quot;, &quot;<A HREF="#)">)</A>&quot;, &quot;<A HREF="#[[">[[</A>&quot;, &quot;<A HREF="#]]">]]</A>&quot;, &quot;<A HREF="#{">{</A>&quot;, &quot;<A HREF="#}">}</A>&quot;, &quot;<A HREF="change.html#:s">:s</A>&quot;, &quot;<A HREF="tagsrch.html#:tag">:tag</A>&quot;, &quot;<A HREF="#L">L</A>&quot;, &quot;<A HREF="#M">M</A>&quot;, &quot;<A HREF="#H">H</A>&quot; and the
+commands that start editing a new file. 
 
 
 							*<A NAME="CTRL-O"></A><B>CTRL-O</B>*
@@ -1292,7 +1292,7 @@ remembered.
 							*<A NAME=":changes"></A><B>:changes</B>*
 <A HREF="#:changes">:changes</A>		Print the change <A HREF="eval.html#list">list</A>.  A &quot;<A HREF="change.html#&gt;">&gt;</A>&quot; character indicates the
 			current position.  Just after a change <A HREF="#it">it</A> is below the
-			newest entry, indicating that &quot;<A HREF="#g;">g;</A>&quot; takes you to the
+			newest entry, indicating that `g;` takes you to the
 			newest entry position.  The first column indicates the
 			<A HREF="intro.html#count">count</A> needed to take you to this position.  Example:
 
@@ -1302,8 +1302,8 @@ remembered.
 				    1    14   54 the latest changed line
 				<A HREF="change.html#&gt;">&gt;</A>
 
-			The &quot;3g;&quot; command takes you to line 9.  Then the
-			output of &quot;<A HREF="#:changes">:changes</A> is:
+			The `3g;` command takes you to line 9.  Then the
+			output of `:changes` is:
 
 <B><FONT color="#54A23D">				change line  col text </FONT></B>
 				<A HREF="change.html#&gt;">&gt;</A>   0     9    8 bla bla bla
@@ -1461,7 +1461,10 @@ the current line is included.  You can then use &quot;<A HREF="#&#37;">&#37;</A>
 <A HREF="#H">H</A>			To line <A HREF="intro.html#[count]">[count]</A> from top (Home) of <A HREF="windows.html#window">window</A> (default:
 			first line on the <A HREF="windows.html#window">window</A>) on the first non-blank
 			character |<A HREF="#linewise">linewise</A>|.  See also <A HREF="options.html#'startofline'">'startofline'</A> option.
-			Cursor is adjusted for <A HREF="options.html#'scrolloff'">'scrolloff'</A> option.
+			Cursor is adjusted for <A HREF="options.html#'scrolloff'">'scrolloff'</A> option, unless an
+			<A HREF="#operator">operator</A> is pending, in which <A HREF="change.html#case">case</A> the text may
+			scroll.  E.g. &quot;yH&quot; yanks from the first visible line
+			until the cursor line (inclusive).
 
 
 						*<A NAME="M"></A><B>M</B>*
@@ -1473,7 +1476,10 @@ the current line is included.  You can then use &quot;<A HREF="#&#37;">&#37;</A>
 <A HREF="#L">L</A>			To line <A HREF="intro.html#[count]">[count]</A> from bottom of <A HREF="windows.html#window">window</A> (default: Last
 			line on the <A HREF="windows.html#window">window</A>) on the first non-blank character
 			|<A HREF="#linewise">linewise</A>|.  See also <A HREF="options.html#'startofline'">'startofline'</A> option.
-			Cursor is adjusted for <A HREF="options.html#'scrolloff'">'scrolloff'</A> option.
+			Cursor is adjusted for <A HREF="options.html#'scrolloff'">'scrolloff'</A> option, unless an
+			<A HREF="#operator">operator</A> is pending, in which <A HREF="change.html#case">case</A> the text may
+			scroll.  E.g. &quot;yL&quot; yanks from the cursor to the last
+			visible line.
 
 <A HREF="visual.html#&lt;LeftMouse&gt;">&lt;LeftMouse&gt;</A>		Moves to the position on the screen where the mouse
 			click is |<A HREF="#exclusive">exclusive</A>|.  See also |<A HREF="visual.html#&lt;LeftMouse&gt;">&lt;LeftMouse&gt;</A>|.  If the
@@ -1483,5 +1489,5 @@ the current line is included.  You can then use &quot;<A HREF="#&#37;">&#37;</A>
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
-  <script data-cfasync="false" src="/cdn-cgi/scripts/d07b1474/cloudflare-static/email-decode.min.js"></script></body>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
 </html>

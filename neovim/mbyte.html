@@ -8,7 +8,7 @@
                 <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
 
     <div class="container">
-      <h1>Vim documentation: mbyte</h1>
+      <h1>Nvim documentation: mbyte</h1>
 <A NAME="top"></A>
 <A HREF="index.html">main help file</A>
 
@@ -861,7 +861,7 @@ use a brightly colored cursor:
 		*<A NAME="keymap-file-format"></A><B>keymap-file-format</B>* *<A NAME=":loadk"></A><B>:loadk</B>* *<A NAME=":loadkeymap"></A><B>:loadkeymap</B>* *<A NAME="E105"></A><B>E105</B>* *<A NAME="E791"></A><B>E791</B>*
 The keymap file looks something like this:
 
-<B>	" Maintainer:	name &lt;<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="ee8b838f8782ae8f8a8a9c8b9d9d">[email&#160;protected]</a>&gt;</B>
+<B>	" Maintainer:	name &lt;<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5a3f373b33361a3b3e3e283f2929">[email&#160;protected]</a>&gt;</B>
 <B>	" Last Changed:	2001 Jan 1</B>
 
 <B>	let b:keymap_name = "short"</B>
@@ -882,7 +882,7 @@ keyboards and encodings.
 The actual mappings are in the lines below &quot;loadkeymap&quot;.  In the example &quot;<A HREF="insert.html#a">a</A>&quot;
 is mapped to &quot;<A HREF="insert.html#A">A</A>&quot; and &quot;<A HREF="motion.html#b">b</A>&quot; to &quot;<A HREF="motion.html#B">B</A>&quot;.  Thus the first item is mapped to the second
 item.  This is done for each line, until the end of the file.
-These items are exactly the same <A HREF="motion.html#as">as</A> what can be used in a |<A HREF="map.html#:lnoremap">:lnoremap</A>| command,
+These items are exactly the same <A HREF="motion.html#as">as</A> what can be used in a |<A HREF="map.html#:lmap">:lmap</A>| command,
 using &quot;&lt;buffer&gt;&quot; to make the mappings local to the buffer.
 You can check the result with this command:
 <B>	:lmap</B>
@@ -897,8 +897,9 @@ Since Vim doesn't know if the next character after a <A HREF="change.html#quote"
 <A HREF="motion.html#it">it</A> will wait for the next character.  To be able to insert a single <A HREF="change.html#quote">quote</A>,
 also add this line:
 <B>	''	'</B>
-Since the <A HREF="map.html#mapping">mapping</A> is defined with |<A HREF="map.html#:lnoremap">:lnoremap</A>| the resulting <A HREF="change.html#quote">quote</A> will not be
-used for the start of another character.
+Since the <A HREF="map.html#mapping">mapping</A> is defined with |<A HREF="map.html#:lmap">:lmap</A>| the resulting <A HREF="change.html#quote">quote</A> will not be
+used for the start of another character defined in the <A HREF="options.html#'keymap'">'keymap'</A>.
+It can be used in a standard |<A HREF="map.html#:imap">:imap</A>| <A HREF="map.html#mapping">mapping</A>.
 
 The &quot;accents&quot; keymap uses this.				*<A NAME="keymap-accents"></A><B>keymap-accents</B>*
 
@@ -932,7 +933,7 @@ meaning in the mappings.  Examples:
 
 If you write a keymap file that will be useful for others, consider submitting
 <A HREF="motion.html#it">it</A> to the Vim maintainer for inclusion in the <A HREF="intro.html#distribution">distribution</A>:
-<A HREF="/cdn-cgi/l/email-protection#016c60686f7560686f64734177686c2f6e7366">&lt;<span class="__cf_email__" data-cfemail="5c313d3532283d3532392e1c2a353172332e3b">[email&#160;protected]</span>&gt;</A> 
+<A HREF="/cdn-cgi/l/email-protection#7e131f17100a1f17101b0c3e08171350110c19">&lt;<span class="__cf_email__" data-cfemail="f598949c9b81949c9b9087b5839c98db9a8792">[email&#160;protected]</span>&gt;</A> 
 
 
 
@@ -1112,8 +1113,7 @@ widespread <A HREF="motion.html#as">as</A> file format.
 A composing or combining character is used to change the meaning of the
 character before <A HREF="motion.html#it">it</A>.  The combining characters are drawn on top of the
 preceding character.
-Up to two combining characters can be used by default.  This can be changed
-with the <A HREF="options.html#'maxcombine'">'maxcombine'</A> option.
+Up to six combining characters can be displayed.
 When editing text a composing character is mostly considered part of the
 preceding character.  For example &quot;<A HREF="change.html#x">x</A>&quot; will delete a character and its
 following composing characters by default.
@@ -1237,14 +1237,14 @@ These <A HREF="options.html#options">options</A> are relevant for editing <A HRE
 ==============================================================================
 
 Contributions specifically for the <A HREF="#multi-byte">multi-byte</A> features by:
-	Chi-Deok Hwang <A HREF="/cdn-cgi/l/email-protection#5f37283e31381f32362536713c3071342d">&lt;<span class="__cf_email__" data-cfemail="e8809f89868fa885819281c68b87c6839a">[email&#160;protected]</span>&gt;</A> 
-	SungHyun Nam <A HREF="/cdn-cgi/l/email-protection#5730382032383b17303a363e3b7934383a">&lt;<span class="__cf_email__" data-cfemail="ec8b839b898380ac8b818d8580c28f8381">[email&#160;protected]</span>&gt;</A> 
-	K.Nagano <A HREF="/cdn-cgi/l/email-protection#3856595f59565778594c5d4b5d16595c4e59564c5d4b4c165b57165248">&lt;<span class="__cf_email__" data-cfemail="fd939c9a9c9392bd9c89988e98d39c998b9c9389988e89d39e92d3978d">[email&#160;protected]</span>&gt;</A> 
-	Taro Muraoka <A HREF="/cdn-cgi/l/email-protection#92f9fde0fdfcd2e6f9f3bcf3e6e6bcfcf7bcf8e2">&lt;<span class="__cf_email__" data-cfemail="2d46425f42436d59464c034c595903434803475d">[email&#160;protected]</span>&gt;</A> 
-	Yasuhiro Matsumoto <A HREF="/cdn-cgi/l/email-protection#b6dbd7c2c2d8f6dbd7dfda98d1d9d998d8d398dcc6">&lt;<span class="__cf_email__" data-cfemail="cba6aabfbfa58ba6aaa2a7e5aca4a4e5a5aee5a1bb">[email&#160;protected]</span>&gt;</A> 
+	Chi-Deok Hwang <A HREF="/cdn-cgi/l/email-protection#b1d9c6d0dfd6f1dcd8cbd89fd2de9fdac3">&lt;<span class="__cf_email__" data-cfemail="701807111e17301d190a195e131f5e1b02">[email&#160;protected]</span>&gt;</A> 
+	SungHyun Nam <A HREF="/cdn-cgi/l/email-protection#83e4ecf4e6ecefc3e4eee2eaefade0ecee">&lt;<span class="__cf_email__" data-cfemail="3651594153595a76515b575f5a1855595b">[email&#160;protected]</span>&gt;</A> 
+	K.Nagano <A HREF="/cdn-cgi/l/email-protection#3b555a5c5a55547b5a4f5e485e155a5f4d5a554f5e484f15585415514b">&lt;<span class="__cf_email__" data-cfemail="e886898f898687a8899c8d9b8dc6898c9e89869c8d9b9cc68b87c68298">[email&#160;protected]</span>&gt;</A> 
+	Taro Muraoka <A HREF="/cdn-cgi/l/email-protection#1e75716c71705e6a757f307f6a6a30707b30746e">&lt;<span class="__cf_email__" data-cfemail="610a0e130e0f21150a004f0015154f0f044f0b11">[email&#160;protected]</span>&gt;</A> 
+	Yasuhiro Matsumoto <A HREF="/cdn-cgi/l/email-protection#e68b87929288a68b878f8ac8818989c88883c88c96">&lt;<span class="__cf_email__" data-cfemail="b4d9d5c0c0daf4d9d5ddd89ad3dbdb9adad19adec4">[email&#160;protected]</span>&gt;</A> 
 
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
-  <script data-cfasync="false" src="/cdn-cgi/scripts/d07b1474/cloudflare-static/email-decode.min.js"></script></body>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
 </html>

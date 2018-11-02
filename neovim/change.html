@@ -8,7 +8,7 @@
                 <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
 
     <div class="container">
-      <h1>Vim documentation: change</h1>
+      <h1>Nvim documentation: change</h1>
 <A NAME="top"></A>
 <A HREF="index.html">main help file</A>
 
@@ -126,7 +126,7 @@ is an error when <A HREF="options.html#'cpoptions'">'cpoptions'</A> includes the
 <A HREF="#J">J</A>			Join <A HREF="intro.html#[count]">[count]</A> lines, with a minimum of two lines.
 			Remove the indent and insert up to two spaces (see
 			below).  Fails when on the last line of the buffer.
-			If <A HREF="intro.html#[count]">[count]</A> is too big <A HREF="motion.html#it">it</A> is reduce to the number of
+			If <A HREF="intro.html#[count]">[count]</A> is too big <A HREF="motion.html#it">it</A> is reduced to the number of
 			lines available.
 
 
@@ -486,7 +486,7 @@ This depends on the <A HREF="options.html#'nrformats'">'nrformats'</A> option:
 
 For decimals a leading negative sign is considered for incrementing or
 decrementing, for binary, <A HREF="eval.html#octal">octal</A> and hex values, <A HREF="motion.html#it">it</A> won't be considered.  To
-ignore the sign Visually select the number before using <A HREF="#CTRL-A">CTRL-A</A> or <A HREF="#CTRL-X">CTRL-X</A>. 
+ignore the sign Visually select the number before using <A HREF="#CTRL-A">CTRL-A</A> or <A HREF="#CTRL-X">CTRL-X</A>.
 
 For numbers with leading zeros (including all <A HREF="eval.html#octal">octal</A> and hexadecimal numbers),
 Vim preserves the number of characters in the number when possible.  <A HREF="#CTRL-A">CTRL-A</A> on
@@ -580,6 +580,7 @@ If the <A HREF="options.html#'shiftround'">'shiftround'</A> option is on, the in
 If the <A HREF="options.html#'smartindent'">'smartindent'</A> option is on, or <A HREF="options.html#'cindent'">'cindent'</A> is on and <A HREF="options.html#'cinkeys'">'cinkeys'</A> contains
 '<A HREF="pattern.html##">#</A>' with a zero value, <A HREF="intro.html#shift">shift</A> right does not affect lines starting with '<A HREF="pattern.html##">#</A>'
 (these are supposed to be C preprocessor lines that must stay in column 1).
+This can be changed with the <A HREF="options.html#'cino'">'cino'</A> option, see |<A HREF="indent.html#cino-#">cino-#</A>|.
 
 When the <A HREF="options.html#'expandtab'">'expandtab'</A> option is off (this is the default) Vim uses &lt;Tab&gt;s <A HREF="motion.html#as">as</A>
 much <A HREF="motion.html#as">as</A> possible to make the indent.  You can use &quot;&gt;&gt;&lt;&lt;&quot; to replace an indent
@@ -767,6 +768,8 @@ The flags that you can use for the substitute commands:
 	    <A HREF="scroll.html#CTRL-E">CTRL-E</A>  to scroll the screen up
 	    <A HREF="scroll.html#CTRL-Y">CTRL-Y</A>  to scroll the screen down
 
+
+							*<A NAME=":s_e"></A><B>:s_e</B>*
 [e]     When the search <A HREF="pattern.html#pattern">pattern</A> fails, <A HREF="diff.html#do">do</A> not issue an error message and, in
 	particular, continue in maps <A HREF="motion.html#as">as</A> if no error occurred.  This is most
 	useful to prevent the &quot;No match&quot; error from breaking a <A HREF="map.html#mapping">mapping</A>.  Vim
@@ -777,29 +780,42 @@ The flags that you can use for the substitute commands:
 		Trailing characters
 		Interrupted
 
+
+							*<A NAME=":s_g"></A><B>:s_g</B>*
 [g]	<A HREF="insert.html#Replace">Replace</A> all occurrences in the line.  Without this argument,
 	replacement occurs only for the first occurrence in each line.  If the
 	<A HREF="options.html#'gdefault'">'gdefault'</A> option is on, this flag is on by default and the [g]
 	argument switches <A HREF="motion.html#it">it</A> off.
 
+
+							*<A NAME=":s_i"></A><B>:s_i</B>*
 [i]	Ignore <A HREF="#case">case</A> for the <A HREF="pattern.html#pattern">pattern</A>.  The <A HREF="options.html#'ignorecase'">'ignorecase'</A> and <A HREF="options.html#'smartcase'">'smartcase'</A> <A HREF="options.html#options">options</A>
 	are not used.
 
+
+							*<A NAME=":s_I"></A><B>:s_I</B>*
 [I]	Don't ignore <A HREF="#case">case</A> for the <A HREF="pattern.html#pattern">pattern</A>.  The <A HREF="options.html#'ignorecase'">'ignorecase'</A> and <A HREF="options.html#'smartcase'">'smartcase'</A>
 	<A HREF="options.html#options">options</A> are not used.
 
+
+							*<A NAME=":s_n"></A><B>:s_n</B>*
 [n]	Report the number of matches, <A HREF="diff.html#do">do</A> not actually substitute.  The [c]
 	flag is ignored.  The matches are reported <A HREF="motion.html#as">as</A> if <A HREF="options.html#'report'">'report'</A> is zero.
 	Useful to |<A HREF="tips.html#count-items">count-items</A>|.
 	If \= |<A HREF="#sub-replace-expression">sub-replace-expression</A>| is used, the expression will be
 	evaluated in the |<A HREF="eval.html#sandbox">sandbox</A>| at every match.
 
-[p]	Print the line containing the last substitute.
 
-[#]	Like [p] and prepend the line number.
+[p]	Print the line containing the last substitute.  *<A NAME=":s_p"></A><B>:s_p</B>*
 
-[l]	Like [p] but print the text like |<A HREF="various.html#:list">:list</A>|.
 
+[#]	Like [p] and prepend the line number.  *<A NAME=":s_#"></A><B>:s_#</B>*
+
+
+[l]	Like [p] but print the text like |<A HREF="various.html#:list">:list</A>|.  *<A NAME=":s_l"></A><B>:s_l</B>*
+
+
+							*<A NAME=":s_r"></A><B>:s_r</B>*
 [r]	Only useful in combination with `:&amp;` or `:s` without arguments.  `:&amp;r`
 	works the same way <A HREF="motion.html#as">as</A> `:~`:  When the search <A HREF="pattern.html#pattern">pattern</A> is empty, use the
 	previously used search <A HREF="pattern.html#pattern">pattern</A> instead of the search <A HREF="pattern.html#pattern">pattern</A> from the
@@ -1019,7 +1035,7 @@ Consider using a character like &quot;<A HREF="repeat.html#@">@</A>&quot; or &qu
 of the <A HREF="eval.html#expression">expression</A> contains the separation character.
 
 Examples:
-<B>	:<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="403300">[email&#160;protected]</a>\<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4b250b">[email&#160;protected]</a>\="\r" . expand("$HOME") . "\r"@</B>
+<B>	:<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="fb88bb">[email&#160;protected]</a>\<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c3ad83">[email&#160;protected]</a>\="\r" . expand("$HOME") . "\r"@</B>
 This replaces an end-of-line with a new line containing the value of <A HREF="options.html#$HOME">$HOME</A>.
 
 <B>	s/E/\="\&lt;Char-0x20ac&gt;"/g</B>
@@ -1193,7 +1209,7 @@ inside of strings can change!  Also see <A HREF="options.html#'softtabstop'">'so
 			If no <A HREF="sponsor.html#register">register</A> is specified, <A HREF="motion.html#it">it</A> depends on the <A HREF="options.html#'cb'">'cb'</A>
 			option: If <A HREF="options.html#'cb'">'cb'</A> contains &quot;unnamedplus&quot;, paste from the
 			+ <A HREF="sponsor.html#register">register</A> |<A HREF="provider.html#quoteplus">quoteplus</A>|.  Otherwise, if <A HREF="options.html#'cb'">'cb'</A> contains
-			&quot;unnamed&quot;, paste from the &#42; <A HREF="sponsor.html#register">register</A> |<A HREF="gui.html#quotestar">quotestar</A>|.
+			&quot;unnamed&quot;, paste from the &#42; <A HREF="sponsor.html#register">register</A> |<A HREF="provider.html#quotestar">quotestar</A>|.
 			Otherwise, paste from the unnamed <A HREF="sponsor.html#register">register</A>
 			|<A HREF="#quote_quote">quote_quote</A>|.
 			The <A HREF="sponsor.html#register">register</A> can also be '<A HREF="#=">=</A>' followed by an optional
@@ -1296,7 +1312,7 @@ There are ten types of <A HREF="#registers">registers</A>:			*<A NAME="registers
 5. three read-only <A HREF="#registers">registers</A> &quot;<A HREF="cmdline.html#:,">:,</A> &quot;., &quot;<A HREF="motion.html#&#37;">&#37;</A>
 6. alternate buffer <A HREF="sponsor.html#register">register</A> &quot;<A HREF="pattern.html##">#</A>
 7. the <A HREF="eval.html#expression">expression</A> <A HREF="sponsor.html#register">register</A> &quot;<A HREF="#=">=</A>
-8. The selection and drop <A HREF="#registers">registers</A> &quot;*, &quot;<A HREF="motion.html#+">+</A> and &quot;<A HREF="#~">~</A> 
+8. The selection <A HREF="#registers">registers</A> &quot;* and &quot;<A HREF="motion.html#+">+</A>
 9. The black hole <A HREF="sponsor.html#register">register</A> &quot;<A HREF="motion.html#_">_</A>
 10. Last search <A HREF="pattern.html#pattern">pattern</A> <A HREF="sponsor.html#register">register</A> &quot;<A HREF="pattern.html#/">/</A>
 
@@ -1351,7 +1367,7 @@ and &quot;<A HREF="#:put">:put</A>&quot; commands and with <A HREF="undo.html#CT
 
 						*<A NAME="quote_."></A><B>quote_.</B>* *<A NAME="quote."></A><B>quote.</B>* *<A NAME="E29"></A><B>E29</B>*
 	&quot;.	Contains the last inserted text (the same <A HREF="motion.html#as">as</A> what is inserted
-		with the insert mode commands <A HREF="#CTRL-A">CTRL-A</A> and <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="80c3d4d2ccadc0">[email&#160;protected]</a>).  Note: this
+		with the insert mode commands <A HREF="#CTRL-A">CTRL-A</A> and <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2f6c7b7d63026f">[email&#160;protected]</a>).  Note: this
 		doesn't work with <A HREF="undo.html#CTRL-R">CTRL-R</A> on the command-line.  It works a bit
 		differently, like <A HREF="insert.html#inserting">inserting</A> the text instead of putting <A HREF="motion.html#it">it</A>
 		('textwidth' and other <A HREF="options.html#options">options</A> affect what is inserted).
@@ -1407,11 +1423,11 @@ If the &quot;<A HREF="#=">=</A> <A HREF="sponsor.html#register">register</A> is 
 characters.  If the <A HREF="eval.html#String">String</A> ends in a <A HREF="motion.html#&lt;NL&gt;">&lt;NL&gt;</A>, <A HREF="motion.html#it">it</A> is regarded <A HREF="motion.html#as">as</A> a <A HREF="motion.html#linewise">linewise</A>
 <A HREF="sponsor.html#register">register</A>.
 
-8. Selection and drop <A HREF="#registers">registers</A> &quot;*, &quot;<A HREF="motion.html#+">+</A> and &quot;<A HREF="#~">~</A> 
+8. Selection <A HREF="#registers">registers</A> &quot;* and &quot;<A HREF="motion.html#+">+</A>
 Use these <A HREF="#registers">registers</A> for storing and retrieving the selected text for the <A HREF="gui.html#GUI">GUI</A>.
-See |<A HREF="gui.html#quotestar">quotestar</A>| and |<A HREF="provider.html#quoteplus">quoteplus</A>|.  When the <A HREF="provider.html#clipboard">clipboard</A> is not available or not
+See |<A HREF="provider.html#quotestar">quotestar</A>| and |<A HREF="provider.html#quoteplus">quoteplus</A>|.  When the <A HREF="provider.html#clipboard">clipboard</A> is not available or not
 working, the unnamed <A HREF="sponsor.html#register">register</A> is used instead.  For Unix systems and Mac OS X,
-see |<A HREF="gui.html#primary-selection">primary-selection</A>|.
+see |<A HREF="provider.html#primary-selection">primary-selection</A>|.
 
 
 9. Black hole <A HREF="sponsor.html#register">register</A> &quot;<A HREF="motion.html#_">_</A>				*<A NAME="quote_"></A><B>quote_</B>*
@@ -1429,7 +1445,7 @@ Note that the value is restored when returning from a function
 
 
 							*<A NAME="@/"></A><B>@/</B>*
-You can write to a <A HREF="sponsor.html#register">register</A> with a `:let` command |<A HREF="eval.html#:let-@">:<span class="__cf_email__" data-cfemail="630f06174e23">[email&#160;protected]</span></A>|.  Example:
+You can write to a <A HREF="sponsor.html#register">register</A> with a `:let` command |<A HREF="eval.html#:let-@">:<span class="__cf_email__" data-cfemail="462a23326b06">[email&#160;protected]</span></A>|.  Example:
 <B>	:let @/ = "the"</B>
 
 If you use a put command without specifying a <A HREF="sponsor.html#register">register</A>, Vim uses the <A HREF="sponsor.html#register">register</A>
@@ -1557,6 +1573,56 @@ You can set the <A HREF="options.html#'formatexpr'">'formatexpr'</A> option to a
 to the name of an external program for Vim to use for text <A HREF="#formatting">formatting</A>.  The
 <A HREF="options.html#'textwidth'">'textwidth'</A> and other <A HREF="options.html#options">options</A> have no effect on <A HREF="#formatting">formatting</A> by an external
 program.
+
+
+                                                        *<A NAME="format-formatexpr"></A><B>format-formatexpr</B>*
+The <A HREF="options.html#'formatexpr'">'formatexpr'</A> option can be set to a Vim <A HREF="usr_41.html#script">script</A> function that performs
+reformatting of the buffer.  This should usually happen in an |<A HREF="usr_41.html#ftplugin">ftplugin</A>|,
+since <A HREF="#formatting">formatting</A> is highly dependent on the type of file.  It makes
+sense to use an |<A HREF="eval.html#autoload">autoload</A>| <A HREF="usr_41.html#script">script</A>, so the corresponding <A HREF="usr_41.html#script">script</A> is only loaded
+when actually needed and the <A HREF="usr_41.html#script">script</A> should be called &lt;filetype&gt;format.vim.
+
+For example, the XML <A HREF="filetype.html#filetype">filetype</A> <A HREF="usr_05.html#plugin">plugin</A> distributed with Vim in the <A HREF="starting.html#$VIMRUNTIME">$VIMRUNTIME</A>
+directory, sets the <A HREF="options.html#'formatexpr'">'formatexpr'</A> option to:
+
+<B>   setlocal formatexpr=xmlformat#Format()</B>
+
+That means, you will find the corresponding <A HREF="usr_41.html#script">script</A>, defining the
+xmlformat#Format() function, in the directory:
+`$VIMRUNTIME/autoload/xmlformat.vim`
+
+Here is an example <A HREF="usr_41.html#script">script</A> that removes trailing <A HREF="pattern.html#whitespace">whitespace</A> from the selected
+text.  Put <A HREF="motion.html#it">it</A> in your <A HREF="eval.html#autoload">autoload</A> directory, e.g. ~/.vim/autoload/format.vim:
+
+<B>  func! format#Format()</B>
+<B>    " only reformat on explicit gq command</B>
+<B>    if mode() != 'n'</B>
+<B>      " fall back to Vims internal reformatting</B>
+<B>      return 1</B>
+<B>    endif</B>
+<B>    let lines = getline(v:lnum, v:lnum + v:count - 1)</B>
+<B>    call map(lines, {key, val -&gt; substitute(val, '\s\+$', '', 'g')})</B>
+<B>    call setline('.', lines)</B>
+
+<B>    " do not run internal formatter!</B>
+<B>    return 0</B>
+<B>  endfunc</B>
+
+You can then enable the <A HREF="#formatting">formatting</A> by executing:
+<B>  setlocal formatexpr=format#Format()</B>
+
+Note: this function explicitly returns non-zero when called from insert mode
+(which basically means, text is inserted beyond the <A HREF="options.html#'textwidth'">'textwidth'</A> limit).  This
+causes Vim to fall back to reformat the text by using the internal formatter.
+
+However, if the |<A HREF="#gq">gq</A>| command is used to reformat the text, the function
+will receive the selected lines, trim trailing <A HREF="pattern.html#whitespace">whitespace</A> from those lines and
+put them back in place.  If you are going to split single lines into multiple
+lines, be careful not to overwrite anything.
+
+If you want to allow reformatting of text from insert or replace mode, one has
+to be very careful, because the function might be called recursively.  For
+debugging <A HREF="motion.html#it">it</A> helps to set the <A HREF="options.html#'debug'">'debug'</A> option.
 
 
 							*<A NAME="right-justify"></A><B>right-justify</B>*
@@ -1949,5 +2015,5 @@ library function used.
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
-  <script data-cfasync="false" src="/cdn-cgi/scripts/d07b1474/cloudflare-static/email-decode.min.js"></script></body>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
 </html>

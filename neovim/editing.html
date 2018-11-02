@@ -8,7 +8,7 @@
                 <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
 
     <div class="container">
-      <h1>Vim documentation: editing</h1>
+      <h1>Nvim documentation: editing</h1>
 <A NAME="top"></A>
 <A HREF="index.html">main help file</A>
 
@@ -426,6 +426,15 @@ On Unix and a few other systems you can also use backticks for the file name
 argument, for example:
 <B>	:next `find . -name ver\\*.c -print`</B>
 <B>	:view `ls -t *.patch  \| head -n1`</B>
+Vim will run the command in backticks using the <A HREF="options.html#'shell'">'shell'</A> and use the standard
+output <A HREF="motion.html#as">as</A> argument for the given Vim command (error <A HREF="message.html#messages">messages</A> from the shell
+command will be discarded).
+To see what shell command Vim is running, set the <A HREF="options.html#'verbose'">'verbose'</A> option to 4. When
+the shell command returns a non-zero exit code, an error message will be
+displayed and the Vim command will be aborted. To avoid this make the shell
+always return zero like so:
+<B>       :next `find . -name ver\\*.c -print \|\| true`</B>
+
 The backslashes before the <A HREF="pattern.html#star">star</A> are required to prevent the shell from
 expanding &quot;ver*.c&quot; prior to execution of the find program.  The <A HREF="intro.html#backslash">backslash</A>
 before the shell pipe symbol &quot;|&quot; prevents Vim from parsing <A HREF="motion.html#it">it</A> <A HREF="motion.html#as">as</A> command
@@ -909,9 +918,9 @@ Note: When the <A HREF="options.html#'write'">'write'</A> option is off, you are
 
 							*<A NAME=":w"></A><B>:w</B>* *<A NAME=":write"></A><B>:write</B>*
 
-						*<A NAME="E502"></A><B>E502</B>* *<A NAME="E503"></A><B>E503</B>* *<A NAME="E504"></A><B>E504</B>* *<A NAME="E505"></A><B>E505</B>*
+					*<A NAME="E502"></A><B>E502</B>* *<A NAME="E503"></A><B>E503</B>* *<A NAME="E504"></A><B>E504</B>* *<A NAME="E505"></A><B>E505</B>*
 
-						*<A NAME="E512"></A><B>E512</B>* *<A NAME="E514"></A><B>E514</B>* *<A NAME="E667"></A><B>E667</B>* *<A NAME="E796"></A><B>E796</B>*
+					*<A NAME="E512"></A><B>E512</B>* *<A NAME="E514"></A><B>E514</B>* *<A NAME="E667"></A><B>E667</B>* *<A NAME="E796"></A><B>E796</B>* *<A NAME="E949"></A><B>E949</B>*
 :w[rite] <A HREF="#[++opt]">[++opt]</A>	Write the whole buffer to the current file.  This is
 			the normal way to save changes to a file.  It fails
 			when the <A HREF="options.html#'readonly'">'readonly'</A> option is set or when there is
@@ -970,6 +979,9 @@ If a file name is given with &quot;<A HREF="#:w">:w</A>&quot; <A HREF="motion.ht
 used, for example, when the write fails and you want to try again later with
 &quot;<A HREF="#:w">:w</A> #&quot;.  This can be switched off by removing the '<A HREF="insert.html#A">A</A>' flag from the
 <A HREF="options.html#'cpoptions'">'cpoptions'</A> option.
+
+Note that the <A HREF="options.html#'fsync'">'fsync'</A> option matters here.  If it's set <A HREF="motion.html#it">it</A> may make writes
+slower (but safer).
 
 
 							*<A NAME=":sav"></A><B>:sav</B>* *<A NAME=":saveas"></A><B>:saveas</B>*
@@ -1346,9 +1358,6 @@ working directory, which in turn takes precedence over the global
 working directory.  If a local working directory (tab or <A HREF="windows.html#window">window</A>) does not
 exist, the next-higher scope in the hierarchy applies.
 
-Commands for <A HREF="change.html#changing">changing</A> the working directory can be suffixed with a bang &quot;<A HREF="change.html#!">!</A>&quot;
-(e.g. |<A HREF="intro.html#:cd!">:cd!</A>|) which is ignored, for compatibility with Vim.
-
 
 							*<A NAME=":cd"></A><B>:cd</B>* *<A NAME="E747"></A><B>E747</B>* *<A NAME="E472"></A><B>E472</B>*
 :cd[!]			On non-Unix systems: Print the current directory
@@ -1462,7 +1471,7 @@ There are a few things to remember when editing binary files:
   file.  Otherwise both <A HREF="motion.html#&lt;CR&gt;">&lt;CR&gt;</A> <A HREF="motion.html#&lt;NL&gt;">&lt;NL&gt;</A> and <A HREF="motion.html#&lt;NL&gt;">&lt;NL&gt;</A> are considered to end a line
   and when the file is written the <A HREF="motion.html#&lt;NL&gt;">&lt;NL&gt;</A> will be replaced with <A HREF="motion.html#&lt;CR&gt;">&lt;CR&gt;</A> <A HREF="motion.html#&lt;NL&gt;">&lt;NL&gt;</A>.
 - <A HREF="intro.html#&lt;Nul&gt;">&lt;Nul&gt;</A> characters are shown on the screen <A HREF="motion.html#as">as</A> ^@.  You can enter them with
-  &quot;<A HREF="visual.html#CTRL-V">CTRL-V</A> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="05465157492845">[email&#160;protected]</a>&quot; or &quot;<A HREF="visual.html#CTRL-V">CTRL-V</A> 000&quot;.
+  &quot;<A HREF="visual.html#CTRL-V">CTRL-V</A> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6b283f3927462b">[email&#160;protected]</a>&quot; or &quot;<A HREF="visual.html#CTRL-V">CTRL-V</A> 000&quot;.
 - To insert a <A HREF="motion.html#&lt;NL&gt;">&lt;NL&gt;</A> character in the file split a line.  When <A HREF="#writing">writing</A> the
   buffer to a file a <A HREF="motion.html#&lt;NL&gt;">&lt;NL&gt;</A> will be written for the <A HREF="intro.html#&lt;EOL&gt;">&lt;EOL&gt;</A>.
 - Vim normally appends an <A HREF="intro.html#&lt;EOL&gt;">&lt;EOL&gt;</A> at the end of the file if there is none.
@@ -1688,5 +1697,5 @@ There are three different types of searching:
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
-  <script data-cfasync="false" src="/cdn-cgi/scripts/d07b1474/cloudflare-static/email-decode.min.js"></script></body>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
 </html>

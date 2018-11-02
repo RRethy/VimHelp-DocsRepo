@@ -8,7 +8,7 @@
                 <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
 
     <div class="container">
-      <h1>Vim documentation: usr_41</h1>
+      <h1>Nvim documentation: usr_41</h1>
 <A NAME="top"></A>
 <A HREF="index.html">main help file</A>
 
@@ -925,14 +925,16 @@ Interactive:					*<A NAME="interactive-functions"></A><B>interactive-functions</
 
 <A HREF="gui.html#GUI">GUI</A>:						*<A NAME="gui-functions"></A><B>gui-functions</B>*
 	<A HREF="eval.html#getfontname()">getfontname()</A>		get name of current font being used
-	<A HREF="eval.html#getwinposx()">getwinposx()</A>		X position of the <A HREF="gui.html#GUI">GUI</A> Vim <A HREF="windows.html#window">window</A>
-	<A HREF="eval.html#getwinposy()">getwinposy()</A>		<A HREF="change.html#Y">Y</A> position of the <A HREF="gui.html#GUI">GUI</A> Vim <A HREF="windows.html#window">window</A>
+	getwinpos()		position of the Vim <A HREF="windows.html#window">window</A>
+	<A HREF="eval.html#getwinposx()">getwinposx()</A>		X position of the Vim <A HREF="windows.html#window">window</A>
+	<A HREF="eval.html#getwinposy()">getwinposy()</A>		<A HREF="change.html#Y">Y</A> position of the Vim <A HREF="windows.html#window">window</A>
 	balloon_show()		set the balloon content
+	balloon_split()		split a message for a balloon
 
 
 Vim server:					*<A NAME="server-functions"></A><B>server-functions</B>*
 	<A HREF="eval.html#serverlist()">serverlist()</A>		return the <A HREF="eval.html#list">list</A> of server names
-	remote_startserver()	run a server
+	<A HREF="eval.html#remote_startserver()">remote_startserver()</A>	run a server
 	<A HREF="eval.html#remote_send()">remote_send()</A>		send command characters to a Vim server
 	<A HREF="eval.html#remote_expr()">remote_expr()</A>		evaluate an <A HREF="eval.html#expression">expression</A> in a Vim server
 	<A HREF="eval.html#server2client()">server2client()</A>		send a reply to a client of a Vim server
@@ -945,6 +947,7 @@ Vim server:					*<A NAME="server-functions"></A><B>server-functions</B>*
 Window size and position:			*<A NAME="window-size-functions"></A><B>window-size-functions</B>*
 	<A HREF="eval.html#winheight()">winheight()</A>		get height of a specific <A HREF="windows.html#window">window</A>
 	<A HREF="eval.html#winwidth()">winwidth()</A>		get width of a specific <A HREF="windows.html#window">window</A>
+	<A HREF="eval.html#win_screenpos()">win_screenpos()</A>		get screen position of a <A HREF="windows.html#window">window</A>
 	<A HREF="eval.html#winrestcmd()">winrestcmd()</A>		return command to restore <A HREF="windows.html#window">window</A> sizes
 	<A HREF="eval.html#winsaveview()">winsaveview()</A>		get view of current <A HREF="windows.html#window">window</A>
 	<A HREF="eval.html#winrestview()">winrestview()</A>		restore saved view of current <A HREF="windows.html#window">window</A>
@@ -966,7 +969,8 @@ Testing:				    *<A NAME="test-functions"></A><B>test-functions</B>*
 	<A HREF="eval.html#assert_false()">assert_false()</A>		assert that an <A HREF="eval.html#expression">expression</A> is false
 	<A HREF="eval.html#assert_true()">assert_true()</A>		assert that an <A HREF="eval.html#expression">expression</A> is true
 	<A HREF="eval.html#assert_exception()">assert_exception()</A>	assert that a command throws an exception
-	<A HREF="eval.html#assert_fails()">assert_fails()</A>		assert that a function call fails
+	assert_beeps()		assert that a command beeps
+	<A HREF="eval.html#assert_fails()">assert_fails()</A>		assert that a command fails
 
 
 Timers:						*<A NAME="timer-functions"></A><B>timer-functions</B>*
@@ -1810,7 +1814,7 @@ Therefore, put a header at the top of your <A HREF="usr_05.html#plugin">plugin</
 
 <B>  1	" Vim global plugin for correcting typing mistakes</B>
 <B>  2	" Last Change:	2000 Oct 15</B>
-<B>  3	" Maintainer:	Bram Moolenaar &lt;<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="024070636f42746b6f2c6d7065">[email&#160;protected]</a>&gt;</B>
+<B>  3	" Maintainer:	Bram Moolenaar &lt;<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6e2c1c0f032e18070340011c09">[email&#160;protected]</a>&gt;</B>
 
 About <A HREF="uganda.html#copyright">copyright</A> and licensing: Since plugins are very useful and it's hardly
 worth restricting their <A HREF="intro.html#distribution">distribution</A>, please consider making your <A HREF="usr_05.html#plugin">plugin</A>
@@ -2042,7 +2046,7 @@ Here is the resulting complete example:
 
 <B>  1	" Vim global plugin for correcting typing mistakes</B>
 <B>  2	" Last Change:	2000 Oct 15</B>
-<B>  3	" Maintainer:	Bram Moolenaar &lt;<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="8ccefeede1ccfae5e1a2e3feeb">[email&#160;protected]</a>&gt;</B>
+<B>  3	" Maintainer:	Bram Moolenaar &lt;<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="216353404c6157484c0f4e5346">[email&#160;protected]</a>&gt;</B>
 <B>  4	" License:	This file is placed in the public domain.</B>
 <B>  5</B>
 <B>  6	if exists("g:loaded_typecorr")</B>
@@ -2445,7 +2449,7 @@ The following example shows how it's done:
 
 <B>	" Vim global plugin for demonstrating quick loading</B>
 <B>	" Last Change:	2005 Feb 25</B>
-<B>	" Maintainer:	Bram Moolenaar &lt;<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="cc8ebeada18cbaa5a1e2a3beab">[email&#160;protected]</a>&gt;</B>
+<B>	" Maintainer:	Bram Moolenaar &lt;<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="87c5f5e6eac7f1eeeaa9e8f5e0">[email&#160;protected]</a>&gt;</B>
 <B>	" License:	This file is placed in the public domain.</B>
 
 <B>	if !exists("s:did_load")</B>
@@ -2574,16 +2578,13 @@ Vim scripts can be used on any system.  There might not be a <A HREF="pi_tar.htm
 command.  If you want to pack files together and/or <A HREF="pi_gzip.html#compress">compress</A> them the &quot;<A HREF="pi_zip.html#zip">zip</A>&quot;
 utility is recommended.
 
-For utmost portability use Vim itself to pack scripts together.  This can be
-done with the Vimball utility.  See |<A HREF="intro.html#vimball">vimball</A>|.
-
 ==============================================================================
 
 Next chapter: |<A HREF="usr_42.html">usr_42.txt</A>|  Add new <A HREF="gui.html#menus">menus</A>
 
-Copyright: see |<A HREF="usr_01.html#manual-copyright">manual-copyright</A>|  vim:tw=78:ts=8:ft=help:norl:
+Copyright: see |<A HREF="usr_01.html#manual-copyright">manual-copyright</A>|  vim:tw=78:ts=8:noet:ft=help:norl:
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
-  <script data-cfasync="false" src="/cdn-cgi/scripts/d07b1474/cloudflare-static/email-decode.min.js"></script></body>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
 </html>

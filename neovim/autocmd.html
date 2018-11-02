@@ -8,7 +8,7 @@
                 <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
 
     <div class="container">
-      <h1>Vim documentation: autocmd</h1>
+      <h1>Nvim documentation: autocmd</h1>
 <A NAME="top"></A>
 <A HREF="index.html">main help file</A>
 
@@ -21,7 +21,7 @@
 
 
 
-Automatic commands					*<A NAME="autocommand"></A><B>autocommand</B>*
+Automatic commands					*<A NAME="autocmd"></A><B>autocmd</B>* *<A NAME="autocommand"></A><B>autocommand</B>*
 
 For a basic explanation, see section |<A HREF="usr_40.html#40.3">40.3</A>| in the user manual.
 
@@ -39,7 +39,7 @@ features, such <A HREF="motion.html#as">as</A> editing compressed files (see |<A
 place to put autocommands is in your <A HREF="starting.html#vimrc">vimrc</A> file.
 
 
-					*<A NAME="E203"></A><B>E203</B>* *<A NAME="E204"></A><B>E204</B>* *<A NAME="E143"></A><B>E143</B>* *<A NAME="E855"></A><B>E855</B>* *<A NAME="E937"></A><B>E937</B>*
+				*<A NAME="E203"></A><B>E203</B>* *<A NAME="E204"></A><B>E204</B>* *<A NAME="E143"></A><B>E143</B>* *<A NAME="E855"></A><B>E855</B>* *<A NAME="E937"></A><B>E937</B>* *<A NAME="E952"></A><B>E952</B>*
 WARNING: Using autocommands is very powerful, and may lead to unexpected side
 effects.  Be careful not to destroy your text.
 - It's a good idea to <A HREF="diff.html#do">do</A> some testing on an expendable copy of a file first.
@@ -65,6 +65,8 @@ effects.  Be careful not to destroy your text.
 			Add {cmd} to the <A HREF="eval.html#list">list</A> of commands that Vim will
 			execute automatically on <A HREF="#{event}">{event}</A> for a file matching
 			<A HREF="#{pat}">{pat}</A> |<A HREF="#autocmd-patterns">autocmd-patterns</A>|.
+			Note: A <A HREF="change.html#quote">quote</A> character is seen <A HREF="motion.html#as">as</A> argument to the
+			<A HREF="#:autocmd">:autocmd</A> and won't start a comment.
 			Vim always adds the {cmd} after existing autocommands,
 			so that the autocommands execute in the order in which
 			they were given.  See |<A HREF="#autocmd-nested">autocmd-nested</A>| for [nested].
@@ -88,7 +90,7 @@ Or use `:execute`:
 Note that special characters (e.g., &quot;<A HREF="motion.html#&#37;">&#37;</A>&quot;, &quot;&lt;cword&gt;&quot;) in the &quot;<A HREF="#:autocmd">:autocmd</A>&quot;
 arguments are not expanded when the <A HREF="#autocommand">autocommand</A> is defined.  These will be
 expanded when the Event is recognized, and the {cmd} is executed.  The only
-exception is that &quot;<A HREF="cmdline.html#&lt;sfile&gt;">&lt;sfile&gt;</A>&quot; is expanded when the autocmd is defined.  Example:
+exception is that &quot;<A HREF="cmdline.html#&lt;sfile&gt;">&lt;sfile&gt;</A>&quot; is expanded when the <A HREF="#autocmd">autocmd</A> is defined.  Example:
 
 <B>	:au BufNewFile,BufRead *.html so &lt;sfile&gt;:h/html.vim</B>
 
@@ -100,7 +102,8 @@ will appear <A HREF="if_cscop.html#twice">twice</A>.  To avoid this, define your
 that you can easily clear them:
 
 <B>	augroup vimrc</B>
-<B>	  autocmd!	" Remove all vimrc autocommands</B>
+<B>	  " Remove all vimrc autocommands</B>
+<B>	  autocmd!</B>
 <B>	  au BufNewFile,BufRead *.html so &lt;sfile&gt;:h/html.vim</B>
 <B>	augroup END</B>
 
@@ -155,6 +158,8 @@ prompt.  When one command outputs two <A HREF="message.html#messages">messages</
 			plugins, <A HREF="syntax.html#syntax">syntax</A> highlighting, etc.
 
 :au[tocmd]! [group]	Remove ALL autocommands.
+			Note: a <A HREF="change.html#quote">quote</A> will be seen <A HREF="motion.html#as">as</A> argument to the <A HREF="#:autocmd">:autocmd</A>
+			and won't start a comment.
 			Warning: You should normally not <A HREF="diff.html#do">do</A> this without a
 			group, <A HREF="motion.html#it">it</A> breaks plugins, <A HREF="syntax.html#syntax">syntax</A> highlighting, etc.
 
@@ -287,6 +292,8 @@ alphabetically with full explanations |<A HREF="#autocmd-events-abc">autocmd-eve
 |<A HREF="#SwapExists">SwapExists</A>|		detected an existing swap file
 |<A HREF="#TermOpen">TermOpen</A>|		when a <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> job starts
 |<A HREF="#TermClose">TermClose</A>|		when a <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> job ends
+|<A HREF="#ChanOpen">ChanOpen</A>|		after a <A HREF="channel.html#channel">channel</A> opened
+|<A HREF="#ChanInfo">ChanInfo</A>|		after a <A HREF="channel.html#channel">channel</A> has its state changed
 
 	Options
 |<A HREF="#FileType">FileType</A>|		when the <A HREF="options.html#'filetype'">'filetype'</A> option has been set
@@ -298,13 +305,15 @@ alphabetically with full explanations |<A HREF="#autocmd-events-abc">autocmd-eve
 |<A HREF="#GUIEnter">GUIEnter</A>|		after starting the GUI successfully
 |<A HREF="#GUIFailed">GUIFailed</A>|		after starting the GUI failed
 |<A HREF="#TermResponse">TermResponse</A>|		after the <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> response to |<A HREF="intro.html#t_RV">t_RV</A>| is received
-|<A HREF="#QuitPre">QuitPre</A>|		when using `:quit`, before deciding whether to quit
+|<A HREF="#QuitPre">QuitPre</A>|		when using `:quit`, before deciding whether to exit
+|<A HREF="#ExitPre">ExitPre</A>|		when using a command that may make Vim exit
 |<A HREF="#VimLeavePre">VimLeavePre</A>|		before <A HREF="starting.html#exiting">exiting</A> Nvim, before <A HREF="editing.html#writing">writing</A> the <A HREF="starting.html#shada">shada</A> file
 |<A HREF="#VimLeave">VimLeave</A>|		before <A HREF="starting.html#exiting">exiting</A> Nvim, after <A HREF="editing.html#writing">writing</A> the <A HREF="starting.html#shada">shada</A> file
 |<A HREF="#VimResume">VimResume</A>|		after Nvim is resumed
 |<A HREF="#VimSuspend">VimSuspend</A>|		before Nvim is suspended
 
 	Various
+|<A HREF="intro.html#DiffUpdated">DiffUpdated</A>|		after diffs have been updated
 |<A HREF="#DirChanged">DirChanged</A>|		after the |<A HREF="editing.html#current-directory">current-directory</A>| was changed
 
 |<A HREF="#FileChangedShell">FileChangedShell</A>|	Vim notices that a file changed since editing started
@@ -321,8 +330,8 @@ alphabetically with full explanations |<A HREF="#autocmd-events-abc">autocmd-eve
 |<A HREF="#SourceCmd">SourceCmd</A>|		before sourcing a Vim <A HREF="usr_41.html#script">script</A> |<A HREF="#Cmd-event">Cmd-event</A>|
 
 |<A HREF="#VimResized">VimResized</A>|		after the Vim <A HREF="windows.html#window">window</A> size changed
-|<A HREF="#FocusGained">FocusGained</A>|		Vim got input focus
-|<A HREF="#FocusLost">FocusLost</A>|		Vim lost input focus
+|<A HREF="#FocusGained">FocusGained</A>|		Nvim got focus
+|<A HREF="#FocusLost">FocusLost</A>|		Nvim lost focus
 |<A HREF="#CursorHold">CursorHold</A>|		the user doesn't press a key for a while
 |<A HREF="#CursorHoldI">CursorHoldI</A>|		the user doesn't press a key for a while in <A HREF="insert.html#Insert">Insert</A> mode
 |<A HREF="#CursorMoved">CursorMoved</A>|		the cursor was moved in <A HREF="intro.html#Normal">Normal</A> mode
@@ -336,8 +345,9 @@ alphabetically with full explanations |<A HREF="#autocmd-events-abc">autocmd-eve
 |<A HREF="#TabNew">TabNew</A>|		when creating a new <A HREF="intro.html#tab">tab</A> page
 |<A HREF="#TabNewEntered">TabNewEntered</A>|		after entering a new <A HREF="intro.html#tab">tab</A> page
 |<A HREF="#TabClosed">TabClosed</A>|		after closing a <A HREF="intro.html#tab">tab</A> page
-|<A HREF="#CmdlineEnter">CmdlineEnter</A>|		after entering cmdline mode
-|<A HREF="#CmdlineLeave">CmdlineLeave</A>|		before leaving cmdline mode
+|<A HREF="#CmdlineChanged">CmdlineChanged</A>|	after a change was made to the command-line text
+|<A HREF="#CmdlineEnter">CmdlineEnter</A>|		after entering <A HREF="cmdline.html#cmdline">cmdline</A> mode
+|<A HREF="#CmdlineLeave">CmdlineLeave</A>|		before leaving <A HREF="cmdline.html#cmdline">cmdline</A> mode
 |<A HREF="#CmdwinEnter">CmdwinEnter</A>|		after entering the command-line <A HREF="windows.html#window">window</A>
 |<A HREF="#CmdwinLeave">CmdwinLeave</A>|		before leaving the command-line <A HREF="windows.html#window">window</A>
 
@@ -351,7 +361,11 @@ alphabetically with full explanations |<A HREF="#autocmd-events-abc">autocmd-eve
 
 |<A HREF="#TextChanged">TextChanged</A>|		after a change was made to the text in <A HREF="intro.html#Normal">Normal</A> mode
 |<A HREF="#TextChangedI">TextChangedI</A>|		after a change was made to the text in <A HREF="insert.html#Insert">Insert</A> mode
+			when popup menu is not visible
+|<A HREF="#TextChangedP">TextChangedP</A>|		after a change was made to the text in <A HREF="insert.html#Insert">Insert</A> mode
+			when popup menu visible
 
+|<A HREF="#ColorSchemePre">ColorSchemePre</A>|	before loading a color scheme
 |<A HREF="#ColorScheme">ColorScheme</A>|		after loading a color scheme
 
 |<A HREF="#RemoteReply">RemoteReply</A>|		a reply from a server Vim was received
@@ -531,6 +545,21 @@ The alphabetical <A HREF="eval.html#list">list</A> of <A HREF="#autocommand">aut
 <A HREF="#BufWritePost">BufWritePost</A>			After <A HREF="editing.html#writing">writing</A> the whole buffer to a file
 				(should <A HREF="undo.html#undo">undo</A> the commands for <A HREF="#BufWritePre">BufWritePre</A>).
 
+							*<A NAME="ChanInfo"></A><B>ChanInfo</B>*
+<A HREF="#ChanInfo">ChanInfo</A>			State of <A HREF="channel.html#channel">channel</A> changed, for instance the
+				client of a <A HREF="msgpack_rpc.html#RPC">RPC</A> <A HREF="channel.html#channel">channel</A> described itself.
+				Sets these |<A HREF="eval.html#v:event">v:event</A>| keys:
+				    info
+				See |<A HREF="api.html#nvim_get_chan_info()">nvim_get_chan_info()</A>| for the format of
+				the info <A HREF="eval.html#Dictionary">Dictionary</A>.
+
+							*<A NAME="ChanOpen"></A><B>ChanOpen</B>*
+<A HREF="#ChanOpen">ChanOpen</A>			Just after a <A HREF="channel.html#channel">channel</A> was opened.
+				Sets these |<A HREF="eval.html#v:event">v:event</A>| keys:
+				    info
+				See |<A HREF="api.html#nvim_get_chan_info()">nvim_get_chan_info()</A>| for the format of
+				the info <A HREF="eval.html#Dictionary">Dictionary</A>.
+
 							*<A NAME="CmdUndefined"></A><B>CmdUndefined</B>*
 <A HREF="#CmdUndefined">CmdUndefined</A>			When a user command is used but <A HREF="motion.html#it">it</A> isn't
 				defined.  Useful for defining a command only
@@ -541,6 +570,11 @@ The alphabetical <A HREF="eval.html#list">list</A> of <A HREF="#autocommand">aut
 				command is defined.  An alternative is to
 				always define the user command and have <A HREF="motion.html#it">it</A>
 				invoke an autoloaded function.  See |<A HREF="eval.html#autoload">autoload</A>|.
+
+ 							*<A NAME="CmdlineChanged"></A><B>CmdlineChanged</B>*
+<A HREF="#CmdlineChanged">CmdlineChanged</A>			After a change was made to the text in the
+				command line.  Be careful not to mess up
+				the command line, <A HREF="motion.html#it">it</A> may cause Vim to lock up.
 
 							*<A NAME="CmdlineEnter"></A><B>CmdlineEnter</B>*
 <A HREF="#CmdlineEnter">CmdlineEnter</A>			After moving the cursor to the command line,
@@ -563,8 +597,8 @@ The alphabetical <A HREF="eval.html#list">list</A> of <A HREF="#autocommand">aut
 				    cmdlevel
 				    cmdtype
 				Note: `abort` can only be changed from false
-				to true. An autocmd cannot execute an already
-				aborted cmdline by <A HREF="change.html#changing">changing</A> <A HREF="motion.html#it">it</A> to false.
+				to true. An <A HREF="#autocmd">autocmd</A> cannot execute an already
+				aborted <A HREF="cmdline.html#cmdline">cmdline</A> by <A HREF="change.html#changing">changing</A> <A HREF="motion.html#it">it</A> to false.
 
 							*<A NAME="CmdwinEnter"></A><B>CmdwinEnter</B>*
 <A HREF="#CmdwinEnter">CmdwinEnter</A>			After entering the command-line <A HREF="windows.html#window">window</A>.
@@ -592,6 +626,11 @@ The alphabetical <A HREF="eval.html#list">list</A> of <A HREF="#autocommand">aut
 				set, and <A HREF="cmdline.html#&lt;amatch&gt;">&lt;amatch&gt;</A> for the new colorscheme
 				name.
 
+
+							*<A NAME="ColorSchemePre"></A><B>ColorSchemePre</B>*
+<A HREF="#ColorSchemePre">ColorSchemePre</A>			Before loading a color scheme. |<A HREF="syntax.html#:colorscheme">:colorscheme</A>|
+				Useful to setup removing things added by a
+				color scheme, before another one is loaded.
 
 
 							*<A NAME="CompleteDone"></A><B>CompleteDone</B>*
@@ -692,6 +731,15 @@ The alphabetical <A HREF="eval.html#list">list</A> of <A HREF="#autocommand">aut
 							*<A NAME="E881"></A><B>E881</B>*
 				If the number of lines changes saving for <A HREF="undo.html#undo">undo</A>
 				may fail and the change will be aborted.
+
+							*<A NAME="ExitPre"></A><B>ExitPre</B>*
+<A HREF="#ExitPre">ExitPre</A>				When using `:quit`, `:wq` in a way <A HREF="motion.html#it">it</A> makes
+				Vim exit, or using `:qall`, just after
+				|<A HREF="#QuitPre">QuitPre</A>|.  Can be used to close any
+				non-essential <A HREF="windows.html#window">window</A>.  Exiting may still be
+				cancelled if there is a modified buffer that
+				isn't automatically saved, use |<A HREF="#VimLeavePre">VimLeavePre</A>|
+				for really <A HREF="starting.html#exiting">exiting</A>.
 
 							*<A NAME="FileChangedShell"></A><B>FileChangedShell</B>*
 <A HREF="#FileChangedShell">FileChangedShell</A>		When Vim notices that the modification time of
@@ -796,15 +844,11 @@ The alphabetical <A HREF="eval.html#list">list</A> of <A HREF="#autocommand">aut
 				Not triggered when <A HREF="options.html#'shelltemp'">'shelltemp'</A> is off.
 
 							*<A NAME="FocusGained"></A><B>FocusGained</B>*
-<A HREF="#FocusGained">FocusGained</A>			When Vim got input focus.  Only for the <A HREF="gui.html#GUI">GUI</A>
-				version and a few console versions where this
-				can be detected.
+<A HREF="#FocusGained">FocusGained</A>			Nvim got focus.
 
 							*<A NAME="FocusLost"></A><B>FocusLost</B>*
-<A HREF="#FocusLost">FocusLost</A>			When Vim lost input focus.  Only for the <A HREF="gui.html#GUI">GUI</A>
-				version and a few console versions where this
-				can be detected.  May also happen when a
-				dialog pops up.
+<A HREF="#FocusLost">FocusLost</A>			Nvim lost focus.  Also (potentially) when
+				a <A HREF="gui.html#GUI">GUI</A> dialog pops up.
 
 							*<A NAME="FuncUndefined"></A><B>FuncUndefined</B>*
 <A HREF="#FuncUndefined">FuncUndefined</A>			When a user function is used but <A HREF="motion.html#it">it</A> isn't
@@ -908,6 +952,9 @@ The alphabetical <A HREF="eval.html#list">list</A> of <A HREF="#autocommand">aut
 				<A HREF="usr_05.html#plugin">plugin</A>. You can always use `:noa` to prevent
 				triggering this <A HREF="#autocommand">autocommand</A>.
 
+				When using |<A HREF="options.html#:set">:set</A>| in the <A HREF="#autocommand">autocommand</A> the event
+				is not triggered again.
+
 
 							*<A NAME="QuickFixCmdPre"></A><B>QuickFixCmdPre</B>*
 <A HREF="#QuickFixCmdPre">QuickFixCmdPre</A>			Before a <A HREF="quickfix.html#quickfix">quickfix</A> command is run (|<A HREF="quickfix.html#:make">:make</A>|,
@@ -941,6 +988,7 @@ The alphabetical <A HREF="eval.html#list">list</A> of <A HREF="#autocommand">aut
 				or quits Vim.  Can be used to close any
 				non-essential <A HREF="windows.html#window">window</A> if the current <A HREF="windows.html#window">window</A> is
 				the last ordinary <A HREF="windows.html#window">window</A>.
+				Also see |<A HREF="#ExitPre">ExitPre</A>|.
 
 							*<A NAME="RemoteReply"></A><B>RemoteReply</B>*
 <A HREF="#RemoteReply">RemoteReply</A>			When a reply from a Vim that <A HREF="eval.html#functions">functions</A> <A HREF="motion.html#as">as</A>
@@ -987,15 +1035,12 @@ The alphabetical <A HREF="eval.html#list">list</A> of <A HREF="#autocommand">aut
 				|<A HREF="spell.html#spell-SpellFileMissing">spell-SpellFileMissing</A>|.
 
 							*<A NAME="StdinReadPost"></A><B>StdinReadPost</B>*
-<A HREF="#StdinReadPost">StdinReadPost</A>			After reading from the stdin into the buffer,
-				before executing the modelines.  Only used
-				when the &quot;<A HREF="motion.html#-">-</A>&quot; argument was used when Vim was
-				started |<A HREF="starting.html#--">--</A>|.
+<A HREF="#StdinReadPost">StdinReadPost</A>			During <A HREF="starting.html#startup">startup</A>, after reading from stdin into
+				the buffer, before executing modelines. |<A HREF="starting.html#--">--</A>|
 
 							*<A NAME="StdinReadPre"></A><B>StdinReadPre</B>*
-<A HREF="#StdinReadPre">StdinReadPre</A>			Before reading from stdin into the buffer.
-				Only used when the &quot;<A HREF="motion.html#-">-</A>&quot; argument was used when
-				Vim was started |<A HREF="starting.html#--">--</A>|.
+<A HREF="#StdinReadPre">StdinReadPre</A>			During <A HREF="starting.html#startup">startup</A>, before reading from stdin into
+				the buffer. |<A HREF="starting.html#--">--</A>|
 
 							*<A NAME="SwapExists"></A><B>SwapExists</B>*
 <A HREF="#SwapExists">SwapExists</A>			Detected an existing swap file when starting
@@ -1016,12 +1061,13 @@ The alphabetical <A HREF="eval.html#list">list</A> of <A HREF="#autocommand">aut
 					'<A HREF="repeat.html#q">q</A>'	quit, don't edit the file
 					'<A HREF="insert.html#a">a</A>'	abort, like hitting <A HREF="pattern.html#CTRL-C">CTRL-C</A>
 				When set to an empty <A HREF="eval.html#string">string</A> the user will be
-				asked, <A HREF="motion.html#as">as</A> if there was no <A HREF="#SwapExists">SwapExists</A> autocmd.
+				asked, <A HREF="motion.html#as">as</A> if there was no <A HREF="#SwapExists">SwapExists</A> <A HREF="#autocmd">autocmd</A>.
 
 							*<A NAME="E812"></A><B>E812</B>*
 				It is not allowed to change to another buffer,
 				change a buffer name or change directory
 				here.
+				{only available with the <A HREF="various.html#+eval">+eval</A> feature}
 
 							*<A NAME="Syntax"></A><B>Syntax</B>*
 <A HREF="#Syntax">Syntax</A>				When the <A HREF="options.html#'syntax'">'syntax'</A> option has been set.  The
@@ -1085,10 +1131,20 @@ The alphabetical <A HREF="eval.html#list">list</A> of <A HREF="#autocommand">aut
 				Not triggered when the popup menu is visible.
 				Otherwise the same <A HREF="motion.html#as">as</A> <A HREF="#TextChanged">TextChanged</A>.
 
+							*<A NAME="TextChangedP"></A><B>TextChangedP</B>*
+<A HREF="#TextChangedP">TextChangedP</A>			After a change was made to the text in the
+				current buffer in <A HREF="insert.html#Insert">Insert</A> mode, only when the
+				popup menu is visible.  Otherwise the same <A HREF="motion.html#as">as</A>
+				<A HREF="#TextChanged">TextChanged</A>.
+
 							*<A NAME="User"></A><B>User</B>*
 <A HREF="#User">User</A>				Never executed automatically.  To be used for
 				autocommands that are only executed with
 				&quot;<A HREF="#:doautocmd">:doautocmd</A>&quot;.
+				Note that when `:doautocmd <A HREF="#User">User</A> MyEvent` is
+				used while there are no matching autocommands,
+				you will get an error.  If you don't want
+				that, define a dummy <A HREF="#autocommand">autocommand</A> yourself.
 
 							*<A NAME="UserGettingBored"></A><B>UserGettingBored</B>*
 <A HREF="#UserGettingBored">UserGettingBored</A>		When the user presses the same key <A HREF="usr_42.html#42">42</A> times.
@@ -1145,9 +1201,10 @@ The alphabetical <A HREF="eval.html#list">list</A> of <A HREF="#autocommand">aut
 				If the <A HREF="windows.html#window">window</A> is for another buffer, Vim
 				executes the <A HREF="#BufEnter">BufEnter</A> autocommands after the
 				<A HREF="#WinEnter">WinEnter</A> autocommands.
-				Note: When using &quot;<A HREF="windows.html#:split">:split</A> fname&quot; the <A HREF="#WinEnter">WinEnter</A>
-				event is triggered after the split but before
-				the file &quot;fname&quot; is loaded.
+				Note: For split and <A HREF="tabpage.html#tabpage">tabpage</A> commands the
+				<A HREF="#WinEnter">WinEnter</A> event is triggered after the split
+				or <A HREF="intro.html#tab">tab</A> command but before the file is loaded.
+
 
 							*<A NAME="WinLeave"></A><B>WinLeave</B>*
 <A HREF="#WinLeave">WinLeave</A>			Before leaving a <A HREF="windows.html#window">window</A>.  If the <A HREF="windows.html#window">window</A> to be
@@ -1344,7 +1401,7 @@ name!
 
 
 							*<A NAME=":aug"></A><B>:aug</B>* *<A NAME=":augroup"></A><B>:augroup</B>*
-:aug[roup] {name}		Define the autocmd group name for the
+:aug[roup] {name}		Define the <A HREF="#autocmd">autocmd</A> group name for the
 				following &quot;<A HREF="#:autocmd">:autocmd</A>&quot; commands.  The name &quot;end&quot;
 				or &quot;END&quot; selects the default group.
 				To avoid confusion, the name should be
@@ -1353,7 +1410,7 @@ name!
 
 
 					*<A NAME=":augroup-delete"></A><B>:augroup-delete</B>* *<A NAME="E367"></A><B>E367</B>* *<A NAME="W19"></A><B>W19</B>* *<A NAME="E936"></A><B>E936</B>*
-:aug[roup]! {name}		Delete the autocmd group {name}.  Don't use
+:aug[roup]! {name}		Delete the <A HREF="#autocmd">autocmd</A> group {name}.  Don't use
 				this if there is still an <A HREF="#autocommand">autocommand</A> using
 				this group!  You will get a warning if doing
 				<A HREF="motion.html#it">it</A> anyway. when the group is the current group
@@ -1472,7 +1529,7 @@ Careful: <A HREF="motion.html#'[">'[</A> and <A HREF="motion.html#']">']</A> cha
 In commands which expect a file name, you can use &quot;<A HREF="cmdline.html#&lt;afile&gt;">&lt;afile&gt;</A>&quot; for the file name
 that is being read |<A HREF="cmdline.html#:&lt;afile&gt;">:&lt;afile&gt;</A>| (you can also use &quot;<A HREF="motion.html#&#37;">&#37;</A>&quot; for the current file
 name).  &quot;<A HREF="cmdline.html#&lt;abuf&gt;">&lt;abuf&gt;</A>&quot; can be used for the buffer number of the currently effective
-buffer.  This also works for <A HREF="windows.html#buffers">buffers</A> that doesn't have a name.  But <A HREF="motion.html#it">it</A> doesn't
+buffer.  This also works for <A HREF="windows.html#buffers">buffers</A> that don't have a name.  But <A HREF="motion.html#it">it</A> doesn't
 work for files without a buffer (e.g., with &quot;<A HREF="insert.html#:r">:r</A> file&quot;).
 
 

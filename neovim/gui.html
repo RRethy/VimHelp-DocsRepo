@@ -8,7 +8,7 @@
                 <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
 
     <div class="container">
-      <h1>Vim documentation: gui</h1>
+      <h1>Nvim documentation: gui</h1>
 <A NAME="top"></A>
 <A HREF="index.html">main help file</A>
 
@@ -27,7 +27,7 @@ Vim's Graphical <A HREF="autocmd.html#User">User</A> Interface				*<A NAME="gui"
 
 ==============================================================================
 
-1. Starting the <A HREF="#GUI">GUI</A>				*<A NAME="gui-start"></A><B>gui-start</B>* *<A NAME="E229"></A><B>E229</B>* *<A NAME="E233"></A><B>E233</B>*
+Starting the <A HREF="#GUI">GUI</A>				*<A NAME="gui-start"></A><B>gui-start</B>* *<A NAME="E229"></A><B>E229</B>* *<A NAME="E233"></A><B>E233</B>*
 
 
 				*<A NAME="ginit.vim"></A><B>ginit.vim</B>* *<A NAME="gui-init"></A><B>gui-init</B>* *<A NAME="gvimrc"></A><B>gvimrc</B>* *<A NAME="$MYGVIMRC"></A><B>$MYGVIMRC</B>*
@@ -92,7 +92,7 @@ and only the first one that is found is read.
 :winp[os]
 		Display current position of the top left corner of the <A HREF="#GUI">GUI</A> vim
 		<A HREF="windows.html#window">window</A> in pixels.  Does not work in all versions.
-		Also see |<A HREF="eval.html#getwinposx()">getwinposx()</A>| and |<A HREF="eval.html#getwinposy()">getwinposy()</A>|.
+		Also see |<A HREF="intro.html#getwinpos()">getwinpos()</A>|, |<A HREF="eval.html#getwinposx()">getwinposx()</A>| and |<A HREF="eval.html#getwinposy()">getwinposy()</A>|.
 
 
 :winp[os] {X} {Y}							*<A NAME="E466"></A><B>E466</B>*
@@ -111,7 +111,7 @@ and only the first one that is found is read.
 
 ==============================================================================
 
-2. Scrollbars						*<A NAME="gui-scrollbars"></A><B>gui-scrollbars</B>*
+Scrollbars						*<A NAME="gui-scrollbars"></A><B>gui-scrollbars</B>*
 
 There are vertical scrollbars and a horizontal scrollbar.  You may
 configure which ones appear with the <A HREF="options.html#'guioptions'">'guioptions'</A> option.
@@ -182,177 +182,7 @@ text of the current cursor line.
 
 ==============================================================================
 
-3. Mouse Control					*<A NAME="gui-mouse"></A><B>gui-mouse</B>*
-
-The mouse only works if the appropriate flag in the <A HREF="options.html#'mouse'">'mouse'</A> option is set.
-When the <A HREF="#GUI">GUI</A> is switched on, and <A HREF="options.html#'mouse'">'mouse'</A> wasn't set yet, the <A HREF="options.html#'mouse'">'mouse'</A> option is
-automatically set to &quot;<A HREF="insert.html#a">a</A>&quot;, enabling <A HREF="motion.html#it">it</A> for all modes except for the
-|<A HREF="message.html#hit-enter">hit-enter</A>| prompt.  If you don't want this, a good place to change the
-<A HREF="options.html#'mouse'">'mouse'</A> option is the &quot;<A HREF="#gvimrc">gvimrc</A>&quot; file.
-
-Other <A HREF="options.html#options">options</A> that are relevant:
-<A HREF="options.html#'mousefocus'">'mousefocus'</A>	<A HREF="windows.html#window">window</A> focus follows mouse pointer |<A HREF="#gui-mouse-focus">gui-mouse-focus</A>|
-<A HREF="options.html#'mousemodel'">'mousemodel'</A>	what mouse button does which action
-<A HREF="options.html#'mousehide'">'mousehide'</A>	hide mouse pointer while typing text
-<A HREF="options.html#'selectmode'">'selectmode'</A>	whether to start <A HREF="visual.html#Select">Select</A> mode or <A HREF="visual.html#Visual">Visual</A> mode
-
-A quick way to set these is with the &quot;<A HREF="#:behave">:behave</A>&quot; command.
-
-							*<A NAME=":behave"></A><B>:behave</B>* *<A NAME=":be"></A><B>:be</B>*
-:be[have] {model}	Set behavior for mouse and selection.  Valid
-			arguments are:
-			   mswin	MS-Windows behavior
-			   xterm	Xterm behavior
-
-			Using &quot;<A HREF="#:behave">:behave</A>&quot; changes these <A HREF="options.html#options">options</A>:
-<B><FONT color="#54A23D">			option		mswin			xterm	</FONT></B>
-			<A HREF="options.html#'selectmode'">'selectmode'</A>	&quot;mouse,key&quot;		&quot;&quot;
-			<A HREF="options.html#'mousemodel'">'mousemodel'</A>	&quot;popup&quot;			&quot;extend&quot;
-			<A HREF="options.html#'keymodel'">'keymodel'</A>	&quot;startsel,stopsel&quot;	&quot;&quot;
-			<A HREF="options.html#'selection'">'selection'</A>	&quot;<A HREF="motion.html#exclusive">exclusive</A>&quot;		&quot;<A HREF="motion.html#inclusive">inclusive</A>&quot;
-
-In the <A HREF="starting.html#$VIMRUNTIME">$VIMRUNTIME</A> directory, there is a <A HREF="usr_41.html#script">script</A> called |<A HREF="mswin.html">mswin.vim</A>|, which will
-also map a few keys to the MS-Windows cut/copy/paste commands.  This is NOT
-compatible, since <A HREF="motion.html#it">it</A> uses the <A HREF="visual.html#CTRL-V">CTRL-V</A>, <A HREF="change.html#CTRL-X">CTRL-X</A> and <A HREF="pattern.html#CTRL-C">CTRL-C</A> keys.  If you don't
-mind, use this command:
-<B>	:so $VIMRUNTIME/mswin.vim</B>
-
-For <A HREF="scroll.html#scrolling">scrolling</A> with a wheel on a mouse, see |<A HREF="scroll.html#scroll-mouse-wheel">scroll-mouse-wheel</A>|.
-
-
-
-3.1 Moving Cursor with Mouse				*<A NAME="gui-mouse-move"></A><B>gui-mouse-move</B>*
-
-Click the left mouse button somewhere in a text buffer where you want the
-cursor to go, and <A HREF="motion.html#it">it</A> does!
-<B><FONT color="#54A23D">This works in	    when 'mouse' contains </FONT></B>
-<A HREF="intro.html#Normal">Normal</A> mode	    '<A HREF="pattern.html#n">n</A>' or '<A HREF="insert.html#a">a</A>'
-<A HREF="visual.html#Visual">Visual</A> mode	    '<A HREF="visual.html#v">v</A>' or '<A HREF="insert.html#a">a</A>'
-<A HREF="insert.html#Insert">Insert</A> mode	    '<A HREF="insert.html#i">i</A>' or '<A HREF="insert.html#a">a</A>'
-
-<A HREF="visual.html#Select">Select</A> mode is handled like <A HREF="visual.html#Visual">Visual</A> mode.
-
-You may use this with an <A HREF="motion.html#operator">operator</A> such <A HREF="motion.html#as">as</A> '<A HREF="change.html#d">d</A>' to delete text from the current
-cursor position to the position you point to with the mouse.  That is, you hit
-'<A HREF="change.html#d">d</A>' and then click the mouse somewhere.
-
-
-							*<A NAME="gui-mouse-focus"></A><B>gui-mouse-focus</B>*
-The <A HREF="options.html#'mousefocus'">'mousefocus'</A> option can be set to make the keyboard focus follow the
-mouse pointer.  This means that the <A HREF="windows.html#window">window</A> where the mouse pointer is, is the
-active <A HREF="windows.html#window">window</A>.  Warning: this doesn't work very well when using a menu,
-because the menu command will always be applied to the top <A HREF="windows.html#window">window</A>.
-
-If you are on the '<A HREF="cmdline.html#:">:</A>' line (or '<A HREF="pattern.html#/">/</A>' or '?'), then clicking the left or right
-mouse button will position the cursor on the '<A HREF="cmdline.html#:">:</A>' line (if <A HREF="options.html#'mouse'">'mouse'</A> contains
-'<A HREF="change.html#c">c</A>', '<A HREF="insert.html#a">a</A>' or 'A').
-
-In any situation the middle mouse button may be clicked to paste the current
-selection.
-
-
-
-3.2 Selection with Mouse				*<A NAME="gui-mouse-select"></A><B>gui-mouse-select</B>*
-
-The mouse can be used to start a selection.  How depends on the <A HREF="options.html#'mousemodel'">'mousemodel'</A>
-option:
-<A HREF="options.html#'mousemodel'">'mousemodel'</A> is &quot;extend&quot;: use the right mouse button
-<A HREF="options.html#'mousemodel'">'mousemodel'</A> is &quot;popup&quot;:  use the left mouse button, while keeping the Shift
-key pressed.
-
-If there was no selection yet, this starts a selection from the old cursor
-position to the position pointed to with the mouse.  If there already is a
-selection then the closest end will be extended.
-
-If <A HREF="options.html#'selectmode'">'selectmode'</A> contains &quot;mouse&quot;, then the selection will be in <A HREF="visual.html#Select">Select</A> mode.
-This means that typing normal text will replace the selection.  See
-|<A HREF="visual.html#Select-mode">Select-mode</A>|.  Otherwise, the selection will be in <A HREF="visual.html#Visual">Visual</A> mode.
-
-Double clicking may be done to make the selection word-wise, triple clicking
-makes <A HREF="motion.html#it">it</A> line-wise, and quadruple clicking makes <A HREF="motion.html#it">it</A> rectangular block-wise.
-
-See |<A HREF="#gui-selections">gui-selections</A>| on how the selection is used.
-
-
-
-3.3 Other Text Selection with Mouse		*<A NAME="gui-mouse-modeless"></A><B>gui-mouse-modeless</B>*
-
-						*<A NAME="modeless-selection"></A><B>modeless-selection</B>*
-A different kind of selection is used when:
-- in <A HREF="cmdline.html#Command-line">Command-line</A> mode
-- in the <A HREF="cmdline.html#Command-line">Command-line</A> <A HREF="windows.html#window">window</A> and pointing in another <A HREF="windows.html#window">window</A>
-- at the |<A HREF="message.html#hit-enter">hit-enter</A>| prompt
-- whenever the current mode is not in the <A HREF="options.html#'mouse'">'mouse'</A> option
-- when holding the CTRL and SHIFT keys in the <A HREF="#GUI">GUI</A>
-
-Since Vim continues like the selection isn't there, and there is no mode
-associated with the selection, this is called modeless selection.  Any text in
-the Vim <A HREF="windows.html#window">window</A> can be selected.  <A HREF="visual.html#Select">Select</A> the text by pressing the left mouse
-button at the start, drag to the end and release.  To extend the selection,
-use the right mouse button when <A HREF="options.html#'mousemodel'">'mousemodel'</A> is &quot;extend&quot;, or the left mouse
-button with the <A HREF="intro.html#shift">shift</A> key pressed when <A HREF="options.html#'mousemodel'">'mousemodel'</A> is &quot;popup&quot;.
-The selection is removed when the selected text is scrolled or changed.
-
-On the command line <A HREF="scroll.html#CTRL-Y">CTRL-Y</A> can be used to copy the selection into the
-<A HREF="provider.html#clipboard">clipboard</A>.  To <A HREF="diff.html#do">do</A> this from <A HREF="insert.html#Insert">Insert</A> mode, use <A HREF="motion.html#CTRL-O">CTRL-O</A> : <A HREF="scroll.html#CTRL-Y">CTRL-Y</A> <A HREF="motion.html#&lt;CR&gt;">&lt;CR&gt;</A>.  When
-<A HREF="options.html#'guioptions'">'guioptions'</A> contains a or A (default on X11), the selection is automatically
-copied to the &quot;* <A HREF="sponsor.html#register">register</A>.
-
-The middle mouse button can then paste the text.  On non-X11 systems, you can
-use <A HREF="undo.html#CTRL-R">CTRL-R</A> +.
-
-
-
-3.4 Using Mouse on Status Lines				*<A NAME="gui-mouse-status"></A><B>gui-mouse-status</B>*
-
-Clicking the left or right mouse button on the status line below a Vim
-<A HREF="windows.html#window">window</A> makes that <A HREF="windows.html#window">window</A> the current <A HREF="windows.html#window">window</A>.  This actually happens on button
-release (to be able to distinguish a click from a drag action).
-
-With the left mouse button a status line can be dragged up and down, thus
-resizing the <A HREF="windows.html#windows">windows</A> above and below <A HREF="motion.html#it">it</A>.  This does not change <A HREF="windows.html#window">window</A> focus.
-
-The same can be used on the vertical separator: click to give the <A HREF="windows.html#window">window</A> left
-of <A HREF="motion.html#it">it</A> focus, drag left and right to make <A HREF="windows.html#windows">windows</A> wider and narrower.
-
-
-
-3.5 Various Mouse Clicks				*<A NAME="gui-mouse-various"></A><B>gui-mouse-various</B>*
-
-    <A HREF="term.html#&lt;S-LeftMouse&gt;">&lt;S-LeftMouse&gt;</A>	Search forward for the <A HREF="motion.html#word">word</A> under the mouse click.
-			When <A HREF="options.html#'mousemodel'">'mousemodel'</A> is &quot;popup&quot; this starts or extends a
-			selection.
-    <A HREF="term.html#&lt;S-RightMouse&gt;">&lt;S-RightMouse&gt;</A>	Search backward for the <A HREF="motion.html#word">word</A> under the mouse click.
-    <A HREF="tagsrch.html#&lt;C-LeftMouse&gt;">&lt;C-LeftMouse&gt;</A>	Jump to the <A HREF="tagsrch.html#tag">tag</A> name under the mouse click.
-    <A HREF="tagsrch.html#&lt;C-RightMouse&gt;">&lt;C-RightMouse&gt;</A>	Jump back to position before the previous <A HREF="tagsrch.html#tag">tag</A> jump
-			(same <A HREF="motion.html#as">as</A> &quot;<A HREF="tagsrch.html#CTRL-T">CTRL-T</A>&quot;)
-
-
-
-3.6 Mouse Mappings					*<A NAME="gui-mouse-mapping"></A><B>gui-mouse-mapping</B>*
-
-The mouse events, complete with modifiers, may be mapped.  Eg:
-<B>   :map &lt;S-LeftMouse&gt;     &lt;RightMouse&gt;</B>
-<B>   :map &lt;S-LeftDrag&gt;      &lt;RightDrag&gt;</B>
-<B>   :map &lt;S-LeftRelease&gt;   &lt;RightRelease&gt;</B>
-<B>   :map &lt;2-S-LeftMouse&gt;   &lt;2-RightMouse&gt;</B>
-<B>   :map &lt;2-S-LeftDrag&gt;    &lt;2-RightDrag&gt;</B>
-<B>   :map &lt;2-S-LeftRelease&gt; &lt;2-RightRelease&gt;</B>
-<B>   :map &lt;3-S-LeftMouse&gt;   &lt;3-RightMouse&gt;</B>
-<B>   :map &lt;3-S-LeftDrag&gt;    &lt;3-RightDrag&gt;</B>
-<B>   :map &lt;3-S-LeftRelease&gt; &lt;3-RightRelease&gt;</B>
-<B>   :map &lt;4-S-LeftMouse&gt;   &lt;4-RightMouse&gt;</B>
-<B>   :map &lt;4-S-LeftDrag&gt;    &lt;4-RightDrag&gt;</B>
-<B>   :map &lt;4-S-LeftRelease&gt; &lt;4-RightRelease&gt;</B>
-These mappings make selection work the way <A HREF="motion.html#it">it</A> probably should in a Motif
-application, with shift-left mouse allowing for extending the visual area
-rather than the right mouse button.
-
-Mouse <A HREF="map.html#mapping">mapping</A> with modifiers does not work for modeless selection.
-
-
-
-3.7 Drag and drop						*<A NAME="drag-n-drop"></A><B>drag-n-drop</B>*
+Drag and drop						*<A NAME="drag-n-drop"></A><B>drag-n-drop</B>*
 
 You can drag and drop one or more files into the Vim <A HREF="windows.html#window">window</A>, where they will
 be opened <A HREF="motion.html#as">as</A> if a |<A HREF="windows.html#:drop">:drop</A>| command was used.
@@ -372,51 +202,13 @@ names with any <A HREF="intro.html#Ex">Ex</A> command.  Special characters (spac
 
 ==============================================================================
 
-4. Making <A HREF="#GUI">GUI</A> Selections				*<A NAME="gui-selections"></A><B>gui-selections</B>*
-
-
-							*<A NAME="quotestar"></A><B>quotestar</B>*
-You may make selections with the mouse (see |<A HREF="#gui-mouse-select">gui-mouse-select</A>|), or by using
-Vim's <A HREF="visual.html#Visual">Visual</A> mode (see |<A HREF="visual.html#v">v</A>|).  If '<A HREF="insert.html#a">a</A>' is present in <A HREF="options.html#'guioptions'">'guioptions'</A>, then
-whenever a selection is started (Visual or <A HREF="visual.html#Select">Select</A> mode), or when the selection
-is changed, Vim becomes the owner of the windowing system's primary selection
-(on MS-Windows the |<A HREF="provider.html#clipboard">clipboard</A>| is used).
-
-
-							*<A NAME="primary-selection"></A><B>primary-selection</B>*
-There is a special <A HREF="sponsor.html#register">register</A> for storing this selection, <A HREF="motion.html#it">it</A> is the &quot;*
-<A HREF="sponsor.html#register">register</A>.  Nothing is put in here unless the information about what text is
-selected is about to change (e.g. with a left mouse click somewhere), or when
-another application wants to paste the selected text.  Then the text is put
-in the &quot;* <A HREF="sponsor.html#register">register</A>.  For example, to cut a line and make <A HREF="motion.html#it">it</A> the current
-selection/put <A HREF="motion.html#it">it</A> on the <A HREF="provider.html#clipboard">clipboard</A>:
-
-<B>	"*dd</B>
-
-Similarly, when you want to paste a selection from another application, e.g.,
-by clicking the middle mouse button, the selection is put in the &quot;* <A HREF="sponsor.html#register">register</A>
-first, and then 'put' like any other <A HREF="sponsor.html#register">register</A>.  For example, to put the
-selection (contents of the clipboard):
-
-<B>	"*p</B>
-
-Note that when pasting text from one Vim into another separate Vim, the type
-of selection (character, line, or block) will also be copied.  For other
-applications the type is always character.
-
-When the &quot;unnamed&quot; <A HREF="eval.html#string">string</A> is included in the <A HREF="options.html#'clipboard'">'clipboard'</A> option, the unnamed
-<A HREF="sponsor.html#register">register</A> is the same <A HREF="motion.html#as">as</A> the &quot;* <A HREF="sponsor.html#register">register</A>.  Thus you can <A HREF="change.html#yank">yank</A> to and paste the
-selection without prepending &quot;* to commands.
-
-==============================================================================
-
-5. Menus						*<A NAME="menus"></A><B>menus</B>*
+Menus							*<A NAME="menus"></A><B>menus</B>*
 
 For an introduction see |<A HREF="usr_42.html">usr_42.txt</A>| in the user manual.
 
 
 
-5.1 Using Menus						*<A NAME="using-menus"></A><B>using-menus</B>*
+Using Menus						*<A NAME="using-menus"></A><B>using-menus</B>*
 
 Basically, <A HREF="#menus">menus</A> can be used just like mappings.  You can define your own
 <A HREF="#menus">menus</A>, <A HREF="motion.html#as">as</A> many <A HREF="motion.html#as">as</A> you like.
@@ -465,7 +257,7 @@ a menu entry.  Hit <A HREF="intro.html#&lt;Enter&gt;">&lt;Enter&gt;</A> to execu
 This does require the |<A HREF="various.html#+menu">+menu</A>| feature enabled at compile time.
 
 
-5.2 Creating New Menus					*<A NAME="creating-menus"></A><B>creating-menus</B>*
+Creating New Menus					*<A NAME="creating-menus"></A><B>creating-menus</B>*
 
 
 				*<A NAME=":me"></A><B>:me</B>*  *<A NAME=":menu"></A><B>:menu</B>*  *<A NAME=":noreme"></A><B>:noreme</B>*  *<A NAME=":noremenu"></A><B>:noremenu</B>*
@@ -729,7 +521,7 @@ popup_setpos.
 
 
 
-5.3 Showing What Menus Are Mapped To			*<A NAME="showing-menus"></A><B>showing-menus</B>*
+Showing What Menus Are Mapped To			*<A NAME="showing-menus"></A><B>showing-menus</B>*
 
 To see what an existing menu is mapped to, use just one argument after the
 menu commands (just like you would with the &quot;<A HREF="map.html#:map">:map</A>&quot; commands).  If the menu
@@ -748,7 +540,7 @@ be used to complete the name of the menu item.
 
 
 
-5.4 Executing Menus					*<A NAME="execute-menus"></A><B>execute-menus</B>*
+Executing Menus						*<A NAME="execute-menus"></A><B>execute-menus</B>*
 
 
 						*<A NAME=":em"></A><B>:em</B>*  *<A NAME=":emenu"></A><B>:emenu</B>* *<A NAME="E334"></A><B>E334</B>* *<A NAME="E335"></A><B>E335</B>*
@@ -770,7 +562,7 @@ using the last visual selection.
 
 
 
-5.5 Deleting Menus					*<A NAME="delete-menus"></A><B>delete-menus</B>*
+Deleting Menus						*<A NAME="delete-menus"></A><B>delete-menus</B>*
 
 
 						*<A NAME=":unme"></A><B>:unme</B>*  *<A NAME=":unmenu"></A><B>:unmenu</B>*
@@ -811,7 +603,7 @@ If you want to get rid of the menu <A HREF="motion.html#bar">bar</A>:
 
 
 
-5.6 Disabling Menus					*<A NAME="disable-menus"></A><B>disable-menus</B>*
+Disabling Menus						*<A NAME="disable-menus"></A><B>disable-menus</B>*
 
 
 						*<A NAME=":menu-disable"></A><B>:menu-disable</B>* *<A NAME=":menu-enable"></A><B>:menu-enable</B>*
@@ -829,7 +621,7 @@ name and all existing submenus below <A HREF="motion.html#it">it</A> are affecte
 
 
 
-5.7 Examples for Menus					*<A NAME="menu-examples"></A><B>menu-examples</B>*
+Examples for Menus					*<A NAME="menu-examples"></A><B>menu-examples</B>*
 
 Here is an example on how to add menu items with menu's!  You can add a menu
 item for the keyword under the cursor.  The <A HREF="sponsor.html#register">register</A> &quot;<A HREF="vimindex.html#z">z</A>&quot; is used.
@@ -846,7 +638,7 @@ mappings, or put these lines in your <A HREF="#gvimrc">gvimrc</A>; &quot;&lt;C-R
 the <A HREF="motion.html#&lt;CR&gt;">&lt;CR&gt;</A> key.  |<A HREF="intro.html#&lt;&gt;">&lt;&gt;</A>|)
 
 
-5.8 Tooltips <A HREF="change.html#&amp;">&amp;</A> Menu <A HREF="tips.html#tips">tips</A>
+Tooltips <A HREF="change.html#&amp;">&amp;</A> Menu <A HREF="tips.html#tips">tips</A>
 
 See section |<A HREF="usr_42.html#42.4">42.4</A>| in the user manual.
 
@@ -919,24 +711,6 @@ This creates a popup menu that doesn't exist on the main menu-bar.
 
 Note that a menu that starts with '<A HREF="vimindex.html#]">]</A>' will not be displayed.
 
-==============================================================================
-
-6. Extras						*<A NAME="gui-extras"></A><B>gui-extras</B>*
-
-This section describes other features which are related to the <A HREF="#GUI">GUI</A>.
-
-- With the <A HREF="#GUI">GUI</A>, there is no wait for one second after hitting <A HREF="intro.html#escape">escape</A>, because
-  the key codes don't start with <A HREF="intro.html#&lt;Esc&gt;">&lt;Esc&gt;</A>.
-
-- Typing ^V followed by a special key in the <A HREF="#GUI">GUI</A> will insert &quot;&lt;Key&gt;&quot;, since
-  the internal <A HREF="eval.html#string">string</A> used is meaningless.  Modifiers may also be held down to
-  get &quot;&lt;Modifiers-Key&gt;&quot;.
-
-- In the <A HREF="#GUI">GUI</A>, the modifiers SHIFT, CTRL, and ALT (or <A HREF="intro.html#META">META</A>) may be used within
-  mappings of special keys and mouse events.  E.g.: <A HREF="map.html#:map">:map</A> &lt;M-LeftDrag&gt; <A HREF="term.html#&lt;LeftDrag&gt;">&lt;LeftDrag&gt;</A>
-
-- In the <A HREF="#GUI">GUI</A>, several normal keys may have modifiers in mappings etc, these
-  are <A HREF="motion.html#&lt;Space&gt;">&lt;Space&gt;</A>, <A HREF="motion.html#&lt;Tab&gt;">&lt;Tab&gt;</A>, <A HREF="motion.html#&lt;NL&gt;">&lt;NL&gt;</A>, <A HREF="motion.html#&lt;CR&gt;">&lt;CR&gt;</A>, <A HREF="intro.html#&lt;Esc&gt;">&lt;Esc&gt;</A>.
 
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>

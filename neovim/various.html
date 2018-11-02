@@ -8,7 +8,7 @@
                 <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
 
     <div class="container">
-      <h1>Vim documentation: various</h1>
+      <h1>Nvim documentation: various</h1>
 <A NAME="top"></A>
 <A HREF="index.html">main help file</A>
 
@@ -60,23 +60,34 @@ Various commands					*<A NAME="various"></A><B>various</B>*
 
 :as[cii]	or					*<A NAME="ga"></A><B>ga</B>* *<A NAME=":as"></A><B>:as</B>* *<A NAME=":ascii"></A><B>:ascii</B>*
 <A HREF="#ga">ga</A>			Print the ascii value of the character under the
-			cursor in decimal, hexadecimal and <A HREF="eval.html#octal">octal</A>.  For
-			example, when the cursor is on a '<A HREF="change.html#R">R</A>':
+			cursor in decimal, hexadecimal and <A HREF="eval.html#octal">octal</A>.
+			Mnemonic: Get Ascii value.
+			
+			For example, when the cursor is on a '<A HREF="change.html#R">R</A>':
 <B><FONT color="#54A23D">				&lt;R&gt;  82,  Hex 52,  Octal 122 </FONT></B>
 			When the character is a non-standard ASCII character,
 			but printable according to the <A HREF="options.html#'isprint'">'isprint'</A> option, the
-			non-printable version is also given.  When the
-			character is larger than 127, the &lt;M-x&gt; form is also
-			printed.  For example:
+			non-printable version is also given.
+			
+			When the character is larger than 127, the &lt;M-x&gt; form
+			is also printed.  For example:
 <B><FONT color="#54A23D">				&lt;~A&gt;  &lt;M-^A&gt;  129,  Hex 81,  Octal 201 </FONT></B>
 <B><FONT color="#54A23D">				&lt;p&gt;  &lt;|~&gt;  &lt;M-~&gt;  254,  Hex fe,  Octal 376 </FONT></B>
 			(where &lt;p&gt; is a special character)
+			
 			The <A HREF="intro.html#&lt;Nul&gt;">&lt;Nul&gt;</A> character in a file is stored internally <A HREF="motion.html#as">as</A>
 			<A HREF="motion.html#&lt;NL&gt;">&lt;NL&gt;</A>, but <A HREF="motion.html#it">it</A> will be shown <A HREF="motion.html#as">as</A>:
 <B><FONT color="#54A23D">				&lt;^@&gt;  0,  Hex 00,  Octal 000 </FONT></B>
+				
 			If the character has composing characters these are
 			also shown.  The value of <A HREF="options.html#'maxcombine'">'maxcombine'</A> doesn't matter.
-			Mnemonic: Get ASCII value.
+			
+			If the character can be inserted <A HREF="motion.html#as">as</A> a <A HREF="digraph.html#digraph">digraph</A>, also
+			output the two characters that can be used to create
+			the character:
+<B><FONT color="#54A23D">			    &lt;ö&gt; 246, Hex 00f6, Oct 366, Digr o: </FONT></B>
+			This shows you can type CTRL-K <A HREF="insert.html#o">o</A> : to insert ö.
+
 
 
 							*<A NAME="g8"></A><B>g8</B>*
@@ -291,8 +302,6 @@ Various commands					*<A NAME="various"></A><B>various</B>*
 			to a pipe (not a <A HREF="nvim_terminal_emulator.html#terminal">terminal</A>terminal). Use |<A HREF="#:terminal">:terminal</A>| to run an
 			interactive shell connected to a <A HREF="nvim_terminal_emulator.html#terminal">terminal</A>.
 
-			For Win32 also see |<A HREF="#:!start">:!start</A>|.
-
 			After the command has been executed, the <A HREF="editing.html#timestamp">timestamp</A> and
 			size of the current file is checked |<A HREF="editing.html#timestamp">timestamp</A>|.
 
@@ -309,22 +318,6 @@ Various commands					*<A NAME="various"></A><B>various</B>*
  			The screen is not redrawn then, thus you have to use
 			<A HREF="#CTRL-L">CTRL-L</A> or &quot;:redraw!&quot; if the command did display
 			something.
-
-							*<A NAME=":!start"></A><B>:!start</B>*
-<A HREF="#:!start">:!start</A>	{cmd}		(Windows only). Special-case of |<A HREF="#:!">:!</A>| which works
-			asynchronously, for running a program that does not
-			affect the files you are editing.
-			Optional arguments (can only use one at a time):
-				/min  <A HREF="windows.html#window">window</A> will be minimized
-				/b    no console <A HREF="windows.html#window">window</A> will be opened
-			Note: If the process requires input, /b will get an
-			EOF error because its input stream (stdin) would be
-			redirected to \\.\NUL (stdout and stderr too).
-
-			Programs begun with <A HREF="#:!start">:!start</A> <A HREF="diff.html#do">do</A> not get passed Vim's
-			open file handles, which means they <A HREF="diff.html#do">do</A> not have to be
-			closed before Vim. To avoid this special treatment,
-			use &quot;<A HREF="#:!">:!</A> start&quot;.
 
 
 							*<A NAME=":!!"></A><B>:!!</B>*
@@ -491,7 +484,7 @@ N  *<A NAME="+statusline"></A><B>+statusline</B>*	Options <A HREF="options.html#
 
 N  *<A NAME="+syntax"></A><B>+syntax</B>*		<A HREF="autocmd.html#Syntax">Syntax</A> highlighting |<A HREF="syntax.html#syntax">syntax</A>|
 
-N  *<A NAME="+tablineat"></A><B>+tablineat</B>*		<A HREF="options.html#'tabline'">'tabline'</A> option recognizing &#37;@<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="3076455e5370">[email&#160;protected]</a> items.
+N  *<A NAME="+tablineat"></A><B>+tablineat</B>*		<A HREF="options.html#'tabline'">'tabline'</A> option recognizing &#37;@<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4006352e2300">[email&#160;protected]</a> items.
 
 <A HREF="motion.html#T">T</A>  *<A NAME="+tag_binary"></A><B>+tag_binary</B>*	binary searching in <A HREF="tagsrch.html#tags">tags</A> file |<A HREF="tagsrch.html#tag-binary-search">tag-binary-search</A>|
 
@@ -523,6 +516,8 @@ N  *<A NAME="+visualextra"></A><B>+visualextra</B>*	extra <A HREF="visual.html#V
 
 N  *<A NAME="+vreplace"></A><B>+vreplace</B>*		|<A HREF="change.html#gR">gR</A>| and |<A HREF="change.html#gr">gr</A>|
 
+   *<A NAME="+vtp"></A><B>+vtp</B>*		on MS-Windows console: support for <A HREF="options.html#'termguicolors'">'termguicolors'</A>
+
 N  *<A NAME="+wildignore"></A><B>+wildignore</B>*	|<A HREF="options.html#'wildignore'">'wildignore'</A>|
 
 N  *<A NAME="+wildmenu"></A><B>+wildmenu</B>*		|<A HREF="options.html#'wildmenu'">'wildmenu'</A>|
@@ -536,8 +531,6 @@ N  *<A NAME="+wildmenu"></A><B>+wildmenu</B>*		|<A HREF="options.html#'wildmenu'
    *<A NAME="+xfontset"></A><B>+xfontset</B>*		X fontset support |<A HREF="mbyte.html#xfontset">xfontset</A>|
 
    *<A NAME="+xpm"></A><B>+xpm</B>*		pixmap support
-
-<A HREF="motion.html#m">m</A>  *<A NAME="+xpm_w32"></A><B>+xpm_w32</B>*		Win32 <A HREF="gui.html#GUI">GUI</A> only: pixmap support |<A HREF="intro.html#w32-xpm-support">w32-xpm-support</A>|
 
 
 							*<A NAME="/dyn"></A><B>/dyn</B>* *<A NAME="E370"></A><B>E370</B>* *<A NAME="E448"></A><B>E448</B>*
@@ -584,7 +577,7 @@ N  *<A NAME="+wildmenu"></A><B>+wildmenu</B>*		|<A HREF="options.html#'wildmenu'
 :redi[r] @*&gt;		
 :redi[r] @+&gt;		Redirect <A HREF="message.html#messages">messages</A> to the selection or <A HREF="provider.html#clipboard">clipboard</A>. For
 			backward compatibility, the &quot;<A HREF="change.html#&gt;">&gt;</A>&quot; after the <A HREF="sponsor.html#register">register</A>
-			name can be omitted. See |<A HREF="gui.html#quotestar">quotestar</A>| and |<A HREF="provider.html#quoteplus">quoteplus</A>|.
+			name can be omitted. See |<A HREF="provider.html#quotestar">quotestar</A>| and |<A HREF="provider.html#quoteplus">quoteplus</A>|.
 :redi[r] @*&gt;&gt;		
 :redi[r] @+&gt;&gt;		Append <A HREF="message.html#messages">messages</A> to the selection or <A HREF="provider.html#clipboard">clipboard</A>.
 
@@ -796,5 +789,5 @@ LessInitFunc in your <A HREF="starting.html#vimrc">vimrc</A>, for example:
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
-  <script data-cfasync="false" src="/cdn-cgi/scripts/d07b1474/cloudflare-static/email-decode.min.js"></script></body>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
 </html>

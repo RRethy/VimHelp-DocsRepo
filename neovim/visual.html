@@ -8,7 +8,7 @@
                 <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
 
     <div class="container">
-      <h1>Vim documentation: visual</h1>
+      <h1>Nvim documentation: visual</h1>
 <A NAME="top"></A>
 <A HREF="index.html">main help file</A>
 
@@ -93,10 +93,7 @@ position.
 
 
 						*<A NAME="CTRL-V"></A><B>CTRL-V</B>* *<A NAME="blockwise-visual"></A><B>blockwise-visual</B>*
-[count]CTRL-V		Start <A HREF="#Visual">Visual</A> mode blockwise.  Note: Under Windows
-			<A HREF="#CTRL-V">CTRL-V</A> could be mapped to paste text, <A HREF="motion.html#it">it</A> doesn't work
-			to start <A HREF="#Visual">Visual</A> mode then, see |<A HREF="intro.html#CTRL-V-alternative">CTRL-V-alternative</A>|.
-			<A HREF="intro.html#[count]">[count]</A> is used <A HREF="motion.html#as">as</A> with `v` above.
+[count]CTRL-V		Start <A HREF="#Visual">Visual</A> mode blockwise.
 
 If you use <A HREF="intro.html#&lt;Esc&gt;">&lt;Esc&gt;</A>, click the left mouse button or use any command that
 does a jump to another buffer while in <A HREF="#Visual">Visual</A> mode, the highlighting stops
@@ -342,8 +339,8 @@ Visual-block <A HREF="insert.html#Insert">Insert</A>						*<A NAME="v_b_I"></A><
 With a blockwise selection, I{string}&lt;ESC&gt; will insert {string} at the start
 of block on every line of the block, provided that the line extends into the
 block.  Thus lines that are short will remain unmodified.  TABs are split to
-retain visual columns.
-See |<A HREF="#v_b_I_example">v_b_I_example</A>|.
+retain visual columns.  Works only for adding text to a line, not for
+deletions.  See |<A HREF="#v_b_I_example">v_b_I_example</A>|.
 
 
 Visual-block Append						*<A NAME="v_b_A"></A><B>v_b_A</B>*
@@ -360,6 +357,7 @@ See |<A HREF="#v_b_A_example">v_b_A_example</A>|.
 Note: &quot;<A HREF="insert.html#I">I</A>&quot; and &quot;<A HREF="insert.html#A">A</A>&quot; behave differently for lines that don't extend into the
 selected block.  This was done intentionally, so that you can <A HREF="diff.html#do">do</A> <A HREF="motion.html#it">it</A> the way
 you want.
+Works only for adding text to a line, not for deletions.
 
 
 Visual-block change						*<A NAME="v_b_c"></A><B>v_b_c</B>*

@@ -8,7 +8,7 @@
                 <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
 
     <div class="container">
-      <h1>Vim documentation: options</h1>
+      <h1>Nvim documentation: options</h1>
 <A NAME="top"></A>
 <A HREF="index.html">main help file</A>
 
@@ -128,17 +128,17 @@ and the following arguments will be ignored.
 When <A HREF="#'verbose'">'verbose'</A> is non-zero, displaying an option value will also tell where <A HREF="motion.html#it">it</A>
 was last set.  Example:
 <B>	:verbose set shiftwidth cindent?</B>
-<B><FONT color="#54A23D"> 	  shiftwidth=4 </FONT></B>
-<B><FONT color="#54A23D">		  Last set from modeline </FONT></B>
-<B><FONT color="#54A23D">	  cindent </FONT></B>
-<B><FONT color="#54A23D">		  Last set from /usr/local/share/vim/vim60/ftplugin/c.vim </FONT></B>
+<B><FONT color="#54A23D">   shiftwidth=4 </FONT></B>
+<B><FONT color="#54A23D">	  Last set from modeline line 1 </FONT></B>
+<B><FONT color="#54A23D">  cindent </FONT></B>
+<B><FONT color="#54A23D">	  Last set from /usr/local/share/vim/vim60/ftplugin/c.vim line 30 </FONT></B>
 This is only done when specific option values are requested, not for &quot;<A HREF="various.html#:verbose">:verbose</A>
 set all&quot; or &quot;<A HREF="various.html#:verbose">:verbose</A> set&quot; without an argument.
 When the option was set by hand there is no &quot;Last set&quot; message.
 When the option was set while executing a function, user command or
 <A HREF="autocmd.html#autocommand">autocommand</A>, the <A HREF="usr_41.html#script">script</A> in which <A HREF="motion.html#it">it</A> was defined is reported.
 A few special texts:
-<B><FONT color="#54A23D">	Last set from modeline </FONT></B>
+<B><FONT color="#54A23D">	Last set from modeline line 1 </FONT></B>
 		Option was set in a |<A HREF="#modeline">modeline</A>|.
 <B><FONT color="#54A23D">	Last set from --cmd argument </FONT></B>
 		Option was set with command line argument |<A HREF="starting.html#--cmd">--cmd</A>| or +.
@@ -627,8 +627,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'ambiwidth'"></A><B>'ambiwidth'</B>* *<A NAME="'ambw'"></A><B>'ambw'</B>*
 <A HREF="#'ambiwidth'">'ambiwidth'</A> <A HREF="#'ambw'">'ambw'</A>	<A HREF="eval.html#string">string</A> (default: &quot;single&quot;)
 			global
-			{only available when compiled with the |<A HREF="various.html#+multi_byte">+multi_byte</A>|
-			feature}
 	Tells Vim what to <A HREF="diff.html#do">do</A> with characters with East Asian Width Class
 	Ambiguous (such <A HREF="motion.html#as">as</A> Euro, Registered Sign, Copyright Sign, Greek
 	letters, Cyrillic letters).
@@ -665,8 +663,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 			*<A NAME="'autochdir'"></A><B>'autochdir'</B>* *<A NAME="'acd'"></A><B>'acd'</B>* *<A NAME="'noautochdir'"></A><B>'noautochdir'</B>* *<A NAME="'noacd'"></A><B>'noacd'</B>*
 <A HREF="#'autochdir'">'autochdir'</A> <A HREF="#'acd'">'acd'</A>	<A HREF="#boolean">boolean</A> (default off)
 			global
-			{only available when compiled with <A HREF="motion.html#it">it</A>, use
-			exists(&quot;+autochdir&quot;) to check}
 	When on, Vim will change the current working directory whenever you
 	open a file, switch <A HREF="windows.html#buffers">buffers</A>, delete a buffer or open/close a <A HREF="windows.html#window">window</A>.
 	It will change to the directory containing the file which was opened
@@ -738,7 +734,9 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 			global or local to buffer |<A HREF="#global-local">global-local</A>|
 	When a file has been detected to have been changed outside of Vim and
 	<A HREF="motion.html#it">it</A> has not been changed inside of Vim, automatically read <A HREF="motion.html#it">it</A> again.
-	When the file has been deleted this is not done.  |<A HREF="editing.html#timestamp">timestamp</A>|
+	When the file has been deleted this is not done, so you have the text
+	from before <A HREF="motion.html#it">it</A> was deleted.  When <A HREF="motion.html#it">it</A> appears again then <A HREF="motion.html#it">it</A> is read.
+	|<A HREF="editing.html#timestamp">timestamp</A>|
 	If this option has a local value, use this command to switch back to
 	using the global value:
 <B>		:set autoread&lt;</B>
@@ -753,6 +751,8 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 	'{A-Z0-9}, or `{A-Z0-9} command takes one to another file.
 	Note that for some commands the <A HREF="#'autowrite'">'autowrite'</A> option is not used, see
 	<A HREF="#'autowriteall'">'autowriteall'</A> for that.
+	Some <A HREF="windows.html#buffers">buffers</A> will not be written, specifically when <A HREF="#'buftype'">'buftype'</A> is
+	&quot;nowrite&quot;, &quot;nofile&quot;, &quot;<A HREF="nvim_terminal_emulator.html#terminal">terminal</A>&quot; or &quot;prompt&quot;.
 
 
 			 *<A NAME="'autowriteall'"></A><B>'autowriteall'</B>* *<A NAME="'awa'"></A><B>'awa'</B>* *<A NAME="'noautowriteall'"></A><B>'noautowriteall'</B>* *<A NAME="'noawa'"></A><B>'noawa'</B>*
@@ -790,13 +790,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 <B>		:set background&amp;</B>
  	Vim will guess the value.  In the <A HREF="gui.html#GUI">GUI</A> this should work correctly,
 	in other cases Vim might not be able to guess the right value.
-
-	When the |<A HREF="intro.html#t_RB">t_RB</A>| option is set, Vim will use <A HREF="motion.html#it">it</A> to request the background
-	color from the <A HREF="nvim_terminal_emulator.html#terminal">terminal</A>.  If the returned RGB value is dark/light and
-	<A HREF="#'background'">'background'</A> is not dark/light, <A HREF="#'background'">'background'</A> will be set and the
-	screen is redrawn.  This may have side effects, make t_BG empty in
-	your .vimrc if you suspect this problem.  The response to |<A HREF="intro.html#t_RB">t_RB</A>| can
-	be found in |<A HREF="intro.html#v:termrbgresp">v:termrbgresp</A>|.
 
 	When starting the <A HREF="gui.html#GUI">GUI</A>, the default value for <A HREF="#'background'">'background'</A> will be
 	&quot;light&quot;.  When the value is not set in the <A HREF="gui.html#gvimrc">gvimrc</A>, and Vim detects
@@ -986,8 +979,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'backupskip'"></A><B>'backupskip'</B>* *<A NAME="'bsk'"></A><B>'bsk'</B>*
 <A HREF="#'backupskip'">'backupskip'</A> <A HREF="#'bsk'">'bsk'</A>	<A HREF="eval.html#string">string</A>	(default: &quot;/tmp/*,$TMPDIR/*,$TMP/*,$TEMP/*&quot;)
 			global
-			{not available when compiled without the |<A HREF="various.html#+wildignore">+wildignore</A>|
-			feature}
 	A <A HREF="eval.html#list">list</A> of file patterns.  When one of the patterns matches with the
 	name of the file which is written, no <A HREF="editing.html#backup">backup</A> file is created.  Both
 	the specified file name and the full path name of the file are used.
@@ -1097,8 +1088,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 							*<A NAME="'bomb'"></A><B>'bomb'</B>* *<A NAME="'nobomb'"></A><B>'nobomb'</B>*
 <A HREF="#'bomb'">'bomb'</A>			<A HREF="#boolean">boolean</A>	(default off)
 			local to buffer
-			{only available when compiled with the |<A HREF="various.html#+multi_byte">+multi_byte</A>|
-			feature}
 	When <A HREF="editing.html#writing">writing</A> a file and the following conditions are met, a BOM (Byte
 	Order <A HREF="motion.html#Mark">Mark</A>) is prepended to the file:
 	- this option is on
@@ -1117,10 +1106,8 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 
 
 						*<A NAME="'breakat'"></A><B>'breakat'</B>* *<A NAME="'brk'"></A><B>'brk'</B>*
-<A HREF="#'breakat'">'breakat'</A> <A HREF="#'brk'">'brk'</A>		<A HREF="eval.html#string">string</A>	(default &quot; ^<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="460f6706">[email&#160;protected]</a>*-+;:,./?&quot;)
+<A HREF="#'breakat'">'breakat'</A> <A HREF="#'brk'">'brk'</A>		<A HREF="eval.html#string">string</A>	(default &quot; ^<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c68fe786">[email&#160;protected]</a>*-+;:,./?&quot;)
 			global
-			{not available when compiled without the |<A HREF="various.html#+linebreak">+linebreak</A>|
-			feature}
 	This option lets you choose which characters might cause a line
 	break if <A HREF="#'linebreak'">'linebreak'</A> is on.  Only works for ASCII characters.
 
@@ -1128,8 +1115,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'breakindent'"></A><B>'breakindent'</B>* *<A NAME="'bri'"></A><B>'bri'</B>*
 <A HREF="#'breakindent'">'breakindent'</A> <A HREF="#'bri'">'bri'</A>	<A HREF="#boolean">boolean</A> (default off)
 			local to <A HREF="windows.html#window">window</A>
-			{not available when compiled without the |<A HREF="various.html#+linebreak">+linebreak</A>|
-			feature}
 	Every wrapped line will continue visually indented (same amount of
 	space <A HREF="motion.html#as">as</A> the beginning of that line), thus preserving horizontal blocks
 	of text.
@@ -1138,8 +1123,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'breakindentopt'"></A><B>'breakindentopt'</B>* *<A NAME="'briopt'"></A><B>'briopt'</B>*
 <A HREF="#'breakindentopt'">'breakindentopt'</A> <A HREF="#'briopt'">'briopt'</A> <A HREF="eval.html#string">string</A> (default empty)
 			local to <A HREF="windows.html#window">window</A>
-			{not available when compiled without the |<A HREF="various.html#+linebreak">+linebreak</A>|
-			feature}
 	Settings for <A HREF="#'breakindent'">'breakindent'</A>. It can consist of the following optional
 	items and must be separated by a comma:
 		min:{n}	    Minimum text width that will be kept after
@@ -1152,7 +1135,7 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 			    characters.  It permits dynamic French <A HREF="motion.html#paragraph">paragraph</A>
 			    indentation (negative) or emphasizing the line
 			    continuation (positive).
-		sbr	    Display the <A HREF="#'showbreak'">'showbreak'</A> value before applying the 
+		sbr	    Display the <A HREF="#'showbreak'">'showbreak'</A> value before applying the
 			    additional indent.
 	The default value for min is 20 and <A HREF="intro.html#shift">shift</A> is 0.
 
@@ -1160,7 +1143,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'browsedir'"></A><B>'browsedir'</B>* *<A NAME="'bsdir'"></A><B>'bsdir'</B>*
 <A HREF="#'browsedir'">'browsedir'</A> <A HREF="#'bsdir'">'bsdir'</A>	<A HREF="eval.html#string">string</A>	(default: &quot;last&quot;)
 			global
-			{only for Mac and Win32 GUI}
 	Which directory to use for the file browser:
 	   last		Use same directory <A HREF="motion.html#as">as</A> with last file browser, where a
 			file was opened or saved.
@@ -1172,8 +1154,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'bufhidden'"></A><B>'bufhidden'</B>* *<A NAME="'bh'"></A><B>'bh'</B>*
 <A HREF="#'bufhidden'">'bufhidden'</A> <A HREF="#'bh'">'bh'</A>	<A HREF="eval.html#string">string</A> (default: &quot;&quot;)
 			local to buffer
-			{not available when compiled without the |<A HREF="various.html#+quickfix">+quickfix</A>|
-			feature}
 	This option specifies what happens when a buffer is no longer
 	displayed in a <A HREF="windows.html#window">window</A>:
 	  &lt;empty&gt;	follow the global <A HREF="#'hidden'">'hidden'</A> option
@@ -1253,8 +1233,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'casemap'"></A><B>'casemap'</B>* *<A NAME="'cmp'"></A><B>'cmp'</B>*
 <A HREF="#'casemap'">'casemap'</A> <A HREF="#'cmp'">'cmp'</A>		<A HREF="eval.html#string">string</A>	(default: &quot;internal,keepascii&quot;)
 			global
-			{only available when compiled with the |<A HREF="various.html#+multi_byte">+multi_byte</A>|
-			feature}
 	Specifies details about <A HREF="change.html#changing">changing</A> the <A HREF="change.html#case">case</A> of letters.  It may contain
 	these words, separated by a comma:
 	internal	Use internal <A HREF="change.html#case">case</A> <A HREF="map.html#mapping">mapping</A> <A HREF="eval.html#functions">functions</A>, the current
@@ -1269,8 +1247,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'cdpath'"></A><B>'cdpath'</B>* *<A NAME="'cd'"></A><B>'cd'</B>* *<A NAME="E344"></A><B>E344</B>* *<A NAME="E346"></A><B>E346</B>*
 <A HREF="#'cdpath'">'cdpath'</A> <A HREF="#'cd'">'cd'</A>		<A HREF="eval.html#string">string</A>	(default: equivalent to $CDPATH or &quot;,,&quot;)
 			global
-			{not available when compiled without the
-			|<A HREF="various.html#+file_in_path">+file_in_path</A>| feature}
 	This is a <A HREF="eval.html#list">list</A> of directories which will be searched when using the
 	|<A HREF="editing.html#:cd">:cd</A>| and |<A HREF="editing.html#:lcd">:lcd</A>| commands, provided that the directory being searched
 	for has a relative path, not an absolute part starting with &quot;<A HREF="pattern.html#/">/</A>&quot;, &quot;./&quot;
@@ -1304,15 +1280,14 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'channel'"></A><B>'channel'</B>*
 <A HREF="#'channel'">'channel'</A>		number (default: 0)
 			local to buffer
-	|<A HREF="intro.html#Channel">Channel</A>| connected to the buffer. Currently only used by
-	|<A HREF="nvim_terminal_emulator.html#terminal-emulator">terminal-emulator</A>|. Is 0 if no terminal is open. Cannot be changed.
+	|<A HREF="channel.html#channel">channel</A>| connected to the buffer, or 0 if no channel is connected.
+	In a |<A HREF="various.html#:terminal">:terminal</A>| buffer this is the terminal <A HREF="channel.html#channel">channel</A>.
+	Read-only.
 
 
 				*<A NAME="'charconvert'"></A><B>'charconvert'</B>* *<A NAME="'ccv'"></A><B>'ccv'</B>* *<A NAME="E202"></A><B>E202</B>* *<A NAME="E214"></A><B>E214</B>* *<A NAME="E513"></A><B>E513</B>*
 <A HREF="#'charconvert'">'charconvert'</A> <A HREF="#'ccv'">'ccv'</A>	<A HREF="eval.html#string">string</A> (default &quot;&quot;)
 			global
-			{only available when compiled with the |<A HREF="various.html#+multi_byte">+multi_byte</A>|
-			and |<A HREF="various.html#+eval">+eval</A>| features}
 	An <A HREF="eval.html#expression">expression</A> that is used for character encoding conversion.  It is
 	evaluated when a file that is to be read or has been written has a
 	different encoding from what is desired.
@@ -1440,8 +1415,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'colorcolumn'"></A><B>'colorcolumn'</B>* *<A NAME="'cc'"></A><B>'cc'</B>*
 <A HREF="#'colorcolumn'">'colorcolumn'</A> <A HREF="#'cc'">'cc'</A>	<A HREF="eval.html#string">string</A>	(default &quot;&quot;)
 			local to <A HREF="windows.html#window">window</A>
-			{not available when compiled without the |<A HREF="various.html#+syntax">+syntax</A>|
-			feature}
 	<A HREF="#'colorcolumn'">'colorcolumn'</A> is a comma separated <A HREF="eval.html#list">list</A> of screen columns that are
 	highlighted with ColorColumn |<A HREF="syntax.html#hl-ColorColumn">hl-ColorColumn</A>|.  Useful to align
 	text.  Will make screen redrawing slower.
@@ -1485,8 +1458,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 					*<A NAME="'commentstring'"></A><B>'commentstring'</B>* *<A NAME="'cms'"></A><B>'cms'</B>* *<A NAME="E537"></A><B>E537</B>*
 <A HREF="#'commentstring'">'commentstring'</A> <A HREF="#'cms'">'cms'</A>	<A HREF="eval.html#string">string</A>	(default &quot;/*&#37;s*/&quot;)
 			local to buffer
-			{not available when compiled without the |<A HREF="various.html#+folding">+folding</A>|
-			feature}
 	A <A HREF="autocmd.html#template">template</A> for a comment.  The &quot;&#37;s&quot; in the value is replaced with the
 	comment text.  Currently only used to add markers for <A HREF="fold.html#folding">folding</A>, see
 	|<A HREF="fold.html#fold-marker">fold-marker</A>|.
@@ -1531,8 +1502,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'completefunc'"></A><B>'completefunc'</B>* *<A NAME="'cfu'"></A><B>'cfu'</B>*
 <A HREF="#'completefunc'">'completefunc'</A> <A HREF="#'cfu'">'cfu'</A>	<A HREF="eval.html#string">string</A>	(default: empty)
 			local to buffer
-			{not available when compiled without the |<A HREF="various.html#+eval">+eval</A>|
-			or |<A HREF="various.html#+insert_expand">+insert_expand</A>| features}
 	This option specifies a function to be used for <A HREF="insert.html#Insert">Insert</A> mode completion
 	with CTRL-X CTRL-U. |<A HREF="insert.html#i_CTRL-X_CTRL-U">i_CTRL-X_CTRL-U</A>|
 	See |<A HREF="insert.html#complete-functions">complete-functions</A>| for an explanation of how the function is
@@ -1544,8 +1513,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'completeopt'"></A><B>'completeopt'</B>* *<A NAME="'cot'"></A><B>'cot'</B>*
 <A HREF="#'completeopt'">'completeopt'</A> <A HREF="#'cot'">'cot'</A>	<A HREF="eval.html#string">string</A>	(default: &quot;menu,preview&quot;)
 			global
-			{not available when compiled without the
-			|<A HREF="various.html#+insert_expand">+insert_expand</A>| feature}
 	A comma separated <A HREF="eval.html#list">list</A> of <A HREF="#options">options</A> for <A HREF="insert.html#Insert">Insert</A> mode completion
 	|<A HREF="insert.html#ins-completion">ins-completion</A>|.  The supported values are:
 
@@ -1598,8 +1565,8 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 
 
 
-<A HREF="#'conceallevel'">'conceallevel'</A> <A HREF="#'cole'">'cole'</A>		*<A NAME="'conceallevel'"></A><B>'conceallevel'</B>* *<A NAME="'cole'"></A><B>'cole'</B>*
-			number (default 0)
+						*<A NAME="'conceallevel'"></A><B>'conceallevel'</B>* *<A NAME="'cole'"></A><B>'cole'</B>*
+<A HREF="#'conceallevel'">'conceallevel'</A> <A HREF="#'cole'">'cole'</A>	number (default 0)
 			local to <A HREF="windows.html#window">window</A>
 	Determine how text with the &quot;conceal&quot; <A HREF="syntax.html#syntax">syntax</A> attribute |<A HREF="syntax.html#:syn-conceal">:syn-conceal</A>|
 	is shown:
@@ -1678,15 +1645,15 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 			the text after the '&#124;' is interpreted <A HREF="motion.html#as">as</A> the next
 			command.  Use a <A HREF="visual.html#CTRL-V">CTRL-V</A> instead of a <A HREF="intro.html#backslash">backslash</A> to
 			include the '&#124;' in the <A HREF="map.html#mapping">mapping</A>.  Applies to all
-			<A HREF="map.html#mapping">mapping</A>, abbreviation, menu and autocmd commands.
+			<A HREF="map.html#mapping">mapping</A>, abbreviation, menu and <A HREF="autocmd.html#autocmd">autocmd</A> commands.
 			See also |<A HREF="map.html#map_bar">map_bar</A>|.
 
 								*<A NAME="cpo-B"></A><B>cpo-B</B>*
 		<A HREF="motion.html#B">B</A>	A <A HREF="intro.html#backslash">backslash</A> has no special meaning in mappings,
-			<A HREF="map.html#abbreviations">abbreviations</A> and the &quot;to&quot; part of the menu commands.
-			Remove this flag to be able to use a <A HREF="intro.html#backslash">backslash</A> like a
-			<A HREF="visual.html#CTRL-V">CTRL-V</A>.  For example, the command &quot;<A HREF="map.html#:map">:map</A> X \&lt;Esc&gt;&quot;
-			results in X being mapped to:
+			<A HREF="map.html#abbreviations">abbreviations</A>, user commands and the &quot;to&quot; part of the
+			menu commands.  Remove this flag to be able to use a
+			<A HREF="intro.html#backslash">backslash</A> like a <A HREF="visual.html#CTRL-V">CTRL-V</A>.  For example, the command
+			&quot;<A HREF="map.html#:map">:map</A> X \&lt;Esc&gt;&quot; results in X being mapped to:
 				'<A HREF="motion.html#B">B</A>' included:	&quot;\^[&quot;	 (^[ is a real <A HREF="intro.html#&lt;Esc&gt;">&lt;Esc&gt;</A>)
 				'<A HREF="motion.html#B">B</A>' excluded:	&quot;<A HREF="intro.html#&lt;Esc&gt;">&lt;Esc&gt;</A>&quot;  (5 characters)
 
@@ -1723,7 +1690,7 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 								*<A NAME="cpo-E"></A><B>cpo-E</B>*
 		<A HREF="motion.html#E">E</A>	It is an error when using &quot;<A HREF="change.html#y">y</A>&quot;, &quot;<A HREF="change.html#d">d</A>&quot;, &quot;<A HREF="change.html#c">c</A>&quot;, &quot;<A HREF="change.html#g~">g~</A>&quot;, &quot;<A HREF="change.html#gu">gu</A>&quot; or
 			&quot;<A HREF="change.html#gU">gU</A>&quot; on an Empty region.  The operators only work when
-			at least one character is to be operate on.  Example:
+			at least one character is to be operated on.  Example:
 			This makes &quot;y0&quot; fail in the first column.
 
 								*<A NAME="cpo-f"></A><B>cpo-f</B>*
@@ -1985,8 +1952,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 			*<A NAME="'cursorcolumn'"></A><B>'cursorcolumn'</B>* *<A NAME="'cuc'"></A><B>'cuc'</B>* *<A NAME="'nocursorcolumn'"></A><B>'nocursorcolumn'</B>* *<A NAME="'nocuc'"></A><B>'nocuc'</B>*
 <A HREF="#'cursorcolumn'">'cursorcolumn'</A> <A HREF="#'cuc'">'cuc'</A>	<A HREF="#boolean">boolean</A>	(default off)
 			local to <A HREF="windows.html#window">window</A>
-			{not available when compiled without the |<A HREF="various.html#+syntax">+syntax</A>|
-			feature}
 	Highlight the screen column of the cursor with CursorColumn
 	|<A HREF="syntax.html#hl-CursorColumn">hl-CursorColumn</A>|.  Useful to align text.  Will make screen redrawing
 	slower.
@@ -2000,8 +1965,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 			*<A NAME="'cursorline'"></A><B>'cursorline'</B>* *<A NAME="'cul'"></A><B>'cul'</B>* *<A NAME="'nocursorline'"></A><B>'nocursorline'</B>* *<A NAME="'nocul'"></A><B>'nocul'</B>*
 <A HREF="#'cursorline'">'cursorline'</A> <A HREF="#'cul'">'cul'</A>	<A HREF="#boolean">boolean</A>	(default off)
 			local to <A HREF="windows.html#window">window</A>
-			{not available when compiled without the |<A HREF="various.html#+syntax">+syntax</A>|
-			feature}
 	Highlight the screen line of the cursor with CursorLine
 	|<A HREF="syntax.html#hl-CursorLine">hl-CursorLine</A>|.  Useful to easily spot the cursor.  Will make screen
 	redrawing slower.
@@ -2044,8 +2007,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 			*<A NAME="'delcombine'"></A><B>'delcombine'</B>* *<A NAME="'deco'"></A><B>'deco'</B>* *<A NAME="'nodelcombine'"></A><B>'nodelcombine'</B>* *<A NAME="'nodeco'"></A><B>'nodeco'</B>*
 <A HREF="#'delcombine'">'delcombine'</A> <A HREF="#'deco'">'deco'</A>	<A HREF="#boolean">boolean</A> (default off)
 			global
-			{only available when compiled with the |<A HREF="various.html#+multi_byte">+multi_byte</A>|
-			feature}
 	If editing <A HREF="mbyte.html#Unicode">Unicode</A> and this option is set, backspace and <A HREF="intro.html#Normal">Normal</A> mode
 	&quot;<A HREF="change.html#x">x</A>&quot; delete each combining character on its own.  When <A HREF="motion.html#it">it</A> is off (the
 	default) the character along with its combining characters are
@@ -2114,6 +2075,15 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 				When omitted a context of six lines is used.
 				See |<A HREF="fold.html#fold-diff">fold-diff</A>|.
 
+		iblank		Ignore changes where lines are all blank.  Adds
+				the &quot;-B&quot; flag to the &quot;<A HREF="diff.html#diff">diff</A>&quot; command if
+				<A HREF="#'diffexpr'">'diffexpr'</A> is empty.  Check the documentation
+				of the &quot;<A HREF="diff.html#diff">diff</A>&quot; command for what this does
+				exactly.
+				NOTE: the <A HREF="diff.html#diff">diff</A> <A HREF="windows.html#windows">windows</A> will get out of sync,
+				because no differences between blank lines are
+				taken into account.
+
 		icase		Ignore changes in <A HREF="change.html#case">case</A> of text.  &quot;<A HREF="insert.html#a">a</A>&quot; and &quot;<A HREF="insert.html#A">A</A>&quot;
 				are considered the same.  Adds the &quot;<A HREF="starting.html#-i">-i</A>&quot; flag
 				to the &quot;<A HREF="diff.html#diff">diff</A>&quot; command if <A HREF="#'diffexpr'">'diffexpr'</A> is empty.
@@ -2125,11 +2095,26 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 				exactly.  It should ignore adding trailing
 				white space, but not leading white space.
 
+		iwhiteall	Ignore all white space changes.  Adds
+				the &quot;<A HREF="starting.html#-w">-w</A>&quot; flag to the &quot;<A HREF="diff.html#diff">diff</A>&quot; command if
+				<A HREF="#'diffexpr'">'diffexpr'</A> is empty.  Check the documentation
+				of the &quot;<A HREF="diff.html#diff">diff</A>&quot; command for what this does
+				exactly.
+
+		iwhiteeol	Ignore white space changes at end of line.
+				Adds the &quot;<A HREF="starting.html#-Z">-Z</A>&quot; flag to the &quot;<A HREF="diff.html#diff">diff</A>&quot; command if
+				<A HREF="#'diffexpr'">'diffexpr'</A> is empty.  Check the documentation
+				of the &quot;<A HREF="diff.html#diff">diff</A>&quot; command for what this does
+				exactly.
+
 		horizontal	Start <A HREF="diff.html#diff">diff</A> mode with horizontal splits (unless
 				explicitly specified otherwise).
 
 		vertical	Start <A HREF="diff.html#diff">diff</A> mode with vertical splits (unless
 				explicitly specified otherwise).
+
+		hiddenoff	Do not use <A HREF="diff.html#diff">diff</A> mode for a buffer when <A HREF="motion.html#it">it</A>
+				becomes hidden.
 
 		foldcolumn:{n}	Set the <A HREF="#'foldcolumn'">'foldcolumn'</A> option to {n} when
 				starting <A HREF="diff.html#diff">diff</A> mode.  Without this 2 is used.
@@ -2144,8 +2129,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 				     *<A NAME="'digraph'"></A><B>'digraph'</B>* *<A NAME="'dg'"></A><B>'dg'</B>* *<A NAME="'nodigraph'"></A><B>'nodigraph'</B>* *<A NAME="'nodg'"></A><B>'nodg'</B>*
 <A HREF="#'digraph'">'digraph'</A> <A HREF="#'dg'">'dg'</A>		<A HREF="#boolean">boolean</A>	(default off)
 			global
-			{not available when compiled without the |<A HREF="various.html#+digraphs">+digraphs</A>|
-			feature}
 	Enable the entering of <A HREF="digraph.html#digraphs">digraphs</A> in <A HREF="insert.html#Insert">Insert</A> mode with {char1} <A HREF="motion.html#&lt;BS&gt;">&lt;BS&gt;</A>
 	{char2}.  See |<A HREF="digraph.html#digraphs">digraphs</A>|.
 
@@ -2198,7 +2181,7 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 
 
 					*<A NAME="'display'"></A><B>'display'</B>* *<A NAME="'dy'"></A><B>'dy'</B>*
-<A HREF="#'display'">'display'</A> <A HREF="#'dy'">'dy'</A>		<A HREF="eval.html#string">string</A>	(default &quot;lastline&quot;, <A HREF="intro.html#Vi">Vi</A> default: &quot;&quot;)
+<A HREF="#'display'">'display'</A> <A HREF="#'dy'">'dy'</A>		<A HREF="eval.html#string">string</A>	(default &quot;lastline,msgsep&quot;, <A HREF="intro.html#Vi">Vi</A> default: &quot;&quot;)
 			global
 	Change the way text is displayed.  This is comma separated <A HREF="eval.html#list">list</A> of
 	flags:
@@ -2210,11 +2193,10 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 			column of the last screen line.  Overrules &quot;lastline&quot;.
 	uhex		Show unprintable characters hexadecimal <A HREF="motion.html#as">as</A> &lt;xx&gt;
 			instead of using ^C and ~C.
-	msgsep		When showing <A HREF="message.html#messages">messages</A> longer than <A HREF="#'cmdheight'">'cmdheight'</A> lines,
-			only scroll the message lines and not the entire
-			screen. This also shows a separator line filled with
-			chars determined by <A HREF="#'fillchars'">'fillchars'</A> option, and
-			highlighted with the |<A HREF="intro.html#MsgSeparator">MsgSeparator</A>| group.
+	msgsep		When showing <A HREF="message.html#messages">messages</A> longer than <A HREF="#'cmdheight'">'cmdheight'</A>, only
+			scroll the message lines, not the entire screen. The
+			separator line is decorated by |<A HREF="syntax.html#hl-MsgSeparator">hl-MsgSeparator</A>| and
+			the &quot;msgsep&quot; flag of <A HREF="#'fillchars'">'fillchars'</A>.
 
 	When neither &quot;lastline&quot; nor &quot;truncate&quot; is included, a last line that
 	doesn't fit is replaced with &quot;<A HREF="repeat.html#@">@</A>&quot; lines.
@@ -2232,21 +2214,16 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'emoji'"></A><B>'emoji'</B>* *<A NAME="'emo'"></A><B>'emo'</B>*
 <A HREF="#'emoji'">'emoji'</A> <A HREF="#'emo'">'emo'</A>	<A HREF="#boolean">boolean</A> (default: on)
 			global
-			{not in Vi}
-			{only available when compiled with the |<A HREF="various.html#+multi_byte">+multi_byte</A>|
-			feature}
 	When on all <A HREF="mbyte.html#Unicode">Unicode</A> emoji characters are considered to be full width.
 
 
 
 					*<A NAME="'encoding'"></A><B>'encoding'</B>* *<A NAME="'enc'"></A><B>'enc'</B>* *<A NAME="E543"></A><B>E543</B>*
-<A HREF="#'encoding'">'encoding'</A> <A HREF="#'enc'">'enc'</A>	Removed. |<A HREF="vim_diff.html#vim-differences">vim-differences</A>| {Nvim}
-	Nvim always uses <A HREF="mbyte.html#UTF-8">UTF-8</A> internally. <A HREF="msgpack_rpc.html#RPC">RPC</A> communication
-	(remote plugins/GUIs) must use <A HREF="mbyte.html#UTF-8">UTF-8</A> strings.
+<A HREF="#'encoding'">'encoding'</A> <A HREF="#'enc'">'enc'</A>
+	String-encoding used internally and for |<A HREF="msgpack_rpc.html#RPC">RPC</A>| communication.
+	Always <A HREF="mbyte.html#UTF-8">UTF-8</A>.
 
-	The character encoding of files can be different than <A HREF="mbyte.html#UTF-8">UTF-8</A>.
-	This is specified with <A HREF="#'fileencoding'">'fileencoding'</A>.  The conversion is done with
-	<A HREF="eval.html#iconv()">iconv()</A> or <A HREF="motion.html#as">as</A> specified with <A HREF="#'charconvert'">'charconvert'</A>.
+	See <A HREF="#'fileencoding'">'fileencoding'</A> to <A HREF="intro.html#control">control</A> file-content encoding.
 
 
 			*<A NAME="'endofline'"></A><B>'endofline'</B>* *<A NAME="'eol'"></A><B>'eol'</B>* *<A NAME="'noendofline'"></A><B>'noendofline'</B>* *<A NAME="'noeol'"></A><B>'noeol'</B>*
@@ -2310,8 +2287,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'errorfile'"></A><B>'errorfile'</B>* *<A NAME="'ef'"></A><B>'ef'</B>*
 <A HREF="#'errorfile'">'errorfile'</A> <A HREF="#'ef'">'ef'</A>	<A HREF="eval.html#string">string</A>	(default: &quot;errors.err&quot;)
 			global
-			{not available when compiled without the |<A HREF="various.html#+quickfix">+quickfix</A>|
-			feature}
 	Name of the errorfile for the QuickFix mode (see |<A HREF="quickfix.html#:cf">:cf</A>|).
 	When the &quot;<A HREF="starting.html#-q">-q</A>&quot; command-line argument is used, <A HREF="#'errorfile'">'errorfile'</A> is set to the
 	following argument.  See |<A HREF="starting.html#-q">-q</A>|.
@@ -2325,8 +2300,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'errorformat'"></A><B>'errorformat'</B>* *<A NAME="'efm'"></A><B>'efm'</B>*
 <A HREF="#'errorformat'">'errorformat'</A> <A HREF="#'efm'">'efm'</A>	<A HREF="eval.html#string">string</A>	(default is very long)
 			global or local to buffer |<A HREF="#global-local">global-local</A>|
-			{not available when compiled without the |<A HREF="various.html#+quickfix">+quickfix</A>|
-			feature}
 	Scanf-like description of the format for the lines in the error file
 	(see |<A HREF="quickfix.html#errorformat">errorformat</A>|).
 
@@ -2372,16 +2345,16 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 				*<A NAME="'fileencoding'"></A><B>'fileencoding'</B>* *<A NAME="'fenc'"></A><B>'fenc'</B>* *<A NAME="E213"></A><B>E213</B>*
 <A HREF="#'fileencoding'">'fileencoding'</A> <A HREF="#'fenc'">'fenc'</A>	<A HREF="eval.html#string">string</A> (default: &quot;&quot;)
 			local to buffer
-			{only available when compiled with the |<A HREF="various.html#+multi_byte">+multi_byte</A>|
-			feature}
-	Sets the character encoding for the file of this buffer.
+	File-content encoding for the current buffer. Conversion is done with
+	<A HREF="eval.html#iconv()">iconv()</A> or <A HREF="motion.html#as">as</A> specified with <A HREF="#'charconvert'">'charconvert'</A>.
 
-	When <A HREF="#'fileencoding'">'fileencoding'</A> is different from &quot;<A HREF="mbyte.html#utf-8">utf-8</A>&quot;, conversion will be
-	done when <A HREF="editing.html#writing">writing</A> the file.  For reading see below.
-	When <A HREF="#'fileencoding'">'fileencoding'</A> is empty, the file will be saved with <A HREF="mbyte.html#utf-8">utf-8</A>
-	encoding.  (no conversion when reading or <A HREF="editing.html#writing">writing</A> a file).
-		WARNING: Conversion to a non-Unicode encoding can cause loss of
-		information! 
+	When <A HREF="#'fileencoding'">'fileencoding'</A> is not <A HREF="mbyte.html#UTF-8">UTF-8</A>, conversion will be done when
+	<A HREF="editing.html#writing">writing</A> the file.  For reading see below.
+	When <A HREF="#'fileencoding'">'fileencoding'</A> is empty, the file will be saved with <A HREF="mbyte.html#UTF-8">UTF-8</A>
+	encoding (no conversion when reading or <A HREF="editing.html#writing">writing</A> a file).
+
+	WARNING: Conversion to a non-Unicode encoding can cause loss of
+	information!
 
 	See |<A HREF="mbyte.html#encoding-names">encoding-names</A>| for the possible values.  Additionally, values may be
 	specified that can be handled by the converter, see
@@ -2408,14 +2381,12 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 	written.  If you <A HREF="diff.html#do">do</A> set <A HREF="#'fenc'">'fenc'</A> in a <A HREF="#modeline">modeline</A>, you might want to set
 	<A HREF="#'nomodified'">'nomodified'</A> to avoid not being able to &quot;<A HREF="editing.html#:q">:q</A>&quot;.
 
-	This option can not be changed when <A HREF="#'modifiable'">'modifiable'</A> is off.
+	This option cannot be changed when <A HREF="#'modifiable'">'modifiable'</A> is off.
 
 
 					*<A NAME="'fileencodings'"></A><B>'fileencodings'</B>* *<A NAME="'fencs'"></A><B>'fencs'</B>*
 <A HREF="#'fileencodings'">'fileencodings'</A> <A HREF="#'fencs'">'fencs'</A>	<A HREF="eval.html#string">string</A> (default: &quot;ucs-bom,utf-8,default,latin1&quot;)
 			global
-			{only available when compiled with the |<A HREF="various.html#+multi_byte">+multi_byte</A>|
-			feature}
 	This is a <A HREF="eval.html#list">list</A> of character encodings considered when starting to edit
 	an existing file.  When a file is read, Vim tries to use the first
 	mentioned character encoding.  If an error is detected, the next one
@@ -2483,7 +2454,7 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 	<A HREF="#'fileformats'">'fileformats'</A> is not empty and <A HREF="#'binary'">'binary'</A> is off.
 	When this option is set, after starting to edit a file, the <A HREF="#'modified'">'modified'</A>
 	option is set, because the file would be different when written.
-	This option can not be changed when <A HREF="#'modifiable'">'modifiable'</A> is off.
+	This option cannot be changed when <A HREF="#'modifiable'">'modifiable'</A> is off.
 
 
 					*<A NAME="'fileformats'"></A><B>'fileformats'</B>* *<A NAME="'ffs'"></A><B>'ffs'</B>*
@@ -2577,8 +2548,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'fillchars'"></A><B>'fillchars'</B>* *<A NAME="'fcs'"></A><B>'fcs'</B>*
 <A HREF="#'fillchars'">'fillchars'</A> <A HREF="#'fcs'">'fcs'</A>	<A HREF="eval.html#string">string</A>	(default &quot;&quot;)
 			global
-			{not available when compiled without the |<A HREF="various.html#+windows">+windows</A>|
-			and |<A HREF="various.html#+folding">+folding</A>| features}
 	Characters to fill the statuslines and vertical separators.
 	It is a comma separated <A HREF="eval.html#list">list</A> of items:
 
@@ -2589,6 +2558,7 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 	  fold:c	'·' or '<A HREF="motion.html#-">-</A>'	filling <A HREF="#'foldtext'">'foldtext'</A>
 	  diff:c	'<A HREF="motion.html#-">-</A>'		deleted lines of the <A HREF="#'diff'">'diff'</A> option
 	  msgsep:c	'' ''		message separator <A HREF="#'display'">'display'</A>
+	  eob:c		'<A HREF="change.html#~">~</A>'		empty lines at the end of a buffer
 
 	Any one that is omitted will fall back to the default.  For &quot;stl&quot; and
 	&quot;stlnc&quot; the space will be used when there is highlighting, '<A HREF="motion.html#^">^</A>' or '<A HREF="change.html#=">=</A>'
@@ -2611,12 +2581,12 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 	  vert:c	VertSplit		|<A HREF="syntax.html#hl-VertSplit">hl-VertSplit</A>|
 	  fold:c	Folded			|<A HREF="syntax.html#hl-Folded">hl-Folded</A>|
 	  diff:c	DiffDelete		|<A HREF="syntax.html#hl-DiffDelete">hl-DiffDelete</A>|
+	  eob:c		EndOfBuffer		|<A HREF="syntax.html#hl-EndOfBuffer">hl-EndOfBuffer</A>|
 
 
 		*<A NAME="'fixendofline'"></A><B>'fixendofline'</B>* *<A NAME="'fixeol'"></A><B>'fixeol'</B>* *<A NAME="'nofixendofline'"></A><B>'nofixendofline'</B>* *<A NAME="'nofixeol'"></A><B>'nofixeol'</B>*
 <A HREF="#'fixendofline'">'fixendofline'</A> <A HREF="#'fixeol'">'fixeol'</A>	<A HREF="#boolean">boolean</A>	(default on)
 			local to buffer
-			{not in Vi}
 	When <A HREF="editing.html#writing">writing</A> a file and this option is on, <A HREF="intro.html#&lt;EOL&gt;">&lt;EOL&gt;</A> at the end of file
 	will be restored if missing. Turn this option off if you want to
 	preserve the situation from the original file.
@@ -2637,8 +2607,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'foldclose'"></A><B>'foldclose'</B>* *<A NAME="'fcl'"></A><B>'fcl'</B>*
 <A HREF="#'foldclose'">'foldclose'</A> <A HREF="#'fcl'">'fcl'</A>	<A HREF="eval.html#string">string</A> (default &quot;&quot;)
 			global
-			{not available when compiled without the |<A HREF="various.html#+folding">+folding</A>|
-			feature}
 	When set to &quot;all&quot;, a fold is closed when the cursor isn't in <A HREF="motion.html#it">it</A> and
 	its level is higher than <A HREF="#'foldlevel'">'foldlevel'</A>.  Useful if you want <A HREF="fold.html#folds">folds</A> to
 	automatically close when moving out of them.
@@ -2647,8 +2615,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'foldcolumn'"></A><B>'foldcolumn'</B>* *<A NAME="'fdc'"></A><B>'fdc'</B>*
 <A HREF="#'foldcolumn'">'foldcolumn'</A> <A HREF="#'fdc'">'fdc'</A>	number (default 0)
 			local to <A HREF="windows.html#window">window</A>
-			{not available when compiled without the |<A HREF="various.html#+folding">+folding</A>|
-			feature}
 	When non-zero, a column with the specified width is shown at the side
 	of the <A HREF="windows.html#window">window</A> which indicates open and closed <A HREF="fold.html#folds">folds</A>.  The maximum
 	value is 12.
@@ -2658,8 +2624,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 			*<A NAME="'foldenable'"></A><B>'foldenable'</B>* *<A NAME="'fen'"></A><B>'fen'</B>* *<A NAME="'nofoldenable'"></A><B>'nofoldenable'</B>* *<A NAME="'nofen'"></A><B>'nofen'</B>*
 <A HREF="#'foldenable'">'foldenable'</A> <A HREF="#'fen'">'fen'</A>	<A HREF="#boolean">boolean</A> (default on)
 			local to <A HREF="windows.html#window">window</A>
-			{not available when compiled without the |<A HREF="various.html#+folding">+folding</A>|
-			feature}
 	When off, all <A HREF="fold.html#folds">folds</A> are open.  This option can be used to quickly
 	switch between showing all text unfolded and viewing the text with
 	<A HREF="fold.html#folds">folds</A> (including manually opened or closed <A HREF="fold.html#folds">folds</A>).  It can be toggled
@@ -2672,8 +2636,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'foldexpr'"></A><B>'foldexpr'</B>* *<A NAME="'fde'"></A><B>'fde'</B>*
 <A HREF="#'foldexpr'">'foldexpr'</A> <A HREF="#'fde'">'fde'</A>	<A HREF="eval.html#string">string</A> (default: &quot;<A HREF="motion.html#0">0</A>&quot;)
 			local to <A HREF="windows.html#window">window</A>
-			{not available when compiled without the |<A HREF="various.html#+folding">+folding</A>|
-			or |<A HREF="various.html#+eval">+eval</A>| features}
 	The <A HREF="eval.html#expression">expression</A> used for when <A HREF="#'foldmethod'">'foldmethod'</A> is &quot;<A HREF="eval.html#expr">expr</A>&quot;.  It is evaluated
 	for each line to obtain its fold level.  See |<A HREF="fold.html#fold-expr">fold-expr</A>|.
 
@@ -2689,8 +2651,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'foldignore'"></A><B>'foldignore'</B>* *<A NAME="'fdi'"></A><B>'fdi'</B>*
 <A HREF="#'foldignore'">'foldignore'</A> <A HREF="#'fdi'">'fdi'</A>	<A HREF="eval.html#string">string</A> (default: &quot;<A HREF="pattern.html##">#</A>&quot;)
 			local to <A HREF="windows.html#window">window</A>
-			{not available when compiled without the |<A HREF="various.html#+folding">+folding</A>|
-			feature}
 	Used only when <A HREF="#'foldmethod'">'foldmethod'</A> is &quot;indent&quot;.  Lines starting with
 	characters in <A HREF="#'foldignore'">'foldignore'</A> will get their fold level from surrounding
 	lines.  White space is skipped before checking for this character.
@@ -2700,8 +2660,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'foldlevel'"></A><B>'foldlevel'</B>* *<A NAME="'fdl'"></A><B>'fdl'</B>*
 <A HREF="#'foldlevel'">'foldlevel'</A> <A HREF="#'fdl'">'fdl'</A>	number (default: 0)
 			local to <A HREF="windows.html#window">window</A>
-			{not available when compiled without the |<A HREF="various.html#+folding">+folding</A>|
-			feature}
 	Sets the fold level: Folds with a higher level will be closed.
 	Setting this option to zero will close all <A HREF="fold.html#folds">folds</A>.  Higher numbers will
 	close fewer <A HREF="fold.html#folds">folds</A>.
@@ -2712,15 +2670,13 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'foldlevelstart'"></A><B>'foldlevelstart'</B>* *<A NAME="'fdls'"></A><B>'fdls'</B>*
 <A HREF="#'foldlevelstart'">'foldlevelstart'</A> <A HREF="#'fdls'">'fdls'</A>	number (default: -1)
 			global
-			{not available when compiled without the |<A HREF="various.html#+folding">+folding</A>|
-			feature}
 	Sets <A HREF="#'foldlevel'">'foldlevel'</A> when starting to edit another buffer in a <A HREF="windows.html#window">window</A>.
 	Useful to always start editing with all <A HREF="fold.html#folds">folds</A> closed (value zero),
 	some <A HREF="fold.html#folds">folds</A> closed (one) or no <A HREF="fold.html#folds">folds</A> closed (99).
 	This is done before reading any <A HREF="#modeline">modeline</A>, thus a setting in a <A HREF="#modeline">modeline</A>
 	overrules this option.  Starting to edit a file for |<A HREF="diff.html#diff-mode">diff-mode</A>| also
 	ignores this option and closes all <A HREF="fold.html#folds">folds</A>.
-	It is also done before <A HREF="autocmd.html#BufReadPre">BufReadPre</A> autocommands, to allow an autocmd to
+	It is also done before <A HREF="autocmd.html#BufReadPre">BufReadPre</A> autocommands, to allow an <A HREF="autocmd.html#autocmd">autocmd</A> to
 	overrule the <A HREF="#'foldlevel'">'foldlevel'</A> value for specific files.
 	When the value is negative, <A HREF="motion.html#it">it</A> is not used.
 
@@ -2728,8 +2684,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'foldmarker'"></A><B>'foldmarker'</B>* *<A NAME="'fmr'"></A><B>'fmr'</B>* *<A NAME="E536"></A><B>E536</B>*
 <A HREF="#'foldmarker'">'foldmarker'</A> <A HREF="#'fmr'">'fmr'</A>	<A HREF="eval.html#string">string</A> (default: &quot;{{{,}}}&quot;)
 			local to <A HREF="windows.html#window">window</A>
-			{not available when compiled without the |<A HREF="various.html#+folding">+folding</A>|
-			feature}
 	The start and end marker used when <A HREF="#'foldmethod'">'foldmethod'</A> is &quot;marker&quot;.  There
 	must be one comma, which separates the start and end marker.  The
 	marker is a literal <A HREF="eval.html#string">string</A> (a regular <A HREF="eval.html#expression">expression</A> would be too slow).
@@ -2739,8 +2693,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'foldmethod'"></A><B>'foldmethod'</B>* *<A NAME="'fdm'"></A><B>'fdm'</B>*
 <A HREF="#'foldmethod'">'foldmethod'</A> <A HREF="#'fdm'">'fdm'</A>	<A HREF="eval.html#string">string</A> (default: &quot;manual&quot;)
 			local to <A HREF="windows.html#window">window</A>
-			{not available when compiled without the |<A HREF="various.html#+folding">+folding</A>|
-			feature}
 	The kind of <A HREF="fold.html#folding">folding</A> used for the current <A HREF="windows.html#window">window</A>.  Possible values:
 	|<A HREF="fold.html#fold-manual">fold-manual</A>|	manual	    Folds are created manually.
 	|<A HREF="fold.html#fold-indent">fold-indent</A>|	indent	    Lines with equal indent form a fold.
@@ -2753,8 +2705,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'foldminlines'"></A><B>'foldminlines'</B>* *<A NAME="'fml'"></A><B>'fml'</B>*
 <A HREF="#'foldminlines'">'foldminlines'</A> <A HREF="#'fml'">'fml'</A>	number (default: 1)
 			local to <A HREF="windows.html#window">window</A>
-			{not available when compiled without the |<A HREF="various.html#+folding">+folding</A>|
-			feature}
 	Sets the number of screen lines above which a fold can be displayed
 	closed.  Also for manually closed <A HREF="fold.html#folds">folds</A>.  With the default value of
 	one a fold can only be closed if <A HREF="motion.html#it">it</A> takes up two or more screen lines.
@@ -2767,8 +2717,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'foldnestmax'"></A><B>'foldnestmax'</B>* *<A NAME="'fdn'"></A><B>'fdn'</B>*
 <A HREF="#'foldnestmax'">'foldnestmax'</A> <A HREF="#'fdn'">'fdn'</A>	number (default: 20)
 			local to <A HREF="windows.html#window">window</A>
-			{not available when compiled without the |<A HREF="various.html#+folding">+folding</A>|
-			feature}
 	Sets the maximum nesting of <A HREF="fold.html#folds">folds</A> for the &quot;indent&quot; and &quot;<A HREF="syntax.html#syntax">syntax</A>&quot;
 	methods.  This avoids that too many <A HREF="fold.html#folds">folds</A> will be created.  Using more
 	than 20 doesn't work, because the internal limit is 20.
@@ -2778,8 +2726,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 <A HREF="#'foldopen'">'foldopen'</A> <A HREF="#'fdo'">'fdo'</A>	<A HREF="eval.html#string">string</A> (default: &quot;block,hor,mark,percent,quickfix,
 							     search,tag,undo&quot;)
 			global
-			{not available when compiled without the |<A HREF="various.html#+folding">+folding</A>|
-			feature}
 	Specifies for which type of commands <A HREF="fold.html#folds">folds</A> will be opened, if the
 	command moves the cursor into a closed fold.  It is a comma separated
 	<A HREF="eval.html#list">list</A> of items.
@@ -2815,8 +2761,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'foldtext'"></A><B>'foldtext'</B>* *<A NAME="'fdt'"></A><B>'fdt'</B>*
 <A HREF="#'foldtext'">'foldtext'</A> <A HREF="#'fdt'">'fdt'</A>	<A HREF="eval.html#string">string</A> (default: &quot;<A HREF="eval.html#foldtext()">foldtext()</A>&quot;)
 			local to <A HREF="windows.html#window">window</A>
-			{not available when compiled without the |<A HREF="various.html#+folding">+folding</A>|
-			feature}
 	An <A HREF="eval.html#expression">expression</A> which is used to specify the text displayed for a closed
 	fold.  See |<A HREF="fold.html#fold-foldtext">fold-foldtext</A>|.
 
@@ -2830,8 +2774,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'formatexpr'"></A><B>'formatexpr'</B>* *<A NAME="'fex'"></A><B>'fex'</B>*
 <A HREF="#'formatexpr'">'formatexpr'</A> <A HREF="#'fex'">'fex'</A>	<A HREF="eval.html#string">string</A> (default &quot;&quot;)
 			local to buffer
-			{not available when compiled without the |<A HREF="various.html#+eval">+eval</A>|
-			feature}
 	Expression which is evaluated to format a range of lines for the |<A HREF="change.html#gq">gq</A>|
 	<A HREF="motion.html#operator">operator</A> or automatic <A HREF="change.html#formatting">formatting</A> (see <A HREF="#'formatoptions'">'formatoptions'</A>).  When this
 	option is empty <A HREF="#'formatprg'">'formatprg'</A> is used.
@@ -3012,17 +2954,27 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 			of the numbers is zero, there is no blinking. E.g.:
 <B>				:set guicursor=n:blinkon0</B>
  		<A HREF="syntax.html#{group-name}">{group-name}</A>
-			a highlight group name, that sets the color and font
-			for the cursor
+			Highlight group name that sets the color and font for
+			the cursor. |inverse|/reverse and no <A HREF="syntax.html#group-name">group-name</A> are
+			interpreted <A HREF="motion.html#as">as</A> &quot;the host <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> default cursor
+			colors&quot; which usually invert bg and fg colors.
 		{group-name}/{group-name}
 			Two highlight group names, the first is used when
 			no language mappings are used, the other when they
 			are. |<A HREF="map.html#language-mapping">language-mapping</A>|
 
 	Examples of parts:
-	   n-c-v:block-nCursor	in <A HREF="intro.html#Normal">Normal</A>, <A HREF="cmdline.html#Command-line">Command-line</A> and <A HREF="visual.html#Visual">Visual</A> mode, use a
+	   n-c-v:block-nCursor	In <A HREF="intro.html#Normal">Normal</A>, <A HREF="cmdline.html#Command-line">Command-line</A> and <A HREF="visual.html#Visual">Visual</A> mode, use a
 				block cursor with colors from the &quot;nCursor&quot;
 				highlight group
+	   n-v-c-sm:block,i-ci-ve:ver25-Cursor,r-cr-o:hor20
+				In <A HREF="intro.html#Normal">Normal</A> et al. modes, use a block cursor
+				with the default colors defined by the host
+				<A HREF="nvim_terminal_emulator.html#terminal">terminal</A>.  In Insert-likes modes, use
+				a vertical <A HREF="motion.html#bar">bar</A> cursor with colors from
+				&quot;Cursor&quot; highlight group.  In Replace-likes
+				modes, use a <A HREF="syntax.html#underline">underline</A> cursor with
+				default colors.
 	   i-ci:ver30-iCursor-blinkwait300-blinkon200-blinkoff150
 				In <A HREF="insert.html#Insert">Insert</A> and <A HREF="cmdline.html#Command-line">Command-line</A> <A HREF="insert.html#Insert">Insert</A> mode, use a
 				30&#37; vertical <A HREF="motion.html#bar">bar</A> cursor with colors from the
@@ -3044,7 +2996,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						   *<A NAME="E235"></A><B>E235</B>* *<A NAME="E596"></A><B>E596</B>*
 <A HREF="#'guifont'">'guifont'</A> <A HREF="#'gfn'">'gfn'</A>		<A HREF="eval.html#string">string</A>	(default &quot;&quot;)
 			global
-			{only available when compiled with <A HREF="gui.html#GUI">GUI</A> enabled}
 	This is a <A HREF="eval.html#list">list</A> of fonts which will be used for the <A HREF="gui.html#GUI">GUI</A> version of Vim.
 	In its simplest form the value is just one font name.  When
 	the font cannot be found you will get an error message.  To try other
@@ -3115,8 +3066,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 					*<A NAME="E250"></A><B>E250</B>* *<A NAME="E252"></A><B>E252</B>* *<A NAME="E234"></A><B>E234</B>* *<A NAME="E597"></A><B>E597</B>* *<A NAME="E598"></A><B>E598</B>*
 <A HREF="#'guifontset'">'guifontset'</A> <A HREF="#'gfs'">'gfs'</A>	<A HREF="eval.html#string">string</A>	(default &quot;&quot;)
 			global
-			{only available when compiled with <A HREF="gui.html#GUI">GUI</A> enabled and
-			with the |<A HREF="various.html#+xfontset">+xfontset</A>| feature}
 	When not empty, specifies two (or more) fonts to be used.  The first
 	one for normal English, the second one for your special language.  See
 	|<A HREF="mbyte.html#xfontset">xfontset</A>|.
@@ -3138,7 +3087,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 				*<A NAME="'guifontwide'"></A><B>'guifontwide'</B>* *<A NAME="'gfw'"></A><B>'gfw'</B>* *<A NAME="E231"></A><B>E231</B>* *<A NAME="E533"></A><B>E533</B>* *<A NAME="E534"></A><B>E534</B>*
 <A HREF="#'guifontwide'">'guifontwide'</A> <A HREF="#'gfw'">'gfw'</A>	<A HREF="eval.html#string">string</A>	(default &quot;&quot;)
 			global
-			{only available when compiled with <A HREF="gui.html#GUI">GUI</A> enabled}
 	When not empty, specifies a comma-separated <A HREF="eval.html#list">list</A> of fonts to be used
 	for double-width characters.  The first font that can be loaded is
 	used.
@@ -3159,7 +3107,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'guioptions'"></A><B>'guioptions'</B>* *<A NAME="'go'"></A><B>'go'</B>*
 <A HREF="#'guioptions'">'guioptions'</A> <A HREF="#'go'">'go'</A>	<A HREF="eval.html#string">string</A>	(default &quot;egmrLT&quot;   (MS-Windows))
 			global
-			{only available when compiled with <A HREF="gui.html#GUI">GUI</A> enabled}
 	This option only has an effect in the <A HREF="gui.html#GUI">GUI</A> version of Vim.  It is a
 	sequence of letters which describes what components and <A HREF="#options">options</A> of the
 	<A HREF="gui.html#GUI">GUI</A> should be used.
@@ -3274,8 +3221,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'guitablabel'"></A><B>'guitablabel'</B>* *<A NAME="'gtl'"></A><B>'gtl'</B>*
 <A HREF="#'guitablabel'">'guitablabel'</A> <A HREF="#'gtl'">'gtl'</A>	<A HREF="eval.html#string">string</A>	(default empty)
 			global
-			{only available when compiled with <A HREF="gui.html#GUI">GUI</A> enabled and
-			with the |<A HREF="various.html#+windows">+windows</A>| feature}
 	When nonempty describes the text to use in a label of the <A HREF="gui.html#GUI">GUI</A> <A HREF="intro.html#tab">tab</A>
 	pages line.  When empty and when the result is empty Vim will use a
 	default label.  See |<A HREF="tabpage.html#setting-guitablabel">setting-guitablabel</A>| for more info.
@@ -3293,8 +3238,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'guitabtooltip'"></A><B>'guitabtooltip'</B>* *<A NAME="'gtt'"></A><B>'gtt'</B>*
 <A HREF="#'guitabtooltip'">'guitabtooltip'</A> <A HREF="#'gtt'">'gtt'</A>	<A HREF="eval.html#string">string</A>	(default empty)
 			global
-			{only available when compiled with <A HREF="gui.html#GUI">GUI</A> enabled and
-			with the |<A HREF="various.html#+windows">+windows</A>| feature}
 	When nonempty describes the text to use in a tooltip for the <A HREF="gui.html#GUI">GUI</A> <A HREF="intro.html#tab">tab</A>
 	pages line.  When empty Vim will use a default tooltip.
 	This option is otherwise just like <A HREF="#'guitablabel'">'guitablabel'</A> above.
@@ -3321,8 +3264,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'helpheight'"></A><B>'helpheight'</B>* *<A NAME="'hh'"></A><B>'hh'</B>*
 <A HREF="#'helpheight'">'helpheight'</A> <A HREF="#'hh'">'hh'</A>	number	(default 20)
 			global
-			{not available when compiled without the |<A HREF="various.html#+windows">+windows</A>|
-			feature}
 	Minimal initial height of the help <A HREF="windows.html#window">window</A> when <A HREF="motion.html#it">it</A> is opened with the
 	&quot;<A HREF="helphelp.html#:help">:help</A>&quot; command.  The initial height of the help <A HREF="windows.html#window">window</A> is half of the
 	current <A HREF="windows.html#window">window</A>, or (when the <A HREF="#'ea'">'ea'</A> option is on) the same <A HREF="motion.html#as">as</A> other
@@ -3333,8 +3274,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'helplang'"></A><B>'helplang'</B>* *<A NAME="'hlg'"></A><B>'hlg'</B>*
 <A HREF="#'helplang'">'helplang'</A> <A HREF="#'hlg'">'hlg'</A>	<A HREF="eval.html#string">string</A>	(default: <A HREF="message.html#messages">messages</A> language or empty)
 			global
-			{only available when compiled with the |<A HREF="various.html#+multi_lang">+multi_lang</A>|
-			feature}
 	Comma separated <A HREF="eval.html#list">list</A> of languages.  Vim will use the first language
 	for which the desired help can be found.  The English help will always
 	be used <A HREF="motion.html#as">as</A> a last resort.  You can add &quot;en&quot; to prefer English over
@@ -3393,8 +3332,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 				 *<A NAME="'hlsearch'"></A><B>'hlsearch'</B>* *<A NAME="'hls'"></A><B>'hls'</B>* *<A NAME="'nohlsearch'"></A><B>'nohlsearch'</B>* *<A NAME="'nohls'"></A><B>'nohls'</B>*
 <A HREF="#'hlsearch'">'hlsearch'</A> <A HREF="#'hls'">'hls'</A>	<A HREF="#boolean">boolean</A>	(default on)
 			global
-			{not available when compiled without the
-			|<A HREF="various.html#+extra_search">+extra_search</A>| feature}
 	When there is a previous search <A HREF="pattern.html#pattern">pattern</A>, highlight all its matches.
 	The |<A HREF="syntax.html#hl-Search">hl-Search</A>| highlight group determines the highlighting. Note that
 	only the matching text is highlighted, any offsets are not applied.
@@ -3415,8 +3352,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'icon'"></A><B>'icon'</B>* *<A NAME="'noicon'"></A><B>'noicon'</B>*
 <A HREF="#'icon'">'icon'</A>			<A HREF="#boolean">boolean</A>	(default off, on when title can be restored)
 			global
-			{not available when compiled without the |<A HREF="various.html#+title">+title</A>|
-			feature}
 	When on, the icon text of the <A HREF="windows.html#window">window</A> will be set to the value of
 	<A HREF="#'iconstring'">'iconstring'</A> (if <A HREF="motion.html#it">it</A> is not empty), or to the name of the file
 	currently being edited.  Only the last part of the name is used.
@@ -3427,15 +3362,12 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'iconstring'"></A><B>'iconstring'</B>*
 <A HREF="#'iconstring'">'iconstring'</A>		<A HREF="eval.html#string">string</A>	(default &quot;&quot;)
 			global
-			{not available when compiled without the |<A HREF="various.html#+title">+title</A>|
-			feature}
 	When this option is not empty, <A HREF="motion.html#it">it</A> will be used for the icon text of
 	the <A HREF="windows.html#window">window</A>.  This happens only when the <A HREF="#'icon'">'icon'</A> option is on.
 	Only works if the <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> supports setting <A HREF="windows.html#window">window</A> icon text
 	When this option contains printf-style '<A HREF="motion.html#&#37;">&#37;</A>' items, they will be
 	expanded according to the rules used for <A HREF="#'statusline'">'statusline'</A>.  See
 	<A HREF="#'titlestring'">'titlestring'</A> for example settings.
-	{not available when compiled without the |<A HREF="various.html#+statusline">+statusline</A>| feature}
 
 
 			*<A NAME="'ignorecase'"></A><B>'ignorecase'</B>* *<A NAME="'ic'"></A><B>'ic'</B>* *<A NAME="'noignorecase'"></A><B>'noignorecase'</B>* *<A NAME="'noic'"></A><B>'noic'</B>*
@@ -3451,8 +3383,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 				*<A NAME="'imcmdline'"></A><B>'imcmdline'</B>* *<A NAME="'imc'"></A><B>'imc'</B>* *<A NAME="'noimcmdline'"></A><B>'noimcmdline'</B>* *<A NAME="'noimc'"></A><B>'noimc'</B>*
 <A HREF="#'imcmdline'">'imcmdline'</A> <A HREF="#'imc'">'imc'</A>	<A HREF="#boolean">boolean</A> (default off)
 			global
-			{only available when compiled with the |<A HREF="various.html#+xim">+xim</A>|,
-			|<A HREF="various.html#+multi_byte_ime">+multi_byte_ime</A>| or |<A HREF="mbyte.html#global-ime">global-ime</A>| features}
 	When set the Input Method is always on when starting to edit a command
 	line, unless entering a search <A HREF="pattern.html#pattern">pattern</A> (see <A HREF="#'imsearch'">'imsearch'</A> for that).
 	Setting this option is useful when your input method allows entering
@@ -3463,8 +3393,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 				*<A NAME="'imdisable'"></A><B>'imdisable'</B>* *<A NAME="'imd'"></A><B>'imd'</B>* *<A NAME="'noimdisable'"></A><B>'noimdisable'</B>* *<A NAME="'noimd'"></A><B>'noimd'</B>*
 <A HREF="#'imdisable'">'imdisable'</A> <A HREF="#'imd'">'imd'</A>	<A HREF="#boolean">boolean</A> (default off, on for some systems (SGI))
 			global
-			{only available when compiled with the |<A HREF="various.html#+xim">+xim</A>|,
-			|<A HREF="various.html#+multi_byte_ime">+multi_byte_ime</A>| or |<A HREF="mbyte.html#global-ime">global-ime</A>| features}
 	When set the Input Method is never used.  This is useful to disable
 	the IM when <A HREF="motion.html#it">it</A> doesn't work properly.
 	Currently this option is on by default for SGI/IRIX machines.  This
@@ -3524,8 +3452,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'include'"></A><B>'include'</B>* *<A NAME="'inc'"></A><B>'inc'</B>*
 <A HREF="#'include'">'include'</A> <A HREF="#'inc'">'inc'</A>		<A HREF="eval.html#string">string</A>	(default &quot;^\s*#\s*include&quot;)
 			global or local to buffer |<A HREF="#global-local">global-local</A>|
-			{not available when compiled without the
-			|<A HREF="various.html#+find_in_path">+find_in_path</A>| feature}
 	<A HREF="pattern.html#Pattern">Pattern</A> to be used to find an include command.  It is a search
 	pattern, just like for the &quot;<A HREF="pattern.html#/">/</A>&quot; command (See |<A HREF="pattern.html#pattern">pattern</A>|).  The default
 	value is for C programs.  This option is used for the commands &quot;<A HREF="tagsrch.html#[i">[i</A>&quot;,
@@ -3542,8 +3468,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'includeexpr'"></A><B>'includeexpr'</B>* *<A NAME="'inex'"></A><B>'inex'</B>*
 <A HREF="#'includeexpr'">'includeexpr'</A> <A HREF="#'inex'">'inex'</A>	<A HREF="eval.html#string">string</A>	(default &quot;&quot;)
 			local to buffer
-			{not available when compiled without the
-			|<A HREF="various.html#+find_in_path">+find_in_path</A>| or |<A HREF="various.html#+eval">+eval</A>| features}
 	Expression to be used to transform the <A HREF="eval.html#string">string</A> found with the <A HREF="#'include'">'include'</A>
 	option to a file name.  Mostly useful to change &quot;<A HREF="repeat.html#.">.</A>&quot; to &quot;<A HREF="pattern.html#/">/</A>&quot; for Java:
 <B>		:set includeexpr=substitute(v:fname,'\\.','/','g')</B>
@@ -3567,7 +3491,7 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 	so far, matches.  The matched <A HREF="eval.html#string">string</A> is highlighted.  If the <A HREF="pattern.html#pattern">pattern</A>
 	is invalid or not found, nothing is shown.  The screen will be updated
 	often, this is only useful on fast terminals.
-	Note that the match will be shown, but the cursor will return to its
+<A HREF="change.html#&lt;">&lt;</A>	Note that the match will be shown, but the cursor will return to its
 	original position when no match is found and when pressing <A HREF="intro.html#&lt;Esc&gt;">&lt;Esc&gt;</A>.  You
 	still need to finish the search command with <A HREF="intro.html#&lt;Enter&gt;">&lt;Enter&gt;</A> to move the
 	cursor to the match.
@@ -3577,11 +3501,11 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 	<A HREF="pattern.html#pattern">pattern</A> and/or a lot of text the match may not be found.  This is to
 	avoid that Vim hangs while you are typing the <A HREF="pattern.html#pattern">pattern</A>.
 	The |<A HREF="syntax.html#hl-IncSearch">hl-IncSearch</A>| highlight group determines the highlighting.
-	When <A HREF="#'hlsearch'">'hlsearch'</A> is on, all matched strings are highlighted too while typing
-	a search command. See also: <A HREF="#'hlsearch'">'hlsearch'</A>.
-	If you don't want turn <A HREF="#'hlsearch'">'hlsearch'</A> on, but want to highlight all matches
-	while searching, you can turn on and off <A HREF="#'hlsearch'">'hlsearch'</A> with autocmd.
-	Example:
+	When <A HREF="#'hlsearch'">'hlsearch'</A> is on, all matched strings are highlighted too while
+	typing a search command. See also: <A HREF="#'hlsearch'">'hlsearch'</A>.
+	If you don't want to turn <A HREF="#'hlsearch'">'hlsearch'</A> on, but want to highlight all
+	matches while searching, you can turn on and off <A HREF="#'hlsearch'">'hlsearch'</A> with
+	<A HREF="autocmd.html#autocmd">autocmd</A>.  Example:
 <B>		augroup vimrc-incsearch-highlight</B>
 <B>		  autocmd!</B>
 <B>		  autocmd CmdlineEnter /,\? :set hlsearch</B>
@@ -3682,7 +3606,7 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 
 						*<A NAME="'isfname'"></A><B>'isfname'</B>* *<A NAME="'isf'"></A><B>'isf'</B>*
 <A HREF="#'isfname'">'isfname'</A> <A HREF="#'isf'">'isf'</A>		<A HREF="eval.html#string">string</A>	(default for Windows:
-			     &quot;@,48-57,/,\,.,-,_,+,,,#,$,&#37;,{,},[,],:,@<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e3cea3">[email&#160;protected]</a>,!,~,=&quot;
+			     &quot;@,48-57,/,\,.,-,_,+,,,#,$,&#37;,{,},[,],:,@<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b499f4">[email&#160;protected]</a>,!,~,=&quot;
 			    otherwise: &quot;@,48-57,/,.,-,_,+,,,#,$,&#37;,~,=&quot;)
 			global
 	The characters specified by this option are included in file names and
@@ -3719,10 +3643,10 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 		&quot;^a-z,#,^&quot;	(exclude '<A HREF="insert.html#a">a</A>' to '<A HREF="vimindex.html#z">z</A>', include '<A HREF="pattern.html##">#</A>' and '<A HREF="motion.html#^">^</A>')
 	If the character is '<A HREF="repeat.html#@">@</A>', all characters where isalpha() returns <A HREF="eval.html#TRUE">TRUE</A>
 	are included.  Normally these are the characters a to <A HREF="vimindex.html#z">z</A> and A to Z,
-	plus accented characters.  To include '<A HREF="repeat.html#@">@</A>' itself use &quot;@<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="426f02">[email&#160;protected]</a>&quot;.  Examples:
+	plus accented characters.  To include '<A HREF="repeat.html#@">@</A>' itself use &quot;@<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="def39e">[email&#160;protected]</a>&quot;.  Examples:
 		&quot;@,^a-z&quot;	All alphabetic characters, excluding lower
 				<A HREF="change.html#case">case</A> ASCII letters.
-		&quot;a-z,A-Z,@<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a78ae7">[email&#160;protected]</a>&quot;	All letters plus the '<A HREF="repeat.html#@">@</A>' character.
+		&quot;a-z,A-Z,@<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="466b06">[email&#160;protected]</a>&quot;	All letters plus the '<A HREF="repeat.html#@">@</A>' character.
 	A comma can be included by using <A HREF="motion.html#it">it</A> where a character number is
 	expected.  Example:
 		&quot;48-57,,,_&quot;	Digits, comma and underscore.
@@ -3741,7 +3665,7 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 	Identifiers are used in recognizing environment <A HREF="eval.html#variables">variables</A> and after a
 	match of the <A HREF="#'define'">'define'</A> option.  It is also used for &quot;\i&quot; in a
 	|<A HREF="pattern.html#pattern">pattern</A>|.  See <A HREF="#'isfname'">'isfname'</A> for a description of the format of this
-	option.
+	option.  For '<A HREF="repeat.html#@">@</A>' only characters up to 255 are used.
 	Careful: If you change this option, <A HREF="motion.html#it">it</A> might break expanding
 	environment <A HREF="eval.html#variables">variables</A>.  E.g., when '<A HREF="pattern.html#/">/</A>' is included and Vim tries to
 	expand &quot;$HOME/.local/share/nvim/shada/main.shada&quot;.  Maybe you should 
@@ -3754,8 +3678,9 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 			local to buffer
 	Keywords are used in searching and recognizing with many commands:
 	&quot;<A HREF="motion.html#w">w</A>&quot;, &quot;*&quot;, &quot;<A HREF="tagsrch.html#[i">[i</A>&quot;, etc.  It is also used for &quot;\k&quot; in a |<A HREF="pattern.html#pattern">pattern</A>|.  See
-	<A HREF="#'isfname'">'isfname'</A> for a description of the format of this option.  For C
-	programs you could use &quot;a-z,A-Z,48-57,_,.,-,&gt;&quot;.
+	<A HREF="#'isfname'">'isfname'</A> for a description of the format of this option.  For '<A HREF="repeat.html#@">@</A>'
+	characters above 255 check the &quot;<A HREF="motion.html#word">word</A>&quot; character class.
+	For C programs you could use &quot;a-z,A-Z,48-57,_,.,-,&gt;&quot;.
 	For a help file <A HREF="motion.html#it">it</A> is set to all non-blank printable characters except
 	'*', &#39;&#34;'' and '&#124;' (so that <A HREF="tagsrch.html#CTRL-]">CTRL-]</A> on a command finds the help for that
 	command).
@@ -3777,7 +3702,7 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 		  0 -  31	&quot;^@&quot; - &quot;^_&quot;
 		 32 - 126	always single characters
 		   127		&quot;^?&quot;
-		128 - 159	&quot;<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="3b457b">[email&#160;protected]</a>&quot; - &quot;~_&quot;
+		128 - 159	&quot;<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="cab48a">[email&#160;protected]</a>&quot; - &quot;~_&quot;
 		160 - 254	&quot;| &quot; - &quot;|~&quot;
 		   255		&quot;~?&quot;
 	Illegal bytes from 128 to 255 (invalid <A HREF="mbyte.html#UTF-8">UTF-8</A>) are
@@ -3805,8 +3730,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 					*<A NAME="'keymap'"></A><B>'keymap'</B>* *<A NAME="'kmp'"></A><B>'kmp'</B>* *<A NAME="E544"></A><B>E544</B>*
 <A HREF="#'keymap'">'keymap'</A> <A HREF="#'kmp'">'kmp'</A>		<A HREF="eval.html#string">string</A>	(default &quot;&quot;)
 			local to buffer
-			{only available when compiled with the |<A HREF="various.html#+keymap">+keymap</A>|
-			feature}
 	Name of a keyboard <A HREF="map.html#mapping">mapping</A>.  See |<A HREF="mbyte.html#mbyte-keymap">mbyte-keymap</A>|.
 	Setting this option to a valid keymap name has the side effect of
 	setting <A HREF="#'iminsert'">'iminsert'</A> to one, so that the keymap becomes effective.
@@ -3825,7 +3748,7 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 	   stopsel	Using a not-shifted special key stops selection.
 	Special keys in this context are the cursor keys, <A HREF="motion.html#&lt;End&gt;">&lt;End&gt;</A>, <A HREF="motion.html#&lt;Home&gt;">&lt;Home&gt;</A>,
 	<A HREF="scroll.html#&lt;PageUp&gt;">&lt;PageUp&gt;</A> and <A HREF="scroll.html#&lt;PageDown&gt;">&lt;PageDown&gt;</A>.
-	The <A HREF="#'keymodel'">'keymodel'</A> option is set by the |<A HREF="gui.html#:behave">:behave</A>| command.
+	The <A HREF="#'keymodel'">'keymodel'</A> option is set by the |<A HREF="#:behave">:behave</A>| command.
 
 
 					*<A NAME="'keywordprg'"></A><B>'keywordprg'</B>* *<A NAME="'kp'"></A><B>'kp'</B>*
@@ -3850,8 +3773,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 					*<A NAME="'langmap'"></A><B>'langmap'</B>* *<A NAME="'lmap'"></A><B>'lmap'</B>* *<A NAME="E357"></A><B>E357</B>* *<A NAME="E358"></A><B>E358</B>*
 <A HREF="#'langmap'">'langmap'</A> <A HREF="#'lmap'">'lmap'</A>	<A HREF="eval.html#string">string</A>	(default &quot;&quot;)
 			global
-			{only available when compiled with the |<A HREF="various.html#+langmap">+langmap</A>|
-			feature}
 	This option allows switching your keyboard into a special language
 	mode.  When you are typing text in <A HREF="insert.html#Insert">Insert</A> mode the characters are
 	inserted directly.  When in <A HREF="intro.html#Normal">Normal</A> mode the <A HREF="#'langmap'">'langmap'</A> option takes
@@ -3897,8 +3818,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 					*<A NAME="'langmenu'"></A><B>'langmenu'</B>* *<A NAME="'lm'"></A><B>'lm'</B>*
 <A HREF="#'langmenu'">'langmenu'</A> <A HREF="#'lm'">'lm'</A>		<A HREF="eval.html#string">string</A>	(default &quot;&quot;)
 			global
-			{only available when compiled with the |<A HREF="various.html#+menu">+menu</A>| and
-			|<A HREF="various.html#+multi_lang">+multi_lang</A>| features}
 	Language to use for menu translation.  Tells which file is loaded
 	from the &quot;lang&quot; directory in <A HREF="#'runtimepath'">'runtimepath'</A>:
 <B>		"lang/menu_" . &amp;langmenu . ".vim"</B>
@@ -3951,8 +3870,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 			*<A NAME="'linebreak'"></A><B>'linebreak'</B>* *<A NAME="'lbr'"></A><B>'lbr'</B>* *<A NAME="'nolinebreak'"></A><B>'nolinebreak'</B>* *<A NAME="'nolbr'"></A><B>'nolbr'</B>*
 <A HREF="#'linebreak'">'linebreak'</A> <A HREF="#'lbr'">'lbr'</A>	<A HREF="#boolean">boolean</A>	(default off)
 			local to <A HREF="windows.html#window">window</A>
-			{not available when compiled without the |<A HREF="various.html#+linebreak">+linebreak</A>|
-			feature}
 	If on, Vim will wrap long lines at a character in <A HREF="#'breakat'">'breakat'</A> rather
 	than at the last character that fits on the screen.  Unlike
 	<A HREF="#'wrapmargin'">'wrapmargin'</A> and <A HREF="#'textwidth'">'textwidth'</A>, this does not insert &lt;EOL&gt;s in the file,
@@ -3995,8 +3912,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'lisp'"></A><B>'lisp'</B>* *<A NAME="'nolisp'"></A><B>'nolisp'</B>*
 <A HREF="#'lisp'">'lisp'</A>			<A HREF="#boolean">boolean</A>	(default off)
 			local to buffer
-			{not available when compiled without the |<A HREF="various.html#+lispindent">+lispindent</A>|
-			feature}
 	Lisp mode: When <A HREF="intro.html#&lt;Enter&gt;">&lt;Enter&gt;</A> is typed in insert mode set the indent for
 	the next line to Lisp standards (well, sort of).  Also happens with
 	&quot;<A HREF="change.html#cc">cc</A>&quot; or &quot;<A HREF="change.html#S">S</A>&quot;.  <A HREF="#'autoindent'">'autoindent'</A> must also be on for this to work.  The '<A HREF="change.html#p">p</A>'
@@ -4011,8 +3926,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'lispwords'"></A><B>'lispwords'</B>* *<A NAME="'lw'"></A><B>'lw'</B>*
 <A HREF="#'lispwords'">'lispwords'</A> <A HREF="#'lw'">'lw'</A>	<A HREF="eval.html#string">string</A>	(default is very long)
 			global or local to buffer |<A HREF="#global-local">global-local</A>|
-			{not available when compiled without the |<A HREF="various.html#+lispindent">+lispindent</A>|
-			feature}
 	Comma separated <A HREF="eval.html#list">list</A> of words that influence the Lisp indenting.
 	|<A HREF="#'lisp'">'lisp'</A>|
 
@@ -4118,8 +4031,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'makeef'"></A><B>'makeef'</B>* *<A NAME="'mef'"></A><B>'mef'</B>*
 <A HREF="#'makeef'">'makeef'</A> <A HREF="#'mef'">'mef'</A>		<A HREF="eval.html#string">string</A>	(default: &quot;&quot;)
 			global
-			{not available when compiled without the |<A HREF="various.html#+quickfix">+quickfix</A>|
-			feature}
 	Name of the errorfile for the |<A HREF="quickfix.html#:make">:make</A>| command (see |<A HREF="quickfix.html#:make_makeprg">:make_makeprg</A>|)
 	and the |<A HREF="quickfix.html#:grep">:grep</A>| command.
 	When <A HREF="motion.html#it">it</A> is empty, an internally generated temp file will be used.
@@ -4136,9 +4047,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 					*<A NAME="'makeencoding'"></A><B>'makeencoding'</B>* *<A NAME="'menc'"></A><B>'menc'</B>*
 <A HREF="#'makeencoding'">'makeencoding'</A> <A HREF="#'menc'">'menc'</A>	<A HREF="eval.html#string">string</A>	(default &quot;&quot;)
 			global or local to buffer |<A HREF="#global-local">global-local</A>|
-			{only available when compiled with the |<A HREF="various.html#+multi_byte">+multi_byte</A>|
-			feature}
-			{not in Vi}
 	Encoding used for reading the output of external commands.  When empty,
 	encoding is not converted.
 	This is used for `:make`, `:lmake`, `:grep`, `:lgrep`, `:grepadd`,
@@ -4200,29 +4108,21 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 
 
 						*<A NAME="'maxcombine'"></A><B>'maxcombine'</B>* *<A NAME="'mco'"></A><B>'mco'</B>*
-<A HREF="#'maxcombine'">'maxcombine'</A> <A HREF="#'mco'">'mco'</A>	number (default 2)
-			global
-			{only available when compiled with the |<A HREF="various.html#+multi_byte">+multi_byte</A>|
-			feature}
-	The maximum number of combining characters supported for displaying.
-	The default is OK for most languages.  Hebrew may require 4.
-	Maximum value is 6.
-	Even when this option is set to 2 you can still edit text with more
-	combining characters, you just can't see them.  Use |<A HREF="various.html#g8">g8</A>| or |<A HREF="various.html#ga">ga</A>|.
-	See |<A HREF="mbyte.html#mbyte-combining">mbyte-combining</A>|.
+<A HREF="#'maxcombine'">'maxcombine'</A> <A HREF="#'mco'">'mco'</A>	Removed. |<A HREF="vim_diff.html#vim-differences">vim-differences</A>| {Nvim}
+	Nvim always displays up to 6 combining characters.  You can still edit
+    text with more than 6 combining characters, you just can't see them.
+    Use |<A HREF="various.html#g8">g8</A>| or |<A HREF="various.html#ga">ga</A>|.  See |<A HREF="mbyte.html#mbyte-combining">mbyte-combining</A>|.
 
 
 						*<A NAME="'maxfuncdepth'"></A><B>'maxfuncdepth'</B>* *<A NAME="'mfd'"></A><B>'mfd'</B>*
 <A HREF="#'maxfuncdepth'">'maxfuncdepth'</A> <A HREF="#'mfd'">'mfd'</A>	number	(default 100)
 			global
-			{not available when compiled without the |<A HREF="various.html#+eval">+eval</A>|
-			feature}
 	Maximum depth of function calls for user <A HREF="eval.html#functions">functions</A>.  This normally
 	catches endless recursion.  When using a recursive function with
 	more depth, set <A HREF="#'maxfuncdepth'">'maxfuncdepth'</A> to a bigger number.  But this will use
 	more memory, there is the danger of failing when memory is exhausted.
 	Increasing this limit above 200 also changes the maximum for <A HREF="intro.html#Ex">Ex</A>
-	command resursion, see |<A HREF="message.html#E169">E169</A>|.
+	command recursion, see |<A HREF="message.html#E169">E169</A>|.
 	See also |<A HREF="eval.html#:function">:function</A>|.
 
 
@@ -4234,17 +4134,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 	&quot;<A HREF="map.html#:map">:map</A> <A HREF="change.html#x">x</A> y&quot; with &quot;<A HREF="map.html#:map">:map</A> <A HREF="change.html#y">y</A> x&quot;.  It still does not catch &quot;<A HREF="map.html#:map">:map</A> <A HREF="vimindex.html#g">g</A> wg&quot;,
 	because the '<A HREF="motion.html#w">w</A>' is used before the next <A HREF="map.html#mapping">mapping</A> is done.  See also
 	|<A HREF="map.html#key-mapping">key-mapping</A>|.
-
-
-						*<A NAME="'maxmem'"></A><B>'maxmem'</B>* *<A NAME="'mm'"></A><B>'mm'</B>*
-<A HREF="#'maxmem'">'maxmem'</A> <A HREF="#'mm'">'mm'</A>		number	(default between 256 to 5120 (system
-				 dependent) or half the amount of memory
-				 available)
-			global
-	Maximum amount of memory (in Kbyte) to use for one buffer.  When this
-	limit is reached allocating extra memory for a buffer will cause
-	other memory to be freed.  The maximum usable value is about 2000000.
-	Use this to work without a limit.  Also see <A HREF="#'maxmemtot'">'maxmemtot'</A>.
 
 
 						*<A NAME="'maxmempattern'"></A><B>'maxmempattern'</B>* *<A NAME="'mmp'"></A><B>'mmp'</B>*
@@ -4259,29 +4148,15 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 	Running into the limit often means that the <A HREF="pattern.html#pattern">pattern</A> is very
 	inefficient or too complex.  This may already happen with the <A HREF="pattern.html#pattern">pattern</A>
 	&quot;\(.\)*&quot; on a very long line.  &quot;.*&quot; works much better.
-	Vim may run out of memory before hitting the <A HREF="#'maxmempattern'">'maxmempattern'</A> limit.
-
-
-						*<A NAME="'maxmemtot'"></A><B>'maxmemtot'</B>* *<A NAME="'mmt'"></A><B>'mmt'</B>*
-<A HREF="#'maxmemtot'">'maxmemtot'</A> <A HREF="#'mmt'">'mmt'</A>	number	(default between 2048 and 10240 (system
-				 dependent) or half the amount of memory
-				 available)
-			global
-	Maximum amount of memory in Kbyte to use for all <A HREF="windows.html#buffers">buffers</A> together.
-	The maximum usable value is about 2000000 (2 Gbyte).  Use this to work
-	without a limit.
-	On 64 bit machines higher values might work.  But hey, <A HREF="diff.html#do">do</A> you really
-	need more than 2 Gbyte for text editing?  Keep in mind that text is
-	stored in the swap file, one can edit files <A HREF="change.html#&gt;">&gt;</A> 2 Gbyte anyway.  We <A HREF="diff.html#do">do</A>
-	need the memory to store <A HREF="undo.html#undo">undo</A> info.
-	Also see <A HREF="#'maxmem'">'maxmem'</A>.
+	Might also happen on redraw, when <A HREF="syntax.html#syntax">syntax</A> rules try to match a complex
+	text structure.
+	Vim may run out of memory before hitting the <A HREF="#'maxmempattern'">'maxmempattern'</A> limit, in
+	which <A HREF="change.html#case">case</A> you get an &quot;Out of memory&quot; error instead.
 
 
 						*<A NAME="'menuitems'"></A><B>'menuitems'</B>* *<A NAME="'mis'"></A><B>'mis'</B>*
 <A HREF="#'menuitems'">'menuitems'</A> <A HREF="#'mis'">'mis'</A>	number	(default 25)
 			global
-			{not available when compiled without the |<A HREF="various.html#+menu">+menu</A>|
-			feature}
 	Maximum number of items to use in a menu.  Used for <A HREF="gui.html#menus">menus</A> that are
 	generated from a <A HREF="eval.html#list">list</A> of items, e.g., the Buffers menu.  Changing this
 	option has no direct effect, the menu must be refreshed first.
@@ -4290,8 +4165,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'mkspellmem'"></A><B>'mkspellmem'</B>* *<A NAME="'msm'"></A><B>'msm'</B>*
 <A HREF="#'mkspellmem'">'mkspellmem'</A> <A HREF="#'msm'">'msm'</A>	<A HREF="eval.html#string">string</A>	(default &quot;460000,2000,500&quot;)
 			global
-			{not available when compiled without the |<A HREF="various.html#+syntax">+syntax</A>|
-			feature}
 	Parameters for |<A HREF="spell.html#:mkspell">:mkspell</A>|.  This tunes when to start compressing the
 	<A HREF="motion.html#word">word</A> tree.  Compression can be slow when there are many words, but
 	it's needed to avoid running out of memory.  The amount of memory used
@@ -4369,6 +4242,8 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 	an explanation.
 	When <A HREF="#'buftype'">'buftype'</A> is &quot;nowrite&quot; or &quot;nofile&quot; this option may be set, but
 	will be ignored.
+	Note that the text may actually be the same, e.g. <A HREF="#'modified'">'modified'</A> is set
+	when using &quot;rA&quot; on an &quot;<A HREF="insert.html#A">A</A>&quot;.
 
 
 						*<A NAME="'more'"></A><B>'more'</B>* *<A NAME="'nomore'"></A><B>'nomore'</B>*
@@ -4383,9 +4258,14 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 <A HREF="#'mouse'">'mouse'</A>			<A HREF="eval.html#string">string</A>	(default &quot;&quot;)
 			global
 
-	Enable the use of the mouse.  Only works for certain terminals.
-	For using the mouse in the <A HREF="gui.html#GUI">GUI</A>, see |<A HREF="gui.html#gui-mouse">gui-mouse</A>|.  The mouse can be
-	enabled for different modes:
+	Enables mouse support. For example, to enable the mouse in <A HREF="intro.html#Normal">Normal</A> mode
+	and <A HREF="visual.html#Visual">Visual</A> mode:
+<B>		:set mouse=nv</B>
+ 
+	To temporarily disable mouse support, hold the <A HREF="intro.html#shift">shift</A> key while using
+	the mouse.
+
+	Mouse support can be enabled for different modes:
 		<A HREF="pattern.html#n">n</A>	<A HREF="intro.html#Normal">Normal</A> mode
 		<A HREF="visual.html#v">v</A>	<A HREF="visual.html#Visual">Visual</A> mode
 		<A HREF="insert.html#i">i</A>	<A HREF="insert.html#Insert">Insert</A> mode
@@ -4393,17 +4273,43 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 		<A HREF="motion.html#h">h</A>	all previous modes when editing a help file
 		a	all previous modes
 		r	for |<A HREF="message.html#hit-enter">hit-enter</A>| and |<A HREF="message.html#more-prompt">more-prompt</A>| prompt
-	Normally you would enable the mouse in all four modes with:
-<B>		:set mouse=a</B>
- 	When the mouse is not enabled, the <A HREF="gui.html#GUI">GUI</A> will still use the mouse for
-	modeless selection.  This doesn't move the text cursor.
 
-	See |<A HREF="term.html#mouse-using">mouse-using</A>|.  Also see |<A HREF="#'clipboard'">'clipboard'</A>|.
+	Left-click anywhere in a text buffer to place the cursor there.  This
+	works with operators too, e.g. type |<A HREF="change.html#d">d</A>| then left-click to delete text
+	from the current cursor position to the position where you clicked.
+
+	Drag the |<A HREF="windows.html#status-line">status-line</A>| or vertical separator of a <A HREF="windows.html#window">window</A> to resize <A HREF="motion.html#it">it</A>.
+
+	If enabled for &quot;<A HREF="visual.html#v">v</A>&quot; (Visual mode) then <A HREF="term.html#double-click">double-click</A> selects word-wise,
+	triple-click makes <A HREF="motion.html#it">it</A> line-wise, and quadruple-click makes <A HREF="motion.html#it">it</A>
+	rectangular block-wise.
+
+	For <A HREF="scroll.html#scrolling">scrolling</A> with a mouse wheel see |<A HREF="scroll.html#scroll-mouse-wheel">scroll-mouse-wheel</A>|.
 
 	Note: When enabling the mouse in a <A HREF="nvim_terminal_emulator.html#terminal">terminal</A>, copy/paste will use the
-	&quot;* <A HREF="sponsor.html#register">register</A> if there is access to an X-server.  The xterm handling of
-	the mouse buttons can still be used by keeping the <A HREF="intro.html#shift">shift</A> key pressed.
-	Also see the <A HREF="#'clipboard'">'clipboard'</A> option.
+	&quot;* <A HREF="sponsor.html#register">register</A> if possible. See also <A HREF="#'clipboard'">'clipboard'</A>.
+
+	Related <A HREF="#options">options</A>:
+	<A HREF="#'mousefocus'">'mousefocus'</A>	<A HREF="windows.html#window">window</A> focus follows mouse pointer
+	<A HREF="#'mousemodel'">'mousemodel'</A>	what mouse button does which action
+	<A HREF="#'mousehide'">'mousehide'</A>	hide mouse pointer while typing text
+	<A HREF="#'selectmode'">'selectmode'</A>	whether to start <A HREF="visual.html#Select">Select</A> mode or <A HREF="visual.html#Visual">Visual</A> mode
+
+	The <A HREF="#:behave">:behave</A> command provides some &quot;profiles&quot; for mouse behavior.
+
+								*<A NAME=":behave"></A><B>:behave</B>* *<A NAME=":be"></A><B>:be</B>*
+	:be[have] {model}	Set behavior for mouse and selection.  Valid
+				arguments are:
+				   mswin	MS-Windows behavior
+				   xterm	Xterm behavior
+
+				Using &quot;<A HREF="#:behave">:behave</A>&quot; changes these <A HREF="#options">options</A>:
+<B><FONT color="#54A23D">				option		mswin			xterm	</FONT></B>
+				<A HREF="#'selectmode'">'selectmode'</A>	&quot;mouse,key&quot;		&quot;&quot;
+				<A HREF="#'mousemodel'">'mousemodel'</A>	&quot;popup&quot;			&quot;extend&quot;
+				<A HREF="#'keymodel'">'keymodel'</A>	&quot;startsel,stopsel&quot;	&quot;&quot;
+				<A HREF="#'selection'">'selection'</A>	&quot;<A HREF="motion.html#exclusive">exclusive</A>&quot;		&quot;<A HREF="motion.html#inclusive">inclusive</A>&quot;
+
 
 
 			*<A NAME="'mousefocus'"></A><B>'mousefocus'</B>* *<A NAME="'mousef'"></A><B>'mousef'</B>* *<A NAME="'nomousefocus'"></A><B>'nomousefocus'</B>* *<A NAME="'nomousef'"></A><B>'nomousef'</B>*
@@ -4426,7 +4332,7 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 
 
 						*<A NAME="'mousemodel'"></A><B>'mousemodel'</B>* *<A NAME="'mousem'"></A><B>'mousem'</B>*
-<A HREF="#'mousemodel'">'mousemodel'</A> <A HREF="#'mousem'">'mousem'</A>	<A HREF="eval.html#string">string</A>	(default &quot;extend&quot;, &quot;popup&quot; for Windows)
+<A HREF="#'mousemodel'">'mousemodel'</A> <A HREF="#'mousem'">'mousem'</A>	<A HREF="eval.html#string">string</A>	(default &quot;extend&quot;)
 			global
 	Sets the model to use for the mouse.  The name mostly specifies what
 	the right mouse button is used for:
@@ -4453,20 +4359,38 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 
 	In the &quot;popup&quot; model the right mouse button produces a pop-up menu.
 	You need to define this first, see |<A HREF="gui.html#popup-menu">popup-menu</A>|.
+	In a <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> the popup menu works if Vim is compiled with the
+	|<A HREF="various.html#+insert_expand">+insert_expand</A>| option.
 
 	Note that you can further refine the meaning of buttons with mappings.
-	See |<A HREF="gui.html#gui-mouse-mapping">gui-mouse-mapping</A>|.  But mappings are NOT used for modeless
-	selection (because that's handled in the <A HREF="gui.html#GUI">GUI</A> code directly).
+	See |<A HREF="term.html#mouse-overview">mouse-overview</A>|.  But mappings are NOT used for modeless selection.
 
-	The <A HREF="#'mousemodel'">'mousemodel'</A> option is set by the |<A HREF="gui.html#:behave">:behave</A>| command.
+	Example:
+<B>	   :map &lt;S-LeftMouse&gt;     &lt;RightMouse&gt;</B>
+<B>	   :map &lt;S-LeftDrag&gt;      &lt;RightDrag&gt;</B>
+<B>	   :map &lt;S-LeftRelease&gt;   &lt;RightRelease&gt;</B>
+<B>	   :map &lt;2-S-LeftMouse&gt;   &lt;2-RightMouse&gt;</B>
+<B>	   :map &lt;2-S-LeftDrag&gt;    &lt;2-RightDrag&gt;</B>
+<B>	   :map &lt;2-S-LeftRelease&gt; &lt;2-RightRelease&gt;</B>
+<B>	   :map &lt;3-S-LeftMouse&gt;   &lt;3-RightMouse&gt;</B>
+<B>	   :map &lt;3-S-LeftDrag&gt;    &lt;3-RightDrag&gt;</B>
+<B>	   :map &lt;3-S-LeftRelease&gt; &lt;3-RightRelease&gt;</B>
+<B>	   :map &lt;4-S-LeftMouse&gt;   &lt;4-RightMouse&gt;</B>
+<B>	   :map &lt;4-S-LeftDrag&gt;    &lt;4-RightDrag&gt;</B>
+<B>	   :map &lt;4-S-LeftRelease&gt; &lt;4-RightRelease&gt;</B>
+ 
+	Mouse commands requiring the CTRL modifier can be simulated by typing
+	the &quot;<A HREF="vimindex.html#g">g</A>&quot; key before using the mouse:
+	    &quot;<A HREF="tagsrch.html#g&lt;LeftMouse&gt;">g&lt;LeftMouse&gt;</A>&quot;  is &quot;<A HREF="tagsrch.html#&lt;C-LeftMouse&gt;">&lt;C-LeftMouse&gt;</A>	(jump to <A HREF="tagsrch.html#tag">tag</A> under mouse click)
+	    &quot;<A HREF="tagsrch.html#g&lt;RightMouse&gt;">g&lt;RightMouse&gt;</A>&quot; is &quot;<A HREF="tagsrch.html#&lt;C-RightMouse&gt;">&lt;C-RightMouse&gt;</A>	(&quot;CTRL-T&quot;)
+
+	The <A HREF="#'mousemodel'">'mousemodel'</A> option is set by the |<A HREF="#:behave">:behave</A>| command.
 
 
 					*<A NAME="'mouseshape'"></A><B>'mouseshape'</B>* *<A NAME="'mouses'"></A><B>'mouses'</B>* *<A NAME="E547"></A><B>E547</B>*
 <A HREF="#'mouseshape'">'mouseshape'</A> <A HREF="#'mouses'">'mouses'</A>	<A HREF="eval.html#string">string</A>	(default &quot;i:beam,r:beam,s:updown,sd:cross,
 					m:no,ml:up-arrow,v:rightup-arrow&quot;)
 			global
-			{only available when compiled with the |<A HREF="various.html#+mouseshape">+mouseshape</A>|
-			feature}
 	This option tells Vim what the mouse pointer should look like in
 	different modes.  The option is a comma separated <A HREF="eval.html#list">list</A> of parts, much
 	like used for <A HREF="#'guicursor'">'guicursor'</A>.  Each part consist of a mode/location-list
@@ -4563,12 +4487,11 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 	Print the line number in front of each line.  When the '<A HREF="pattern.html#n">n</A>' option is
 	excluded from <A HREF="#'cpoptions'">'cpoptions'</A> a wrapped line will not use the column of
 	line numbers.
-	The <A HREF="#'numberwidth'">'numberwidth'</A> option can be used to set the room used for the line
-	number.
+	Use the <A HREF="#'numberwidth'">'numberwidth'</A> option to adjust the room for the line number.
 	When a long, wrapped line doesn't start with the first character, '<A HREF="motion.html#-">-</A>'
 	characters are put before the number.
-	See |<A HREF="syntax.html#hl-LineNr">hl-LineNr</A>|  and |<A HREF="syntax.html#hl-CursorLineNr">hl-CursorLineNr</A>| for the highlighting used for
-	the number.
+	For highlighting see |<A HREF="syntax.html#hl-LineNr">hl-LineNr</A>|, |<A HREF="syntax.html#hl-CursorLineNr">hl-CursorLineNr</A>|, and the
+	|<A HREF="sign.html#:sign-define">:sign-define</A>| &quot;numhl&quot; argument.
 
 						*<A NAME="number_relativenumber"></A><B>number_relativenumber</B>*
 	The <A HREF="#'relativenumber'">'relativenumber'</A> option changes the displayed number to be
@@ -4587,8 +4510,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'numberwidth'"></A><B>'numberwidth'</B>* *<A NAME="'nuw'"></A><B>'nuw'</B>*
 <A HREF="#'numberwidth'">'numberwidth'</A> <A HREF="#'nuw'">'nuw'</A>	number	(Vim default: 4  <A HREF="intro.html#Vi">Vi</A> default: 8)
 			local to <A HREF="windows.html#window">window</A>
-			{only available when compiled with the |<A HREF="various.html#+linebreak">+linebreak</A>|
-			feature}
 	Minimal number of columns to use for the line number.  Only relevant
 	when the <A HREF="#'number'">'number'</A> or <A HREF="#'relativenumber'">'relativenumber'</A> option is set or <A HREF="print.html#printing">printing</A> lines
 	with a line number. Since one space is always between the number and
@@ -4604,8 +4525,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'omnifunc'"></A><B>'omnifunc'</B>* *<A NAME="'ofu'"></A><B>'ofu'</B>*
 <A HREF="#'omnifunc'">'omnifunc'</A> <A HREF="#'ofu'">'ofu'</A>	<A HREF="eval.html#string">string</A>	(default: empty)
 			local to buffer
-			{not available when compiled without the |<A HREF="various.html#+eval">+eval</A>|
-			or |<A HREF="various.html#+insert_expand">+insert_expand</A>| features}
 	This option specifies a function to be used for <A HREF="insert.html#Insert">Insert</A> mode omni
 	completion with CTRL-X CTRL-O. |<A HREF="insert.html#i_CTRL-X_CTRL-O">i_CTRL-X_CTRL-O</A>|
 	See |<A HREF="insert.html#complete-functions">complete-functions</A>| for an explanation of how the function is
@@ -4632,7 +4551,7 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'operatorfunc'"></A><B>'operatorfunc'</B>* *<A NAME="'opfunc'"></A><B>'opfunc'</B>*
 <A HREF="#'operatorfunc'">'operatorfunc'</A> <A HREF="#'opfunc'">'opfunc'</A>	<A HREF="eval.html#string">string</A>	(default: empty)
 			global
-	This option specifies a function to be called by the |<A HREF="map.html#g@"><span class="__cf_email__" data-cfemail="a1c6e1">[email&#160;protected]</span></A>| <A HREF="motion.html#operator">operator</A>.
+	This option specifies a function to be called by the |<A HREF="map.html#g@"><span class="__cf_email__" data-cfemail="325572">[email&#160;protected]</span></A>| <A HREF="motion.html#operator">operator</A>.
 	See |<A HREF="map.html#:map-operator">:map-operator</A>| for more info and an example.
 
 	This option cannot be set from a |<A HREF="#modeline">modeline</A>| or in the |<A HREF="eval.html#sandbox">sandbox</A>|, for
@@ -4641,7 +4560,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 
 				*<A NAME="'packpath'"></A><B>'packpath'</B>* *<A NAME="'pp'"></A><B>'pp'</B>*
 <A HREF="#'packpath'">'packpath'</A> <A HREF="#'pp'">'pp'</A>		<A HREF="eval.html#string">string</A>	(default: see <A HREF="#'runtimepath'">'runtimepath'</A>)
-			{not in Vi}
 	Directories used to find packages.  See |<A HREF="repeat.html#packages">packages</A>|.
 
 
@@ -4741,11 +4659,11 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 	copy of the original file will be kept.  The name of the copy is the
 	name of the original file with the <A HREF="eval.html#string">string</A> in the <A HREF="#'patchmode'">'patchmode'</A> option
 	appended.  This option should start with a dot.  Use a <A HREF="eval.html#string">string</A> like
-	&quot;.org&quot;.  <A HREF="#'backupdir'">'backupdir'</A> must not be empty for this to work (Detail: The
-	<A HREF="editing.html#backup">backup</A> file is renamed to the patchmode file after the new file has
-	been successfully written, that's why <A HREF="motion.html#it">it</A> must be possible to write a
-	<A HREF="editing.html#backup">backup</A> file).  If there was no file to be backed up, an empty file is
-	created.
+	&quot;.orig&quot; or &quot;.org&quot;.  <A HREF="#'backupdir'">'backupdir'</A> must not be empty for this to work
+	(Detail: The <A HREF="editing.html#backup">backup</A> file is renamed to the patchmode file after the
+	new file has been successfully written, that's why <A HREF="motion.html#it">it</A> must be possible
+	to write a <A HREF="editing.html#backup">backup</A> file).  If there was no file to be backed up, an
+	empty file is created.
 	When the <A HREF="#'backupskip'">'backupskip'</A> <A HREF="pattern.html#pattern">pattern</A> matches, a patchmode file is not made.
 	Using <A HREF="#'patchmode'">'patchmode'</A> for compressed files appends the extension at the
 	end (e.g., &quot;file.gz.orig&quot;), thus the resulting name isn't always
@@ -4782,7 +4700,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
  &quot;http://www.vim.org&quot; will make &quot;:find index.html&quot; work.
 	- Search upwards and downwards in a directory tree using &quot;*&quot;, &quot;**&quot; and
 	  &quot;<A HREF="motion.html#;">;</A>&quot;.  See |<A HREF="editing.html#file-searching">file-searching</A>| for info and <A HREF="syntax.html#syntax">syntax</A>.
-	  {not available when compiled without the |<A HREF="various.html#+path_extra">+path_extra</A>| feature}
 	- Careful with '\' characters, type two to get one in the option:
 <B>		:set path=.,c:\\include</B>
  	  Or just use '<A HREF="pattern.html#/">/</A>' instead:
@@ -4827,8 +4744,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 					*<A NAME="'previewheight'"></A><B>'previewheight'</B>* *<A NAME="'pvh'"></A><B>'pvh'</B>*
 <A HREF="#'previewheight'">'previewheight'</A> <A HREF="#'pvh'">'pvh'</A>	number (default 12)
 			global
-			{not available when compiled without the |<A HREF="various.html#+windows">+windows</A>| or
-			|<A HREF="various.html#+quickfix">+quickfix</A>| features}
 	Default height for a preview <A HREF="windows.html#window">window</A>.  Used for |<A HREF="windows.html#:ptag">:ptag</A>| and associated
 	commands.  Used for |<A HREF="windows.html#CTRL-W_}">CTRL-W_}</A>| when no <A HREF="intro.html#count">count</A> is given.
 
@@ -4838,8 +4753,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 					*<A NAME="'pvw'"></A><B>'pvw'</B>* *<A NAME="'nopvw'"></A><B>'nopvw'</B>* *<A NAME="E590"></A><B>E590</B>*
 <A HREF="#'previewwindow'">'previewwindow'</A> <A HREF="#'pvw'">'pvw'</A>	<A HREF="#boolean">boolean</A> (default off)
 			local to <A HREF="windows.html#window">window</A>
-			{not available when compiled without the |<A HREF="various.html#+windows">+windows</A>| or
-			|<A HREF="various.html#+quickfix">+quickfix</A>| features}
 	Identifies the preview <A HREF="windows.html#window">window</A>.  Only one <A HREF="windows.html#window">window</A> can have this option
 	set.  It's normally not set directly, but by using one of the commands
 	|<A HREF="windows.html#:ptag">:ptag</A>|, |<A HREF="windows.html#:pedit">:pedit</A>|, etc.
@@ -4848,8 +4761,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'printdevice'"></A><B>'printdevice'</B>* *<A NAME="'pdev'"></A><B>'pdev'</B>*
 <A HREF="#'printdevice'">'printdevice'</A> <A HREF="#'pdev'">'pdev'</A>	<A HREF="eval.html#string">string</A>	(default empty)
 			global
-			{only available when compiled with the |<A HREF="various.html#+printer">+printer</A>|
-			feature}
 	The name of the printer to be used for |<A HREF="print.html#:hardcopy">:hardcopy</A>|.
 	See |<A HREF="print.html#pdev-option">pdev-option</A>|.
 	This option cannot be set from a |<A HREF="#modeline">modeline</A>| or in the |<A HREF="eval.html#sandbox">sandbox</A>|, for
@@ -4857,19 +4768,15 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 
 
 						*<A NAME="'printencoding'"></A><B>'printencoding'</B>* *<A NAME="'penc'"></A><B>'penc'</B>*
-<A HREF="#'printencoding'">'printencoding'</A> <A HREF="#'penc'">'penc'</A>	<A HREF="eval.html#String">String</A>	(default empty, except for some systems)
+<A HREF="#'printencoding'">'printencoding'</A> <A HREF="#'penc'">'penc'</A>	<A HREF="eval.html#string">string</A>	(default empty, except for some systems)
 			global
-			{only available when compiled with the |<A HREF="various.html#+printer">+printer</A>|
-			and |<A HREF="various.html#+postscript">+postscript</A>| features}
 	Sets the character encoding used when <A HREF="print.html#printing">printing</A>.
 	See |<A HREF="print.html#penc-option">penc-option</A>|.
 
 
 						*<A NAME="'printexpr'"></A><B>'printexpr'</B>* *<A NAME="'pexpr'"></A><B>'pexpr'</B>*
-<A HREF="#'printexpr'">'printexpr'</A> <A HREF="#'pexpr'">'pexpr'</A>	<A HREF="eval.html#String">String</A>	(default: see below)
+<A HREF="#'printexpr'">'printexpr'</A> <A HREF="#'pexpr'">'pexpr'</A>	<A HREF="eval.html#string">string</A>	(default: see below)
 			global
-			{only available when compiled with the |<A HREF="various.html#+printer">+printer</A>|
-			and |<A HREF="various.html#+postscript">+postscript</A>| features}
 	Expression used to print the PostScript produced with |<A HREF="print.html#:hardcopy">:hardcopy</A>|.
 	See |<A HREF="print.html#pexpr-option">pexpr-option</A>|.
 	This option cannot be set from a |<A HREF="#modeline">modeline</A>| or in the |<A HREF="eval.html#sandbox">sandbox</A>|, for
@@ -4879,8 +4786,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'printfont'"></A><B>'printfont'</B>* *<A NAME="'pfn'"></A><B>'pfn'</B>*
 <A HREF="#'printfont'">'printfont'</A> <A HREF="#'pfn'">'pfn'</A>	<A HREF="eval.html#string">string</A>	(default &quot;courier&quot;)
 			global
-			{only available when compiled with the |<A HREF="various.html#+printer">+printer</A>|
-			feature}
 	The name of the font that will be used for |<A HREF="print.html#:hardcopy">:hardcopy</A>|.
 	See |<A HREF="print.html#pfn-option">pfn-option</A>|.
 
@@ -4888,8 +4793,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'printheader'"></A><B>'printheader'</B>* *<A NAME="'pheader'"></A><B>'pheader'</B>*
 <A HREF="#'printheader'">'printheader'</A> <A HREF="#'pheader'">'pheader'</A>  <A HREF="eval.html#string">string</A>  (default &quot;&#37;&lt;&#37;f&#37;h&#37;m&#37;=Page &#37;N&quot;)
 			global
-			{only available when compiled with the |<A HREF="various.html#+printer">+printer</A>|
-			feature}
 	The format of the header produced in |<A HREF="print.html#:hardcopy">:hardcopy</A>| output.
 	See |<A HREF="print.html#pheader-option">pheader-option</A>|.
 
@@ -4897,8 +4800,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'printmbcharset'"></A><B>'printmbcharset'</B>* *<A NAME="'pmbcs'"></A><B>'pmbcs'</B>*
 <A HREF="#'printmbcharset'">'printmbcharset'</A> <A HREF="#'pmbcs'">'pmbcs'</A>  <A HREF="eval.html#string">string</A> (default &quot;&quot;)
 			global
-			{only available when compiled with the |<A HREF="various.html#+printer">+printer</A>|,
-			|<A HREF="various.html#+postscript">+postscript</A>| and |<A HREF="various.html#+multi_byte">+multi_byte</A>| features}
 	The CJK character set to be used for CJK output from |<A HREF="print.html#:hardcopy">:hardcopy</A>|.
 	See |<A HREF="print.html#pmbcs-option">pmbcs-option</A>|.
 
@@ -4906,8 +4807,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'printmbfont'"></A><B>'printmbfont'</B>* *<A NAME="'pmbfn'"></A><B>'pmbfn'</B>*
 <A HREF="#'printmbfont'">'printmbfont'</A> <A HREF="#'pmbfn'">'pmbfn'</A>	<A HREF="eval.html#string">string</A> (default &quot;&quot;)
 			global
-			{only available when compiled with the |<A HREF="various.html#+printer">+printer</A>|,
-			|<A HREF="various.html#+postscript">+postscript</A>| and |<A HREF="various.html#+multi_byte">+multi_byte</A>| features}
 	<A HREF="eval.html#List">List</A> of font names to be used for CJK output from |<A HREF="print.html#:hardcopy">:hardcopy</A>|.
 	See |<A HREF="print.html#pmbfn-option">pmbfn-option</A>|.
 
@@ -4915,7 +4814,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'printoptions'"></A><B>'printoptions'</B>* *<A NAME="'popt'"></A><B>'popt'</B>*
 <A HREF="#'printoptions'">'printoptions'</A> <A HREF="#'popt'">'popt'</A> <A HREF="eval.html#string">string</A> (default &quot;&quot;)
 			global
-			{only available when compiled with |<A HREF="various.html#+printer">+printer</A>| feature}
 	<A HREF="eval.html#List">List</A> of items that <A HREF="intro.html#control">control</A> the format of the output of |<A HREF="print.html#:hardcopy">:hardcopy</A>|.
 	See |<A HREF="print.html#popt-option">popt-option</A>|.
 
@@ -4929,8 +4827,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'pumheight'"></A><B>'pumheight'</B>* *<A NAME="'ph'"></A><B>'ph'</B>*
 <A HREF="#'pumheight'">'pumheight'</A> <A HREF="#'ph'">'ph'</A>	number	(default 0)
 			global
-			{not available when compiled without the
-			|<A HREF="various.html#+insert_expand">+insert_expand</A>| feature}
 	Determines the maximum number of items to show in the popup menu for
 	<A HREF="insert.html#Insert">Insert</A> mode completion.  When zero <A HREF="motion.html#as">as</A> much space <A HREF="motion.html#as">as</A> available is used.
 	|<A HREF="insert.html#ins-completion-menu">ins-completion-menu</A>|.
@@ -4963,8 +4859,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'redrawtime'"></A><B>'redrawtime'</B>* *<A NAME="'rdt'"></A><B>'rdt'</B>*
 <A HREF="#'redrawtime'">'redrawtime'</A> <A HREF="#'rdt'">'rdt'</A>	number	(default 2000)
 			global
-			{only available when compiled with the |<A HREF="various.html#+reltime">+reltime</A>|
-			feature}
 	Time in milliseconds for redrawing the display.  Applies to
 	<A HREF="#'hlsearch'">'hlsearch'</A>, <A HREF="#'inccommand'">'inccommand'</A> and |<A HREF="pattern.html#:match">:match</A>| highlighting.
 	When redrawing takes more than this many milliseconds no further
@@ -5097,8 +4991,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'rulerformat'"></A><B>'rulerformat'</B>* *<A NAME="'ruf'"></A><B>'ruf'</B>*
 <A HREF="#'rulerformat'">'rulerformat'</A> <A HREF="#'ruf'">'ruf'</A>	<A HREF="eval.html#string">string</A>	(default empty)
 			global
-			{not available when compiled without the |<A HREF="various.html#+statusline">+statusline</A>|
-			feature}
 	When this option is not empty, <A HREF="motion.html#it">it</A> determines the content of the ruler
 	<A HREF="eval.html#string">string</A>, <A HREF="motion.html#as">as</A> displayed for the <A HREF="#'ruler'">'ruler'</A> option.
 	The format of this option is like that of <A HREF="#'statusline'">'statusline'</A>.
@@ -5189,6 +5081,8 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 	to find files which replace a distributed runtime files.  You can put
 	a directory after <A HREF="starting.html#$VIMRUNTIME">$VIMRUNTIME</A> to find files which add to distributed
 	runtime files.
+	When Vim is started with |<A HREF="intro.html#--clean">--clean</A>| the home directory entries are not
+	included.
 	This option cannot be set from a |<A HREF="#modeline">modeline</A>| or in the |<A HREF="eval.html#sandbox">sandbox</A>|, for
 	security reasons.
 
@@ -5217,8 +5111,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 			*<A NAME="'scrollbind'"></A><B>'scrollbind'</B>* *<A NAME="'scb'"></A><B>'scb'</B>* *<A NAME="'noscrollbind'"></A><B>'noscrollbind'</B>* *<A NAME="'noscb'"></A><B>'noscb'</B>*
 <A HREF="#'scrollbind'">'scrollbind'</A> <A HREF="#'scb'">'scb'</A>	<A HREF="#boolean">boolean</A>  (default off)
 			local to <A HREF="windows.html#window">window</A>
-			{not available when compiled without the |<A HREF="various.html#+scrollbind">+scrollbind</A>|
-			feature}
 	See also |<A HREF="scroll.html#scroll-binding">scroll-binding</A>|.  When this option is set, the current
 	<A HREF="windows.html#window">window</A> scrolls <A HREF="motion.html#as">as</A> other scrollbind <A HREF="windows.html#windows">windows</A> (windows that also have
 	this option set) scroll.  This option is useful for viewing the
@@ -5255,8 +5147,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'scrollopt'"></A><B>'scrollopt'</B>* *<A NAME="'sbo'"></A><B>'sbo'</B>*
 <A HREF="#'scrollopt'">'scrollopt'</A> <A HREF="#'sbo'">'sbo'</A>	<A HREF="eval.html#string">string</A>	(default &quot;ver,jump&quot;)
 			global
-			{not available when compiled without the |<A HREF="various.html#+scrollbind">+scrollbind</A>|
-			feature}
 	This is a comma-separated <A HREF="eval.html#list">list</A> of words that specifies how
 	<A HREF="#'scrollbind'">'scrollbind'</A> <A HREF="windows.html#windows">windows</A> should behave.  <A HREF="#'sbo'">'sbo'</A> stands for ScrollBind
 	Options.
@@ -5329,7 +5219,7 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 	backwards, you cannot include the last character of a line, when
 	starting in <A HREF="intro.html#Normal">Normal</A> mode and <A HREF="#'virtualedit'">'virtualedit'</A> empty.
 
-	The <A HREF="#'selection'">'selection'</A> option is set by the |<A HREF="gui.html#:behave">:behave</A>| command.
+	The <A HREF="#'selection'">'selection'</A> option is set by the |<A HREF="#:behave">:behave</A>| command.
 
 
 						*<A NAME="'selectmode'"></A><B>'selectmode'</B>* *<A NAME="'slm'"></A><B>'slm'</B>*
@@ -5342,7 +5232,7 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 	   key		when using shifted special keys
 	   cmd		when using &quot;<A HREF="visual.html#v">v</A>&quot;, &quot;<A HREF="visual.html#V">V</A>&quot; or <A HREF="visual.html#CTRL-V">CTRL-V</A>
 	See |<A HREF="visual.html#Select-mode">Select-mode</A>|.
-	The <A HREF="#'selectmode'">'selectmode'</A> option is set by the |<A HREF="gui.html#:behave">:behave</A>| command.
+	The <A HREF="#'selectmode'">'selectmode'</A> option is set by the |<A HREF="#:behave">:behave</A>| command.
 
 
 						*<A NAME="'sessionoptions'"></A><B>'sessionoptions'</B>* *<A NAME="'ssop'"></A><B>'ssop'</B>*
@@ -5378,6 +5268,8 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 	   tabpages	all <A HREF="intro.html#tab">tab</A> pages; without this only the current <A HREF="intro.html#tab">tab</A> page
 			is restored, so that you can make a session for each
 			<A HREF="intro.html#tab">tab</A> page separately
+	   <A HREF="nvim_terminal_emulator.html#terminal">terminal</A>	include <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> <A HREF="windows.html#windows">windows</A> where the command can be
+			restored
 	   unix		with Unix end-of-line format (single &lt;NL&gt;), even when
 			on Windows or DOS
 	   winpos	position of the whole Vim <A HREF="windows.html#window">window</A>
@@ -5454,7 +5346,7 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 		saved.  &#39;&#34;'' is the old name for this item.
 		Also see the '<A HREF="change.html#s">s</A>' item below: limit specified in KiB.
 
-							*<A NAME="shada-@"></A><B><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="35465d5451541875">[email&#160;protected]</a></B>*
+							*<A NAME="shada-@"></A><B><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="fc8f949d989dd1bc">[email&#160;protected]</a></B>*
 	@	Maximum number of items in the input-line <A HREF="cmdline.html#history">history</A> to be
 		saved.  When not included, the value of <A HREF="#'history'">'history'</A> is used.
 
@@ -5563,7 +5455,12 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 	Note that such processing is done after |<A HREF="#:set">:set</A>| did its own round of 
 	unescaping, so to keep yourself sane use |<A HREF="eval.html#:let-&amp;">:let-&amp;</A>| like shown above.
 
-	This option cannot be set from a |<A HREF="#modeline">modeline</A>| or in the |<A HREF="eval.html#sandbox">sandbox</A>|, for
+							*<A NAME="shell-powershell"></A><B>shell-powershell</B>*
+	To use powershell (on Windows):
+<B>		set shell=powershell shellquote=( shellpipe=\| shellredir=&gt; shellxquote=</B>
+<B>		set shellcmdflag=-NoLogo\ -NoProfile\ -ExecutionPolicy\ RemoteSigned\ -Command</B>
+
+ 	This option cannot be set from a |<A HREF="#modeline">modeline</A>| or in the |<A HREF="eval.html#sandbox">sandbox</A>|, for
 	security reasons.
 
 
@@ -5730,7 +5627,7 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 
 
 						*<A NAME="'shortmess'"></A><B>'shortmess'</B>* *<A NAME="'shm'"></A><B>'shm'</B>*
-<A HREF="#'shortmess'">'shortmess'</A> <A HREF="#'shm'">'shm'</A>	<A HREF="eval.html#string">string</A>	(Vim default &quot;filnxtToO&quot;, <A HREF="intro.html#Vi">Vi</A> default: &quot;&quot;)
+<A HREF="#'shortmess'">'shortmess'</A> <A HREF="#'shm'">'shm'</A>	<A HREF="eval.html#string">string</A>	(Vim default &quot;filnxtToOF&quot;, <A HREF="intro.html#Vi">Vi</A> default: &quot;&quot;)
 			global
 	This option helps to avoid all the |<A HREF="message.html#hit-enter">hit-enter</A>| prompts caused by file
 	<A HREF="message.html#messages">messages</A>, for example  with <A HREF="editing.html#CTRL-G">CTRL-G</A>, and to avoid some other <A HREF="message.html#messages">messages</A>.
@@ -5784,8 +5681,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'showbreak'"></A><B>'showbreak'</B>* *<A NAME="'sbr'"></A><B>'sbr'</B>* *<A NAME="E595"></A><B>E595</B>*
 <A HREF="#'showbreak'">'showbreak'</A> <A HREF="#'sbr'">'sbr'</A>	<A HREF="eval.html#string">string</A>	(default &quot;&quot;)
 			global
-			{not available when compiled without the |<A HREF="various.html#+linebreak">+linebreak</A>|
-			feature}
 	<A HREF="eval.html#String">String</A> to put at the start of lines that have been wrapped.  Useful
 	values are &quot;<A HREF="change.html#&gt;">&gt;</A> &quot; or &quot;+++ &quot;:
 <B>		:set showbreak=&gt;\ </B>
@@ -5860,8 +5755,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'showtabline'"></A><B>'showtabline'</B>* *<A NAME="'stal'"></A><B>'stal'</B>*
 <A HREF="#'showtabline'">'showtabline'</A> <A HREF="#'stal'">'stal'</A>	number	(default 1)
 			global
-			{not available when compiled without the |<A HREF="various.html#+windows">+windows</A>|
-			feature}
 	The value of this option specifies when the line with <A HREF="intro.html#tab">tab</A> page labels
 	will be displayed:
 		0: never
@@ -5926,8 +5819,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 			     *<A NAME="'smartindent'"></A><B>'smartindent'</B>* *<A NAME="'si'"></A><B>'si'</B>* *<A NAME="'nosmartindent'"></A><B>'nosmartindent'</B>* *<A NAME="'nosi'"></A><B>'nosi'</B>*
 <A HREF="#'smartindent'">'smartindent'</A> <A HREF="#'si'">'si'</A>	<A HREF="#boolean">boolean</A>	(default off)
 			local to buffer
-			{not available when compiled without the
-			|<A HREF="various.html#+smartindent">+smartindent</A>| feature}
 	Do smart autoindenting when starting a new line.  Works for C-like
 	programs, but can also be used for other languages.  <A HREF="#'cindent'">'cindent'</A> does
 	something like this, works better in most cases, but is more strict,
@@ -5990,8 +5881,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'spell'"></A><B>'spell'</B>* *<A NAME="'nospell'"></A><B>'nospell'</B>*
 <A HREF="#'spell'">'spell'</A>			<A HREF="#boolean">boolean</A>	(default off)
 			local to <A HREF="windows.html#window">window</A>
-			{not available when compiled without the |<A HREF="various.html#+syntax">+syntax</A>|
-			feature}
 	When on spell checking will be done.  See |<A HREF="spell.html#spell">spell</A>|.
 	The languages are specified with <A HREF="#'spelllang'">'spelllang'</A>.
 
@@ -5999,8 +5888,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'spellcapcheck'"></A><B>'spellcapcheck'</B>* *<A NAME="'spc'"></A><B>'spc'</B>*
 <A HREF="#'spellcapcheck'">'spellcapcheck'</A> <A HREF="#'spc'">'spc'</A>	<A HREF="eval.html#string">string</A>	(default &quot;[.?!]\_[\])&#39;&#34;' \t]\+&quot;)
 			local to buffer
-			{not available when compiled without the |<A HREF="various.html#+syntax">+syntax</A>|
-			feature}
 	<A HREF="pattern.html#Pattern">Pattern</A> to locate the end of a <A HREF="motion.html#sentence">sentence</A>.  The following <A HREF="motion.html#word">word</A> will be
 	checked to start with a capital <A HREF="print.html#letter">letter</A>.  If not then <A HREF="motion.html#it">it</A> is highlighted
 	with SpellCap |<A HREF="syntax.html#hl-SpellCap">hl-SpellCap</A>| (unless the <A HREF="motion.html#word">word</A> is also badly spelled).
@@ -6015,8 +5902,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'spellfile'"></A><B>'spellfile'</B>* *<A NAME="'spf'"></A><B>'spf'</B>*
 <A HREF="#'spellfile'">'spellfile'</A> <A HREF="#'spf'">'spf'</A>	<A HREF="eval.html#string">string</A>	(default empty)
 			local to buffer
-			{not available when compiled without the |<A HREF="various.html#+syntax">+syntax</A>|
-			feature}
 	Name of the <A HREF="motion.html#word">word</A> <A HREF="eval.html#list">list</A> file where words are added for the |<A HREF="spell.html#zg">zg</A>| and |<A HREF="spell.html#zw">zw</A>|
 	commands.  It must end in &quot;.{encoding}.add&quot;.  You need to include the
 	path, otherwise the file is placed in the current directory.
@@ -6043,8 +5928,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'spelllang'"></A><B>'spelllang'</B>* *<A NAME="'spl'"></A><B>'spl'</B>*
 <A HREF="#'spelllang'">'spelllang'</A> <A HREF="#'spl'">'spl'</A>	<A HREF="eval.html#string">string</A>	(default &quot;en&quot;)
 			local to buffer
-			{not available when compiled without the |<A HREF="various.html#+syntax">+syntax</A>|
-			feature}
 	A comma separated <A HREF="eval.html#list">list</A> of <A HREF="motion.html#word">word</A> <A HREF="eval.html#list">list</A> names.  When the <A HREF="#'spell'">'spell'</A> option is
 	on spellchecking will be done for these languages.  Example:
 <B>		set spelllang=en_us,nl,medical</B>
@@ -6085,8 +5968,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'spellsuggest'"></A><B>'spellsuggest'</B>* *<A NAME="'sps'"></A><B>'sps'</B>*
 <A HREF="#'spellsuggest'">'spellsuggest'</A> <A HREF="#'sps'">'sps'</A>	<A HREF="eval.html#string">string</A>	(default &quot;best&quot;)
 			global
-			{not available when compiled without the |<A HREF="various.html#+syntax">+syntax</A>|
-			feature}
 	Methods used for spelling suggestions.  Both for the |<A HREF="spell.html#z=">z=</A>| command and
 	the |<A HREF="eval.html#spellsuggest()">spellsuggest()</A>| function.  This is a comma-separated <A HREF="eval.html#list">list</A> of
 	items:
@@ -6151,8 +6032,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 			*<A NAME="'splitbelow'"></A><B>'splitbelow'</B>* *<A NAME="'sb'"></A><B>'sb'</B>* *<A NAME="'nosplitbelow'"></A><B>'nosplitbelow'</B>* *<A NAME="'nosb'"></A><B>'nosb'</B>*
 <A HREF="#'splitbelow'">'splitbelow'</A> <A HREF="#'sb'">'sb'</A>	<A HREF="#boolean">boolean</A>	(default off)
 			global
-			{not available when compiled without the |<A HREF="various.html#+windows">+windows</A>|
-			feature}
 	When on, splitting a <A HREF="windows.html#window">window</A> will put the new <A HREF="windows.html#window">window</A> below the current
 	one. |<A HREF="windows.html#:split">:split</A>|
 
@@ -6181,8 +6060,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 			   *<A NAME="'statusline'"></A><B>'statusline'</B>* *<A NAME="'stl'"></A><B>'stl'</B>* *<A NAME="E540"></A><B>E540</B>* *<A NAME="E542"></A><B>E542</B>*
 <A HREF="#'statusline'">'statusline'</A> <A HREF="#'stl'">'stl'</A>	<A HREF="eval.html#string">string</A>	(default empty)
 			global or local to <A HREF="windows.html#window">window</A> |<A HREF="#global-local">global-local</A>|
-			{not available when compiled without the |<A HREF="various.html#+statusline">+statusline</A>|
-			feature}
 	When nonempty, this option determines the content of the status line.
 	Also see |<A HREF="windows.html#status-line">status-line</A>|.
 
@@ -6276,7 +6153,7 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 	      tab&quot; label.    Clicking this label with left mouse button closes 
 	      specified <A HREF="intro.html#tab">tab</A> page.
 	@ N   For <A HREF="#'tabline'">'tabline'</A>: start of execute function label. Use &#37;X or &#37;T to 
-	end the label, e.g.: <A HREF="/cdn-cgi/l/email-protection#30161303070b01007063475944535872455656554270565f5f1e53161303070b681e">&#37;<span class="__cf_email__" data-cfemail="82b3b2c2d1f5ebf6e1eac0f7e4e4e7f0">[email&#160;protected]</span>@foo.c&#37;X.</A> Clicking this 
+	end the label, e.g.: <A HREF="/cdn-cgi/l/email-protection#ddfbfeeeeae6eced9d8eaab4a9beb59fa8bbbbb8af9dbbb2b2f3befbfeeeeae685f3">&#37;<span class="__cf_email__" data-cfemail="10212050436779647378526576767562">[email&#160;protected]</span>@foo.c&#37;X.</A> Clicking this 
 	      label runs specified function: in the example when clicking once 
 	      using left mouse button on &quot;foo.c&quot; &quot;SwitchBuffer(10, 1, '<A HREF="motion.html#l">l</A>', 
 	      ''    ')&quot; <A HREF="eval.html#expression">expression</A> will be run.  Function receives the 
@@ -6289,8 +6166,8 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 	         that contains only ASCII lower <A HREF="change.html#case">case</A> letters may be expected 
 	         for other mouse buttons
 	      4. modifiers pressed: <A HREF="eval.html#string">string</A> which contains &quot;<A HREF="change.html#s">s</A>&quot; if <A HREF="intro.html#shift">shift</A> 
-	         modifier was pressed, &quot;<A HREF="change.html#c">c</A>&quot; for <A HREF="intro.html#control">control</A>, &quot;<A HREF="insert.html#a">a</A>&quot; for <A HREF="intro.html#alt">alt</A> and &quot;<A HREF="motion.html#m">m</A>&quot; 
-	         for <A HREF="intro.html#meta">meta</A>; currently if modifier is not pressed <A HREF="eval.html#string">string</A> 
+	         modifier was pressed, &quot;<A HREF="change.html#c">c</A>&quot; for <A HREF="intro.html#control">control</A>, &quot;<A HREF="insert.html#a">a</A>&quot; for alt and &quot;<A HREF="motion.html#m">m</A>&quot; 
+	         for meta; currently if modifier is not pressed <A HREF="eval.html#string">string</A> 
 	         contains space instead, but one should not rely on presence 
 	         of spaces or specific order of modifiers: use |<A HREF="eval.html#stridx()">stridx()</A>| to 
 	         test whether some modifier is present; <A HREF="eval.html#string">string</A> is guaranteed 
@@ -6331,7 +6208,7 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 	line is displayed.  The current buffer and current <A HREF="windows.html#window">window</A> will be set
 	temporarily to that of the <A HREF="windows.html#window">window</A> (and buffer) whose statusline is
 	currently being drawn.  The <A HREF="eval.html#expression">expression</A> will evaluate in this context.
-	The variable &quot;actual_curbuf&quot; is set to the '<A HREF="eval.html#bufnr()">bufnr()</A>' number of the
+	The variable &quot;<A HREF="#g:actual_curbuf">g:actual_curbuf</A>&quot; is set to the `bufnr()` number of the
 	real current buffer.
 
 	The <A HREF="#'statusline'">'statusline'</A> option will be evaluated in the |<A HREF="eval.html#sandbox">sandbox</A>| if set from
@@ -6391,8 +6268,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'suffixesadd'"></A><B>'suffixesadd'</B>* *<A NAME="'sua'"></A><B>'sua'</B>*
 <A HREF="#'suffixesadd'">'suffixesadd'</A> <A HREF="#'sua'">'sua'</A>	<A HREF="eval.html#string">string</A>	(default &quot;&quot;)
 			local to buffer
-			{not available when compiled without the
-			|<A HREF="various.html#+file_in_path">+file_in_path</A>| feature}
 	Comma separated <A HREF="eval.html#list">list</A> of <A HREF="cmdline.html#suffixes">suffixes</A>, which are used when searching for a
 	file for the &quot;<A HREF="editing.html#gf">gf</A>&quot;, &quot;<A HREF="tagsrch.html#[I">[I</A>&quot;, etc. commands.  Example:
 <B>		:set suffixesadd=.java</B>
@@ -6415,6 +6290,7 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 	Also see |<A HREF="recover.html#swap-file">swap-file</A>|.
 	If you want to open a new buffer without creating a swap file for <A HREF="motion.html#it">it</A>,
 	use the |<A HREF="recover.html#:noswapfile">:noswapfile</A>| modifier.
+	See <A HREF="#'directory'">'directory'</A> for where the swap file is created.
 
 	This option is used together with <A HREF="#'bufhidden'">'bufhidden'</A> and <A HREF="#'buftype'">'buftype'</A> to
 	specify special kinds of buffers.   See |<A HREF="windows.html#special-buffers">special-buffers</A>|.
@@ -6445,8 +6321,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'synmaxcol'"></A><B>'synmaxcol'</B>* *<A NAME="'smc'"></A><B>'smc'</B>*
 <A HREF="#'synmaxcol'">'synmaxcol'</A> <A HREF="#'smc'">'smc'</A>	number	(default 3000)
 			local to buffer
-			{not available when compiled without the |<A HREF="various.html#+syntax">+syntax</A>|
-			feature}
 	Maximum column in which to search for <A HREF="syntax.html#syntax">syntax</A> items.  In long lines the
 	text after this column is not highlighted and following lines may not
 	be highlighted correctly, because the <A HREF="syntax.html#syntax">syntax</A> state is cleared.
@@ -6458,8 +6332,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'syntax'"></A><B>'syntax'</B>* *<A NAME="'syn'"></A><B>'syn'</B>*
 <A HREF="#'syntax'">'syntax'</A> <A HREF="#'syn'">'syn'</A>		<A HREF="eval.html#string">string</A>	(default empty)
 			local to buffer
-			{not available when compiled without the |<A HREF="various.html#+syntax">+syntax</A>|
-			feature}
 	When this option is set, the <A HREF="syntax.html#syntax">syntax</A> with this name is loaded, unless
 	<A HREF="syntax.html#syntax">syntax</A> highlighting has been switched off with &quot;<A HREF="syntax.html#:syntax">:syntax</A> off&quot;.
 	Otherwise this option does not always reflect the current <A HREF="syntax.html#syntax">syntax</A> (the
@@ -6488,8 +6360,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'tabline'"></A><B>'tabline'</B>* *<A NAME="'tal'"></A><B>'tal'</B>*
 <A HREF="#'tabline'">'tabline'</A> <A HREF="#'tal'">'tal'</A>		<A HREF="eval.html#string">string</A>	(default empty)
 			global
-			{not available when compiled without the |<A HREF="various.html#+windows">+windows</A>|
-			feature}
 	When nonempty, this option determines the content of the <A HREF="intro.html#tab">tab</A> pages
 	line at the top of the Vim <A HREF="windows.html#window">window</A>.  When empty Vim will use a default
 	tab pages line.  See |<A HREF="tabpage.html#setting-tabline">setting-tabline</A>| for more info.
@@ -6512,8 +6382,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'tabpagemax'"></A><B>'tabpagemax'</B>* *<A NAME="'tpm'"></A><B>'tpm'</B>*
 <A HREF="#'tabpagemax'">'tabpagemax'</A> <A HREF="#'tpm'">'tpm'</A>	number	(default 50)
 			global
-			{not available when compiled without the |<A HREF="various.html#+windows">+windows</A>|
-			feature}
 	Maximum number of <A HREF="intro.html#tab">tab</A> pages to be opened by the |<A HREF="starting.html#-p">-p</A>| command line
 	argument or the &quot;<A HREF="tabpage.html#:tab">:tab</A> all&quot; command. |<A HREF="tabpage.html#tabpage">tabpage</A>|
 
@@ -6602,7 +6470,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 							*<A NAME="'tagcase'"></A><B>'tagcase'</B>* *<A NAME="'tc'"></A><B>'tc'</B>*
 <A HREF="#'tagcase'">'tagcase'</A> <A HREF="#'tc'">'tc'</A>		<A HREF="eval.html#string">string</A>	(default &quot;followic&quot;)
 			global or local to buffer |<A HREF="#global-local">global-local</A>|
-			{not in Vi}
 	This option specifies how <A HREF="change.html#case">case</A> is handled when searching the <A HREF="tagsrch.html#tags">tags</A>
 	file:
 	   followic	Follow the <A HREF="#'ignorecase'">'ignorecase'</A> option
@@ -6639,8 +6506,7 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 	a directory tree.  See |<A HREF="editing.html#file-searching">file-searching</A>|.  E.g., &quot;/lib/**/tags&quot; will
 	find all files named &quot;<A HREF="tagsrch.html#tags">tags</A>&quot; below &quot;/lib&quot;.  The filename itself cannot
 	contain <A HREF="editing.html#wildcards">wildcards</A>, <A HREF="motion.html#it">it</A> is used as-is.  E.g., &quot;/lib/**/tags?&quot; will find
-	files called &quot;tags?&quot;.  {not available when compiled without the
-	|<A HREF="various.html#+path_extra">+path_extra</A>| feature}
+	files called &quot;tags?&quot;.
 	The |<A HREF="eval.html#tagfiles()">tagfiles()</A>| function can be used to get a <A HREF="eval.html#list">list</A> of the file names
 	actually used.
 	The use of |<A HREF="#:set+=">:set+=</A>| and |<A HREF="#:set-=">:set-=</A>| is preferred when adding or removing
@@ -6714,7 +6580,7 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 	non-keyword characters (white space is preferred).  Maximum line
 	length is 510 bytes.
 	To obtain a file to be used here, check out this ftp site:
-	[Sorry this link doesn't work anymore, <A HREF="diff.html#do">do</A> you know the right one?] 
+	[Sorry this link doesn't work anymore, <A HREF="diff.html#do">do</A> you know the right one?]
 	<A HREF="ftp://ftp.ox.ac.uk/pub/wordlists/">ftp://ftp.ox.ac.uk/pub/wordlists/</A> First get the README file.
 	To include a comma in a file name precede <A HREF="motion.html#it">it</A> with a <A HREF="intro.html#backslash">backslash</A>.  Spaces
 	after a comma are ignored, otherwise spaces are included in the file
@@ -6821,7 +6687,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 	separating space only when needed.
 	NOTE: Use of special characters in <A HREF="#'titlestring'">'titlestring'</A> may cause the display
 	to be garbled (e.g., when <A HREF="motion.html#it">it</A> contains a CR or NL character).
-	{not available when compiled without the |<A HREF="various.html#+statusline">+statusline</A>| feature}
 
 
 				     *<A NAME="'ttyfast'"></A><B>'ttyfast'</B>* *<A NAME="'tf'"></A><B>'tf'</B>* *<A NAME="'nottyfast'"></A><B>'nottyfast'</B>* *<A NAME="'notf'"></A><B>'notf'</B>*
@@ -6831,7 +6696,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'undodir'"></A><B>'undodir'</B>* *<A NAME="'udir'"></A><B>'udir'</B>* *<A NAME="E5003"></A><B>E5003</B>*
 <A HREF="#'undodir'">'undodir'</A> <A HREF="#'udir'">'udir'</A>	<A HREF="eval.html#string">string</A>	(default &quot;$XDG_DATA_HOME/nvim/undo&quot;)
 			global
-			{only when compiled with the |<A HREF="various.html#+persistent_undo">+persistent_undo</A>| feature}
 	<A HREF="eval.html#List">List</A> of directory names for <A HREF="undo.html#undo">undo</A> files, separated with commas.
 	See |<A HREF="#'backupdir'">'backupdir'</A>| for details of the format.
 	&quot;<A HREF="repeat.html#.">.</A>&quot; means using the directory of the file.  The <A HREF="undo.html#undo">undo</A> file name for
@@ -6851,7 +6715,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 				*<A NAME="'undofile'"></A><B>'undofile'</B>* *<A NAME="'noundofile'"></A><B>'noundofile'</B>* *<A NAME="'udf'"></A><B>'udf'</B>* *<A NAME="'noudf'"></A><B>'noudf'</B>*
 <A HREF="#'undofile'">'undofile'</A> <A HREF="#'udf'">'udf'</A>	<A HREF="#boolean">boolean</A>	(default off)
 			local to buffer
-			{only when compiled with the |<A HREF="various.html#+persistent_undo">+persistent_undo</A>| feature}
 	When on, Vim automatically saves <A HREF="undo.html#undo">undo</A> <A HREF="cmdline.html#history">history</A> to an <A HREF="undo.html#undo">undo</A> file when
 	<A HREF="editing.html#writing">writing</A> a buffer to a file, and restores <A HREF="undo.html#undo">undo</A> <A HREF="cmdline.html#history">history</A> from the same
 	file on buffer read.
@@ -6962,8 +6825,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'viewdir'"></A><B>'viewdir'</B>* *<A NAME="'vdir'"></A><B>'vdir'</B>*
 <A HREF="#'viewdir'">'viewdir'</A> <A HREF="#'vdir'">'vdir'</A>	<A HREF="eval.html#string">string</A>	(default: &quot;$XDG_DATA_HOME/nvim/view&quot;)
 			global
-			{not available when compiled without the |<A HREF="various.html#+mksession">+mksession</A>|
-			feature}
 	Name of the directory where to store files for |<A HREF="starting.html#:mkview">:mkview</A>|.
 	This option cannot be set from a |<A HREF="#modeline">modeline</A>| or in the |<A HREF="eval.html#sandbox">sandbox</A>|, for
 	security reasons.
@@ -6972,8 +6833,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'viewoptions'"></A><B>'viewoptions'</B>* *<A NAME="'vop'"></A><B>'vop'</B>*
 <A HREF="#'viewoptions'">'viewoptions'</A> <A HREF="#'vop'">'vop'</A>	<A HREF="eval.html#string">string</A>	(default: &quot;folds,options,cursor,curdir&quot;)
 			global
-			{not available when compiled without the |<A HREF="various.html#+mksession">+mksession</A>|
-			feature}
 	Changes the effect of the |<A HREF="starting.html#:mkview">:mkview</A>| command.  It is a comma separated
 	<A HREF="eval.html#list">list</A> of words.  Each <A HREF="motion.html#word">word</A> enables saving and restoring something:
 <B><FONT color="#54A23D">	   word		save and restore </FONT></B>
@@ -6997,8 +6856,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 					    *<A NAME="'virtualedit'"></A><B>'virtualedit'</B>* *<A NAME="'ve'"></A><B>'ve'</B>*
 <A HREF="#'virtualedit'">'virtualedit'</A> <A HREF="#'ve'">'ve'</A>	<A HREF="eval.html#string">string</A>	(default &quot;&quot;)
 			global
-			{not available when compiled without the
-			|<A HREF="various.html#+virtualedit">+virtualedit</A>| feature}
 	A comma separated <A HREF="eval.html#list">list</A> of these words:
 	    block	Allow virtual editing in <A HREF="visual.html#Visual">Visual</A> block mode.
 	    insert	Allow virtual editing in <A HREF="insert.html#Insert">Insert</A> mode.
@@ -7095,8 +6952,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'wildignore'"></A><B>'wildignore'</B>* *<A NAME="'wig'"></A><B>'wig'</B>*
 <A HREF="#'wildignore'">'wildignore'</A> <A HREF="#'wig'">'wig'</A>	<A HREF="eval.html#string">string</A>	(default &quot;&quot;)
 			global
-			{not available when compiled without the |<A HREF="various.html#+wildignore">+wildignore</A>|
-			feature}
 	A <A HREF="eval.html#list">list</A> of file patterns.  A file that matches with one of these
 	patterns is ignored when expanding |<A HREF="editing.html#wildcards">wildcards</A>|, completing file or
 	directory names, and influences the result of |<A HREF="eval.html#expand()">expand()</A>|, |<A HREF="eval.html#glob()">glob()</A>| and
@@ -7124,8 +6979,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 				*<A NAME="'wildmenu'"></A><B>'wildmenu'</B>* *<A NAME="'wmnu'"></A><B>'wmnu'</B>* *<A NAME="'nowildmenu'"></A><B>'nowildmenu'</B>* *<A NAME="'nowmnu'"></A><B>'nowmnu'</B>*
 <A HREF="#'wildmenu'">'wildmenu'</A> <A HREF="#'wmnu'">'wmnu'</A>	<A HREF="#boolean">boolean</A>	(default on)
 			global
-			{not available if compiled without the |<A HREF="various.html#+wildmenu">+wildmenu</A>|
-			feature}
 	When <A HREF="#'wildmenu'">'wildmenu'</A> is on, command-line completion operates in an enhanced
 	mode.  On pressing <A HREF="#'wildchar'">'wildchar'</A> (usually <A HREF="motion.html#&lt;Tab&gt;">&lt;Tab&gt;</A>) to invoke completion,
 	the possible matches are shown just above the command line, with the
@@ -7203,8 +7056,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'wildoptions'"></A><B>'wildoptions'</B>* *<A NAME="'wop'"></A><B>'wop'</B>*
 <A HREF="#'wildoptions'">'wildoptions'</A> <A HREF="#'wop'">'wop'</A>	<A HREF="eval.html#string">string</A>	(default &quot;&quot;)
 			global
-			{not available when compiled without the |<A HREF="various.html#+wildignore">+wildignore</A>|
-			feature}
 	A <A HREF="eval.html#list">list</A> of words that change how command line completion is done.
 	Currently only one <A HREF="motion.html#word">word</A> is allowed:
 	  tagfile	When using <A HREF="scroll.html#CTRL-D">CTRL-D</A> to <A HREF="eval.html#list">list</A> matching <A HREF="tagsrch.html#tags">tags</A>, the kind of
@@ -7219,19 +7070,19 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 <A HREF="#'winaltkeys'">'winaltkeys'</A> <A HREF="#'wak'">'wak'</A>	<A HREF="eval.html#string">string</A>	(default &quot;menu&quot;)
 			global
 			{only used in Win32}
-	Some <A HREF="gui.html#GUI">GUI</A> versions allow the access to menu entries by using the ALT
+	Some <A HREF="gui.html#GUI">GUI</A> versions allow the access to menu entries by using the <A HREF="intro.html#ALT">ALT</A>
 	key in combination with a character that appears underlined in the
-	menu.  This conflicts with the use of the ALT key for mappings and
+	menu.  This conflicts with the use of the <A HREF="intro.html#ALT">ALT</A> key for mappings and
 	entering special characters.  This option tells what to <A HREF="diff.html#do">do</A>:
-	  no	Don't use ALT keys for <A HREF="gui.html#menus">menus</A>.  ALT key combinations can be
+	  no	Don't use <A HREF="intro.html#ALT">ALT</A> keys for <A HREF="gui.html#menus">menus</A>.  <A HREF="intro.html#ALT">ALT</A> key combinations can be
 		mapped, but there is no automatic handling.  This can then be
 		done with the |<A HREF="intro.html#:simalt">:simalt</A>| command.
-	  yes	ALT key handling is done by the windowing system.  ALT key
+	  yes	<A HREF="intro.html#ALT">ALT</A> key handling is done by the windowing system.  <A HREF="intro.html#ALT">ALT</A> key
 		combinations cannot be mapped.
-	  menu	Using ALT in combination with a character that is a menu
+	  menu	Using <A HREF="intro.html#ALT">ALT</A> in combination with a character that is a menu
 		shortcut key, will be handled by the windowing system.  Other
 		keys can be mapped.
-	If the menu is disabled by excluding '<A HREF="motion.html#m">m</A>' from <A HREF="#'guioptions'">'guioptions'</A>, the ALT
+	If the menu is disabled by excluding '<A HREF="motion.html#m">m</A>' from <A HREF="#'guioptions'">'guioptions'</A>, the <A HREF="intro.html#ALT">ALT</A>
 	key is never used for the menu.
 	This option is not used for &lt;F10&gt;; on Win32.
 
@@ -7253,8 +7104,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'winheight'"></A><B>'winheight'</B>* *<A NAME="'wh'"></A><B>'wh'</B>* *<A NAME="E591"></A><B>E591</B>*
 <A HREF="#'winheight'">'winheight'</A> <A HREF="#'wh'">'wh'</A>	number	(default 1)
 			global
-			{not available when compiled without the |<A HREF="various.html#+windows">+windows</A>|
-			feature}
 	Minimal number of lines for the current <A HREF="windows.html#window">window</A>.  This is not a hard
 	minimum, Vim will use fewer lines if there is not enough room.  If the
 	focus goes to a <A HREF="windows.html#window">window</A> that is smaller, its size is increased, at the
@@ -7283,8 +7132,8 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 	syntax highlighting (use |<A HREF="syntax.html#:ownsyntax">:ownsyntax</A>| for that).
 	
 	Highlights of vertical separators are determined by the <A HREF="windows.html#window">window</A> to the
-	left of the separator.  The highlight of a <A HREF="tabpage.html#tabpage">tabpage</A> in |<A HREF="intro.html#tabline">tabline</A>| is
-	determined by the last-focused <A HREF="windows.html#window">window</A> of the <A HREF="tabpage.html#tabpage">tabpage</A>.  Highlights of
+	left of the separator.  The <A HREF="#'tabline'">'tabline'</A> highlight of a <A HREF="tabpage.html#tabpage">tabpage</A> is
+	decided by the last-focused <A HREF="windows.html#window">window</A> of the <A HREF="tabpage.html#tabpage">tabpage</A>.  Highlights of
 	the popupmenu are determined by the current <A HREF="windows.html#window">window</A>.  Highlights in the
 	message area cannot be overridden.
 
@@ -7295,8 +7144,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 			*<A NAME="'winfixheight'"></A><B>'winfixheight'</B>* *<A NAME="'wfh'"></A><B>'wfh'</B>* *<A NAME="'nowinfixheight'"></A><B>'nowinfixheight'</B>* *<A NAME="'nowfh'"></A><B>'nowfh'</B>*
 <A HREF="#'winfixheight'">'winfixheight'</A> <A HREF="#'wfh'">'wfh'</A>	<A HREF="#boolean">boolean</A>	(default off)
 			local to <A HREF="windows.html#window">window</A>
-			{not available when compiled without the |<A HREF="various.html#+windows">+windows</A>|
-			feature}
 	Keep the <A HREF="windows.html#window">window</A> height when <A HREF="windows.html#windows">windows</A> are opened or closed and
 	<A HREF="#'equalalways'">'equalalways'</A> is set.  Also for |<A HREF="windows.html#CTRL-W_=">CTRL-W_=</A>|.  Set by default for the
 	|<A HREF="windows.html#preview-window">preview-window</A>| and |<A HREF="quickfix.html#quickfix-window">quickfix-window</A>|.
@@ -7306,8 +7153,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 			*<A NAME="'winfixwidth'"></A><B>'winfixwidth'</B>* *<A NAME="'wfw'"></A><B>'wfw'</B>* *<A NAME="'nowinfixwidth'"></A><B>'nowinfixwidth'</B>* *<A NAME="'nowfw'"></A><B>'nowfw'</B>*
 <A HREF="#'winfixwidth'">'winfixwidth'</A> <A HREF="#'wfw'">'wfw'</A>	<A HREF="#boolean">boolean</A>	(default off)
 			local to <A HREF="windows.html#window">window</A>
-			{not available when compiled without the |<A HREF="various.html#+windows">+windows</A>|
-			feature}
 	Keep the <A HREF="windows.html#window">window</A> width when <A HREF="windows.html#windows">windows</A> are opened or closed and
 	<A HREF="#'equalalways'">'equalalways'</A> is set.  Also for |<A HREF="windows.html#CTRL-W_=">CTRL-W_=</A>|.
 	The width may be changed anyway when running out of room.
@@ -7316,8 +7161,6 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 						*<A NAME="'winminheight'"></A><B>'winminheight'</B>* *<A NAME="'wmh'"></A><B>'wmh'</B>*
 <A HREF="#'winminheight'">'winminheight'</A> <A HREF="#'wmh'">'wmh'</A>	number	(default 1)
 			global
-			{not available when compiled without the |<A HREF="various.html#+windows">+windows</A>|
-			feature}
 	The minimal height of a <A HREF="windows.html#window">window</A>, when it's not the current <A HREF="windows.html#window">window</A>.
 	This is a hard minimum, <A HREF="windows.html#windows">windows</A> will never become smaller.
 	When set to zero, <A HREF="windows.html#windows">windows</A> may be &quot;squashed&quot; to zero lines (i.e. just a
@@ -7441,5 +7284,5 @@ A jump table for the <A HREF="#options">options</A> with a short description can
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
-  <script data-cfasync="false" src="/cdn-cgi/scripts/d07b1474/cloudflare-static/email-decode.min.js"></script></body>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
 </html>

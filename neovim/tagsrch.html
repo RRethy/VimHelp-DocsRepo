@@ -8,7 +8,7 @@
                 <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
 
     <div class="container">
-      <h1>Vim documentation: tagsrch</h1>
+      <h1>Nvim documentation: tagsrch</h1>
 <A NAME="top"></A>
 <A HREF="index.html">main help file</A>
 
@@ -51,12 +51,12 @@ below.
 
 
 						*<A NAME=":ta"></A><B>:ta</B>* *<A NAME=":tag"></A><B>:tag</B>* *<A NAME="E426"></A><B>E426</B>* *<A NAME="E429"></A><B>E429</B>*
-:[count]ta[g][!] {ident}
-			Jump to the definition of {ident}, using the
-			information in the <A HREF="#tags">tags</A> file(s).  Put {ident} in the
+:[count]ta[g][!] {name}
+			Jump to the definition of {name}, using the
+			information in the <A HREF="#tags">tags</A> file(s).  Put {name} in the
 			tag stack.  See |<A HREF="#tag-!">tag-!</A>| for [!].
-			{ident} can be a regexp <A HREF="pattern.html#pattern">pattern</A>, see |<A HREF="#tag-regexp">tag-regexp</A>|.
-			When there are several matching <A HREF="#tags">tags</A> for {ident}, jump
+			{name} can be a regexp <A HREF="pattern.html#pattern">pattern</A>, see |<A HREF="#tag-regexp">tag-regexp</A>|.
+			When there are several matching <A HREF="#tags">tags</A> for {name}, jump
 			to the <A HREF="intro.html#[count]">[count]</A> one.  When <A HREF="intro.html#[count]">[count]</A> is omitted the
 			first one is jumped to. See |<A HREF="#tag-matchlist">tag-matchlist</A>| for
 			jumping to other matching <A HREF="#tags">tags</A>.
@@ -66,16 +66,16 @@ below.
 
 <A HREF="#&lt;C-LeftMouse&gt;">&lt;C-LeftMouse&gt;</A>					*<A NAME="&lt;C-LeftMouse&gt;"></A><B>&lt;C-LeftMouse&gt;</B>* *<A NAME="CTRL-]"></A><B>CTRL-]</B>*
 <A HREF="#CTRL-]">CTRL-]</A>			Jump to the definition of the keyword under the
-			cursor.  Same <A HREF="motion.html#as">as</A> &quot;<A HREF="#:tag">:tag</A> {ident}&quot;, where {ident} is the
+			cursor.  Same <A HREF="motion.html#as">as</A> &quot;<A HREF="#:tag">:tag</A> {name}&quot;, where {name} is the
 			keyword under or after cursor.
-			When there are several matching <A HREF="#tags">tags</A> for {ident}, jump
+			When there are several matching <A HREF="#tags">tags</A> for {name}, jump
 			to the <A HREF="intro.html#[count]">[count]</A> one.  When no <A HREF="intro.html#[count]">[count]</A> is given the
 			first one is jumped to. See |<A HREF="#tag-matchlist">tag-matchlist</A>| for
 			jumping to other matching <A HREF="#tags">tags</A>.
 
 
 							*<A NAME="v_CTRL-]"></A><B>v_CTRL-]</B>*
-{Visual}CTRL-]		Same <A HREF="motion.html#as">as</A> &quot;<A HREF="#:tag">:tag</A> {ident}&quot;, where {ident} is the text that
+{Visual}CTRL-]		Same <A HREF="motion.html#as">as</A> &quot;<A HREF="#:tag">:tag</A> {name}&quot;, where {name} is the text that
 			is highlighted.
 
 
@@ -101,7 +101,7 @@ When there are multiple matches for a <A HREF="#tag">tag</A>, this priority is u
 
 Note that when the current file changes, the priority <A HREF="eval.html#list">list</A> is mostly not
 changed, to avoid confusion when using &quot;<A HREF="#:tnext">:tnext</A>&quot;.  It is changed when using
-&quot;<A HREF="#:tag">:tag</A> {ident}&quot;.
+&quot;<A HREF="#:tag">:tag</A> {name}&quot;.
 
 The ignore-case matches are not found for a &quot;<A HREF="#:tag">:tag</A>&quot; command when:
 - the <A HREF="options.html#'ignorecase'">'ignorecase'</A> option is off and <A HREF="options.html#'tagcase'">'tagcase'</A> is &quot;followic&quot;
@@ -191,7 +191,7 @@ You can get from main to FuncA by using <A HREF="#CTRL-]">CTRL-]</A> on the call
 you can <A HREF="#CTRL-]">CTRL-]</A> to get to FuncC.  If you now want to go back to main you can
 use <A HREF="#CTRL-T">CTRL-T</A> <A HREF="if_cscop.html#twice">twice</A>.  Then you can <A HREF="#CTRL-]">CTRL-]</A> to FuncB.
 
-If you issue a &quot;<A HREF="#:ta">:ta</A> {ident}&quot; or <A HREF="#CTRL-]">CTRL-]</A> command, this <A HREF="#tag">tag</A> is inserted at the
+If you issue a &quot;<A HREF="#:ta">:ta</A> {name}&quot; or <A HREF="#CTRL-]">CTRL-]</A> command, this <A HREF="#tag">tag</A> is inserted at the
 current position in the stack.  If the stack was full (it can hold up to 20
 entries), the oldest entry is deleted and the older entries <A HREF="intro.html#shift">shift</A> one
 position up (their index number is decremented by one).  If the last used
@@ -218,14 +218,14 @@ the same entry.
 
 
 							*<A NAME=":ts"></A><B>:ts</B>* *<A NAME=":tselect"></A><B>:tselect</B>*
-:ts[elect][!] [ident]	<A HREF="eval.html#List">List</A> the <A HREF="#tags">tags</A> that match [ident], using the
+:ts[elect][!] [name]	<A HREF="eval.html#List">List</A> the <A HREF="#tags">tags</A> that match [name], using the
 			information in the <A HREF="#tags">tags</A> file(s).
-			When [ident] is not given, the last <A HREF="#tag">tag</A> name from the
+			When [name] is not given, the last <A HREF="#tag">tag</A> name from the
 			<A HREF="#tag">tag</A> stack is used.
 			See |<A HREF="#tag-!">tag-!</A>| for [!].
 			With a '<A HREF="change.html#&gt;">&gt;</A>' in the first column is indicated which is
 			the current position in the <A HREF="eval.html#list">list</A> (if there is one).
-			[ident] can be a regexp <A HREF="pattern.html#pattern">pattern</A>, see |<A HREF="#tag-regexp">tag-regexp</A>|.
+			[name] can be a regexp <A HREF="pattern.html#pattern">pattern</A>, see |<A HREF="#tag-regexp">tag-regexp</A>|.
 			See |<A HREF="#tag-priority">tag-priority</A>| for the priorities used in the
 			listing.
 			Example output:
@@ -254,7 +254,7 @@ the same entry.
 
 
 							*<A NAME=":sts"></A><B>:sts</B>* *<A NAME=":stselect"></A><B>:stselect</B>*
-:sts[elect][!] [ident]	Does &quot;:tselect[!] [ident]&quot; and splits the <A HREF="windows.html#window">window</A> for
+:sts[elect][!] [name]	Does &quot;:tselect[!] [name]&quot; and splits the <A HREF="windows.html#window">window</A> for
 			the selected <A HREF="#tag">tag</A>.
 
 
@@ -268,12 +268,12 @@ the same entry.
 
 
 							*<A NAME=":tj"></A><B>:tj</B>* *<A NAME=":tjump"></A><B>:tjump</B>*
-:tj[ump][!] [ident]	Like &quot;<A HREF="#:tselect">:tselect</A>&quot;, but jump to the <A HREF="#tag">tag</A> directly when
+:tj[ump][!] [name]	Like &quot;<A HREF="#:tselect">:tselect</A>&quot;, but jump to the <A HREF="#tag">tag</A> directly when
 			there is only one match.
 
 
 							*<A NAME=":stj"></A><B>:stj</B>* *<A NAME=":stjump"></A><B>:stjump</B>*
-:stj[ump][!] [ident]	Does &quot;:tjump[!] [ident]&quot; and splits the <A HREF="windows.html#window">window</A> for the
+:stj[ump][!] [name]	Does &quot;:tjump[!] [name]&quot; and splits the <A HREF="windows.html#window">window</A> for the
 			selected <A HREF="#tag">tag</A>.
 
 
@@ -314,9 +314,9 @@ the same entry.
 
 
 							*<A NAME=":lt"></A><B>:lt</B>* *<A NAME=":ltag"></A><B>:ltag</B>*
-:lt[ag][!] [ident]	Jump to <A HREF="#tag">tag</A> [ident] and add the matching <A HREF="#tags">tags</A> to a new
-			location <A HREF="eval.html#list">list</A> for the current <A HREF="windows.html#window">window</A>.  [ident] can be
-			a regexp <A HREF="pattern.html#pattern">pattern</A>, see |<A HREF="#tag-regexp">tag-regexp</A>|.  When [ident] is
+:lt[ag][!] [name]	Jump to <A HREF="#tag">tag</A> [name] and add the matching <A HREF="#tags">tags</A> to a new
+			location <A HREF="eval.html#list">list</A> for the current <A HREF="windows.html#window">window</A>.  [name] can be
+			a regexp <A HREF="pattern.html#pattern">pattern</A>, see |<A HREF="#tag-regexp">tag-regexp</A>|.  When [name] is
 			not given, the last <A HREF="#tag">tag</A> name from the <A HREF="#tag">tag</A> stack is
 			used.  The search <A HREF="pattern.html#pattern">pattern</A> to locate the <A HREF="#tag">tag</A> line is
 			prefixed with &quot;\V&quot; to <A HREF="intro.html#escape">escape</A> all the special
@@ -350,12 +350,12 @@ the same <A HREF="motion.html#as">as</A> above, with a &quot;<A HREF="change.htm
 
 
 							*<A NAME=":pts"></A><B>:pts</B>* *<A NAME=":ptselect"></A><B>:ptselect</B>*
-:pts[elect][!] [ident]	Does &quot;:tselect[!] [ident]&quot; and shows the new <A HREF="#tag">tag</A> in a
+:pts[elect][!] [name]	Does &quot;:tselect[!] [name]&quot; and shows the new <A HREF="#tag">tag</A> in a
 			&quot;Preview&quot; <A HREF="windows.html#window">window</A>.  See |<A HREF="windows.html#:ptag">:ptag</A>| for more info.
 
 
 							*<A NAME=":ptj"></A><B>:ptj</B>* *<A NAME=":ptjump"></A><B>:ptjump</B>*
-:ptj[ump][!] [ident]	Does &quot;:tjump[!] [ident]&quot; and shows the new <A HREF="#tag">tag</A> in a
+:ptj[ump][!] [name]	Does &quot;:tjump[!] [name]&quot; and shows the new <A HREF="#tag">tag</A> in a
 			&quot;Preview&quot; <A HREF="windows.html#window">window</A>.  See |<A HREF="windows.html#:ptag">:ptag</A>| for more info.
 
 

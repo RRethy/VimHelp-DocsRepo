@@ -8,7 +8,7 @@
                 <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
 
     <div class="container">
-      <h1>Vim documentation: starting</h1>
+      <h1>Nvim documentation: starting</h1>
 <A NAME="top"></A>
 <A HREF="index.html">main help file</A>
 
@@ -41,8 +41,7 @@ More generally, Vim is started with:
 Option arguments and file name arguments can be mixed, and any number of them
 can be given.  However, watch out for <A HREF="options.html#options">options</A> that take an argument.
 
-Exactly one out of the following five items may be used to choose how to
-start editing:
+The following items may be used to choose how to start editing:
 
 
 							*<A NAME="-file"></A><B>-file</B>* *<A NAME="---"></A><B>---</B>*
@@ -54,27 +53,26 @@ filename	One or more file names.  The first one will be the current
 <B>			nvim -- -filename</B>
  		All arguments after the &quot;<A HREF="#--">--</A>&quot; will be interpreted <A HREF="motion.html#as">as</A> file names,
 		no other <A HREF="options.html#options">options</A> or &quot;+command&quot; argument can follow.
-		For behavior of quotes on MS-Windows, see |<A HREF="intro.html#win32-quotes">win32-quotes</A>|.
 
 
 							*<A NAME="--"></A><B>--</B>*
--		This argument can mean two things, depending on whether <A HREF="intro.html#Ex">Ex</A>
-		mode is to be used.
-
-		Starting in <A HREF="intro.html#Normal">Normal</A> mode:
-<B>			nvim -</B>
- 		Start editing a new buffer, which is filled with text
-		that is read from stdin.  The commands that would normally be
-		read from stdin will now be read from stderr.  Example:
-<B>			find . -name "*.c" -print | nvim -</B>
+-		Alias for stdin (standard input).
+		Example:
+<B>			echo text | nvim - file</B>
+ 		&quot;text&quot; is read into buffer 1, &quot;file&quot; is opened <A HREF="motion.html#as">as</A> buffer 2.
+		In most cases (except <A HREF="#-s">-s</A>, <A HREF="#-es">-es</A>, |<A HREF="#--embed">--embed</A>|, <A HREF="#--headless">--headless</A>) if stdin
+		is not a TTY then <A HREF="motion.html#it">it</A> is read <A HREF="motion.html#as">as</A> text, so &quot;<A HREF="motion.html#-">-</A>&quot; is implied:
+<B>			echo text | nvim file</B>
  		The buffer will be marked modified, because <A HREF="motion.html#it">it</A> contains text
-		that needs to be saved.  Except when in readonly mode, then
-		the buffer is not marked modified.  Example:
-<B>			ls | nvim -R -</B>
- 		Starting in <A HREF="intro.html#Ex">Ex</A> mode:
-<B>			nvim -e -</B>
-<B>			nvim -E</B>
- 		Start editing in |<A HREF="#silent-mode">silent-mode</A>|.
+		that needs to be saved (except for readonly |<A HREF="#-R">-R</A>| mode).
+
+		To read stdin <A HREF="motion.html#as">as</A> <A HREF="intro.html#Normal">Normal</A> commands use |<A HREF="#-s">-s</A>| with &quot;-&quot;:
+<B>			echo "ifoo" | nvim -s -</B>
+ 		To read stdin <A HREF="motion.html#as">as</A> <A HREF="intro.html#Ex">Ex</A> commands use |<A HREF="#-es">-es</A>| or |<A HREF="#-e">-e</A>|:
+<B>			echo "echo getpid()" | nvim -e - -V1</B>
+ 		To open a file literally named &quot;<A HREF="motion.html#-">-</A>&quot;, put <A HREF="motion.html#it">it</A> after &quot;<A HREF="#--">--</A>&quot;:
+<B>			echo foo | nvim -- -</B>
+ 		To read stdin <A HREF="motion.html#as">as</A> text with |<A HREF="#--headless">--headless</A>| use &quot;-&quot;.
 
 
 							*<A NAME="-t"></A><B>-t</B>* *<A NAME="-tag"></A><B>-tag</B>*
@@ -103,7 +101,8 @@ combined after one dash.  There can be no option arguments after the &quot;<A HR
 argument.
 
 
-<A HREF="#--help">--help</A>							*<A NAME="-h"></A><B>-h</B>* *<A NAME="--help"></A><B>--help</B>*
+<A HREF="#--help">--help</A>							*<A NAME="-h"></A><B>-h</B>* *<A NAME="--help"></A><B>--help</B>* *<A NAME="-?"></A><B>-?</B>*
+<A HREF="#-?">-?</A>
 <A HREF="#-h">-h</A>		Give usage (help) message and exit.
 		See |<A HREF="#info-message">info-message</A>| about capturing the text.
 
@@ -131,14 +130,6 @@ argument.
 		When {fname} already exists new <A HREF="message.html#messages">messages</A> are appended.
 		(Only available when compiled with the |<A HREF="various.html#+startuptime">+startuptime</A>|
 		feature).
-
-
-							*<A NAME="--literal"></A><B>--literal</B>*
-<A HREF="#--literal">--literal</A>	Take file names literally, don't expand <A HREF="editing.html#wildcards">wildcards</A>.  Not needed
-		for Unix, because Vim always takes file names literally (the
-		shell expands <A HREF="editing.html#wildcards">wildcards</A>).
-		Applies to all the names, also the ones that come before this
-		argument.
 
 
 							*<A NAME="-+"></A><B>-+</B>*
@@ -234,36 +225,38 @@ argument.
 		<A HREF="eval.html#jobstart()">jobstart()</A>, etc.
 
 
-							*<A NAME="-e"></A><B>-e</B>*
-<A HREF="#-e">-e</A>		Start Vim in <A HREF="intro.html#Ex">Ex</A> mode |<A HREF="intro.html#Q">Q</A>|.
+<A HREF="#-e">-e</A>							*<A NAME="-e"></A><B>-e</B>* *<A NAME="-E"></A><B>-E</B>*
+<A HREF="#-E">-E</A>		Start Nvim in <A HREF="intro.html#Ex">Ex</A> mode |<A HREF="intro.html#gQ">gQ</A>|.
+
+		If stdin is not a TTY:
+		  <A HREF="#-e">-e</A> reads stdin <A HREF="motion.html#as">as</A> <A HREF="intro.html#Ex">Ex</A> commands.
+		  <A HREF="#-E">-E</A> reads stdin <A HREF="motion.html#as">as</A> text (into buffer 1).
 
 
-							*<A NAME="-E"></A><B>-E</B>*
-<A HREF="#-E">-E</A>		Start Vim in improved <A HREF="intro.html#Ex">Ex</A> mode |<A HREF="intro.html#gQ">gQ</A>|.
+							*<A NAME="-es"></A><B>-es</B>* *<A NAME="-Es"></A><B>-Es</B>*
 
-
-							*<A NAME="-s-ex"></A><B>-s-ex</B>* *<A NAME="silent-mode"></A><B>silent-mode</B>*
-<A HREF="#-s">-s</A>		Silent or batch mode.  Only when &quot;<A HREF="#-s">-s</A>&quot; is preceded by the &quot;<A HREF="#-e">-e</A>&quot;
-		argument.  Otherwise see |<A HREF="#-s">-s</A>|, which does take an argument
-		while this use of &quot;<A HREF="#-s">-s</A>&quot; doesn't.  To be used when Vim is used
-		to execute <A HREF="intro.html#Ex">Ex</A> commands from a file instead of a <A HREF="nvim_terminal_emulator.html#terminal">terminal</A>.
-		Switches off most prompts and informative <A HREF="message.html#messages">messages</A>.  Also
-		warnings and error <A HREF="message.html#messages">messages</A>.  The output of these commands is
-		displayed (to stdout):
+<A HREF="#-es">-es</A>							*<A NAME="-s-ex"></A><B>-s-ex</B>* *<A NAME="silent-mode"></A><B>silent-mode</B>*
+<A HREF="#-Es">-Es</A>		Silent or batch mode: execute <A HREF="intro.html#Ex">Ex</A> commands from a file instead
+		of a <A HREF="nvim_terminal_emulator.html#terminal">terminal</A>.  Special <A HREF="change.html#case">case</A> of |<A HREF="#-s">-s</A>| (which takes an argument
+		while &quot;<A HREF="#-es">-es</A>&quot; doesn't).  Disables most prompts, <A HREF="message.html#messages">messages</A>,
+		warnings and <A HREF="message.html#errors">errors</A>.
+		Output of these commands is displayed (to stdout):
 			<A HREF="various.html#:print">:print</A>
 			<A HREF="various.html#:list">:list</A>
 			<A HREF="various.html#:number">:number</A>
 			<A HREF="options.html#:set">:set</A>      <A HREF="options.html#'to'">to</A> display option values.
-		When <A HREF="options.html#'verbose'">'verbose'</A> is non-zero <A HREF="message.html#messages">messages</A> are printed (for
-		debugging, to stderr).
+		When <A HREF="options.html#'verbose'">'verbose'</A> is set <A HREF="message.html#messages">messages</A> are printed to stderr, e.g.:
+<B>			echo foo | nvim -V1 -es</B>
+ 
+		<A HREF="autocmd.html#User">User</A> |<A HREF="init.html">init.vim</A>| is skipped (unless given with |<A HREF="#-u">-u</A>|).
 		|<A HREF="term.html#$TERM">$TERM</A>| is not used.
-		If Vim appears to be stuck try typing &quot;qa!&lt;Enter&gt;&quot;.  You don't
-		get a prompt thus you can't see Vim is waiting for you to type
-		something.
-		Initializations are skipped (except the ones given with the
-		&quot;<A HREF="#-u">-u</A>&quot; argument).
+
+		If stdin is not a TTY:
+		  <A HREF="#-es">-es</A> reads stdin <A HREF="motion.html#as">as</A> <A HREF="intro.html#Ex">Ex</A> commands.
+		  <A HREF="#-Es">-Es</A> reads stdin <A HREF="motion.html#as">as</A> text (into buffer 1).
+
 		Example:
-<B>			vim -es &lt; thefilter  thefile</B>
+<B>			printf "put ='foo'\n%%print\n" | nvim -es</B>
  
 
 							*<A NAME="-b"></A><B>-b</B>*
@@ -381,12 +374,15 @@ argument.
 
 
 							*<A NAME="-s"></A><B>-s</B>*
-<A HREF="#-s">-s</A> {scriptin}	The <A HREF="usr_41.html#script">script</A> file &quot;scriptin&quot; is read.  The characters in the
-		file are interpreted <A HREF="motion.html#as">as</A> if you had typed them.  The same can
-		be done with the command &quot;:source! {scriptin}&quot;.  If the end
-		of the file is reached before the editor exits, further
-		characters are read from the keyboard.  Only works when not
-		started in <A HREF="intro.html#Ex">Ex</A> mode, see |<A HREF="#-s-ex">-s-ex</A>|.  See also |<A HREF="repeat.html#complex-repeat">complex-repeat</A>|.
+<A HREF="#-s">-s</A> {scriptin}	Read <A HREF="usr_41.html#script">script</A> file {scriptin}, interpreting characters <A HREF="motion.html#as">as</A>
+		<A HREF="intro.html#Normal-mode">Normal-mode</A> input.  The same can be done with &quot;:source!&quot;:
+<B>			:source! {scriptin}</B>
+ 		Reads from stdin if {scriptin} is &quot;<A HREF="motion.html#-">-</A>&quot;:
+<B>			echo "ifoo" | nvim -s -</B>
+ 		If the end of the file is reached before Nvim exits, further
+		characters are read from the keyboard.
+
+		Does not work with |<A HREF="#-es">-es</A>|.  See also |<A HREF="repeat.html#complex-repeat">complex-repeat</A>|.
 
 
 							*<A NAME="-w_nr"></A><B>-w_nr</B>*
@@ -411,11 +407,47 @@ argument.
 <A HREF="#--api-info">--api-info</A> 	Print msgpack-encoded |<A HREF="api.html#api-metadata">api-metadata</A>| and exit.
 
 
+							*<A NAME="--embed"></A><B>--embed</B>*
+<A HREF="#--embed">--embed</A>		Use stdin/stdout <A HREF="motion.html#as">as</A> a msgpack-RPC <A HREF="channel.html#channel">channel</A>, so applications can
+		embed and <A HREF="intro.html#control">control</A> Nvim via the |<A HREF="msgpack_rpc.html#rpc-api">rpc-api</A>|.
+
+		By default <A HREF="nvim.html#nvim">nvim</A> will wait for the embedding process to call
+		`nvim_ui_attach` before sourcing <A HREF="#startup">startup</A> files and reading
+		<A HREF="windows.html#buffers">buffers</A>.  This is so that UI can show <A HREF="#startup">startup</A> <A HREF="message.html#messages">messages</A> and
+		possible swap file dialog for the first loaded file.  The
+		process can <A HREF="diff.html#do">do</A> requests before the `nvim_ui_attach`, for
+		instance a `nvim_get_api_info` call so that UI features can be
+		safely detected by the UI before attaching.
+
+		See |<A HREF="ui.html#ui-startup">ui-startup</A>| for more information about UI startup.
+
+		To embed <A HREF="nvim.html#nvim">nvim</A> without using the UI protocol, `--headless` should
+		be supplied together with `--embed`. Then <A HREF="#initialization">initialization</A> is
+		performed without waiting for an UI. This is also equivalent
+		to the following alternative:
+<B>			nvim --headless --cmd "call stdioopen({'rpc': v:true})"</B>
+ 
+		See also |<A HREF="channel.html#channel-stdio">channel-stdio</A>|.
+
+
 							*<A NAME="--headless"></A><B>--headless</B>*
-<A HREF="#--headless">--headless</A> 	Do not start the built-in UI.
-                See |<A HREF="channel.html#channel-stdio">channel-stdio</A>| for how to use stdio for other purposes
-                instead.
-		See also |<A HREF="#silent-mode">silent-mode</A>|, which does start a (limited) UI.
+<A HREF="#--headless">--headless</A> 	Start <A HREF="nvim.html#nvim">nvim</A> without an UI. The <A HREF="term.html#TUI">TUI</A> is not used, so stdio
+		can be used <A HREF="motion.html#as">as</A> an arbitrary communication <A HREF="channel.html#channel">channel</A>.
+		|<A HREF="channel.html#channel-stdio">channel-stdio</A>| When used together with `--embed`, <A HREF="diff.html#do">do</A> not wait
+		for the embedder to attach an UI.
+
+		Also useful for scripting (tests) to see <A HREF="message.html#messages">messages</A> that would
+		not be printed by |<A HREF="#-es">-es</A>|.
+
+		To detect if a UI is available, check if |<A HREF="api.html#nvim_list_uis()">nvim_list_uis()</A>| is
+		empty in or after |<A HREF="autocmd.html#VimEnter">VimEnter</A>|.
+
+		To read stdin <A HREF="motion.html#as">as</A> text, &quot;<A HREF="motion.html#-">-</A>&quot; must be given explicitly:
+		<A HREF="#--headless">--headless</A> cannot assume that stdin is just text.
+<B>			echo foo | nvim --headless +"%print" +"q!" -</B>
+ 
+		See also |<A HREF="#--embed">--embed</A>|.
+		See also |<A HREF="#-es">-es</A>|, which also disables most <A HREF="message.html#messages">messages</A>.
 
 
 <A HREF="#--listen">--listen</A> {addr}						*<A NAME="--listen"></A><B>--listen</B>*
@@ -458,9 +490,6 @@ accordingly.  Vim proceeds in this order:
 				(default for <A HREF="#$XDG_CONFIG_HOME">$XDG_CONFIG_HOME</A> is ~/.config)
 		Windows		$XDG_CONFIG_HOME/nvim/init.vim
 				(default for <A HREF="#$XDG_CONFIG_HOME">$XDG_CONFIG_HOME</A> is ~/AppData/Local)
-
-	The files are searched in the order specified above and only the first
-	one that is found is read.
 
 	RECOMMENDATION: Put all your Vim configuration stuff in the 
 	$HOME/.config/nvim/ directory. That makes <A HREF="motion.html#it">it</A> easy to copy <A HREF="motion.html#it">it</A> to 
@@ -686,27 +715,15 @@ there is not enough room, you will see only part of <A HREF="motion.html#it">it<
 
 
 							*<A NAME="info-message"></A><B>info-message</B>*
-The |<A HREF="#--help">--help</A>| and |<A HREF="#--version">--version</A>| arguments cause Vim to print a message and then
+The |<A HREF="#--help">--help</A>| and |<A HREF="#--version">--version</A>| arguments cause Nvim to print a message and then
 exit.  Normally the message is sent to stdout, thus can be redirected to a
 file with:
 
-<B>	vim --help &gt;file</B>
+<B>	nvim --help &gt;file</B>
 
-From inside Vim:
+From inside Nvim:
 
-<B>	:read !vim --help</B>
-
-When using gvim, <A HREF="motion.html#it">it</A> detects that <A HREF="motion.html#it">it</A> might have been started from the desktop,
-without a <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> to show <A HREF="message.html#messages">messages</A> on.  This is detected when both stdout and
-stderr are not a tty.  This breaks the &quot;<A HREF="insert.html#:read">:read</A>&quot; command, <A HREF="motion.html#as">as</A> used in the example
-above.  To make <A HREF="motion.html#it">it</A> work again, set <A HREF="options.html#'shellredir'">'shellredir'</A> to &quot;<A HREF="change.html#&gt;">&gt;</A>&quot; instead of the default
-&quot;&gt;&amp;&quot;:
-
-<B>	:set shellredir=&gt;</B>
-<B>	:read !gvim --help</B>
-
-This still won't work for systems where gvim does not use stdout at all
-though.
+<B>	:read !nvim --help</B>
 
 ==============================================================================
 3. <A HREF="#$VIM">$VIM</A> and <A HREF="#$VIMRUNTIME">$VIMRUNTIME</A>
@@ -759,27 +776,25 @@ greps in the help files) you might be able to use this:
 
 
 					*<A NAME="iconize"></A><B>iconize</B>* *<A NAME="iconise"></A><B>iconise</B>* *<A NAME="CTRL-Z"></A><B>CTRL-Z</B>* *<A NAME="v_CTRL-Z"></A><B>v_CTRL-Z</B>*
-<A HREF="#CTRL-Z">CTRL-Z</A>			Suspend Vim, like &quot;<A HREF="#:stop">:stop</A>&quot;.
+<A HREF="#CTRL-Z">CTRL-Z</A>			Suspend Nvim, like &quot;<A HREF="#:stop">:stop</A>&quot;.
 			Works in <A HREF="intro.html#Normal">Normal</A> and in <A HREF="visual.html#Visual">Visual</A> mode.  In <A HREF="insert.html#Insert">Insert</A> and
 			<A HREF="cmdline.html#Command-line">Command-line</A> mode, the <A HREF="#CTRL-Z">CTRL-Z</A> is inserted <A HREF="motion.html#as">as</A> a normal
-			character.  In <A HREF="visual.html#Visual">Visual</A> mode Vim goes back to <A HREF="intro.html#Normal">Normal</A>
+			character.  In <A HREF="visual.html#Visual">Visual</A> mode Nvim goes back to <A HREF="intro.html#Normal">Normal</A>
 			mode.
 
 
 :sus[pend][!]	or			*<A NAME=":sus"></A><B>:sus</B>* *<A NAME=":suspend"></A><B>:suspend</B>* *<A NAME=":st"></A><B>:st</B>* *<A NAME=":stop"></A><B>:stop</B>*
-:st[op][!]		Suspend Vim.  Vim will continue if you make <A HREF="motion.html#it">it</A> the
-			foreground job again.
-			If the '<A HREF="change.html#!">!</A>' is not given and <A HREF="options.html#'autowrite'">'autowrite'</A> is set, every
+:st[op][!]		Suspend Nvim using OS &quot;job control&quot;; <A HREF="motion.html#it">it</A> will continue
+			if you make <A HREF="motion.html#it">it</A> the foreground job again.  Triggers
+			|<A HREF="autocmd.html#VimSuspend">VimSuspend</A>| before suspending and |<A HREF="autocmd.html#VimResume">VimResume</A>| when
+			resumed.
+			If &quot;<A HREF="change.html#!">!</A>&quot; is not given and <A HREF="options.html#'autowrite'">'autowrite'</A> is set, every
 			buffer with changes and a file name is written out.
-			If the '<A HREF="change.html#!">!</A>' is given or <A HREF="options.html#'autowrite'">'autowrite'</A> is not set, changed
-			<A HREF="windows.html#buffers">buffers</A> are not written, don't forget to bring Vim
+			If &quot;<A HREF="change.html#!">!</A>&quot; is given or <A HREF="options.html#'autowrite'">'autowrite'</A> is not set, changed
+			<A HREF="windows.html#buffers">buffers</A> are not written, don't forget to bring Nvim
 			back to the foreground later!
 
 In the <A HREF="gui.html#GUI">GUI</A>, suspending is implementation-defined.
-
-In X-windows the selection is disowned when Vim suspends.  this means you
-can't paste <A HREF="motion.html#it">it</A> in another application (since Vim is going to sleep an attempt
-to get the selection would make the program hang).
 
 ==============================================================================
 
@@ -921,7 +936,7 @@ resulting file, when executed with a &quot;<A HREF="repeat.html#:source">:source
    such <A HREF="motion.html#as">as</A> creating menu items in the <A HREF="gui.html#GUI">GUI</A> version.
 
 After restoring the <A HREF="#Session">Session</A>, the full filename of your current <A HREF="#Session">Session</A> is
-available in the internal variable &quot;<A HREF="eval.html#v:this_session">v:this_session</A>&quot; |<A HREF="eval.html#this_session-variable">this_session-variable</A>|.
+available in the internal variable |<A HREF="eval.html#v:this_session">v:this_session</A>|.
 An example <A HREF="map.html#mapping">mapping</A>:
 <B>  :nmap &lt;F2&gt; :wa&lt;Bar&gt;exe "mksession! " . v:this_session&lt;CR&gt;:so ~/sessions/</B>
 This saves the current <A HREF="#Session">Session</A>, and starts off the command to load another.
@@ -929,7 +944,7 @@ This saves the current <A HREF="#Session">Session</A>, and starts off the comman
 A session includes all <A HREF="intro.html#tab">tab</A> pages, unless &quot;tabpages&quot; was removed from
 <A HREF="options.html#'sessionoptions'">'sessionoptions'</A>. |<A HREF="tabpage.html#tab-page">tab-page</A>|
 
-The |<A HREF="autocmd.html#SessionLoadPost">SessionLoadPost</A>| autocmd event is triggered after a session file is
+The |<A HREF="autocmd.html#SessionLoadPost">SessionLoadPost</A>| <A HREF="autocmd.html#autocmd">autocmd</A> event is triggered after a session file is
 loaded/sourced.
 
 						*<A NAME="SessionLoad-variable"></A><B>SessionLoad-variable</B>*
@@ -1114,7 +1129,7 @@ Neovim instance.  For this purpose ShaDa files store <A HREF="editing.html#times
 with ShaDa entries.  Specifically the following is being done:
 
 1. History lines are merged, ordered by <A HREF="editing.html#timestamp">timestamp</A>.  Maximum amount of items in 
-   ShaDa file is defined by <A HREF="options.html#'shada'">'shada'</A> option (|<A HREF="options.html#shada-/">shada-/</A>|, |<A HREF="options.html#shada-:">shada-:</A>|, |<A HREF="options.html#shada-@"><span class="__cf_email__" data-cfemail="becdd6dfdadf93fe">[email&#160;protected]</span></A>|, 
+   ShaDa file is defined by <A HREF="options.html#'shada'">'shada'</A> option (|<A HREF="options.html#shada-/">shada-/</A>|, |<A HREF="options.html#shada-:">shada-:</A>|, |<A HREF="options.html#shada-@"><span class="__cf_email__" data-cfemail="5d2e353c393c701d">[email&#160;protected]</span></A>|, 
    etc: one suboption for each character that represents <A HREF="cmdline.html#history">history</A> name 
    (|<A HREF="cmdline.html#:history">:history</A>|)).
 2. Local marks and changes for files that were not opened by Neovim are copied 
@@ -1183,6 +1198,8 @@ SHADA FILE NAME						*<A NAME="shada-file-name"></A><B>shada-file-name</B>*
 - The &quot;-i&quot; Vim argument can be used to set another file name, |<A HREF="#-i">-i</A>|.  When the
   file name given is &quot;NONE&quot; (all uppercase), no ShaDa file is ever read or
   written.  Also not for the commands below!
+- The 'viminfofile' option can be used like the &quot;<A HREF="#-i">-i</A>&quot; argument.  In fact, the
+  value form the &quot;<A HREF="#-i">-i</A>&quot; argument is stored in the 'viminfofile' option.
 - For the commands below, another file name can be given, overriding the
   default and the name given with <A HREF="options.html#'shada'">'shada'</A> or &quot;<A HREF="#-i">-i</A>&quot; (unless it's NONE).
 
@@ -1458,41 +1475,38 @@ file when reading and include:
   complete MessagePack object.
 
 ==============================================================================
-9. Standard Paths
+
+9. Standard Paths				*<A NAME="standard-path"></A><B>standard-path</B>*
 
 Nvim stores configuration and data in standard locations. Plugins are strongly
-encouraged to follow this <A HREF="pattern.html#pattern">pattern</A> also.
+encouraged to follow this <A HREF="pattern.html#pattern">pattern</A> also. Use |<A HREF="eval.html#stdpath()">stdpath()</A>| to get the paths.
 
 
-						      *<A NAME="base-directories"></A><B>base-directories</B>* *<A NAME="xdg"></A><B>xdg</B>*
+						*<A NAME="base-directories"></A><B>base-directories</B>* *<A NAME="xdg"></A><B>xdg</B>*
 The &quot;base&quot; (root) directories conform to the XDG Base Directory Specification.
 https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
 The <A HREF="#$XDG_CONFIG_HOME">$XDG_CONFIG_HOME</A> and <A HREF="#$XDG_DATA_HOME">$XDG_DATA_HOME</A> environment <A HREF="eval.html#variables">variables</A> are used if they
 exist, otherwise default values (listed below) are used.
 
+<B><FONT color="#54A23D">CONFIG DIRECTORY (DEFAULT) </FONT></B>
+
+                  *<A NAME="$XDG_CONFIG_HOME"></A><B>$XDG_CONFIG_HOME</B>*            Nvim: stdpath(&quot;config&quot;)
+    Unix:         ~/.config                   ~/.config/nvim
+    Windows:      ~/AppData/Local             ~/AppData/Local/nvim
+
+<B><FONT color="#54A23D">DATA DIRECTORY (DEFAULT) </FONT></B>
+
+                  *<A NAME="$XDG_DATA_HOME"></A><B>$XDG_DATA_HOME</B>*              Nvim: stdpath(&quot;data&quot;)
+    Unix:         ~/.local/share              ~/.local/share/nvim
+    Windows:      ~/AppData/Local             ~/AppData/Local/nvim-data
+
 Note: Throughout the user manual these defaults are used <A HREF="motion.html#as">as</A> placeholders, e.g.
 &quot;~/.config&quot; is understood to mean &quot;<A HREF="#$XDG_CONFIG_HOME">$XDG_CONFIG_HOME</A> or ~/.config&quot;.
 
 
-CONFIG DIRECTORY					*<A NAME="$XDG_CONFIG_HOME"></A><B>$XDG_CONFIG_HOME</B>*
-<B><FONT color="#54A23D">          Base                Nvim </FONT></B>
-Unix:     ~/.config           ~/.config/nvim
-Windows:  ~/AppData/Local     ~/AppData/Local/nvim
-
-
-DATA DIRECTORY						*<A NAME="$XDG_DATA_HOME"></A><B>$XDG_DATA_HOME</B>*
-<B><FONT color="#54A23D">          Base                Nvim </FONT></B>
-Unix:     ~/.local/share      ~/.local/share/nvim
-Windows:  ~/AppData/Local     ~/AppData/Local/nvim-data
-
-
-STANDARD PATHS						*<A NAME="standard-path"></A><B>standard-path</B>*
-
-
-							      *<A NAME="$NVIM_LOG_FILE"></A><B>$NVIM_LOG_FILE</B>*
-Besides <A HREF="options.html#'debug'">'debug'</A> and <A HREF="options.html#'verbose'">'verbose'</A>, Nvim has a low-level &quot;log of last resort&quot; that
-is written directly to the filesystem. This log may also be used by plugins or
-<A HREF="msgpack_rpc.html#RPC">RPC</A> clients for debugging. <A HREF="#$NVIM_LOG_FILE">$NVIM_LOG_FILE</A> contains the log file path:
+LOG FILE					*<A NAME="$NVIM_LOG_FILE"></A><B>$NVIM_LOG_FILE</B>*
+Besides <A HREF="options.html#'debug'">'debug'</A> and <A HREF="options.html#'verbose'">'verbose'</A>, Nvim keeps a general log file for internal
+debugging, plugins and <A HREF="msgpack_rpc.html#RPC">RPC</A> clients.
 <B>	:echo $NVIM_LOG_FILE</B>
 Usually the file is ~/.local/share/nvim/log unless that path is inaccessible
 or if <A HREF="#$NVIM_LOG_FILE">$NVIM_LOG_FILE</A> was set before |<A HREF="#startup">startup</A>|.
@@ -1500,5 +1514,5 @@ or if <A HREF="#$NVIM_LOG_FILE">$NVIM_LOG_FILE</A> was set before |<A HREF="#sta
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
-  <script data-cfasync="false" src="/cdn-cgi/scripts/d07b1474/cloudflare-static/email-decode.min.js"></script></body>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
 </html>

@@ -8,7 +8,7 @@
                 <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
 
     <div class="container">
-      <h1>Vim documentation: term</h1>
+      <h1>Nvim documentation: term</h1>
 <A NAME="top"></A>
 <A HREF="index.html">main help file</A>
 
@@ -21,7 +21,7 @@
 
 
 
-Terminal UI						*<A NAME="tui"></A><B>tui</B>*
+Terminal UI						*<A NAME="TUI"></A><B>TUI</B>* *<A NAME="tui"></A><B>tui</B>*
 
 Nvim (except in |<A HREF="starting.html#--headless">--headless</A>| mode) uses information about the <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> you are
 using to present a built-in UI.  If that information is not correct, the
@@ -290,94 +290,16 @@ effect on some UIs.
 
 Using the mouse						*<A NAME="mouse-using"></A><B>mouse-using</B>*
 
-This section is about using the mouse on a <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> or a <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> <A HREF="windows.html#window">window</A>.  How
-to use the mouse in a <A HREF="gui.html#GUI">GUI</A> <A HREF="windows.html#window">window</A> is explained in |<A HREF="gui.html#gui-mouse">gui-mouse</A>|.  For <A HREF="scroll.html#scrolling">scrolling</A>
-with a mouse wheel see |<A HREF="scroll.html#scroll-mouse-wheel">scroll-mouse-wheel</A>|.
-
-These characters in the <A HREF="options.html#'mouse'">'mouse'</A> option tell in which situations the mouse will
-be used by Vim:
-		<A HREF="pattern.html#n">n</A>	<A HREF="intro.html#Normal">Normal</A> mode
-		<A HREF="visual.html#v">v</A>	<A HREF="visual.html#Visual">Visual</A> mode
-		<A HREF="insert.html#i">i</A>	<A HREF="insert.html#Insert">Insert</A> mode
-		<A HREF="change.html#c">c</A>	<A HREF="cmdline.html#Command-line">Command-line</A> mode
-		<A HREF="motion.html#h">h</A>	all previous modes when in a help file
-		a	all previous modes
-		r	for |<A HREF="message.html#hit-enter">hit-enter</A>| prompt
-
-If you only want to use the mouse in a few modes or also want to use <A HREF="motion.html#it">it</A> for
-the two questions you will have to concatenate the letters for those modes.
-For example:
-<B>	:set mouse=nv</B>
-Will make the mouse work in <A HREF="intro.html#Normal">Normal</A> mode and <A HREF="visual.html#Visual">Visual</A> mode.
-<B>	:set mouse=h</B>
-Will make the mouse work in help files only (so you can use &quot;<A HREF="tagsrch.html#g&lt;LeftMouse&gt;">g&lt;LeftMouse&gt;</A>&quot; to
-jump to <A HREF="tagsrch.html#tags">tags</A>).
-
-Whether the selection that is started with the mouse is in <A HREF="visual.html#Visual">Visual</A> mode or
-<A HREF="visual.html#Select">Select</A> mode depends on whether &quot;mouse&quot; is included in the <A HREF="options.html#'selectmode'">'selectmode'</A>
-option.
-
-In an xterm, with the currently active mode included in the <A HREF="options.html#'mouse'">'mouse'</A> option,
-normal mouse clicks are used by Vim, mouse clicks with the <A HREF="intro.html#shift">shift</A> or <A HREF="intro.html#ctrl">ctrl</A> key
-pressed go to the xterm.  With the currently active mode not included in
-<A HREF="options.html#'mouse'">'mouse'</A> all mouse clicks go to the xterm.
-
-
-							*<A NAME="xterm-clipboard"></A><B>xterm-clipboard</B>*
-The middle mouse button will insert the unnamed <A HREF="sponsor.html#register">register</A>.  In that <A HREF="change.html#case">case</A>, here
-is how you copy and paste a piece of text:
-
-Copy/paste with the mouse and <A HREF="visual.html#Visual">Visual</A> mode ('mouse' option must be set, see
-above):
-1. Press left mouse button on first <A HREF="print.html#letter">letter</A> of text, move mouse pointer to last
-   <A HREF="print.html#letter">letter</A> of the text and release the button.  This will start <A HREF="visual.html#Visual">Visual</A> mode and
-   highlight the selected area.
-2. Press &quot;<A HREF="change.html#y">y</A>&quot; to <A HREF="change.html#yank">yank</A> the <A HREF="visual.html#Visual">Visual</A> text in the unnamed <A HREF="sponsor.html#register">register</A>.
-3. Click the left mouse button at the insert position.
-4. Click the middle mouse button.
-
-Shortcut: If the insert position is on the screen at the same time <A HREF="motion.html#as">as</A> the
-<A HREF="visual.html#Visual">Visual</A> text, you can <A HREF="diff.html#do">do</A> 2, 3 and 4 all in one: Click the middle mouse button
-at the insert position.
-
-
-							*<A NAME="xterm-copy-paste"></A><B>xterm-copy-paste</B>*
-NOTE: In some (older) xterms, it's not possible to move the cursor past column
-95 or 223.  This is an xterm problem, not Vim's.  Get a newer xterm
-|<A HREF="syntax.html#color-xterm">color-xterm</A>|.
-
-Copy/paste in xterm with (current mode NOT included in 'mouse'):
-1. Press left mouse button on first <A HREF="print.html#letter">letter</A> of text, move mouse pointer to last
-   <A HREF="print.html#letter">letter</A> of the text and release the button.
-2. Use normal Vim commands to put the cursor at the insert position.
-3. Press &quot;<A HREF="insert.html#a">a</A>&quot; to start <A HREF="insert.html#Insert">Insert</A> mode.
-4. Click the middle mouse button.
-5. Press ESC to end <A HREF="insert.html#Insert">Insert</A> mode.
-(The same can be done with anything in <A HREF="options.html#'mouse'">'mouse'</A> if you keep the <A HREF="intro.html#shift">shift</A> key
-pressed while using the mouse.)
-
-Note: if you lose the 8th bit when pasting (special characters are translated
-into other characters), you may have to <A HREF="diff.html#do">do</A> &quot;stty cs8 -istrip -parenb&quot; in your
-shell before starting Vim.
-
-Thus in an xterm the <A HREF="intro.html#shift">shift</A> and <A HREF="intro.html#ctrl">ctrl</A> keys cannot be used with the mouse.  Mouse
-commands requiring the CTRL modifier can be simulated by typing the &quot;<A HREF="vimindex.html#g">g</A>&quot; key
-before using the mouse:
-	&quot;<A HREF="tagsrch.html#g&lt;LeftMouse&gt;">g&lt;LeftMouse&gt;</A>&quot;	is &quot;<A HREF="tagsrch.html#&lt;C-LeftMouse&gt;">&lt;C-LeftMouse&gt;</A>	(jump to <A HREF="tagsrch.html#tag">tag</A> under mouse click)
-	&quot;<A HREF="tagsrch.html#g&lt;RightMouse&gt;">g&lt;RightMouse&gt;</A>&quot; is &quot;<A HREF="tagsrch.html#&lt;C-RightMouse&gt;">&lt;C-RightMouse&gt;</A>	(&quot;CTRL-T&quot;)
-
 
 							*<A NAME="bracketed-paste-mode"></A><B>bracketed-paste-mode</B>*
-Bracketed paste mode allows <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> applications to distinguish between typed
-text and pasted text. Thus you can paste text without Nvim trying to format or
-indent the text. See also https://cirw.in/blog/bracketed-paste
-
-Nvim enables bracketed paste by default. If <A HREF="motion.html#it">it</A> does not work in your <A HREF="nvim_terminal_emulator.html#terminal">terminal</A>,
-try the <A HREF="options.html#'paste'">'paste'</A> option instead.
+Nvim enables bracketed paste by default. Bracketed paste mode allows <A HREF="nvim_terminal_emulator.html#terminal">terminal</A>
+applications to distinguish between typed text and pasted text. Thus you can
+paste text without Nvim trying to format or indent the text.
+See also https://cirw.in/blog/bracketed-paste
 
 
 					*<A NAME="mouse-mode-table"></A><B>mouse-mode-table</B>* *<A NAME="mouse-overview"></A><B>mouse-overview</B>*
-A short overview of what the mouse buttons <A HREF="diff.html#do">do</A>, when <A HREF="options.html#'mousemodel'">'mousemodel'</A> is &quot;extend&quot;:
+Overview of what the mouse buttons <A HREF="diff.html#do">do</A>, when <A HREF="options.html#'mousemodel'">'mousemodel'</A> is &quot;extend&quot;:
 
 <A HREF="intro.html#Normal">Normal</A> Mode:
 <B><FONT color="#54A23D">event	      position	   selection	  change  action	</FONT></B>
@@ -460,11 +382,11 @@ In <A HREF="intro.html#Normal">Normal</A>, <A HREF="visual.html#Visual">Visual</
 to be used while keeping the <A HREF="intro.html#shift">shift</A> key pressed.  When clicking in a <A HREF="windows.html#window">window</A>
 which is editing another buffer, the <A HREF="visual.html#Visual">Visual</A> or <A HREF="visual.html#Select">Select</A> mode is stopped.
 
-In <A HREF="intro.html#Normal">Normal</A>, <A HREF="visual.html#Visual">Visual</A> and <A HREF="visual.html#Select">Select</A> mode clicking the right mouse button with the <A HREF="intro.html#alt">alt</A>
+In <A HREF="intro.html#Normal">Normal</A>, <A HREF="visual.html#Visual">Visual</A> and <A HREF="visual.html#Select">Select</A> mode clicking the right mouse button with the alt
 key pressed causes the <A HREF="visual.html#Visual">Visual</A> area to become blockwise.  When <A HREF="options.html#'mousemodel'">'mousemodel'</A> is
-&quot;popup&quot; the left button has to be used with the <A HREF="intro.html#alt">alt</A> key.  Note that this won't
+&quot;popup&quot; the left button has to be used with the alt key.  Note that this won't
 work on systems where the <A HREF="windows.html#window">window</A> manager consumes the mouse events when the
-<A HREF="intro.html#alt">alt</A> key is pressed (it may move the <A HREF="windows.html#window">window</A>).
+alt key is pressed (it may move the <A HREF="windows.html#window">window</A>).
 
 
 							*<A NAME="double-click"></A><B>double-click</B>*
@@ -499,15 +421,6 @@ In <A HREF="insert.html#Insert">Insert</A> mode, when a selection is started, Vi
 temporarily.  When <A HREF="visual.html#Visual">Visual</A> or <A HREF="visual.html#Select">Select</A> mode ends, <A HREF="motion.html#it">it</A> returns to <A HREF="insert.html#Insert">Insert</A> mode.
 This is like using <A HREF="motion.html#CTRL-O">CTRL-O</A> in <A HREF="insert.html#Insert">Insert</A> mode.  <A HREF="visual.html#Select">Select</A> mode is used when the
 <A HREF="options.html#'selectmode'">'selectmode'</A> option contains &quot;mouse&quot;.
-
-							*<A NAME="drag-status-line"></A><B>drag-status-line</B>*
-When working with several <A HREF="windows.html#windows">windows</A>, the size of the <A HREF="windows.html#windows">windows</A> can be changed by
-dragging the status line with the mouse.  Point the mouse at a status line,
-press the left button, move the mouse to the new position of the status line,
-release the button.  Just clicking the mouse in a status line makes that <A HREF="windows.html#window">window</A>
-the current <A HREF="windows.html#window">window</A>, without moving the cursor.  If by selecting a <A HREF="windows.html#window">window</A> <A HREF="motion.html#it">it</A>
-will change position or size, the dragging of the status line will look
-confusing, but <A HREF="motion.html#it">it</A> will work (just try <A HREF="motion.html#it">it</A>).
 
 
 					*<A NAME="&lt;MiddleRelease&gt;"></A><B>&lt;MiddleRelease&gt;</B>* *<A NAME="&lt;MiddleDrag&gt;"></A><B>&lt;MiddleDrag&gt;</B>*

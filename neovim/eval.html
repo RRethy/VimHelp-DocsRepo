@@ -8,7 +8,7 @@
                 <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
 
     <div class="container">
-      <h1>Vim documentation: eval</h1>
+      <h1>Nvim documentation: eval</h1>
 <A NAME="top"></A>
 <A HREF="index.html">main help file</A>
 
@@ -992,6 +992,13 @@ These three can be repeated and mixed.	Examples:
 
 
 <A HREF="#expr8">expr8</A>							*<A NAME="expr8"></A><B>expr8</B>*
+This <A HREF="#expression">expression</A> is either |<A HREF="#expr9">expr9</A>| or a sequence of the alternatives below,
+in any order.  E.g., these are all possible:
+	expr9[expr1].name
+	expr9.name[expr1]
+	expr9(expr1, ...)[expr1].name
+
+
 
 expr8[expr1]		item of <A HREF="#String">String</A> or |<A HREF="#List">List</A>|	*<A NAME="expr-[]"></A><B>expr-[]</B>* *<A NAME="E111"></A><B>E111</B>*
 
@@ -1620,8 +1627,7 @@ Predefined Vim <A HREF="#variables">variables</A>:			*<A NAME="vim-variable"></A
 <B>	:silent! next</B>
 <B>	:if v:errmsg != ""</B>
 <B>	:  ... handle error</B>
- 		&quot;errmsg&quot; also works, for backwards compatibility.
-
+ 
 
 					*<A NAME="v:errors"></A><B>v:errors</B>* *<A NAME="errors-variable"></A><B>errors-variable</B>*
 <A HREF="#v:errors">v:errors</A>	Errors found by assert <A HREF="#functions">functions</A>, such as |<A HREF="#assert_true()">assert_true()</A>|.
@@ -1642,9 +1648,9 @@ Predefined Vim <A HREF="#variables">variables</A>:			*<A NAME="vim-variable"></A
 		event, e.g. |<A HREF="autocmd.html#DirChanged">DirChanged</A>| or |<A HREF="autocmd.html#TextYankPost">TextYankPost</A>|.
 <B><FONT color="#54A23D">			KEY		DESCRIPTION </FONT></B>
 			abort		Whether the event triggered during
-					an aborting condition, <A HREF="insert.html#i">i</A> <A HREF="motion.html#e">e</A> |<A HREF="cmdline.html#c_Esc">c_Esc</A>| or
-					|<A HREF="intro.html#c_CTRL-c">c_CTRL-c</A>|for |<A HREF="autocmd.html#CmdlineLeave">CmdlineLeave</A>|.
-			cmdlevel	Level of cmdline.
+					an aborting condition (e.g. |<A HREF="cmdline.html#c_Esc">c_Esc</A>| or
+					|<A HREF="cmdline.html#c_CTRL-C">c_CTRL-C</A>| for |<A HREF="autocmd.html#CmdlineLeave">CmdlineLeave</A>|).
+			cmdlevel	Level of <A HREF="cmdline.html#cmdline">cmdline</A>.
 			cmdtype		Type of cmdline, |<A HREF="cmdline.html#cmdline-char">cmdline-char</A>|.
 			cwd		Current working directory.
 			scope		Event-specific scope name.
@@ -1965,19 +1971,18 @@ Predefined Vim <A HREF="#variables">variables</A>:			*<A NAME="vim-variable"></A
 <B>	:if v:shell_error</B>
 <B>	:  echo 'could not rename "foo" to "bar"!'</B>
 <B>	:endif</B>
- 		&quot;shell_error&quot; also works, for backwards compatibility.
-
+ 
 
 					*<A NAME="v:statusmsg"></A><B>v:statusmsg</B>* *<A NAME="statusmsg-variable"></A><B>statusmsg-variable</B>*
 <A HREF="#v:statusmsg">v:statusmsg</A>	Last given status message.  It's allowed to set this variable.
 
 
 					*<A NAME="v:stderr"></A><B>v:stderr</B>* *<A NAME="stderr-variable"></A><B>stderr-variable</B>*
-<A HREF="#v:stderr">v:stderr</A>	Channel id for stderr. Unlike stdin and stdout (see
-		|<A HREF="#stdioopen()">stdioopen()</A>|), stderr is always open for <A HREF="editing.html#writing">writing</A>. This <A HREF="channel.html#channel">channel</A>
-		ID is always 2, but this variable can be used to be explicit.
-		Example:
-<B>	:call chansend(v:stderr, "something bad happened\n")</B>
+<A HREF="#v:stderr">v:stderr</A>	|<A HREF="channel.html#channel-id">channel-id</A>| corresponding to stderr. The value is always 2;
+		use this variable to make your code more descriptive.
+		Unlike stdin and stdout (see |<A HREF="#stdioopen()">stdioopen()</A>|), stderr is always
+		open for <A HREF="editing.html#writing">writing</A>. Example:
+<B>			:call chansend(v:stderr, "error: toaster empty\n")</B>
  
 
 					*<A NAME="v:swapname"></A><B>v:swapname</B>* *<A NAME="swapname-variable"></A><B>swapname-variable</B>*
@@ -2055,7 +2060,6 @@ Predefined Vim <A HREF="#variables">variables</A>:			*<A NAME="vim-variable"></A
 <A HREF="#v:this_session">v:this_session</A>	Full filename of the last loaded or saved session file.  See
 		|<A HREF="starting.html#:mksession">:mksession</A>|.  It is allowed to set this variable.  When no
 		session file has been saved, this variable is empty.
-		&quot;this_session&quot; also works, for backwards compatibility.
 
 
 					*<A NAME="v:throwpoint"></A><B>v:throwpoint</B>* *<A NAME="throwpoint-variable"></A><B>throwpoint-variable</B>*
@@ -2255,7 +2259,7 @@ getchar([expr])		<A HREF="#Number">Number</A>	get one character from the user
 <A HREF="#getcmdtype()">getcmdtype()</A>			<A HREF="#String">String</A>	return current command-line type
 <A HREF="#getcmdwintype()">getcmdwintype()</A>			<A HREF="#String">String</A>	return current command-line <A HREF="windows.html#window">window</A> type
 getcompletion({pat}, {type} [, {filtered}])
-				<A HREF="#List">List</A>	<A HREF="#list">list</A> of cmdline completion matches
+				<A HREF="#List">List</A>	<A HREF="#list">list</A> of <A HREF="cmdline.html#cmdline">cmdline</A> completion matches
 <A HREF="#getcurpos()">getcurpos()</A>			<A HREF="#List">List</A>	position of the cursor
 getcwd([{winnr} [, {tabnr}]])	<A HREF="#String">String</A>	get the current working directory
 getfontname([{name}])		<A HREF="#String">String</A>	name of font being used
@@ -2279,6 +2283,7 @@ gettabvar({nr}, {varname} [, {def}])
 gettabwinvar({tabnr}, {winnr}, {name} [, {def}])
 				any	{name} in {winnr} in <A HREF="intro.html#tab">tab</A> page {tabnr}
 getwininfo([{winid}])		<A HREF="#List">List</A>	<A HREF="#list">list</A> of <A HREF="windows.html#windows">windows</A>
+getwinpos([{timeout}])		<A HREF="#List">List</A>	X and <A HREF="change.html#Y">Y</A> coord in pixels of the Vim <A HREF="windows.html#window">window</A>
 <A HREF="#getwinposx()">getwinposx()</A>			<A HREF="#Number">Number</A>	X coord in pixels of <A HREF="gui.html#GUI">GUI</A> Vim <A HREF="windows.html#window">window</A>
 <A HREF="#getwinposy()">getwinposy()</A>			<A HREF="#Number">Number</A>	<A HREF="change.html#Y">Y</A> coord in pixels of <A HREF="gui.html#GUI">GUI</A> Vim <A HREF="windows.html#window">window</A>
 getwinvar({nr}, {varname} [, {def}])
@@ -2372,6 +2377,8 @@ msgpackdump({list})		<A HREF="#List">List</A>	dump a <A HREF="#list">list</A> of
 msgpackparse({list})		<A HREF="#List">List</A>	parse msgpack to a <A HREF="#list">list</A> of <A HREF="vimindex.html#objects">objects</A>
 nextnonblank({lnum})		<A HREF="#Number">Number</A>	line nr of non-blank line &gt;= {lnum}
 nr2char({expr}[, {utf8}])	<A HREF="#String">String</A>	single char with ASCII/UTF8 value {expr}
+option_restore({list})		none	restore <A HREF="options.html#options">options</A> saved by option_save()
+option_save({list})		<A HREF="#List">List</A>	save <A HREF="options.html#options">options</A> values
 nvim_...({args}...)		any	call <A HREF="nvim.html#nvim">nvim</A> |<A HREF="api.html#api">api</A>| <A HREF="#functions">functions</A>
 or({expr}, {expr})		<A HREF="#Number">Number</A>  bitwise OR
 pathshorten({expr})		<A HREF="#String">String</A>	shorten directory names in a path
@@ -2397,6 +2404,7 @@ remote_read({serverid} [, {timeout}])
 				<A HREF="#String">String</A>	read reply <A HREF="#string">string</A>
 remote_send({server}, {string} [, {idvar}])
 				<A HREF="#String">String</A>	send key sequence
+remote_startserver({name})	none	become server {name}
 remove({list}, {idx} [, {end}])	any	remove items {idx}-{end} from {list}
 remove({dict}, {key})		any	remove entry {key} from {dict}
 rename({from}, {to})		<A HREF="#Number">Number</A>	rename (move) file from {from} to {to}
@@ -2512,6 +2520,7 @@ tolower({expr})			<A HREF="#String">String</A>	the <A HREF="#String">String</A> 
 toupper({expr})			<A HREF="#String">String</A>	the <A HREF="#String">String</A> {expr} switched to <A HREF="change.html#uppercase">uppercase</A>
 tr({src}, {fromstr}, {tostr})	<A HREF="#String">String</A>	translate chars of {src} in {fromstr}
 					to chars in {tostr}
+trim({text} [, {mask}])		<A HREF="#String">String</A>	trim characters in {mask} from {text}
 trunc({expr})			<A HREF="#Float">Float</A>	truncate <A HREF="#Float">Float</A> {expr}
 type({name})			<A HREF="#Number">Number</A>	type of variable {name}
 undofile({name})		<A HREF="#String">String</A>	<A HREF="undo.html#undo">undo</A> file name for {name}
@@ -2527,6 +2536,7 @@ win_getid([{win} [, {tab}]])	<A HREF="#Number">Number</A>	get |<A HREF="windows.
 win_gotoid({expr})		<A HREF="#Number">Number</A>	go to |<A HREF="windows.html#window-ID">window-ID</A>| {expr}
 win_id2tabwin({expr})		<A HREF="#List">List</A>	get <A HREF="intro.html#tab">tab</A> and window nr from |<A HREF="windows.html#window-ID">window-ID</A>|
 win_id2win({expr})		<A HREF="#Number">Number</A>	get window nr from |<A HREF="windows.html#window-ID">window-ID</A>|
+win_screenpos({nr})		<A HREF="#List">List</A>	get screen position of <A HREF="windows.html#window">window</A> {nr}
 winbufnr({nr})			<A HREF="#Number">Number</A>	buffer number of <A HREF="windows.html#window">window</A> {nr}
 <A HREF="#wincol()">wincol()</A>			<A HREF="#Number">Number</A>	<A HREF="windows.html#window">window</A> column of the cursor
 winheight({nr})			<A HREF="#Number">Number</A>	height of <A HREF="windows.html#window">window</A> {nr}
@@ -2593,10 +2603,10 @@ and({expr}, {expr})					*<A NAME="and()"></A><B>and()</B>*
 		Returns <A HREF="#Dictionary">Dictionary</A> of |<A HREF="api.html#api-metadata">api-metadata</A>|.
 
 
-append({lnum}, {expr})					*<A NAME="append()"></A><B>append()</B>*
-		When {expr} is a |<A HREF="#List">List</A>|: Append each item of the |<A HREF="#List">List</A>| <A HREF="motion.html#as">as</A> a
+append({lnum}, {text})					*<A NAME="append()"></A><B>append()</B>*
+		When {text} is a |<A HREF="#List">List</A>|: Append each item of the |<A HREF="#List">List</A>| <A HREF="motion.html#as">as</A> a
 		text line below line {lnum} in the current buffer.
-		Otherwise append {expr} <A HREF="motion.html#as">as</A> one text line below line {lnum} in
+		Otherwise append {text} <A HREF="motion.html#as">as</A> one text line below line {lnum} in
 		the current buffer.
 		{lnum} can be zero to insert a line before the first one.
 		Returns 1 for failure ({lnum} out of range or out of memory),
@@ -2673,7 +2683,7 @@ assert_exception({error} [, {msg}])			*<A NAME="assert_exception()"></A><B>asser
 <B>			endtry</B>
 
 
-assert_fails({cmd} [, {error}])					*<A NAME="assert_fails()"></A><B>assert_fails()</B>*
+assert_fails({cmd} [, {error} [, {msg}]])			*<A NAME="assert_fails()"></A><B>assert_fails()</B>*
 		Run {cmd} and add an error message to |<A HREF="#v:errors">v:errors</A>| if <A HREF="motion.html#it">it</A> does
 		NOT produce an error.
 		When {error} is given <A HREF="motion.html#it">it</A> must match in |<A HREF="#v:errmsg">v:errmsg</A>|.
@@ -2811,6 +2821,8 @@ bufexists({expr})					*<A NAME="bufexists()"></A><B>bufexists()</B>*
 		The result is a <A HREF="#Number">Number</A>, which is |<A HREF="#TRUE">TRUE</A>| if a buffer called
 		{expr} exists.
 		If the {expr} argument is a number, buffer numbers are used.
+		<A HREF="#Number">Number</A> zero is the alternate buffer for the current <A HREF="windows.html#window">window</A>.
+
 		If the {expr} argument is a <A HREF="#string">string</A> <A HREF="motion.html#it">it</A> must match a buffer name
 		exactly.  The name can be:
 		- Relative to the current directory.
@@ -3217,11 +3229,16 @@ cosh({expr})						*<A NAME="cosh()"></A><B>cosh()</B>*
 
 count({comp}, {expr} [, {ic} [, {start}]])			*<A NAME="count()"></A><B>count()</B>*
 		Return the number of times an item with value {expr} appears
-		in |<A HREF="#List">List</A>| or |<A HREF="#Dictionary">Dictionary</A>| {comp}.
+		in |<A HREF="#String">String</A>|, |<A HREF="#List">List</A>| or |<A HREF="#Dictionary">Dictionary</A>| {comp}.
+
 		If {start} is given then start with the item with this index.
 		{start} can only be used with a |<A HREF="#List">List</A>|.
+
 		When {ic} is given and it's |<A HREF="#TRUE">TRUE</A>| then <A HREF="change.html#case">case</A> is ignored.
 
+		When {comp} is a <A HREF="#string">string</A> then the number of not overlapping
+		occurrences of {expr} is returned. Zero is returned when
+		{expr} is an empty <A HREF="#string">string</A>.
 
 
 							*<A NAME="cscope_connection()"></A><B>cscope_connection()</B>*
@@ -3466,12 +3483,12 @@ executable({expr})					*<A NAME="executable()"></A><B>executable()</B>*
 		On Windows <A HREF="motion.html#it">it</A> only checks if the file exists and
 		is not a directory, not if it's really executable.
 		On Windows an executable in the same directory <A HREF="motion.html#as">as</A> Vim is
-		always found.  Since this directory is added to $PATH <A HREF="motion.html#it">it</A>
-		should also work to execute <A HREF="motion.html#it">it</A> |<A HREF="intro.html#win32-PATH">win32-PATH</A>|.
+		always found (it is added to $PATH at |<A HREF="starting.html#startup">startup</A>|).
 		The result is a <A HREF="#Number">Number</A>:
 			1	exists
 			0	does not exist
 			-1	not implemented on this system
+		|<A HREF="#exepath()">exepath()</A>| can be used to get the full path of an executable.
 
 
 execute({command} [, {silent}])				*<A NAME="execute()"></A><B>execute()</B>*
@@ -3627,9 +3644,9 @@ expand({expr} [, {nosuf} [, {list}]])				*<A NAME="expand()"></A><B>expand()</B>
 			#		alternate file name
 			#n		alternate file name <A HREF="pattern.html#n">n</A>
 			<A HREF="cmdline.html#&lt;cfile&gt;">&lt;cfile&gt;</A>		file name under the cursor
-			<A HREF="cmdline.html#&lt;afile&gt;">&lt;afile&gt;</A>		autocmd file name
-			<A HREF="cmdline.html#&lt;abuf&gt;">&lt;abuf&gt;</A>		autocmd buffer number (as a String!)
-			<A HREF="cmdline.html#&lt;amatch&gt;">&lt;amatch&gt;</A>	autocmd matched name
+			<A HREF="cmdline.html#&lt;afile&gt;">&lt;afile&gt;</A>		<A HREF="autocmd.html#autocmd">autocmd</A> file name
+			<A HREF="cmdline.html#&lt;abuf&gt;">&lt;abuf&gt;</A>		<A HREF="autocmd.html#autocmd">autocmd</A> buffer number (as a String!)
+			<A HREF="cmdline.html#&lt;amatch&gt;">&lt;amatch&gt;</A>	<A HREF="autocmd.html#autocmd">autocmd</A> matched name
 			<A HREF="cmdline.html#&lt;sfile&gt;">&lt;sfile&gt;</A>		sourced <A HREF="usr_41.html#script">script</A> file or function name
 			<A HREF="cmdline.html#&lt;slnum&gt;">&lt;slnum&gt;</A>		sourced <A HREF="usr_41.html#script">script</A> file line number
 			&lt;cword&gt;		<A HREF="motion.html#word">word</A> under the cursor
@@ -4150,7 +4167,7 @@ getbufinfo([{dict}])
 <B>			endfor</B>
  
 		To get buffer-local <A HREF="options.html#options">options</A> use:
-<B>			getbufvar({bufnr}, '&amp;')</B>
+<B>			getbufvar({bufnr}, '&amp;option_name')</B>
 
  
 
@@ -4216,7 +4233,7 @@ getchar([expr])						*<A NAME="getchar()"></A><B>getchar()</B>*
 		For a special key it's a sequence of bytes starting with 0x80
 		(decimal: 128).  This is the same value <A HREF="motion.html#as">as</A> the <A HREF="#string">string</A>
 		&quot;\&lt;Key&gt;&quot;, e.g., &quot;\&lt;Left&gt;&quot;.  The returned value is also a
-		<A HREF="#String">String</A> when a modifier (shift, <A HREF="intro.html#control">control</A>, <A HREF="intro.html#alt">alt</A>) was used that is
+		<A HREF="#String">String</A> when a modifier (shift, <A HREF="intro.html#control">control</A>, alt) was used that is
 		not included in the character.
 
 		When [expr] is 0 and Esc is typed, there will be a short delay
@@ -4278,8 +4295,8 @@ getchar([expr])						*<A NAME="getchar()"></A><B>getchar()</B>*
 		These values are added together:
 			2	<A HREF="intro.html#shift">shift</A>
 			4	<A HREF="intro.html#control">control</A>
-			8	<A HREF="intro.html#alt">alt</A> (meta)
-			16	<A HREF="intro.html#meta">meta</A> (when it's different from ALT)
+			8	alt (meta)
+			16	meta (when it's different from <A HREF="intro.html#ALT">ALT</A>)
 			32	mouse double click
 			64	mouse triple click
 			96	mouse quadruple click (== 32 + 64)
@@ -4317,6 +4334,8 @@ getchar([expr])						*<A NAME="getchar()"></A><B>getchar()</B>*
 		Example:
 <B>			:cmap &lt;F7&gt; &lt;C-\&gt;eescape(getcmdline(), ' \')&lt;CR&gt;</B>
  		Also see |<A HREF="#getcmdtype()">getcmdtype()</A>|, |<A HREF="#getcmdpos()">getcmdpos()</A>| and |<A HREF="#setcmdpos()">setcmdpos()</A>|.
+		Returns an empty <A HREF="#string">string</A> when entering a password or using
+		|<A HREF="#inputsecret()">inputsecret()</A>|.
 
 
 <A HREF="#getcmdpos()">getcmdpos()</A>						*<A NAME="getcmdpos()"></A><B>getcmdpos()</B>*
@@ -4355,9 +4374,10 @@ getcompletion({pat}, {type} [, {filtered}])		*<A NAME="getcompletion()"></A><B>g
 		specifies what for.  The following completion types are
 		supported:
 
-		augroup		autocmd groups
+		<A HREF="editing.html#arglist">arglist</A>		file names in argument <A HREF="#list">list</A>
+		augroup		<A HREF="autocmd.html#autocmd">autocmd</A> groups
 		buffer		buffer names
-		behave		<A HREF="gui.html#:behave">:behave</A> suboptions
+		behave		<A HREF="options.html#:behave">:behave</A> suboptions
 		cmdline		|<A HREF="cmdline.html#cmdline-completion">cmdline-completion</A>|
 		color		color schemes
 		command		<A HREF="intro.html#Ex">Ex</A> command (and arguments)
@@ -4375,6 +4395,7 @@ getcompletion({pat}, {type} [, {filtered}])		*<A NAME="getcompletion()"></A><B>g
 		highlight	highlight groups
 		<A HREF="cmdline.html#history">history</A>		<A HREF="cmdline.html#:history">:history</A> suboptions
 		<A HREF="mbyte.html#locale">locale</A>		<A HREF="mbyte.html#locale">locale</A> names (as output of <A HREF="mbyte.html#locale">locale</A> -a)
+		mapclear        buffer argument
 		<A HREF="map.html#mapping">mapping</A>		<A HREF="map.html#mapping">mapping</A> name
 		menu		<A HREF="gui.html#menus">menus</A>
 		messages	|<A HREF="message.html#:messages">:messages</A>| suboptions
@@ -4597,6 +4618,7 @@ getqflist([{what}])					*<A NAME="getqflist()"></A><B>getqflist()</B>*
 		<A HREF="#list">list</A> item is a dictionary with these entries:
 			bufnr	number of buffer that has the file name, use
 				<A HREF="#bufname()">bufname()</A> to get the name
+			module	module name
 			lnum	line number in the buffer (first line is 1)
 			col	column number (first column is 1)
 			vcol	|TRUE|: &quot;col&quot; is visual column
@@ -4621,34 +4643,63 @@ getqflist([{what}])					*<A NAME="getqflist()"></A><B>getqflist()</B>*
 		If the optional {what} dictionary argument is supplied, then
 		returns only the items listed in {what} <A HREF="motion.html#as">as</A> a dictionary. The
 		following <A HREF="#string">string</A> items are supported in {what}:
-			context	get the context stored with |<A HREF="#setqflist()">setqflist()</A>|
+			changedtick	get the total number of changes made
+					to the <A HREF="#list">list</A> |<A HREF="quickfix.html#quickfix-changedtick">quickfix-changedtick</A>|
+			context	get the |<A HREF="quickfix.html#quickfix-context">quickfix-context</A>|
+			efm	<A HREF="quickfix.html#errorformat">errorformat</A> to use when parsing &quot;lines&quot;. If
+				not present, then the <A HREF="options.html#'errorformat'">'errorformat'</A> option
+				value is used.
+			id	get information for the <A HREF="quickfix.html#quickfix">quickfix</A> <A HREF="#list">list</A> with
+				|<A HREF="quickfix.html#quickfix-ID">quickfix-ID</A>|; zero means the id for the
+				current <A HREF="#list">list</A> or the <A HREF="#list">list</A> specified by &quot;nr&quot;
+			idx	index of the current entry in the <A HREF="#list">list</A>
 			items	<A HREF="quickfix.html#quickfix">quickfix</A> <A HREF="#list">list</A> entries
+			lines	parse a <A HREF="#list">list</A> of lines using <A HREF="options.html#'efm'">'efm'</A> and return
+				the resulting entries.  Only a |<A HREF="#List">List</A>| type is
+				accepted.  The current <A HREF="quickfix.html#quickfix">quickfix</A> <A HREF="#list">list</A> is not
+				modified. See |<A HREF="quickfix.html#quickfix-parse">quickfix-parse</A>|.
 			nr	get information for this <A HREF="quickfix.html#quickfix">quickfix</A> <A HREF="#list">list</A>; zero
-				means the current <A HREF="quickfix.html#quickfix">quickfix</A> <A HREF="#list">list</A> and '<A HREF="motion.html#$">$</A>' means
+				means the current <A HREF="quickfix.html#quickfix">quickfix</A> <A HREF="#list">list</A> and &quot;<A HREF="motion.html#$">$</A>&quot; means
 				the last <A HREF="quickfix.html#quickfix">quickfix</A> <A HREF="#list">list</A>
-			title	get the <A HREF="#list">list</A> title
-			<A HREF="windows.html#winid">winid</A>	get the |<A HREF="windows.html#window-ID">window-ID</A>| (if opened)
+			size	number of entries in the <A HREF="quickfix.html#quickfix">quickfix</A> <A HREF="#list">list</A>
+			title	get the <A HREF="#list">list</A> title |<A HREF="quickfix.html#quickfix-title">quickfix-title</A>|
+			<A HREF="windows.html#winid">winid</A>	get the <A HREF="quickfix.html#quickfix">quickfix</A> |<A HREF="windows.html#window-ID">window-ID</A>|
 			all	all of the above <A HREF="quickfix.html#quickfix">quickfix</A> properties
-		Non-string items in {what} are ignored.
+		Non-string items in {what} are ignored. To get the value of a
+		particular item, set <A HREF="motion.html#it">it</A> to zero.
 		If &quot;nr&quot; is not present then the current <A HREF="quickfix.html#quickfix">quickfix</A> <A HREF="#list">list</A> is used.
-		To get the number of lists in the <A HREF="quickfix.html#quickfix">quickfix</A> stack, set 'nr' to
-		'<A HREF="motion.html#$">$</A>' in {what}. The 'nr' value in the returned dictionary
+		If both &quot;nr&quot; and a non-zero &quot;id&quot; are specified, then the <A HREF="#list">list</A>
+		specified by &quot;id&quot; is used.
+		To get the number of lists in the <A HREF="quickfix.html#quickfix">quickfix</A> stack, set &quot;nr&quot; to
+		&quot;<A HREF="motion.html#$">$</A>&quot; in {what}. The &quot;nr&quot; value in the returned dictionary
 		contains the <A HREF="quickfix.html#quickfix">quickfix</A> stack size.
-		In <A HREF="change.html#case">case</A> of error processing {what}, an empty dictionary is
-		returned.
+		When &quot;lines&quot; is specified, all the other items except &quot;efm&quot;
+		are ignored.  The returned dictionary contains the entry
+		&quot;items&quot; with the <A HREF="#list">list</A> of entries.
 
 		The returned dictionary contains the following entries:
-			context	context information stored with |<A HREF="#setqflist()">setqflist()</A>|
-			items	<A HREF="quickfix.html#quickfix">quickfix</A> <A HREF="#list">list</A> entries
-			nr	<A HREF="quickfix.html#quickfix">quickfix</A> <A HREF="#list">list</A> number
-			title	<A HREF="quickfix.html#quickfix">quickfix</A> <A HREF="#list">list</A> title text
-			<A HREF="windows.html#winid">winid</A>	<A HREF="quickfix.html#quickfix">quickfix</A> |<A HREF="windows.html#window-ID">window-ID</A>| (if opened)
+			changedtick	total number of changes made to the
+					<A HREF="#list">list</A> |<A HREF="quickfix.html#quickfix-changedtick">quickfix-changedtick</A>|
+			context	quickfix <A HREF="#list">list</A> context. See |<A HREF="quickfix.html#quickfix-context">quickfix-context</A>|
+				If not present, set to &quot;&quot;.
+			id	quickfix <A HREF="#list">list</A> ID |<A HREF="quickfix.html#quickfix-ID">quickfix-ID</A>|. If not
+				present, set to 0.
+			idx	index of the current entry in the <A HREF="#list">list</A>. If not
+				present, set to 0.
+			items	<A HREF="quickfix.html#quickfix">quickfix</A> <A HREF="#list">list</A> entries. If not present, set to
+				an empty <A HREF="#list">list</A>.
+			nr	<A HREF="quickfix.html#quickfix">quickfix</A> <A HREF="#list">list</A> number. If not present, set to 0
+			size	number of entries in the <A HREF="quickfix.html#quickfix">quickfix</A> <A HREF="#list">list</A>. If not
+				present, set to 0.
+			title	<A HREF="quickfix.html#quickfix">quickfix</A> <A HREF="#list">list</A> title text. If not present, set
+				to &quot;&quot;.
+			<A HREF="windows.html#winid">winid</A>	<A HREF="quickfix.html#quickfix">quickfix</A> |<A HREF="windows.html#window-ID">window-ID</A>|. If not present, set to 0
 
-		Examples:
+		Examples (See also |<A HREF="quickfix.html#getqflist-examples">getqflist-examples</A>|):
 <B>			:echo getqflist({'all': 1})</B>
 <B>			:echo getqflist({'nr': 2, 'title': 1})</B>
+<B>			:echo getqflist({'lines' : ["F1:10:L10"]})</B>
  
-
 
 getreg([{regname} [, 1 [, {list}]]])			*<A NAME="getreg()"></A><B>getreg()</B>*
 		The result is a <A HREF="#String">String</A>, which is the contents of <A HREF="sponsor.html#register">register</A>
@@ -4732,8 +4783,10 @@ gettabwinvar({tabnr}, {winnr}, {varname} [, {def}])		*<A NAME="gettabwinvar()"><
 <B>			:let list_is_on = gettabwinvar(1, 2, '&amp;list')</B>
 <B>			:echo "myvar = " . gettabwinvar(3, 1, 'myvar')</B>
  
+		To obtain all window-local <A HREF="#variables">variables</A> use:
+<B>			gettabwinvar({tabnr}, {winnr}, '&amp;')</B>
 
-							*<A NAME="getwinposx()"></A><B>getwinposx()</B>*
+<B>							*getwinposx()*</B>
 <A HREF="#getwinposx()">getwinposx()</A>	The result is a <A HREF="#Number">Number</A>, which is the X coordinate in pixels of
 		the left hand side of the <A HREF="gui.html#GUI">GUI</A> Vim <A HREF="windows.html#window">window</A>.  The result will be
 		-1 if the information is not available.
@@ -4760,19 +4813,18 @@ getwininfo([{winid}])					*<A NAME="getwininfo()"></A><B>getwininfo()</B>*
 		Each <A HREF="#List">List</A> item is a <A HREF="#Dictionary">Dictionary</A> with the following entries:
 			bufnr		number of buffer in the <A HREF="windows.html#window">window</A>
 			height		<A HREF="windows.html#window">window</A> height (excluding winbar)
-			winbar		1 if the <A HREF="windows.html#window">window</A> has a toolbar, 0
-					otherwise
 			loclist		1 if showing a location <A HREF="#list">list</A>
 			<A HREF="quickfix.html#quickfix">quickfix</A>	1 if <A HREF="quickfix.html#quickfix">quickfix</A> or location <A HREF="#list">list</A> <A HREF="windows.html#window">window</A>
 			tabnr		<A HREF="intro.html#tab">tab</A> page number
 			<A HREF="#variables">variables</A>	a reference to the dictionary with
 					window-local <A HREF="#variables">variables</A>
 			width		<A HREF="windows.html#window">window</A> width
+			winbar		1 if the <A HREF="windows.html#window">window</A> has a toolbar, 0
+					otherwise
+			wincol		leftmost screen column of the <A HREF="windows.html#window">window</A>
 			<A HREF="windows.html#winid">winid</A>		|<A HREF="windows.html#window-ID">window-ID</A>|
 			winnr		<A HREF="windows.html#window">window</A> number
-
-		To obtain all window-local <A HREF="#variables">variables</A> use:
-<B>			gettabwinvar({tabnr}, {winnr}, '&amp;')</B>
+			winrow		topmost screen column of the <A HREF="windows.html#window">window</A>
 
 
 getwinvar({winnr}, {varname} [, {def}])				*<A NAME="getwinvar()"></A><B>getwinvar()</B>*
@@ -5122,7 +5174,7 @@ input({opts})
 		where
 			hl_start_col is the first highlighted column,
 			hl_end_col is the last highlighted column (+ 1!),
-			hl_group is |<A HREF="intro.html#:hl">:hl</A>| group used for highlighting.
+			hl_group is |<A HREF="syntax.html#:hi">:hi</A>| group used for highlighting.
 
 					      *<A NAME="E5403"></A><B>E5403</B>* *<A NAME="E5404"></A><B>E5404</B>* *<A NAME="E5405"></A><B>E5405</B>* *<A NAME="E5406"></A><B>E5406</B>*
 		Both hl_start_col and hl_end_col + 1 must point to the start
@@ -5331,15 +5383,17 @@ jobstart({cmd}[, {opts}])				*<A NAME="jobstart()"></A><B>jobstart()</B>*
 <B>		  :call jobstart(split(&amp;shell) + split(&amp;shellcmdflag) + ['{cmd}'])</B>
  		(See |<A HREF="options.html#shell-unquoting">shell-unquoting</A>| for details.)
 
+		Example:
+<B>		  :call jobstart('nvim -h', {'on_stdout':{j,d,e-&gt;append(line('.'),d)}})</B>
+ 
 		Returns |<A HREF="job_control.html#job-id">job-id</A>| on success, 0 on invalid arguments (or job
 		table is full), -1 if {cmd}[0] or <A HREF="options.html#'shell'">'shell'</A> is not executable.
-		For communication over the job's stdio, <A HREF="motion.html#it">it</A> is represented <A HREF="motion.html#as">as</A> a
-		|<A HREF="channel.html#channel">channel</A>|, and a channel ID is returned on success. Use
-		|<A HREF="#chansend()">chansend()</A>| (or |<A HREF="#rpcnotify()">rpcnotify()</A>| and |<A HREF="#rpcrequest()">rpcrequest()</A>| if &quot;rpc&quot; option
-		was used) to send data to stdin and |<A HREF="#chanclose()">chanclose()</A>| to close stdio
-		streams without stopping the job explicitly.
+		The returned <A HREF="job_control.html#job-id">job-id</A> is a valid |<A HREF="channel.html#channel-id">channel-id</A>| representing the
+		job's stdio streams. Use |<A HREF="#chansend()">chansend()</A>| (or |<A HREF="#rpcnotify()">rpcnotify()</A>| and
+		|<A HREF="#rpcrequest()">rpcrequest()</A>| if &quot;rpc&quot; was enabled) to send data to stdin and
+		|<A HREF="#chanclose()">chanclose()</A>| to close the streams without stopping the job.
 
-		See |<A HREF="job_control.html#job-control">job-control</A>| and |<A HREF="msgpack_rpc.html#rpc">rpc</A>|.
+		See |<A HREF="job_control.html#job-control">job-control</A>| and |<A HREF="msgpack_rpc.html#RPC">RPC</A>|.
 
 		NOTE: on Windows if {cmd} is a <A HREF="#List">List</A>:
 		  - cmd[0] must be an executable (not a &quot;built-in&quot;). If <A HREF="motion.html#it">it</A> is
@@ -5382,7 +5436,7 @@ jobstart({cmd}[, {opts}])				*<A NAME="jobstart()"></A><B>jobstart()</B>*
 		  - The <A HREF="channel.html#channel">channel</A> ID on success
 		  - 0 on invalid arguments
 		  - -1 if {cmd}[0] is not executable.
-		See |<A HREF="job_control.html#job-control">job-control</A>|, |<A HREF="intro.html#channels">channels</A>|, and |<A HREF="msgpack_rpc.html#msgpack-rpc">msgpack-rpc</A>| for more information.
+		See also |<A HREF="job_control.html#job-control">job-control</A>|, |<A HREF="channel.html#channel">channel</A>|, |<A HREF="msgpack_rpc.html#msgpack-rpc">msgpack-rpc</A>|.
 
 
 jobstop({id})						*<A NAME="jobstop()"></A><B>jobstop()</B>*
@@ -5394,18 +5448,24 @@ jobstop({id})						*<A NAME="jobstop()"></A><B>jobstop()</B>*
 
 
 jobwait({ids}[, {timeout}])				*<A NAME="jobwait()"></A><B>jobwait()</B>*
-		Wait for a set of jobs to finish. The {ids} argument is a <A HREF="#list">list</A>
-		of |<A HREF="job_control.html#job-id">job-id</A>|<A HREF="change.html#s">s</A> to wait for. {timeout} is the maximum number of
-		milliseconds to wait. During <A HREF="#jobwait()">jobwait()</A>, callbacks for jobs not
-		in the {ids} <A HREF="#list">list</A> may be invoked. The screen will not redraw
-		unless |<A HREF="various.html#:redraw">:redraw</A>| is invoked by a callback.
+		Wait for a set of jobs to complete.
+
+		{ids} is a <A HREF="#list">list</A> of |<A HREF="job_control.html#job-id">job-id</A>|<A HREF="change.html#s">s</A> to wait for.
+		{timeout} is the maximum number of milliseconds to wait.
+		{timeout} of zero can be used to check if a <A HREF="job_control.html#job-id">job-id</A> is valid,
+		without waiting.
+
+		During <A HREF="#jobwait()">jobwait()</A> callbacks for jobs not in the {ids} <A HREF="#list">list</A> may
+		be invoked. The screen will not redraw unless |<A HREF="various.html#:redraw">:redraw</A>| is
+		invoked by a callback.
 
 		Returns a <A HREF="#list">list</A> of len({ids}) integers, where each integer is
-		the wait-result of the corresponding job. Each wait-result is:
-		    Job exit-code, if the job exited
-		    -1 if the wait timed out for the job
-		    -2 if the job was interrupted
-		    -3 if the |<A HREF="job_control.html#job-id">job-id</A>| is invalid.
+		the wait-result of the corresponding job. Each wait-result is
+		one of the following:
+			&#42; Exit-code, if the job exited
+			&#42; -1 if the timeout was exceeded
+			&#42; -2 if the job was interrupted
+			&#42; -3 if the |<A HREF="job_control.html#job-id">job-id</A>| is invalid
 
 
 join({list} [, {sep}])					*<A NAME="join()"></A><B>join()</B>*
@@ -5531,8 +5591,10 @@ line({expr})	The result is a <A HREF="#Number">Number</A>, which is the line num
 		    $	    the last line in the current buffer
 		    'x	    position of <A HREF="motion.html#mark">mark</A> <A HREF="change.html#x">x</A> (if the <A HREF="motion.html#mark">mark</A> is not set, 0 is
 			    returned)
-		    w0	    first line visible in current <A HREF="windows.html#window">window</A>
-		    w$	    last line visible in current <A HREF="windows.html#window">window</A>
+		    w0	    first line visible in current <A HREF="windows.html#window">window</A> (one if the
+			    display isn't updated, e.g. in silent <A HREF="intro.html#Ex">Ex</A> mode)
+		    w$	    last line visible in current <A HREF="windows.html#window">window</A> (this is one
+			    <A HREF="various.html#less">less</A> than &quot;w0&quot; if no lines are visible)
 		    <A HREF="visual.html#v">v</A>	    In <A HREF="visual.html#Visual">Visual</A> mode: the start of the <A HREF="visual.html#Visual">Visual</A> area (the
 			    cursor is the end).  When not in <A HREF="visual.html#Visual">Visual</A> mode
 			    returns the cursor position.  Differs from |<A HREF="motion.html#'&lt;">'&lt;</A>| in
@@ -5550,9 +5612,9 @@ line({expr})	The result is a <A HREF="#Number">Number</A>, which is the line num
 		This <A HREF="autocmd.html#autocommand">autocommand</A> jumps to the last known position in a file
 		just after opening <A HREF="motion.html#it">it</A>, if the &#39;&#34;' <A HREF="motion.html#mark">mark</A> is set:
 <B>     :au BufReadPost *</B>
-<B>         \ if line("'\"") &gt; 1 &amp;&amp; line("'\"") &lt;= line("$") &amp;&amp; &amp;ft !~# 'commit'</B>
-<B>         \ |   exe "normal! g`\""</B>
-<B>         \ | endif</B>
+<B>	\ if line("'\"") &gt; 1 &amp;&amp; line("'\"") &lt;= line("$") &amp;&amp; &amp;ft !~# 'commit'</B>
+<B>	\ |   exe "normal! g`\""</B>
+<B>	\ | endif</B>
 
 
 line2byte({lnum})					*<A NAME="line2byte()"></A><B>line2byte()</B>*
@@ -5661,7 +5723,8 @@ maparg({name} [, {mode} [, {abbr} [, {dict}]]])			*<A NAME="maparg()"></A><B>map
 		listing.
 
 		When there is no <A HREF="map.html#mapping">mapping</A> for {name}, an empty <A HREF="#String">String</A> is
-		returned.
+		returned.  When the <A HREF="map.html#mapping">mapping</A> for {name} is empty, then &quot;<A HREF="map.html#&lt;Nop&gt;">&lt;Nop&gt;</A>&quot;
+		is returned.
 
 		The {name} can have special key names, like in the &quot;<A HREF="map.html#:map">:map</A>&quot;
 		command.
@@ -5729,9 +5792,10 @@ mapcheck({name} [, {mode} [, {abbr}]])			*<A NAME="mapcheck()"></A><B>mapcheck()
 		<A HREF="map.html#mapping">mapping</A> that matches with {name}, while <A HREF="#maparg()">maparg()</A> only finds a
 		<A HREF="map.html#mapping">mapping</A> for {name} exactly.
 		When there is no <A HREF="map.html#mapping">mapping</A> that starts with {name}, an empty
-		<A HREF="#String">String</A> is returned.  If there is one, the rhs of that <A HREF="map.html#mapping">mapping</A>
+		<A HREF="#String">String</A> is returned.  If there is one, the RHS of that <A HREF="map.html#mapping">mapping</A>
 		is returned.  If there are several mappings that start with
-		{name}, the rhs of one of them is returned.
+		{name}, the RHS of one of them is returned.  This will be
+		&quot;<A HREF="map.html#&lt;Nop&gt;">&lt;Nop&gt;</A>&quot; if the RHS is empty.
 		The mappings local to the current buffer are checked first,
 		then the global mappings.
 		This function can be used to check if a <A HREF="map.html#mapping">mapping</A> can be added
@@ -5747,11 +5811,14 @@ match({expr}, <A HREF="autocmd.html#{pat}">{pat}</A> [, {start} [, {count}]])			
 		When {expr} is a |<A HREF="#List">List</A>| then this returns the index of the
 		first item where <A HREF="autocmd.html#{pat}">{pat}</A> matches.  Each item is used <A HREF="motion.html#as">as</A> a
 		<A HREF="#String">String</A>, |<A HREF="#Lists">Lists</A>| and |<A HREF="#Dictionaries">Dictionaries</A>| are used <A HREF="motion.html#as">as</A> echoed.
+
 		Otherwise, {expr} is used <A HREF="motion.html#as">as</A> a <A HREF="#String">String</A>.	The result is a
 		<A HREF="#Number">Number</A>, which gives the index (byte offset) in {expr} where
 		<A HREF="autocmd.html#{pat}">{pat}</A> matches.
+
 		A match at the first character or |<A HREF="#List">List</A>| item returns zero.
 		If there is no match -1 is returned.
+
 		For getting submatches see |<A HREF="#matchlist()">matchlist()</A>|.
 		Example:
 <B>			:echo match("testing", "ing")	" results in 4</B>
@@ -5893,8 +5960,6 @@ matchaddpos({group}, {pos} [, {priority} [, {id} [, {dict}]]])
  		Matches added by |<A HREF="#matchaddpos()">matchaddpos()</A>| are returned by
 		|<A HREF="#getmatches()">getmatches()</A>| with an entry &quot;pos1&quot;, &quot;pos2&quot;, etc., with the
 		value a <A HREF="#list">list</A> like the {pos} item.
-		These matches cannot be set via |<A HREF="#setmatches()">setmatches()</A>|, however they
-		can still be deleted by |<A HREF="#clearmatches()">clearmatches()</A>|.
 
 
 matcharg({nr})							*<A NAME="matcharg()"></A><B>matcharg()</B>*
@@ -6043,7 +6108,7 @@ min({expr})	Return the minimum value of all items in {expr}.
 		<A HREF="motion.html#it">it</A> returns the minimum of all values in the dictionary.
 		If {expr} is neither a <A HREF="#list">list</A> nor a dictionary, or one of the
 		items in {expr} cannot be used <A HREF="motion.html#as">as</A> a <A HREF="#Number">Number</A> this results in
-                an error.  An empty |<A HREF="#List">List</A>| or |<A HREF="#Dictionary">Dictionary</A>| results in zero.
+		an error.  An empty |<A HREF="#List">List</A>| or |<A HREF="#Dictionary">Dictionary</A>| results in zero.
 
 
 							*<A NAME="mkdir()"></A><B>mkdir()</B>* *<A NAME="E739"></A><B>E739</B>*
@@ -6603,15 +6668,17 @@ reltimestr({time})				*<A NAME="reltimestr()"></A><B>reltimestr()</B>*
 
 
 							*<A NAME="remote_expr()"></A><B>remote_expr()</B>* *<A NAME="E449"></A><B>E449</B>*
-remote_expr({server}, {string} [, {idvar}])
+remote_expr({server}, {string} [, {idvar} [, {timeout}]])
 		Send the {string} to {server}.	The <A HREF="#string">string</A> is sent <A HREF="motion.html#as">as</A> an
 		<A HREF="#expression">expression</A> and the result is returned after evaluation.
 		The result must be a <A HREF="#String">String</A> or a |<A HREF="#List">List</A>|.  A |<A HREF="#List">List</A>| is turned
 		into a <A HREF="#String">String</A> by joining the items with a line break in
 		between (not at the end), like with join(expr, &quot;\n&quot;).
-		If {idvar} is present, <A HREF="motion.html#it">it</A> is taken <A HREF="motion.html#as">as</A> the name of a
-		variable and a {serverid} for later use with
+		If {idvar} is present and not empty, <A HREF="motion.html#it">it</A> is taken <A HREF="motion.html#as">as</A> the name
+		of a variable and a {serverid} for later use with
 		<A HREF="#remote_read()">remote_read()</A> is stored there.
+		If {timeout} is given the read times out after this many
+		seconds.  Otherwise a timeout of 600 seconds is used.
 		See also |<A HREF="remote.html#clientserver">clientserver</A>| |<A HREF="autocmd.html#RemoteReply">RemoteReply</A>|.
 		This function is not available in the |<A HREF="#sandbox">sandbox</A>|.
 		{only available when compiled with the |<A HREF="various.html#+clientserver">+clientserver</A>| feature}
@@ -6658,9 +6725,10 @@ remote_peek({serverid} [, {retvar}])		*<A NAME="remote_peek()"></A><B>remote_pee
 <B>			:echo "PEEK: ".remote_peek(id, "repl").": ".repl</B>
 
 
-remote_read({serverid})				*<A NAME="remote_read()"></A><B>remote_read()</B>*
+remote_read({serverid}, [{timeout}])			*<A NAME="remote_read()"></A><B>remote_read()</B>*
 		Return the oldest available reply from {serverid} and consume
-		<A HREF="motion.html#it">it</A>.  It blocks until a reply is available.
+		<A HREF="motion.html#it">it</A>.  Unless a {timeout} in seconds is given, <A HREF="motion.html#it">it</A> blocks until a
+		reply is available.
 		See also |<A HREF="remote.html#clientserver">clientserver</A>|.
 		This function is not available in the |<A HREF="#sandbox">sandbox</A>|.
 		{only available when compiled with the |<A HREF="various.html#+clientserver">+clientserver</A>| feature}
@@ -6679,6 +6747,7 @@ remote_send({server}, {string} [, {idvar}])
 		See also |<A HREF="remote.html#clientserver">clientserver</A>| |<A HREF="autocmd.html#RemoteReply">RemoteReply</A>|.
 		This function is not available in the |<A HREF="#sandbox">sandbox</A>|.
 		{only available when compiled with the |<A HREF="various.html#+clientserver">+clientserver</A>| feature}
+
 		Note: Any <A HREF="message.html#errors">errors</A> will be reported in the server and may mess
 		up the display.
 		Examples:
@@ -6690,6 +6759,13 @@ remote_send({server}, {string} [, {idvar}])
 <B>		:echo remote_send("gvim", ":sleep 10 | echo ".</B>
 <B>		 \ 'server2client(expand("&lt;client&gt;"), "HELLO")&lt;CR&gt;')</B>
  
+
+					*<A NAME="remote_startserver()"></A><B>remote_startserver()</B>* *<A NAME="E941"></A><B>E941</B>* *<A NAME="E942"></A><B>E942</B>*
+remote_startserver({name})
+		Become the server {name}.  This fails if already running <A HREF="motion.html#as">as</A> a
+		server, when |<A HREF="#v:servername">v:servername</A>| is not empty.
+		{only available when compiled with the |<A HREF="various.html#+clientserver">+clientserver</A>| feature}
+
 
 remove({list}, {idx} [, {end}])				*<A NAME="remove()"></A><B>remove()</B>*
 		Without {end}: Remove the item at {idx} from |<A HREF="#List">List</A>| {list} and
@@ -6788,11 +6864,9 @@ rpcstart({prog}[, {argv}])				   {Nvim} *<A NAME="rpcstart()"></A><B>rpcstart()<
 
 
 rpcstop({channel})					    {Nvim} *<A NAME="rpcstop()"></A><B>rpcstop()</B>*
-		Deprecated. This function was used to stop a job with |<A HREF="msgpack_rpc.html#rpc">rpc</A>|
-		<A HREF="channel.html#channel">channel</A>, and additionally closed <A HREF="msgpack_rpc.html#rpc">rpc</A> sockets.  Instead use
-		|<A HREF="#jobstop()">jobstop()</A>| to stop any job, and |<A HREF="intro.html#chanclose">chanclose</A>|(id, &quot;<A HREF="msgpack_rpc.html#rpc">rpc</A>&quot;) to close
-		<A HREF="msgpack_rpc.html#rpc">rpc</A> communication without stopping the job. Use YXXYchanclose|(id)
-		to close any socket.
+		Deprecated. Instead use |<A HREF="#jobstop()">jobstop()</A>| to stop any job, and
+		chanclose(id, &quot;<A HREF="msgpack_rpc.html#rpc">rpc</A>&quot;) to close <A HREF="msgpack_rpc.html#RPC">RPC</A> communication without
+		stopping the job. Use chanclose(id) to close any socket.
 
 
 screenattr({row}, {col})					*<A NAME="screenattr()"></A><B>screenattr()</B>*
@@ -6981,6 +7055,8 @@ searchpair({start}, {middle}, {end} [, {flags} [, {skip}
 		When {skip} is omitted or empty, every match is accepted.
 		When evaluating {skip} causes an error the search is aborted
 		and -1 returned.
+ 		{skip} can be a <A HREF="#string">string</A>, a <A HREF="#lambda">lambda</A>, a funcref or a partial.
+		Anything else makes the function fail.
 
 		For {stopline} and {timeout} see |<A HREF="#search()">search()</A>|.
 
@@ -7234,10 +7310,12 @@ setpos({expr}, {list})
 		    [bufnum, lnum, col, off, curswant]
 
 		&quot;bufnum&quot; is the buffer number.	Zero can be used for the
-		current buffer.  Setting the cursor is only possible for
-		the current buffer.  To set a <A HREF="motion.html#mark">mark</A> in another buffer you can
-		use the |<A HREF="#bufnr()">bufnr()</A>| function to turn a file name into a buffer
-		number.
+		current buffer.  When setting an <A HREF="change.html#uppercase">uppercase</A> <A HREF="motion.html#mark">mark</A> &quot;bufnum&quot; is
+		used for the <A HREF="motion.html#mark">mark</A> position.  For other marks <A HREF="motion.html#it">it</A> specifies the
+		buffer to set the <A HREF="motion.html#mark">mark</A> in.  You can use the |<A HREF="#bufnr()">bufnr()</A>| function
+		to turn a file name into a buffer number.
+		For setting the cursor and the '' <A HREF="motion.html#mark">mark</A> &quot;bufnum&quot; is ignored,
+		since these are associated with a <A HREF="windows.html#window">window</A>, not a buffer.
 		Does not change the <A HREF="motion.html#jumplist">jumplist</A>.
 
 		&quot;lnum&quot; and &quot;col&quot; are the position in the buffer.  The first
@@ -7273,10 +7351,12 @@ setpos({expr}, {list})
 
 
 setqflist({list} [, {action}[, {what}]])		*<A NAME="setqflist()"></A><B>setqflist()</B>*
-		Create or replace or add to the <A HREF="quickfix.html#quickfix">quickfix</A> <A HREF="#list">list</A> using the items
-		in {list}.  Each item in {list} is a dictionary.
-		Non-dictionary items in {list} are ignored.  Each dictionary
-		item can contain the following entries:
+		Create or replace or add to the <A HREF="quickfix.html#quickfix">quickfix</A> <A HREF="#list">list</A>.
+		
+		When {what} is not present, use the items in {list}.  Each
+		item must be a dictionary.  Non-dictionary items in {list} are
+		ignored.  Each dictionary item can contain the following
+		entries:
 
 		    bufnr	buffer number; must be the number of a valid
 				buffer
@@ -7322,7 +7402,10 @@ setqflist({list} [, {action}[, {what}]])		*<A NAME="setqflist()"></A><B>setqflis
 			freed.
 
 		If {action} is not present or is set to '' '', then a new <A HREF="#list">list</A>
-		is created.
+		is created. The new <A HREF="quickfix.html#quickfix">quickfix</A> <A HREF="#list">list</A> is added after the current
+		<A HREF="quickfix.html#quickfix">quickfix</A> <A HREF="#list">list</A> in the stack and all the following lists are
+		freed. To add a new <A HREF="quickfix.html#quickfix">quickfix</A> <A HREF="#list">list</A> at the end of the stack,
+		set &quot;nr&quot; in {what} to &quot;<A HREF="motion.html#$">$</A>&quot;.
 
 		If {title} is given, it will be used to set |<A HREF="quickfix.html#w:quickfix_title">w:quickfix_title</A>|
 		after opening the <A HREF="quickfix.html#quickfix">quickfix</A> <A HREF="windows.html#window">window</A>.
@@ -7331,20 +7414,32 @@ setqflist({list} [, {action}[, {what}]])		*<A NAME="setqflist()"></A><B>setqflis
 		only the items listed in {what} are set. The first {list}
 		argument is ignored.  The following items can be specified in
 		{what}:
-		    context	any Vim type can be stored <A HREF="motion.html#as">as</A> a context
+		    context	quickfix <A HREF="#list">list</A> context. See |<A HREF="quickfix.html#quickfix-context">quickfix-context</A>|
+		    efm		<A HREF="quickfix.html#errorformat">errorformat</A> to use when parsing text from
+				&quot;lines&quot;. If this is not present, then the
+				<A HREF="options.html#'errorformat'">'errorformat'</A> option value is used.
+		    id		quickfix <A HREF="#list">list</A> identifier |<A HREF="quickfix.html#quickfix-ID">quickfix-ID</A>|
 		    items	<A HREF="#list">list</A> of <A HREF="quickfix.html#quickfix">quickfix</A> entries. Same <A HREF="motion.html#as">as</A> the {list}
 				argument.
+		    lines	use <A HREF="options.html#'errorformat'">'errorformat'</A> to parse a <A HREF="#list">list</A> of lines and
+				add the resulting entries to the <A HREF="quickfix.html#quickfix">quickfix</A> <A HREF="#list">list</A>
+				{nr} or {id}.  Only a |<A HREF="#List">List</A>| value is supported.
 		    nr		<A HREF="#list">list</A> number in the <A HREF="quickfix.html#quickfix">quickfix</A> stack; zero
-				means the current <A HREF="quickfix.html#quickfix">quickfix</A> <A HREF="#list">list</A> and '<A HREF="motion.html#$">$</A>' means
+				means the current <A HREF="quickfix.html#quickfix">quickfix</A> <A HREF="#list">list</A> and &quot;<A HREF="motion.html#$">$</A>&quot; means
 				the last <A HREF="quickfix.html#quickfix">quickfix</A> <A HREF="#list">list</A>
 		    title	<A HREF="quickfix.html#quickfix">quickfix</A> <A HREF="#list">list</A> title text
 		Unsupported keys in {what} are ignored.
 		If the &quot;nr&quot; item is not present, then the current <A HREF="quickfix.html#quickfix">quickfix</A> <A HREF="#list">list</A>
-		is modified.
+		is modified. When creating a new <A HREF="quickfix.html#quickfix">quickfix</A> <A HREF="#list">list</A>, &quot;nr&quot; can be
+		set to a value one greater than the <A HREF="quickfix.html#quickfix">quickfix</A> stack size.
+		When modifying a <A HREF="quickfix.html#quickfix">quickfix</A> <A HREF="#list">list</A>, to guarantee that the correct
+		<A HREF="#list">list</A> is modified, &quot;id&quot; should be used instead of &quot;nr&quot; to
+		specify the <A HREF="#list">list</A>.
 
-		Examples:
-<B>			:call setqflist([], 'r', {'title': 'My search'})</B>
-<B>			:call setqflist([], 'r', {'nr': 2, 'title': 'Errors'})</B>
+		Examples (See also |<A HREF="quickfix.html#setqflist-examples">setqflist-examples</A>|):
+<B>		   :call setqflist([], 'r', {'title': 'My search'})</B>
+<B>		   :call setqflist([], 'r', {'nr': 2, 'title': 'Errors'})</B>
+<B>		   :call setqflist([], 'a', {'id':qfid, 'lines':["F1:10:L10"]})</B>
  
 		Returns zero for success, -1 for failure.
 
@@ -7730,20 +7825,21 @@ stdioopen({opts})			 *<A NAME="stdioopen()"></A><B>stdioopen()</B>*
 
 
 stdpath({what})					*<A NAME="stdpath()"></A><B>stdpath()</B>* *<A NAME="E6100"></A><B>E6100</B>*
-		Returns the standard path(s) for {what}.
-
-		These directories are the default locations for various files
-		used by Neovim.
+		Returns |<A HREF="starting.html#standard-path">standard-path</A>| locations of various default files and
+		directories.
 
 <B><FONT color="#54A23D">		{what}       Type    Description </FONT></B>
-		cache        <A HREF="#String">String</A>  Cache directory. Useful for plugins
-		                     that need temporary files to work.
+		cache        <A HREF="#String">String</A>  Cache directory. Arbitrary temporary
+		                     storage for plugins, etc.
 		config       <A HREF="#String">String</A>  <A HREF="autocmd.html#User">User</A> configuration directory. The
 		                     |<A HREF="init.html">init.vim</A>| is stored here.
 		config_dirs  <A HREF="#List">List</A>    Additional configuration directories.
 		data         <A HREF="#String">String</A>  <A HREF="autocmd.html#User">User</A> data directory. The |<A HREF="starting.html#shada-file">shada-file</A>|
 		                     is stored here.
 		data_dirs    <A HREF="#List">List</A>    Additional data directories.
+
+		Example:
+<B>			:echo stdpath("config")</B>
 
 
 
@@ -7983,8 +8079,9 @@ submatch({nr} [, {list}])			*<A NAME="submatch()"></A><B>submatch()</B>* *<A NAM
 		When <A HREF="#substitute()">substitute()</A> is used recursively only the submatches in
 		the current (deepest) call can be obtained.
 
-		Example:
+		Examples:
 <B>			:s/\d\+/\=submatch(0) + 1/</B>
+<B>			:echo substitute(text, '\d\+', '\=submatch(0) + 1', '')</B>
  		This finds the first number in the line and adds one to <A HREF="motion.html#it">it</A>.
 		A line break is included <A HREF="motion.html#as">as</A> a newline character.
 
@@ -8114,7 +8211,7 @@ synconcealed({lnum}, {col})				*<A NAME="synconcealed()"></A><B>synconcealed()</
 		   concealable region if there are two consecutive regions
 		   with the same replacement character.  For an example, if
 		   the text is &quot;123456&quot; and both &quot;23&quot; and &quot;45&quot; are concealed
-		   and replace by the character &quot;<A HREF="change.html#X">X</A>&quot;, then:
+		   and replaced by the character &quot;<A HREF="change.html#X">X</A>&quot;, then:
 <B><FONT color="#54A23D">			call			returns </FONT></B>
 		   	synconcealed(lnum, 1)   [0, <A HREF="motion.html#''">''</A>, 0]
 		   	synconcealed(lnum, 2)   [1, '<A HREF="change.html#X">X</A>', 1]
@@ -8454,6 +8551,23 @@ tr({src}, {fromstr}, {tostr})				*<A NAME="tr()"></A><B>tr()</B>*
  		returns &quot;{blob}&quot;
 
 
+trim({text} [, {mask}])						*<A NAME="trim()"></A><B>trim()</B>*
+		Return {text} <A HREF="motion.html#as">as</A> a <A HREF="#String">String</A> where any character in {mask} is
+		removed from the beginning and  end of {text}.
+		If {mask} is not given, {mask} is all characters up to 0x20,
+		which includes <A HREF="intro.html#Tab">Tab</A>, space, NL and CR, plus the non-breaking
+		space character 0xa0.
+		This code deals with <A HREF="mbyte.html#multibyte">multibyte</A> characters properly.
+
+		Examples:
+<B>			echo trim("   some text ")</B>
+ 		returns &quot;some text&quot;
+<B>			echo trim("  \r\t\t\r RESERVE \t\n\x0B\xA0") . "_TAIL"</B>
+ 		returns &quot;RESERVE_TAIL&quot;
+<B>			echo trim("rm&lt;Xrm&lt;&gt;X&gt;rrm", "rm&lt;&gt;")</B>
+ 		returns &quot;Xrm&lt;&gt;X&quot; (characters in the middle are not removed)
+
+
 trunc({expr})							*<A NAME="trunc()"></A><B>trunc()</B>*
 		Return the largest integral value with magnitude <A HREF="various.html#less">less</A> than or
 		equal to {expr} <A HREF="motion.html#as">as</A> a |<A HREF="#Float">Float</A>| (truncate towards zero).
@@ -8547,8 +8661,8 @@ undofile({name})					*<A NAME="undofile()"></A><B>undofile()</B>*
 				write.  The number is the write <A HREF="intro.html#count">count</A>.  The
 				first write has number 1, the last one the
 				&quot;save_last&quot; mentioned above.
-		  &quot;<A HREF="intro.html#alt">alt</A>&quot;		Alternate entry.  This is again a <A HREF="#List">List</A> of <A HREF="undo.html#undo">undo</A>
-				blocks.  Each item may again have an &quot;<A HREF="intro.html#alt">alt</A>&quot;
+		  &quot;alt&quot;		Alternate entry.  This is again a <A HREF="#List">List</A> of <A HREF="undo.html#undo">undo</A>
+				blocks.  Each item may again have an &quot;alt&quot;
 				item.
 
 
@@ -8670,6 +8784,15 @@ win_id2win({expr})					*<A NAME="win_id2win()"></A><B>win_id2win()</B>*
 		Return 0 if the <A HREF="windows.html#window">window</A> cannot be found in the current <A HREF="tabpage.html#tabpage">tabpage</A>.
 
 
+win_screenpos({nr})					*<A NAME="win_screenpos()"></A><B>win_screenpos()</B>*
+		Return the screen position of <A HREF="windows.html#window">window</A> {nr} <A HREF="motion.html#as">as</A> a <A HREF="#list">list</A> with two
+		numbers: [row, col].  The first <A HREF="windows.html#window">window</A> always has position
+		[1, 1].
+		{nr} can be the window number or the |<A HREF="windows.html#window-ID">window-ID</A>|.
+		Return [0, 0] if the <A HREF="windows.html#window">window</A> cannot be found in the current
+		<A HREF="tabpage.html#tabpage">tabpage</A>.
+
+
 							*<A NAME="winbufnr()"></A><B>winbufnr()</B>*
 winbufnr({nr})	The result is a <A HREF="#Number">Number</A>, which is the number of the buffer
 		associated with <A HREF="windows.html#window">window</A> {nr}.  {nr} can be the <A HREF="windows.html#window">window</A> number or
@@ -8785,8 +8908,8 @@ winwidth({nr})						*<A NAME="winwidth()"></A><B>winwidth()</B>*
 <B>  :if winwidth(0) &lt;= 50</B>
 <B>  :  exe "normal 50\&lt;C-W&gt;|"</B>
 <B>  :endif</B>
-                For getting the <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> or screen size, see the <A HREF="options.html#'columns'">'columns'</A>
-               option.
+ 		For getting the <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> or screen size, see the <A HREF="options.html#'columns'">'columns'</A>
+		option.
 
 
 
@@ -8805,11 +8928,11 @@ winwidth({nr})						*<A NAME="winwidth()"></A><B>winwidth()</B>*
 			cursor_words    <A HREF="#Number">Number</A> of words before cursor position
 					(not in <A HREF="visual.html#Visual">Visual</A> mode)
 			visual_bytes    <A HREF="#Number">Number</A> of bytes visually selected
-			                (only in <A HREF="visual.html#Visual">Visual</A> mode)
+					(only in <A HREF="visual.html#Visual">Visual</A> mode)
 			visual_chars    <A HREF="#Number">Number</A> of chars visually selected
-			                (only in <A HREF="visual.html#Visual">Visual</A> mode)
+					(only in <A HREF="visual.html#Visual">Visual</A> mode)
 			visual_words    <A HREF="#Number">Number</A> of chars visually selected
-			                (only in <A HREF="visual.html#Visual">Visual</A> mode)
+					(only in <A HREF="visual.html#Visual">Visual</A> mode)
 
 
 
@@ -8893,7 +9016,7 @@ use: `if exists('+shellslash')`
 
 acl			Compiled with |<A HREF="editing.html#ACL">ACL</A>| support.
 arabic			Compiled with Arabic support |<A HREF="arabic.html#Arabic">Arabic</A>|.
-autocmd			Compiled with autocommand support. |<A HREF="autocmd.html#autocommand">autocommand</A>|
+<A HREF="autocmd.html#autocmd">autocmd</A>			Compiled with autocommand support. |<A HREF="autocmd.html#autocommand">autocommand</A>|
 browse			Compiled with |<A HREF="editing.html#:browse">:browse</A>| support, and <A HREF="#browse()">browse()</A> will
 			work.
 browsefilter		Compiled with support for |<A HREF="editing.html#browsefilter">browsefilter</A>|.
@@ -8971,7 +9094,7 @@ statusline		Compiled with support for <A HREF="options.html#'statusline'">'statu
 syntax			Compiled with syntax highlighting support |<A HREF="syntax.html#syntax">syntax</A>|.
 syntax_items		There are active <A HREF="syntax.html#syntax">syntax</A> highlighting items for the
 			current buffer.
-tablineat		<A HREF="options.html#'tabline'">'tabline'</A> option accepts &#37;@<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="bcfac9d2dffc">[email&#160;protected]</a> items.
+tablineat		<A HREF="options.html#'tabline'">'tabline'</A> option accepts &#37;@<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e8ae9d868ba8">[email&#160;protected]</a> items.
 tag_binary		Compiled with binary searching in <A HREF="tagsrch.html#tags">tags</A> files
 			|<A HREF="tagsrch.html#tag-binary-search">tag-binary-search</A>|.
 tag_old_static		Compiled with support for old static <A HREF="tagsrch.html#tags">tags</A>
@@ -8996,6 +9119,8 @@ visual			Compiled with <A HREF="visual.html#Visual">Visual</A> mode.
 visualextra		Compiled with extra <A HREF="visual.html#Visual">Visual</A> mode commands.
 			|<A HREF="visual.html#blockwise-operators">blockwise-operators</A>|.
 vreplace		Compiled with |<A HREF="change.html#gR">gR</A>| and |<A HREF="change.html#gr">gr</A>| commands.
+vtp			Compiled for vcon support |<A HREF="various.html#+vtp">+vtp</A>| (check vcon to find
+			out if <A HREF="motion.html#it">it</A> works in the current console)).
 wildignore		Compiled with <A HREF="options.html#'wildignore'">'wildignore'</A> option.
 wildmenu		Compiled with <A HREF="options.html#'wildmenu'">'wildmenu'</A> option.
 win32			Windows version of Vim (32 or 64 bit).
@@ -9105,6 +9230,9 @@ See |<A HREF="various.html#:verbose-cmd">:verbose-cmd</A>| for more information.
 			not used an error message is given.  When [!] is used,
 			an existing function is silently replaced.  Unless <A HREF="motion.html#it">it</A>
 			is currently being executed, that is an error.
+			NOTE: Use ! wisely.  If used without care <A HREF="motion.html#it">it</A> can cause
+			an existing function to be replaced unexpectedly,
+			which is hard to debug.
 
 			For the {arguments} see |<A HREF="#function-argument">function-argument</A>|.
 
@@ -9160,19 +9288,37 @@ See |<A HREF="various.html#:verbose-cmd">:verbose-cmd</A>| for more information.
 			when the function returns.
 
 
-					*<A NAME=":endf"></A><B>:endf</B>* *<A NAME=":endfunction"></A><B>:endfunction</B>* *<A NAME="E126"></A><B>E126</B>* *<A NAME="E193"></A><B>E193</B>*
-:endf[unction]		The end of a function definition.  Must be on a line
-			by its own, without other commands.
+				*<A NAME=":endf"></A><B>:endf</B>* *<A NAME=":endfunction"></A><B>:endfunction</B>* *<A NAME="E126"></A><B>E126</B>* *<A NAME="E193"></A><B>E193</B>* *<A NAME="W22"></A><B>W22</B>*
+:endf[unction] [argument]
+			The end of a function definition.  Best is to put <A HREF="motion.html#it">it</A>
+			on a line by its own, without [argument].
 
+			[argument] can be:
+				&#124; command	command to execute next
+				\n command	command to execute next
+				&quot; comment	always ignored
+				anything else	ignored, warning given when
+						<A HREF="options.html#'verbose'">'verbose'</A> is non-zero
+			The support for a following command was added in Vim
+			8.0.0654, before that any argument was silently
+			ignored.
 
-				    *<A NAME=":delf"></A><B>:delf</B>* *<A NAME=":delfunction"></A><B>:delfunction</B>* *<A NAME="E130"></A><B>E130</B>* *<A NAME="E131"></A><B>E131</B>* *<A NAME="E933"></A><B>E933</B>*
-:delf[unction] {name}	Delete function {name}.
+			To be able to define a function inside an `:execute`
+			command, use line breaks instead of YXXY:bar|:
+<B>				:exe "func Foo()\necho 'foo'\nendfunc"</B>
+ 
+
+				*<A NAME=":delf"></A><B>:delf</B>* *<A NAME=":delfunction"></A><B>:delfunction</B>* *<A NAME="E130"></A><B>E130</B>* *<A NAME="E131"></A><B>E131</B>* *<A NAME="E933"></A><B>E933</B>*
+:delf[unction][!] {name}
+			Delete function {name}.
 			{name} can also be a |<A HREF="#Dictionary">Dictionary</A>| entry that is a
 			YXXYFuncref|:
 <B>				:delfunc dict.init</B>
- 			This will remove the &quot;init&quot; entry from &quot;<A HREF="#dict">dict</A>&quot;.	The
+ 			This will remove the &quot;init&quot; entry from &quot;<A HREF="#dict">dict</A>&quot;.  The
 			function is deleted if there are no more references to
 			<A HREF="motion.html#it">it</A>.
+			With the ! there is no error if the function does not
+			exist.
 
 							*<A NAME=":retu"></A><B>:retu</B>* *<A NAME=":return"></A><B>:return</B>* *<A NAME="E133"></A><B>E133</B>*
 :retu[rn] [expr]	Return from a function.  When &quot;[expr]&quot; is given, <A HREF="motion.html#it">it</A> is
@@ -9217,8 +9363,7 @@ may be larger.
 It is also possible to define a function without any arguments.  You must
 still supply the () then.
 
-It is allowed to define another function inside a function
-body.
+It is allowed to define another function inside a function body.
 
 
 							*<A NAME="local-variables"></A><B>local-variables</B>*
@@ -9381,9 +9526,6 @@ Also note that if you have two <A HREF="usr_41.html#script">script</A> files, an
 other and vice versa, before the used function is defined, <A HREF="motion.html#it">it</A> won't work.
 Avoid using the <A HREF="#autoload">autoload</A> functionality at the toplevel.
 
-Hint: If you distribute a bunch of scripts you can pack them together with the
-|<A HREF="intro.html#vimball">vimball</A>| utility.  Also read the user manual |<A HREF="usr_41.html#distribute-script">distribute-script</A>|.
-
 ==============================================================================
 
 6. Curly braces names					*<A NAME="curly-braces-names"></A><B>curly-braces-names</B>*
@@ -9485,7 +9627,7 @@ This does NOT work:
 			works like &quot;<A HREF="change.html#=">=</A>&quot;.
 
 
-<A HREF="#:let">:let</A> @{reg-name} = {expr1}			*<A NAME=":let-register"></A><B>:let-register</B>* *<A NAME=":let-@"></A><B>:<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e68a8392cba6">[email&#160;protected]</a></B>*
+<A HREF="#:let">:let</A> @{reg-name} = {expr1}			*<A NAME=":let-register"></A><B>:let-register</B>* *<A NAME=":let-@"></A><B>:<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="93fff6e7bed3">[email&#160;protected]</a></B>*
 			Write the result of the <A HREF="#expression">expression</A> {expr1} in <A HREF="sponsor.html#register">register</A>
 			{reg-name}.  {reg-name} must be a single <A HREF="print.html#letter">letter</A>, and
 			must be the name of a writable <A HREF="sponsor.html#register">register</A> (see
@@ -9616,6 +9758,15 @@ This does NOT work:
 			deleted when the <A HREF="usr_41.html#script">script</A> ends).  Function-local
 			<A HREF="#variables">variables</A> are automatically deleted when the function
 			ends.
+
+
+:unl[et] ${env-name} <A HREF="#...">...</A>			*<A NAME=":unlet-environment"></A><B>:unlet-environment</B>* *<A NAME=":unlet-$"></A><B>:unlet-$</B>*
+			Remove environment variable {env-name}.
+			Can mix {name} and ${env-name} in one <A HREF="#:unlet">:unlet</A> command.
+			No error message is given for a non-existing
+			variable, also without !.
+			If the system does not support <A HREF="change.html#deleting">deleting</A> an environment
+			variable, <A HREF="motion.html#it">it</A> is made emtpy.
 
 
 :lockv[ar][!] [depth] {name} <A HREF="#...">...</A>			*<A NAME=":lockvar"></A><B>:lockvar</B>* *<A NAME=":lockv"></A><B>:lockv</B>*
@@ -9909,15 +10060,15 @@ This does NOT work:
  							*<A NAME=":echo-self-refer"></A><B>:echo-self-refer</B>*
 			When <A HREF="print.html#printing">printing</A> nested containers echo prints second
 			occurrence of the self-referencing container using
-			&quot;[<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="436d6d6d032f2635262f">[email&#160;protected]</a>]&quot; (self-referencing |<A HREF="#List">List</A>|) or
-			&quot;{<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7b5555553b171e0d1e17">[email&#160;protected]</a>}&quot; (self-referencing |<A HREF="#Dict">Dict</A>|):
+			&quot;[<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6f4141412f030a190a03">[email&#160;protected]</a>]&quot; (self-referencing |<A HREF="#List">List</A>|) or
+			&quot;{<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="83adadadc3efe6f5e6ef">[email&#160;protected]</a>}&quot; (self-referencing |<A HREF="#Dict">Dict</A>|):
 <B>		:let l = []</B>
 <B>		:call add(l, l)</B>
 <B>		:let l2 = []</B>
 <B>		:call add(l2, [l2])</B>
 <B>		:echo l l2</B>
- 			echoes &quot;[[<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="ddf3f3f39ded">[email&#160;protected]</a>]] [[[<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="103e3e3e5020">[email&#160;protected]</a>]]]&quot;. Echoing &quot;[l]&quot; will
-			echo &quot;[[[<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f0dededeb0c1">[email&#160;protected]</a>]]]&quot; because <A HREF="motion.html#l">l</A> first occurs at second
+ 			echoes &quot;[[<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="dbf5f5f59beb">[email&#160;protected]</a>]] [[[<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a8868686e898">[email&#160;protected]</a>]]]&quot;. Echoing &quot;[l]&quot; will
+			echo &quot;[[[<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="597777771968">[email&#160;protected]</a>]]]&quot; because <A HREF="motion.html#l">l</A> first occurs at second
 			level.
 
 
@@ -11217,7 +11368,7 @@ The sandbox is also used for the |<A HREF="#:sandbox">:sandbox</A>| command.
 
 These items are not allowed in the <A HREF="#sandbox">sandbox</A>:
 	- <A HREF="change.html#changing">changing</A> the buffer text
-	- defining or <A HREF="change.html#changing">changing</A> <A HREF="map.html#mapping">mapping</A>, autocommands, <A HREF="#functions">functions</A>, user commands
+	- defining or <A HREF="change.html#changing">changing</A> <A HREF="map.html#mapping">mapping</A>, autocommands, user commands
 	- setting certain <A HREF="options.html#options">options</A> (see |<A HREF="options.html#option-summary">option-summary</A>|)
 
 	- setting certain v: <A HREF="#variables">variables</A> (see |<A HREF="#v:var">v:var</A>|)  *<A NAME="E794"></A><B>E794</B>*
@@ -11242,6 +11393,7 @@ location.  Insecure in this context are:
 - sourcing a .nvimrc or .exrc in the current directory
 - while executing in the <A HREF="#sandbox">sandbox</A>
 - value coming from a <A HREF="options.html#modeline">modeline</A>
+- executing a function that was defined in the <A HREF="#sandbox">sandbox</A>
 
 Note that when in the <A HREF="#sandbox">sandbox</A> and saving an option value and restoring <A HREF="motion.html#it">it</A>, the
 option will still be marked <A HREF="motion.html#as">as</A> <A HREF="motion.html#it">it</A> was set in the <A HREF="#sandbox">sandbox</A>.
@@ -11382,7 +11534,7 @@ and some other intermediate groups are present.
 
 *<A NAME="hl-NvimColon"></A><B>hl-NvimColon</B>*                       Delimiter               `:` in |<A HREF="#dict">dict</A>| literal
 
-*<A NAME="hl-NvimComma"></A><B>hl-NvimComma</B>*                       Delimiter               `,` in |<A HREF="intro.html#dict|/|list">dict|/|list</A>|
+*<A NAME="hl-NvimComma"></A><B>hl-NvimComma</B>*                       Delimiter               `,` in |<A HREF="#dict">dict</A>| or |<A HREF="#list">list</A>|
                                                            literal or
                                                            |<A HREF="#expr-function">expr-function</A>|
 
@@ -11453,5 +11605,5 @@ and some other intermediate groups are present.
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
-  <script data-cfasync="false" src="/cdn-cgi/scripts/d07b1474/cloudflare-static/email-decode.min.js"></script></body>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
 </html>

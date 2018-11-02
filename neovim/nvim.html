@@ -8,7 +8,7 @@
                 <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
 
     <div class="container">
-      <h1>Vim documentation: nvim</h1>
+      <h1>Nvim documentation: nvim</h1>
 <A NAME="top"></A>
 <A HREF="index.html">main help file</A>
 
@@ -25,7 +25,9 @@ Nvim							   *<A NAME="nvim"></A><B>nvim</B>* *<A NAME="nvim-intro"></A><B>nvim
 
 Nvim is based on Vim by <A HREF="intro.html#Bram">Bram</A> <A HREF="intro.html#Moolenaar">Moolenaar</A>.
 
-If you are new to Vim see |<A HREF="index.html">help.txt</A>|, or type &quot;<A HREF="pi_tutor.html#:Tutor">:Tutor</A>&quot;.
+If you are new to Vim, try the 30-minute tutorial:
+<B>    :Tutor&lt;Enter&gt;</B>
+
 If you already use Vim see |<A HREF="#nvim-from-vim">nvim-from-vim</A>| for a quickstart.
 
 Nvim is emphatically a fork of Vim, not a clone: compatibility with Vim is
@@ -38,29 +40,24 @@ differences from Vim.
 
 Transitioning from Vim				*<A NAME="nvim-from-vim"></A><B>nvim-from-vim</B>*
 
-To start the transition, create <A HREF="starting.html#init.vim">init.vim</A> in the correct directory for your
-platform.
+1. To start the transition, create your |<A HREF="init.html">init.vim</A>| (user config) file:
 
-For Linux, macOS and other Unixes, create the file at ~/.config/nvim/init.vim.
+<B>    :call mkdir(stdpath('config'), 'p')</B>
+<B>    :exe 'edit '.stdpath('config').'/init.vim'</B>
 
-For Windows, create the file at &#37;LOCALAPPDATA&#37;\nvim\init.vim. `&#37;LOCALAPPDATA&#37;`
-usually expands to `C:\Users\&lt;username&gt;\AppData\Local`.
-
-Note: If your system sets `$XDG_CONFIG_HOME`, use that instead of `~/.config`
-or `&#37;LOCALAPPDATA&#37;` in the paths above. Nvim follows the XDG |<A HREF="starting.html#base-directories">base-directories</A>|
-convention.
-
-Next, add these contents to the file:
+2. Add these contents to the file:
 
 <B>    set runtimepath^=~/.vim runtimepath+=~/.vim/after</B>
 <B>    let &amp;packpath = &amp;runtimepath</B>
 <B>    source ~/.vimrc</B>
- 
+
+3. Restart Nvim, your existing Vim config will be loaded.
+
 See |<A HREF="provider.html#provider-python">provider-python</A>| and |<A HREF="provider.html#provider-clipboard">provider-clipboard</A>| for additional software you
 might need to use some features.
 
-Your Vim configuration might not be entirely compatible with Nvim. For a
-full <A HREF="eval.html#list">list</A> of differences between Vim and Nvim see |<A HREF="vim_diff.html#vim-differences">vim-differences</A>|.
+Your Vim configuration might not be entirely Nvim-compatible.
+See |<A HREF="vim_diff.html#vim-differences">vim-differences</A>| for the full <A HREF="eval.html#list">list</A> of changes.
 
 The |<A HREF="vim_diff.html#'ttymouse'">'ttymouse'</A>| option, for example, was removed from Nvim (mouse support
 should work without <A HREF="motion.html#it">it</A>). If you use the same |<A HREF="starting.html#vimrc">vimrc</A>| for Vim and Nvim,
