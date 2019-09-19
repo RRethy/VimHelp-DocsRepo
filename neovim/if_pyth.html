@@ -2,10 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Nvim documentation: if_pyth</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.0/normalize.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="/css/main.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
   </head>
   <body>
-                <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
+    <header class="navbar">
+      <div class="container">
+        <nav class="navbar">
+          <div class="container-fluid">
+            <div class="navbar-header">
+
+              <a href="/" class="navbar-brand">
+                <img src="/images/logo@2x.png" id="navbar-logo" alt="Neovim">
+              </a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
 
     <div class="container">
       <h1>Nvim documentation: if_pyth</h1>
@@ -23,13 +47,13 @@
 
 The <A HREF="#Python">Python</A> Interface to Vim				*<A NAME="if_pyth"></A><B>if_pyth</B>* *<A NAME="python"></A><B>python</B>* *<A NAME="Python"></A><B>Python</B>*
 
-See |<A HREF="provider.html#provider-python">provider-python</A>| for more information. {Nvim}
+See |<A HREF="provider.html#provider-python">provider-python</A>| for more information.
 
                                       Type |<A HREF="various.html#gO">gO</A>| to see the table of contents.
 
 ==============================================================================
 
-1. Commands						*<A NAME="python-commands"></A><B>python-commands</B>*
+Commands						*<A NAME="python-commands"></A><B>python-commands</B>*
 
 
 					*<A NAME=":python"></A><B>:python</B>* *<A NAME=":py"></A><B>:py</B>* *<A NAME="E263"></A><B>E263</B>* *<A NAME="E264"></A><B>E264</B>* *<A NAME="E887"></A><B>E887</B>*
@@ -38,18 +62,17 @@ See |<A HREF="provider.html#provider-python">provider-python</A>| for more infor
 			the `:python` command is working:
 <B>				:python print "Hello"</B>
 
-:[range]py[thon] <A HREF="change.html#&lt;&lt;">&lt;&lt;</A> {endmarker}
+:[range]py[thon] <A HREF="change.html#&lt;&lt;">&lt;&lt;</A> [endmarker]
 {script}
 {endmarker}
-			Execute <A HREF="#Python">Python</A> <A HREF="usr_41.html#script">script</A> {script}.
-			Note: This command doesn't work when <A HREF="#Python">Python</A> isn't
-			available.  To avoid <A HREF="message.html#errors">errors</A>, see |<A HREF="#script-here">script-here</A>|.
+			Execute <A HREF="#Python">Python</A> <A HREF="usr_41.html#script">script</A> {script}.  Useful for including
+			<A HREF="#python">python</A> code in Vim scripts.  Requires <A HREF="#Python">Python</A>, see
+			|<A HREF="#script-here">script-here</A>|.
 
-{endmarker} must NOT be preceded by any white space.  If {endmarker} is
-omitted from after the &quot;<A HREF="change.html#&lt;&lt;">&lt;&lt;</A>&quot;, a dot '<A HREF="repeat.html#.">.</A>' must be used after {script}, like
-for the |<A HREF="insert.html#:append">:append</A>| and |<A HREF="insert.html#:insert">:insert</A>| commands.
-This form of the |<A HREF="#:python">:python</A>| command is mainly useful for including python code
-in Vim scripts.
+The {endmarker} below the {script} must NOT be preceded by any white space.
+
+If [endmarker] is omitted from after the &quot;<A HREF="change.html#&lt;&lt;">&lt;&lt;</A>&quot;, a dot '<A HREF="repeat.html#.">.</A>' must be used after
+{script}, like for the |<A HREF="insert.html#:append">:append</A>| and |<A HREF="insert.html#:insert">:insert</A>| commands.
 
 Example:
 <B>	function! IcecreamInitialize()</B>
@@ -63,10 +86,10 @@ Example:
 To see what version of <A HREF="#Python">Python</A> you have:
 <B>	:python print(sys.version)</B>
 
-There is no need to import sys, it's done by default.
+There is no need to &quot;import sys&quot;, it's done by default.
 
-Note: <A HREF="#Python">Python</A> is very sensitive to the indenting.  Make sure the &quot;class&quot; line
-and &quot;EOF&quot; <A HREF="diff.html#do">do</A> not have any indent.
+Note: <A HREF="#Python">Python</A> is very sensitive to indenting.  Make sure the &quot;class&quot; line and
+&quot;EOF&quot; <A HREF="diff.html#do">do</A> not have any indent.
 
 
 							*<A NAME=":pydo"></A><B>:pydo</B>*
@@ -125,8 +148,8 @@ Here are some examples					*<A NAME="python-examples"></A><B>python-examples</B>
 <B>	:python print "Hello"</B>
 <B>	:python str = current.buffer[42]</B>
 
-(Note that changes - like the imports - persist from one command to the next,
-just like in the <A HREF="#Python">Python</A> interpreter.)
+Note that changes (such <A HREF="motion.html#as">as</A> the &quot;import&quot; statements) persist from one command
+to the next, just like the <A HREF="#Python">Python</A> REPL.
 
 
 							*<A NAME="script-here"></A><B>script-here</B>*
@@ -154,7 +177,7 @@ Note that &quot;EOF&quot; must be at the start of the line.
 
 ==============================================================================
 
-2. The vim module					*<A NAME="python-vim"></A><B>python-vim</B>* *<A NAME="python2"></A><B>python2</B>*
+The vim module						*<A NAME="python-vim"></A><B>python-vim</B>* *<A NAME="python2"></A><B>python2</B>*
 
 <A HREF="#Python">Python</A> code gets all of its access to vim (with one exception - see
 |<A HREF="#python-output">python-output</A>| below) via the &quot;vim&quot; module.  The vim module implements two
@@ -215,12 +238,6 @@ vim.eval(str)						*<A NAME="python-eval"></A><B>python-eval</B>*
 <B>	    :py str = vim.eval("12+12")		# NB result is a string! Use</B>
 <B>						# string.atoi() to convert to</B>
 <B>						# a number.</B>
-
-
-vim.bindeval(str)					*<A NAME="python-bindeval"></A><B>python-bindeval</B>*
-	Like |<A HREF="#python-eval">python-eval</A>|, but returns special <A HREF="vimindex.html#objects">objects</A> described in 
-	|<A HREF="#python-bindeval-objects">python-bindeval-objects</A>|. These python objects let you modify (|<A HREF="eval.html#List">List</A>| 
-	or |<A HREF="eval.html#Dictionary">Dictionary</A>|) or call (|<A HREF="eval.html#Funcref">Funcref</A>|) vim <A HREF="vimindex.html#objects">objects</A>.
 
 
 vim.strwidth(str)					*<A NAME="python-strwidth"></A><B>python-strwidth</B>*
@@ -311,7 +328,7 @@ vim.current						*<A NAME="python-current"></A><B>python-current</B>*
 	valid |<A HREF="#python-buffer">python-buffer</A>|, |<A HREF="#python-window">python-window</A>| or |<A HREF="#python-tabpage">python-tabpage</A>| <A HREF="vimindex.html#objects">objects</A> 
 	respectively. Assigning triggers normal (with |<A HREF="autocmd.html#autocommand">autocommand</A>|<A HREF="change.html#s">s</A>) 
 	switching to given buffer, <A HREF="windows.html#window">window</A> or <A HREF="intro.html#tab">tab</A> page. It is the only way to 
-	switch UI <A HREF="vimindex.html#objects">objects</A> in <A HREF="#python">python</A>: you can't assign to 
+	switch <A HREF="ui.html#UI">UI</A> <A HREF="vimindex.html#objects">objects</A> in <A HREF="#python">python</A>: you can't assign to 
 	|<A HREF="#python-tabpage">python-tabpage</A>|.window attribute. To switch without triggering 
 	autocommands use
 <B>	    py &lt;&lt; EOF</B>
@@ -328,8 +345,7 @@ vim.vars						*<A NAME="python-vars"></A><B>python-vars</B>*
 
 vim.vvars						*<A NAME="python-vvars"></A><B>python-vvars</B>*
 	Dictionary-like <A HREF="vimindex.html#objects">objects</A> holding dictionaries with global (|<A HREF="eval.html#g:">g:</A>|) and 
-	vim (|<A HREF="eval.html#v:">v:</A>|) <A HREF="eval.html#variables">variables</A> respectively. Identical to `vim.bindeval(&quot;g:&quot;)`, 
-	but faster.
+	vim (|<A HREF="eval.html#v:">v:</A>|) <A HREF="eval.html#variables">variables</A> respectively.
 
 
 vim.options						*<A NAME="python-options"></A><B>python-options</B>*
@@ -454,7 +470,7 @@ vim._get_paths						*<A NAME="python-_get_paths"></A><B>python-_get_paths</B>*
 
 ==============================================================================
 
-3. Buffer <A HREF="vimindex.html#objects">objects</A>					*<A NAME="python-buffer"></A><B>python-buffer</B>*
+Buffer <A HREF="vimindex.html#objects">objects</A>						*<A NAME="python-buffer"></A><B>python-buffer</B>*
 
 Buffer <A HREF="vimindex.html#objects">objects</A> represent vim <A HREF="windows.html#buffers">buffers</A>.  You can obtain them in a number of ways:
 	- via vim.current.buffer (|<A HREF="#python-current">python-current</A>|)
@@ -465,7 +481,7 @@ Buffer <A HREF="vimindex.html#objects">objects</A> have two read-only attributes
 the buffer, and number - the buffer number.  They also have three methods
 (append, <A HREF="motion.html#mark">mark</A>, and range; see below).
 
-You can also treat buffer <A HREF="vimindex.html#objects">objects</A> <A HREF="motion.html#as">as</A> sequence <A HREF="vimindex.html#objects">objects</A>.  In this context, they
+You can also treat buffer <A HREF="vimindex.html#objects">objects</A> <A HREF="motion.html#as">as</A> sequence <A HREF="vimindex.html#objects">objects</A>.  In this <A HREF="repeat.html#context">context</A>, they
 act <A HREF="motion.html#as">as</A> if they were lists (yes, they are mutable) of strings, with each
 element being a line of the buffer.  All of the usual sequence operations,
 including indexing, index assignment, slicing and <A HREF="eval.html#slice">slice</A> assignment, work <A HREF="motion.html#as">as</A>
@@ -533,7 +549,7 @@ Examples (assume <A HREF="motion.html#b">b</A> is the current buffer)
 
 ==============================================================================
 
-4. Range <A HREF="vimindex.html#objects">objects</A>					*<A NAME="python-range"></A><B>python-range</B>*
+Range <A HREF="vimindex.html#objects">objects</A>						*<A NAME="python-range"></A><B>python-range</B>*
 
 Range <A HREF="vimindex.html#objects">objects</A> represent a part of a vim buffer.  You can obtain them in a
 number of ways:
@@ -566,7 +582,7 @@ Example (assume <A HREF="change.html#r">r</A> is the current range):
 
 ==============================================================================
 
-5. Window <A HREF="vimindex.html#objects">objects</A>					*<A NAME="python-window"></A><B>python-window</B>*
+Window <A HREF="vimindex.html#objects">objects</A>						*<A NAME="python-window"></A><B>python-window</B>*
 
 Window <A HREF="vimindex.html#objects">objects</A> represent vim <A HREF="windows.html#windows">windows</A>.  You can obtain them in a number of ways:
 	- via vim.current.window (|<A HREF="#python-current">python-current</A>|)
@@ -611,7 +627,7 @@ Window object type is available using &quot;Window&quot; attribute of vim module
 
 ==============================================================================
 
-6. <A HREF="intro.html#Tab">Tab</A> page <A HREF="vimindex.html#objects">objects</A>					*<A NAME="python-tabpage"></A><B>python-tabpage</B>*
+<A HREF="intro.html#Tab">Tab</A> page <A HREF="vimindex.html#objects">objects</A>					*<A NAME="python-tabpage"></A><B>python-tabpage</B>*
 
 <A HREF="intro.html#Tab">Tab</A> page <A HREF="vimindex.html#objects">objects</A> represent vim <A HREF="intro.html#tab">tab</A> pages. You can obtain them in a number of 
 ways:
@@ -634,124 +650,15 @@ TabPage object type is available using &quot;TabPage&quot; attribute of vim modu
 
 ==============================================================================
 
-7. vim.bindeval <A HREF="vimindex.html#objects">objects</A>				*<A NAME="python-bindeval-objects"></A><B>python-bindeval-objects</B>*
-
-
-vim.Dictionary object				*<A NAME="python-Dictionary"></A><B>python-Dictionary</B>*
-    Dictionary-like object providing access to vim |<A HREF="eval.html#Dictionary">Dictionary</A>| type.
-    Attributes:
-<B><FONT color="#54A23D">        Attribute  Description </FONT></B>
-
-        locked     One of                       *<A NAME="python-.locked"></A><B>python-.locked</B>*
-<B><FONT color="#54A23D">                    Value           Description </FONT></B>
-                    zero            Variable is not locked
-                    vim.VAR_LOCKED  Variable is locked, but can be unlocked
-                    vim.VAR_FIXED   Variable is locked and can't be unlocked
-                   Read-write. You can unlock locked variable by assigning 
-                   `True` or `False` to this attribute. No recursive locking 
-                   is supported.
-        scope      One of
-<B><FONT color="#54A23D">                    Value              Description </FONT></B>
-                    zero               <A HREF="eval.html#Dictionary">Dictionary</A> is not a scope one
-                    vim.VAR_DEF_SCOPE  |<A HREF="eval.html#g:">g:</A>| or |<A HREF="eval.html#l:">l:</A>| dictionary
-                    vim.VAR_SCOPE      Other scope dictionary,
-                                       see |<A HREF="eval.html#internal-variables">internal-variables</A>|
-    Methods (note: methods <A HREF="diff.html#do">do</A> not support keyword arguments):
-<B><FONT color="#54A23D">        Method      Description </FONT></B>
-        <A HREF="eval.html#keys()">keys()</A>      Returns a <A HREF="eval.html#list">list</A> with dictionary keys.
-        <A HREF="eval.html#values()">values()</A>    Returns a <A HREF="eval.html#list">list</A> with dictionary values.
-        <A HREF="eval.html#items()">items()</A>     Returns a <A HREF="eval.html#list">list</A> of 2-tuples with dictionary contents.
-        update(iterable), update(dictionary), update(**kwargs)
-                    Adds keys to dictionary.
-        get(key[, default=None])
-                    Obtain key from dictionary, returning the default if <A HREF="motion.html#it">it</A> is 
-                    not present.
-        pop(key[, default])
-                    Remove specified key from dictionary and return 
-                    corresponding value. If key is not found and default is 
-                    given returns the default, otherwise raises KeyError.
-        popitem()
-                    Remove random key from dictionary and return (key, value) 
-                    pair.
-        has_key(key)
-                    Check whether dictionary contains specified key, similar 
-                    to `key in dict`.
-
-        __new__(), __new__(iterable), __new__(dictionary), __new__(update)
-                    You can use `vim.Dictionary()` to create new vim 
-                    dictionaries. `d=vim.Dictionary(arg)` is the same <A HREF="motion.html#as">as</A> 
-                    `d=vim.bindeval('{}');d.update(arg)`. Without arguments 
-                    constructs empty dictionary.
-
-    Examples:
-<B>        d = vim.Dictionary(food="bar")		# Constructor</B>
-<B>        d['a'] = 'b'				# Item assignment</B>
-<B>        print d['a']				# getting item</B>
-<B>        d.update({'c': 'd'})			# .update(dictionary)</B>
-<B>        d.update(e='f')				# .update(**kwargs)</B>
-<B>        d.update((('g', 'h'), ('i', 'j')))	# .update(iterable)</B>
-<B>        for key in d.keys():			# .keys()</B>
-<B>        for val in d.values():			# .values()</B>
-<B>        for key, val in d.items():		# .items()</B>
-<B>        print isinstance(d, vim.Dictionary)	# True</B>
-<B>        for key in d:				# Iteration over keys</B>
-<B>        class Dict(vim.Dictionary):		# Subclassing</B>
- 
-    Note: when iterating over keys you should not modify dictionary.
-
-
-vim.List object					*<A NAME="python-List"></A><B>python-List</B>*
-    Sequence-like object providing access to vim |<A HREF="eval.html#List">List</A>| type.
-    Supports `.locked` attribute, see |<A HREF="python-.html">python-.locked</A>|. Also supports the 
-    following methods:
-<B><FONT color="#54A23D">        Method          Description </FONT></B>
-        extend(item)    Add items to the <A HREF="eval.html#list">list</A>.
-
-        __new__(), __new__(iterable)
-                        You can use `vim.List()` to create new vim lists. 
-                        `l=vim.List(iterable)` is the same <A HREF="motion.html#as">as</A> 
-                        `l=vim.bindeval('[]');l.extend(iterable)`. Without 
-                        arguments constructs empty <A HREF="eval.html#list">list</A>.
-    Examples:
-<B>        l = vim.List("abc")		# Constructor, result: ['a', 'b', 'c']</B>
-<B>        l.extend(['abc', 'def'])	# .extend() method</B>
-<B>        print l[1:]			# slicing</B>
-<B>        l[:0] = ['ghi', 'jkl']		# slice assignment</B>
-<B>        print l[0]			# getting item</B>
-<B>        l[0] = 'mno'			# assignment</B>
-<B>        for i in l:			# iteration</B>
-<B>        print isinstance(l, vim.List)	# True</B>
-<B>        class List(vim.List):		# Subclassing</B>
-
-
-vim.Function object				*<A NAME="python-Function"></A><B>python-Function</B>*
-    Function-like object, acting like vim |<A HREF="eval.html#Funcref">Funcref</A>| object. Supports `.name` 
-    attribute and is callable. Accepts special keyword argument `self`, see 
-    |<A HREF="eval.html#Dictionary-function">Dictionary-function</A>|. You can also use `vim.Function(name)` constructor, 
-    <A HREF="motion.html#it">it</A> is the same <A HREF="motion.html#as">as</A> `vim.bindeval('function(&#37;s)'&#37;json.dumps(name))`.
-
-    Examples:
-<B>        f = vim.Function('tr')			# Constructor</B>
-<B>        print f('abc', 'a', 'b')		# Calls tr('abc', 'a', 'b')</B>
-<B>        vim.command('''</B>
-<B>            function DictFun() dict</B>
-<B>                return self</B>
-<B>            endfunction</B>
-<B>        ''')</B>
-<B>        f = vim.bindeval('function("DictFun")')</B>
-<B>        print f(self={})			# Like call('DictFun', [], {})</B>
-<B>        print isinstance(f, vim.Function)	# True</B>
-
-==============================================================================
-
-8. <A HREF="eval.html#pyeval()">pyeval()</A> and <A HREF="eval.html#py3eval()">py3eval()</A> Vim <A HREF="eval.html#functions">functions</A>			*<A NAME="python-pyeval"></A><B>python-pyeval</B>*
+<A HREF="eval.html#pyeval()">pyeval()</A> and <A HREF="eval.html#py3eval()">py3eval()</A> Vim <A HREF="eval.html#functions">functions</A>			*<A NAME="python-pyeval"></A><B>python-pyeval</B>*
 
 To facilitate bi-directional interface, you can use |<A HREF="eval.html#pyeval()">pyeval()</A>| and |<A HREF="eval.html#py3eval()">py3eval()</A>| 
 <A HREF="eval.html#functions">functions</A> to evaluate <A HREF="#Python">Python</A> expressions and pass their values to Vim <A HREF="usr_41.html#script">script</A>.
+|<A HREF="eval.html#pyxeval()">pyxeval()</A>| is also available.
 
 ==============================================================================
 
-9. <A HREF="#Python">Python</A> 3						*<A NAME="python3"></A><B>python3</B>*
+<A HREF="#Python">Python</A> 3						*<A NAME="python3"></A><B>python3</B>*
 
 
 							*<A NAME=":py3"></A><B>:py3</B>* *<A NAME=":python3"></A><B>:python3</B>*
@@ -784,30 +691,74 @@ You can test what <A HREF="#Python">Python</A> version is available with:
 <B>	  echo 'there is Python 3.x'</B>
 <B>	endif</B>
 
-Note however, that if <A HREF="#Python">Python</A> 2 and 3 are both available, but not loaded,
-these <A HREF="eval.html#has()">has()</A> calls will try to load them.
+==============================================================================
 
-To avoid loading the dynamic library, only check if Vim was compiled with
-<A HREF="#python">python</A> support:
-<B>	if has('python_compiled')</B>
-<B>	  echo 'compiled with Python 2.x support'</B>
-<B>	  if has('python_dynamic')</B>
-<B>	    echo 'Python 2.x dynamically loaded'</B>
-<B>	  endif</B>
-<B>	endif</B>
-<B>  	if has('python3_compiled')</B>
-<B>	  echo 'compiled with Python 3.x support'</B>
-<B>	  if has('python3_dynamic')</B>
-<B>	    echo 'Python 3.x dynamically loaded'</B>
-<B>	  endif</B>
+<A HREF="#Python">Python</A> X						*<A NAME="python_x"></A><B>python_x</B>* *<A NAME="pythonx"></A><B>pythonx</B>*
+
+Because most <A HREF="#python">python</A> code can be written so that <A HREF="motion.html#it">it</A> works with <A HREF="#Python">Python</A> 2.6+ and
+<A HREF="#Python">Python</A> 3, the pyx* <A HREF="eval.html#functions">functions</A> and commands have been written.  They work the
+same <A HREF="motion.html#as">as</A> the <A HREF="#Python">Python</A> 2 and 3 variants, but select the <A HREF="#Python">Python</A> version using the
+<A HREF="options.html#'pyxversion'">'pyxversion'</A> setting.
+
+Set <A HREF="options.html#'pyxversion'">'pyxversion'</A> in your |<A HREF="starting.html#vimrc">vimrc</A>| to prefer <A HREF="#Python">Python</A> 2 or <A HREF="#Python">Python</A> 3 for <A HREF="#Python">Python</A>
+commands. Changing this setting at runtime risks losing the state of plugins
+(such <A HREF="motion.html#as">as</A> <A HREF="starting.html#initialization">initialization</A>).
+
+If you want to use a module, you can put <A HREF="motion.html#it">it</A> in the {rtp}/pythonx directory.
+See |<A HREF="#pythonx-directory">pythonx-directory</A>|.
+
+
+							*<A NAME=":pyx"></A><B>:pyx</B>* *<A NAME=":pythonx"></A><B>:pythonx</B>*
+`:pyx` and `:pythonx` work similar to `:python`.  To check if `:pyx` works:
+<B>	:pyx print("Hello")</B>
+
+To see what version of <A HREF="#Python">Python</A> is being used:
+<B>	:pyx import sys</B>
+<B>	:pyx print(sys.version)</B>
+ 
+
+					*<A NAME=":pyxfile"></A><B>:pyxfile</B>* *<A NAME="python_x-special-comments"></A><B>python_x-special-comments</B>*
+`:pyxfile` works similar to `:pyfile`.  But you can add a &quot;shebang&quot; comment to
+force Vim to use `:pyfile` or `:py3file`:
+<B>  #!/any string/python2		" Shebang. Must be the first line of the file.</B>
+<B>  #!/any string/python3		" Shebang. Must be the first line of the file.</B>
+<B>  # requires python 2.x		" Maximum lines depend on 'modelines'.</B>
+<B>  # requires python 3.x		" Maximum lines depend on 'modelines'.</B>
+Unlike normal modelines, the bottom of the file is not checked.
+If none of them are found, the <A HREF="options.html#'pyxversion'">'pyxversion'</A> option is used.
+
+							*<A NAME="W20"></A><B>W20</B>* *<A NAME="W21"></A><B>W21</B>*
+If Vim does not support the selected <A HREF="#Python">Python</A> version a silent message will be
+printed.  Use `:messages` to read them.
+
+
+							*<A NAME=":pyxdo"></A><B>:pyxdo</B>*
+`:pyxdo` works similar to `:pydo`.
+
+
+							*<A NAME="has-pythonx"></A><B>has-pythonx</B>*
+To check if pyx* <A HREF="eval.html#functions">functions</A> and commands are available:
+<B>	if has('pythonx')</B>
+<B>	  echo 'pyx* commands are available. (Python ' . &amp;pyx . ')'</B>
 <B>	endif</B>
 
-This also tells you whether <A HREF="#Python">Python</A> is dynamically loaded, which will fail if
-the runtime library cannot be found.
+If you prefer <A HREF="#Python">Python</A> 2 and want to fallback to <A HREF="#Python">Python</A> 3, set <A HREF="options.html#'pyxversion'">'pyxversion'</A>
+explicitly in your |<A HREF="intro.html#.vimrc">.vimrc</A>|.  Example:
+<B>	if has('python')</B>
+<B>	  set pyx=2</B>
+<B>	elseif has('python3')</B>
+<B>	  set pyx=3</B>
+<B>	endif</B>
 
 ==============================================================================
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
+
+    <footer>
+      <div class="container">
+        Generated Wed Sep 18 20:06:11 UTC 2019 from <a href="https://github.com/neovim/neovim/commit/1070c092c7bf989f261047b861165e61e94c1941"><code>1070c09</code></a>.
+      </div>
+    </footer>
   </body>
 </html>

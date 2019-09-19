@@ -2,10 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Nvim documentation: map</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.0/normalize.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="/css/main.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
   </head>
   <body>
-                <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
+    <header class="navbar">
+      <div class="container">
+        <nav class="navbar">
+          <div class="container-fluid">
+            <div class="navbar-header">
+
+              <a href="/" class="navbar-brand">
+                <img src="/images/logo@2x.png" id="navbar-logo" alt="Neovim">
+              </a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
 
     <div class="container">
       <h1>Nvim documentation: map</h1>
@@ -22,7 +46,7 @@
 
 Key <A HREF="#mapping">mapping</A>, <A HREF="#abbreviations">abbreviations</A> and user-defined commands.
 
-This subject is introduced in sections |<A HREF="usr_05.html#05.3">05.3</A>|, |<A HREF="usr_24.html#24.7">24.7</A>| and |<A HREF="usr_40.html#40.1">40.1</A>| of the user
+This subject is introduced in sections |<A HREF="intro.html#05.3">05.3</A>|, |<A HREF="usr_24.html#24.7">24.7</A>| and |<A HREF="usr_40.html#40.1">40.1</A>| of the user
 manual.
 
                                       Type |<A HREF="various.html#gO">gO</A>| to see the table of contents.
@@ -68,7 +92,7 @@ modes.
 
 :im[ap]	<A HREF="#{lhs}">{lhs}</A> <A HREF="#{rhs}">{rhs}</A>		|<A HREF="#mapmode-i">mapmode-i</A>|		*<A NAME=":im"></A><B>:im</B>* *<A NAME=":imap"></A><B>:imap</B>*
 
-:lm[ap]	<A HREF="#{lhs}">{lhs}</A> <A HREF="#{rhs}">{rhs}</A>		|<A HREF="#mapmode-l">mapmode-l</A>|		*<A NAME=":lm"></A><B>:lm</B>* *<A NAME=":lmap"></A><B>:lmap</B>*
+:lm[ap]	<A HREF="#{lhs}">{lhs}</A> <A HREF="#{rhs}">{rhs}</A>		|<A HREF="#mapmode-l">mapmode-l</A>|		*<A NAME=":lm"></A><B>:lm</B>* *<A NAME=":lma"></A><B>:lma</B>* *<A NAME=":lmap"></A><B>:lmap</B>*
 
 :cm[ap]	<A HREF="#{lhs}">{lhs}</A> <A HREF="#{rhs}">{rhs}</A>		|<A HREF="#mapmode-c">mapmode-c</A>|		*<A NAME=":cm"></A><B>:cm</B>* *<A NAME=":cmap"></A><B>:cmap</B>*
 
@@ -89,17 +113,17 @@ modes.
 
 :xn[oremap] <A HREF="#{lhs}">{lhs}</A> <A HREF="#{rhs}">{rhs}</A>		|<A HREF="#mapmode-x">mapmode-x</A>|	*<A NAME=":xn"></A><B>:xn</B>*  *<A NAME=":xnoremap"></A><B>:xnoremap</B>*
 
-:snor[emap] <A HREF="#{lhs}">{lhs}</A> <A HREF="#{rhs}">{rhs}</A>		|<A HREF="#mapmode-s">mapmode-s</A>|	*<A NAME=":snor"></A><B>:snor</B>* *<A NAME=":snoremap"></A><B>:snoremap</B>*
+:snor[emap] <A HREF="#{lhs}">{lhs}</A> <A HREF="#{rhs}">{rhs}</A>		|<A HREF="#mapmode-s">mapmode-s</A>|	*<A NAME=":snor"></A><B>:snor</B>* *<A NAME=":snore"></A><B>:snore</B>* *<A NAME=":snoremap"></A><B>:snoremap</B>*
 
 :ono[remap] <A HREF="#{lhs}">{lhs}</A> <A HREF="#{rhs}">{rhs}</A>		|<A HREF="#mapmode-o">mapmode-o</A>|	*<A NAME=":ono"></A><B>:ono</B>* *<A NAME=":onoremap"></A><B>:onoremap</B>*
 
 :no[remap]! <A HREF="#{lhs}">{lhs}</A> <A HREF="#{rhs}">{rhs}</A>		|<A HREF="#mapmode-ic">mapmode-ic</A>|	*<A NAME=":no!"></A><B>:no!</B>* *<A NAME=":noremap!"></A><B>:noremap!</B>*
 
-:ino[remap] <A HREF="#{lhs}">{lhs}</A> <A HREF="#{rhs}">{rhs}</A>		|<A HREF="#mapmode-i">mapmode-i</A>|	*<A NAME=":ino"></A><B>:ino</B>* *<A NAME=":inoremap"></A><B>:inoremap</B>*
+:ino[remap] <A HREF="#{lhs}">{lhs}</A> <A HREF="#{rhs}">{rhs}</A>		|<A HREF="#mapmode-i">mapmode-i</A>|	*<A NAME=":ino"></A><B>:ino</B>* *<A NAME=":inor"></A><B>:inor</B>* *<A NAME=":inoremap"></A><B>:inoremap</B>*
 
 :ln[oremap] <A HREF="#{lhs}">{lhs}</A> <A HREF="#{rhs}">{rhs}</A>		|<A HREF="#mapmode-l">mapmode-l</A>|	*<A NAME=":ln"></A><B>:ln</B>*  *<A NAME=":lnoremap"></A><B>:lnoremap</B>*
 
-:cno[remap] <A HREF="#{lhs}">{lhs}</A> <A HREF="#{rhs}">{rhs}</A>		|<A HREF="#mapmode-c">mapmode-c</A>|	*<A NAME=":cno"></A><B>:cno</B>* *<A NAME=":cnoremap"></A><B>:cnoremap</B>*
+:cno[remap] <A HREF="#{lhs}">{lhs}</A> <A HREF="#{rhs}">{rhs}</A>		|<A HREF="#mapmode-c">mapmode-c</A>|	*<A NAME=":cno"></A><B>:cno</B>* *<A NAME=":cnor"></A><B>:cnor</B>* *<A NAME=":cnoremap"></A><B>:cnoremap</B>*
 
 :tno[remap] <A HREF="#{lhs}">{lhs}</A> <A HREF="#{rhs}">{rhs}</A>		|<A HREF="#mapmode-t">mapmode-t</A>|	*<A NAME=":tno"></A><B>:tno</B>* *<A NAME=":tnoremap"></A><B>:tnoremap</B>*
 			Map the key sequence <A HREF="#{lhs}">{lhs}</A> to <A HREF="#{rhs}">{rhs}</A> for the modes
@@ -127,7 +151,7 @@ modes.
 
 :lu[nmap] <A HREF="#{lhs}">{lhs}</A>			|<A HREF="#mapmode-l">mapmode-l</A>|		*<A NAME=":lu"></A><B>:lu</B>*   *<A NAME=":lunmap"></A><B>:lunmap</B>*
 
-:cu[nmap] <A HREF="#{lhs}">{lhs}</A>			|<A HREF="#mapmode-c">mapmode-c</A>|		*<A NAME=":cu"></A><B>:cu</B>*   *<A NAME=":cunmap"></A><B>:cunmap</B>*
+:cu[nmap] <A HREF="#{lhs}">{lhs}</A>			|<A HREF="#mapmode-c">mapmode-c</A>|		*<A NAME=":cu"></A><B>:cu</B>*   *<A NAME=":cun"></A><B>:cun</B>* *<A NAME=":cunmap"></A><B>:cunmap</B>*
 
 :tunma[p] <A HREF="#{lhs}">{lhs}</A>			|<A HREF="#mapmode-t">mapmode-t</A>|		*<A NAME=":tunma"></A><B>:tunma</B>* *<A NAME=":tunmap"></A><B>:tunmap</B>*
 			Remove the <A HREF="#mapping">mapping</A> of <A HREF="#{lhs}">{lhs}</A> for the modes where the
@@ -266,7 +290,7 @@ The search <A HREF="eval.html#string">string</A> will not be echoed when using t
 the executed command are still given though.  To shut them up too, add a
 &quot;<A HREF="various.html#:silent">:silent</A>&quot; in the executed command:
 <B>	:map &lt;silent&gt; ,h :exe ":silent normal /Header\r"&lt;CR&gt;</B>
-Prompts will still be given, e.g., for <A HREF="eval.html#inputdialog()">inputdialog()</A>.
+Prompts will still be given, e.g., for <A HREF="deprecated.html#inputdialog()">inputdialog()</A>.
 Using &quot;&lt;silent&gt;&quot; for an abbreviation is possible, but will cause redrawing of
 the command line to fail.
 
@@ -311,14 +335,14 @@ should not either insert or change the <A HREF="eval.html#v:char">v:char</A>.
 
 Be very careful about side effects!  The <A HREF="eval.html#expression">expression</A> is evaluated while
 obtaining characters, you may very well make the command dysfunctional.
-For this reason the following is blocked:
+Therefore the following is blocked for &lt;expr&gt; mappings:
 - Changing the buffer text |<A HREF="eval.html#textlock">textlock</A>|.
 - Editing another buffer.
 - The |<A HREF="various.html#:normal">:normal</A>| command.
 - Moving the cursor is allowed, but <A HREF="motion.html#it">it</A> is restored afterwards.
 - If the <A HREF="cmdline.html#cmdline">cmdline</A> is changed, the old text and cursor position are restored.
 If you want the <A HREF="#mapping">mapping</A> to <A HREF="diff.html#do">do</A> any of these let the returned characters <A HREF="diff.html#do">do</A>
-that. Or use a |<A HREF="#&lt;Cmd&gt;">&lt;Cmd&gt;</A>| <A HREF="#mapping">mapping</A> (which doesn't have these restrictions).
+that. (Or use a |<A HREF="#&lt;Cmd&gt;">&lt;Cmd&gt;</A>| <A HREF="#mapping">mapping</A> instead.)
 
 You can use <A HREF="eval.html#getchar()">getchar()</A>, <A HREF="motion.html#it">it</A> consumes typeahead if there is any. E.g., if you
 have these mappings:
@@ -359,9 +383,9 @@ Using 0x80 <A HREF="motion.html#as">as</A> a single byte before other text does 
 
 
 						*<A NAME="&lt;Cmd&gt;"></A><B>&lt;Cmd&gt;</B>* *<A NAME=":map-cmd"></A><B>:map-cmd</B>*
-The <A HREF="#&lt;Cmd&gt;">&lt;Cmd&gt;</A> pseudokey may be used to define a &quot;command mapping&quot;, which executes
-the command directly (without <A HREF="change.html#changing">changing</A> modes, etc.).  Where you might use
-&quot;:...&lt;CR&gt;&quot; in the <A HREF="#{lhs}">{lhs}</A> of a <A HREF="#mapping">mapping</A>, you can instead use &quot;&lt;Cmd&gt;...&lt;CR&gt;&quot;.
+The <A HREF="#&lt;Cmd&gt;">&lt;Cmd&gt;</A> pseudokey begins a &quot;command mapping&quot;, which executes the command
+directly (without <A HREF="change.html#changing">changing</A> modes).  Where you might use &quot;:...&lt;CR&gt;&quot; in the
+<A HREF="#{lhs}">{lhs}</A> of a <A HREF="#mapping">mapping</A>, you can instead use &quot;&lt;Cmd&gt;...&lt;CR&gt;&quot;.
 Example:
 <B>	noremap x &lt;Cmd&gt;echo mode(1)&lt;cr&gt;</B>
  
@@ -369,14 +393,19 @@ This is more flexible than `:&lt;C-U&gt;` in visual and operator-pending mode, o
 `&lt;C-O&gt;:` in insert-mode, because the commands are executed directly in the
 current mode (instead of always going to normal-mode).  <A HREF="visual.html#Visual-mode">Visual-mode</A> is
 preserved, so tricks with |<A HREF="visual.html#gv">gv</A>| are not needed.  Commands can be invoked
-directly in cmdline-mode (which otherwise would require <A HREF="eval.html#timer">timer</A> hacks).
+directly in cmdline-mode (which would otherwise require <A HREF="eval.html#timer">timer</A> hacks).
 
 Unlike &lt;expr&gt; mappings, there are no special restrictions on the <A HREF="#&lt;Cmd&gt;">&lt;Cmd&gt;</A>
 command: <A HREF="motion.html#it">it</A> is executed <A HREF="motion.html#as">as</A> if an (unrestricted) |<A HREF="autocmd.html#autocmd">autocmd</A>| was invoked or an
 async event event was processed.
 
-In select-mode, |<A HREF="#:map">:map</A>| and |<A HREF="#:vmap">:vmap</A>| command mappings are executed in
-<A HREF="visual.html#visual-mode">visual-mode</A>.  Use |<A HREF="#:smap">:smap</A>| to handle select-mode.
+Note:
+- Because <A HREF="#&lt;Cmd&gt;">&lt;Cmd&gt;</A> avoids mode-changes (unlike &quot;<A HREF="cmdline.html#:">:</A>&quot;) <A HREF="motion.html#it">it</A> does not trigger
+  |<A HREF="autocmd.html#CmdlineEnter">CmdlineEnter</A>| and |<A HREF="autocmd.html#CmdlineLeave">CmdlineLeave</A>| events. This helps performance.
+- For the same reason, |<A HREF="intro.html#keycodes">keycodes</A>| like &lt;C-R&gt;&lt;C-W&gt; are interpreted <A HREF="motion.html#as">as</A> plain,
+  unmapped keys.
+- In select-mode, |<A HREF="#:map">:map</A>| and |<A HREF="#:vmap">:vmap</A>| command mappings are executed in
+  <A HREF="visual.html#visual-mode">visual-mode</A>.  Use |<A HREF="#:smap">:smap</A>| to handle select-mode.
 
 
 							*<A NAME="E5520"></A><B>E5520</B>*
@@ -527,6 +556,7 @@ When listing mappings the characters in the first two columns are:
 	<A HREF="insert.html#i">i</A>	<A HREF="insert.html#Insert">Insert</A>
 	<A HREF="motion.html#l">l</A>	&quot;<A HREF="#:lmap">:lmap</A>&quot; mappings for <A HREF="insert.html#Insert">Insert</A>, <A HREF="cmdline.html#Command-line">Command-line</A> and Lang-Arg
 	<A HREF="change.html#c">c</A>	<A HREF="cmdline.html#Command-line">Command-line</A>
+	t	Terminal-Job
 
 Just before the <A HREF="#{rhs}">{rhs}</A> a special character can appear:
 	&#42;	indicates that <A HREF="motion.html#it">it</A> is not remappable
@@ -635,9 +665,9 @@ scenario:
 <B>	:imap &lt;M-C&gt; foo</B>
 <B>	:set encoding=utf-8</B>
 The <A HREF="#mapping">mapping</A> for &lt;M-C&gt; is defined with the latin1 encoding, resulting in a 0xc3
-byte.  If you type the character &aacute; (0xe1 &lt;M-a&gt;) in <A HREF="mbyte.html#UTF-8">UTF-8</A> encoding this is the
+byte.  If you type the character á (0xe1 &lt;M-a&gt;) in <A HREF="mbyte.html#UTF-8">UTF-8</A> encoding this is the
 two bytes 0xc3 0xa1.  You don't want the 0xc3 byte to be mapped then or
-otherwise <A HREF="motion.html#it">it</A> would be impossible to type the  character.
+otherwise <A HREF="motion.html#it">it</A> would be impossible to type the á character.
 
 
 					*<A NAME="&lt;Leader&gt;"></A><B>&lt;Leader&gt;</B>* *<A NAME="mapleader"></A><B>mapleader</B>*
@@ -779,7 +809,7 @@ When you type a <A HREF="intro.html#count">count</A> before triggering a <A HREF
 typed before the <A HREF="#{lhs}">{lhs}</A>.  For example, with this <A HREF="#mapping">mapping</A>:
 <B>   :map &lt;F4&gt;  3w</B>
 Typing 2&lt;F4&gt; will result in &quot;23w&quot;. Thus not moving 2 &#42; 3 words but 23 words.
-If you want to multiply counts use the <A HREF="eval.html#expression">expression</A> <A HREF="sponsor.html#register">register</A>:
+If you want to multiply counts use the <A HREF="eval.html#expression">expression</A> <A HREF="intro.html#register">register</A>:
 <B>   :map &lt;F4&gt;  @='3w'&lt;CR&gt;</B>
 The part between quotes is the <A HREF="eval.html#expression">expression</A> being executed. |<A HREF="change.html#@=">@=</A>|
 
@@ -892,12 +922,12 @@ otherwise <A HREF="motion.html#it">it</A> is interpreted <A HREF="motion.html#as
 
 An <A HREF="motion.html#operator">operator</A> is used before a <A HREF="intro.html#{motion}">{motion}</A> command.  To define your own <A HREF="motion.html#operator">operator</A>
 you must create <A HREF="#mapping">mapping</A> that first sets the <A HREF="options.html#'operatorfunc'">'operatorfunc'</A> option and then
-invoke the |<A HREF="#g@"><span class="__cf_email__" data-cfemail="620522">[email&#160;protected]</span></A>| <A HREF="motion.html#operator">operator</A>.  After the user types the <A HREF="intro.html#{motion}">{motion}</A> command the
+invoke the |<A HREF="#g@"><span class="__cf_email__" data-cfemail="5e391e">[email&#160;protected]</span></A>| <A HREF="motion.html#operator">operator</A>.  After the user types the <A HREF="intro.html#{motion}">{motion}</A> command the
 specified function will be called.
 
 
-							*<A NAME="g@"></A><B><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f89fb8">[email&#160;protected]</a></B>* *<A NAME="E774"></A><B>E774</B>* *<A NAME="E775"></A><B>E775</B>*
-<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="dbbc9b">[email&#160;protected]</a>{motion}		Call the function set by the <A HREF="options.html#'operatorfunc'">'operatorfunc'</A> option.
+							*<A NAME="g@"></A><B><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f99eb9">[email&#160;protected]</a></B>* *<A NAME="E774"></A><B>E774</B>* *<A NAME="E775"></A><B>E775</B>*
+<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e186a1">[email&#160;protected]</a>{motion}		Call the function set by the <A HREF="options.html#'operatorfunc'">'operatorfunc'</A> option.
 			The <A HREF="motion.html#'[">'[</A> <A HREF="motion.html#mark">mark</A> is positioned at the start of the text
 			moved over by <A HREF="intro.html#{motion}">{motion}</A>, the <A HREF="motion.html#']">']</A> <A HREF="motion.html#mark">mark</A> on the last
 			character of the text.
@@ -906,13 +936,11 @@ specified function will be called.
 			    &quot;char&quot;	<A HREF="intro.html#{motion}">{motion}</A> was |<A HREF="motion.html#characterwise">characterwise</A>|
 			    &quot;block&quot;	<A HREF="intro.html#{motion}">{motion}</A> was |<A HREF="visual.html#blockwise-visual">blockwise-visual</A>|
 			Although &quot;block&quot; would rarely appear, since <A HREF="motion.html#it">it</A> can
-			only result from <A HREF="visual.html#Visual">Visual</A> mode where &quot;<A HREF="#g@"><span class="__cf_email__" data-cfemail="a9cee9">[email&#160;protected]</span></A>&quot; is not useful.
-			{not available when compiled without the |<A HREF="various.html#+eval">+eval</A>|
-			feature}
+			only result from <A HREF="visual.html#Visual">Visual</A> mode where &quot;<A HREF="#g@"><span class="__cf_email__" data-cfemail="82e5c2">[email&#160;protected]</span></A>&quot; is not useful.
 
 Here is an example that counts the number of spaces with &lt;F4&gt;:
 
-<B>	nmap &lt;silent&gt; &lt;F4&gt; :set opfunc=CountSpaces&lt;CR&gt;<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="ee89ae">[email&#160;protected]</a></B>
+<B>	nmap &lt;silent&gt; &lt;F4&gt; :set opfunc=CountSpaces&lt;CR&gt;<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="214661">[email&#160;protected]</a></B>
 <B>	vmap &lt;silent&gt; &lt;F4&gt; :&lt;C-U&gt;call CountSpaces(visualmode(), 1)&lt;CR&gt;</B>
 
 <B>	function! CountSpaces(type, ...)</B>
@@ -1096,7 +1124,7 @@ See |<A HREF="various.html#:verbose-cmd">:verbose-cmd</A>| for more information.
 			same <A HREF="motion.html#as">as</A> &quot;<A HREF="#:ab">:ab</A>&quot;, but no remapping for this <A HREF="#{rhs}">{rhs}</A>
 
 
-						*<A NAME=":ca"></A><B>:ca</B>* *<A NAME=":cabbrev"></A><B>:cabbrev</B>*
+						*<A NAME=":ca"></A><B>:ca</B>* *<A NAME=":cab"></A><B>:cab</B>* *<A NAME=":cabbrev"></A><B>:cabbrev</B>*
 :ca[bbrev] [&lt;expr&gt;] [&lt;buffer&gt;] [lhs] [rhs]
 			same <A HREF="motion.html#as">as</A> &quot;<A HREF="#:ab">:ab</A>&quot;, but for <A HREF="cmdline.html#Command-line">Command-line</A> mode only.
 
@@ -1206,17 +1234,17 @@ avoid this problem, use &quot;<A HREF="#&lt;SID&gt;">&lt;SID&gt;</A>&quot; inste
 <A HREF="motion.html#as">as</A> for mappings.  This makes <A HREF="motion.html#it">it</A> possible to define a call to the function in
 a <A HREF="#mapping">mapping</A>.
 
-When a local function is executed, <A HREF="motion.html#it">it</A> runs in the context of the <A HREF="usr_41.html#script">script</A> <A HREF="motion.html#it">it</A> was
+When a local function is executed, <A HREF="motion.html#it">it</A> runs in the <A HREF="repeat.html#context">context</A> of the <A HREF="usr_41.html#script">script</A> <A HREF="motion.html#it">it</A> was
 defined in.  This means that new <A HREF="eval.html#functions">functions</A> and mappings <A HREF="motion.html#it">it</A> defines can also
 use &quot;s:&quot; or &quot;<A HREF="#&lt;SID&gt;">&lt;SID&gt;</A>&quot; and <A HREF="motion.html#it">it</A> will use the same unique number <A HREF="motion.html#as">as</A> when the
 function itself was defined.  Also, the &quot;<A HREF="eval.html#s:var">s:var</A>&quot; local <A HREF="usr_41.html#script">script</A> <A HREF="eval.html#variables">variables</A> can be
 used.
 
-When executing an <A HREF="autocmd.html#autocommand">autocommand</A> or a user command, <A HREF="motion.html#it">it</A> will run in the context of
+When executing an <A HREF="autocmd.html#autocommand">autocommand</A> or a user command, <A HREF="motion.html#it">it</A> will run in the <A HREF="repeat.html#context">context</A> of
 the <A HREF="usr_41.html#script">script</A> <A HREF="motion.html#it">it</A> was defined in.  This makes <A HREF="motion.html#it">it</A> possible that the command calls a
 local function or uses a local <A HREF="#mapping">mapping</A>.
 
-Otherwise, using &quot;<A HREF="#&lt;SID&gt;">&lt;SID&gt;</A>&quot; outside of a <A HREF="usr_41.html#script">script</A> context is an error.
+Otherwise, using &quot;<A HREF="#&lt;SID&gt;">&lt;SID&gt;</A>&quot; outside of a <A HREF="usr_41.html#script">script</A> <A HREF="repeat.html#context">context</A> is an error.
 
 If you need to get the <A HREF="usr_41.html#script">script</A> number to use in a complicated <A HREF="usr_41.html#script">script</A>, you can
 use this function:
@@ -1333,14 +1361,14 @@ reported if any are supplied).  However, <A HREF="motion.html#it">it</A> is poss
 command can take arguments, using the -nargs attribute.  Valid cases are:
 
 	-nargs=0    No arguments are allowed (the default)
-	-nargs=1    Exactly one argument is required, <A HREF="motion.html#it">it</A> includes spaces 
+	-nargs=1    Exactly one argument is required, <A HREF="motion.html#it">it</A> includes spaces
 	-nargs=*    Any number of arguments are allowed (0, 1, or many),
 		    separated by white space
 	-nargs=?    0 or 1 arguments are allowed
 	-nargs=+    Arguments must be supplied, but any number are allowed
 
 Arguments are considered to be separated by (unescaped) spaces or tabs in this
-context, except when there is one argument, then the white space is part of
+<A HREF="repeat.html#context">context</A>, except when there is one argument, then the white space is part of
 the argument.
 
 Note that arguments are used <A HREF="motion.html#as">as</A> text, not <A HREF="motion.html#as">as</A> expressions.  Specifically,
@@ -1356,10 +1384,11 @@ defined, not where <A HREF="motion.html#it">it</A> is invoked!  Example:
 Executing script2.vim will result in &quot;None&quot; being echoed.  Not what you
 intended!  Calling a function may be an alternative.
 
+<B><FONT color="#54A23D">Completion behavior </FONT></B>
 
-Completion behavior				*<A NAME=":command-completion"></A><B>:command-completion</B>* *<A NAME="E179"></A><B>E179</B>*
+				*<A NAME=":command-completion"></A><B>:command-completion</B>* *<A NAME="E179"></A><B>E179</B>* *<A NAME="E180"></A><B>E180</B>* *<A NAME="E181"></A><B>E181</B>*
 
-					*<A NAME="E180"></A><B>E180</B>* *<A NAME="E181"></A><B>E181</B>* *<A NAME=":command-complete"></A><B>:command-complete</B>*
+				*<A NAME=":command-complete"></A><B>:command-complete</B>*
 By default, the arguments of user defined commands <A HREF="diff.html#do">do</A> not undergo completion.
 However, by specifying one or the other of the following attributes, argument
 completion can be enabled:
@@ -1430,7 +1459,7 @@ The function arguments are:
 			completed on
 	CmdLine		the entire command line
 	CursorPos	the cursor position in <A HREF="motion.html#it">it</A> (byte index)
-The function may use these for determining context.  For the &quot;custom&quot;
+The function may use these for determining <A HREF="repeat.html#context">context</A>.  For the &quot;custom&quot;
 argument, <A HREF="motion.html#it">it</A> is not necessary to <A HREF="change.html#filter">filter</A> candidates against the (implicit
 <A HREF="pattern.html#pattern">pattern</A> in) ArgLead.  Vim will <A HREF="change.html#filter">filter</A> the candidates with its <A HREF="pattern.html#regexp">regexp</A> engine
 after function return, and this is probably more efficient in most cases. For
@@ -1486,12 +1515,13 @@ which by default correspond to the current line, last line and the whole
 buffer, relate to arguments, (loaded) <A HREF="windows.html#buffers">buffers</A>, <A HREF="windows.html#windows">windows</A> or <A HREF="intro.html#tab">tab</A> pages.
 
 Possible values are:
-     -addr=lines            Range of lines (this is the default)
-     -addr=arguments        Range for arguments
-     -addr=buffers          Range for <A HREF="windows.html#buffers">buffers</A> (also not loaded <A HREF="windows.html#buffers">buffers</A>)
-     -addr=loaded_buffers   Range for loaded <A HREF="windows.html#buffers">buffers</A>
-     -addr=windows          Range for <A HREF="windows.html#windows">windows</A>
-     -addr=tabs             Range for <A HREF="intro.html#tab">tab</A> pages
+	-addr=lines		Range of lines (this is the default)
+	-addr=arguments		Range for arguments
+	-addr=buffers		Range for <A HREF="windows.html#buffers">buffers</A> (also not loaded <A HREF="windows.html#buffers">buffers</A>)
+	-addr=loaded_buffers	Range for loaded <A HREF="windows.html#buffers">buffers</A>
+	-addr=windows		Range for <A HREF="windows.html#windows">windows</A>
+	-addr=tabs		Range for <A HREF="intro.html#tab">tab</A> pages
+	-addr=other		other kind of range
 
 
 
@@ -1505,7 +1535,7 @@ There are some special cases <A HREF="motion.html#as">as</A> well:
 		    A &quot;|&quot; inside the command argument is not allowed then.
 		    Also checks for a &quot; to start a comment.
 	-register   The first argument to the command can be an optional
-		    <A HREF="sponsor.html#register">register</A> name (like <A HREF="change.html#:del">:del</A>, <A HREF="change.html#:put">:put</A>, <A HREF="change.html#:yank">:yank</A>).
+		    <A HREF="intro.html#register">register</A> name (like <A HREF="change.html#:del">:del</A>, <A HREF="change.html#:put">:put</A>, <A HREF="change.html#:yank">:yank</A>).
 	-buffer	    The command will only be available in the current buffer.
 
 In the cases of the -count and -register attributes, if the optional argument
@@ -1569,13 +1599,13 @@ The valid <A HREF="intro.html#escape">escape</A> sequences are
  
 
 						*<A NAME="&lt;reg&gt;"></A><B>&lt;reg&gt;</B>* *<A NAME="&lt;register&gt;"></A><B>&lt;register&gt;</B>*
-	<A HREF="#&lt;reg&gt;">&lt;reg&gt;</A>	(See the '-register' attribute) The optional <A HREF="sponsor.html#register">register</A>,
+	<A HREF="#&lt;reg&gt;">&lt;reg&gt;</A>	(See the '-register' attribute) The optional <A HREF="intro.html#register">register</A>,
 		if specified.  Otherwise, expands to nothing.  <A HREF="#&lt;register&gt;">&lt;register&gt;</A>
 		is a synonym for this.
 
 						*<A NAME="&lt;args&gt;"></A><B>&lt;args&gt;</B>*
 	<A HREF="#&lt;args&gt;">&lt;args&gt;</A>	The command arguments, exactly <A HREF="motion.html#as">as</A> supplied (but <A HREF="motion.html#as">as</A>
-		noted above, any <A HREF="intro.html#count">count</A> or <A HREF="sponsor.html#register">register</A> can consume some
+		noted above, any <A HREF="intro.html#count">count</A> or <A HREF="intro.html#register">register</A> can consume some
 		of the arguments, which are then not part of <A HREF="#&lt;args&gt;">&lt;args&gt;</A>).
 	<A HREF="intro.html#&lt;lt&gt;">&lt;lt&gt;</A>	A single '<A HREF="change.html#&lt;">&lt;</A>' (Less-Than) character.  This is needed if you
 		want to get a literal copy of one of these <A HREF="intro.html#escape">escape</A> sequences
@@ -1658,11 +1688,17 @@ This will invoke:
  
 When defining a user command in a <A HREF="usr_41.html#script">script</A>, <A HREF="motion.html#it">it</A> will be able to call <A HREF="eval.html#functions">functions</A>
 local to the <A HREF="usr_41.html#script">script</A> and use mappings local to the <A HREF="usr_41.html#script">script</A>.  When the user
-invokes the user command, <A HREF="motion.html#it">it</A> will run in the context of the <A HREF="usr_41.html#script">script</A> <A HREF="motion.html#it">it</A> was
+invokes the user command, <A HREF="motion.html#it">it</A> will run in the <A HREF="repeat.html#context">context</A> of the <A HREF="usr_41.html#script">script</A> <A HREF="motion.html#it">it</A> was
 defined in.  This matters if |<A HREF="#&lt;SID&gt;">&lt;SID&gt;</A>| is used in a command.
 
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
+
+    <footer>
+      <div class="container">
+        Generated Wed Sep 18 20:06:11 UTC 2019 from <a href="https://github.com/neovim/neovim/commit/1070c092c7bf989f261047b861165e61e94c1941"><code>1070c09</code></a>.
+      </div>
+    </footer>
   <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
 </html>

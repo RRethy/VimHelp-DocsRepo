@@ -2,10 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Nvim documentation: job_control</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.0/normalize.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="/css/main.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
   </head>
   <body>
-                <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
+    <header class="navbar">
+      <div class="container">
+        <nav class="navbar">
+          <div class="container-fluid">
+            <div class="navbar-header">
+
+              <a href="/" class="navbar-brand">
+                <img src="/images/logo@2x.png" id="navbar-logo" alt="Neovim">
+              </a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
 
     <div class="container">
       <h1>Nvim documentation: job_control</h1>
@@ -21,7 +45,7 @@
 
 
 
-Nvim job <A HREF="intro.html#control">control</A>					*<A NAME="job-control"></A><B>job-control</B>*
+Nvim <A HREF="#job">job</A> <A HREF="intro.html#control">control</A>					*<A NAME="job"></A><B>job</B>* *<A NAME="job-control"></A><B>job-control</B>*
 
 Job <A HREF="intro.html#control">control</A> is a way to perform multitasking in Nvim, so scripts can spawn and
 <A HREF="intro.html#control">control</A> multiple processes without blocking the current Nvim instance.
@@ -34,13 +58,13 @@ Concepts
 
 Job Id							*<A NAME="job-id"></A><B>job-id</B>*
 
-Each job is identified by an integer id, unique for the life of the current
+Each <A HREF="#job">job</A> is identified by an integer id, unique for the life of the current
 Nvim session. Each <A HREF="#job-id">job-id</A> is a valid |channel-id|: they share the same &quot;key
 space&quot;. Functions like |<A HREF="eval.html#jobstart()">jobstart()</A>| return job ids; <A HREF="eval.html#functions">functions</A> like
 |<A HREF="deprecated.html#jobsend()">jobsend()</A>|, |<A HREF="eval.html#jobstop()">jobstop()</A>|, |<A HREF="eval.html#rpcnotify()">rpcnotify()</A>|, and |<A HREF="eval.html#rpcrequest()">rpcrequest()</A>| take job ids.
 
 Job stdio streams form a |<A HREF="channel.html#channel">channel</A>| which can send and receive raw bytes or
-|<A HREF="msgpack_rpc.html#msgpack-rpc">msgpack-rpc</A>| <A HREF="message.html#messages">messages</A>.
+|<A HREF="api.html#msgpack-rpc">msgpack-rpc</A>| <A HREF="message.html#messages">messages</A>.
 
 ==============================================================================
 
@@ -87,7 +111,7 @@ For |<A HREF="channel.html#on_stdout">on_stdout</A>| and |<A HREF="channel.html#
 							*<A NAME="on_exit"></A><B>on_exit</B>*
 Arguments passed to <A HREF="#on_exit">on_exit</A> callback:
   0: |<A HREF="#job-id">job-id</A>|
-  1: Exit-code of the process.
+  1: Exit-code of the process, or 128+SIGNUM if by signal (e.g. 143 on SIGTERM).
   2: Event type: &quot;exit&quot;
 
 
@@ -95,7 +119,7 @@ Arguments passed to <A HREF="#on_exit">on_exit</A> callback:
 	will not trigger the on_stdout/on_stderr callback (but if the process
 	ends, the <A HREF="#on_exit">on_exit</A> callback will be invoked).
         For example, &quot;<A HREF="if_ruby.html#ruby">ruby</A> -e&quot; <A HREF="windows.html#buffers">buffers</A> output, so small strings will be
-        <A HREF="channel.html#buffered">buffered</A> unless &quot;auto-flushing&quot; ($stdout.sync=true) is enabled.
+        buffered unless &quot;auto-flushing&quot; ($stdout.sync=true) is enabled.
 <B>          function! Receive(job_id, data, event)</B>
 <B>            echom printf('%s: %s',a:event,string(a:data))</B>
 <B>          endfunction</B>
@@ -161,11 +185,17 @@ A job may be killed at any time with the |<A HREF="eval.html#jobstop()">jobstop(
 
 <B>    :call jobstop(job1)</B>
  
-Individual streams can be closed without killing the job, see |<A HREF="eval.html#chanclose()">chanclose()</A>|.
+Individual streams can be closed without killing the <A HREF="#job">job</A>, see |<A HREF="eval.html#chanclose()">chanclose()</A>|.
 
 ==============================================================================
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
+
+    <footer>
+      <div class="container">
+        Generated Wed Sep 18 20:06:11 UTC 2019 from <a href="https://github.com/neovim/neovim/commit/1070c092c7bf989f261047b861165e61e94c1941"><code>1070c09</code></a>.
+      </div>
+    </footer>
   </body>
 </html>

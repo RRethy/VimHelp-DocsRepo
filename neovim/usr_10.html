@@ -2,10 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Nvim documentation: usr_10</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.0/normalize.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="/css/main.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
   </head>
   <body>
-                <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
+    <header class="navbar">
+      <div class="container">
+        <nav class="navbar">
+          <div class="container-fluid">
+            <div class="navbar-header">
+
+              <a href="/" class="navbar-brand">
+                <img src="/images/logo@2x.png" id="navbar-logo" alt="Neovim">
+              </a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
 
     <div class="container">
       <h1>Nvim documentation: usr_10</h1>
@@ -48,8 +72,8 @@ The &quot;<A HREF="repeat.html#.">.</A>&quot; command repeats the preceding chan
 something more complex than a single change?  That's where command <A HREF="repeat.html#recording">recording</A>
 comes in.  There are three steps:
 
-1. The &quot;q{register}&quot; command starts <A HREF="repeat.html#recording">recording</A> keystrokes into the <A HREF="sponsor.html#register">register</A>
-   named {register}.  The <A HREF="sponsor.html#register">register</A> name must be between a and <A HREF="scroll.html#z.">z.</A>
+1. The &quot;q{register}&quot; command starts <A HREF="repeat.html#recording">recording</A> keystrokes into the <A HREF="intro.html#register">register</A>
+   named {register}.  The <A HREF="intro.html#register">register</A> name must be between a and <A HREF="scroll.html#z.">z.</A>
 2. Type your commands.
 3. To finish <A HREF="repeat.html#recording">recording</A>, press <A HREF="repeat.html#q">q</A> (without any extra character).
 
@@ -73,7 +97,7 @@ And what you want is the following:
 You start by moving to the first character of the first line.  Next you
 execute the following commands:
 
-	qa			Start <A HREF="repeat.html#recording">recording</A> a <A HREF="map.html#macro">macro</A> in <A HREF="sponsor.html#register">register</A> a.
+	qa			Start <A HREF="repeat.html#recording">recording</A> a <A HREF="map.html#macro">macro</A> in <A HREF="intro.html#register">register</A> a.
 	^			Move to the beginning of the line.
 	i#include &quot;<A HREF="intro.html#&lt;Esc&gt;">&lt;Esc&gt;</A>	<A HREF="insert.html#Insert">Insert</A> the <A HREF="eval.html#string">string</A> #include &quot; at the beginning
 				of the line.
@@ -88,7 +112,7 @@ command &quot;@a&quot; three times.
    The &quot;@a&quot; command can be preceded by a <A HREF="intro.html#count">count</A>, which will cause the <A HREF="map.html#macro">macro</A> to
 be executed that number of times.  In this <A HREF="change.html#case">case</A> you would type:
 
-<B>	<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2e1d6e4f">[email&#160;protected]</a></B>
+<B>	<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="56651637">[email&#160;protected]</a></B>
 
 
 MOVE AND EXECUTE
@@ -96,11 +120,11 @@ MOVE AND EXECUTE
 You might have the lines you want to change in various places.  Just move the
 cursor to each location and use the &quot;@a&quot; command.  If you have done that once,
 you can <A HREF="diff.html#do">do</A> <A HREF="motion.html#it">it</A> again with &quot;<A HREF="repeat.html#@@">@@</A>&quot;.  That's a bit easier to type.  If you now
-execute <A HREF="sponsor.html#register">register</A> <A HREF="motion.html#b">b</A> with &quot;@b&quot;, the next &quot;<A HREF="repeat.html#@@">@@</A>&quot; will use <A HREF="sponsor.html#register">register</A> <A HREF="motion.html#b">b</A>.
+execute <A HREF="intro.html#register">register</A> <A HREF="motion.html#b">b</A> with &quot;@b&quot;, the next &quot;<A HREF="repeat.html#@@">@@</A>&quot; will use <A HREF="intro.html#register">register</A> <A HREF="motion.html#b">b</A>.
    If you compare the playback method with using &quot;<A HREF="repeat.html#.">.</A>&quot;, there are several
 differences.  First of all, &quot;<A HREF="repeat.html#.">.</A>&quot; can only repeat one change.  As seen in the
 example above, &quot;@a&quot; can <A HREF="diff.html#do">do</A> several changes, and move around <A HREF="motion.html#as">as</A> well.
-Secondly, &quot;<A HREF="repeat.html#.">.</A>&quot; can only remember the last change.  Executing a <A HREF="sponsor.html#register">register</A> allows
+Secondly, &quot;<A HREF="repeat.html#.">.</A>&quot; can only remember the last change.  Executing a <A HREF="intro.html#register">register</A> allows
 you to make any changes and then still use &quot;@a&quot; to replay the recorded
 commands.  Finally, you can use 26 different <A HREF="change.html#registers">registers</A>.  Thus you can remember
 26 different command sequences to execute.
@@ -111,19 +135,19 @@ USING REGISTERS
 The <A HREF="change.html#registers">registers</A> used for <A HREF="repeat.html#recording">recording</A> are the same ones you used for <A HREF="change.html#yank">yank</A> and
 delete commands.  This allows you to mix <A HREF="repeat.html#recording">recording</A> with other commands to
 manipulate the <A HREF="change.html#registers">registers</A>.
-   Suppose you have recorded a few commands in <A HREF="sponsor.html#register">register</A> <A HREF="pattern.html#n">n</A>.  When you execute
+   Suppose you have recorded a few commands in <A HREF="intro.html#register">register</A> <A HREF="pattern.html#n">n</A>.  When you execute
 this with &quot;@n&quot; you notice you did something wrong.  You could try <A HREF="repeat.html#recording">recording</A>
 again, but perhaps you will make another mistake.  Instead, use this trick:
 
 	<A HREF="motion.html#G">G</A>			Go to the end of the file.
 	o&lt;Esc&gt;			Create an empty line.
-	&quot;np			Put the text from the <A HREF="pattern.html#n">n</A> <A HREF="sponsor.html#register">register</A>.  You now see
+	&quot;np			Put the text from the <A HREF="pattern.html#n">n</A> <A HREF="intro.html#register">register</A>.  You now see
 				the commands you typed <A HREF="motion.html#as">as</A> text in the file.
 	{edits}			Change the commands that were wrong.  This is
 				just like editing text.
 	0			Go to the start of the line.
 	&quot;ny$			Yank the corrected commands into the <A HREF="pattern.html#n">n</A>
-				<A HREF="sponsor.html#register">register</A>.
+				<A HREF="intro.html#register">register</A>.
 	<A HREF="change.html#dd">dd</A>			Delete the scratch line.
 
 Now you can execute the corrected commands with &quot;@n&quot;.  (If your recorded
@@ -133,20 +157,20 @@ include all the lines.)
 
 APPENDING TO A REGISTER
 
-So far we have used a <A HREF="change.html#lowercase">lowercase</A> <A HREF="print.html#letter">letter</A> for the <A HREF="sponsor.html#register">register</A> name.  To append to a
-<A HREF="sponsor.html#register">register</A>, use an <A HREF="change.html#uppercase">uppercase</A> <A HREF="print.html#letter">letter</A>.
-   Suppose you have recorded a command to change a <A HREF="motion.html#word">word</A> to <A HREF="sponsor.html#register">register</A> <A HREF="change.html#c">c</A>.  It
+So far we have used a <A HREF="change.html#lowercase">lowercase</A> <A HREF="print.html#letter">letter</A> for the <A HREF="intro.html#register">register</A> name.  To append to a
+<A HREF="intro.html#register">register</A>, use an <A HREF="change.html#uppercase">uppercase</A> <A HREF="print.html#letter">letter</A>.
+   Suppose you have recorded a command to change a <A HREF="motion.html#word">word</A> to <A HREF="intro.html#register">register</A> <A HREF="change.html#c">c</A>.  It
 works properly, but you would like to add a search for the next <A HREF="motion.html#word">word</A> to
 change.  This can be done with:
 
 <B>	qC/word&lt;Enter&gt;q</B>
 
-You start with &quot;qC&quot;, which records to the <A HREF="change.html#c">c</A> <A HREF="sponsor.html#register">register</A> and appends.  Thus
-<A HREF="editing.html#writing">writing</A> to an <A HREF="change.html#uppercase">uppercase</A> <A HREF="sponsor.html#register">register</A> name means to append to the <A HREF="sponsor.html#register">register</A> with
+You start with &quot;qC&quot;, which records to the <A HREF="change.html#c">c</A> <A HREF="intro.html#register">register</A> and appends.  Thus
+<A HREF="editing.html#writing">writing</A> to an <A HREF="change.html#uppercase">uppercase</A> <A HREF="intro.html#register">register</A> name means to append to the <A HREF="intro.html#register">register</A> with
 the same <A HREF="print.html#letter">letter</A>, but <A HREF="change.html#lowercase">lowercase</A>.
 
 This works both with <A HREF="repeat.html#recording">recording</A> and with <A HREF="change.html#yank">yank</A> and delete commands.  For
-example, you want to collect a sequence of lines into the a <A HREF="sponsor.html#register">register</A>.  Yank
+example, you want to collect a sequence of lines into the a <A HREF="intro.html#register">register</A>.  Yank
 the first line with:
 
 <B>	"aY</B>
@@ -155,7 +179,7 @@ Now move to the second line, and type:
 
 <B>	"AY</B>
 
-Repeat this command for all lines.  The a <A HREF="sponsor.html#register">register</A> now contains all those
+Repeat this command for all lines.  The a <A HREF="intro.html#register">register</A> now contains all those
 lines, in the order you yanked them.
 
 ==============================================================================
@@ -627,7 +651,7 @@ this chapter.
 APPENDING TO A FILE
 
 In the first section of this chapter was explained how to collect a number of
-lines into a <A HREF="sponsor.html#register">register</A>.  The same can be done to collect lines in a file.
+lines into a <A HREF="intro.html#register">register</A>.  The same can be done to collect lines in a file.
 Write the first line with this command:
 
 <B>	:.write collection</B>
@@ -849,5 +873,11 @@ Copyright: see |<A HREF="usr_01.html#manual-copyright">manual-copyright</A>|  vi
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
+
+    <footer>
+      <div class="container">
+        Generated Wed Sep 18 20:06:13 UTC 2019 from <a href="https://github.com/neovim/neovim/commit/1070c092c7bf989f261047b861165e61e94c1941"><code>1070c09</code></a>.
+      </div>
+    </footer>
   <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
 </html>

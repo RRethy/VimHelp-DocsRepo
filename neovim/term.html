@@ -2,10 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Nvim documentation: term</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.0/normalize.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="/css/main.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
   </head>
   <body>
-                <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
+    <header class="navbar">
+      <div class="container">
+        <nav class="navbar">
+          <div class="container-fluid">
+            <div class="navbar-header">
+
+              <a href="/" class="navbar-brand">
+                <img src="/images/logo@2x.png" id="navbar-logo" alt="Neovim">
+              </a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
 
     <div class="container">
       <h1>Nvim documentation: term</h1>
@@ -21,11 +45,11 @@
 
 
 
-Terminal UI						*<A NAME="TUI"></A><B>TUI</B>* *<A NAME="tui"></A><B>tui</B>*
+Terminal <A HREF="ui.html#UI">UI</A>						*<A NAME="TUI"></A><B>TUI</B>* *<A NAME="tui"></A><B>tui</B>*
 
-Nvim (except in |<A HREF="starting.html#--headless">--headless</A>| mode) uses information about the <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> you are
-using to present a built-in UI.  If that information is not correct, the
-screen may be messed up or keys may not be recognized.
+Nvim uses a <A HREF="eval.html#list">list</A> of <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> capabilities to display its user interface
+(except in |<A HREF="starting.html#--embed">--embed</A>| and |<A HREF="starting.html#--headless">--headless</A>| modes). If that information is wrong,
+the screen may be messed up or keys may not be recognized.
 
                                       Type |<A HREF="various.html#gO">gO</A>| to see the table of contents.
 
@@ -33,8 +57,9 @@ screen may be messed up or keys may not be recognized.
 
 Startup						*<A NAME="startup-terminal"></A><B>startup-terminal</B>*
 
-Nvim (except in |<A HREF="starting.html#--headless">--headless</A>| mode) guesses a <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> type when <A HREF="motion.html#it">it</A> starts.
-|<A HREF="#$TERM">$TERM</A>| is the primary hint that determines the <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> type.
+Nvim guesses the <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> type when <A HREF="motion.html#it">it</A> starts (except in |<A HREF="starting.html#--embed">--embed</A>| and
+|<A HREF="starting.html#--headless">--headless</A>| modes). The |<A HREF="#$TERM">$TERM</A>| environment variable is the primary hint that
+determines the <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> type.
 
 
 					*<A NAME="terminfo"></A><B>terminfo</B>* *<A NAME="E557"></A><B>E557</B>* *<A NAME="E558"></A><B>E558</B>* *<A NAME="E559"></A><B>E559</B>*
@@ -57,40 +82,40 @@ The <A HREF="#$TERM">$TERM</A> environment variable must match the <A HREF="nvim
 Otherwise Nvim cannot know what sequences your <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> expects, and weird
 or sub-optimal behavior will result (scrolling quirks, wrong colors, etc.).
 
-<A HREF="#$TERM">$TERM</A> is also important because <A HREF="motion.html#it">it</A> is mirrored by SSH to the remote session,
+<A HREF="#$TERM">$TERM</A> is also important because <A HREF="motion.html#it">it</A> is forwarded by SSH to the remote session,
 unlike most other environment <A HREF="eval.html#variables">variables</A>.
 
   For this <A HREF="nvim_terminal_emulator.html#terminal">terminal</A>           Set <A HREF="#$TERM">$TERM</A> to                  |<A HREF="#builtin-terms">builtin-terms</A>|
   -------------------------------------------------------------------------
+  anything libvte-based       vte, vte-256color                   <A HREF="change.html#Y">Y</A>
+   (e.g. GNOME Terminal)      (aliases: gnome, gnome-256color)
   iTerm (original)            iterm, iTerm.app                    N
   iTerm2 (new capabilities)   iterm2, iTerm2.app                  <A HREF="change.html#Y">Y</A>
   Konsole                     konsole-256color                    N
-  anything libvte-based       vte, vte-256color                   <A HREF="change.html#Y">Y</A>
-   (e.g. GNOME Terminal)      (aliases: gnome, gnome-256color)
-  tmux                        tmux, tmux-256color                 <A HREF="change.html#Y">Y</A>
-  screen                      screen, screen-256color             <A HREF="change.html#Y">Y</A>
-  PuTTY                       putty, putty-256color               <A HREF="change.html#Y">Y</A>
-  Terminal.app                nsterm                              N
   Linux virtual <A HREF="nvim_terminal_emulator.html#terminal">terminal</A>      linux, linux-256color               <A HREF="change.html#Y">Y</A>
+  PuTTY                       putty, putty-256color               <A HREF="change.html#Y">Y</A>
+  rxvt                        rxvt, rxvt-256color                 <A HREF="change.html#Y">Y</A>
+  screen                      screen, screen-256color             <A HREF="change.html#Y">Y</A>
+  simple <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> (st)        st, st-256color                     <A HREF="change.html#Y">Y</A>
+  Terminal.app                nsterm                              N
+  tmux                        tmux, tmux-256color                 <A HREF="change.html#Y">Y</A>
+  Windows/ConEmu              conemu                              <A HREF="change.html#Y">Y</A>
+  Windows/Cygwin-built Nvim   cygwin                              <A HREF="change.html#Y">Y</A>
+  Windows/Interix             interix                             <A HREF="change.html#Y">Y</A>
+  Windows/VTP console         vtpcon                              <A HREF="change.html#Y">Y</A>
+  Windows/legacy console      win32con                            <A HREF="change.html#Y">Y</A>
+  xterm or compatible         xterm, xterm-256color               <A HREF="change.html#Y">Y</A>
 
 
 					*<A NAME="builtin-terms"></A><B>builtin-terms</B>* *<A NAME="builtin_terms"></A><B>builtin_terms</B>*
-If a |<A HREF="#terminfo">terminfo</A>| database is not available, or no entry for the <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> type is
-found in that database, Nvim will use a compiled-in mini-database of <A HREF="#terminfo">terminfo</A>
-entries for &quot;xterm&quot;, &quot;putty&quot;, &quot;screen&quot;, &quot;tmux&quot;, &quot;rxvt&quot;, &quot;iterm&quot;, &quot;interix&quot;,
-&quot;linux&quot;, &quot;st&quot;, &quot;vte&quot;, &quot;gnome&quot;, and &quot;ansi&quot;.
+If a |<A HREF="#terminfo">terminfo</A>| database is not available or there is no entry for the current
+<A HREF="nvim_terminal_emulator.html#terminal">terminal</A>, Nvim will map |<A HREF="#$TERM">$TERM</A>| to a builtin entry according to the above
+table, or &quot;ansi&quot; if there is no match. For example &quot;TERM=putty-256color&quot; will
+be mapped to the builtin &quot;putty&quot; entry. See also |<A HREF="#tui-colors">tui-colors</A>|.
 
-The lookup matches the initial portion of the <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> type, so (for example)
-&quot;putty-256color&quot; and &quot;putty&quot; will both be mapped to the built-in &quot;putty&quot;
-entry.  The built-in <A HREF="#terminfo">terminfo</A> entries describe the <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> <A HREF="motion.html#as">as</A> 256-colour
-capable if possible.  See |<A HREF="#tui-colors">tui-colors</A>|.
-
-If no built-in <A HREF="#terminfo">terminfo</A> record matches the <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> type, the built-in &quot;ansi&quot;
-<A HREF="#terminfo">terminfo</A> record is used <A HREF="motion.html#as">as</A> a final fallback.
-
-The built-in mini-database is not combined with an external <A HREF="#terminfo">terminfo</A> database,
-nor can <A HREF="motion.html#it">it</A> be used in preference to one.  You can thus entirely override any
-omissions or out-of-date information in the built-in <A HREF="#terminfo">terminfo</A> database by
+The builtin <A HREF="#terminfo">terminfo</A> is not combined with any external <A HREF="#terminfo">terminfo</A> database, nor
+can <A HREF="motion.html#it">it</A> be used in preference to one.  You can thus entirely override any
+omissions or out-of-date information in the builtin <A HREF="#terminfo">terminfo</A> database by
 supplying an external one with entries for the <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> type.
 
 
@@ -129,12 +154,6 @@ This will not speed up <A HREF="scroll.html#scrolling">scrolling</A> in a <A HRE
 and right scroll margins <A HREF="motion.html#as">as</A> well.  If Nvim detects that the <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> is Xterm,
 <A HREF="motion.html#it">it</A> will make use of this ability to speed up <A HREF="scroll.html#scrolling">scrolling</A> that is not the full
 width of the <A HREF="nvim_terminal_emulator.html#terminal">terminal</A>.
-
-This ability is only present in genuine Xterm, not in the many <A HREF="nvim_terminal_emulator.html#terminal">terminal</A>
-emulators that incorrectly describe themselves <A HREF="motion.html#as">as</A> xterm.  Nvim's detection of
-genuine Xterm will not work over an SSH connection, because the environment
-variable, set by genuine Xterm, that <A HREF="motion.html#it">it</A> looks for is not automatically
-replicated over an SSH login session.
 
 
 							*<A NAME="tui-colors"></A><B>tui-colors</B>*
@@ -176,7 +195,7 @@ extension.  So Nvim simply assumes that (all) &quot;dtterm&quot;, &quot;xterm&qu
 &quot;rxvt&quot; <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> types, and Konsole, are capable of this.
 
 
-							*<A NAME="tui-cursor-shape"></A><B>tui-cursor-shape</B>* 
+							*<A NAME="tui-cursor-shape"></A><B>tui-cursor-shape</B>*
 Nvim will adjust the shape of the cursor from a block to a line when in insert
 mode (or <A HREF="motion.html#as">as</A> specified by the <A HREF="options.html#'guicursor'">'guicursor'</A> option), on terminals that support
 <A HREF="motion.html#it">it</A>.  It uses the same |<A HREF="#terminfo">terminfo</A>| extensions that were pioneered by tmux for
@@ -189,57 +208,23 @@ environment <A HREF="eval.html#variables">variables</A>.  For the &quot;rxvt&quo
 <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> emulator, or genuine Xterm are detected, <A HREF="motion.html#it">it</A> will add constructed
 &quot;Ss&quot; and &quot;Se&quot; capabilities.
 
-Note: Sometimes <A HREF="motion.html#it">it</A> will appear that Nvim when run within tmux is not <A HREF="change.html#changing">changing</A>
-the cursor, but in fact <A HREF="motion.html#it">it</A> is tmux receiving instructions from Nvim to change
-the cursor and not knowing what to <A HREF="diff.html#do">do</A> in turn.  tmux has to translate what <A HREF="motion.html#it">it</A>
-receives from Nvim into whatever <A HREF="intro.html#control">control</A> sequence is appropriate for the
-<A HREF="nvim_terminal_emulator.html#terminal">terminal</A> that <A HREF="motion.html#it">it</A> is outputting to.  It shares a common mechanism with Nvim, of
-using the &quot;Ss&quot; and &quot;Se&quot; capabilities from <A HREF="#terminfo">terminfo</A> (for the output <A HREF="nvim_terminal_emulator.html#terminal">terminal</A>)
-if they are present.  Unlike Nvim, if they are not present in <A HREF="#terminfo">terminfo</A> you
-must add them by setting &quot;terminal-overrides&quot; in ~/.tmux.conf .
+
+							*<A NAME="tui-cursor-tmux"></A><B>tui-cursor-tmux</B>*
+Within tmux <A HREF="motion.html#it">it</A> may appear that Nvim is not <A HREF="change.html#changing">changing</A> the cursor, but in fact <A HREF="motion.html#it">it</A>
+is tmux receiving instructions from Nvim to change the cursor and not knowing
+what to <A HREF="diff.html#do">do</A> in turn.  tmux must translate what <A HREF="motion.html#it">it</A> receives from Nvim into
+whatever <A HREF="intro.html#control">control</A> sequence is appropriate for the host <A HREF="nvim_terminal_emulator.html#terminal">terminal</A>.  It shares
+a common mechanism with Nvim, of using the &quot;Ss&quot; and &quot;Se&quot; capabilities from
+<A HREF="#terminfo">terminfo</A> (for the output <A HREF="nvim_terminal_emulator.html#terminal">terminal</A>) if they are present. Unlike Nvim, if they
+are not in <A HREF="#terminfo">terminfo</A> you must add them by setting &quot;terminal-overrides&quot; in
+~/.tmux.conf .
 
 See the tmux(1) manual page for the details of how and what to <A HREF="diff.html#do">do</A> in the tmux
 configuration file.  It will look something like:
 <B>	set -ga terminal-overrides '*:Ss=\E[%p1%d q:Se=\E[ q'</B>
- or (alas!) for Konsole specifically, something more complex like:
+ or (alas!) for Konsole 18.07.70 or older, something more complex like:
 <B>	set -ga terminal-overrides 'xterm*:\E]50;CursorShape=%?%p1%{3}%&lt;%t%{0}%e%{1}%;%d\007'</B>
  
-
-							*<A NAME="cs7-problem"></A><B>cs7-problem</B>*
-Note: If the <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> settings are changed after running Vim, you might have
-an illegal combination of settings.  This has been reported on Solaris 2.5
-with &quot;stty cs8 parenb&quot;, which is restored <A HREF="motion.html#as">as</A> &quot;stty cs7 parenb&quot;.  Use
-&quot;stty cs8 -parenb -istrip&quot; instead, this is restored correctly.
-
-Many cursor key codes start with an <A HREF="intro.html#&lt;Esc&gt;">&lt;Esc&gt;</A>.  Vim must find out if this is a
-single hit of the <A HREF="intro.html#&lt;Esc&gt;">&lt;Esc&gt;</A> key or the start of a cursor key sequence.  It waits
-for a next character to arrive.  If <A HREF="motion.html#it">it</A> does not arrive within one second a
-single <A HREF="intro.html#&lt;Esc&gt;">&lt;Esc&gt;</A> is assumed.  On very slow systems this may fail, causing cursor
-keys not to work sometimes.  If you discover this problem reset the <A HREF="options.html#'timeout'">'timeout'</A>
-option.  Vim will wait for the next character to arrive after an <A HREF="intro.html#&lt;Esc&gt;">&lt;Esc&gt;</A>.  If
-you want to enter a single <A HREF="intro.html#&lt;Esc&gt;">&lt;Esc&gt;</A> you must type <A HREF="motion.html#it">it</A> <A HREF="if_cscop.html#twice">twice</A>.
-
-Some terminals have confusing codes for the cursor keys.  The televideo 925 is
-such a <A HREF="nvim_terminal_emulator.html#terminal">terminal</A>.  It sends a <A HREF="motion.html#CTRL-H">CTRL-H</A> for <A HREF="intro.html#cursor-left">cursor-left</A>.  This would make <A HREF="motion.html#it">it</A>
-impossible to distinguish a backspace and <A HREF="intro.html#cursor-left">cursor-left</A>.  To avoid this problem
-<A HREF="motion.html#CTRL-H">CTRL-H</A> is never recognized <A HREF="motion.html#as">as</A> <A HREF="intro.html#cursor-left">cursor-left</A>.
-
-
-					*<A NAME="vt100-cursor-keys"></A><B>vt100-cursor-keys</B>* *<A NAME="xterm-cursor-keys"></A><B>xterm-cursor-keys</B>*
-Other terminals (e.g., vt100 and xterm) have cursor keys that send &lt;Esc&gt;OA,
-&lt;Esc&gt;OB, etc.  Unfortunately these are valid commands in insert mode: Stop
-insert, Open a new line above the new one, start <A HREF="insert.html#inserting">inserting</A> '<A HREF="insert.html#A">A</A>', '<A HREF="motion.html#B">B</A>', etc.
-Instead of performing these commands Vim will erroneously recognize this typed
-key sequence <A HREF="motion.html#as">as</A> a cursor key <A HREF="intro.html#movement">movement</A>.  To avoid this and make Vim <A HREF="diff.html#do">do</A> what you
-want in either <A HREF="change.html#case">case</A> you could use these settings:
-<B>	:set notimeout		" don't timeout on mappings</B>
-<B>	:set ttimeout		" do timeout on terminal key codes</B>
-<B>	:set timeoutlen=100	" timeout after 100 msec</B>
-This requires the <A HREF="intro.html#key-codes">key-codes</A> to be sent within 100 msec in order to recognize
-them <A HREF="motion.html#as">as</A> a cursor key.  When you type you normally are not that fast, so they
-are recognized <A HREF="motion.html#as">as</A> individual typed commands, even though Vim receives the same
-sequence of bytes.
-
 ==============================================================================
 
 Window size						*<A NAME="window-size"></A><B>window-size</B>*
@@ -256,7 +241,7 @@ On Unix systems, three methods are tried to get the <A HREF="windows.html#window
 If everything fails a default size of 24 lines and 80 columns is assumed.  If
 a <A HREF="windows.html#window-resize">window-resize</A> signal is received the size will be set again.  If the <A HREF="windows.html#window">window</A>
 size is wrong you can use the <A HREF="options.html#'lines'">'lines'</A> and <A HREF="options.html#'columns'">'columns'</A> <A HREF="options.html#options">options</A> to set the
-correct values. See |<A HREF="windows.html#:mode">:mode</A>|.
+correct values. See |<A HREF="various.html#:mode">:mode</A>|.
 
 ==============================================================================
 
@@ -289,13 +274,6 @@ effect on some UIs.
 ==============================================================================
 
 Using the mouse						*<A NAME="mouse-using"></A><B>mouse-using</B>*
-
-
-							*<A NAME="bracketed-paste-mode"></A><B>bracketed-paste-mode</B>*
-Nvim enables bracketed paste by default. Bracketed paste mode allows <A HREF="nvim_terminal_emulator.html#terminal">terminal</A>
-applications to distinguish between typed text and pasted text. Thus you can
-paste text without Nvim trying to format or indent the text.
-See also https://cirw.in/blog/bracketed-paste
 
 
 					*<A NAME="mouse-mode-table"></A><B>mouse-mode-table</B>* *<A NAME="mouse-overview"></A><B>mouse-overview</B>*
@@ -332,7 +310,7 @@ Overview of what the mouse buttons <A HREF="diff.html#do">do</A>, when <A HREF="
 <A HREF="#&lt;S-LeftMouse&gt;">&lt;S-LeftMouse&gt;</A>   yes     (cannot be active)  yes	   &quot;CTRL-O*&quot; (2)
 <A HREF="#&lt;LeftDrag&gt;">&lt;LeftDrag&gt;</A>      yes     start or extend (1) no	   like <A HREF="motion.html#CTRL-O">CTRL-O</A> (1)
 <A HREF="visual.html#&lt;LeftRelease&gt;">&lt;LeftRelease&gt;</A>   yes     start or extend (1) no	   like <A HREF="motion.html#CTRL-O">CTRL-O</A> (1)
-<A HREF="change.html#&lt;MiddleMouse&gt;">&lt;MiddleMouse&gt;</A>   no      (cannot be active)  no	   put <A HREF="sponsor.html#register">register</A>
+<A HREF="change.html#&lt;MiddleMouse&gt;">&lt;MiddleMouse&gt;</A>   no      (cannot be active)  no	   put <A HREF="intro.html#register">register</A>
 <A HREF="visual.html#&lt;RightMouse&gt;">&lt;RightMouse&gt;</A>    yes     start or extend	    yes	   like <A HREF="motion.html#CTRL-O">CTRL-O</A>
 <A HREF="#&lt;A-RightMouse&gt;">&lt;A-RightMouse&gt;</A>  yes start or extend blockw. yes
 <A HREF="#&lt;S-RightMouse&gt;">&lt;S-RightMouse&gt;</A>  yes     (cannot be active)  yes	   &quot;CTRL-O#&quot; (2)
@@ -429,7 +407,7 @@ Mouse clicks can be mapped.  The codes for mouse clicks are:
  <A HREF="visual.html#&lt;LeftMouse&gt;">&lt;LeftMouse&gt;</A>	 left pressed		    set cursor position
  <A HREF="#&lt;LeftDrag&gt;">&lt;LeftDrag&gt;</A>	 left moved while pressed   extend selection
  <A HREF="visual.html#&lt;LeftRelease&gt;">&lt;LeftRelease&gt;</A>	 left released		    set selection end
- <A HREF="change.html#&lt;MiddleMouse&gt;">&lt;MiddleMouse&gt;</A>	 middle pressed		    paste text at cursor position
+ <A HREF="change.html#&lt;MiddleMouse&gt;">&lt;MiddleMouse&gt;</A>	 middle pressed		    <A HREF="provider.html#paste">paste</A> text at cursor position
  <A HREF="#&lt;MiddleDrag&gt;">&lt;MiddleDrag&gt;</A>	 middle moved while pressed -
  <A HREF="#&lt;MiddleRelease&gt;">&lt;MiddleRelease&gt;</A> middle released	    -
  <A HREF="visual.html#&lt;RightMouse&gt;">&lt;RightMouse&gt;</A>	 right pressed		    extend selection
@@ -454,7 +432,7 @@ Currently X1 and X2 only work on Win32 and X11 environments.
 
 Examples:
 <B>	:noremap &lt;MiddleMouse&gt; &lt;LeftMouse&gt;&lt;MiddleMouse&gt;</B>
-Paste at the position of the middle mouse button click (otherwise the paste
+Paste at the position of the middle mouse button click (otherwise the <A HREF="provider.html#paste">paste</A>
 would be done at the cursor position).
 
 <B>	:noremap &lt;LeftRelease&gt; &lt;LeftRelease&gt;y</B>
@@ -488,5 +466,11 @@ To swap the meaning of the left and right mouse buttons:
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
+
+    <footer>
+      <div class="container">
+        Generated Wed Sep 18 20:06:12 UTC 2019 from <a href="https://github.com/neovim/neovim/commit/1070c092c7bf989f261047b861165e61e94c1941"><code>1070c09</code></a>.
+      </div>
+    </footer>
   </body>
 </html>

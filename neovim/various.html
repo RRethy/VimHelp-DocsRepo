@@ -2,10 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Nvim documentation: various</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.0/normalize.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="/css/main.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
   </head>
   <body>
-                <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
+    <header class="navbar">
+      <div class="container">
+        <nav class="navbar">
+          <div class="container-fluid">
+            <div class="navbar-header">
+
+              <a href="/" class="navbar-brand">
+                <img src="/images/logo@2x.png" id="navbar-logo" alt="Neovim">
+              </a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
 
     <div class="container">
       <h1>Nvim documentation: various</h1>
@@ -31,24 +55,33 @@ Various commands					*<A NAME="various"></A><B>various</B>*
 
 
 							*<A NAME="CTRL-L"></A><B>CTRL-L</B>*
-<A HREF="#CTRL-L">CTRL-L</A>			Clear and redraw the screen.  The redraw may happen
+<A HREF="#CTRL-L">CTRL-L</A>			Clears and redraws the screen.  The redraw may happen
 			later, after processing typeahead.
 
 
+							*<A NAME=":mod"></A><B>:mod</B>* *<A NAME=":mode"></A><B>:mode</B>*
+:mod[e]			Clears and redraws the screen.
+
+
 							*<A NAME=":redr"></A><B>:redr</B>* *<A NAME=":redraw"></A><B>:redraw</B>*
-:redr[aw][!]		Redraw the screen right now.  When ! is included <A HREF="motion.html#it">it</A> is
-			cleared first.
-			Useful to update the screen halfway through executing
-			a <A HREF="usr_41.html#script">script</A> or function (or a <A HREF="map.html#mapping">mapping</A> if <A HREF="options.html#'lazyredraw'">'lazyredraw'</A>
-			set).
+:redr[aw][!]		Redraws pending screen updates now, or the entire
+			screen if &quot;<A HREF="change.html#!">!</A>&quot; is included.  To CLEAR the screen use
+			|<A HREF="#:mode">:mode</A>| or |<A HREF="#CTRL-L">CTRL-L</A>|.
+			Useful to update the screen during a <A HREF="usr_41.html#script">script</A> or
+			function (or a <A HREF="map.html#mapping">mapping</A> if <A HREF="options.html#'lazyredraw'">'lazyredraw'</A> set).
 
 
 						*<A NAME=":redraws"></A><B>:redraws</B>* *<A NAME=":redrawstatus"></A><B>:redrawstatus</B>*
-:redraws[tatus][!]	Redraw the status line of the current <A HREF="windows.html#window">window</A>.  When !
-			is included all status lines are redrawn.
-			Useful to update the status line(s) when <A HREF="options.html#'statusline'">'statusline'</A>
-			includes an item that doesn't cause automatic
-			updating.
+:redraws[tatus][!]	Redraws the status line of the current <A HREF="windows.html#window">window</A>, or all
+			status lines if &quot;<A HREF="change.html#!">!</A>&quot; is included.
+			Useful if <A HREF="options.html#'statusline'">'statusline'</A> includes an item that doesn't
+			cause automatic updating.
+
+
+						*<A NAME=":redrawt"></A><B>:redrawt</B>* *<A NAME=":redrawtabline"></A><B>:redrawtabline</B>*
+:redrawt[abline]	Redraw the tabline.  Useful to update the tabline when
+			<A HREF="options.html#'tabline'">'tabline'</A> includes an item that doesn't trigger
+			automatic updating.
 
 
 							*<A NAME="N&lt;Del&gt;"></A><B>N&lt;Del&gt;</B>*
@@ -251,15 +284,16 @@ Various commands					*<A NAME="various"></A><B>various</B>*
 
 
 						  *<A NAME=":sh"></A><B>:sh</B>* *<A NAME=":shell"></A><B>:shell</B>* *<A NAME="E371"></A><B>E371</B>* *<A NAME="E360"></A><B>E360</B>*
-:sh[ell]		Removed. |<A HREF="vim_diff.html#vim-differences">vim-differences</A>| {Nvim}
+:sh[ell]		Removed. |<A HREF="vim_diff.html#vim-differences">vim-differences</A>|
 
 
 						  *<A NAME=":terminal"></A><B>:terminal</B>* *<A NAME=":te"></A><B>:te</B>*
-:te[rminal][!] [{cmd}]	Execute {cmd} with <A HREF="options.html#'shell'">'shell'</A> in a new |<A HREF="nvim_terminal_emulator.html#terminal-emulator">terminal-emulator</A>|
-			buffer. Without {cmd}, start an interactive <A HREF="options.html#'shell'">'shell'</A>.
+:te[rminal][!] [{cmd}]	Run {cmd} in a non-interactive <A HREF="options.html#'shell'">'shell'</A> in a new
+			|<A HREF="nvim_terminal_emulator.html#terminal-emulator">terminal-emulator</A>| buffer. Without {cmd}, start an
+			interactive <A HREF="options.html#'shell'">'shell'</A>.
 
 			Type |<A HREF="insert.html#i">i</A>| to enter |<A HREF="intro.html#Terminal-mode">Terminal-mode</A>|, then keys are sent to
-			the job running in the <A HREF="nvim_terminal_emulator.html#terminal">terminal</A>. Type &lt;C-\&gt;&lt;C-N&gt; to
+			the <A HREF="job_control.html#job">job</A> running in the <A HREF="nvim_terminal_emulator.html#terminal">terminal</A>. Type &lt;C-\&gt;&lt;C-N&gt; to
 			leave <A HREF="intro.html#Terminal-mode">Terminal-mode</A>. |<A HREF="intro.html#CTRL-\_CTRL-N">CTRL-\_CTRL-N</A>|
 
 			Fails if changes have been made to the current buffer,
@@ -272,35 +306,32 @@ Various commands					*<A NAME="various"></A><B>various</B>*
 							*<A NAME=":!cmd"></A><B>:!cmd</B>* *<A NAME=":!"></A><B>:!</B>* *<A NAME="E34"></A><B>E34</B>*
 :!{cmd}			Execute {cmd} with <A HREF="options.html#'shell'">'shell'</A>. See also |<A HREF="#:terminal">:terminal</A>|.
 
-			Any '<A HREF="change.html#!">!</A>' in {cmd} is replaced with the previous
-			external command (see also <A HREF="options.html#'cpoptions'">'cpoptions'</A>).  But not when
-			there is a <A HREF="intro.html#backslash">backslash</A> before the '<A HREF="change.html#!">!</A>', then that
-			<A HREF="intro.html#backslash">backslash</A> is removed.  Example: &quot;:!ls&quot; followed by
-			&quot;:!echo ! \! \\!&quot; executes &quot;echo ls ! \!&quot;.
-
-			A '&#124;' in {cmd} is passed to the shell, you cannot use
-			<A HREF="motion.html#it">it</A> to append a Vim command.  See |<A HREF="cmdline.html#:bar">:bar</A>|.
-
-			If {cmd} contains &quot;<A HREF="motion.html#&#37;">&#37;</A>&quot; <A HREF="motion.html#it">it</A> is expanded to the current
-			file name.  Special characters are not escaped, use
-			quotes to avoid their special meaning:
-<B>				:!ls "%"</B>
- 			If the file name contains a &quot;<A HREF="motion.html#$">$</A>&quot; single quotes might
-			work better (but a single <A HREF="change.html#quote">quote</A> causes trouble):
-<B>				:!ls '%'</B>
- 			This should always work, but it's more typing:
-<B>				:exe "!ls " . shellescape(expand("%"))</B>
- 
-			A newline character ends {cmd}, what follows is
-			interpreted <A HREF="motion.html#as">as</A> a following &quot;<A HREF="cmdline.html#:">:</A>&quot; command.  However, if
-			there is a <A HREF="intro.html#backslash">backslash</A> before the newline <A HREF="motion.html#it">it</A> is removed
-			and {cmd} continues.  It doesn't matter how many
-			backslashes are before the newline, only one is
-			removed.
-
 			The command runs in a non-interactive shell connected
 			to a pipe (not a <A HREF="nvim_terminal_emulator.html#terminal">terminal</A>terminal). Use |<A HREF="#:terminal">:terminal</A>| to run an
 			interactive shell connected to a <A HREF="nvim_terminal_emulator.html#terminal">terminal</A>.
+
+			Backgrounded (&quot;&amp;&quot;) commands must not write to stdout
+			or stderr, the streams are closed immediately. |<A HREF="eval.html#E5677">E5677</A>|
+			Use |<A HREF="eval.html#jobstart()">jobstart()</A>| instead.
+<B>				:call jobstart('foo', {'detach':1})</B>
+ 
+			Any &quot;<A HREF="change.html#!">!</A>&quot; in {cmd} is replaced with the previous
+			external command (see also 'cpoptions'), unless
+			escaped by a <A HREF="intro.html#backslash">backslash</A>.  Example: &quot;:!ls&quot; followed by
+			&quot;:!echo ! \! \\!&quot; executes &quot;echo ls ! \!&quot;.
+
+			Any &quot;|&quot; in {cmd} is passed to the shell, you cannot
+			use <A HREF="motion.html#it">it</A> to append a Vim command.  See |<A HREF="cmdline.html#:bar">:bar</A>|.
+
+			Any &quot;<A HREF="motion.html#&#37;">&#37;</A>&quot; in {cmd} is expanded to the current file name.
+			Special characters are not escaped, use quotes or
+			YXXYshellescape()|:
+<B>				:!ls "%"</B>
+<B>				:exe "!ls " . shellescape(expand("%"))</B>
+ 
+			Newline character ends {cmd} unless a <A HREF="intro.html#backslash">backslash</A>
+			precedes the newline.  What follows is interpreted <A HREF="motion.html#as">as</A>
+			another |<A HREF="cmdline.html#:">:</A>| command.
 
 			After the command has been executed, the <A HREF="editing.html#timestamp">timestamp</A> and
 			size of the current file is checked |<A HREF="editing.html#timestamp">timestamp</A>|.
@@ -310,238 +341,17 @@ Various commands					*<A NAME="various"></A><B>various</B>*
 			data is lost, this only affects the display.  The last
 			few lines are always displayed (never skipped).
 
-			Vim redraws the screen after the command is finished,
-			because <A HREF="motion.html#it">it</A> may have printed any text.  This requires a
-			<A HREF="message.html#hit-enter">hit-enter</A> prompt, so that you can read any <A HREF="message.html#messages">messages</A>.
-			To avoid this use:
+			To avoid the <A HREF="message.html#hit-enter">hit-enter</A> prompt use:
 <B>				:silent !{cmd}</B>
- 			The screen is not redrawn then, thus you have to use
-			<A HREF="#CTRL-L">CTRL-L</A> or &quot;:redraw!&quot; if the command did display
-			something.
-
+ 
 
 							*<A NAME=":!!"></A><B>:!!</B>*
 <A HREF="#:!!">:!!</A>			Repeat last &quot;:!{cmd}&quot;.
 
 
-							*<A NAME=":ve"></A><B>:ve</B>* *<A NAME=":version"></A><B>:version</B>*
-:ve[rsion]		Print the version number of the editor.  The following
-			lines contain information about which features were
-			enabled when Vim was compiled.  When there is a
-			preceding '<A HREF="motion.html#+">+</A>', the feature is included, when there is
-			a '<A HREF="motion.html#-">-</A>' <A HREF="motion.html#it">it</A> is excluded.  To change this, you have to
-			edit feature.h and recompile Vim.  To check for this
-			in an <A HREF="eval.html#expression">expression</A>, see |<A HREF="eval.html#has()">has()</A>|.  Here is an overview of
-			the features.  The first column shows the smallest
-			version in which they are included:
-			   <A HREF="motion.html#T">T</A>	tiny
-			   <A HREF="change.html#S">S</A>	small
-			   N	normal
-			   <A HREF="motion.html#B">B</A>	big
-			   <A HREF="motion.html#H">H</A>	huge
-			   <A HREF="motion.html#m">m</A>	manually enabled or depends on other features
-			 (none) system dependent
-			Thus if a feature is marked with &quot;<A HREF="pattern.html#N">N</A>&quot;, <A HREF="motion.html#it">it</A> is included
-			in the normal, big and huge versions of Vim.
-
-
-							*<A NAME="+feature-list"></A><B>+feature-list</B>*
-
-   *<A NAME="+acl"></A><B>+acl</B>*		|<A HREF="editing.html#ACL">ACL</A>| support included
-
-<A HREF="motion.html#B">B</A>  *<A NAME="+arabic"></A><B>+arabic</B>*		|<A HREF="arabic.html#Arabic">Arabic</A>| language support
-
-N  *<A NAME="+autocmd"></A><B>+autocmd</B>*		|<A HREF="autocmd.html#:autocmd">:autocmd</A>|, automatic commands
-
-N  *<A NAME="+browse"></A><B>+browse</B>*		|<A HREF="editing.html#:browse">:browse</A>| command
-
-N  *<A NAME="+byte_offset"></A><B>+byte_offset</B>*	support for '<A HREF="insert.html#o">o</A>' flag in <A HREF="options.html#'statusline'">'statusline'</A> option, &quot;go&quot;
-			and &quot;<A HREF="motion.html#:goto">:goto</A>&quot; commands.
-
-N  *<A NAME="+cindent"></A><B>+cindent</B>*		|<A HREF="options.html#'cindent'">'cindent'</A>|, C indenting
-
-N  *<A NAME="+clientserver"></A><B>+clientserver</B>*	Unix and Win32: Remote invocation |<A HREF="remote.html#clientserver">clientserver</A>|
-
-   *<A NAME="+clipboard"></A><B>+clipboard</B>*		|<A HREF="provider.html#clipboard">clipboard</A>| support
-
-N  *<A NAME="+cmdline_compl"></A><B>+cmdline_compl</B>*	command line completion |<A HREF="cmdline.html#cmdline-completion">cmdline-completion</A>|
-
-<A HREF="change.html#S">S</A>  *<A NAME="+cmdline_hist"></A><B>+cmdline_hist</B>*	command line history |<A HREF="cmdline.html#cmdline-history">cmdline-history</A>|
-
-N  *<A NAME="+cmdline_info"></A><B>+cmdline_info</B>*	|<A HREF="options.html#'showcmd'">'showcmd'</A>| and |<A HREF="options.html#'ruler'">'ruler'</A>|
-
-N  *<A NAME="+comments"></A><B>+comments</B>*		|<A HREF="options.html#'comments'">'comments'</A>| support
-
-<A HREF="motion.html#B">B</A>  *<A NAME="+conceal"></A><B>+conceal</B>*		&quot;conceal&quot; support, see |<A HREF="syntax.html#conceal">conceal</A>| |<A HREF="syntax.html#:syn-conceal">:syn-conceal</A>| etc.
-
-<A HREF="motion.html#B">B</A>  *<A NAME="+cscope"></A><B>+cscope</B>*		|<A HREF="if_cscop.html#cscope">cscope</A>| support
-
-<A HREF="motion.html#m">m</A>  *<A NAME="+cursorbind"></A><B>+cursorbind</B>*	|<A HREF="options.html#'cursorbind'">'cursorbind'</A>| support
-
-<A HREF="motion.html#m">m</A>  *<A NAME="+debug"></A><B>+debug</B>*		Compiled for debugging.
-
-N  *<A NAME="+dialog_gui"></A><B>+dialog_gui</B>*	Support for |<A HREF="editing.html#:confirm">:confirm</A>| with <A HREF="gui.html#GUI">GUI</A> dialog.
-
-N  *<A NAME="+dialog_con"></A><B>+dialog_con</B>*	Support for |<A HREF="editing.html#:confirm">:confirm</A>| with console dialog.
-
-N  *<A NAME="+dialog_con_gui"></A><B>+dialog_con_gui</B>*	Support for |<A HREF="editing.html#:confirm">:confirm</A>| with <A HREF="gui.html#GUI">GUI</A> and console dialog.
-
-N  *<A NAME="+digraphs"></A><B>+digraphs</B>*		|<A HREF="digraph.html#digraphs">digraphs</A>| *<A NAME="E196"></A><B>E196</B>*
-
-N  *<A NAME="+eval"></A><B>+eval</B>*		<A HREF="eval.html#expression">expression</A> evaluation |<A HREF="eval.html#eval.txt">eval.txt</A>|
-
-N  *<A NAME="+ex_extra"></A><B>+ex_extra</B>*		always on now, used to be for Vim's extra <A HREF="intro.html#Ex">Ex</A> commands
-
-N  *<A NAME="+extra_search"></A><B>+extra_search</B>*	|<A HREF="options.html#'hlsearch'">'hlsearch'</A>| and |<A HREF="options.html#'incsearch'">'incsearch'</A>| <A HREF="options.html#options">options</A>.
-
-<A HREF="motion.html#B">B</A>  *<A NAME="+farsi"></A><B>+farsi</B>*		|<A HREF="farsi.html#farsi">farsi</A>| language
-
-N  *<A NAME="+file_in_path"></A><B>+file_in_path</B>*	|<A HREF="editing.html#gf">gf</A>|, |<A HREF="windows.html#CTRL-W_f">CTRL-W_f</A>| and |<A HREF="cmdline.html#&lt;cfile&gt;">&lt;cfile&gt;</A>|
-
-N  *<A NAME="+find_in_path"></A><B>+find_in_path</B>*	include file searches: |<A HREF="tagsrch.html#[I">[I</A>|, |<A HREF="tagsrch.html#:isearch">:isearch</A>|,
-			|<A HREF="tagsrch.html#CTRL-W_CTRL-I">CTRL-W_CTRL-I</A>|, |<A HREF="tagsrch.html#:checkpath">:checkpath</A>|, etc.
-
-N  *<A NAME="+folding"></A><B>+folding</B>*		|<A HREF="fold.html#folding">folding</A>|
-
-N  *<A NAME="+gettext"></A><B>+gettext</B>*		message translations |<A HREF="mlang.html#multi-lang">multi-lang</A>|
-
-   *<A NAME="+iconv"></A><B>+iconv</B>*		Compiled with the |<A HREF="eval.html#iconv()">iconv()</A>| function
-
-   *<A NAME="+iconv/dyn"></A><B>+iconv/dyn</B>*		Likewise |<A HREF="mbyte.html#iconv-dynamic">iconv-dynamic</A>| |<A HREF="#/dyn">/dyn</A>|
-
-N  *<A NAME="+insert_expand"></A><B>+insert_expand</B>*	|<A HREF="insert.html#insert_expand">insert_expand</A>| <A HREF="insert.html#Insert">Insert</A> mode completion
-
-<A HREF="change.html#S">S</A>  *<A NAME="+jumplist"></A><B>+jumplist</B>*		|<A HREF="motion.html#jumplist">jumplist</A>|
-
-<A HREF="motion.html#B">B</A>  *<A NAME="+keymap"></A><B>+keymap</B>*		|<A HREF="options.html#'keymap'">'keymap'</A>|
-
-N  *<A NAME="+lambda"></A><B>+lambda</B>*		|<A HREF="eval.html#lambda">lambda</A>| and |<A HREF="eval.html#closure">closure</A>|
-
-<A HREF="motion.html#B">B</A>  *<A NAME="+langmap"></A><B>+langmap</B>*		|<A HREF="options.html#'langmap'">'langmap'</A>|
-
-N  *<A NAME="+libcall"></A><B>+libcall</B>*		|<A HREF="eval.html#libcall()">libcall()</A>|
-
-N  *<A NAME="+linebreak"></A><B>+linebreak</B>*		|<A HREF="options.html#'linebreak'">'linebreak'</A>|, |<A HREF="options.html#'breakat'">'breakat'</A>| and |<A HREF="options.html#'showbreak'">'showbreak'</A>|
-
-N  *<A NAME="+lispindent"></A><B>+lispindent</B>*	|<A HREF="options.html#'lisp'">'lisp'</A>|
-
-N  *<A NAME="+listcmds"></A><B>+listcmds</B>*		Vim commands for the <A HREF="eval.html#list">list</A> of <A HREF="windows.html#buffers">buffers</A> |<A HREF="windows.html#buffer-hidden">buffer-hidden</A>|
-			and argument <A HREF="eval.html#list">list</A> |<A HREF="editing.html#:argdelete">:argdelete</A>|
-
-N  *<A NAME="+localmap"></A><B>+localmap</B>*		Support for mappings local to a buffer |<A HREF="map.html#:map-local">:map-local</A>|
-
-N  *<A NAME="+menu"></A><B>+menu</B>*		|<A HREF="gui.html#:menu">:menu</A>|
-
-N  *<A NAME="+mksession"></A><B>+mksession</B>*		|<A HREF="starting.html#:mksession">:mksession</A>|
-
-N  *<A NAME="+modify_fname"></A><B>+modify_fname</B>*	|<A HREF="cmdline.html#filename-modifiers">filename-modifiers</A>|
-
-N  *<A NAME="+mouse"></A><B>+mouse</B>*		Mouse handling |<A HREF="term.html#mouse-using">mouse-using</A>|
-
-N  *<A NAME="+mouseshape"></A><B>+mouseshape</B>*	|<A HREF="options.html#'mouseshape'">'mouseshape'</A>|
-
-N  *<A NAME="+multi_byte"></A><B>+multi_byte</B>*	16 and 32 bit characters |<A HREF="mbyte.html#multibyte">multibyte</A>|
-
-   *<A NAME="+multi_byte_ime"></A><B>+multi_byte_ime</B>*	Win32 input method for multibyte chars |<A HREF="mbyte.html#multibyte-ime">multibyte-ime</A>|
-
-N  *<A NAME="+multi_lang"></A><B>+multi_lang</B>*	non-English language support |<A HREF="mlang.html#multi-lang">multi-lang</A>|
-
-   *<A NAME="+num64"></A><B>+num64</B>*		64-bit Number support |<A HREF="eval.html#Number">Number</A>|
-
-N  *<A NAME="+path_extra"></A><B>+path_extra</B>*	Up/downwards search in <A HREF="options.html#'path'">'path'</A> and <A HREF="options.html#'tags'">'tags'</A>
-
-N  *<A NAME="+persistent_undo"></A><B>+persistent_undo</B>*	Persistent undo |<A HREF="undo.html#undo-persistence">undo-persistence</A>|
-
-   *<A NAME="+postscript"></A><B>+postscript</B>*	|<A HREF="print.html#:hardcopy">:hardcopy</A>| writes a PostScript file
-
-N  *<A NAME="+printer"></A><B>+printer</B>*		|<A HREF="print.html#:hardcopy">:hardcopy</A>| command
-
-<A HREF="motion.html#H">H</A>  *<A NAME="+profile"></A><B>+profile</B>*		|<A HREF="repeat.html#:profile">:profile</A>| command
-
-<A HREF="motion.html#m">m</A>  *<A NAME="+python"></A><B>+python</B>*		<A HREF="if_pyth.html#Python">Python</A> 2 interface |<A HREF="if_pyth.html#python">python</A>|
-
-<A HREF="motion.html#m">m</A>  *<A NAME="+python3"></A><B>+python3</B>*		<A HREF="if_pyth.html#Python">Python</A> 3 interface |<A HREF="if_pyth.html#python">python</A>|
-
-N  *<A NAME="+quickfix"></A><B>+quickfix</B>*		|<A HREF="quickfix.html#:make">:make</A>| and |<A HREF="quickfix.html#quickfix">quickfix</A>| commands
-
-N  *<A NAME="+reltime"></A><B>+reltime</B>*		|<A HREF="eval.html#reltime()">reltime()</A>| function, 'hlsearch'/'incsearch' timeout,
-			<A HREF="options.html#'redrawtime'">'redrawtime'</A> option
-
-<A HREF="motion.html#B">B</A>  *<A NAME="+rightleft"></A><B>+rightleft</B>*		Right to left typing |<A HREF="options.html#'rightleft'">'rightleft'</A>|
-
-N  *<A NAME="+scrollbind"></A><B>+scrollbind</B>*	|<A HREF="options.html#'scrollbind'">'scrollbind'</A>|
-
-N  *<A NAME="+shada"></A><B>+shada</B>*		|<A HREF="options.html#'shada'">'shada'</A>|
-
-<A HREF="motion.html#B">B</A>  *<A NAME="+signs"></A><B>+signs</B>*		|<A HREF="sign.html#:sign">:sign</A>|
-
-N  *<A NAME="+smartindent"></A><B>+smartindent</B>*	|<A HREF="options.html#'smartindent'">'smartindent'</A>|
-
-N  *<A NAME="+startuptime"></A><B>+startuptime</B>*	|<A HREF="starting.html#--startuptime">--startuptime</A>| argument
-
-N  *<A NAME="+statusline"></A><B>+statusline</B>*	Options <A HREF="options.html#'statusline'">'statusline'</A>, <A HREF="options.html#'rulerformat'">'rulerformat'</A> and special
-			formats of <A HREF="options.html#'titlestring'">'titlestring'</A> and <A HREF="options.html#'iconstring'">'iconstring'</A>
-
-N  *<A NAME="+syntax"></A><B>+syntax</B>*		<A HREF="autocmd.html#Syntax">Syntax</A> highlighting |<A HREF="syntax.html#syntax">syntax</A>|
-
-N  *<A NAME="+tablineat"></A><B>+tablineat</B>*		<A HREF="options.html#'tabline'">'tabline'</A> option recognizing &#37;@<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4006352e2300">[email&#160;protected]</a> items.
-
-<A HREF="motion.html#T">T</A>  *<A NAME="+tag_binary"></A><B>+tag_binary</B>*	binary searching in <A HREF="tagsrch.html#tags">tags</A> file |<A HREF="tagsrch.html#tag-binary-search">tag-binary-search</A>|
-
-N  *<A NAME="+tag_old_static"></A><B>+tag_old_static</B>*	old method for static <A HREF="tagsrch.html#tags">tags</A> |<A HREF="tagsrch.html#tag-old-static">tag-old-static</A>|
-
-<A HREF="motion.html#m">m</A>  *<A NAME="+tag_any_white"></A><B>+tag_any_white</B>*	any white space allowed in <A HREF="tagsrch.html#tags">tags</A> file |<A HREF="tagsrch.html#tag-any-white">tag-any-white</A>|
-
-<A HREF="motion.html#B">B</A>  *<A NAME="+termguicolors"></A><B>+termguicolors</B>*	24-bit color in xterm-compatible terminals support
-
-N  *<A NAME="+termresponse"></A><B>+termresponse</B>*	support for |<A HREF="intro.html#t_RV">t_RV</A>| and |<A HREF="eval.html#v:termresponse">v:termresponse</A>|
-
-N  *<A NAME="+textobjects"></A><B>+textobjects</B>*	|<A HREF="motion.html#text-objects">text-objects</A>| selection
-
-N  *<A NAME="+timers"></A><B>+timers</B>*		the |<A HREF="eval.html#timer_start()">timer_start()</A>| function
-
-N  *<A NAME="+title"></A><B>+title</B>*		Setting the <A HREF="windows.html#window">window</A> <A HREF="options.html#'title'">'title'</A> and <A HREF="options.html#'icon'">'icon'</A>
-
-N  *<A NAME="+toolbar"></A><B>+toolbar</B>*		|<A HREF="gui.html#gui-toolbar">gui-toolbar</A>|
-
-N  *<A NAME="+user_commands"></A><B>+user_commands</B>*	User-defined commands. |<A HREF="map.html#user-commands">user-commands</A>|
-
-   *<A NAME="+vertsplit"></A><B>+vertsplit</B>*		Vertically split <A HREF="windows.html#windows">windows</A> |<A HREF="windows.html#:vsplit">:vsplit</A>|
-
-N  *<A NAME="+virtualedit"></A><B>+virtualedit</B>*	|<A HREF="options.html#'virtualedit'">'virtualedit'</A>|
-
-<A HREF="change.html#S">S</A>  *<A NAME="+visual"></A><B>+visual</B>*		Visual mode |<A HREF="visual.html#Visual-mode">Visual-mode</A>| Always enabled since 7.4.200.
-
-N  *<A NAME="+visualextra"></A><B>+visualextra</B>*	extra <A HREF="visual.html#Visual">Visual</A> mode commands |<A HREF="visual.html#blockwise-operators">blockwise-operators</A>|
-
-N  *<A NAME="+vreplace"></A><B>+vreplace</B>*		|<A HREF="change.html#gR">gR</A>| and |<A HREF="change.html#gr">gr</A>|
-
-   *<A NAME="+vtp"></A><B>+vtp</B>*		on MS-Windows console: support for <A HREF="options.html#'termguicolors'">'termguicolors'</A>
-
-N  *<A NAME="+wildignore"></A><B>+wildignore</B>*	|<A HREF="options.html#'wildignore'">'wildignore'</A>|
-
-N  *<A NAME="+wildmenu"></A><B>+wildmenu</B>*		|<A HREF="options.html#'wildmenu'">'wildmenu'</A>|
-
-   *<A NAME="+windows"></A><B>+windows</B>*		more than one <A HREF="windows.html#window">window</A>
-
-<A HREF="motion.html#m">m</A>  *<A NAME="+writebackup"></A><B>+writebackup</B>*	|<A HREF="options.html#'writebackup'">'writebackup'</A>| is default on
-
-<A HREF="motion.html#m">m</A>  *<A NAME="+xim"></A><B>+xim</B>*		X input method |<A HREF="mbyte.html#xim">xim</A>|
-
-   *<A NAME="+xfontset"></A><B>+xfontset</B>*		X fontset support |<A HREF="mbyte.html#xfontset">xfontset</A>|
-
-   *<A NAME="+xpm"></A><B>+xpm</B>*		pixmap support
-
-
-							*<A NAME="/dyn"></A><B>/dyn</B>* *<A NAME="E370"></A><B>E370</B>* *<A NAME="E448"></A><B>E448</B>*
-			To some of the features &quot;<A HREF="#/dyn">/dyn</A>&quot; is added when the
-			feature is only available when the related library can
-			be dynamically loaded.
-
-:ve[rsion] {nr}		Is now ignored.  This was previously used to check the
-			version number of a .vimrc file.  It was removed,
-			because you can now use the &quot;<A HREF="eval.html#:if">:if</A>&quot; command for
-			version-dependent behavior.
+							*<A NAME=":ve"></A><B>:ve</B>* *<A NAME=":ver"></A><B>:ver</B>* *<A NAME=":version"></A><B>:version</B>*
+:ve[rsion]		Print editor version and build information.
+			See also |<A HREF="vim_diff.html#feature-compile">feature-compile</A>|.
 
 
 							*<A NAME=":redi"></A><B>:redi</B>* *<A NAME=":redir"></A><B>:redir</B>*
@@ -568,23 +378,23 @@ N  *<A NAME="+wildmenu"></A><B>+wildmenu</B>*		|<A HREF="options.html#'wildmenu'
 			already exists.
 
 :redi[r] @{a-zA-Z}
-:redi[r] @{a-zA-Z}&gt;	Redirect <A HREF="message.html#messages">messages</A> to <A HREF="sponsor.html#register">register</A> {a-z}.  Append to the
-			contents of the <A HREF="sponsor.html#register">register</A> if its name is given
-			<A HREF="change.html#uppercase">uppercase</A> {A-Z}.  The &quot;<A HREF="change.html#&gt;">&gt;</A>&quot; after the <A HREF="sponsor.html#register">register</A> name is
+:redi[r] @{a-zA-Z}&gt;	Redirect <A HREF="message.html#messages">messages</A> to <A HREF="intro.html#register">register</A> {a-z}.  Append to the
+			contents of the <A HREF="intro.html#register">register</A> if its name is given
+			<A HREF="change.html#uppercase">uppercase</A> {A-Z}.  The &quot;<A HREF="change.html#&gt;">&gt;</A>&quot; after the <A HREF="intro.html#register">register</A> name is
 			optional.
-:redi[r] @{a-z}&gt;&gt;	Append <A HREF="message.html#messages">messages</A> to <A HREF="sponsor.html#register">register</A> {a-z}.
+:redi[r] @{a-z}&gt;&gt;	Append <A HREF="message.html#messages">messages</A> to <A HREF="intro.html#register">register</A> {a-z}.
 
 :redi[r] @*&gt;		
 :redi[r] @+&gt;		Redirect <A HREF="message.html#messages">messages</A> to the selection or <A HREF="provider.html#clipboard">clipboard</A>. For
-			backward compatibility, the &quot;<A HREF="change.html#&gt;">&gt;</A>&quot; after the <A HREF="sponsor.html#register">register</A>
+			backward compatibility, the &quot;<A HREF="change.html#&gt;">&gt;</A>&quot; after the <A HREF="intro.html#register">register</A>
 			name can be omitted. See |<A HREF="provider.html#quotestar">quotestar</A>| and |<A HREF="provider.html#quoteplus">quoteplus</A>|.
 :redi[r] @*&gt;&gt;		
 :redi[r] @+&gt;&gt;		Append <A HREF="message.html#messages">messages</A> to the selection or <A HREF="provider.html#clipboard">clipboard</A>.
 
-:redi[r] @&quot;&gt;		Redirect <A HREF="message.html#messages">messages</A> to the unnamed <A HREF="sponsor.html#register">register</A>. For
-			backward compatibility, the &quot;<A HREF="change.html#&gt;">&gt;</A>&quot; after the <A HREF="sponsor.html#register">register</A>
+:redi[r] @&quot;&gt;		Redirect <A HREF="message.html#messages">messages</A> to the unnamed <A HREF="intro.html#register">register</A>. For
+			backward compatibility, the &quot;<A HREF="change.html#&gt;">&gt;</A>&quot; after the <A HREF="intro.html#register">register</A>
 			name can be omitted.
-:redi[r] @&quot;&gt;&gt;		Append <A HREF="message.html#messages">messages</A> to the unnamed <A HREF="sponsor.html#register">register</A>.
+:redi[r] @&quot;&gt;&gt;		Append <A HREF="message.html#messages">messages</A> to the unnamed <A HREF="intro.html#register">register</A>.
 
 :redi[r] =&gt; {var}	Redirect <A HREF="message.html#messages">messages</A> to a variable.  If the variable
 			doesn't exist, then <A HREF="motion.html#it">it</A> is created.  If the variable
@@ -621,7 +431,20 @@ N  *<A NAME="+wildmenu"></A><B>+wildmenu</B>*		|<A HREF="options.html#'wildmenu'
 			The <A HREF="pattern.html#pattern">pattern</A> is matched against the relevant part of
 			the output, not necessarily the whole line. Only some
 			commands support filtering, try <A HREF="motion.html#it">it</A> out to check if <A HREF="motion.html#it">it</A>
-			works.
+			works. Some of the commands that support filtering:
+			   |<A HREF="#:#">:#</A>|          - <A HREF="change.html#filter">filter</A> whole line
+			   |<A HREF="quickfix.html#:clist">:clist</A>|      - <A HREF="change.html#filter">filter</A> by file name or module name
+			   |<A HREF="map.html#:command">:command</A>|    - <A HREF="change.html#filter">filter</A> by command name
+			   |<A HREF="windows.html#:files">:files</A>|      - <A HREF="change.html#filter">filter</A> by file name
+			   |<A HREF="syntax.html#:highlight">:highlight</A>|  - <A HREF="change.html#filter">filter</A> by highlight group
+			   |<A HREF="motion.html#:jumps">:jumps</A>|      - <A HREF="change.html#filter">filter</A> by file name
+			   |<A HREF="eval.html#:let">:let</A>|        - <A HREF="change.html#filter">filter</A> by variable name
+			   |<A HREF="#:list">:list</A>|       - <A HREF="change.html#filter">filter</A> whole line
+			   |<A HREF="quickfix.html#:llist">:llist</A>|      - <A HREF="change.html#filter">filter</A> by file name or module name
+			   |<A HREF="motion.html#:marks">:marks</A>|      - <A HREF="change.html#filter">filter</A> by text in the current file,
+					   or file name for other files
+			   |<A HREF="starting.html#:oldfiles">:oldfiles</A>|   - <A HREF="change.html#filter">filter</A> by file name
+			   |<A HREF="options.html#:set">:set</A>|        - <A HREF="change.html#filter">filter</A> by variable name
 
 			Only normal <A HREF="message.html#messages">messages</A> are filtered, error <A HREF="message.html#messages">messages</A> are
 			not.
@@ -652,14 +475,9 @@ N  *<A NAME="+wildmenu"></A><B>+wildmenu</B>*		|<A HREF="options.html#'wildmenu'
 <B>			    :silent! /^begin</B>
 <B>			    :if v:errmsg != ""</B>
 <B>			    : ... pattern was not found</B>
- 			&quot;<A HREF="#:silent">:silent</A>&quot; will also avoid the <A HREF="message.html#hit-enter">hit-enter</A> prompt.  When
-			using this for an external command, this may cause the
-			screen to be messed up.  Use |<A HREF="#CTRL-L">CTRL-L</A>| to clean <A HREF="motion.html#it">it</A> up
-			then.
-			&quot;<A HREF="#:silent">:silent</A> menu ...&quot; defines a menu that will not echo a
-			<A HREF="cmdline.html#Command-line">Command-line</A> command.  The command will still produce
-			<A HREF="message.html#messages">messages</A> though.  Use &quot;<A HREF="#:silent">:silent</A>&quot; in the command itself
-			to avoid that: &quot;<A HREF="#:silent">:silent</A> menu <A HREF="eval.html#...">...</A>. <A HREF="#:silent">:silent</A> command&quot;.
+ 			&quot;<A HREF="#:silent">:silent</A>&quot; also skips the <A HREF="message.html#hit-enter">hit-enter</A> prompt.
+			Dialogs that prompt for user input (|<A HREF="eval.html#confirm()">confirm()</A>|,
+			<A HREF="options.html#'swapfile'">'swapfile'</A>, …) are never silent.
 
 
 						*<A NAME=":uns"></A><B>:uns</B>* *<A NAME=":unsilent"></A><B>:unsilent</B>*
@@ -705,7 +523,6 @@ or an <A HREF="autocmd.html#autocommand">autocommand</A> will also display where
 defined manually then there will be no &quot;Last set&quot; message.  When <A HREF="motion.html#it">it</A> was
 defined while executing a function, user command or <A HREF="autocmd.html#autocommand">autocommand</A>, the <A HREF="usr_41.html#script">script</A> in
 which <A HREF="motion.html#it">it</A> was defined is reported.
-{not available when compiled without the |<A HREF="#+eval">+eval</A>| feature}
 
 
 							*<A NAME="K"></A><B>K</B>*
@@ -748,17 +565,18 @@ which <A HREF="motion.html#it">it</A> was defined is reported.
 
 
 [N]gs							*<A NAME="gs"></A><B>gs</B>* *<A NAME=":sl"></A><B>:sl</B>* *<A NAME=":sleep"></A><B>:sleep</B>*
-:[N]sl[eep] [N]	[m]	Do nothing for [N] seconds.  When [m] is included,
-			sleep for [N] milliseconds.  The <A HREF="intro.html#count">count</A> for &quot;<A HREF="#gs">gs</A>&quot; always
-			uses seconds.  The default is one second.
+:[N]sl[eep] [N]	[m]	Do nothing for [N] seconds, or [N] milliseconds if [m]
+			was given.  &quot;<A HREF="#gs">gs</A>&quot; always uses seconds.
+			Default is one second.
 <B>			     :sleep	     "sleep for one second</B>
 <B>			     :5sleep	     "sleep for five seconds</B>
 <B>			     :sleep 100m     "sleep for a hundred milliseconds</B>
 <B>			     10gs	     "sleep for ten seconds</B>
- 			Can be interrupted with <A HREF="pattern.html#CTRL-C">CTRL-C</A> (CTRL-Break on Windows).
+ 			Can be interrupted with <A HREF="pattern.html#CTRL-C">CTRL-C</A>.
 			&quot;<A HREF="#gs">gs</A>&quot; stands for &quot;goto sleep&quot;.
 			While sleeping the cursor is positioned in the text,
 			if at a visible position.
+			Queued <A HREF="message.html#messages">messages</A> are processed during the sleep.
 
 ==============================================================================
 
@@ -789,5 +607,11 @@ LessInitFunc in your <A HREF="starting.html#vimrc">vimrc</A>, for example:
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
+
+    <footer>
+      <div class="container">
+        Generated Wed Sep 18 20:06:13 UTC 2019 from <a href="https://github.com/neovim/neovim/commit/1070c092c7bf989f261047b861165e61e94c1941"><code>1070c09</code></a>.
+      </div>
+    </footer>
+  </body>
 </html>

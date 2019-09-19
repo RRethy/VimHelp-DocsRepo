@@ -2,10 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Nvim documentation: digraph</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.0/normalize.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="/css/main.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
   </head>
   <body>
-                <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
+    <header class="navbar">
+      <div class="container">
+        <nav class="navbar">
+          <div class="container-fluid">
+            <div class="navbar-header">
+
+              <a href="/" class="navbar-brand">
+                <img src="/images/logo@2x.png" id="navbar-logo" alt="Neovim">
+              </a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
 
     <div class="container">
       <h1>Nvim documentation: digraph</h1>
@@ -52,9 +76,6 @@ An alternative is using the <A HREF="options.html#'keymap'">'keymap'</A> option.
 			first character, <A HREF="motion.html#it">it</A> has a special meaning in the
 			future.
 
-Vim is normally compiled with the |<A HREF="various.html#+digraphs">+digraphs</A>| feature.  If the feature is
-disabled, the &quot;:digraph&quot; command will display an error message.
-
 Example of the output of &quot;<A HREF="#:digraphs">:digraphs</A>&quot;:
 <B> TH Þ  222  ss ß  223  a! à  224  a' á  225  a&gt; â  226  a? ã  227  a: ä  228</B>
 
@@ -74,18 +95,9 @@ conversion to be available, <A HREF="motion.html#it">it</A> might fail.  For the
 &quot;10&quot;.  That's because NUL characters are internally represented with a NL
 character.  When you write the file <A HREF="motion.html#it">it</A> will become a NUL character.
 
-When Vim was compiled without the |<A HREF="various.html#+multi_byte">+multi_byte</A>| feature, you need to specify
-the character in the encoding given with <A HREF="options.html#'encoding'">'encoding'</A>.  You might want to use
-something like this:
-
-<B>	if has("multi_byte")</B>
-<B>		digraph oe 339</B>
-<B>	elseif &amp;encoding == "iso-8859-15"</B>
-<B>		digraph oe 189</B>
-<B>	endif</B>
-
-This defines the &quot;oe&quot; <A HREF="#digraph">digraph</A> for a character that is number 339 in <A HREF="mbyte.html#Unicode">Unicode</A>
-and 189 in latin9 (iso-8859-15).
+Example:
+<B>	digraph oe 339</B>
+This defines the &quot;oe&quot; <A HREF="#digraph">digraph</A> for a character that is number 339 in <A HREF="mbyte.html#Unicode">Unicode</A>.
 
 ==============================================================================
 
@@ -120,7 +132,7 @@ For CTRL-K, there is one general <A HREF="#digraph">digraph</A>: CTRL-K <A HREF=
 
 The <A HREF="intro.html#&lt;Esc&gt;">&lt;Esc&gt;</A> character cannot be part of a <A HREF="#digraph">digraph</A>.  When hitting <A HREF="intro.html#&lt;Esc&gt;">&lt;Esc&gt;</A>, Vim
 stops <A HREF="#digraph">digraph</A> entry and ends <A HREF="insert.html#Insert">Insert</A> mode or <A HREF="cmdline.html#Command-line">Command-line</A> mode, just like
-hitting an <A HREF="intro.html#&lt;Esc&gt;">&lt;Esc&gt;</A> out of <A HREF="#digraph">digraph</A> context.  Use <A HREF="visual.html#CTRL-V">CTRL-V</A> 155 to enter meta-ESC
+hitting an <A HREF="intro.html#&lt;Esc&gt;">&lt;Esc&gt;</A> out of <A HREF="#digraph">digraph</A> <A HREF="repeat.html#context">context</A>.  Use <A HREF="visual.html#CTRL-V">CTRL-V</A> 155 to enter meta-ESC
 (CSI).
 
 If you accidentally typed an '<A HREF="insert.html#a">a</A>' that should be an '<A HREF="motion.html#e">e</A>', you will type '<A HREF="insert.html#a">a</A>' <A HREF="motion.html#&lt;BS&gt;">&lt;BS&gt;</A>
@@ -130,11 +142,14 @@ this, you will have to type <A HREF="motion.html#&lt;BS&gt;">&lt;BS&gt;</A> <A H
 
 You may have problems using Vim with characters which have a value above 128.
 For example: You insert ue (u-umlaut) and the editor echoes \334 in <A HREF="insert.html#Insert">Insert</A>
-mode.  After leaving the <A HREF="insert.html#Insert">Insert</A> mode everything is fine.  Note that fmt
-removes all characters with a value above 128 from the text being formatted.
-On some Unix systems this means you have to define the environment-variable
-LC_CTYPE.  If you are using csh, then put the following line in your .cshrc:
-<B>	setenv LC_CTYPE iso_8859_1</B>
+mode.  After leaving the <A HREF="insert.html#Insert">Insert</A> mode everything is fine.  On some Unix systems
+this means you have to define the environment-variable LC_CTYPE.  If you are
+using csh, then put the following line in your .cshrc:
+<B>	setenv LC_CTYPE en_US.utf8</B>
+(or similar for a different language or country). The value must be a valid
+<A HREF="mbyte.html#locale">locale</A> on your system, i.e. on Unix-like systems <A HREF="motion.html#it">it</A> must be present in the
+output of
+<B>	locale -a</B>
 
 ==============================================================================
 
@@ -179,8 +194,7 @@ a standard meaning:
 Example: a: is ä  and <A HREF="insert.html#o">o</A>: is ö
 
 These are the RFC1345 <A HREF="#digraphs">digraphs</A> for the one-byte characters.  See the output of
-&quot;<A HREF="#:digraphs">:digraphs</A>&quot; for the others.  The characters above 255 are only available when
-Vim was compiled with the |<A HREF="various.html#+multi_byte">+multi_byte</A>| feature.
+&quot;<A HREF="#:digraphs">:digraphs</A>&quot; for the others.
 
 EURO
 
@@ -244,7 +258,7 @@ $	DO	0x24	 36	DOLLAR SIGN
 }	!)	0x7d	125	RIGHT CURLY BRACKET
 ~	''?	0x7e	126	TILDE
 ^?	DT	0x7f	127	DELETE (DEL)
-<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="621c22">[email&#160;protected]</a>	PA	0x80	128	PADDING CHARACTER (PAD)
+<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="ccb28c">[email&#160;protected]</a>	PA	0x80	128	PADDING CHARACTER (PAD)
 ~A	HO	0x81	129	HIGH OCTET PRESET (HOP)
 ~B	BH	0x82	130	BREAK PERMITTED HERE (BPH)
 ~C	NH	0x83	131	NO BREAK HERE (NBH)
@@ -586,7 +600,7 @@ If your Vim is compiled with |<A HREF="mbyte.html#multibyte">multibyte</A>| supp
 Ω	W*	03A9	0937	GREEK CAPITAL LETTER OMEGA
 Ϊ	J*	03AA	0938	GREEK CAPITAL LETTER IOTA WITH DIALYTIKA
 Ϋ	V*	03AB	0939	GREEK CAPITAL LETTER UPSILON WITH DIALYTIKA
-ά	<A HREF="pi_matchit.html#a&#37;">a&#37;</A>	03AC	0940	GREEK SMALL LETTER ALPHA WITH TONOS
+ά	a&#37;	03AC	0940	GREEK SMALL LETTER ALPHA WITH TONOS
 έ	e&#37;	03AD	0941	GREEK SMALL LETTER EPSILON WITH TONOS
 ή	y&#37;	03AE	0942	GREEK SMALL LETTER ETA WITH TONOS
 ί	i&#37;	03AF	0943	GREEK SMALL LETTER IOTA WITH TONOS
@@ -713,7 +727,7 @@ If your Vim is compiled with |<A HREF="mbyte.html#multibyte">multibyte</A>| supp
 я	ja	044F	1103	CYRILLIC SMALL LETTER YA
 ё	io	0451	1105	CYRILLIC SMALL LETTER IO
 ђ	d&#37;	0452	1106	CYRILLIC SMALL LETTER DJE
-ѓ	<A HREF="pi_matchit.html#g&#37;">g&#37;</A>	0453	1107	CYRILLIC SMALL LETTER GJE
+ѓ	g&#37;	0453	1107	CYRILLIC SMALL LETTER GJE
 є	ie	0454	1108	CYRILLIC SMALL LETTER UKRAINIAN IE
 ѕ	ds	0455	1109	CYRILLIC SMALL LETTER DZE
 і	ii	0456	1110	CYRILLIC SMALL LETTER BYELORUSSIAN-UKRAINIAN I
@@ -1513,5 +1527,11 @@ If your Vim is compiled with |<A HREF="mbyte.html#multibyte">multibyte</A>| supp
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
+
+    <footer>
+      <div class="container">
+        Generated Wed Sep 18 20:06:10 UTC 2019 from <a href="https://github.com/neovim/neovim/commit/1070c092c7bf989f261047b861165e61e94c1941"><code>1070c09</code></a>.
+      </div>
+    </footer>
   <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
 </html>

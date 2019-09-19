@@ -2,10 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Nvim documentation: indent</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.0/normalize.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="/css/main.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
   </head>
   <body>
-                <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
+    <header class="navbar">
+      <div class="container">
+        <nav class="navbar">
+          <div class="container-fluid">
+            <div class="navbar-header">
+
+              <a href="/" class="navbar-brand">
+                <img src="/images/logo@2x.png" id="navbar-logo" alt="Neovim">
+              </a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
 
     <div class="container">
       <h1>Nvim documentation: indent</h1>
@@ -74,12 +98,13 @@ typing certain characters or commands in certain contexts.  Note that this not
 only triggers <A HREF="#C-indenting">C-indenting</A>.  When <A HREF="options.html#'indentexpr'">'indentexpr'</A> is not empty <A HREF="options.html#'indentkeys'">'indentkeys'</A> is
 used instead.  The format of <A HREF="options.html#'cinkeys'">'cinkeys'</A> and <A HREF="options.html#'indentkeys'">'indentkeys'</A> is equal.
 
-The default is &quot;0{,0},0),:,0#,!^F,o,O,e&quot; which specifies that indenting occurs
-<A HREF="motion.html#as">as</A> follows:
+The default is &quot;0{,0},0),0],:,0#,!^F,o,O,e&quot; which specifies that indenting
+occurs <A HREF="motion.html#as">as</A> follows:
 
 	&quot;0{&quot;	if you type '<A HREF="motion.html#{">{</A>' <A HREF="motion.html#as">as</A> the first character in a line
 	&quot;0}&quot;	if you type '<A HREF="motion.html#}">}</A>' <A HREF="motion.html#as">as</A> the first character in a line
 	&quot;0)&quot;	if you type '<A HREF="motion.html#)">)</A>' <A HREF="motion.html#as">as</A> the first character in a line
+	&quot;0]&quot;	if you type '<A HREF="vimindex.html#]">]</A>' <A HREF="motion.html#as">as</A> the first character in a line
 	&quot;<A HREF="cmdline.html#:">:</A>&quot;	if you type '<A HREF="cmdline.html#:">:</A>' after a label or <A HREF="change.html#case">case</A> statement
 	&quot;0#&quot;	if you type '<A HREF="pattern.html##">#</A>' <A HREF="motion.html#as">as</A> the first character in a line
 	&quot;!^F&quot;	if you type <A HREF="scroll.html#CTRL-F">CTRL-F</A> (which is not inserted)
@@ -510,7 +535,7 @@ The examples below assume a <A HREF="options.html#'shiftwidth'">'shiftwidth'</A>
 	      using &quot;(0&quot; or &quot;u0&quot;, respectively and the unclosed parentheses is
 	      the last non-white character in its line and <A HREF="motion.html#it">it</A> is not the
 	      closing parentheses, indent the following line N characters
-	      relative to the outer context (i.e. start of the line or the
+	      relative to the outer <A HREF="repeat.html#context">context</A> (i.e. start of the line or the
 	      next unclosed parentheses).  (default: 0).
 
 		cino=(0			   cino=(0,W4
@@ -525,7 +550,7 @@ The examples below assume a <A HREF="options.html#'shiftwidth'">'shiftwidth'</A>
 	kN    When in unclosed parentheses which follow &quot;if&quot;, &quot;for&quot; or
 	      &quot;while&quot; and N is non-zero, overrides the behaviour defined by
 	      &quot;(N&quot;: causes the indent to be N characters relative to the outer
-	      context (i.e. the line where &quot;if&quot;, &quot;for&quot; or &quot;while&quot; is).  Has
+	      <A HREF="repeat.html#context">context</A> (i.e. the line where &quot;if&quot;, &quot;for&quot; or &quot;while&quot; is).  Has
 	      no effect on deeper levels of nesting.  Affects flags like &quot;wN&quot;
 	      only for the &quot;if&quot;, &quot;for&quot; and &quot;while&quot; conditions.  If 0, defaults
 	      to behaviour defined by the &quot;(N&quot; flag.  (default: 0).
@@ -641,8 +666,9 @@ The basics for using flexible indenting are explained in section |<A HREF="usr_3
 user manual.
 
 If you want to write your own indent file, <A HREF="motion.html#it">it</A> must set the <A HREF="options.html#'indentexpr'">'indentexpr'</A>
-option.  Setting the <A HREF="options.html#'indentkeys'">'indentkeys'</A> option is often useful.  See the
-$VIMRUNTIME/indent directory for examples.
+option.  Setting the <A HREF="options.html#'indentkeys'">'indentkeys'</A> option is often useful.
+See the $VIMRUNTIME/indent/README.txt file for hints.
+See the $VIMRUNTIME/indent directory for examples.
 
 
 <B><FONT color="#54A23D">REMARKS ABOUT SPECIFIC INDENT FILES </FONT></B>
@@ -656,15 +682,15 @@ the use of square and curly brackets, and otherwise by community convention.
 These conventions are not universally followed, so the Clojure indent <A HREF="usr_41.html#script">script</A>
 offers a few configurable <A HREF="options.html#options">options</A>, listed below.
 
-If the current vim does not include <A HREF="eval.html#searchpairpos()">searchpairpos()</A>, the indent <A HREF="usr_41.html#script">script</A> falls
+If the current vim does not include |<A HREF="eval.html#searchpairpos()">searchpairpos()</A>|, the indent <A HREF="usr_41.html#script">script</A> falls
 back to normal <A HREF="options.html#'lisp'">'lisp'</A> indenting, and the following <A HREF="options.html#options">options</A> are ignored.
 
 
 							*<A NAME="g:clojure_maxlines"></A><B>g:clojure_maxlines</B>*
 
-Set maximum scan distance of <A HREF="eval.html#searchpairpos()">searchpairpos()</A>. Larger values trade performance
-for correctness when dealing with very long forms. A value of 0 will scan
-without <A HREF="vi_diff.html#limits">limits</A>.
+Set maximum scan distance of |<A HREF="eval.html#searchpairpos()">searchpairpos()</A>|. Larger values trade
+performance for correctness when dealing with very long forms. A value of 0
+will scan without <A HREF="vi_diff.html#limits">limits</A>.
 
 <B>	" Default</B>
 <B>	let g:clojure_maxlines = 100</B>
@@ -964,7 +990,7 @@ NOTE:	Indenting will be a bit slower if this option is used because some
 	optimizations won't be available.
 
 
-							*<A NAME="PHP_vintage_case_default_indent"></A><B>PHP_vintage_case_default_indent</B>*
+					*<A NAME="PHP_vintage_case_default_indent"></A><B>PHP_vintage_case_default_indent</B>*
 To indent 'case:' and 'default:' statements in switch() blocks:
 <B>    :let g:PHP_vintage_case_default_indent = 1</B>
 
@@ -993,6 +1019,41 @@ You will obtain the following result:
 
 
 
+					*<A NAME="PHP_IndentFunctionCallParameters"></A><B>PHP_IndentFunctionCallParameters</B>*
+Extra indentation levels to add to parameters in multi-line function calls.
+<B>    let g:PHP_IndentFunctionCallParameters = 1</B>
+
+Function call arguments will indent 1 extra level. For two-space indentation:
+
+<B>    function call_the_thing(</B>
+<B>      $with_this,</B>
+<B>      $and_that</B>
+<B>    ) {</B>
+<B>      $this-&gt;do_the_thing(</B>
+<B>          $with_this,</B>
+<B>          $and_that</B>
+<B>      );</B>
+<B>    }</B>
+
+
+
+				*<A NAME="PHP_IndentFunctionDeclarationParameters"></A><B>PHP_IndentFunctionDeclarationParameters</B>*
+Extra indentation levels to add to arguments in multi-line function <A HREF="intro.html#definitions">definitions</A>.
+<B>    let g:PHP_IndentFunctionDeclarationParameters = 1</B>
+
+Function arguments in declarations will indent 1 extra level. For two-space indentation:
+
+<B>    function call_the_thing(</B>
+<B>        $with_this,</B>
+<B>        $and_that</B>
+<B>    ) {</B>
+<B>      $this-&gt;do_the_thing(</B>
+<B>        $with_this,</B>
+<B>        $and_that</B>
+<B>      );</B>
+<B>    }</B>
+
+
 
 PYTHON							*<A NAME="ft-python-indent"></A><B>ft-python-indent</B>*
 
@@ -1001,16 +1062,21 @@ given are the defaults.  Note that the <A HREF="eval.html#variables">variables</
 that you can change the value of <A HREF="options.html#'shiftwidth'">'shiftwidth'</A> later.
 
 Indent after an open paren:
-<B>	let g:pyindent_open_paren = '&amp;sw * 2'</B>
+<B>	let g:pyindent_open_paren = 'shiftwidth() * 2'</B>
 Indent after a nested paren:
-<B>	let g:pyindent_nested_paren = '&amp;sw'</B>
+<B>	let g:pyindent_nested_paren = 'shiftwidth()'</B>
 Indent for a continuation line:
-<B>	let g:pyindent_continue = '&amp;sw * 2'</B>
+<B>	let g:pyindent_continue = 'shiftwidth() * 2'</B>
 
-The method uses <A HREF="eval.html#searchpair()">searchpair()</A> to look back for unclosed parenthesis.  This can
-sometimes be slow, thus <A HREF="motion.html#it">it</A> timeouts after 150 msec.  If you notice the
+The method uses |<A HREF="eval.html#searchpair()">searchpair()</A>| to look back for unclosed parenthesis.  This
+can sometimes be slow, thus <A HREF="motion.html#it">it</A> timeouts after 150 msec.  If you notice the
 indenting isn't correct, you can set a larger timeout in msec:
 <B>	let g:pyindent_searchpair_timeout = 500</B>
+
+If looking back for unclosed parenthesis is still too slow, especially during
+a copy-paste operation, or if you don't need indenting inside multi-line
+parentheses, you can completely disable this feature:
+<B>	let g:pyindent_disable_parentheses_indenting = 1</B>
 
 
 
@@ -1107,7 +1173,7 @@ Furthermore, setting the variable b:verilog_indent_width to change the
 indenting width (default is 'shiftwidth'):
 
 <B>  let b:verilog_indent_width = 4</B>
-<B>  let b:verilog_indent_width = &amp;sw * 2</B>
+<B>  let b:verilog_indent_width = shiftwidth() * 2</B>
 
 In addition, you can turn the <A HREF="starting.html#verbose">verbose</A> mode for debug issue:
 
@@ -1230,7 +1296,7 @@ VIM							*<A NAME="ft-vim-indent"></A><B>ft-vim-indent</B>*
 For indenting Vim scripts there is one variable that specifies the amount of
 indent for a continuation line, a line that starts with a <A HREF="intro.html#backslash">backslash</A>:
 
-<B>	:let g:vim_indent_cont = &amp;sw * 3</B>
+<B>	:let g:vim_indent_cont = shiftwidth() * 3</B>
 
 Three times shiftwidth is the default value.
 
@@ -1238,5 +1304,11 @@ Three times shiftwidth is the default value.
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
+
+    <footer>
+      <div class="container">
+        Generated Wed Sep 18 20:06:11 UTC 2019 from <a href="https://github.com/neovim/neovim/commit/1070c092c7bf989f261047b861165e61e94c1941"><code>1070c09</code></a>.
+      </div>
+    </footer>
   </body>
 </html>

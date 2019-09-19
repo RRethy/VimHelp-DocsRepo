@@ -2,10 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Nvim documentation: starting</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.0/normalize.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="/css/main.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
   </head>
   <body>
-                <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
+    <header class="navbar">
+      <div class="container">
+        <nav class="navbar">
+          <div class="container-fluid">
+            <div class="navbar-header">
+
+              <a href="/" class="navbar-brand">
+                <img src="/images/logo@2x.png" id="navbar-logo" alt="Neovim">
+              </a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
 
     <div class="container">
       <h1>Nvim documentation: starting</h1>
@@ -113,6 +137,12 @@ argument.
 		See |<A HREF="#info-message">info-message</A>| about capturing the text.
 
 
+							*<A NAME="--clean"></A><B>--clean</B>*
+<A HREF="#--clean">--clean</A>		Equivalent to &quot;<A HREF="#-u">-u</A> NONE <A HREF="#-i">-i</A> NONE&quot;:
+		- Skips initializations from files and environment <A HREF="eval.html#variables">variables</A>.
+		- No <A HREF="options.html#'shada'">'shada'</A> file is read or written.
+
+
 							*<A NAME="--noplugin"></A><B>--noplugin</B>*
 <A HREF="#--noplugin">--noplugin</A>	Skip loading plugins.  Resets the <A HREF="options.html#'loadplugins'">'loadplugins'</A> option.
 		Note that the |<A HREF="#-u">-u</A>| argument may also disable loading plugins:
@@ -128,7 +158,7 @@ argument.
 		This can be used to find out where time is spent while loading
 		your |<A HREF="init.html">init.vim</A>|, plugins and opening the first file.
 		When {fname} already exists new <A HREF="message.html#messages">messages</A> are appended.
-		(Only available when compiled with the |<A HREF="various.html#+startuptime">+startuptime</A>|
+		(Only available when compiled with the |<A HREF="intro.html#+startuptime">+startuptime</A>|
 		feature).
 
 
@@ -229,35 +259,33 @@ argument.
 <A HREF="#-E">-E</A>		Start Nvim in <A HREF="intro.html#Ex">Ex</A> mode |<A HREF="intro.html#gQ">gQ</A>|.
 
 		If stdin is not a TTY:
-		  <A HREF="#-e">-e</A> reads stdin <A HREF="motion.html#as">as</A> <A HREF="intro.html#Ex">Ex</A> commands.
+		  <A HREF="#-e">-e</A> reads/executes stdin <A HREF="motion.html#as">as</A> <A HREF="intro.html#Ex">Ex</A> commands.
 		  <A HREF="#-E">-E</A> reads stdin <A HREF="motion.html#as">as</A> text (into buffer 1).
 
 
-							*<A NAME="-es"></A><B>-es</B>* *<A NAME="-Es"></A><B>-Es</B>*
+<A HREF="#-es">-es</A>						*<A NAME="-es"></A><B>-es</B>* *<A NAME="-Es"></A><B>-Es</B>* *<A NAME="-s-ex"></A><B>-s-ex</B>* *<A NAME="silent-mode"></A><B>silent-mode</B>*
+<A HREF="#-Es">-Es</A>		Silent mode (no UI), for scripting.  Unrelated to |<A HREF="#-s">-s</A>|.
+		Disables most prompts, <A HREF="message.html#messages">messages</A>, warnings and <A HREF="message.html#errors">errors</A>.
 
-<A HREF="#-es">-es</A>							*<A NAME="-s-ex"></A><B>-s-ex</B>* *<A NAME="silent-mode"></A><B>silent-mode</B>*
-<A HREF="#-Es">-Es</A>		Silent or batch mode: execute <A HREF="intro.html#Ex">Ex</A> commands from a file instead
-		of a <A HREF="nvim_terminal_emulator.html#terminal">terminal</A>.  Special <A HREF="change.html#case">case</A> of |<A HREF="#-s">-s</A>| (which takes an argument
-		while &quot;<A HREF="#-es">-es</A>&quot; doesn't).  Disables most prompts, <A HREF="message.html#messages">messages</A>,
-		warnings and <A HREF="message.html#errors">errors</A>.
-		Output of these commands is displayed (to stdout):
+		<A HREF="#-es">-es</A> reads/executes stdin <A HREF="motion.html#as">as</A> <A HREF="intro.html#Ex">Ex</A> commands.
+<B>			printf "put ='foo'\n%%print\n" | nvim -es</B>
+
+ 		<A HREF="#-Es">-Es</A> reads stdin <A HREF="motion.html#as">as</A> text (into buffer 1).  Use |<A HREF="#-c">-c</A>| or &quot;<A HREF="motion.html#+">+</A>&quot; to
+		send commands.
+<B>			printf "foo\n" | nvim -Es +"%print"</B>
+
+ 		Output of these commands is displayed (to stdout):
 			<A HREF="various.html#:print">:print</A>
 			<A HREF="various.html#:list">:list</A>
 			<A HREF="various.html#:number">:number</A>
-			<A HREF="options.html#:set">:set</A>      <A HREF="options.html#'to'">to</A> display option values.
-		When <A HREF="options.html#'verbose'">'verbose'</A> is set <A HREF="message.html#messages">messages</A> are printed to stderr, e.g.:
+			<A HREF="options.html#:set">:set</A>      (to display option values)
+		When <A HREF="options.html#'verbose'">'verbose'</A> is set <A HREF="message.html#messages">messages</A> are printed to stderr.
 <B>			echo foo | nvim -V1 -es</B>
- 
-		<A HREF="autocmd.html#User">User</A> |<A HREF="init.html">init.vim</A>| is skipped (unless given with |<A HREF="#-u">-u</A>|).
-		|<A HREF="term.html#$TERM">$TERM</A>| is not used.
 
-		If stdin is not a TTY:
-		  <A HREF="#-es">-es</A> reads stdin <A HREF="motion.html#as">as</A> <A HREF="intro.html#Ex">Ex</A> commands.
-		  <A HREF="#-Es">-Es</A> reads stdin <A HREF="motion.html#as">as</A> text (into buffer 1).
+ 		<A HREF="autocmd.html#User">User</A> |<A HREF="init.html">init.vim</A>| is skipped (unless given with |<A HREF="#-u">-u</A>|).
+		Swap file is skipped (like |<A HREF="#-n">-n</A>|).
+		<A HREF="autocmd.html#User">User</A> |<A HREF="#shada">shada</A>| is loaded (unless &quot;<A HREF="#-i">-i</A> NONE&quot; is given).
 
-		Example:
-<B>			printf "put ='foo'\n%%print\n" | nvim -es</B>
- 
 
 							*<A NAME="-b"></A><B>-b</B>*
 <A HREF="#-b">-b</A>		Binary mode.  File I/O will only recognize <A HREF="motion.html#&lt;NL&gt;">&lt;NL&gt;</A> to separate
@@ -274,10 +302,6 @@ argument.
 
 							*<A NAME="-A"></A><B>-A</B>*
 <A HREF="#-A">-A</A>		<A HREF="arabic.html#Arabic">Arabic</A> mode.  Sets the <A HREF="options.html#'arabic'">'arabic'</A> option on.
-
-
-							*<A NAME="-F"></A><B>-F</B>*
-<A HREF="#-F">-F</A>		<A HREF="farsi.html#Farsi">Farsi</A> mode.  Sets the <A HREF="options.html#'fkmap'">'fkmap'</A> and <A HREF="options.html#'rightleft'">'rightleft'</A> <A HREF="options.html#options">options</A> on.
 
 
 							*<A NAME="-H"></A><B>-H</B>*
@@ -303,11 +327,10 @@ argument.
 							*<A NAME="-D"></A><B>-D</B>*
 <A HREF="#-D">-D</A>		Debugging.  Go to debugging mode when executing the first
 		command from a <A HREF="usr_41.html#script">script</A>. |<A HREF="repeat.html#debug-mode">debug-mode</A>|
-		{not available when compiled without the |<A HREF="various.html#+eval">+eval</A>| feature}
 
 
 							*<A NAME="-n"></A><B>-n</B>*
-<A HREF="#-n">-n</A>		No swap file will be used.  Recovery after a crash will be
+<A HREF="#-n">-n</A>		No |<A HREF="recover.html#swap-file">swap-file</A>| will be used.  Recovery after a crash will be
 		impossible.  Handy if you want to view or edit a file on a
 		very slow medium (e.g., a floppy).
 		Can also be done with &quot;<A HREF="options.html#:set">:set</A> <A HREF="options.html#'updatecount'">updatecount</A>=0&quot;.  You can switch <A HREF="motion.html#it">it</A>
@@ -351,19 +374,21 @@ argument.
 
 							*<A NAME="-u"></A><B>-u</B>* *<A NAME="E282"></A><B>E282</B>*
 <A HREF="#-u">-u</A> {vimrc}	The file {vimrc} is read for initializations.  Most other
-		initializations are skipped; see |<A HREF="#initialization">initialization</A>|.  This can
-		be used to start Vim in a special mode, with special
+		initializations are skipped; see |<A HREF="#initialization">initialization</A>|.
+
+		This can be used to start Vim in a special mode, with special
 		mappings and settings.  A shell alias can be used to make
 		this easy to use.  For example:
 <B>			alias vimc vim -u ~/.config/nvim/c_init.vim !*</B>
  		Also consider using autocommands; see |<A HREF="autocmd.html#autocommand">autocommand</A>|.
-		When {vimrc} is equal to &quot;NONE&quot; (all uppercase), all
-		initializations from files and environment <A HREF="eval.html#variables">variables</A> are
-		skipped, including reading the |<A HREF="ginit.html">ginit.vim</A>| file when the <A HREF="gui.html#GUI">GUI</A>
-		starts.  Plugins and <A HREF="syntax.html#syntax">syntax</A> highlighting are also skipped.
-		When {vimrc} is equal to &quot;NORC&quot; (all uppercase), this has the
-		same effect <A HREF="motion.html#as">as</A> &quot;NONE&quot;, but plugins and <A HREF="syntax.html#syntax">syntax</A> highlighting are
-		not skipped.
+
+		When {vimrc} is &quot;NONE&quot; (all uppercase), all initializations
+		from files and environment <A HREF="eval.html#variables">variables</A> are skipped.  Plugins and
+		<A HREF="syntax.html#syntax">syntax</A> highlighting are also skipped.
+
+		When {vimrc} is &quot;NORC&quot; (all uppercase), this has the same
+		effect <A HREF="motion.html#as">as</A> &quot;NONE&quot;, but plugins and <A HREF="syntax.html#syntax">syntax</A> highlighting are not
+		skipped.
 
 
 							*<A NAME="-i"></A><B>-i</B>*
@@ -375,7 +400,7 @@ argument.
 
 							*<A NAME="-s"></A><B>-s</B>*
 <A HREF="#-s">-s</A> {scriptin}	Read <A HREF="usr_41.html#script">script</A> file {scriptin}, interpreting characters <A HREF="motion.html#as">as</A>
-		<A HREF="intro.html#Normal-mode">Normal-mode</A> input.  The same can be done with &quot;:source!&quot;:
+		<A HREF="intro.html#Normal-mode">Normal-mode</A> input.  The same can be done with &quot;<A HREF="repeat.html#:source!">:source!</A>&quot;:
 <B>			:source! {scriptin}</B>
  		Reads from stdin if {scriptin} is &quot;<A HREF="motion.html#-">-</A>&quot;:
 <B>			echo "ifoo" | nvim -s -</B>
@@ -394,7 +419,7 @@ argument.
 <A HREF="#-w">-w</A> {scriptout}	All the characters that you type are recorded in the file
 		&quot;scriptout&quot;, until you exit Vim.  This is useful if you want
 		to create a <A HREF="usr_41.html#script">script</A> file to be used with &quot;vim -s&quot; or
-		&quot;:source!&quot;.  When the &quot;scriptout&quot; file already exists, new
+		&quot;<A HREF="repeat.html#:source!">:source!</A>&quot;.  When the &quot;scriptout&quot; file already exists, new
 		characters are appended.  See also |<A HREF="repeat.html#complex-repeat">complex-repeat</A>|.
 		{scriptout} cannot start with a digit.
 
@@ -409,38 +434,36 @@ argument.
 
 							*<A NAME="--embed"></A><B>--embed</B>*
 <A HREF="#--embed">--embed</A>		Use stdin/stdout <A HREF="motion.html#as">as</A> a msgpack-RPC <A HREF="channel.html#channel">channel</A>, so applications can
-		embed and <A HREF="intro.html#control">control</A> Nvim via the |<A HREF="msgpack_rpc.html#rpc-api">rpc-api</A>|.
+		embed and <A HREF="intro.html#control">control</A> Nvim via the <A HREF="api.html#RPC">RPC</A> |<A HREF="api.html#API">API</A>|.
 
-		By default <A HREF="nvim.html#nvim">nvim</A> will wait for the embedding process to call
-		`nvim_ui_attach` before sourcing <A HREF="#startup">startup</A> files and reading
-		<A HREF="windows.html#buffers">buffers</A>.  This is so that UI can show <A HREF="#startup">startup</A> <A HREF="message.html#messages">messages</A> and
-		possible swap file dialog for the first loaded file.  The
-		process can <A HREF="diff.html#do">do</A> requests before the `nvim_ui_attach`, for
-		instance a `nvim_get_api_info` call so that UI features can be
-		safely detected by the UI before attaching.
+		Waits for the client (&quot;embedder&quot;) to call |<A HREF="api.html#nvim_ui_attach()">nvim_ui_attach()</A>|
+		before sourcing <A HREF="#startup">startup</A> files and reading <A HREF="windows.html#buffers">buffers</A>, so that UIs
+		can deterministically handle (display) early <A HREF="message.html#messages">messages</A>,
+		dialogs, etc.  The client can <A HREF="diff.html#do">do</A> other requests before
+		`nvim_ui_attach` (e.g. `nvim_get_api_info` for feature-detection).
+		During this pre-startup phase the user <A HREF="#config">config</A> is of course not
+		available (similar to `--cmd`).
 
-		See |<A HREF="ui.html#ui-startup">ui-startup</A>| for more information about UI startup.
+		Embedders _not_ using the <A HREF="ui.html#UI">UI</A> protocol must pass YXXY--headless|:
+<B>		    nvim --embed --headless</B>
 
-		To embed <A HREF="nvim.html#nvim">nvim</A> without using the UI protocol, `--headless` should
-		be supplied together with `--embed`. Then <A HREF="#initialization">initialization</A> is
-		performed without waiting for an UI. This is also equivalent
-		to the following alternative:
-<B>			nvim --headless --cmd "call stdioopen({'rpc': v:true})"</B>
- 
-		See also |<A HREF="channel.html#channel-stdio">channel-stdio</A>|.
+ 		Then <A HREF="#startup">startup</A> will continue without waiting for `nvim_ui_attach`.
+		This is equivalent to:
+<B>		    nvim --headless --cmd "call stdioopen({'rpc': v:true})"</B>
+
+ 		See also: |<A HREF="ui.html#ui-startup">ui-startup</A>| |<A HREF="channel.html#channel-stdio">channel-stdio</A>|
 
 
 							*<A NAME="--headless"></A><B>--headless</B>*
-<A HREF="#--headless">--headless</A> 	Start <A HREF="nvim.html#nvim">nvim</A> without an UI. The <A HREF="term.html#TUI">TUI</A> is not used, so stdio
-		can be used <A HREF="motion.html#as">as</A> an arbitrary communication <A HREF="channel.html#channel">channel</A>.
-		|<A HREF="channel.html#channel-stdio">channel-stdio</A>| When used together with `--embed`, <A HREF="diff.html#do">do</A> not wait
-		for the embedder to attach an UI.
+<A HREF="#--headless">--headless</A> 	Start without <A HREF="ui.html#UI">UI</A>, and <A HREF="diff.html#do">do</A> not wait for `nvim_ui_attach`. The
+		builtin <A HREF="term.html#TUI">TUI</A> is not used, so stdio works <A HREF="motion.html#as">as</A> an arbitrary
+		communication channel. |<A HREF="channel.html#channel-stdio">channel-stdio</A>| 
 
 		Also useful for scripting (tests) to see <A HREF="message.html#messages">messages</A> that would
 		not be printed by |<A HREF="#-es">-es</A>|.
 
-		To detect if a UI is available, check if |<A HREF="api.html#nvim_list_uis()">nvim_list_uis()</A>| is
-		empty in or after |<A HREF="autocmd.html#VimEnter">VimEnter</A>|.
+		To detect if a <A HREF="ui.html#UI">UI</A> is available, check if |<A HREF="api.html#nvim_list_uis()">nvim_list_uis()</A>| is
+		empty during or after |<A HREF="autocmd.html#VimEnter">VimEnter</A>|.
 
 		To read stdin <A HREF="motion.html#as">as</A> text, &quot;<A HREF="motion.html#-">-</A>&quot; must be given explicitly:
 		<A HREF="#--headless">--headless</A> cannot assume that stdin is just text.
@@ -451,7 +474,7 @@ argument.
 
 
 <A HREF="#--listen">--listen</A> {addr}						*<A NAME="--listen"></A><B>--listen</B>*
-		Start |<A HREF="msgpack_rpc.html#RPC">RPC</A>| server on pipe or TCP address {addr}. Sets the
+		Start |<A HREF="api.html#RPC">RPC</A>| server on pipe or TCP address {addr}. Sets the
 		primary listen address |<A HREF="eval.html#v:servername">v:servername</A>| to {addr}. |<A HREF="eval.html#serverstart()">serverstart()</A>|
 
 ==============================================================================
@@ -474,42 +497,35 @@ accordingly.  Vim proceeds in this order:
 	useful for debugging the initializations.
 
 3. Execute <A HREF="intro.html#Ex">Ex</A> commands, from environment <A HREF="eval.html#variables">variables</A> and/or files
-	An environment variable is read <A HREF="motion.html#as">as</A> one <A HREF="intro.html#Ex">Ex</A> command line, where multiple
-	commands must be separated with '&#124;' or &quot;<A HREF="motion.html#&lt;NL&gt;">&lt;NL&gt;</A>&quot;.
+	An environment variable (e.g. $VIMINIT) is read <A HREF="motion.html#as">as</A> one <A HREF="intro.html#Ex">Ex</A> command
+	line, where multiple commands must be separated with '&#124;' or <A HREF="motion.html#&lt;NL&gt;">&lt;NL&gt;</A>.
 
-						    *<A NAME="init.vim"></A><B>init.vim</B>* *<A NAME="vimrc"></A><B>vimrc</B>* *<A NAME="exrc"></A><B>exrc</B>*
-	A file that contains <A HREF="#initialization">initialization</A> commands is called a &quot;<A HREF="#vimrc">vimrc</A>&quot; file.
-	Each line in a <A HREF="#vimrc">vimrc</A> file is executed <A HREF="motion.html#as">as</A> an <A HREF="intro.html#Ex">Ex</A> command line.  It is
-	sometimes also referred to <A HREF="motion.html#as">as</A> &quot;<A HREF="#exrc">exrc</A>&quot; file.  They are the same type of
-	file, but &quot;<A HREF="#exrc">exrc</A>&quot; is what <A HREF="intro.html#Vi">Vi</A> always used, &quot;<A HREF="#vimrc">vimrc</A>&quot; is a Vim specific
-	name, &quot;<A HREF="#init.vim">init.vim</A>&quot; is Neovim specific location for <A HREF="#vimrc">vimrc</A> file.  Also see 
-	|<A HREF="usr_05.html#vimrc-intro">vimrc-intro</A>|.
+					*<A NAME="config"></A><B>config</B>* *<A NAME="init.vim"></A><B>init.vim</B>* *<A NAME="vimrc"></A><B>vimrc</B>* *<A NAME="exrc"></A><B>exrc</B>*
+	A file that contains <A HREF="#initialization">initialization</A> commands is generically called
+	a &quot;<A HREF="#vimrc">vimrc</A>&quot; or <A HREF="#config">config</A> file.  Each line in a <A HREF="#vimrc">vimrc</A> file is executed <A HREF="motion.html#as">as</A> an
+	<A HREF="intro.html#Ex">Ex</A> command line.  See also |<A HREF="usr_05.html#vimrc-intro">vimrc-intro</A>| and |<A HREF="#base-directories">base-directories</A>|.
 
-	Places for your personal initializations (see |<A HREF="#base-directories">base-directories</A>|):
-		Unix		$XDG_CONFIG_HOME/nvim/init.vim
-				(default for <A HREF="#$XDG_CONFIG_HOME">$XDG_CONFIG_HOME</A> is ~/.config)
-		Windows		$XDG_CONFIG_HOME/nvim/init.vim
-				(default for <A HREF="#$XDG_CONFIG_HOME">$XDG_CONFIG_HOME</A> is ~/AppData/Local)
+	The Nvim <A HREF="#config">config</A> file is named &quot;<A HREF="#init.vim">init.vim</A>&quot;, located at:
+		Unix		~/.config/nvim/init.vim
+		Windows		~/AppData/Local/nvim/init.vim
+	Or if |<A HREF="#$XDG_CONFIG_HOME">$XDG_CONFIG_HOME</A>| is defined:
+				$XDG_CONFIG_HOME/nvim/init.vim
 
-	RECOMMENDATION: Put all your Vim configuration stuff in the 
-	$HOME/.config/nvim/ directory. That makes <A HREF="motion.html#it">it</A> easy to copy <A HREF="motion.html#it">it</A> to 
-	another system.
-
-	If Vim was started with &quot;<A HREF="#-u">-u</A> filename&quot;, the file &quot;filename&quot; is used.
+	If Nvim was started with &quot;<A HREF="#-u">-u</A> filename&quot;, the file &quot;filename&quot; is used.
 	All following initializations until 4. are skipped. <A HREF="#$MYVIMRC">$MYVIMRC</A> is not
 	set.
-	&quot;vim <A HREF="#-u">-u</A> NORC&quot; can be used to skip these initializations without
-	reading a file.  &quot;vim <A HREF="#-u">-u</A> NONE&quot; also skips plugins and <A HREF="syntax.html#syntax">syntax</A>
+	&quot;<A HREF="nvim.html#nvim">nvim</A> <A HREF="#-u">-u</A> NORC&quot; can be used to skip these initializations without
+	reading a file.  &quot;<A HREF="nvim.html#nvim">nvim</A> <A HREF="#-u">-u</A> NONE&quot; also skips plugins and <A HREF="syntax.html#syntax">syntax</A>
 	highlighting.  |<A HREF="#-u">-u</A>|
 
-	If Vim was started in <A HREF="intro.html#Ex">Ex</A> mode with the &quot;<A HREF="#-s">-s</A>&quot; argument, all following
-	initializations until 4. are skipped.  Only the &quot;<A HREF="#-u">-u</A>&quot; option is
-	interpreted.
+	If Nvim was started with |<A HREF="#-es">-es</A>|, all following initializations until 4.
+	are skipped.
 
-							*<A NAME="system-vimrc"></A><B>system-vimrc</B>*
-     a. For Unix, MS-Windows, and Macintosh, the system <A HREF="#vimrc">vimrc</A> file is read for
-	initializations.  The path of this file is shown with the
-	&quot;<A HREF="various.html#:version">:version</A>&quot; command.  Mostly it's &quot;$VIM/vimrc&quot;.
+						*<A NAME="system-vimrc"></A><B>system-vimrc</B>* *<A NAME="sysinit.vim"></A><B>sysinit.vim</B>*
+     a. The system <A HREF="#vimrc">vimrc</A> file is read for initializations.  If
+	nvim/sysinit.vim file exists in one of $XDG_CONFIG_DIRS, <A HREF="motion.html#it">it</A> will be
+	used.  Otherwise, the system <A HREF="#vimrc">vimrc</A> file is used. The path of this file
+	is shown with the &quot;<A HREF="various.html#:version">:version</A>&quot; command.  Mostly it's &quot;$VIM/sysinit.vim&quot;.
 
 
 						*<A NAME="VIMINIT"></A><B>VIMINIT</B>* *<A NAME="EXINIT"></A><B>EXINIT</B>* *<A NAME="$MYVIMRC"></A><B>$MYVIMRC</B>*
@@ -517,23 +533,17 @@ accordingly.  Vim proceeds in this order:
 	is used, the others are ignored.  The <A HREF="#$MYVIMRC">$MYVIMRC</A> environment variable is
 	set to the file that was first found, unless <A HREF="#$MYVIMRC">$MYVIMRC</A> was already set
 	and when using <A HREF="#VIMINIT">VIMINIT</A>.
-	-  The environment variable <A HREF="#VIMINIT">VIMINIT</A>
-	   The value of $VIMINIT is used <A HREF="motion.html#as">as</A> an <A HREF="intro.html#Ex">Ex</A> command line.
-	-  The user <A HREF="#vimrc">vimrc</A> file: $XDG_CONFIG_HOME/nvim/init.vim.
-	-  Other <A HREF="#vimrc">vimrc</A> file: {xdg_config_dir}/nvim/init.vim where 
+	-  Environment variable $VIMINIT, used <A HREF="motion.html#as">as</A> an <A HREF="intro.html#Ex">Ex</A> command line.
+	-  <A HREF="autocmd.html#User">User</A> |<A HREF="#config">config</A>| file: $XDG_CONFIG_HOME/nvim/init.vim.
+	-  Other <A HREF="#config">config</A> file: {xdg_config_dir}/nvim/init.vim where 
 	   {xdg_config_dir} is one of the directories in $XDG_CONFIG_DIRS.
-	-  The environment variable <A HREF="#EXINIT">EXINIT</A>.
-	   The value of $EXINIT is used <A HREF="motion.html#as">as</A> an <A HREF="intro.html#Ex">Ex</A> command line.
+	-  Environment variable $EXINIT, used <A HREF="motion.html#as">as</A> an <A HREF="intro.html#Ex">Ex</A> command line.
 
-     <A HREF="change.html#c">c</A>. If the <A HREF="options.html#'exrc'">'exrc'</A> option is on (which is NOT the default), the current
-	directory is searched for three files.  The first that exists is used,
+     <A HREF="change.html#c">c</A>. If the <A HREF="deprecated.html#'exrc'">'exrc'</A> option is on (which is NOT the default), the current
+	directory is searched for two files.  The first that exists is used,
 	the others are ignored.
-	-  The file &quot;.nvimrc&quot; (for Unix)
-		    &quot;_nvimrc&quot; (for Win32)
-	-  The file &quot;_nvimrc&quot; (for Unix)
-		    &quot;.nvimrc&quot; (for Win32)
-	-  The file &quot;.exrc&quot;  (for Unix)
-		    &quot;_exrc&quot;  (for Win32)
+	-  The file &quot;.nvimrc&quot;
+	-  The file &quot;.exrc&quot;
 
 4. Enable <A HREF="filetype.html#filetype">filetype</A> and indent plugins.
 	This does the same <A HREF="motion.html#as">as</A> the commands:
@@ -562,8 +572,9 @@ accordingly.  Vim proceeds in this order:
 	Loading plugins won't be done when:
 	- The <A HREF="options.html#'loadplugins'">'loadplugins'</A> option was reset in a <A HREF="#vimrc">vimrc</A> file.
 	- The |<A HREF="#--noplugin">--noplugin</A>| command line argument is used.
+	- The |<A HREF="#--clean">--clean</A>| command line argument is used.
 	- The &quot;-u NONE&quot; command line argument is used |<A HREF="#-u">-u</A>|.
-	- When Vim was compiled without the |<A HREF="various.html#+eval">+eval</A>| feature.
+	- When Vim was compiled without the |<A HREF="intro.html#+eval">+eval</A>| feature.
 	Note that using &quot;<A HREF="#-c">-c</A> 'set noloadplugins&#39;&#34;' doesn't work, because the
 	commands from the command line have not been executed yet.  You can
 	use &quot;--cmd 'set noloadplugins&#39;&#34;' or &quot;--cmd 'set loadplugins&#39;&#34;' |<A HREF="#--cmd">--cmd</A>|.
@@ -590,18 +601,14 @@ accordingly.  Vim proceeds in this order:
 	If the &quot;<A HREF="#-b">-b</A>&quot; flag was given to Vim, the <A HREF="options.html#options">options</A> for binary editing will
 	be set now.  See |<A HREF="#-b">-b</A>|.
 
-10. Perform <A HREF="gui.html#GUI">GUI</A> initializations
-	Only when starting &quot;gvim&quot;, the <A HREF="gui.html#GUI">GUI</A> initializations will be done.  See
-	|<A HREF="gui.html#gui-init">gui-init</A>|.
-
-11. Read the ShaDa file
+10. Read the ShaDa file
 	See |<A HREF="#shada-file">shada-file</A>|.
 
-12. Read the <A HREF="quickfix.html#quickfix">quickfix</A> file
+11. Read the <A HREF="quickfix.html#quickfix">quickfix</A> file
 	If the &quot;<A HREF="#-q">-q</A>&quot; flag was given to Vim, the <A HREF="quickfix.html#quickfix">quickfix</A> file is read.  If this
 	fails, Vim exits.
 
-13. Open all <A HREF="windows.html#windows">windows</A>
+12. Open all <A HREF="windows.html#windows">windows</A>
 	When the |<A HREF="#-o">-o</A>| flag was given, <A HREF="windows.html#windows">windows</A> will be opened (but not
 	displayed yet).
 	When the |<A HREF="#-p">-p</A>| flag was given, <A HREF="intro.html#tab">tab</A> pages will be created (but not
@@ -610,7 +617,7 @@ accordingly.  Vim proceeds in this order:
 	If the &quot;<A HREF="#-q">-q</A>&quot; flag was given to Vim, the first error is jumped to.
 	Buffers for all <A HREF="windows.html#windows">windows</A> will be loaded.
 
-14. Execute <A HREF="#startup">startup</A> commands
+13. Execute <A HREF="#startup">startup</A> commands
 	If a &quot;<A HREF="#-t">-t</A>&quot; flag was given to Vim, the <A HREF="tagsrch.html#tag">tag</A> is jumped to.
 	The commands given with the |<A HREF="#-c">-c</A>| and |<A HREF="editing.html#+cmd">+cmd</A>| arguments are executed.
 	If the <A HREF="options.html#'insertmode'">'insertmode'</A> option is set, <A HREF="insert.html#Insert">Insert</A> mode is entered.
@@ -631,7 +638,7 @@ Local setup:
 Put all commands that you need for editing a specific directory only into a
 <A HREF="#vimrc">vimrc</A> file and place <A HREF="motion.html#it">it</A> in that directory under the name &quot;.nvimrc&quot; (&quot;_nvimrc&quot;
 for Windows).  NOTE: To make Vim look for these special files you
-have to turn on the option <A HREF="options.html#'exrc'">'exrc'</A>.  See |<A HREF="#trojan-horse">trojan-horse</A>| too.
+have to turn on the option <A HREF="deprecated.html#'exrc'">'exrc'</A>.  See |<A HREF="#trojan-horse">trojan-horse</A>| too.
 
 System setup:
 This only applies if you are managing a Unix system with several users and
@@ -662,9 +669,6 @@ On Windows systems Vim assumes that all the <A HREF="#vimrc">vimrc</A> files hav
 <A HREF="motion.html#as">as</A> line separators.  This will give problems if you have a file with only
 &lt;NL&gt;s and have a line like &quot;<A HREF="map.html#:map">:map</A> xx yy^M&quot;.  The trailing ^M will be ignored.
 
-The <A HREF="#$MYVIMRC">$MYVIMRC</A> or <A HREF="gui.html#$MYGVIMRC">$MYGVIMRC</A> file will be set to the first found <A HREF="#vimrc">vimrc</A> and/or
-<A HREF="gui.html#gvimrc">gvimrc</A> file.
-
 
 <B><FONT color="#54A23D">Avoiding trojan horses </FONT></B>
 
@@ -683,7 +687,7 @@ in the global <A HREF="#exrc">exrc</A> or <A HREF="#vimrc">vimrc</A> file.  This
 	On Unix systems, this only happens if you are not the owner of the
 <A HREF="#vimrc">vimrc</A> file.  Warning: If you unpack an archive that contains a <A HREF="#vimrc">vimrc</A> or <A HREF="#exrc">exrc</A>
 file, <A HREF="motion.html#it">it</A> will be owned by you.  You won't have the security protection.  Check
-the <A HREF="#vimrc">vimrc</A> file before you start Vim in that directory, or reset the <A HREF="options.html#'exrc'">'exrc'</A>
+the <A HREF="#vimrc">vimrc</A> file before you start Vim in that directory, or reset the <A HREF="deprecated.html#'exrc'">'exrc'</A>
 option.  Some Unix systems allow a user to <A HREF="diff.html#do">do</A> &quot;chown&quot; on a file.  This makes
 <A HREF="motion.html#it">it</A> possible for another user to create a nasty <A HREF="#vimrc">vimrc</A> and make you the owner.
 Be careful!
@@ -701,7 +705,7 @@ out what happens.
 If you have <A HREF="options.html#'shada'">'shada'</A> enabled, the loading of the ShaDa file may take a
 while.  You can find out if this is the problem by disabling ShaDa for a
 moment (use the Vim argument &quot;-i NONE&quot;, |<A HREF="#-i">-i</A>|).  Try reducing the number of
-lines stored in a <A HREF="sponsor.html#register">register</A> with &quot;<A HREF="options.html#:set">:set</A> <A HREF="options.html#'shada'">shada</A>='20,&lt;50,s10&quot;.  |<A HREF="#shada-file">shada-file</A>|.
+lines stored in a <A HREF="intro.html#register">register</A> with &quot;<A HREF="options.html#:set">:set</A> <A HREF="options.html#'shada'">shada</A>='20,&lt;50,s10&quot;.  |<A HREF="#shada-file">shada-file</A>|.
 
 
 <B><FONT color="#54A23D">Intro message </FONT></B>
@@ -768,7 +772,7 @@ After doing this once, Nvim sets the <A HREF="#$VIMRUNTIME">$VIMRUNTIME</A> envi
 In <A HREF="change.html#case">case</A> you need the value of <A HREF="#$VIMRUNTIME">$VIMRUNTIME</A> in a shell (e.g., for a <A HREF="usr_41.html#script">script</A> that
 greps in the help files) you might be able to use this:
 
-<B>	VIMRUNTIME="$(nvim -e --cmd 'echo $VIMRUNTIME|quit' 2&gt;&amp;1)"</B>
+<B>	VIMRUNTIME="$(nvim --clean --headless --cmd 'echo $VIMRUNTIME|q')"</B>
 
 ==============================================================================
 
@@ -784,8 +788,8 @@ greps in the help files) you might be able to use this:
 
 
 :sus[pend][!]	or			*<A NAME=":sus"></A><B>:sus</B>* *<A NAME=":suspend"></A><B>:suspend</B>* *<A NAME=":st"></A><B>:st</B>* *<A NAME=":stop"></A><B>:stop</B>*
-:st[op][!]		Suspend Nvim using OS &quot;job control&quot;; <A HREF="motion.html#it">it</A> will continue
-			if you make <A HREF="motion.html#it">it</A> the foreground job again.  Triggers
+:st[op][!]		Suspend Nvim using OS &quot;<A HREF="job_control.html#job">job</A> control&quot;; <A HREF="motion.html#it">it</A> will continue
+			if you make <A HREF="motion.html#it">it</A> the foreground <A HREF="job_control.html#job">job</A> again.  Triggers
 			|<A HREF="autocmd.html#VimSuspend">VimSuspend</A>| before suspending and |<A HREF="autocmd.html#VimResume">VimResume</A>| when
 			resumed.
 			If &quot;<A HREF="change.html#!">!</A>&quot; is not given and <A HREF="options.html#'autowrite'">'autowrite'</A> is set, every
@@ -830,7 +834,7 @@ You can use these files <A HREF="motion.html#as">as</A> they are, or copy/paste 
 			directory).
 
 
-							*<A NAME=":mkv"></A><B>:mkv</B>* *<A NAME=":mkvimrc"></A><B>:mkvimrc</B>*
+						*<A NAME=":mkv"></A><B>:mkv</B>* *<A NAME=":mkvi"></A><B>:mkvi</B>* *<A NAME=":mkvimrc"></A><B>:mkvimrc</B>*
 :mkv[imrc][!] [file]	Like &quot;<A HREF="#:mkexrc">:mkexrc</A>&quot;, but the default is &quot;.nvimrc&quot; in the
 			current directory.  The &quot;<A HREF="various.html#:version">:version</A>&quot; command is also
 			written to the file.
@@ -865,7 +869,7 @@ these steps:
 1. Edit your <A HREF="#vimrc">vimrc</A> file with Vim.
 2. Play with the option until it's right.  E.g., try out different values for
    <A HREF="options.html#'guifont'">'guifont'</A>.
-3. Append a line to set the value of the option, using the <A HREF="eval.html#expression">expression</A> <A HREF="sponsor.html#register">register</A>
+3. Append a line to set the value of the option, using the <A HREF="eval.html#expression">expression</A> <A HREF="intro.html#register">register</A>
    '<A HREF="change.html#=">=</A>' to enter the value.  E.g., for the <A HREF="options.html#'guifont'">'guifont'</A> option:
 <B>   o:set guifont=&lt;C-R&gt;=&amp;guifont&lt;CR&gt;&lt;Esc&gt;</B>
    [&lt;C-R&gt; is a <A HREF="undo.html#CTRL-R">CTRL-R</A>, <A HREF="motion.html#&lt;CR&gt;">&lt;CR&gt;</A> is a return, <A HREF="intro.html#&lt;Esc&gt;">&lt;Esc&gt;</A> is the <A HREF="intro.html#escape">escape</A> key]
@@ -990,7 +994,7 @@ The output of &quot;<A HREF="#:mkview">:mkview</A>&quot; contains these items:
 
 Note that Views and Sessions are not perfect:
 - They don't restore everything.  For example, defined <A HREF="eval.html#functions">functions</A>, autocommands
-  and &quot;<A HREF="syntax.html#:syntax">:syntax</A> on&quot; are not included.  Things like <A HREF="sponsor.html#register">register</A> contents and
+  and &quot;<A HREF="syntax.html#:syntax">:syntax</A> on&quot; are not included.  Things like <A HREF="intro.html#register">register</A> contents and
   command line <A HREF="cmdline.html#history">history</A> are in ShaDa, not in Sessions or Views.
 - Global option values are only set when they differ from the default value.
   When the current value is not the default value, loading a <A HREF="#Session">Session</A> will not
@@ -1122,14 +1126,14 @@ remembered.
 
 
 MERGING							*<A NAME="shada-merging"></A><B>shada-merging</B>*
-									{Nvim}
+
 When <A HREF="editing.html#writing">writing</A> ShaDa files with |<A HREF="#:wshada">:wshada</A>| without bang or at regular exit 
 information in the existing ShaDa file is merged with information from current 
 Neovim instance.  For this purpose ShaDa files store <A HREF="editing.html#timestamps">timestamps</A> associated 
 with ShaDa entries.  Specifically the following is being done:
 
 1. History lines are merged, ordered by <A HREF="editing.html#timestamp">timestamp</A>.  Maximum amount of items in 
-   ShaDa file is defined by <A HREF="options.html#'shada'">'shada'</A> option (|<A HREF="options.html#shada-/">shada-/</A>|, |<A HREF="options.html#shada-:">shada-:</A>|, |<A HREF="options.html#shada-@"><span class="__cf_email__" data-cfemail="5d2e353c393c701d">[email&#160;protected]</span></A>|, 
+   ShaDa file is defined by <A HREF="options.html#'shada'">'shada'</A> option (|<A HREF="options.html#shada-/">shada-/</A>|, |<A HREF="options.html#shada-:">shada-:</A>|, |<A HREF="options.html#shada-@"><span class="__cf_email__" data-cfemail="a9dac1c8cdc884e9">[email&#160;protected]</span></A>|, 
    etc: one suboption for each character that represents <A HREF="cmdline.html#history">history</A> name 
    (|<A HREF="cmdline.html#:history">:history</A>|)).
 2. Local marks and changes for files that were not opened by Neovim are copied 
@@ -1140,7 +1144,7 @@ with ShaDa entries.  Specifically the following is being done:
 4. Search patterns and substitute strings are not merged: search <A HREF="pattern.html#pattern">pattern</A> or 
    substitute <A HREF="eval.html#string">string</A> which has greatest <A HREF="editing.html#timestamp">timestamp</A> will be the only one copied 
    to ShaDa file.
-5. For each <A HREF="sponsor.html#register">register</A> entity with greatest <A HREF="editing.html#timestamp">timestamp</A> is the only saved. 
+5. For each <A HREF="intro.html#register">register</A> entity with greatest <A HREF="editing.html#timestamp">timestamp</A> is the only saved. 
    |<A HREF="options.html#shada-&lt;">shada-&lt;</A>|
 6. All saved <A HREF="eval.html#variables">variables</A> are saved from current Neovim instance. Additionally 
    existing variable values are copied, meaning that the only way to remove 
@@ -1153,15 +1157,15 @@ with ShaDa entries.  Specifically the following is being done:
 
 
 COMPATIBILITY						*<A NAME="shada-compatibility"></A><B>shada-compatibility</B>*
-									{Nvim}
+
 ShaDa files are forward and backward compatible.  This means that
 
 1. Entries which have unknown type (i.e. that hold unidentified data) are 
    ignored when reading and blindly copied when <A HREF="editing.html#writing">writing</A>.
-2. Register entries with unknown <A HREF="sponsor.html#register">register</A> name are ignored when reading and 
+2. Register entries with unknown <A HREF="intro.html#register">register</A> name are ignored when reading and 
    blindly copied when <A HREF="editing.html#writing">writing</A>. Limitation: only <A HREF="change.html#registers">registers</A> that use name with 
    code in interval [1, 255] are supported. |<A HREF="change.html#registers">registers</A>|
-3. Register entries with unknown <A HREF="sponsor.html#register">register</A> type are ignored when reading and 
+3. Register entries with unknown <A HREF="intro.html#register">register</A> type are ignored when reading and 
    merged <A HREF="motion.html#as">as</A> usual when <A HREF="editing.html#writing">writing</A>. |<A HREF="eval.html#getregtype()">getregtype()</A>|
 4. Local and global <A HREF="motion.html#mark">mark</A> entries with unknown <A HREF="motion.html#mark">mark</A> names are ignored when 
    reading. When <A HREF="editing.html#writing">writing</A> global <A HREF="motion.html#mark">mark</A> entries are blindly copied and local <A HREF="motion.html#mark">mark</A> 
@@ -1173,7 +1177,7 @@ ShaDa files are forward and backward compatible.  This means that
 5. History entries with unknown <A HREF="cmdline.html#history">history</A> type are ignored when reading and 
    blindly copied when <A HREF="editing.html#writing">writing</A>. Limitation: there can be only up to 256 
    history types. |<A HREF="cmdline.html#history">history</A>|
-6. Unknown keys found in <A HREF="sponsor.html#register">register</A>, local <A HREF="motion.html#mark">mark</A>, global <A HREF="motion.html#mark">mark</A>, change, jump and 
+6. Unknown keys found in <A HREF="intro.html#register">register</A>, local <A HREF="motion.html#mark">mark</A>, global <A HREF="motion.html#mark">mark</A>, change, jump and 
    search <A HREF="pattern.html#pattern">pattern</A> entries are saved internally and dumped when <A HREF="editing.html#writing">writing</A>. 
    Entries created during Neovim session never have such additions.
 7. Additional elements found in replacement <A HREF="eval.html#string">string</A> and <A HREF="cmdline.html#history">history</A> entries are 
@@ -1191,15 +1195,16 @@ even if other entries (with known name/type/etc) are merged. |<A HREF="#shada-me
 
 SHADA FILE NAME						*<A NAME="shada-file-name"></A><B>shada-file-name</B>*
 
-- The default name of the ShaDa file is &quot;$XDG_DATA_HOME/nvim/shada/main.shada&quot; 
-  for Unix. Default for <A HREF="#$XDG_DATA_HOME">$XDG_DATA_HOME</A> is ~/.local/share. |<A HREF="#base-directories">base-directories</A>|
-- The '<A HREF="pattern.html#n">n</A>' flag in the <A HREF="options.html#'shada'">'shada'</A> option can be used to specify another ShaDa
-  file name |<A HREF="options.html#'shada'">'shada'</A>|.
-- The &quot;-i&quot; Vim argument can be used to set another file name, |<A HREF="#-i">-i</A>|.  When the
-  file name given is &quot;NONE&quot; (all uppercase), no ShaDa file is ever read or
-  written.  Also not for the commands below!
-- The 'viminfofile' option can be used like the &quot;<A HREF="#-i">-i</A>&quot; argument.  In fact, the
-  value form the &quot;<A HREF="#-i">-i</A>&quot; argument is stored in the 'viminfofile' option.
+- Default name of the |<A HREF="#shada">shada</A>| file is:
+      Unix:     &quot;$XDG_DATA_HOME/nvim/shada/main.shada&quot;
+      Windows:  &quot;$XDG_DATA_HOME/nvim-data/shada/main.shada&quot;
+  See also |<A HREF="#base-directories">base-directories</A>|.
+- To choose a different file name you can use:
+    - The &quot;<A HREF="pattern.html#n">n</A>&quot; flag in the <A HREF="options.html#'shada'">'shada'</A> option.
+    - The |<A HREF="#-i">-i</A>| <A HREF="#startup">startup</A> argument.  &quot;NONE&quot; means no <A HREF="#shada">shada</A> file is ever read or
+      written.  Also not for the commands below!
+    - The <A HREF="options.html#'shadafile'">'shadafile'</A> option.  The value from the &quot;<A HREF="#-i">-i</A>&quot; argument (if any) is
+      stored in the <A HREF="options.html#'shadafile'">'shadafile'</A> option.
 - For the commands below, another file name can be given, overriding the
   default and the name given with <A HREF="options.html#'shada'">'shada'</A> or &quot;<A HREF="#-i">-i</A>&quot; (unless it's NONE).
 
@@ -1209,7 +1214,7 @@ MANUALLY READING AND WRITING				*<A NAME="shada-read-write"></A><B>shada-read-wr
 
 Two commands can be used to read and write the ShaDa file manually.  This
 can be used to exchange <A HREF="change.html#registers">registers</A> between two running Vim programs: First
-type &quot;<A HREF="#:wsh">:wsh</A>&quot; in one and then &quot;<A HREF="#:rsh">:rsh</A>&quot; in the other.  Note that if the <A HREF="sponsor.html#register">register</A>
+type &quot;<A HREF="#:wsh">:wsh</A>&quot; in one and then &quot;<A HREF="#:rsh">:rsh</A>&quot; in the other.  Note that if the <A HREF="intro.html#register">register</A>
 already contained something, then &quot;:rsh!&quot; would be required.  Also note
 however that this means everything will be overwritten with information from
 the first Vim, including the command line <A HREF="cmdline.html#history">history</A>, etc.
@@ -1349,25 +1354,25 @@ exactly four MessagePack <A HREF="vimindex.html#objects">objects</A>:
                        the entries.  If key value is equal to default then <A HREF="motion.html#it">it</A> 
                        is normally not present.  Keys:
 <B><FONT color="#54A23D">                       Key  Type     Default  Description </FONT></B>
-                       sm   Boolean  true     Effective <A HREF="options.html#'magic'">'magic'</A> value.
-                       sc   Boolean  false    Effective <A HREF="options.html#'smartcase'">'smartcase'</A> value.
-                       sl   Boolean  true     True if search <A HREF="pattern.html#pattern">pattern</A> comes 
+                       sm   <A HREF="eval.html#Boolean">Boolean</A>  true     Effective <A HREF="options.html#'magic'">'magic'</A> value.
+                       sc   <A HREF="eval.html#Boolean">Boolean</A>  false    Effective <A HREF="options.html#'smartcase'">'smartcase'</A> value.
+                       sl   <A HREF="eval.html#Boolean">Boolean</A>  true     True if search <A HREF="pattern.html#pattern">pattern</A> comes 
                                               with a line offset.  See 
                                               |<A HREF="pattern.html#search-offset">search-offset</A>|.
-                       se   Boolean  false    True if |<A HREF="pattern.html#search-offset">search-offset</A>| 
+                       se   <A HREF="eval.html#Boolean">Boolean</A>  false    True if |<A HREF="pattern.html#search-offset">search-offset</A>| 
                                               requested to place cursor at 
                                               (relative to) the end of the 
                                               <A HREF="pattern.html#pattern">pattern</A>.
                        so   Integer  0        Offset value. |<A HREF="pattern.html#search-offset">search-offset</A>|
-                       su   Boolean  false    True if current entry was the 
+                       su   <A HREF="eval.html#Boolean">Boolean</A>  false    True if current entry was the 
                                               last used search <A HREF="pattern.html#pattern">pattern</A>.
-                       ss   Boolean  false    True if current entry describes 
+                       ss   <A HREF="eval.html#Boolean">Boolean</A>  false    True if current entry describes 
                                               |<A HREF="change.html#:substitute">:substitute</A>| <A HREF="pattern.html#pattern">pattern</A>.
-                       sh   Boolean  false    True if |<A HREF="eval.html#v:hlsearch">v:hlsearch</A>| is on.
+                       sh   <A HREF="eval.html#Boolean">Boolean</A>  false    True if |<A HREF="eval.html#v:hlsearch">v:hlsearch</A>| is on.
                                               With |<A HREF="options.html#shada-h">shada-h</A>| or <A HREF="options.html#'nohlsearch'">'nohlsearch'</A> 
                                               this key is always false.
                        sp   Binary   N/A      Actual <A HREF="pattern.html#pattern">pattern</A>.  Required.
-                       sb   Boolean  false    True if search direction is 
+                       sb   <A HREF="eval.html#Boolean">Boolean</A>  false    True if search direction is 
                                               backward.
                        &#42;    any      none     Other keys are allowed for 
                                               compatibility reasons, see 
@@ -1403,12 +1408,12 @@ exactly four MessagePack <A HREF="vimindex.html#objects">objects</A>:
                                                    line should be represented
                                                    <A HREF="motion.html#as">as</A> NL according to
                                                    |<A HREF="pattern.html#NL-used-for-Nul">NL-used-for-Nul</A>|.
-                       ru   Boolean          false Unnamed <A HREF="sponsor.html#register">register</A>. Whether
-                                                   the unnamed <A HREF="sponsor.html#register">register</A> had
-                                                   pointed to this <A HREF="sponsor.html#register">register</A>.
+                       ru   <A HREF="eval.html#Boolean">Boolean</A>          false Unnamed <A HREF="intro.html#register">register</A>. Whether
+                                                   the unnamed <A HREF="intro.html#register">register</A> had
+                                                   pointed to this <A HREF="intro.html#register">register</A>.
                        <A HREF="pattern.html#n">n</A>    UInteger         N/A   Register name: character
                                                    code in range [1, 255].
-                                                   Example: |<A HREF="change.html#quote0">quote0</A>| <A HREF="sponsor.html#register">register</A>
+                                                   Example: |<A HREF="change.html#quote0">quote0</A>| <A HREF="intro.html#register">register</A>
                                                    has name 48 (ASCII code for
                                                    zero character).
                        &#42;    any              none  Other keys are allowed
@@ -1506,7 +1511,7 @@ Note: Throughout the user manual these defaults are used <A HREF="motion.html#as
 
 LOG FILE					*<A NAME="$NVIM_LOG_FILE"></A><B>$NVIM_LOG_FILE</B>*
 Besides <A HREF="options.html#'debug'">'debug'</A> and <A HREF="options.html#'verbose'">'verbose'</A>, Nvim keeps a general log file for internal
-debugging, plugins and <A HREF="msgpack_rpc.html#RPC">RPC</A> clients.
+debugging, plugins and <A HREF="api.html#RPC">RPC</A> clients.
 <B>	:echo $NVIM_LOG_FILE</B>
 Usually the file is ~/.local/share/nvim/log unless that path is inaccessible
 or if <A HREF="#$NVIM_LOG_FILE">$NVIM_LOG_FILE</A> was set before |<A HREF="#startup">startup</A>|.
@@ -1514,5 +1519,11 @@ or if <A HREF="#$NVIM_LOG_FILE">$NVIM_LOG_FILE</A> was set before |<A HREF="#sta
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
+
+    <footer>
+      <div class="container">
+        Generated Wed Sep 18 20:06:12 UTC 2019 from <a href="https://github.com/neovim/neovim/commit/1070c092c7bf989f261047b861165e61e94c1941"><code>1070c09</code></a>.
+      </div>
+    </footer>
   <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
 </html>

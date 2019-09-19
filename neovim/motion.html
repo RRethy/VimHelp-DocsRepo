@@ -2,10 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Nvim documentation: motion</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.0/normalize.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="/css/main.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
   </head>
   <body>
-                <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
+    <header class="navbar">
+      <div class="container">
+        <nav class="navbar">
+          <div class="container-fluid">
+            <div class="navbar-header">
+
+              <a href="/" class="navbar-brand">
+                <img src="/images/logo@2x.png" id="navbar-logo" alt="Neovim">
+              </a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
 
     <div class="container">
       <h1>Nvim documentation: motion</h1>
@@ -56,7 +80,7 @@ or change text.  The following operators are available:
 
 	|<A HREF="change.html#c">c</A>|	c	change
 	|<A HREF="change.html#d">d</A>|	d	delete
-	|<A HREF="change.html#y">y</A>|	y	<A HREF="change.html#yank">yank</A> into <A HREF="sponsor.html#register">register</A> (does not change the text)
+	|<A HREF="change.html#y">y</A>|	y	<A HREF="change.html#yank">yank</A> into <A HREF="intro.html#register">register</A> (does not change the text)
 	|<A HREF="change.html#~">~</A>|	~	swap <A HREF="change.html#case">case</A> (only if <A HREF="options.html#'tildeop'">'tildeop'</A> is set)
 	|<A HREF="change.html#g~">g~</A>|	g~	swap <A HREF="change.html#case">case</A>
 	|<A HREF="change.html#gu">gu</A>|	gu	make <A HREF="change.html#lowercase">lowercase</A>
@@ -64,11 +88,12 @@ or change text.  The following operators are available:
 	|<A HREF="change.html#!">!</A>|	!	<A HREF="change.html#filter">filter</A> through an external program
 	|<A HREF="change.html#=">=</A>|	=	<A HREF="change.html#filter">filter</A> through <A HREF="options.html#'equalprg'">'equalprg'</A> or <A HREF="indent.html#C-indenting">C-indenting</A> if empty
 	|<A HREF="change.html#gq">gq</A>|	gq	text <A HREF="change.html#formatting">formatting</A>
+	|<A HREF="change.html#gw">gw</A>|	gw	text <A HREF="change.html#formatting">formatting</A> with no cursor <A HREF="intro.html#movement">movement</A>
 	|<A HREF="change.html#g?">g?</A>|	g?	ROT13 encoding
 	|<A HREF="change.html#&gt;">&gt;</A>|	&gt;	<A HREF="intro.html#shift">shift</A> right
 	|<A HREF="change.html#&lt;">&lt;</A>|	&lt;	<A HREF="intro.html#shift">shift</A> left
 	|<A HREF="fold.html#zf">zf</A>|	zf	define a fold
-	|<A HREF="map.html#g@"><span class="__cf_email__" data-cfemail="a2c5e2">[email&#160;protected]</span></A>|	<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d8bf98">[email&#160;protected]</a>	call function set with the <A HREF="options.html#'operatorfunc'">'operatorfunc'</A> option
+	|<A HREF="map.html#g@"><span class="__cf_email__" data-cfemail="107750">[email&#160;protected]</span></A>|	<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="99fed9">[email&#160;protected]</a>	call function set with the <A HREF="options.html#'operatorfunc'">'operatorfunc'</A> option
 
 If the motion includes a <A HREF="intro.html#count">count</A> and the <A HREF="#operator">operator</A> also had a <A HREF="intro.html#count">count</A> before <A HREF="#it">it</A>,
 the two counts are multiplied.  For example: &quot;2d3w&quot; deletes six words.
@@ -86,10 +111,11 @@ and end position.  Generally, motions that move between lines affect lines
 
 
 						*<A NAME="exclusive"></A><B>exclusive</B>* *<A NAME="inclusive"></A><B>inclusive</B>*
-A character motion is either <A HREF="#inclusive">inclusive</A> or <A HREF="#exclusive">exclusive</A>.  When <A HREF="#inclusive">inclusive</A>, the
+Character motion is either <A HREF="#inclusive">inclusive</A> or <A HREF="#exclusive">exclusive</A>.  When <A HREF="#inclusive">inclusive</A>, the
 start and end position of the motion are included in the operation.  When
 <A HREF="#exclusive">exclusive</A>, the last character towards the end of the buffer is not included.
-Linewise motions always include the start and end position.
+Linewise motions always include the start and end position.  Plugins can
+check the v:event.inclusive flag of the |<A HREF="autocmd.html#TextYankPost">TextYankPost</A>| event.
 
 Which motions are <A HREF="#linewise">linewise</A>, <A HREF="#inclusive">inclusive</A> or <A HREF="#exclusive">exclusive</A> is mentioned with the
 command.  There are however, two general exceptions:
@@ -128,6 +154,7 @@ This cannot be repeated:
 Note that when using &quot;<A HREF="cmdline.html#:">:</A>&quot; any motion becomes <A HREF="#characterwise">characterwise</A> <A HREF="#exclusive">exclusive</A>.
 
 
+								*<A NAME="forced-motion"></A><B>forced-motion</B>*
 FORCING A MOTION TO BE LINEWISE, CHARACTERWISE OR BLOCKWISE
 
 When a motion is not of the type you would like to use, you can force another
@@ -369,7 +396,7 @@ _  &lt;underscore&gt;		<A HREF="intro.html#[count]">[count]</A> - 1 lines downwa
 <A HREF="#G">G</A>			Goto line <A HREF="intro.html#[count]">[count]</A>, default last line, on the first
 			non-blank character |<A HREF="#linewise">linewise</A>|.  If <A HREF="options.html#'startofline'">'startofline'</A> not
 			set, keep the same column.
-			<A HREF="#G">G</A> is a one of |<A HREF="#jump-motions">jump-motions</A>|.
+			<A HREF="#G">G</A> is one of the |<A HREF="#jump-motions">jump-motions</A>|.
 
 
 							*<A NAME="&lt;C-End&gt;"></A><B>&lt;C-End&gt;</B>*
@@ -859,7 +886,7 @@ m{a-zA-Z}		Set <A HREF="#mark">mark</A> {a-zA-Z} at cursor position (does not mo
 
 
 						*<A NAME="m'"></A><B>m'</B>* *<A NAME="m`"></A><B>m`</B>*
-<A HREF="#m'">m'</A>  or  <A HREF="#m`">m`</A>		Set the previous context <A HREF="#mark">mark</A>.  This can be jumped to
+<A HREF="#m'">m'</A>  or  <A HREF="#m`">m`</A>		Set the previous <A HREF="repeat.html#context">context</A> <A HREF="#mark">mark</A>.  This can be jumped to
 			with the &quot;'&#39;&#34;' or &quot;<A HREF="#``">``</A>&quot; command (does not move the
 			cursor, this is not a motion command).
 
@@ -1016,7 +1043,7 @@ was made yet in the current file.
 							*<A NAME="'quote"></A><B>'quote</B>* *<A NAME="`quote"></A><B>`quote</B>*
 &#39;&#34;'  `&quot;			To the cursor position when last <A HREF="starting.html#exiting">exiting</A> the current
 			buffer.  Defaults to the first character of the first
-			line.  See |<A HREF="eval.html#last-position-jump">last-position-jump</A>| for how to use this
+			line.  See |<A HREF="usr_05.html#last-position-jump">last-position-jump</A>| for how to use this
 			for each opened file.
 			Only one position is remembered per buffer, not one
 			for each <A HREF="windows.html#window">window</A>.  As long <A HREF="#as">as</A> the buffer is visible in
@@ -1084,7 +1111,7 @@ These commands are not marks themselves, but jump to a <A HREF="#mark">mark</A>:
 
 
 
-:loc[kmarks] {command}					*<A NAME=":loc"></A><B>:loc</B>* *<A NAME=":lockmarks"></A><B>:lockmarks</B>*
+:loc[kmarks] {command}				*<A NAME=":loc"></A><B>:loc</B>* *<A NAME=":lock"></A><B>:lock</B>* *<A NAME=":lockmarks"></A><B>:lockmarks</B>*
 			Execute {command} without adjusting marks.  This is
 			useful when <A HREF="change.html#changing">changing</A> text in a way that the line <A HREF="intro.html#count">count</A>
 			will be the same when the change has completed.
@@ -1104,14 +1131,14 @@ These commands are not marks themselves, but jump to a <A HREF="#mark">mark</A>:
 			- positions in the |<A HREF="#jumplist">jumplist</A>|
 			- positions in the |<A HREF="tagsrch.html#tagstack">tagstack</A>|
 			These items will still be adjusted:
-			- previous context <A HREF="#mark">mark</A> <A HREF="#''">''</A>
+			- previous <A HREF="repeat.html#context">context</A> <A HREF="#mark">mark</A> <A HREF="#''">''</A>
 			- the cursor position
 			- the view of a <A HREF="windows.html#window">window</A> on a buffer
 			- <A HREF="fold.html#folds">folds</A>
 			- diffs
 
 
-:kee[pmarks] {command}					*<A NAME=":kee"></A><B>:kee</B>* *<A NAME=":keepmarks"></A><B>:keepmarks</B>*
+:kee[pmarks] {command}				*<A NAME=":kee"></A><B>:kee</B>* *<A NAME=":keep"></A><B>:keep</B>* *<A NAME=":keepmarks"></A><B>:keepmarks</B>*
 			Currently only has effect for the <A HREF="change.html#filter">filter</A> command
 			YXXY:range!|:
 			- When the number of lines after filtering is equal to
@@ -1153,11 +1180,11 @@ These commands are not marks themselves, but jump to a <A HREF="#mark">mark</A>:
 
 A &quot;jump&quot; is a command that normally moves the cursor several lines away.  If
 you make the cursor &quot;jump&quot; the position of the cursor before the jump is
-remembered.  You can return to that position with the &quot;'&#39;&#34;' and &quot;<A HREF="#``">``</A>&quot; command,
+remembered.  You can return to that position with the &quot;'&#39;&#34;' and &quot;<A HREF="#``">``</A>&quot; commands,
 unless the line containing that position was changed or deleted.  The
 following commands are &quot;jump&quot; commands: &quot;&#39;&#34;', &quot;<A HREF="#`">`</A>&quot;, &quot;<A HREF="#G">G</A>&quot;, &quot;<A HREF="pattern.html#/">/</A>&quot;, &quot;<A HREF="pattern.html#?">?</A>&quot;, &quot;<A HREF="pattern.html#n">n</A>&quot;, &quot;<A HREF="pattern.html#N">N</A>&quot;,
 &quot;<A HREF="#&#37;">&#37;</A>&quot;, &quot;<A HREF="#(">(</A>&quot;, &quot;<A HREF="#)">)</A>&quot;, &quot;<A HREF="#[[">[[</A>&quot;, &quot;<A HREF="#]]">]]</A>&quot;, &quot;<A HREF="#{">{</A>&quot;, &quot;<A HREF="#}">}</A>&quot;, &quot;<A HREF="change.html#:s">:s</A>&quot;, &quot;<A HREF="tagsrch.html#:tag">:tag</A>&quot;, &quot;<A HREF="#L">L</A>&quot;, &quot;<A HREF="#M">M</A>&quot;, &quot;<A HREF="#H">H</A>&quot; and the
-commands that start editing a new file. 
+commands that start editing a new file.
 
 
 							*<A NAME="CTRL-O"></A><B>CTRL-O</B>*
@@ -1330,8 +1357,8 @@ remembered.
 					C preprocessor conditionals (when the
 					cursor is on the # or no ([{
 					following)
-			For other items the <A HREF="pi_matchit.html#matchit">matchit</A> <A HREF="usr_05.html#plugin">plugin</A> can be used, see
-			|<A HREF="pi_matchit.html#matchit">matchit</A>|.  This <A HREF="usr_05.html#plugin">plugin</A> also helps to skip matches in
+			For other items the matchit <A HREF="usr_05.html#plugin">plugin</A> can be used, see
+			|<A HREF="intro.html#matchit">matchit</A>|.  This <A HREF="usr_05.html#plugin">plugin</A> also helps to skip matches in
 			comments.
 
 			When <A HREF="options.html#'cpoptions'">'cpoptions'</A> contains &quot;M&quot; |<A HREF="options.html#cpo-M">cpo-M</A>| backslashes
@@ -1350,7 +1377,7 @@ remembered.
 			Perl, where single quotes are used for strings.
 
 			Nothing special is done for matches in comments.  You
-			can either use the |<A HREF="pi_matchit.html#matchit">matchit</A>| <A HREF="usr_05.html#plugin">plugin</A> or put quotes around
+			can either use the |<A HREF="intro.html#matchit">matchit</A>| <A HREF="usr_05.html#plugin">plugin</A> or put quotes around
 			matches.
 
 			No <A HREF="intro.html#count">count</A> is allowed, {count}&#37; jumps to a line {count}
@@ -1489,5 +1516,11 @@ the current line is included.  You can then use &quot;<A HREF="#&#37;">&#37;</A>
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
+
+    <footer>
+      <div class="container">
+        Generated Wed Sep 18 20:06:11 UTC 2019 from <a href="https://github.com/neovim/neovim/commit/1070c092c7bf989f261047b861165e61e94c1941"><code>1070c09</code></a>.
+      </div>
+    </footer>
   <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
 </html>

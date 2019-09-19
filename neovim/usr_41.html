@@ -2,10 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Nvim documentation: usr_41</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.0/normalize.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="/css/main.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
   </head>
   <body>
-                <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
+    <header class="navbar">
+      <div class="container">
+        <nav class="navbar">
+          <div class="container-fluid">
+            <div class="navbar-header">
+
+              <a href="/" class="navbar-brand">
+                <img src="/images/logo@2x.png" id="navbar-logo" alt="Neovim">
+              </a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
 
     <div class="container">
       <h1>Nvim documentation: usr_41</h1>
@@ -122,20 +146,21 @@ We won't explain how |<A HREF="eval.html#:for">:for</A>| and |<A HREF="eval.html
 if you are impatient.
 
 
-THREE KINDS OF NUMBERS
+FOUR KINDS OF NUMBERS
 
-Numbers can be decimal, hexadecimal or <A HREF="eval.html#octal">octal</A>.  A hexadecimal number starts
-with &quot;0x&quot; or &quot;0X&quot;.  For example &quot;0x1f&quot; is decimal 31.  An <A HREF="eval.html#octal">octal</A> number starts
-with a zero.  &quot;017&quot; is decimal 15.  Careful: don't put a zero before a decimal
-number, <A HREF="motion.html#it">it</A> will be interpreted <A HREF="motion.html#as">as</A> an <A HREF="eval.html#octal">octal</A> number!
+Numbers can be decimal, hexadecimal, <A HREF="eval.html#octal">octal</A> or binary.  A hexadecimal number
+starts with &quot;0x&quot; or &quot;0X&quot;.  For example &quot;0x1f&quot; is decimal 31.  An <A HREF="eval.html#octal">octal</A> number
+starts with a zero.  &quot;017&quot; is decimal 15.  A binary number starts with &quot;0b&quot; or
+&quot;0B&quot;.  For example &quot;0b101&quot; is decimal 5.  Careful: don't put a zero before a
+decimal number, <A HREF="motion.html#it">it</A> will be interpreted <A HREF="motion.html#as">as</A> an <A HREF="eval.html#octal">octal</A> number!
    The &quot;<A HREF="eval.html#:echo">:echo</A>&quot; command always prints decimal numbers.  Example:
 
 <B>	:echo 0x7f 036</B>
 <B><FONT color="#54A23D"> 	127 30 </FONT></B>
 
-A number is made negative with a minus sign.  This also works for hexadecimal
-and <A HREF="eval.html#octal">octal</A> numbers.   A minus sign is also used for subtraction.  Compare this
-with the previous example:
+A number is made negative with a minus sign.  This also works for hexadecimal,
+<A HREF="eval.html#octal">octal</A> and binary numbers.  A minus sign is also used for subtraction.  Compare
+this with the previous example:
 
 <B>	:echo 0x7f -036</B>
 <B><FONT color="#54A23D"> 	97 </FONT></B>
@@ -295,7 +320,7 @@ themselves.  Thus everywhere an <A HREF="eval.html#expression">expression</A> is
 
 	$NAME		environment variable
 	&amp;name		option
-	<A HREF="eval.html#@r">@r</A>		<A HREF="sponsor.html#register">register</A>
+	<A HREF="eval.html#@r">@r</A>		<A HREF="intro.html#register">register</A>
 
 Examples:
 
@@ -636,6 +661,8 @@ the function name to jump to detailed help on <A HREF="motion.html#it">it</A>.
 	<A HREF="eval.html#repeat()">repeat()</A>		repeat a <A HREF="eval.html#string">string</A> multiple times
 	<A HREF="eval.html#eval()">eval()</A>			evaluate a <A HREF="eval.html#string">string</A> <A HREF="eval.html#expression">expression</A>
 	<A HREF="eval.html#execute()">execute()</A>		execute an <A HREF="intro.html#Ex">Ex</A> command and get the output
+	win_execute()		like <A HREF="eval.html#execute()">execute()</A> but in a specified <A HREF="windows.html#window">window</A>
+	<A HREF="eval.html#trim()">trim()</A>			trim characters from a <A HREF="eval.html#string">string</A>
 
 
 <A HREF="eval.html#List">List</A> manipulation:					*<A NAME="list-functions"></A><B>list-functions</B>*
@@ -799,9 +826,13 @@ System <A HREF="eval.html#functions">functions</A> and manipulation of files:
 	<A HREF="eval.html#rename()">rename()</A>		rename a file
 	<A HREF="eval.html#system()">system()</A>		get the result of a shell command <A HREF="motion.html#as">as</A> a <A HREF="eval.html#string">string</A>
 	<A HREF="eval.html#systemlist()">systemlist()</A>		get the result of a shell command <A HREF="motion.html#as">as</A> a <A HREF="eval.html#list">list</A>
+	<A HREF="eval.html#environ()">environ()</A>		get all environment <A HREF="eval.html#variables">variables</A>
+	<A HREF="eval.html#getenv()">getenv()</A>		get one environment variable
+	<A HREF="eval.html#setenv()">setenv()</A>		set an environment variable
 	<A HREF="eval.html#hostname()">hostname()</A>		name of the system
 	<A HREF="eval.html#readfile()">readfile()</A>		read a file into a <A HREF="eval.html#List">List</A> of lines
-	<A HREF="eval.html#writefile()">writefile()</A>		write a <A HREF="eval.html#List">List</A> of lines into a file
+	<A HREF="eval.html#readdir()">readdir()</A>		get a <A HREF="eval.html#List">List</A> of file names in a directory
+	<A HREF="eval.html#writefile()">writefile()</A>		write a <A HREF="eval.html#List">List</A> of lines or Blob into a file
 
 
 Date and Time:				*<A NAME="date-functions"></A><B>date-functions</B>* *<A NAME="time-functions"></A><B>time-functions</B>*
@@ -832,6 +863,9 @@ Buffers, <A HREF="windows.html#windows">windows</A> and the argument <A HREF="ev
 	<A HREF="eval.html#bufwinnr()">bufwinnr()</A>		get the <A HREF="windows.html#window">window</A> number of a specific buffer
 	<A HREF="eval.html#winbufnr()">winbufnr()</A>		get the buffer number of a specific <A HREF="windows.html#window">window</A>
 	<A HREF="eval.html#getbufline()">getbufline()</A>		get a <A HREF="eval.html#list">list</A> of lines from the specified buffer
+	<A HREF="eval.html#setbufline()">setbufline()</A>		replace a line in the specified buffer
+	<A HREF="eval.html#appendbufline()">appendbufline()</A>		append a <A HREF="eval.html#list">list</A> of lines in the specified buffer
+	<A HREF="eval.html#deletebufline()">deletebufline()</A>		delete lines from a specified buffer
 	<A HREF="eval.html#win_findbuf()">win_findbuf()</A>		find <A HREF="windows.html#windows">windows</A> containing a buffer
 	<A HREF="eval.html#win_getid()">win_getid()</A>		get <A HREF="windows.html#window">window</A> ID of a <A HREF="windows.html#window">window</A>
 	<A HREF="eval.html#win_gotoid()">win_gotoid()</A>		go to <A HREF="windows.html#window">window</A> with ID
@@ -840,6 +874,10 @@ Buffers, <A HREF="windows.html#windows">windows</A> and the argument <A HREF="ev
 	<A HREF="eval.html#getbufinfo()">getbufinfo()</A>		get a <A HREF="eval.html#list">list</A> with buffer information
 	<A HREF="eval.html#gettabinfo()">gettabinfo()</A>		get a <A HREF="eval.html#list">list</A> with <A HREF="intro.html#tab">tab</A> page information
 	<A HREF="eval.html#getwininfo()">getwininfo()</A>		get a <A HREF="eval.html#list">list</A> with <A HREF="windows.html#window">window</A> information
+	<A HREF="eval.html#getchangelist()">getchangelist()</A>		get a <A HREF="eval.html#list">list</A> of change <A HREF="eval.html#list">list</A> entries
+	<A HREF="eval.html#getjumplist()">getjumplist()</A>		get a <A HREF="eval.html#list">list</A> of jump <A HREF="eval.html#list">list</A> entries
+	<A HREF="eval.html#swapinfo()">swapinfo()</A>		information about a swap file
+	<A HREF="eval.html#swapname()">swapname()</A>		get the swap file path of a buffer
 
 
 Command line:					*<A NAME="command-line-functions"></A><B>command-line-functions</B>*
@@ -862,6 +900,7 @@ Command line:					*<A NAME="command-line-functions"></A><B>command-line-function
 	<A HREF="eval.html#complete()">complete()</A>		set found matches
 	<A HREF="eval.html#complete_add()">complete_add()</A>		add to found matches
 	<A HREF="eval.html#complete_check()">complete_check()</A>	check if completion should be aborted
+	<A HREF="eval.html#complete_info()">complete_info()</A>		get current completion information
 	<A HREF="eval.html#pumvisible()">pumvisible()</A>		check if the popup menu is displayed
 
 
@@ -918,18 +957,19 @@ Interactive:					*<A NAME="interactive-functions"></A><B>interactive-functions</
 	<A HREF="eval.html#input()">input()</A>			get a line from the user
 	<A HREF="eval.html#inputlist()">inputlist()</A>		let the user pick an entry from a <A HREF="eval.html#list">list</A>
 	<A HREF="eval.html#inputsecret()">inputsecret()</A>		get a line from the user without showing <A HREF="motion.html#it">it</A>
-	<A HREF="eval.html#inputdialog()">inputdialog()</A>		get a line from the user in a dialog
+	<A HREF="deprecated.html#inputdialog()">inputdialog()</A>		get a line from the user in a dialog
 	<A HREF="eval.html#inputsave()">inputsave()</A>		save and clear typeahead
 	<A HREF="eval.html#inputrestore()">inputrestore()</A>		restore typeahead
 
 
 <A HREF="gui.html#GUI">GUI</A>:						*<A NAME="gui-functions"></A><B>gui-functions</B>*
 	<A HREF="eval.html#getfontname()">getfontname()</A>		get name of current font being used
-	getwinpos()		position of the Vim <A HREF="windows.html#window">window</A>
+	<A HREF="eval.html#getwinpos()">getwinpos()</A>		position of the Vim <A HREF="windows.html#window">window</A>
 	<A HREF="eval.html#getwinposx()">getwinposx()</A>		X position of the Vim <A HREF="windows.html#window">window</A>
 	<A HREF="eval.html#getwinposy()">getwinposy()</A>		<A HREF="change.html#Y">Y</A> position of the Vim <A HREF="windows.html#window">window</A>
 	balloon_show()		set the balloon content
 	balloon_split()		split a message for a balloon
+	balloon_gettext()	get the text in the balloon
 
 
 Vim server:					*<A NAME="server-functions"></A><B>server-functions</B>*
@@ -948,6 +988,7 @@ Window size and position:			*<A NAME="window-size-functions"></A><B>window-size-
 	<A HREF="eval.html#winheight()">winheight()</A>		get height of a specific <A HREF="windows.html#window">window</A>
 	<A HREF="eval.html#winwidth()">winwidth()</A>		get width of a specific <A HREF="windows.html#window">window</A>
 	<A HREF="eval.html#win_screenpos()">win_screenpos()</A>		get screen position of a <A HREF="windows.html#window">window</A>
+	<A HREF="eval.html#winlayout()">winlayout()</A>		get layout of <A HREF="windows.html#windows">windows</A> in a <A HREF="intro.html#tab">tab</A> page
 	<A HREF="eval.html#winrestcmd()">winrestcmd()</A>		return command to restore <A HREF="windows.html#window">window</A> sizes
 	<A HREF="eval.html#winsaveview()">winsaveview()</A>		get view of current <A HREF="windows.html#window">window</A>
 	<A HREF="eval.html#winrestview()">winrestview()</A>		restore saved view of current <A HREF="windows.html#window">window</A>
@@ -960,8 +1001,20 @@ Mappings:				    *<A NAME="mapping-functions"></A><B>mapping-functions</B>*
 	<A HREF="eval.html#wildmenumode()">wildmenumode()</A>		check if the wildmode is active
 
 
+Signs:						*<A NAME="sign-functions"></A><B>sign-functions</B>*
+	<A HREF="eval.html#sign_define()">sign_define()</A>		define or update a sign
+	<A HREF="eval.html#sign_getdefined()">sign_getdefined()</A>	get a <A HREF="eval.html#list">list</A> of defined <A HREF="sign.html#signs">signs</A>
+	<A HREF="eval.html#sign_getplaced()">sign_getplaced()</A>	get a <A HREF="eval.html#list">list</A> of placed <A HREF="sign.html#signs">signs</A>
+	<A HREF="eval.html#sign_jump()">sign_jump()</A>		jump to a sign
+	<A HREF="eval.html#sign_place()">sign_place()</A>		place a sign
+	<A HREF="eval.html#sign_undefine()">sign_undefine()</A>		undefine a sign
+	<A HREF="eval.html#sign_unplace()">sign_unplace()</A>		unplace a sign
+
+
+
 Testing:				    *<A NAME="test-functions"></A><B>test-functions</B>*
 	<A HREF="eval.html#assert_equal()">assert_equal()</A>		assert that two expressions values are equal
+	<A HREF="eval.html#assert_equalfile()">assert_equalfile()</A>	assert that two file contents are equal
 	<A HREF="eval.html#assert_notequal()">assert_notequal()</A>	assert that two expressions values are not equal
 	<A HREF="eval.html#assert_inrange()">assert_inrange()</A>	assert that an <A HREF="eval.html#expression">expression</A> is inside a range
 	<A HREF="eval.html#assert_match()">assert_match()</A>		assert that a <A HREF="pattern.html#pattern">pattern</A> matches the value
@@ -969,13 +1022,38 @@ Testing:				    *<A NAME="test-functions"></A><B>test-functions</B>*
 	<A HREF="eval.html#assert_false()">assert_false()</A>		assert that an <A HREF="eval.html#expression">expression</A> is false
 	<A HREF="eval.html#assert_true()">assert_true()</A>		assert that an <A HREF="eval.html#expression">expression</A> is true
 	<A HREF="eval.html#assert_exception()">assert_exception()</A>	assert that a command throws an exception
-	assert_beeps()		assert that a command beeps
+	<A HREF="eval.html#assert_beeps()">assert_beeps()</A>		assert that a command beeps
 	<A HREF="eval.html#assert_fails()">assert_fails()</A>		assert that a command fails
 
 
 Timers:						*<A NAME="timer-functions"></A><B>timer-functions</B>*
 	<A HREF="eval.html#timer_start()">timer_start()</A>		create a <A HREF="eval.html#timer">timer</A>
+	<A HREF="eval.html#timer_pause()">timer_pause()</A>		pause or unpause a <A HREF="eval.html#timer">timer</A>
 	<A HREF="eval.html#timer_stop()">timer_stop()</A>		stop a <A HREF="eval.html#timer">timer</A>
+	<A HREF="eval.html#timer_stopall()">timer_stopall()</A>		stop all <A HREF="eval.html#timers">timers</A>
+	<A HREF="eval.html#timer_info()">timer_info()</A>		get information about <A HREF="eval.html#timers">timers</A>
+	<A HREF="eval.html#wait()">wait()</A>			wait for a condition
+
+
+Tags:						*<A NAME="tag-functions"></A><B>tag-functions</B>*
+	<A HREF="eval.html#taglist()">taglist()</A>		get <A HREF="eval.html#list">list</A> of matching <A HREF="tagsrch.html#tags">tags</A>
+	<A HREF="eval.html#tagfiles()">tagfiles()</A>		get a <A HREF="eval.html#list">list</A> of <A HREF="tagsrch.html#tags">tags</A> files
+	<A HREF="eval.html#gettagstack()">gettagstack()</A>		get the <A HREF="tagsrch.html#tag">tag</A> stack of a <A HREF="windows.html#window">window</A>
+	<A HREF="eval.html#settagstack()">settagstack()</A>		modify the <A HREF="tagsrch.html#tag">tag</A> stack of a <A HREF="windows.html#window">window</A>
+
+
+Prompt Buffer:					*<A NAME="promptbuffer-functions"></A><B>promptbuffer-functions</B>*
+	prompt_setcallback()	set prompt callback for a buffer
+	prompt_setinterrupt()	set interrupt callback for a buffer
+	prompt_setprompt()	set the prompt text for a buffer
+
+
+<A HREF="repeat.html#Context">Context</A> Stack:					*<A NAME="ctx-functions"></A><B>ctx-functions</B>*
+	<A HREF="eval.html#ctxget()">ctxget()</A>		return <A HREF="repeat.html#context">context</A> at given index from top
+	<A HREF="eval.html#ctxpop()">ctxpop()</A>		pop and restore top <A HREF="repeat.html#context">context</A>
+	<A HREF="eval.html#ctxpush()">ctxpush()</A>		push given <A HREF="repeat.html#context">context</A>
+	<A HREF="eval.html#ctxset()">ctxset()</A>		set <A HREF="repeat.html#context">context</A> at given index from top
+	<A HREF="eval.html#ctxsize()">ctxsize()</A>		return <A HREF="repeat.html#context">context</A> stack size
 
 
 Various:					*<A NAME="various-functions"></A><B>various-functions</B>*
@@ -995,21 +1073,21 @@ Various:					*<A NAME="various-functions"></A><B>various-functions</B>*
 	<A HREF="eval.html#undofile()">undofile()</A>		get the name of the <A HREF="undo.html#undo">undo</A> file
 	<A HREF="eval.html#undotree()">undotree()</A>		return the state of the <A HREF="undo.html#undo">undo</A> tree
 
-	<A HREF="eval.html#getreg()">getreg()</A>		get contents of a <A HREF="sponsor.html#register">register</A>
-	<A HREF="eval.html#getregtype()">getregtype()</A>		get type of a <A HREF="sponsor.html#register">register</A>
-	<A HREF="eval.html#setreg()">setreg()</A>		set contents and type of a <A HREF="sponsor.html#register">register</A>
+	<A HREF="eval.html#getreg()">getreg()</A>		get contents of a <A HREF="intro.html#register">register</A>
+	<A HREF="eval.html#getregtype()">getregtype()</A>		get type of a <A HREF="intro.html#register">register</A>
+	<A HREF="eval.html#setreg()">setreg()</A>		set contents and type of a <A HREF="intro.html#register">register</A>
+	<A HREF="eval.html#reg_executing()">reg_executing()</A>		return the name of the <A HREF="intro.html#register">register</A> being executed
+	<A HREF="eval.html#reg_recording()">reg_recording()</A>		return the name of the <A HREF="intro.html#register">register</A> being recorded
 
 	<A HREF="eval.html#shiftwidth()">shiftwidth()</A>		effective value of <A HREF="options.html#'shiftwidth'">'shiftwidth'</A>
 
 	<A HREF="eval.html#wordcount()">wordcount()</A>		get byte/word/char <A HREF="intro.html#count">count</A> of buffer
 
-	<A HREF="eval.html#taglist()">taglist()</A>		get <A HREF="eval.html#list">list</A> of matching <A HREF="tagsrch.html#tags">tags</A>
-	<A HREF="eval.html#tagfiles()">tagfiles()</A>		get a <A HREF="eval.html#list">list</A> of <A HREF="tagsrch.html#tags">tags</A> files
-
 	<A HREF="if_lua.html#luaeval()">luaeval()</A>		evaluate <A HREF="if_lua.html#Lua">Lua</A> <A HREF="eval.html#expression">expression</A>
-	<A HREF="eval.html#py3eval()">py3eval()</A>		evaluate <A HREF="if_pyth.html#Python">Python</A> <A HREF="eval.html#expression">expression</A> (|<A HREF="various.html#+python3">+python3</A>|)
-	<A HREF="eval.html#pyeval()">pyeval()</A>		evaluate <A HREF="if_pyth.html#Python">Python</A> <A HREF="eval.html#expression">expression</A> (|<A HREF="various.html#+python">+python</A>|)
-	pyxeval()		evaluate |<A HREF="intro.html#python_x">python_x</A>| <A HREF="eval.html#expression">expression</A>
+	<A HREF="eval.html#py3eval()">py3eval()</A>		evaluate <A HREF="if_pyth.html#Python">Python</A> <A HREF="eval.html#expression">expression</A> (|<A HREF="intro.html#+python3">+python3</A>|)
+	<A HREF="eval.html#pyeval()">pyeval()</A>		evaluate <A HREF="if_pyth.html#Python">Python</A> <A HREF="eval.html#expression">expression</A> (|<A HREF="intro.html#+python">+python</A>|)
+	<A HREF="eval.html#pyxeval()">pyxeval()</A>		evaluate |<A HREF="if_pyth.html#python_x">python_x</A>| <A HREF="eval.html#expression">expression</A>
+	debugbreak()		interrupt a program being debugged
 
 ==============================================================================
 
@@ -1718,7 +1796,7 @@ file and then restores the view:
 What this does:
 <B>	ma"aYHmbgg"aP`bzt`a</B>
  	ma			set <A HREF="motion.html#mark">mark</A> a at cursor position
-	  &quot;aY			<A HREF="change.html#yank">yank</A> current line into <A HREF="sponsor.html#register">register</A> a
+	  &quot;aY			<A HREF="change.html#yank">yank</A> current line into <A HREF="intro.html#register">register</A> a
 	     Hmb		go to top line in <A HREF="windows.html#window">window</A> and set <A HREF="motion.html#mark">mark</A> <A HREF="motion.html#b">b</A> there
 		<A HREF="motion.html#gg">gg</A>		go to first line in file
 		  &quot;aP		put the yanked line above <A HREF="motion.html#it">it</A>
@@ -1814,7 +1892,7 @@ Therefore, put a header at the top of your <A HREF="usr_05.html#plugin">plugin</
 
 <B>  1	" Vim global plugin for correcting typing mistakes</B>
 <B>  2	" Last Change:	2000 Oct 15</B>
-<B>  3	" Maintainer:	Bram Moolenaar &lt;<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6e2c1c0f032e18070340011c09">[email&#160;protected]</a>&gt;</B>
+<B>  3	" Maintainer:	Bram Moolenaar &lt;<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e7a595868aa7918e8ac9889580">[email&#160;protected]</a>&gt;</B>
 
 About <A HREF="uganda.html#copyright">copyright</A> and licensing: Since plugins are very useful and it's hardly
 worth restricting their <A HREF="intro.html#distribution">distribution</A>, please consider making your <A HREF="usr_05.html#plugin">plugin</A>
@@ -2046,7 +2124,7 @@ Here is the resulting complete example:
 
 <B>  1	" Vim global plugin for correcting typing mistakes</B>
 <B>  2	" Last Change:	2000 Oct 15</B>
-<B>  3	" Maintainer:	Bram Moolenaar &lt;<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="216353404c6157484c0f4e5346">[email&#160;protected]</a>&gt;</B>
+<B>  3	" Maintainer:	Bram Moolenaar &lt;<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2d6f5f4c406d5b444003425f4a">[email&#160;protected]</a>&gt;</B>
 <B>  4	" License:	This file is placed in the public domain.</B>
 <B>  5</B>
 <B>  6	if exists("g:loaded_typecorr")</B>
@@ -2449,7 +2527,7 @@ The following example shows how it's done:
 
 <B>	" Vim global plugin for demonstrating quick loading</B>
 <B>	" Last Change:	2005 Feb 25</B>
-<B>	" Maintainer:	Bram Moolenaar &lt;<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="87c5f5e6eac7f1eeeaa9e8f5e0">[email&#160;protected]</a>&gt;</B>
+<B>	" Maintainer:	Bram Moolenaar &lt;<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e2a090838fa2948b8fcc8d9085">[email&#160;protected]</a>&gt;</B>
 <B>	" License:	This file is placed in the public domain.</B>
 
 <B>	if !exists("s:did_load")</B>
@@ -2571,7 +2649,7 @@ Further reading: |<A HREF="eval.html#autoload">autoload</A>|.
 
 *<A NAME="41.16"></A><B>41.16</B>*	Distributing Vim scripts			*<A NAME="distribute-script"></A><B>distribute-script</B>*
 
- Vim users will look for scripts on the Vim website:	<A HREF="http://www.vim.org">http://www.vim.org</A>.
+ Vim users will look for scripts on the Vim website:	<A HREF="https://www.vim.org">http://www.vim.org</A>.
 If you made something that is useful for others, share <A HREF="motion.html#it">it</A>!
 
 Vim scripts can be used on any system.  There might not be a <A HREF="pi_tar.html#tar">tar</A> or <A HREF="pi_gzip.html#gzip">gzip</A>
@@ -2586,5 +2664,11 @@ Copyright: see |<A HREF="usr_01.html#manual-copyright">manual-copyright</A>|  vi
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
+
+    <footer>
+      <div class="container">
+        Generated Wed Sep 18 20:06:13 UTC 2019 from <a href="https://github.com/neovim/neovim/commit/1070c092c7bf989f261047b861165e61e94c1941"><code>1070c09</code></a>.
+      </div>
+    </footer>
   <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
 </html>

@@ -2,10 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Nvim documentation: editing</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.0/normalize.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="/css/main.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
   </head>
   <body>
-                <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
+    <header class="navbar">
+      <div class="container">
+        <nav class="navbar">
+          <div class="container-fluid">
+            <div class="navbar-header">
+
+              <a href="/" class="navbar-brand">
+                <img src="/images/logo@2x.png" id="navbar-logo" alt="Neovim">
+              </a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
 
     <div class="container">
       <h1>Nvim documentation: editing</h1>
@@ -616,7 +640,7 @@ You can use the argument <A HREF="eval.html#list">list</A> with the following co
 <A HREF="eval.html#list">list</A> of the current <A HREF="windows.html#window">window</A>.
 
 
-							*<A NAME=":ar"></A><B>:ar</B>* *<A NAME=":args"></A><B>:args</B>*
+							*<A NAME=":ar"></A><B>:ar</B>* *<A NAME=":arg"></A><B>:arg</B>* *<A NAME=":args"></A><B>:args</B>*
 :ar[gs]			Print the argument <A HREF="eval.html#list">list</A>, with the current file in
 			square brackets.
 
@@ -1289,9 +1313,8 @@ If you want to always use &quot;<A HREF="#:confirm">:confirm</A>&quot;, set the 
 			and |<A HREF="#:qall">:qall</A>| if <A HREF="options.html#'confirm'">'confirm'</A> is set.
 			{only in Win32 GUI}
 			When &quot;<A HREF="#:browse">:browse</A>&quot; is not possible you get an error
-			message.  If the |<A HREF="various.html#+browse">+browse</A>| feature is missing or the
-			{command} doesn't support browsing, the {command} is
-			executed without a dialog.
+			message.  If {command} doesn't support browsing, the
+			{command} is executed without a dialog.
 			&quot;<A HREF="#:browse">:browse</A> set&quot; works like |<A HREF="options.html#:options">:options</A>|.
 			See also |<A HREF="starting.html#:oldfiles">:oldfiles</A>| for &quot;<A HREF="#:browse">:browse</A> oldfiles&quot;.
 
@@ -1471,7 +1494,7 @@ There are a few things to remember when editing binary files:
   file.  Otherwise both <A HREF="motion.html#&lt;CR&gt;">&lt;CR&gt;</A> <A HREF="motion.html#&lt;NL&gt;">&lt;NL&gt;</A> and <A HREF="motion.html#&lt;NL&gt;">&lt;NL&gt;</A> are considered to end a line
   and when the file is written the <A HREF="motion.html#&lt;NL&gt;">&lt;NL&gt;</A> will be replaced with <A HREF="motion.html#&lt;CR&gt;">&lt;CR&gt;</A> <A HREF="motion.html#&lt;NL&gt;">&lt;NL&gt;</A>.
 - <A HREF="intro.html#&lt;Nul&gt;">&lt;Nul&gt;</A> characters are shown on the screen <A HREF="motion.html#as">as</A> ^@.  You can enter them with
-  &quot;<A HREF="visual.html#CTRL-V">CTRL-V</A> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6b283f3927462b">[email&#160;protected]</a>&quot; or &quot;<A HREF="visual.html#CTRL-V">CTRL-V</A> 000&quot;.
+  &quot;<A HREF="visual.html#CTRL-V">CTRL-V</A> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="236077716f0e63">[email&#160;protected]</a>&quot; or &quot;<A HREF="visual.html#CTRL-V">CTRL-V</A> 000&quot;.
 - To insert a <A HREF="motion.html#&lt;NL&gt;">&lt;NL&gt;</A> character in the file split a line.  When <A HREF="#writing">writing</A> the
   buffer to a file a <A HREF="motion.html#&lt;NL&gt;">&lt;NL&gt;</A> will be written for the <A HREF="intro.html#&lt;EOL&gt;">&lt;EOL&gt;</A>.
 - Vim normally appends an <A HREF="intro.html#&lt;EOL&gt;">&lt;EOL&gt;</A> at the end of the file if there is none.
@@ -1561,7 +1584,7 @@ If you don't get warned often enough you can use the following command.
 
 							*<A NAME="E813"></A><B>E813</B>* *<A NAME="E814"></A><B>E814</B>*
 Vim will <A HREF="#reload">reload</A> the buffer if you chose to.  If a <A HREF="windows.html#window">window</A> is visible that
-contains this buffer, the reloading will happen in the context of this <A HREF="windows.html#window">window</A>.
+contains this buffer, the reloading will happen in the <A HREF="repeat.html#context">context</A> of this <A HREF="windows.html#window">window</A>.
 Otherwise a special <A HREF="windows.html#window">window</A> is used, so that most autocommands will work.  You
 can't close this <A HREF="windows.html#window">window</A>.  A few other restrictions apply.  Best is to make
 sure nothing happens outside of the current buffer.  E.g., setting
@@ -1598,8 +1621,6 @@ problem goes away the next day.
 ==============================================================================
 
 11. File Searching					*<A NAME="file-searching"></A><B>file-searching</B>*
-
-{not available when compiled without the |<A HREF="various.html#+path_extra">+path_extra</A>| feature}
 
 The file searching is currently used for the <A HREF="options.html#'path'">'path'</A>, <A HREF="options.html#'cdpath'">'cdpath'</A> and <A HREF="options.html#'tags'">'tags'</A>
 <A HREF="options.html#options">options</A>, for |<A HREF="eval.html#finddir()">finddir()</A>| and |<A HREF="eval.html#findfile()">findfile()</A>|.  Other commands use |<A HREF="#wildcards">wildcards</A>|
@@ -1697,5 +1718,11 @@ There are three different types of searching:
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
+
+    <footer>
+      <div class="container">
+        Generated Wed Sep 18 20:06:10 UTC 2019 from <a href="https://github.com/neovim/neovim/commit/1070c092c7bf989f261047b861165e61e94c1941"><code>1070c09</code></a>.
+      </div>
+    </footer>
   <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
 </html>

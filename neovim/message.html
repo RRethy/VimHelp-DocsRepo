@@ -2,10 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Nvim documentation: message</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.0/normalize.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="/css/main.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
   </head>
   <body>
-                <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
+    <header class="navbar">
+      <div class="container">
+        <nav class="navbar">
+          <div class="container-fluid">
+            <div class="navbar-header">
+
+              <a href="/" class="navbar-brand">
+                <img src="/images/logo@2x.png" id="navbar-logo" alt="Neovim">
+              </a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
 
     <div class="container">
       <h1>Nvim documentation: message</h1>
@@ -277,6 +301,9 @@ format of the file.  The file will not be marked unmodified.  If you care
 about the loss of information, set the <A HREF="options.html#'fileencoding'">'fileencoding'</A> option to another value
 that can handle the characters in the buffer and write again.  If you don't
 care, you can <A HREF="editing.html#abandon">abandon</A> the buffer or reset the <A HREF="options.html#'modified'">'modified'</A> option.
+If there is a <A HREF="editing.html#backup">backup</A> file, when <A HREF="options.html#'writebackup'">'writebackup'</A> or <A HREF="options.html#'backup'">'backup'</A> is set, <A HREF="motion.html#it">it</A> will not
+be deleted, so you can move <A HREF="motion.html#it">it</A> back into place if you want to <A HREF="editing.html#discard">discard</A> the
+changes.
 
 
 							*<A NAME="E302"></A><B>E302</B>* 
@@ -584,16 +611,6 @@ for about 14 levels.  When more nesting is done, Vim assumes that there is a
 recursive loop somewhere and stops with this error message.
 
 
-							*<A NAME="E319"></A><B>E319</B>* 
-<B>  The command is not available in this version</B>
-
-You have used a command that is not present in the version of Vim you are
-using.  When compiling Vim, many different features can be enabled or
-disabled.  This depends on how big Vim has chosen to be and the operating
-system.  See |<A HREF="various.html#+feature-list">+feature-list</A>| for when which feature is available.  The
-|<A HREF="various.html#:version">:version</A>| command shows which feature Vim was compiled with.
-
-
 							*<A NAME="E300"></A><B>E300</B>* 
 <B>  Swap file already exists (symlink attack?)</B>
 
@@ -614,15 +631,6 @@ files are not properly sorted, reset the |<A HREF="options.html#'tagbsearch'">'t
 This message is only given when Vim detects a problem when searching for a
 <A HREF="tagsrch.html#tag">tag</A>.  Sometimes this message is not given, even though the <A HREF="tagsrch.html#tags">tags</A> file is not
 properly sorted.
-
-
-							*<A NAME="E460"></A><B>E460</B>* 
-<B>  The resource fork would be lost (add ! to override)</B>
-
-On the Macintosh (classic), when <A HREF="editing.html#writing">writing</A> a file, Vim attempts to preserve all
-info about a file, including its resource fork.  If this is not possible you
-get this error message.  Append &quot;<A HREF="change.html#!">!</A>&quot; to the command name to write anyway (and
-lose the info).
 
 
 							*<A NAME="E424"></A><B>E424</B>* 
@@ -663,7 +671,7 @@ when using &quot;:w&quot;), therefore Vim requires using a !  after the command,
 
 Messages like this appear when starting up.  This is not a Vim problem, your
 X11 configuration is wrong.  You can find a hint on how to solve this here:
-	<A HREF="http://groups.yahoo.com/group/solarisonintel/message/12179">http://groups.yahoo.com/group/solarisonintel/message/12179</A>.
+	<A HREF="https://groups.yahoo.com/group/solarisonintel/message/12179">http://groups.yahoo.com/group/solarisonintel/message/12179</A>.
 [this URL is no longer valid]
 
 
@@ -707,7 +715,7 @@ starts.  It can be fixed in one of these ways:
   write the file <A HREF="if_cscop.html#twice">twice</A> and set the clock back.
 
 If you get <A HREF="#W11">W11</A> all the time, you may need to disable &quot;Acronis Active
-Protection&quot; or <A HREF="sponsor.html#register">register</A> Vim <A HREF="motion.html#as">as</A> a trusted service/application.
+Protection&quot; or <A HREF="intro.html#register">register</A> Vim <A HREF="motion.html#as">as</A> a trusted service/application.
 
 
 							*<A NAME="W12"></A><B>W12</B>* 
@@ -776,11 +784,13 @@ This happens when an <A HREF="intro.html#Ex">Ex</A> command with mandatory argum
 no argument has been specified.
 
 
-							*<A NAME="E474"></A><B>E474</B>* *<A NAME="E475"></A><B>E475</B>* 
+							*<A NAME="E474"></A><B>E474</B>* *<A NAME="E475"></A><B>E475</B>* *<A NAME="E983"></A><B>E983</B>* 
 <B>  Invalid argument</B>
 <B>  Invalid argument: {arg}</B>
+<B>  Duplicate argument: {arg}</B>
 
-An <A HREF="intro.html#Ex">Ex</A> command has been executed, but an invalid argument has been specified.
+An <A HREF="intro.html#Ex">Ex</A> command or function has been executed, but an invalid argument has been
+specified.
 
 
 							*<A NAME="E488"></A><B>E488</B>* 
@@ -847,11 +857,10 @@ You tried to set an option after <A HREF="starting.html#startup">startup</A> tha
 
 
 							*<A NAME="E943"></A><B>E943</B>* 
-<B>  Command table needs to be updated, run 'make cmdidxs'</B>
+<B>  Command table needs to be updated, run 'make'</B>
 
-This can only happen when <A HREF="change.html#changing">changing</A> the source code, when adding a command in
-src/ex_cmds.h.  The lookup table then needs to be updated, by running:
-<B>	make cmdidxs</B>
+This can only happen when <A HREF="change.html#changing">changing</A> the source code, after adding a command in
+src/ex_cmds.lua.  Update the lookup table by re-running the build.
 
 ==============================================================================
 
@@ -880,7 +889,7 @@ and the screen is about to be redrawn:
 -&gt; Pressing '<A HREF="motion.html#j">j</A>', '<A HREF="motion.html#f">f</A>', '<A HREF="change.html#d">d</A>' or <A HREF="motion.html#&lt;Down&gt;">&lt;Down&gt;</A> is ignored when <A HREF="#messages">messages</A> scrolled off the
    top of the screen and <A HREF="options.html#'more'">'more'</A> is on, to avoid that typing one '<A HREF="motion.html#j">j</A>' or '<A HREF="motion.html#f">f</A>' too
    many causes the <A HREF="#messages">messages</A> to disappear.
--&gt; Press &lt;C-Y&gt; to copy (yank) a modeless selection to the <A HREF="provider.html#clipboard">clipboard</A> <A HREF="sponsor.html#register">register</A>.
+-&gt; Press &lt;C-Y&gt; to copy (yank) a modeless selection to the <A HREF="provider.html#clipboard">clipboard</A> <A HREF="intro.html#register">register</A>.
 -&gt; Use a menu.  The characters defined for <A HREF="cmdline.html#Cmdline-mode">Cmdline-mode</A> are used.
 -&gt; When <A HREF="options.html#'mouse'">'mouse'</A> contains the '<A HREF="change.html#r">r</A>' flag, clicking the left mouse button works
    like pressing <A HREF="motion.html#&lt;Space&gt;">&lt;Space&gt;</A>.  This makes <A HREF="motion.html#it">it</A> impossible to select text though.
@@ -894,6 +903,7 @@ To reduce the number of <A HREF="#hit-enter">hit-enter</A> prompts:
 - Set <A HREF="options.html#'cmdheight'">'cmdheight'</A> to 2 or higher.
 - Add flags to <A HREF="options.html#'shortmess'">'shortmess'</A>.
 - Reset <A HREF="options.html#'showcmd'">'showcmd'</A> and/or <A HREF="options.html#'ruler'">'ruler'</A>.
+- Make sure `:echo` text is within |<A HREF="eval.html#v:echospace">v:echospace</A>| screen cells.
 
 If your <A HREF="usr_41.html#script">script</A> causes the <A HREF="#hit-enter">hit-enter</A> prompt and you don't know why, you may
 find the |<A HREF="eval.html#v:scrollstart">v:scrollstart</A>| variable useful.
@@ -949,5 +959,11 @@ prompt.
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
+
+    <footer>
+      <div class="container">
+        Generated Wed Sep 18 20:06:11 UTC 2019 from <a href="https://github.com/neovim/neovim/commit/1070c092c7bf989f261047b861165e61e94c1941"><code>1070c09</code></a>.
+      </div>
+    </footer>
   </body>
 </html>

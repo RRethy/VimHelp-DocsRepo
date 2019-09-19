@@ -2,10 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Nvim documentation: quickref</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.0/normalize.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="/css/main.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
   </head>
   <body>
-                <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
+    <header class="navbar">
+      <div class="container">
+        <nav class="navbar">
+          <div class="container-fluid">
+            <div class="navbar-header">
+
+              <a href="/" class="navbar-brand">
+                <img src="/images/logo@2x.png" id="navbar-logo" alt="Neovim">
+              </a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
 
     <div class="container">
       <h1>Nvim documentation: quickref</h1>
@@ -56,7 +80,7 @@ N is used to indicate an optional <A HREF="intro.html#count">count</A> that can 
 |<A HREF="motion.html#l">l</A>|	N  l		right (also: <A HREF="motion.html#&lt;Space&gt;">&lt;Space&gt;</A> or <A HREF="motion.html#&lt;Right&gt;">&lt;Right&gt;</A> key)
 |<A HREF="motion.html#0">0</A>|	   0		to first character in the line (also: <A HREF="motion.html#&lt;Home&gt;">&lt;Home&gt;</A> key)
 |<A HREF="motion.html#^">^</A>|	   ^		to first non-blank character in the line
-|<A HREF="motion.html#$">$</A>|	N  $		to the last character in the line (N-1 lines lower)
+|<A HREF="motion.html#$">$</A>|	N  $		to the next EOL (end of line) position
 			   (also: <A HREF="motion.html#&lt;End&gt;">&lt;End&gt;</A> key)
 |<A HREF="motion.html#g0">g0</A>|	   g0		to first character in screen line (differs from &quot;0&quot;
 			   when lines wrap)
@@ -317,9 +341,9 @@ moving around:
 |<A HREF="insert.html#i_CTRL-Y">i_CTRL-Y</A>|	CTRL-Y		  insert the character from above the cursor
 
 |<A HREF="insert.html#i_CTRL-A">i_CTRL-A</A>|	CTRL-A		  insert previously inserted text
-|<A HREF="insert.html#i_CTRL-@"><span class="__cf_email__" data-cfemail="caa395899e9886e78a">[email&#160;protected]</span></A>|	<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7a392e2836573a">[email&#160;protected]</a>		  insert previously inserted text and stop
+|<A HREF="insert.html#i_CTRL-@"><span class="__cf_email__" data-cfemail="80e9dfc3d4d2ccadc0">[email&#160;protected]</span></A>|	<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="cf8c9b9d83e28f">[email&#160;protected]</a>		  insert previously inserted text and stop
 				     <A HREF="insert.html#Insert">Insert</A> mode
-|<A HREF="insert.html#i_CTRL-R">i_CTRL-R</A>|	CTRL-R {0-9a-z&#37;#:.-=&quot;}  insert the contents of a <A HREF="sponsor.html#register">register</A>
+|<A HREF="insert.html#i_CTRL-R">i_CTRL-R</A>|	CTRL-R {0-9a-z&#37;#:.-=&quot;}  insert the contents of a <A HREF="intro.html#register">register</A>
 
 |<A HREF="insert.html#i_CTRL-N">i_CTRL-N</A>|	CTRL-N		  insert next match of identifier before the
 				     cursor
@@ -375,20 +399,20 @@ In <A HREF="insert.html#Insert">Insert</A> or <A HREF="cmdline.html#Command-line
 |<A HREF="change.html#v_J">v_J</A>|	   {visual}J	join the highlighted lines
 |<A HREF="change.html#gJ">gJ</A>|	N  gJ		like &quot;J&quot;, but without <A HREF="insert.html#inserting">inserting</A> spaces
 |<A HREF="change.html#v_gJ">v_gJ</A>|	   {visual}gJ	like &quot;{visual}J&quot;, but without <A HREF="insert.html#inserting">inserting</A> spaces
-|<A HREF="change.html#:d">:d</A>|	:[range]d [x]	delete <A HREF="cmdline.html#[range]">[range]</A> lines [into <A HREF="sponsor.html#register">register</A> x]
+|<A HREF="change.html#:d">:d</A>|	:[range]d [x]	delete <A HREF="cmdline.html#[range]">[range]</A> lines [into <A HREF="intro.html#register">register</A> x]
 ------------------------------------------------------------------------------
 
 *<A NAME="Q_cm"></A><B>Q_cm</B>*		Copying and moving text
 
-|<A HREF="change.html#quote">quote</A>|	  &quot;{char}	use <A HREF="sponsor.html#register">register</A> {char} for the next delete, <A HREF="change.html#yank">yank</A>, or put
+|<A HREF="change.html#quote">quote</A>|	  &quot;{char}	use <A HREF="intro.html#register">register</A> {char} for the next delete, <A HREF="change.html#yank">yank</A>, or put
 |<A HREF="change.html#:reg">:reg</A>|	  :reg		show the contents of all <A HREF="change.html#registers">registers</A>
 |<A HREF="change.html#:reg">:reg</A>|	  :reg {arg}	show the contents of <A HREF="change.html#registers">registers</A> mentioned in {arg}
-|<A HREF="change.html#y">y</A>|	  N  y{motion}	<A HREF="change.html#yank">yank</A> the text moved over with <A HREF="intro.html#{motion}">{motion}</A> into a <A HREF="sponsor.html#register">register</A>
-|<A HREF="change.html#v_y">v_y</A>|	     {visual}y	<A HREF="change.html#yank">yank</A> the highlighted text into a <A HREF="sponsor.html#register">register</A>
-|<A HREF="change.html#yy">yy</A>|	  N  yy		<A HREF="change.html#yank">yank</A> N lines into a <A HREF="sponsor.html#register">register</A>
-|<A HREF="change.html#Y">Y</A>|	  N  Y		<A HREF="change.html#yank">yank</A> N lines into a <A HREF="sponsor.html#register">register</A>
-|<A HREF="change.html#p">p</A>|	  N  p		put a <A HREF="sponsor.html#register">register</A> after the cursor position (N times)
-|<A HREF="change.html#P">P</A>|	  N  P		put a <A HREF="sponsor.html#register">register</A> before the cursor position (N times)
+|<A HREF="change.html#y">y</A>|	  N  y{motion}	<A HREF="change.html#yank">yank</A> the text moved over with <A HREF="intro.html#{motion}">{motion}</A> into a <A HREF="intro.html#register">register</A>
+|<A HREF="change.html#v_y">v_y</A>|	     {visual}y	<A HREF="change.html#yank">yank</A> the highlighted text into a <A HREF="intro.html#register">register</A>
+|<A HREF="change.html#yy">yy</A>|	  N  yy		<A HREF="change.html#yank">yank</A> N lines into a <A HREF="intro.html#register">register</A>
+|<A HREF="change.html#Y">Y</A>|	  N  Y		<A HREF="change.html#yank">yank</A> N lines into a <A HREF="intro.html#register">register</A>
+|<A HREF="change.html#p">p</A>|	  N  p		put a <A HREF="intro.html#register">register</A> after the cursor position (N times)
+|<A HREF="change.html#P">P</A>|	  N  P		put a <A HREF="intro.html#register">register</A> before the cursor position (N times)
 |<A HREF="change.html#]p">]p</A>|	  N  ]p		like p, but adjust indent to current line
 |<A HREF="change.html#[p">[p</A>|	  N  [p		like <A HREF="change.html#P">P</A>, but adjust indent to current line
 |<A HREF="change.html#gp">gp</A>|	  N  gp		like p, but leave cursor after the new text
@@ -522,12 +546,12 @@ In <A HREF="insert.html#Insert">Insert</A> or <A HREF="cmdline.html#Command-line
 *<A NAME="Q_re"></A><B>Q_re</B>*		Repeating commands
 
 |<A HREF="repeat.html#.">.</A>|	   N  .		repeat last change (with <A HREF="intro.html#count">count</A> replaced with N)
-|<A HREF="repeat.html#q">q</A>|	      q{a-z}	record typed characters into <A HREF="sponsor.html#register">register</A> {a-z}
-|<A HREF="repeat.html#q">q</A>|	      q{A-Z}	record typed characters, appended to <A HREF="sponsor.html#register">register</A> {a-z}
+|<A HREF="repeat.html#q">q</A>|	      q{a-z}	record typed characters into <A HREF="intro.html#register">register</A> {a-z}
+|<A HREF="repeat.html#q">q</A>|	      q{A-Z}	record typed characters, appended to <A HREF="intro.html#register">register</A> {a-z}
 |<A HREF="repeat.html#q">q</A>|	      q		stop <A HREF="repeat.html#recording">recording</A>
-|<A HREF="repeat.html#@">@</A>|	   N  @{a-z}	execute the contents of <A HREF="sponsor.html#register">register</A> {a-z} (N times)
+|<A HREF="repeat.html#@">@</A>|	   N  @{a-z}	execute the contents of <A HREF="intro.html#register">register</A> {a-z} (N times)
 |<A HREF="repeat.html#@@">@@</A>|	   N  @@	   repeat previous @{a-z} (N times)
-|<A HREF="repeat.html#:@">:@</A>|	   :@{a-z}	execute the contents of <A HREF="sponsor.html#register">register</A> {a-z} <A HREF="motion.html#as">as</A> an <A HREF="intro.html#Ex">Ex</A>
+|<A HREF="repeat.html#:@">:@</A>|	   :@{a-z}	execute the contents of <A HREF="intro.html#register">register</A> {a-z} <A HREF="motion.html#as">as</A> an <A HREF="intro.html#Ex">Ex</A>
 			   command
 |<A HREF="repeat.html#:@@">:@@</A>|	   :@@		repeat previous :@{a-z}
 |<A HREF="repeat.html#:g">:g</A>|	   :[range]g[lobal]/{pattern}/[cmd]
@@ -638,7 +662,6 @@ In <A HREF="insert.html#Insert">Insert</A> or <A HREF="cmdline.html#Command-line
 Short explanation of each option:		*<A NAME="option-list"></A><B>option-list</B>*
 <A HREF="options.html#'aleph'">'aleph'</A>		  <A HREF="options.html#'al'">'al'</A>	    ASCII code of the <A HREF="print.html#letter">letter</A> <A HREF="options.html#Aleph">Aleph</A> (Hebrew)
 <A HREF="options.html#'allowrevins'">'allowrevins'</A>	  <A HREF="options.html#'ari'">'ari'</A>     allow CTRL-_ in <A HREF="insert.html#Insert">Insert</A> and <A HREF="cmdline.html#Command-line">Command-line</A> mode
-<A HREF="options.html#'altkeymap'">'altkeymap'</A>	  <A HREF="options.html#'akm'">'akm'</A>     for default second language (Farsi/Hebrew)
 <A HREF="options.html#'ambiwidth'">'ambiwidth'</A>	  <A HREF="options.html#'ambw'">'ambw'</A>    what to <A HREF="diff.html#do">do</A> with <A HREF="mbyte.html#Unicode">Unicode</A> chars of ambiguous width
 <A HREF="options.html#'autochdir'">'autochdir'</A>	  <A HREF="options.html#'acd'">'acd'</A>     change directory to the file in the current <A HREF="windows.html#window">window</A>
 <A HREF="options.html#'arabic'">'arabic'</A>	  <A HREF="options.html#'arab'">'arab'</A>    for <A HREF="arabic.html#Arabic">Arabic</A> <A HREF="motion.html#as">as</A> a default second language
@@ -676,7 +699,7 @@ Short explanation of each option:		*<A NAME="option-list"></A><B>option-list</B>
 <A HREF="options.html#'cinkeys'">'cinkeys'</A>	  <A HREF="options.html#'cink'">'cink'</A>    keys that trigger indent when <A HREF="options.html#'cindent'">'cindent'</A> is set
 <A HREF="options.html#'cinoptions'">'cinoptions'</A>	  <A HREF="options.html#'cino'">'cino'</A>    how to <A HREF="diff.html#do">do</A> indenting when <A HREF="options.html#'cindent'">'cindent'</A> is set
 <A HREF="options.html#'cinwords'">'cinwords'</A>	  <A HREF="options.html#'cinw'">'cinw'</A>    words where <A HREF="options.html#'si'">'si'</A> and <A HREF="options.html#'cin'">'cin'</A> add an indent
-<A HREF="options.html#'clipboard'">'clipboard'</A>	  <A HREF="options.html#'cb'">'cb'</A>	    use the <A HREF="provider.html#clipboard">clipboard</A> <A HREF="motion.html#as">as</A> the unnamed <A HREF="sponsor.html#register">register</A>
+<A HREF="options.html#'clipboard'">'clipboard'</A>	  <A HREF="options.html#'cb'">'cb'</A>	    use the <A HREF="provider.html#clipboard">clipboard</A> <A HREF="motion.html#as">as</A> the unnamed <A HREF="intro.html#register">register</A>
 <A HREF="options.html#'cmdheight'">'cmdheight'</A>	  <A HREF="options.html#'ch'">'ch'</A>	    number of lines to use for the command-line
 <A HREF="options.html#'cmdwinheight'">'cmdwinheight'</A>	  <A HREF="options.html#'cwh'">'cwh'</A>     height of the command-line <A HREF="windows.html#window">window</A>
 <A HREF="options.html#'colorcolumn'">'colorcolumn'</A>	  <A HREF="options.html#'cc'">'cc'</A>	    columns to highlight
@@ -720,7 +743,7 @@ Short explanation of each option:		*<A NAME="option-list"></A><B>option-list</B>
 <A HREF="options.html#'errorformat'">'errorformat'</A>	  <A HREF="options.html#'efm'">'efm'</A>     description of the lines in the error file
 <A HREF="options.html#'eventignore'">'eventignore'</A>	  <A HREF="options.html#'ei'">'ei'</A>	    <A HREF="autocmd.html#autocommand">autocommand</A> events that are ignored
 <A HREF="options.html#'expandtab'">'expandtab'</A>	  <A HREF="options.html#'et'">'et'</A>	    use spaces when <A HREF="motion.html#&lt;Tab&gt;">&lt;Tab&gt;</A> is inserted
-<A HREF="options.html#'exrc'">'exrc'</A>		  <A HREF="options.html#'ex'">'ex'</A>	    read .nvimrc and .exrc in the current directory
+<A HREF="deprecated.html#'exrc'">'exrc'</A>		  <A HREF="deprecated.html#'ex'">'ex'</A>	    read .nvimrc and .exrc in the current directory
 <A HREF="options.html#'fileencoding'">'fileencoding'</A>	  <A HREF="options.html#'fenc'">'fenc'</A>    file encoding for <A HREF="mbyte.html#multi-byte">multi-byte</A> text
 <A HREF="options.html#'fileencodings'">'fileencodings'</A>   <A HREF="options.html#'fencs'">'fencs'</A>   automatically detected character encodings
 <A HREF="options.html#'fileformat'">'fileformat'</A>	  <A HREF="options.html#'ff'">'ff'</A>	    file format used for file I/O
@@ -729,7 +752,6 @@ Short explanation of each option:		*<A NAME="option-list"></A><B>option-list</B>
 <A HREF="options.html#'filetype'">'filetype'</A>	  <A HREF="options.html#'ft'">'ft'</A>	    type of file, used for autocommands
 <A HREF="options.html#'fillchars'">'fillchars'</A>	  <A HREF="options.html#'fcs'">'fcs'</A>     characters to use for displaying special items
 <A HREF="options.html#'fixendofline'">'fixendofline'</A>	  <A HREF="options.html#'fixeol'">'fixeol'</A>  make sure last line in file has <A HREF="intro.html#&lt;EOL&gt;">&lt;EOL&gt;</A>
-<A HREF="options.html#'fkmap'">'fkmap'</A>		  <A HREF="options.html#'fk'">'fk'</A>	    <A HREF="farsi.html#Farsi">Farsi</A> keyboard <A HREF="map.html#mapping">mapping</A>
 <A HREF="options.html#'foldclose'">'foldclose'</A>	  <A HREF="options.html#'fcl'">'fcl'</A>     close a fold when the cursor leaves <A HREF="motion.html#it">it</A>
 <A HREF="options.html#'foldcolumn'">'foldcolumn'</A>	  <A HREF="options.html#'fdc'">'fdc'</A>     width of the column used to indicate <A HREF="fold.html#folds">folds</A>
 <A HREF="options.html#'foldenable'">'foldenable'</A>	  <A HREF="options.html#'fen'">'fen'</A>     set to display all <A HREF="fold.html#folds">folds</A> open
@@ -814,6 +836,7 @@ Short explanation of each option:		*<A NAME="option-list"></A><B>option-list</B>
 <A HREF="options.html#'menuitems'">'menuitems'</A>	  <A HREF="options.html#'mis'">'mis'</A>     maximum number of items in a menu
 <A HREF="options.html#'mkspellmem'">'mkspellmem'</A>	  <A HREF="options.html#'msm'">'msm'</A>     memory used before |<A HREF="spell.html#:mkspell">:mkspell</A>| compresses the tree
 <A HREF="options.html#'modeline'">'modeline'</A>	  <A HREF="options.html#'ml'">'ml'</A>	    recognize modelines at start or end of file
+<A HREF="options.html#'modelineexpr'">'modelineexpr'</A>	  <A HREF="options.html#'mle'">'mle'</A>	    allow setting <A HREF="eval.html#expression">expression</A> <A HREF="options.html#options">options</A> from a <A HREF="options.html#modeline">modeline</A>
 <A HREF="options.html#'modelines'">'modelines'</A>	  <A HREF="options.html#'mls'">'mls'</A>     number of lines checked for modelines
 <A HREF="options.html#'modifiable'">'modifiable'</A>	  <A HREF="options.html#'ma'">'ma'</A>	    changes to the text are not possible
 <A HREF="options.html#'modified'">'modified'</A>	  <A HREF="options.html#'mod'">'mod'</A>     buffer has been modified
@@ -829,7 +852,7 @@ Short explanation of each option:		*<A NAME="option-list"></A><B>option-list</B>
 <A HREF="options.html#'numberwidth'">'numberwidth'</A>	  <A HREF="options.html#'nuw'">'nuw'</A>     number of columns used for the line number
 <A HREF="options.html#'omnifunc'">'omnifunc'</A>	  <A HREF="options.html#'ofu'">'ofu'</A>     function for filetype-specific completion
 <A HREF="options.html#'opendevice'">'opendevice'</A>	  <A HREF="options.html#'odev'">'odev'</A>    allow reading/writing devices on MS-Windows
-<A HREF="options.html#'operatorfunc'">'operatorfunc'</A>	  <A HREF="options.html#'opfunc'">'opfunc'</A>  function to be called for |<A HREF="map.html#g@"><span class="__cf_email__" data-cfemail="a8cfe8">[email&#160;protected]</span></A>| <A HREF="motion.html#operator">operator</A>
+<A HREF="options.html#'operatorfunc'">'operatorfunc'</A>	  <A HREF="options.html#'opfunc'">'opfunc'</A>  function to be called for |<A HREF="map.html#g@"><span class="__cf_email__" data-cfemail="781f38">[email&#160;protected]</span></A>| <A HREF="motion.html#operator">operator</A>
 <A HREF="options.html#'packpath'">'packpath'</A>	  <A HREF="options.html#'pp'">'pp'</A>      <A HREF="eval.html#list">list</A> of directories used for <A HREF="repeat.html#packages">packages</A>
 <A HREF="options.html#'paragraphs'">'paragraphs'</A>	  <A HREF="options.html#'para'">'para'</A>    nroff macros that separate paragraphs
 <A HREF="options.html#'paste'">'paste'</A>			    allow pasting text
@@ -840,6 +863,7 @@ Short explanation of each option:		*<A NAME="option-list"></A><B>option-list</B>
 'perldll'		    name of the Perl dynamic library
 <A HREF="options.html#'preserveindent'">'preserveindent'</A>  <A HREF="options.html#'pi'">'pi'</A>	    preserve the indent structure when reindenting
 <A HREF="options.html#'previewheight'">'previewheight'</A>   <A HREF="options.html#'pvh'">'pvh'</A>     height of the preview <A HREF="windows.html#window">window</A>
+'previewpopup'    'pvp'     use popup <A HREF="windows.html#window">window</A> for preview
 <A HREF="options.html#'previewwindow'">'previewwindow'</A>   <A HREF="options.html#'pvw'">'pvw'</A>     identifies the preview <A HREF="windows.html#window">window</A>
 <A HREF="options.html#'printdevice'">'printdevice'</A>	  <A HREF="options.html#'pdev'">'pdev'</A>    name of the printer to be used for <A HREF="print.html#:hardcopy">:hardcopy</A>
 <A HREF="options.html#'printencoding'">'printencoding'</A>   <A HREF="options.html#'penc'">'penc'</A>    encoding to be used for <A HREF="print.html#printing">printing</A>
@@ -854,6 +878,7 @@ Short explanation of each option:		*<A NAME="option-list"></A><B>option-list</B>
 'pumwidth'	  'pw'	    minimum width of the popup menu
 'pythondll'		    name of the <A HREF="if_pyth.html#Python">Python</A> 2 dynamic library
 'pythonthreedll'	    name of the <A HREF="if_pyth.html#Python">Python</A> 3 dynamic library
+<A HREF="options.html#'pyxversion'">'pyxversion'</A>	  <A HREF="options.html#'pyx'">'pyx'</A>	    <A HREF="if_pyth.html#Python">Python</A> version used for pyx* commands
 <A HREF="options.html#'quoteescape'">'quoteescape'</A>	  <A HREF="options.html#'qe'">'qe'</A>	    <A HREF="intro.html#escape">escape</A> characters used in a <A HREF="eval.html#string">string</A>
 <A HREF="options.html#'readonly'">'readonly'</A>	  <A HREF="options.html#'ro'">'ro'</A>	    disallow <A HREF="editing.html#writing">writing</A> the buffer
 <A HREF="options.html#'redrawtime'">'redrawtime'</A>	  <A HREF="options.html#'rdt'">'rdt'</A>     timeout for <A HREF="options.html#'hlsearch'">'hlsearch'</A> and |<A HREF="pattern.html#:match">:match</A>| highlighting
@@ -899,7 +924,7 @@ Short explanation of each option:		*<A NAME="option-list"></A><B>option-list</B>
 <A HREF="options.html#'showtabline'">'showtabline'</A>	  <A HREF="options.html#'stal'">'stal'</A>    tells when the <A HREF="intro.html#tab">tab</A> pages line is displayed
 <A HREF="options.html#'sidescroll'">'sidescroll'</A>	  <A HREF="options.html#'ss'">'ss'</A>	    minimum number of columns to scroll horizontal
 <A HREF="options.html#'sidescrolloff'">'sidescrolloff'</A>   <A HREF="options.html#'siso'">'siso'</A>    min. nr. of columns to left and right of cursor
-<A HREF="options.html#'signcolumn'">'signcolumn'</A>	  <A HREF="options.html#'scl'">'scl'</A>	    when to display the sign column
+<A HREF="options.html#'signcolumn'">'signcolumn'</A>	  <A HREF="options.html#'scl'">'scl'</A>	    when and how to display the sign column
 <A HREF="options.html#'smartcase'">'smartcase'</A>	  <A HREF="options.html#'scs'">'scs'</A>     no ignore <A HREF="change.html#case">case</A> when <A HREF="pattern.html#pattern">pattern</A> has <A HREF="change.html#uppercase">uppercase</A>
 <A HREF="options.html#'smartindent'">'smartindent'</A>	  <A HREF="options.html#'si'">'si'</A>	    smart autoindenting for C programs
 <A HREF="options.html#'smarttab'">'smarttab'</A>	  <A HREF="options.html#'sta'">'sta'</A>     use <A HREF="options.html#'shiftwidth'">'shiftwidth'</A> when <A HREF="insert.html#inserting">inserting</A> <A HREF="motion.html#&lt;Tab&gt;">&lt;Tab&gt;</A>
@@ -969,6 +994,7 @@ Short explanation of each option:		*<A NAME="option-list"></A><B>option-list</B>
 <A HREF="options.html#'winaltkeys'">'winaltkeys'</A>	  <A HREF="options.html#'wak'">'wak'</A>     when the <A HREF="windows.html#windows">windows</A> system handles <A HREF="intro.html#ALT">ALT</A> keys
 <A HREF="options.html#'window'">'window'</A>	  <A HREF="options.html#'wi'">'wi'</A>	    nr of lines to scroll for <A HREF="scroll.html#CTRL-F">CTRL-F</A> and <A HREF="scroll.html#CTRL-B">CTRL-B</A>
 <A HREF="options.html#'winheight'">'winheight'</A>	  <A HREF="options.html#'wh'">'wh'</A>	    minimum number of lines for the current <A HREF="windows.html#window">window</A>
+<A HREF="options.html#'winhighlight'">'winhighlight'</A>	  <A HREF="options.html#'winhl'">'winhl'</A>   window-local highlighting
 <A HREF="options.html#'winfixheight'">'winfixheight'</A>	  <A HREF="options.html#'wfh'">'wfh'</A>     keep <A HREF="windows.html#window">window</A> height when opening/closing <A HREF="windows.html#windows">windows</A>
 <A HREF="options.html#'winfixwidth'">'winfixwidth'</A>	  <A HREF="options.html#'wfw'">'wfw'</A>     keep <A HREF="windows.html#window">window</A> width when opening/closing <A HREF="windows.html#windows">windows</A>
 <A HREF="options.html#'winminheight'">'winminheight'</A>	  <A HREF="options.html#'wmh'">'wmh'</A>     minimum number of lines for any <A HREF="windows.html#window">window</A>
@@ -1058,7 +1084,7 @@ Short explanation of each option:		*<A NAME="option-list"></A><B>option-list</B>
 |<A HREF="cmdline.html#c_CTRL-K">c_CTRL-K</A>|	CTRL-K {char1} {char2}
 				   enter <A HREF="digraph.html#digraph">digraph</A> (See |<A HREF="#Q_di">Q_di</A>|)
 |<A HREF="cmdline.html#c_CTRL-R">c_CTRL-R</A>|	CTRL-R {0-9a-z&quot;&#37;#:-=}
-				   insert the contents of a <A HREF="sponsor.html#register">register</A>
+				   insert the contents of a <A HREF="intro.html#register">register</A>
 
 |<A HREF="cmdline.html#c_&lt;Left&gt;">c_&lt;Left&gt;</A>|	&lt;Left&gt;/&lt;Right&gt;	   cursor left/right
 |<A HREF="cmdline.html#c_&lt;S-Left&gt;">c_&lt;S-Left&gt;</A>|	&lt;S-Left&gt;/&lt;S-Right&gt; cursor one <A HREF="motion.html#word">word</A> left/right
@@ -1170,7 +1196,6 @@ Context-sensitive completion on the command-line:
 |<A HREF="starting.html#-b">-b</A>|	-b		    binary mode
 |<A HREF="starting.html#-l">-l</A>|	-l		    lisp mode
 |<A HREF="starting.html#-A">-A</A>|	-A		    <A HREF="arabic.html#Arabic">Arabic</A> mode ('arabic' is set)
-|<A HREF="starting.html#-F">-F</A>|	-F		    <A HREF="farsi.html#Farsi">Farsi</A> mode ('fkmap' and <A HREF="options.html#'rightleft'">'rightleft'</A> are set)
 |<A HREF="starting.html#-H">-H</A>|	-H		    Hebrew mode ('hkmap' and <A HREF="options.html#'rightleft'">'rightleft'</A> are set)
 |<A HREF="starting.html#-V">-V</A>|	-V		    Verbose, give informative <A HREF="message.html#messages">messages</A>
 |<A HREF="starting.html#-r">-r</A>|	-r		    give <A HREF="eval.html#list">list</A> of swap files
@@ -1370,7 +1395,7 @@ Context-sensitive completion on the command-line:
 *<A NAME="Q_sy"></A><B>Q_sy</B>*		<A HREF="autocmd.html#Syntax">Syntax</A> Highlighting
 
 |<A HREF="syntax.html#:syn-on">:syn-on</A>|	<A HREF="syntax.html#:syntax">:syntax</A> on		start using <A HREF="syntax.html#syntax">syntax</A> highlighting
-|<A HREF="usr_06.html#:syn-off">:syn-off</A>|	<A HREF="syntax.html#:syntax">:syntax</A> off		stop using <A HREF="syntax.html#syntax">syntax</A> highlighting
+|<A HREF="syntax.html#:syn-off">:syn-off</A>|	<A HREF="syntax.html#:syntax">:syntax</A> off		stop using <A HREF="syntax.html#syntax">syntax</A> highlighting
 
 |<A HREF="syntax.html#:syn-keyword">:syn-keyword</A>|	<A HREF="syntax.html#:syntax">:syntax</A> keyword <A HREF="syntax.html#{group-name}">{group-name}</A> {keyword} ..
 					add a <A HREF="syntax.html#syntax">syntax</A> keyword item
@@ -1437,5 +1462,11 @@ Context-sensitive completion on the command-line:
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
+
+    <footer>
+      <div class="container">
+        Generated Wed Sep 18 20:06:12 UTC 2019 from <a href="https://github.com/neovim/neovim/commit/1070c092c7bf989f261047b861165e61e94c1941"><code>1070c09</code></a>.
+      </div>
+    </footer>
   <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
 </html>

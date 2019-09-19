@@ -2,10 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Nvim documentation: mbyte</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.0/normalize.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="/css/main.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
   </head>
   <body>
-                <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
+    <header class="navbar">
+      <div class="container">
+        <nav class="navbar">
+          <div class="container-fluid">
+            <div class="navbar-header">
+
+              <a href="/" class="navbar-brand">
+                <img src="/images/logo@2x.png" id="navbar-logo" alt="Neovim">
+              </a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
 
     <div class="container">
       <h1>Nvim documentation: mbyte</h1>
@@ -115,7 +139,7 @@ INPUT
 
 There are several ways to enter <A HREF="#multi-byte">multi-byte</A> characters:
 - For X11 XIM can be used.  See |<A HREF="#XIM">XIM</A>|.
-- For MS-Windows IME can be used.  See |<A HREF="#IME">IME</A>|.
+- For MS-Windows IME can be used.  See |<A HREF="intro.html#IME">IME</A>|.
 - For all systems keymaps can be used.  See |<A HREF="#mbyte-keymap">mbyte-keymap</A>|.
 
 The <A HREF="options.html#options">options</A> <A HREF="options.html#'iminsert'">'iminsert'</A>, <A HREF="options.html#'imsearch'">'imsearch'</A> and <A HREF="options.html#'imcmdline'">'imcmdline'</A> can be used to chose
@@ -371,14 +395,14 @@ Vim will automatically convert from one to another encoding in several places:
   &quot;<A HREF="#utf-8">utf-8</A>&quot; (requires a gettext version that supports this).
 - When reading a Vim script where |<A HREF="repeat.html#:scriptencoding">:scriptencoding</A>| is different from
   &quot;<A HREF="#utf-8">utf-8</A>&quot;.
-Most of these require the |<A HREF="various.html#+iconv">+iconv</A>| feature.  Conversion for reading and
+Most of these require the |<A HREF="intro.html#+iconv">+iconv</A>| feature.  Conversion for reading and
 <A HREF="editing.html#writing">writing</A> files may also be specified with the <A HREF="options.html#'charconvert'">'charconvert'</A> option.
 
 Useful utilities for converting the <A HREF="#charset">charset</A>:
     All:	    iconv
 	GNU iconv can convert most encodings.  <A HREF="#Unicode">Unicode</A> is used <A HREF="motion.html#as">as</A> the
 	intermediate encoding, which allows conversion from and to all other
- encodings. See	<A HREF="http://www.gnu.org/directory/libiconv.html">http://www.gnu.org/directory/libiconv.html</A>.
+ encodings. See	<A HREF="https://www.gnu.org/directory/libiconv.html">http://www.gnu.org/directory/libiconv.html</A>.
 
     <A HREF="#Japanese">Japanese</A>:	    nkf
 	Nkf is &quot;Network Kanji code conversion Filter&quot;.  One of the most unique
@@ -424,7 +448,7 @@ conversion needs to be done.  These conversions are supported:
 
 
 							*<A NAME="iconv-dynamic"></A><B>iconv-dynamic</B>*
-On MS-Windows Vim can be compiled with the |<A HREF="various.html#+iconv/dyn">+iconv/dyn</A>| feature.  This means
+On MS-Windows Vim can be compiled with the |<A HREF="intro.html#+iconv/dyn">+iconv/dyn</A>| feature.  This means
 Vim will search for the &quot;iconv.dll&quot; and &quot;libiconv.dll&quot; libraries.  When
 neither of them can be found Vim will still work but some conversions won't be
 possible.
@@ -738,84 +762,6 @@ For example, when you are using kinput2 <A HREF="motion.html#as">as</A> |<A HREF
 
 ==============================================================================
 
-Input on MS-Windows					*<A NAME="mbyte-IME"></A><B>mbyte-IME</B>*
-
-
-(Windows <A HREF="#IME">IME</A> support)				*<A NAME="multibyte-ime"></A><B>multibyte-ime</B>* *<A NAME="IME"></A><B>IME</B>*
-
-{only works Windows <A HREF="gui.html#GUI">GUI</A> and compiled with the |<A HREF="various.html#+multi_byte_ime">+multi_byte_ime</A>| feature}
-
-To input <A HREF="#multibyte">multibyte</A> characters on Windows, you can use an Input Method Editor
-(IME).  In process of your editing text, you must switch status (on/off) of
-<A HREF="#IME">IME</A> many many many times.  Because <A HREF="#IME">IME</A> with status on is hooking all of your
-key inputs, you cannot input '<A HREF="motion.html#j">j</A>', '<A HREF="motion.html#k">k</A>', or almost all of keys to Vim directly.
-
-This |<A HREF="various.html#+multi_byte_ime">+multi_byte_ime</A>| feature help this.  It reduce times of switch status of
-<A HREF="#IME">IME</A> manually.  In normal mode, there are almost no need working <A HREF="#IME">IME</A>, even
-editing <A HREF="#multibyte">multibyte</A> text.  So <A HREF="starting.html#exiting">exiting</A> insert mode with ESC, Vim memorize last
-status of <A HREF="#IME">IME</A> and force turn off <A HREF="#IME">IME</A>.  When re-enter insert mode, Vim revert
-<A HREF="#IME">IME</A> status to that memorized automatically.
-
-This works on not only insert-normal mode, but also search-command input and
-replace mode.
-The <A HREF="options.html#options">options</A> <A HREF="options.html#'iminsert'">'iminsert'</A>, <A HREF="options.html#'imsearch'">'imsearch'</A> and <A HREF="options.html#'imcmdline'">'imcmdline'</A> can be used to chose
-the different input methods or disable them temporarily.
-
-WHAT IS <A HREF="#IME">IME</A>
-    <A HREF="#IME">IME</A> is a part of East asian version Windows.  That helps you to input
-    <A HREF="#multibyte">multibyte</A> character.  English and other language version Windows does not
-    have any <A HREF="#IME">IME</A>.  (Also there is no need usually.) But there is one that
-    called Microsoft Global <A HREF="#IME">IME</A>.  Global <A HREF="#IME">IME</A> is a part of Internet Explorer
-    4.0 or above.  You can get more information about Global <A HREF="#IME">IME</A>, at below
-    URL.
-
-
-WHAT IS GLOBAL <A HREF="#IME">IME</A>					*<A NAME="global-ime"></A><B>global-ime</B>*
-    Global <A HREF="#IME">IME</A> enables input of <A HREF="#Chinese">Chinese</A>, <A HREF="#Japanese">Japanese</A>, and <A HREF="#Korean">Korean</A> text into Vim
-    buffer on any language version of Windows.  Global <A HREF="#IME">IME</A> is built in, and
-    the Input Locales can be added through Control Panel/Regional
-    Options/Input Locales.  Please see below URL for detail of Global <A HREF="#IME">IME</A>.
-    You can also find various language version of Global <A HREF="#IME">IME</A> at same place.
-
-    - Global <A HREF="#IME">IME</A> detailed information.
-	<A HREF="http://search.microsoft.com/results.aspx?q=global+ime">http://search.microsoft.com/results.aspx?q=global+ime</A>
-
-    - Active Input Method Manager (Global <A HREF="#IME">IME</A>)
-	<A HREF="http://msdn.microsoft.com/en-us/library/aa741221v=VS.85.aspx">http://msdn.microsoft.com/en-us/library/aa741221v=VS.85.aspx</A>
-
-    Support for Global <A HREF="#IME">IME</A> is an experimental feature.
-
-NOTE: For <A HREF="#IME">IME</A> to work you must make sure the input locales of your language
-are added to your system.  The exact location of this depends on the version
-of Windows you use.  For example, on my Windows 2000 box:
-1. Control Panel
-2. Regional Options
-3. Input Locales <A HREF="intro.html#Tab">Tab</A>
-4. Add Installed input locales -&gt; Chinese(PRC)
-   The default is still English (United Stated)
-
-
-
-Cursor color when <A HREF="#IME">IME</A> or <A HREF="#XIM">XIM</A> is on				*<A NAME="CursorIM"></A><B>CursorIM</B>*
-    There is a little cute feature for <A HREF="#IME">IME</A>.  Cursor can indicate status of <A HREF="#IME">IME</A>
-    by <A HREF="change.html#changing">changing</A> its color.  Usually status of <A HREF="#IME">IME</A> was indicated by little icon
-    at a corner of desktop (or taskbar).  It is not easy to verify status of
-    <A HREF="#IME">IME</A>.  But this feature help this.
-    This works in the same way when using <A HREF="#XIM">XIM</A>.
-
-    You can select cursor color when status is on by using highlight group
-    <A HREF="#CursorIM">CursorIM</A>.  For example, add these lines to your YXXYginit.vim|:
-
-<B>	if has('multi_byte_ime')</B>
-<B>	    highlight Cursor guifg=NONE guibg=Green</B>
-<B>	    highlight CursorIM guifg=NONE guibg=Purple</B>
-<B>	endif</B>
- 
-    Cursor color with off <A HREF="#IME">IME</A> is green.  And purple cursor indicates that
-    status is on.
-
-==============================================================================
-
 Input with a keymap					*<A NAME="mbyte-keymap"></A><B>mbyte-keymap</B>*
 
 When the keyboard doesn't produce the characters you want to enter in your
@@ -823,7 +769,6 @@ text, you can use the <A HREF="options.html#'keymap'">'keymap'</A> option.  This
 (English) characters to another (non-English) character.  This only happens
 when typing text, not when typing Vim commands.  This avoids having to switch
 between two keyboard settings.
-{only available when compiled with the |<A HREF="various.html#+keymap">+keymap</A>| feature}
 
 The value of the <A HREF="options.html#'keymap'">'keymap'</A> option specifies a keymap file to use.  The name of
 this file is one of these two:
@@ -861,7 +806,7 @@ use a brightly colored cursor:
 		*<A NAME="keymap-file-format"></A><B>keymap-file-format</B>* *<A NAME=":loadk"></A><B>:loadk</B>* *<A NAME=":loadkeymap"></A><B>:loadkeymap</B>* *<A NAME="E105"></A><B>E105</B>* *<A NAME="E791"></A><B>E791</B>*
 The keymap file looks something like this:
 
-<B>	" Maintainer:	name &lt;<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5a3f373b33361a3b3e3e283f2929">[email&#160;protected]</a>&gt;</B>
+<B>	" Maintainer:	name &lt;<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="ee8b838f8782ae8f8a8a9c8b9d9d">[email&#160;protected]</a>&gt;</B>
 <B>	" Last Changed:	2001 Jan 1</B>
 
 <B>	let b:keymap_name = "short"</B>
@@ -933,7 +878,7 @@ meaning in the mappings.  Examples:
 
 If you write a keymap file that will be useful for others, consider submitting
 <A HREF="motion.html#it">it</A> to the Vim maintainer for inclusion in the <A HREF="intro.html#distribution">distribution</A>:
-<A HREF="/cdn-cgi/l/email-protection#7e131f17100a1f17101b0c3e08171350110c19">&lt;<span class="__cf_email__" data-cfemail="f598949c9b81949c9b9087b5839c98db9a8792">[email&#160;protected]</span>&gt;</A> 
+<A HREF="/cdn-cgi/l/email-protection#177a767e7963767e79726557617e7a39786570">&lt;<span class="__cf_email__" data-cfemail="7a171b13140e1b13141f083a0c13175415081d">[email&#160;protected]</span>&gt;</A> 
 
 
 
@@ -1237,14 +1182,20 @@ These <A HREF="options.html#options">options</A> are relevant for editing <A HRE
 ==============================================================================
 
 Contributions specifically for the <A HREF="#multi-byte">multi-byte</A> features by:
-	Chi-Deok Hwang <A HREF="/cdn-cgi/l/email-protection#b1d9c6d0dfd6f1dcd8cbd89fd2de9fdac3">&lt;<span class="__cf_email__" data-cfemail="701807111e17301d190a195e131f5e1b02">[email&#160;protected]</span>&gt;</A> 
-	SungHyun Nam <A HREF="/cdn-cgi/l/email-protection#83e4ecf4e6ecefc3e4eee2eaefade0ecee">&lt;<span class="__cf_email__" data-cfemail="3651594153595a76515b575f5a1855595b">[email&#160;protected]</span>&gt;</A> 
-	K.Nagano <A HREF="/cdn-cgi/l/email-protection#3b555a5c5a55547b5a4f5e485e155a5f4d5a554f5e484f15585415514b">&lt;<span class="__cf_email__" data-cfemail="e886898f898687a8899c8d9b8dc6898c9e89869c8d9b9cc68b87c68298">[email&#160;protected]</span>&gt;</A> 
-	Taro Muraoka <A HREF="/cdn-cgi/l/email-protection#1e75716c71705e6a757f307f6a6a30707b30746e">&lt;<span class="__cf_email__" data-cfemail="610a0e130e0f21150a004f0015154f0f044f0b11">[email&#160;protected]</span>&gt;</A> 
-	Yasuhiro Matsumoto <A HREF="/cdn-cgi/l/email-protection#e68b87929288a68b878f8ac8818989c88883c88c96">&lt;<span class="__cf_email__" data-cfemail="b4d9d5c0c0daf4d9d5ddd89ad3dbdb9adad19adec4">[email&#160;protected]</span>&gt;</A> 
+	Chi-Deok Hwang <A HREF="/cdn-cgi/l/email-protection#9ef6e9fff0f9def3f7e4f7b0fdf1b0f5ec">&lt;<span class="__cf_email__" data-cfemail="96fee1f7f8f1d6fbffecffb8f5f9b8fde4">[email&#160;protected]</span>&gt;</A> 
+	SungHyun Nam <A HREF="/cdn-cgi/l/email-protection#f0979f87959f9cb0979d91999cde939f9d">&lt;<span class="__cf_email__" data-cfemail="b1d6dec6d4deddf1d6dcd0d8dd9fd2dedc">[email&#160;protected]</span>&gt;</A> 
+	K.Nagano <A HREF="/cdn-cgi/l/email-protection#a9c7c8cec8c7c6e9c8ddccdacc87c8cddfc8c7ddccdadd87cac687c3d9">&lt;<span class="__cf_email__" data-cfemail="bcd2dddbddd2d3fcddc8d9cfd992ddd8caddd2c8d9cfc892dfd392d6cc">[email&#160;protected]</span>&gt;</A> 
+	Taro Muraoka <A HREF="/cdn-cgi/l/email-protection#f69d99849998b6829d97d8978282d89893d89c86">&lt;<span class="__cf_email__" data-cfemail="9bf0f4e9f4f5dbeff0fab5faefefb5f5feb5f1eb">[email&#160;protected]</span>&gt;</A> 
+	Yasuhiro Matsumoto <A HREF="/cdn-cgi/l/email-protection#701d1104041e301d11191c5e171f1f5e1e155e1a00">&lt;<span class="__cf_email__" data-cfemail="97faf6e3e3f9d7faf6fefbb9f0f8f8b9f9f2b9fde7">[email&#160;protected]</span>&gt;</A> 
 
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
+
+    <footer>
+      <div class="container">
+        Generated Wed Sep 18 20:06:11 UTC 2019 from <a href="https://github.com/neovim/neovim/commit/1070c092c7bf989f261047b861165e61e94c1941"><code>1070c09</code></a>.
+      </div>
+    </footer>
   <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
 </html>

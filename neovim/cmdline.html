@@ -2,10 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Nvim documentation: cmdline</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.0/normalize.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="/css/main.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
   </head>
   <body>
-                <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
+    <header class="navbar">
+      <div class="container">
+        <nav class="navbar">
+          <div class="container-fluid">
+            <div class="navbar-header">
+
+              <a href="/" class="navbar-brand">
+                <img src="/images/logo@2x.png" id="navbar-logo" alt="Neovim">
+              </a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
 
     <div class="container">
       <h1>Nvim documentation: cmdline</h1>
@@ -90,7 +114,7 @@ There is an automatic completion of names on the command-line; see
 		decimal value of a single byte.  The non-digit and the three
 		digits are not considered for <A HREF="map.html#mapping">mapping</A>.  This works the same
 		way <A HREF="motion.html#as">as</A> in <A HREF="insert.html#Insert">Insert</A> mode (see above, |<A HREF="insert.html#i_CTRL-V">i_CTRL-V</A>|).
-		Note: Under Windows <A HREF="visual.html#CTRL-V">CTRL-V</A> is often mapped to paste text.
+		Note: Under Windows <A HREF="visual.html#CTRL-V">CTRL-V</A> is often mapped to <A HREF="provider.html#paste">paste</A> text.
 		Use CTRL-Q instead then.
 
 							*<A NAME="c_CTRL-Q"></A><B>c_CTRL-Q</B>*
@@ -162,10 +186,10 @@ CTRL-K {char1} {char2}					*<A NAME="c_CTRL-K"></A><B>c_CTRL-K</B>*
 
 
 <A HREF="undo.html#CTRL-R">CTRL-R</A> {0-9a-z&quot;&#37;#:-=.}					*<A NAME="c_CTRL-R"></A><B>c_CTRL-R</B>* *<A NAME="c_&lt;C-R&gt;"></A><B>c_&lt;C-R&gt;</B>*
-		<A HREF="insert.html#Insert">Insert</A> the contents of a numbered or named <A HREF="sponsor.html#register">register</A>.  Between
+		<A HREF="insert.html#Insert">Insert</A> the contents of a numbered or named <A HREF="intro.html#register">register</A>.  Between
 		typing <A HREF="undo.html#CTRL-R">CTRL-R</A> and the second character &#39;&#34;'' will be displayed
 		to indicate that you are expected to enter the name of a
-		<A HREF="sponsor.html#register">register</A>.
+		<A HREF="intro.html#register">register</A>.
 		The text is inserted <A HREF="motion.html#as">as</A> if you typed <A HREF="motion.html#it">it</A>, but mappings and
 		<A HREF="map.html#abbreviations">abbreviations</A> are not used.  <A HREF="#Command-line">Command-line</A> completion through
 		<A HREF="options.html#'wildchar'">'wildchar'</A> is not triggered though.  And characters that end
@@ -174,7 +198,7 @@ CTRL-K {char1} {char2}					*<A NAME="c_CTRL-K"></A><B>c_CTRL-K</B>*
 		though, and remaining characters will then be interpreted in
 		another mode, which might not be what you intended.
 		Special <A HREF="change.html#registers">registers</A>:
-			&#39;&#34;''	the unnamed <A HREF="sponsor.html#register">register</A>, containing the text of
+			&#39;&#34;''	the unnamed <A HREF="intro.html#register">register</A>, containing the text of
 				the last delete or <A HREF="change.html#yank">yank</A>
 			'<A HREF="motion.html#&#37;">&#37;</A>'	the current file name
 			'<A HREF="pattern.html##">#</A>'	the alternate file name
@@ -186,7 +210,7 @@ CTRL-K {char1} {char2}					*<A NAME="c_CTRL-K"></A><B>c_CTRL-K</B>*
 			'<A HREF="repeat.html#.">.</A>'	the last inserted text
 
 							*<A NAME="c_CTRL-R_="></A><B>c_CTRL-R_=</B>*
-			'<A HREF="change.html#=">=</A>'	the <A HREF="eval.html#expression">expression</A> <A HREF="sponsor.html#register">register</A>: you are prompted to
+			'<A HREF="change.html#=">=</A>'	the <A HREF="eval.html#expression">expression</A> <A HREF="intro.html#register">register</A>: you are prompted to
 				enter an expression (see |<A HREF="eval.html#expression">expression</A>|)
 				(doesn't work at the <A HREF="eval.html#expression">expression</A> prompt; some
 				things such <A HREF="motion.html#as">as</A> <A HREF="change.html#changing">changing</A> the buffer or current
@@ -197,7 +221,7 @@ CTRL-K {char1} {char2}					*<A NAME="c_CTRL-K"></A><B>c_CTRL-K</B>*
 				When the result is a <A HREF="eval.html#Float">Float</A> it's automatically
 				converted to a <A HREF="eval.html#String">String</A>.
 		See |<A HREF="change.html#registers">registers</A>| about registers.
-		Implementation detail: When using the |<A HREF="eval.html#expression">expression</A>| <A HREF="sponsor.html#register">register</A>
+		Implementation detail: When using the |<A HREF="eval.html#expression">expression</A>| <A HREF="intro.html#register">register</A>
 		and invoking <A HREF="eval.html#setcmdpos()">setcmdpos()</A>, this sets the position before
 		<A HREF="insert.html#inserting">inserting</A> the resulting <A HREF="eval.html#string">string</A>.  Use <A HREF="undo.html#CTRL-R">CTRL-R</A> <A HREF="undo.html#CTRL-R">CTRL-R</A> to set the
 		position afterwards.
@@ -230,9 +254,9 @@ CTRL-K {char1} {char2}					*<A NAME="c_CTRL-K"></A><B>c_CTRL-K</B>*
 					*<A NAME="c_CTRL-R_CTRL-O"></A><B>c_CTRL-R_CTRL-O</B>* *<A NAME="c_&lt;C-R&gt;_&lt;C-O&gt;"></A><B>c_&lt;C-R&gt;_&lt;C-O&gt;</B>*
 <A HREF="undo.html#CTRL-R">CTRL-R</A> <A HREF="undo.html#CTRL-R">CTRL-R</A> {0-9a-z&quot;&#37;#:-=. <A HREF="scroll.html#CTRL-F">CTRL-F</A> <A HREF="motion.html#CTRL-P">CTRL-P</A> <A HREF="vimindex.html#CTRL-W">CTRL-W</A> <A HREF="change.html#CTRL-A">CTRL-A</A> CTRL-L}
 <A HREF="undo.html#CTRL-R">CTRL-R</A> <A HREF="motion.html#CTRL-O">CTRL-O</A> {0-9a-z&quot;&#37;#:-=. <A HREF="scroll.html#CTRL-F">CTRL-F</A> <A HREF="motion.html#CTRL-P">CTRL-P</A> <A HREF="vimindex.html#CTRL-W">CTRL-W</A> <A HREF="change.html#CTRL-A">CTRL-A</A> CTRL-L}
-		<A HREF="insert.html#Insert">Insert</A> <A HREF="sponsor.html#register">register</A> or object under the cursor.  Works like
+		<A HREF="insert.html#Insert">Insert</A> <A HREF="intro.html#register">register</A> or object under the cursor.  Works like
 		|<A HREF="#c_CTRL-R">c_CTRL-R</A>| but inserts the text literally.  For example, if
-		<A HREF="sponsor.html#register">register</A> a contains &quot;xy^Hz&quot; (where ^H is a backspace),
+		<A HREF="intro.html#register">register</A> a contains &quot;xy^Hz&quot; (where ^H is a backspace),
 		&quot;<A HREF="undo.html#CTRL-R">CTRL-R</A> a&quot; will insert &quot;xz&quot; while &quot;<A HREF="undo.html#CTRL-R">CTRL-R</A> <A HREF="undo.html#CTRL-R">CTRL-R</A> a&quot; will
 		insert &quot;xy^Hz&quot;.
 
@@ -264,7 +288,7 @@ CTRL-\ <A HREF="motion.html#e">e</A> {expr}						*<A NAME="c_CTRL-\_e"></A><B>c_
 
 							*<A NAME="c_CTRL-Y"></A><B>c_CTRL-Y</B>*
 <A HREF="scroll.html#CTRL-Y">CTRL-Y</A>		When there is a modeless selection, copy the selection into
-		the <A HREF="provider.html#clipboard">clipboard</A>. |<A HREF="intro.html#modeless-selection">modeless-selection</A>|
+		the <A HREF="provider.html#clipboard">clipboard</A>.
 		If there is no selection <A HREF="scroll.html#CTRL-Y">CTRL-Y</A> is inserted <A HREF="motion.html#as">as</A> a character.
 
 
@@ -310,19 +334,12 @@ CTRL-[						*<A NAME="c_CTRL-["></A><B>c_CTRL-[</B>* *<A NAME="c_&lt;Esc&gt;"></
 
 
 							*<A NAME="c_CTRL-_"></A><B>c_CTRL-_</B>*
-CTRL-_		a - switch between Hebrew and English keyboard mode, which is
+CTRL-_		Switch between Hebrew and English keyboard mode, which is
 		private to the command-line and not related to hkmap.
 		This is useful when Hebrew text entry is required in the
 		command-line, searches, <A HREF="map.html#abbreviations">abbreviations</A>, etc.  Applies only if
 		the <A HREF="options.html#'allowrevins'">'allowrevins'</A> option is set.
 		See |<A HREF="rileft.html">rileft.txt</A>|.
-
-		<A HREF="motion.html#b">b</A> - switch between <A HREF="farsi.html#Farsi">Farsi</A> and English keyboard mode, which is
-		private to the command-line and not related to fkmap.  In
-		<A HREF="farsi.html#Farsi">Farsi</A> keyboard mode the characters are inserted in reverse
-		insert manner.  This is useful when <A HREF="farsi.html#Farsi">Farsi</A> text entry is
-		required in the command-line, searches, <A HREF="map.html#abbreviations">abbreviations</A>, etc.
-		See |<A HREF="farsi.html">farsi.txt</A>|.
 
 
 							*<A NAME="c_CTRL-^"></A><B>c_CTRL-^</B>*
@@ -372,7 +389,7 @@ terminals)
 		<A HREF="eval.html#List">List</A> the contents of <A HREF="#history">history</A> {name} which can be:
 		c[md]	 or :		command-line <A HREF="#history">history</A>
 		s[earch] or / or ?	search <A HREF="eval.html#string">string</A> <A HREF="#history">history</A>
-		e[xpr]	 or =		<A HREF="eval.html#expression">expression</A> <A HREF="sponsor.html#register">register</A> <A HREF="#history">history</A>
+		e[xpr]	 or =		<A HREF="eval.html#expression">expression</A> <A HREF="intro.html#register">register</A> <A HREF="#history">history</A>
 		i[nput]	 or @		input line <A HREF="#history">history</A>
 		d[ebug]	 or <A HREF="change.html#&gt;">&gt;</A>		debug command <A HREF="#history">history</A>
 		a[ll]			all of the above
@@ -499,6 +516,10 @@ a previous version <A HREF="intro.html#&lt;Esc&gt;">&lt;Esc&gt;</A> was used).  
 '<A HREF="pattern.html#?">?</A>' are accepted when matching file names.  '*' matches any <A HREF="eval.html#string">string</A>, '<A HREF="pattern.html#?">?</A>'
 matches exactly one character.
 
+When <A HREF="repeat.html#repeating">repeating</A> <A HREF="options.html#'wildchar'">'wildchar'</A> or <A HREF="motion.html#CTRL-N">CTRL-N</A> you cycle through the matches, eventually
+ending up back to what was typed.  If the first match is not what you wanted,
+you can use &lt;S-Tab&gt; or <A HREF="motion.html#CTRL-P">CTRL-P</A> to go straight back to what you typed.
+
 The <A HREF="options.html#'wildignorecase'">'wildignorecase'</A> option can be set to ignore <A HREF="change.html#case">case</A> in filenames.
 
 The <A HREF="options.html#'wildmenu'">'wildmenu'</A> option can be set to show the matches just above the command
@@ -581,7 +602,6 @@ that see the &#39;&#34;'' <A HREF="motion.html#as">as</A> part of their argument
     <A HREF="autocmd.html#:autocmd">:autocmd</A>
     <A HREF="windows.html#:bufdo">:bufdo</A>
     <A HREF="quickfix.html#:cexpr">:cexpr</A> (and the like)
-    <A HREF="eval.html#:call">:call</A>
     <A HREF="quickfix.html#:cdo">:cdo</A> (and the like)
     <A HREF="map.html#:command">:command</A>
     <A HREF="if_cscop.html#:cscope">:cscope</A> (and the like)
@@ -748,7 +768,7 @@ If more line specifiers are given than required for the command, the first
 one(s) will be ignored.
 
 
-Line numbers may be specified with:		*<A NAME=":range"></A><B>:range</B>* *<A NAME="E14"></A><B>E14</B>* *<A NAME="{address}"></A><B>{address}</B>*
+Line numbers may be specified with:		*<A NAME=":range"></A><B>:range</B>* *<A NAME="{address}"></A><B>{address}</B>*
 	{number}	an absolute line number
 
 	.		the current line			  *<A NAME=":."></A><B>:.</B>*
@@ -898,7 +918,6 @@ function |<A HREF="eval.html#expand()">expand()</A>|.
 		file name <A HREF="pattern.html#n">n</A>.  See |<A HREF="starting.html#:oldfiles">:oldfiles</A>| or |<A HREF="eval.html#v:oldfiles">v:oldfiles</A>| to get the
 
 		number.							*<A NAME="E809"></A><B>E809</B>*
-		{only when compiled with the |<A HREF="various.html#+eval">+eval</A>| and |<A HREF="various.html#+shada">+shada</A>| features}
 
 Note that these, except &quot;#&lt;n&quot;, give the file name <A HREF="motion.html#as">as</A> <A HREF="motion.html#it">it</A> was typed.  If an
 absolute path is needed (when using the file name from a different directory),
@@ -924,18 +943,20 @@ Detail: The special meaning is always escaped when there is a <A HREF="intro.htm
 Also see |<A HREF="editing.html#`=">`=</A>|.
 
 
-			       *<A NAME=":&lt;cword&gt;"></A><B>:&lt;cword&gt;</B>* *<A NAME=":&lt;cWORD&gt;"></A><B>:&lt;cWORD&gt;</B>* *<A NAME=":&lt;cfile&gt;"></A><B>:&lt;cfile&gt;</B>* *<A NAME="&lt;cfile&gt;"></A><B>&lt;cfile&gt;</B>*
+			       *<A NAME=":&lt;cword&gt;"></A><B>:&lt;cword&gt;</B>* *<A NAME="&lt;cword&gt;"></A><B>&lt;cword&gt;</B>* *<A NAME=":&lt;cWORD&gt;"></A><B>:&lt;cWORD&gt;</B>* *<A NAME="&lt;cWORD&gt;"></A><B>&lt;cWORD&gt;</B>*
 
-			       *<A NAME=":&lt;sfile&gt;"></A><B>:&lt;sfile&gt;</B>* *<A NAME="&lt;sfile&gt;"></A><B>&lt;sfile&gt;</B>* *<A NAME=":&lt;afile&gt;"></A><B>:&lt;afile&gt;</B>* *<A NAME="&lt;afile&gt;"></A><B>&lt;afile&gt;</B>*
+			       *<A NAME=":&lt;cexpr&gt;"></A><B>:&lt;cexpr&gt;</B>* *<A NAME="&lt;cexpr&gt;"></A><B>&lt;cexpr&gt;</B>* *<A NAME=":&lt;cfile&gt;"></A><B>:&lt;cfile&gt;</B>* *<A NAME="&lt;cfile&gt;"></A><B>&lt;cfile&gt;</B>*
 
-			       *<A NAME=":&lt;abuf&gt;"></A><B>:&lt;abuf&gt;</B>* *<A NAME="&lt;abuf&gt;"></A><B>&lt;abuf&gt;</B>* *<A NAME=":&lt;amatch&gt;"></A><B>:&lt;amatch&gt;</B>* *<A NAME="&lt;amatch&gt;"></A><B>&lt;amatch&gt;</B>*
+			       *<A NAME=":&lt;afile&gt;"></A><B>:&lt;afile&gt;</B>* *<A NAME="&lt;afile&gt;"></A><B>&lt;afile&gt;</B>* *<A NAME=":&lt;abuf&gt;"></A><B>:&lt;abuf&gt;</B>* *<A NAME="&lt;abuf&gt;"></A><B>&lt;abuf&gt;</B>*
 
-			       *<A NAME=":&lt;cexpr&gt;"></A><B>:&lt;cexpr&gt;</B>* *<A NAME="&lt;cexpr&gt;"></A><B>&lt;cexpr&gt;</B>*
+			       *<A NAME=":&lt;amatch&gt;"></A><B>:&lt;amatch&gt;</B>* *<A NAME="&lt;amatch&gt;"></A><B>&lt;amatch&gt;</B>*
 
-			       *<A NAME="&lt;slnum&gt;"></A><B>&lt;slnum&gt;</B>* *<A NAME="E495"></A><B>E495</B>* *<A NAME="E496"></A><B>E496</B>* *<A NAME="E497"></A><B>E497</B>* *<A NAME="E499"></A><B>E499</B>* *<A NAME="E500"></A><B>E500</B>*
+			       *<A NAME=":&lt;sfile&gt;"></A><B>:&lt;sfile&gt;</B>* *<A NAME="&lt;sfile&gt;"></A><B>&lt;sfile&gt;</B>* *<A NAME=":&lt;slnum&gt;"></A><B>:&lt;slnum&gt;</B>* *<A NAME="&lt;slnum&gt;"></A><B>&lt;slnum&gt;</B>*
+
+			       *<A NAME=":&lt;sflnum&gt;"></A><B>:&lt;sflnum&gt;</B>* *<A NAME="&lt;sflnum&gt;"></A><B>&lt;sflnum&gt;</B>* *<A NAME="E499"></A><B>E499</B>* *<A NAME="E500"></A><B>E500</B>*
 Note: these are typed literally, they are not special keys!
-	&lt;cword&gt;    is replaced with the <A HREF="motion.html#word">word</A> under the cursor (like |<A HREF="pattern.html#star">star</A>|)
-	&lt;cWORD&gt;    is replaced with the WORD under the cursor (see |<A HREF="motion.html#WORD">WORD</A>|)
+	<A HREF="#&lt;cword&gt;">&lt;cword&gt;</A>    is replaced with the <A HREF="motion.html#word">word</A> under the cursor (like |<A HREF="pattern.html#star">star</A>|)
+	<A HREF="#&lt;cWORD&gt;">&lt;cWORD&gt;</A>    is replaced with the WORD under the cursor (see |<A HREF="motion.html#WORD">WORD</A>|)
 	<A HREF="#&lt;cexpr&gt;">&lt;cexpr&gt;</A>    is replaced with the <A HREF="motion.html#word">word</A> under the cursor, including more
 		   to form a C <A HREF="eval.html#expression">expression</A>.  E.g., when the cursor is on &quot;arg&quot;
 		   of &quot;ptr-&gt;arg&quot; then the result is &quot;ptr-&gt;arg&quot;; when the
@@ -945,15 +966,19 @@ Note: these are typed literally, they are not special keys!
 		   |<A HREF="editing.html#gf">gf</A>| uses)
 	<A HREF="#&lt;afile&gt;">&lt;afile&gt;</A>    When executing autocommands, is replaced with the file name
 		   of the buffer being manipulated, or the file for a read or
-		   write.
+
+		   write.  *<A NAME="E495"></A><B>E495</B>*
 	<A HREF="#&lt;abuf&gt;">&lt;abuf&gt;</A>     When executing autocommands, is replaced with the currently
 		   effective buffer number (for &quot;<A HREF="insert.html#:r">:r</A> file&quot; and &quot;<A HREF="repeat.html#:so">:so</A> file&quot; <A HREF="motion.html#it">it</A> is
 		   the current buffer, the file being read/sourced is not in a
-		   buffer).
+
+		   buffer).  *<A NAME="E496"></A><B>E496</B>*
 	<A HREF="#&lt;amatch&gt;">&lt;amatch&gt;</A>   When executing autocommands, is replaced with the match for
-		   which this <A HREF="autocmd.html#autocommand">autocommand</A> was executed.  It differs from
-		   <A HREF="#&lt;afile&gt;">&lt;afile&gt;</A> only when the file name isn't used to match with
-		   (for <A HREF="autocmd.html#FileType">FileType</A>, <A HREF="autocmd.html#Syntax">Syntax</A> and <A HREF="autocmd.html#SpellFileMissing">SpellFileMissing</A> events).
+
+		   which this <A HREF="autocmd.html#autocommand">autocommand</A> was executed.  *<A NAME="E497"></A><B>E497</B>*
+		   It differs from <A HREF="#&lt;afile&gt;">&lt;afile&gt;</A> only when the file name isn't used
+		   to match with (for <A HREF="autocmd.html#FileType">FileType</A>, <A HREF="autocmd.html#Syntax">Syntax</A> and <A HREF="autocmd.html#SpellFileMissing">SpellFileMissing</A>
+		   events).
 	<A HREF="#&lt;sfile&gt;">&lt;sfile&gt;</A>    When executing a &quot;<A HREF="repeat.html#:source">:source</A>&quot; command, is replaced with the
 
 		   file name of the sourced file.  *<A NAME="E498"></A><B>E498</B>*
@@ -965,9 +990,13 @@ Note: these are typed literally, they are not special keys!
 		   used inside a function.
 	<A HREF="#&lt;slnum&gt;">&lt;slnum&gt;</A>	   When executing a &quot;<A HREF="repeat.html#:source">:source</A>&quot; command, is replaced with the
 
-	           line number.  *<A NAME="E842"></A><B>E842</B>*
+		   line number.  *<A NAME="E842"></A><B>E842</B>*
 		   When executing a function it's the line number relative to
 		   the start of the function.
+	<A HREF="#&lt;sflnum&gt;">&lt;sflnum&gt;</A>   When executing a <A HREF="usr_41.html#script">script</A>, is replaced with the line number.
+		   It differs from <A HREF="#&lt;slnum&gt;">&lt;slnum&gt;</A> in that <A HREF="#&lt;sflnum&gt;">&lt;sflnum&gt;</A> is replaced with
+
+		   the <A HREF="usr_41.html#script">script</A> line number in any situation.  *<A NAME="E961"></A><B>E961</B>*
 
 
 							 *<A NAME="filename-modifiers"></A><B>filename-modifiers</B>*
@@ -977,8 +1006,6 @@ Note: these are typed literally, they are not special keys!
      *<A NAME="&#37;:8"></A><B>&#37;:8</B>* *<A NAME="&#37;:p"></A><B>&#37;:p</B>* *<A NAME="&#37;:."></A><B>&#37;:.</B>* *<A NAME="&#37;:~"></A><B>&#37;:~</B>* *<A NAME="&#37;:h"></A><B>&#37;:h</B>* *<A NAME="&#37;:t"></A><B>&#37;:t</B>* *<A NAME="&#37;:r"></A><B>&#37;:r</B>* *<A NAME="&#37;:e"></A><B>&#37;:e</B>* *<A NAME="&#37;:s"></A><B>&#37;:s</B>* *<A NAME="&#37;:gs"></A><B>&#37;:gs</B>* *<A NAME="&#37;:S"></A><B>&#37;:S</B>*
 The file name modifiers can be used after &quot;<A HREF="motion.html#&#37;">&#37;</A>&quot;, &quot;<A HREF="pattern.html##">#</A>&quot;, &quot;#n&quot;, &quot;<A HREF="#&lt;cfile&gt;">&lt;cfile&gt;</A>&quot;, &quot;<A HREF="#&lt;sfile&gt;">&lt;sfile&gt;</A>&quot;,
 &quot;<A HREF="#&lt;afile&gt;">&lt;afile&gt;</A>&quot; or &quot;<A HREF="#&lt;abuf&gt;">&lt;abuf&gt;</A>&quot;.  They are also used with the |<A HREF="eval.html#fnamemodify()">fnamemodify()</A>| function.
-These are not available when Vim has been compiled without the |<A HREF="various.html#+modify_fname">+modify_fname</A>|
-feature.
 These modifiers can be given, in this order:
 	<A HREF="various.html#:p">:p</A>	Make file name a full path.  Must be the first modifier.  Also
 		changes &quot;~/&quot; (and &quot;~user/&quot; for Unix) to the path for the home
@@ -1228,8 +1255,8 @@ in the command-line <A HREF="windows.html#window">window</A>, like this:
 Note that hitting <A HREF="motion.html#&lt;Tab&gt;">&lt;Tab&gt;</A> in <A HREF="intro.html#Normal">Normal</A> mode will <A HREF="diff.html#do">do</A> completion on the next
 character.  That way <A HREF="motion.html#it">it</A> works at the end of the line.
 If you don't want these mappings, disable them with:
-<B>	au CmdwinEnter [:&gt;] iunmap &lt;Tab&gt;</B>
-<B>	au CmdwinEnter [:&gt;] nunmap &lt;Tab&gt;</B>
+<B>	au CmdwinEnter [:&gt;] iunmap &lt;buffer&gt; &lt;Tab&gt;</B>
+<B>	au CmdwinEnter [:&gt;] nunmap &lt;buffer&gt; &lt;Tab&gt;</B>
 You could put these lines in your <A HREF="starting.html#vimrc">vimrc</A> file.
 
 While in the command-line <A HREF="windows.html#window">window</A> you cannot use the mouse to put the cursor in
@@ -1270,5 +1297,11 @@ The character used for the <A HREF="pattern.html#pattern">pattern</A> indicates 
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
+
+    <footer>
+      <div class="container">
+        Generated Wed Sep 18 20:06:10 UTC 2019 from <a href="https://github.com/neovim/neovim/commit/1070c092c7bf989f261047b861165e61e94c1941"><code>1070c09</code></a>.
+      </div>
+    </footer>
   </body>
 </html>

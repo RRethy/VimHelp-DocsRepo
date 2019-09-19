@@ -2,10 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Nvim documentation: change</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.0/normalize.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="/css/main.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
   </head>
   <body>
-                <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
+    <header class="navbar">
+      <div class="container">
+        <nav class="navbar">
+          <div class="container-fluid">
+            <div class="navbar-header">
+
+              <a href="/" class="navbar-brand">
+                <img src="/images/logo@2x.png" id="navbar-logo" alt="Neovim">
+              </a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
 
     <div class="container">
       <h1>Nvim documentation: change</h1>
@@ -20,7 +44,7 @@
 		  VIM REFERENCE MANUAL    by <A HREF="intro.html#Bram">Bram</A> <A HREF="intro.html#Moolenaar">Moolenaar</A>
 
 
-This file describes commands that delete or change text.  In this context,
+This file describes commands that delete or change text.  In this <A HREF="repeat.html#context">context</A>,
 <A HREF="#changing">changing</A> text means <A HREF="#deleting">deleting</A> the text and <A HREF="#replacing">replacing</A> <A HREF="motion.html#it">it</A> with other text using
 one command.  You can <A HREF="undo.html#undo">undo</A> all of these commands.  You can repeat the non-Ex
 commands with the &quot;<A HREF="repeat.html#.">.</A>&quot; command.
@@ -36,7 +60,7 @@ For <A HREF="insert.html#inserting">inserting</A> text see |<A HREF="insert.html
 
 [&quot;x]&lt;Del&gt;	or					*<A NAME="&lt;Del&gt;"></A><B>&lt;Del&gt;</B>* *<A NAME="x"></A><B>x</B>* *<A NAME="dl"></A><B>dl</B>*
 [&quot;x]x			Delete <A HREF="intro.html#[count]">[count]</A> characters under and after the cursor
-			[into <A HREF="sponsor.html#register">register</A> x] (not |<A HREF="motion.html#linewise">linewise</A>|).  Does the same <A HREF="motion.html#as">as</A>
+			[into <A HREF="intro.html#register">register</A> x] (not |<A HREF="motion.html#linewise">linewise</A>|).  Does the same <A HREF="motion.html#as">as</A>
 			&quot;<A HREF="#dl">dl</A>&quot;.
 			The <A HREF="#&lt;Del&gt;">&lt;Del&gt;</A> key does not take a <A HREF="intro.html#[count]">[count]</A>.  Instead, <A HREF="motion.html#it">it</A>
 			deletes the last character of the <A HREF="intro.html#count">count</A>.
@@ -46,22 +70,22 @@ For <A HREF="insert.html#inserting">inserting</A> text see |<A HREF="insert.html
 
 							*<A NAME="X"></A><B>X</B>* *<A NAME="dh"></A><B>dh</B>*
 [&quot;x]X			Delete <A HREF="intro.html#[count]">[count]</A> characters before the cursor [into
-			<A HREF="sponsor.html#register">register</A> x] (not |<A HREF="motion.html#linewise">linewise</A>|).  Does the same <A HREF="motion.html#as">as</A> &quot;<A HREF="#dh">dh</A>&quot;.
+			<A HREF="intro.html#register">register</A> x] (not |<A HREF="motion.html#linewise">linewise</A>|).  Does the same <A HREF="motion.html#as">as</A> &quot;<A HREF="#dh">dh</A>&quot;.
 			Also see |<A HREF="options.html#'whichwrap'">'whichwrap'</A>|.
 
 
 							*<A NAME="d"></A><B>d</B>*
-[&quot;x]d{motion}		Delete text that <A HREF="intro.html#{motion}">{motion}</A> moves over [into <A HREF="sponsor.html#register">register</A>
+[&quot;x]d{motion}		Delete text that <A HREF="intro.html#{motion}">{motion}</A> moves over [into <A HREF="intro.html#register">register</A>
 			x].  See below for exceptions.
 
 
 							*<A NAME="dd"></A><B>dd</B>*
-[&quot;x]dd			Delete <A HREF="intro.html#[count]">[count]</A> lines [into <A HREF="sponsor.html#register">register</A> x] |<A HREF="motion.html#linewise">linewise</A>|.
+[&quot;x]dd			Delete <A HREF="intro.html#[count]">[count]</A> lines [into <A HREF="intro.html#register">register</A> x] |<A HREF="motion.html#linewise">linewise</A>|.
 
 
 							*<A NAME="D"></A><B>D</B>*
 [&quot;x]D			Delete the characters under the cursor until the end
-			of the line and [count]-1 more lines [into <A HREF="sponsor.html#register">register</A>
+			of the line and [count]-1 more lines [into <A HREF="intro.html#register">register</A>
 			x]; synonym for &quot;d$&quot;.
 			(not |<A HREF="motion.html#linewise">linewise</A>|)
 			When the '<A HREF="pattern.html##">#</A>' flag is in <A HREF="options.html#'cpoptions'">'cpoptions'</A> the <A HREF="intro.html#count">count</A> is
@@ -70,17 +94,17 @@ For <A HREF="insert.html#inserting">inserting</A> text see |<A HREF="insert.html
 
 {Visual}[&quot;x]x	or					*<A NAME="v_x"></A><B>v_x</B>* *<A NAME="v_d"></A><B>v_d</B>* *<A NAME="v_&lt;Del&gt;"></A><B>v_&lt;Del&gt;</B>*
 {Visual}[&quot;x]d   or
-{Visual}[&quot;x]&lt;Del&gt;	Delete the highlighted text [into <A HREF="sponsor.html#register">register</A> x] (for
+{Visual}[&quot;x]&lt;Del&gt;	Delete the highlighted text [into <A HREF="intro.html#register">register</A> x] (for
 			<A HREF="intro.html#{Visual}">{Visual}</A> see |<A HREF="visual.html#Visual-mode">Visual-mode</A>|).
 
 
 {Visual}[&quot;x]CTRL-H   or					*<A NAME="v_CTRL-H"></A><B>v_CTRL-H</B>* *<A NAME="v_&lt;BS&gt;"></A><B>v_&lt;BS&gt;</B>*
 {Visual}[&quot;x]&lt;BS&gt;	When in <A HREF="visual.html#Select">Select</A> mode: Delete the highlighted text [into
-			<A HREF="sponsor.html#register">register</A> x].
+			<A HREF="intro.html#register">register</A> x].
 
 
 {Visual}[&quot;x]X	or					*<A NAME="v_X"></A><B>v_X</B>* *<A NAME="v_D"></A><B>v_D</B>* *<A NAME="v_b_D"></A><B>v_b_D</B>*
-{Visual}[&quot;x]D		Delete the highlighted lines [into <A HREF="sponsor.html#register">register</A> x] (for
+{Visual}[&quot;x]D		Delete the highlighted lines [into <A HREF="intro.html#register">register</A> x] (for
 			<A HREF="intro.html#{Visual}">{Visual}</A> see |<A HREF="visual.html#Visual-mode">Visual-mode</A>|).  In Visual block mode,
 			&quot;<A HREF="#D">D</A>&quot; deletes the highlighted text plus all text until
 			the end of the line.
@@ -88,7 +112,7 @@ For <A HREF="insert.html#inserting">inserting</A> text see |<A HREF="insert.html
 
 					*<A NAME=":d"></A><B>:d</B>* *<A NAME=":de"></A><B>:de</B>* *<A NAME=":del"></A><B>:del</B>* *<A NAME=":delete"></A><B>:delete</B>* *<A NAME=":dl"></A><B>:dl</B>* *<A NAME=":dp"></A><B>:dp</B>*
 :[range]d[elete] [x]	Delete <A HREF="cmdline.html#[range]">[range]</A> lines (default: current line) [into
-			<A HREF="sponsor.html#register">register</A> x].
+			<A HREF="intro.html#register">register</A> x].
 			Note these weird <A HREF="map.html#abbreviations">abbreviations</A>:
 			   <A HREF="#:dl">:dl</A>		delete and <A HREF="eval.html#list">list</A>
 			   :dell	idem
@@ -105,7 +129,7 @@ For <A HREF="insert.html#inserting">inserting</A> text see |<A HREF="insert.html
 :[range]d[elete] [x] {count}
 			Delete {count} lines, starting with <A HREF="cmdline.html#[range]">[range]</A>
 			(default: current line |<A HREF="cmdline.html#cmdline-ranges">cmdline-ranges</A>|) [into
-			<A HREF="sponsor.html#register">register</A> x].
+			<A HREF="intro.html#register">register</A> x].
 
 These commands delete text.  You can repeat them with the `.` command
 (except `:d`) and <A HREF="undo.html#undo">undo</A> them.  Use <A HREF="visual.html#Visual">Visual</A> mode to delete blocks of text.  See
@@ -196,12 +220,10 @@ of the resulting line.
 			<A HREF="motion.html#&lt;Tab&gt;">&lt;Tab&gt;</A> may replace several characters at once.
 			Repeat the entered text [count]-1 times.  See
 			|<A HREF="insert.html#Virtual-Replace-mode">Virtual-Replace-mode</A>| for more details.
-			{not available when compiled without the |<A HREF="various.html#+vreplace">+vreplace</A>|
-			feature}
 
 
 							*<A NAME="c"></A><B>c</B>*
-[&quot;x]c{motion}		Delete <A HREF="intro.html#{motion}">{motion}</A> text [into <A HREF="sponsor.html#register">register</A> x] and start
+[&quot;x]c{motion}		Delete <A HREF="intro.html#{motion}">{motion}</A> text [into <A HREF="intro.html#register">register</A> x] and start
 			insert.  When  <A HREF="options.html#'cpoptions'">'cpoptions'</A> includes the '<A HREF="motion.html#E">E</A>' flag and
 			there is no text to delete (e.g., with &quot;cTx&quot; when the
 			cursor is just after an 'x'), an error occurs and
@@ -212,30 +234,30 @@ of the resulting line.
 
 
 							*<A NAME="cc"></A><B>cc</B>*
-[&quot;x]cc			Delete <A HREF="intro.html#[count]">[count]</A> lines [into <A HREF="sponsor.html#register">register</A> x] and start
+[&quot;x]cc			Delete <A HREF="intro.html#[count]">[count]</A> lines [into <A HREF="intro.html#register">register</A> x] and start
 			insert |<A HREF="motion.html#linewise">linewise</A>|.  If <A HREF="options.html#'autoindent'">'autoindent'</A> is on, preserve
 			the indent of the first line.
 
 
 							*<A NAME="C"></A><B>C</B>*
 [&quot;x]C			Delete from the cursor position to the end of the
-			line and [count]-1 more lines [into <A HREF="sponsor.html#register">register</A> x], and
+			line and [count]-1 more lines [into <A HREF="intro.html#register">register</A> x], and
 			start insert.  Synonym for c$ (not |<A HREF="motion.html#linewise">linewise</A>|).
 
 
 							*<A NAME="s"></A><B>s</B>*
-[&quot;x]s			Delete <A HREF="intro.html#[count]">[count]</A> characters [into <A HREF="sponsor.html#register">register</A> x] and start
+[&quot;x]s			Delete <A HREF="intro.html#[count]">[count]</A> characters [into <A HREF="intro.html#register">register</A> x] and start
 			insert (s stands for Substitute).  Synonym for &quot;cl&quot;
 			(not |<A HREF="motion.html#linewise">linewise</A>|).
 
 
 							*<A NAME="S"></A><B>S</B>*
-[&quot;x]S			Delete <A HREF="intro.html#[count]">[count]</A> lines [into <A HREF="sponsor.html#register">register</A> x] and start
+[&quot;x]S			Delete <A HREF="intro.html#[count]">[count]</A> lines [into <A HREF="intro.html#register">register</A> x] and start
 			insert.  Synonym for &quot;<A HREF="#cc">cc</A>&quot; |<A HREF="motion.html#linewise">linewise</A>|.
 
 
 {Visual}[&quot;x]c	or					*<A NAME="v_c"></A><B>v_c</B>* *<A NAME="v_s"></A><B>v_s</B>*
-{Visual}[&quot;x]s		Delete the highlighted text [into <A HREF="sponsor.html#register">register</A> x] and
+{Visual}[&quot;x]s		Delete the highlighted text [into <A HREF="intro.html#register">register</A> x] and
 			start insert (for <A HREF="intro.html#{Visual}">{Visual}</A> see |<A HREF="visual.html#Visual-mode">Visual-mode</A>|).
 
 
@@ -244,12 +266,12 @@ of the resulting line.
 
 
 							*<A NAME="v_C"></A><B>v_C</B>*
-{Visual}[&quot;x]C		Delete the highlighted lines [into <A HREF="sponsor.html#register">register</A> x] and
+{Visual}[&quot;x]C		Delete the highlighted lines [into <A HREF="intro.html#register">register</A> x] and
 			start insert.  In <A HREF="visual.html#Visual">Visual</A> block mode <A HREF="motion.html#it">it</A> works
 			differently |<A HREF="visual.html#v_b_C">v_b_C</A>|.
 
 							*<A NAME="v_S"></A><B>v_S</B>*
-{Visual}[&quot;x]S		Delete the highlighted lines [into <A HREF="sponsor.html#register">register</A> x] and
+{Visual}[&quot;x]S		Delete the highlighted lines [into <A HREF="intro.html#register">register</A> x] and
 			start insert (for <A HREF="intro.html#{Visual}">{Visual}</A> see |<A HREF="visual.html#Visual-mode">Visual-mode</A>|).
 
 
@@ -331,15 +353,12 @@ gr{char}		<A HREF="insert.html#Replace">Replace</A> the virtual characters under
 			space.  See |<A HREF="#gR">gR</A>| and |<A HREF="insert.html#Virtual-Replace-mode">Virtual-Replace-mode</A>| for more
 			details.  As with |<A HREF="#r">r</A>| a <A HREF="intro.html#count">count</A> may be given.
 			{char} can be entered like with |<A HREF="#r">r</A>|.
-			{not available when compiled without the |<A HREF="various.html#+vreplace">+vreplace</A>|
-			feature}
 
 
 						*<A NAME="digraph-arg"></A><B>digraph-arg</B>*
 The argument for <A HREF="intro.html#Normal">Normal</A> mode commands like |<A HREF="#r">r</A>| and |<A HREF="motion.html#t">t</A>| is a single character.
 When <A HREF="options.html#'cpo'">'cpo'</A> doesn't contain the '<A HREF="#D">D</A>' flag, this character can also be entered
 like |<A HREF="digraph.html#digraphs">digraphs</A>|.  First type CTRL-K and then the two digraph characters.
-{not available when compiled without the |<A HREF="various.html#+digraphs">+digraphs</A>| feature}
 
 
 						*<A NAME="case"></A><B>case</B>*
@@ -507,7 +526,7 @@ The <A HREF="#CTRL-A">CTRL-A</A> command is very useful in a <A HREF="map.html#m
 steps to make a numbered <A HREF="eval.html#list">list</A>.
 
 1. Create the first <A HREF="eval.html#list">list</A> entry, make sure <A HREF="motion.html#it">it</A> starts with a number.
-2. qa	     - start <A HREF="repeat.html#recording">recording</A> into <A HREF="sponsor.html#register">register</A> '<A HREF="insert.html#a">a</A>'
+2. qa	     - start <A HREF="repeat.html#recording">recording</A> into <A HREF="intro.html#register">register</A> '<A HREF="insert.html#a">a</A>'
 3. <A HREF="#Y">Y</A>	     - <A HREF="#yank">yank</A> the entry
 4. <A HREF="#p">p</A>	     - put a copy of the entry below the first one
 5. <A HREF="#CTRL-A">CTRL-A</A>    - increment the number
@@ -691,12 +710,12 @@ Directory for temporary files is created in the first suitable directory of:
 			For the {pattern} see |<A HREF="pattern.html#pattern">pattern</A>|.
 			{string} can be a literal <A HREF="eval.html#string">string</A>, or something
 			special; see |<A HREF="#sub-replace-special">sub-replace-special</A>|.
-
-							*<A NAME="E939"></A><B>E939</B>*
 			When <A HREF="cmdline.html#[range]">[range]</A> and <A HREF="intro.html#[count]">[count]</A> are omitted, replace in the
 			current line only.  When <A HREF="intro.html#[count]">[count]</A> is given, replace in
 			<A HREF="intro.html#[count]">[count]</A> lines, starting with the last line in <A HREF="cmdline.html#[range]">[range]</A>.
 			When <A HREF="cmdline.html#[range]">[range]</A> is omitted start in the current line.
+
+							*<A NAME="E939"></A><B>E939</B>*
 			<A HREF="intro.html#[count]">[count]</A> must be a positive number.  Also see
 			|<A HREF="cmdline.html#cmdline-ranges">cmdline-ranges</A>|.
 
@@ -933,7 +952,7 @@ the |<A HREF="eval.html#substitute()">substitute()</A>| function with the follow
   - magic is always set without regard to <A HREF="options.html#'magic'">'magic'</A>.
   - A ~ inserts a tilde literally.
   - <A HREF="motion.html#&lt;CR&gt;">&lt;CR&gt;</A> and \r inserts a <A HREF="intro.html#carriage-return">carriage-return</A> (CTRL-M).
-  - \&lt;CR&gt; does not have a special meaning. it's just one of \x.
+  - \&lt;CR&gt; does not have a special meaning. It's just one of \x.
 
 Examples:
 <B>  :s/a\|b/xxx\0xxx/g		 modifies "a b"	     to "xxxaxxx xxxbxxx"</B>
@@ -1026,16 +1045,16 @@ When the result is a |<A HREF="eval.html#List">List</A>| then the items are join
 breaks.  Thus each item becomes a line, except that they can contain line
 breaks themselves.
 
-The whole matched text can be accessed with &quot;submatch(0)&quot;.  The text matched
-with the first pair of () with &quot;submatch(1)&quot;.  Likewise for further
-sub-matches in ().
+The |<A HREF="eval.html#submatch()">submatch()</A>| function can be used to obtain matched text.  The whole
+matched text can be accessed with &quot;submatch(0)&quot;.  The text matched with the
+first pair of () with &quot;submatch(1)&quot;.  Likewise for further sub-matches in ().
 
 Be careful: The separation character must not appear in the <A HREF="eval.html#expression">expression</A>!
 Consider using a character like &quot;<A HREF="repeat.html#@">@</A>&quot; or &quot;<A HREF="cmdline.html#:">:</A>&quot;.  There is no problem if the result
 of the <A HREF="eval.html#expression">expression</A> contains the separation character.
 
 Examples:
-<B>	:<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="fb88bb">[email&#160;protected]</a>\<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c3ad83">[email&#160;protected]</a>\="\r" . expand("$HOME") . "\r"@</B>
+<B>	:<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="82f1c2">[email&#160;protected]</a>\<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f19fb1">[email&#160;protected]</a>\="\r" . expand("$HOME") . "\r"@</B>
 This replaces an end-of-line with a new line containing the value of <A HREF="options.html#$HOME">$HOME</A>.
 
 <B>	s/E/\="\&lt;Char-0x20ac&gt;"/g</B>
@@ -1084,8 +1103,6 @@ This replaces each '<A HREF="motion.html#E">E</A>' character with a euro sign.  
 			this (that's a good habit anyway).
 			`:retab!` may also change a sequence of spaces by
 			<A HREF="motion.html#&lt;Tab&gt;">&lt;Tab&gt;</A> characters, which can mess up a <A HREF="eval.html#printf()">printf()</A>.
-			Not available when |<A HREF="various.html#+ex_extra">+ex_extra</A>| feature was disabled at
-			compile time.
 
 
 							*<A NAME="retab-example"></A><B>retab-example</B>*
@@ -1104,14 +1121,14 @@ inside of strings can change!  Also see <A HREF="options.html#'softtabstop'">'so
 
 
 							*<A NAME="quote"></A><B>quote</B>*
-&quot;{a-zA-Z0-9.&#37;#:-&quot;}	Use <A HREF="sponsor.html#register">register</A> {a-zA-Z0-9.&#37;#:-&quot;} for next delete, <A HREF="#yank">yank</A>
+&quot;{a-zA-Z0-9.&#37;#:-&quot;}	Use <A HREF="intro.html#register">register</A> {a-zA-Z0-9.&#37;#:-&quot;} for next delete, <A HREF="#yank">yank</A>
 			or put (use <A HREF="#uppercase">uppercase</A> character to append with
 			delete and <A HREF="#yank">yank</A>) ({.&#37;#:} only work with put).
 
 
 							*<A NAME=":reg"></A><B>:reg</B>* *<A NAME=":registers"></A><B>:registers</B>*
 :reg[isters]		Display the contents of all numbered and named
-			<A HREF="#registers">registers</A>.  If a <A HREF="sponsor.html#register">register</A> is written to for |<A HREF="various.html#:redir">:redir</A>|
+			<A HREF="#registers">registers</A>.  If a <A HREF="intro.html#register">register</A> is written to for |<A HREF="various.html#:redir">:redir</A>|
 			<A HREF="motion.html#it">it</A> will not be listed.
 
 
@@ -1127,62 +1144,62 @@ inside of strings can change!  Also see <A HREF="options.html#'softtabstop'">'so
 
 
 							*<A NAME="y"></A><B>y</B>* *<A NAME="yank"></A><B>yank</B>*
-[&quot;x]y{motion}		Yank <A HREF="intro.html#{motion}">{motion}</A> text [into <A HREF="sponsor.html#register">register</A> x].  When no
+[&quot;x]y{motion}		Yank <A HREF="intro.html#{motion}">{motion}</A> text [into <A HREF="intro.html#register">register</A> x].  When no
 			characters are to be yanked (e.g., &quot;y0&quot; in column 1),
 			this is an error when <A HREF="options.html#'cpoptions'">'cpoptions'</A> includes the '<A HREF="motion.html#E">E</A>'
 			flag.
 
 
 							*<A NAME="yy"></A><B>yy</B>*
-[&quot;x]yy			Yank <A HREF="intro.html#[count]">[count]</A> lines [into <A HREF="sponsor.html#register">register</A> x] |<A HREF="motion.html#linewise">linewise</A>|.
+[&quot;x]yy			Yank <A HREF="intro.html#[count]">[count]</A> lines [into <A HREF="intro.html#register">register</A> x] |<A HREF="motion.html#linewise">linewise</A>|.
 
 
 							*<A NAME="Y"></A><B>Y</B>*
-[&quot;x]Y			<A HREF="#yank">yank</A> <A HREF="intro.html#[count]">[count]</A> lines [into <A HREF="sponsor.html#register">register</A> x] (synonym for
+[&quot;x]Y			<A HREF="#yank">yank</A> <A HREF="intro.html#[count]">[count]</A> lines [into <A HREF="intro.html#register">register</A> x] (synonym for
 			<A HREF="#yy">yy</A>, |<A HREF="motion.html#linewise">linewise</A>|).  If you like &quot;<A HREF="#Y">Y</A>&quot; to work from the
 			cursor to the end of line (which is more logical,
 			but not Vi-compatible) use &quot;<A HREF="map.html#:map">:map</A> <A HREF="#Y">Y</A> y$&quot;.
 
 
 							*<A NAME="v_y"></A><B>v_y</B>*
-{Visual}[&quot;x]y		Yank the highlighted text [into <A HREF="sponsor.html#register">register</A> x] (for
+{Visual}[&quot;x]y		Yank the highlighted text [into <A HREF="intro.html#register">register</A> x] (for
 			<A HREF="intro.html#{Visual}">{Visual}</A> see |<A HREF="visual.html#Visual-mode">Visual-mode</A>|).
 
 
 							*<A NAME="v_Y"></A><B>v_Y</B>*
-{Visual}[&quot;x]Y		Yank the highlighted lines [into <A HREF="sponsor.html#register">register</A> x] (for
+{Visual}[&quot;x]Y		Yank the highlighted lines [into <A HREF="intro.html#register">register</A> x] (for
 			<A HREF="intro.html#{Visual}">{Visual}</A> see |<A HREF="visual.html#Visual-mode">Visual-mode</A>|).
 
 
 							*<A NAME=":y"></A><B>:y</B>* *<A NAME=":yank"></A><B>:yank</B>* *<A NAME="E850"></A><B>E850</B>*
-:[range]y[ank] [x]	Yank <A HREF="cmdline.html#[range]">[range]</A> lines [into <A HREF="sponsor.html#register">register</A> x]. Yanking to the
+:[range]y[ank] [x]	Yank <A HREF="cmdline.html#[range]">[range]</A> lines [into <A HREF="intro.html#register">register</A> x]. Yanking to the
 			&quot;* or &quot;<A HREF="motion.html#+">+</A> <A HREF="#registers">registers</A> is possible only when the
-			|<A HREF="various.html#+clipboard">+clipboard</A>| feature is included.
+			|<A HREF="intro.html#+clipboard">+clipboard</A>| feature is included.
 
 :[range]y[ank] [x] {count}
 			Yank {count} lines, starting with last line number
 			in <A HREF="cmdline.html#[range]">[range]</A> (default: current line |<A HREF="cmdline.html#cmdline-ranges">cmdline-ranges</A>|),
-			[into <A HREF="sponsor.html#register">register</A> x].
+			[into <A HREF="intro.html#register">register</A> x].
 
 
 							*<A NAME="p"></A><B>p</B>* *<A NAME="put"></A><B>put</B>* *<A NAME="E353"></A><B>E353</B>*
-[&quot;x]p			Put the text [from <A HREF="sponsor.html#register">register</A> x] after the cursor
+[&quot;x]p			Put the text [from <A HREF="intro.html#register">register</A> x] after the cursor
 			<A HREF="intro.html#[count]">[count]</A> times.
 
 
 							*<A NAME="P"></A><B>P</B>*
-[&quot;x]P			Put the text [from <A HREF="sponsor.html#register">register</A> x] before the cursor
+[&quot;x]P			Put the text [from <A HREF="intro.html#register">register</A> x] before the cursor
 			<A HREF="intro.html#[count]">[count]</A> times.
 
 
 							*<A NAME="&lt;MiddleMouse&gt;"></A><B>&lt;MiddleMouse&gt;</B>*
-[&quot;x]&lt;MiddleMouse&gt;	Put the text from a <A HREF="sponsor.html#register">register</A> before the cursor <A HREF="intro.html#[count]">[count]</A>
-			times.  Uses the &quot;* <A HREF="sponsor.html#register">register</A>, unless another is
+[&quot;x]&lt;MiddleMouse&gt;	Put the text from a <A HREF="intro.html#register">register</A> before the cursor <A HREF="intro.html#[count]">[count]</A>
+			times.  Uses the &quot;* <A HREF="intro.html#register">register</A>, unless another is
 			specified.
 			Leaves the cursor at the end of the new text.
 			Using the mouse only works when <A HREF="options.html#'mouse'">'mouse'</A> contains '<A HREF="pattern.html#n">n</A>'
 			or '<A HREF="insert.html#a">a</A>'.
-			If you have a scrollwheel and often accidentally paste
+			If you have a scrollwheel and often accidentally <A HREF="provider.html#paste">paste</A>
 			text, you can use these mappings to disable the
 			pasting with the middle mouse button:
 <B>				:map &lt;MiddleMouse&gt; &lt;Nop&gt;</B>
@@ -1202,17 +1219,17 @@ inside of strings can change!  Also see <A HREF="options.html#'softtabstop'">'so
 
 
 							*<A NAME=":pu"></A><B>:pu</B>* *<A NAME=":put"></A><B>:put</B>*
-:[line]pu[t] [x]	Put the text [from <A HREF="sponsor.html#register">register</A> x] after [line] (default
+:[line]pu[t] [x]	Put the text [from <A HREF="intro.html#register">register</A> x] after [line] (default
 			current line).  This always works |<A HREF="motion.html#linewise">linewise</A>|, thus
 			this command can be used to put a yanked block <A HREF="motion.html#as">as</A> new
 			lines.
-			If no <A HREF="sponsor.html#register">register</A> is specified, <A HREF="motion.html#it">it</A> depends on the <A HREF="options.html#'cb'">'cb'</A>
-			option: If <A HREF="options.html#'cb'">'cb'</A> contains &quot;unnamedplus&quot;, paste from the
-			+ <A HREF="sponsor.html#register">register</A> |<A HREF="provider.html#quoteplus">quoteplus</A>|.  Otherwise, if <A HREF="options.html#'cb'">'cb'</A> contains
-			&quot;unnamed&quot;, paste from the &#42; <A HREF="sponsor.html#register">register</A> |<A HREF="provider.html#quotestar">quotestar</A>|.
-			Otherwise, paste from the unnamed <A HREF="sponsor.html#register">register</A>
+			If no <A HREF="intro.html#register">register</A> is specified, <A HREF="motion.html#it">it</A> depends on the <A HREF="options.html#'cb'">'cb'</A>
+			option: If <A HREF="options.html#'cb'">'cb'</A> contains &quot;unnamedplus&quot;, <A HREF="provider.html#paste">paste</A> from the
+			+ <A HREF="intro.html#register">register</A> |<A HREF="provider.html#quoteplus">quoteplus</A>|.  Otherwise, if <A HREF="options.html#'cb'">'cb'</A> contains
+			&quot;unnamed&quot;, <A HREF="provider.html#paste">paste</A> from the &#42; <A HREF="intro.html#register">register</A> |<A HREF="provider.html#quotestar">quotestar</A>|.
+			Otherwise, <A HREF="provider.html#paste">paste</A> from the unnamed <A HREF="intro.html#register">register</A>
 			|<A HREF="#quote_quote">quote_quote</A>|.
-			The <A HREF="sponsor.html#register">register</A> can also be '<A HREF="#=">=</A>' followed by an optional
+			The <A HREF="intro.html#register">register</A> can also be '<A HREF="#=">=</A>' followed by an optional
 			<A HREF="eval.html#expression">expression</A>.  The <A HREF="eval.html#expression">expression</A> continues until the end of
 			the command.  You need to <A HREF="intro.html#escape">escape</A> the '&#124;' and &#39;&#34;''
 			characters to prevent them from terminating the
@@ -1221,7 +1238,7 @@ inside of strings can change!  Also see <A HREF="options.html#'softtabstop'">'so
  			If there is no <A HREF="eval.html#expression">expression</A> after '<A HREF="#=">=</A>', Vim uses the
 			previous <A HREF="eval.html#expression">expression</A>.  You can see <A HREF="motion.html#it">it</A> with &quot;:dis =&quot;.
 
-:[line]pu[t]! [x]	Put the text [from <A HREF="sponsor.html#register">register</A> x] before [line] (default
+:[line]pu[t]! [x]	Put the text [from <A HREF="intro.html#register">register</A> x] before [line] (default
 			current line).
 
 
@@ -1241,8 +1258,8 @@ inside of strings can change!  Also see <A HREF="options.html#'softtabstop'">'so
 			or '<A HREF="insert.html#a">a</A>'.
 
 You can use these commands to copy text from one place to another.  Do this
-by first getting the text into a <A HREF="sponsor.html#register">register</A> with a <A HREF="#yank">yank</A>, delete or change
-command, then <A HREF="insert.html#inserting">inserting</A> the <A HREF="sponsor.html#register">register</A> contents with a put command.  You can
+by first getting the text into a <A HREF="intro.html#register">register</A> with a <A HREF="#yank">yank</A>, delete or change
+command, then <A HREF="insert.html#inserting">inserting</A> the <A HREF="intro.html#register">register</A> contents with a put command.  You can
 also use these commands to move text from one file to another, because Vim
 preserves all <A HREF="#registers">registers</A> when <A HREF="#changing">changing</A> <A HREF="windows.html#buffers">buffers</A> (the <A HREF="editing.html#CTRL-^">CTRL-^</A> command is a quick
 way to toggle between two files).
@@ -1250,7 +1267,7 @@ way to toggle between two files).
 
 				*<A NAME="linewise-register"></A><B>linewise-register</B>* *<A NAME="characterwise-register"></A><B>characterwise-register</B>*
 You can repeat the put commands with &quot;<A HREF="repeat.html#.">.</A>&quot; (except for <A HREF="#:put">:put</A>) and <A HREF="undo.html#undo">undo</A> them.  If
-the command that was used to get the text into the <A HREF="sponsor.html#register">register</A> was |<A HREF="motion.html#linewise">linewise</A>|,
+the command that was used to get the text into the <A HREF="intro.html#register">register</A> was |<A HREF="motion.html#linewise">linewise</A>|,
 Vim inserts the text below (&quot;p&quot;) or above (&quot;P&quot;) the line where the cursor is.
 Otherwise Vim inserts the text after (&quot;p&quot;) or before (&quot;P&quot;) the cursor.  With
 the &quot;<A HREF="#:put">:put</A>&quot; command, Vim always inserts the text in the next line.  You can
@@ -1264,26 +1281,26 @@ the cursor to the start.
 
 						*<A NAME="put-Visual-mode"></A><B>put-Visual-mode</B>* *<A NAME="v_p"></A><B>v_p</B>* *<A NAME="v_P"></A><B>v_P</B>*
 When using a put command like |<A HREF="#p">p</A>| or |<A HREF="#P">P</A>| in <A HREF="visual.html#Visual">Visual</A> mode, Vim will try to
-replace the selected text with the contents of the <A HREF="sponsor.html#register">register</A>.  Whether this
+replace the selected text with the contents of the <A HREF="intro.html#register">register</A>.  Whether this
 works well depends on the type of selection and the type of the text in the
-<A HREF="sponsor.html#register">register</A>.  With blockwise selection <A HREF="motion.html#it">it</A> also depends on the size of the block
+<A HREF="intro.html#register">register</A>.  With blockwise selection <A HREF="motion.html#it">it</A> also depends on the size of the block
 and whether the corners are on an existing character.  (Implementation detail:
-<A HREF="motion.html#it">it</A> actually works by first putting the <A HREF="sponsor.html#register">register</A> after the selection and then
+<A HREF="motion.html#it">it</A> actually works by first putting the <A HREF="intro.html#register">register</A> after the selection and then
 <A HREF="#deleting">deleting</A> the selection.)
-The previously selected text is put in the unnamed <A HREF="sponsor.html#register">register</A>.  If you want to
+The previously selected text is put in the unnamed <A HREF="intro.html#register">register</A>.  If you want to
 put the same text into a <A HREF="visual.html#Visual">Visual</A> selection several times you need to use
-another <A HREF="sponsor.html#register">register</A>.  E.g., <A HREF="#yank">yank</A> the text to copy, Visually select the text to
+another <A HREF="intro.html#register">register</A>.  E.g., <A HREF="#yank">yank</A> the text to copy, Visually select the text to
 replace and use &quot;0p .  You can repeat this <A HREF="motion.html#as">as</A> many times <A HREF="motion.html#as">as</A> you like, the
-unnamed <A HREF="sponsor.html#register">register</A> will be changed each time.
+unnamed <A HREF="intro.html#register">register</A> will be changed each time.
 
 When you use a blockwise <A HREF="visual.html#Visual">Visual</A> mode command and <A HREF="#yank">yank</A> only a single line into
-a <A HREF="sponsor.html#register">register</A>, a paste on a visual selected area will paste that single line on
+a <A HREF="intro.html#register">register</A>, a <A HREF="provider.html#paste">paste</A> on a visual selected area will <A HREF="provider.html#paste">paste</A> that single line on
 each of the selected lines (thus <A HREF="#replacing">replacing</A> the blockwise selected region by a
 block of the pasted line).
 
 
 							*<A NAME="blockwise-register"></A><B>blockwise-register</B>*
-If you use a blockwise <A HREF="visual.html#Visual">Visual</A> mode command to get the text into the <A HREF="sponsor.html#register">register</A>,
+If you use a blockwise <A HREF="visual.html#Visual">Visual</A> mode command to get the text into the <A HREF="intro.html#register">register</A>,
 the block of text will be inserted before (&quot;P&quot;) or after (&quot;p&quot;) the cursor
 column in the current and next lines.  Vim makes the whole block of text start
 in the same column.  Thus the inserted text looks the same <A HREF="motion.html#as">as</A> when <A HREF="motion.html#it">it</A> was
@@ -1305,54 +1322,54 @@ column is unmodified, thus <A HREF="motion.html#it">it</A> may not be on the fir
 
 
 There are ten types of <A HREF="#registers">registers</A>:			*<A NAME="registers"></A><B>registers</B>* *<A NAME="E354"></A><B>E354</B>*
-1. The unnamed <A HREF="sponsor.html#register">register</A> &quot;&quot;
+1. The unnamed <A HREF="intro.html#register">register</A> &quot;&quot;
 2. 10 numbered <A HREF="#registers">registers</A> &quot;<A HREF="motion.html#0">0</A> to &quot;9
-3. The small delete <A HREF="sponsor.html#register">register</A> &quot;<A HREF="motion.html#-">-</A>
+3. The small delete <A HREF="intro.html#register">register</A> &quot;<A HREF="motion.html#-">-</A>
 4. 26 named <A HREF="#registers">registers</A> &quot;a to &quot;<A HREF="vimindex.html#z">z</A> or &quot;A to &quot;Z
-5. three read-only <A HREF="#registers">registers</A> &quot;<A HREF="cmdline.html#:,">:,</A> &quot;., &quot;<A HREF="motion.html#&#37;">&#37;</A>
-6. alternate buffer <A HREF="sponsor.html#register">register</A> &quot;<A HREF="pattern.html##">#</A>
-7. the <A HREF="eval.html#expression">expression</A> <A HREF="sponsor.html#register">register</A> &quot;<A HREF="#=">=</A>
+5. Three read-only <A HREF="#registers">registers</A> &quot;<A HREF="cmdline.html#:,">:,</A> &quot;., &quot;<A HREF="motion.html#&#37;">&#37;</A>
+6. Alternate buffer <A HREF="intro.html#register">register</A> &quot;<A HREF="pattern.html##">#</A>
+7. The <A HREF="eval.html#expression">expression</A> <A HREF="intro.html#register">register</A> &quot;<A HREF="#=">=</A>
 8. The selection <A HREF="#registers">registers</A> &quot;* and &quot;<A HREF="motion.html#+">+</A>
-9. The black hole <A HREF="sponsor.html#register">register</A> &quot;<A HREF="motion.html#_">_</A>
-10. Last search <A HREF="pattern.html#pattern">pattern</A> <A HREF="sponsor.html#register">register</A> &quot;<A HREF="pattern.html#/">/</A>
+9. The black hole <A HREF="intro.html#register">register</A> &quot;<A HREF="motion.html#_">_</A>
+10. Last search <A HREF="pattern.html#pattern">pattern</A> <A HREF="intro.html#register">register</A> &quot;<A HREF="pattern.html#/">/</A>
 
 
-1. Unnamed <A HREF="sponsor.html#register">register</A> &quot;&quot;				*<A NAME="quote_quote"></A><B>quote_quote</B>* *<A NAME="quotequote"></A><B>quotequote</B>*
-Vim fills this <A HREF="sponsor.html#register">register</A> with text deleted with the &quot;<A HREF="#d">d</A>&quot;, &quot;<A HREF="#c">c</A>&quot;, &quot;<A HREF="#s">s</A>&quot;, &quot;<A HREF="#x">x</A>&quot; commands
+1. Unnamed <A HREF="intro.html#register">register</A> &quot;&quot;				*<A NAME="quote_quote"></A><B>quote_quote</B>* *<A NAME="quotequote"></A><B>quotequote</B>*
+Vim fills this <A HREF="intro.html#register">register</A> with text deleted with the &quot;<A HREF="#d">d</A>&quot;, &quot;<A HREF="#c">c</A>&quot;, &quot;<A HREF="#s">s</A>&quot;, &quot;<A HREF="#x">x</A>&quot; commands
 or copied with the <A HREF="#yank">yank</A> &quot;<A HREF="#y">y</A>&quot; command, regardless of whether or not a specific
-<A HREF="sponsor.html#register">register</A> was used (e.g.  &quot;xdd).  This is like the unnamed <A HREF="sponsor.html#register">register</A> is pointing
-to the last used <A HREF="sponsor.html#register">register</A>.  Thus when appending using an <A HREF="#uppercase">uppercase</A> <A HREF="sponsor.html#register">register</A>
-name, the unnamed <A HREF="sponsor.html#register">register</A> contains the same text <A HREF="motion.html#as">as</A> the named <A HREF="sponsor.html#register">register</A>.
-An exception is the '<A HREF="motion.html#_">_</A>' <A HREF="sponsor.html#register">register</A>: &quot;_dd does not store the deleted text in any
-<A HREF="sponsor.html#register">register</A>.
-Vim uses the contents of the unnamed <A HREF="sponsor.html#register">register</A> for any put command (p or <A HREF="#P">P</A>)
-which does not specify a <A HREF="sponsor.html#register">register</A>.  Additionally you can access <A HREF="motion.html#it">it</A> with the
+<A HREF="intro.html#register">register</A> was used (e.g.  &quot;xdd).  This is like the unnamed <A HREF="intro.html#register">register</A> is pointing
+to the last used <A HREF="intro.html#register">register</A>.  Thus when appending using an <A HREF="#uppercase">uppercase</A> <A HREF="intro.html#register">register</A>
+name, the unnamed <A HREF="intro.html#register">register</A> contains the same text <A HREF="motion.html#as">as</A> the named <A HREF="intro.html#register">register</A>.
+An exception is the '<A HREF="motion.html#_">_</A>' <A HREF="intro.html#register">register</A>: &quot;_dd does not store the deleted text in any
+<A HREF="intro.html#register">register</A>.
+Vim uses the contents of the unnamed <A HREF="intro.html#register">register</A> for any put command (p or <A HREF="#P">P</A>)
+which does not specify a <A HREF="intro.html#register">register</A>.  Additionally you can access <A HREF="motion.html#it">it</A> with the
 name &#39;&#34;''.  This means you have to type two double quotes.  Writing to the &quot;&quot;
-<A HREF="sponsor.html#register">register</A> writes to <A HREF="sponsor.html#register">register</A> &quot;0.
+<A HREF="intro.html#register">register</A> writes to <A HREF="intro.html#register">register</A> &quot;0.
 
 
 2. Numbered <A HREF="#registers">registers</A> &quot;<A HREF="motion.html#0">0</A> to &quot;9		*<A NAME="quote_number"></A><B>quote_number</B>* *<A NAME="quote0"></A><B>quote0</B>* *<A NAME="quote1"></A><B>quote1</B>*
 
 					*<A NAME="quote2"></A><B>quote2</B>* *<A NAME="quote3"></A><B>quote3</B>* *<A NAME="quote4"></A><B>quote4</B>* *<A NAME="quote9"></A><B>quote9</B>*
 Vim fills these <A HREF="#registers">registers</A> with text from <A HREF="#yank">yank</A> and delete commands.
-   Numbered <A HREF="sponsor.html#register">register</A> 0 contains the text from the most recent <A HREF="#yank">yank</A> command,
-unless the command specified another <A HREF="sponsor.html#register">register</A> with [&quot;x].
-   Numbered <A HREF="sponsor.html#register">register</A> 1 contains the text deleted by the most recent delete or
-change command, unless the command specified another <A HREF="sponsor.html#register">register</A> or the text is
-<A HREF="various.html#less">less</A> than one line (the small delete <A HREF="sponsor.html#register">register</A> is used then).  An exception is
+   Numbered <A HREF="intro.html#register">register</A> 0 contains the text from the most recent <A HREF="#yank">yank</A> command,
+unless the command specified another <A HREF="intro.html#register">register</A> with [&quot;x].
+   Numbered <A HREF="intro.html#register">register</A> 1 contains the text deleted by the most recent delete or
+change command, unless the command specified another <A HREF="intro.html#register">register</A> or the text is
+<A HREF="various.html#less">less</A> than one line (the small delete <A HREF="intro.html#register">register</A> is used then).  An exception is
 made for the delete <A HREF="motion.html#operator">operator</A> with these <A HREF="intro.html#movement">movement</A> commands: |<A HREF="motion.html#&#37;">&#37;</A>|, |<A HREF="motion.html#(">(</A>|, |<A HREF="motion.html#)">)</A>|, |<A HREF="motion.html#`">`</A>|,
 |<A HREF="pattern.html#/">/</A>|, |<A HREF="pattern.html#?">?</A>|, |<A HREF="pattern.html#n">n</A>|, |<A HREF="pattern.html#N">N</A>|, |<A HREF="motion.html#{">{</A>| and |<A HREF="motion.html#}">}</A>|.  Register &quot;1 is always used then (this is <A HREF="intro.html#Vi">Vi</A>
-compatible).  The &quot;<A HREF="motion.html#-">-</A> <A HREF="sponsor.html#register">register</A> is used <A HREF="motion.html#as">as</A> well if the delete is within a line.
-Note that these characters may be mapped.  E.g. |<A HREF="motion.html#&#37;">&#37;</A>| is mapped by the <A HREF="pi_matchit.html#matchit">matchit</A>
+compatible).  The &quot;<A HREF="motion.html#-">-</A> <A HREF="intro.html#register">register</A> is used <A HREF="motion.html#as">as</A> well if the delete is within a line.
+Note that these characters may be mapped.  E.g. |<A HREF="motion.html#&#37;">&#37;</A>| is mapped by the matchit
 <A HREF="usr_05.html#plugin">plugin</A>.
    With each successive deletion or change, Vim shifts the previous contents
-of <A HREF="sponsor.html#register">register</A> 1 into <A HREF="sponsor.html#register">register</A> 2, 2 into 3, and so forth, losing the previous
-contents of <A HREF="sponsor.html#register">register</A> 9.
+of <A HREF="intro.html#register">register</A> 1 into <A HREF="intro.html#register">register</A> 2, 2 into 3, and so forth, losing the previous
+contents of <A HREF="intro.html#register">register</A> 9.
 
 
-3. Small delete <A HREF="sponsor.html#register">register</A> &quot;<A HREF="motion.html#-">-</A>				*<A NAME="quote_-"></A><B>quote_-</B>* *<A NAME="quote-"></A><B>quote-</B>*
-This <A HREF="sponsor.html#register">register</A> contains text from commands that delete <A HREF="various.html#less">less</A> than one line,
-except when the command specifies a <A HREF="sponsor.html#register">register</A> with [&quot;x].
+3. Small delete <A HREF="intro.html#register">register</A> &quot;<A HREF="motion.html#-">-</A>				*<A NAME="quote_-"></A><B>quote_-</B>* *<A NAME="quote-"></A><B>quote-</B>*
+This <A HREF="intro.html#register">register</A> contains text from commands that delete <A HREF="various.html#less">less</A> than one line,
+except when the command specifies a <A HREF="intro.html#register">register</A> with [&quot;x].
 
 
 4. Named <A HREF="#registers">registers</A> &quot;a to &quot;<A HREF="vimindex.html#z">z</A> or &quot;A to &quot;Z			*<A NAME="quote_alpha"></A><B>quote_alpha</B>* *<A NAME="quotea"></A><B>quotea</B>*
@@ -1367,7 +1384,7 @@ and &quot;<A HREF="#:put">:put</A>&quot; commands and with <A HREF="undo.html#CT
 
 						*<A NAME="quote_."></A><B>quote_.</B>* *<A NAME="quote."></A><B>quote.</B>* *<A NAME="E29"></A><B>E29</B>*
 	&quot;.	Contains the last inserted text (the same <A HREF="motion.html#as">as</A> what is inserted
-		with the insert mode commands <A HREF="#CTRL-A">CTRL-A</A> and <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2f6c7b7d63026f">[email&#160;protected]</a>).  Note: this
+		with the insert mode commands <A HREF="#CTRL-A">CTRL-A</A> and <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="85c6d1d7c9a8c5">[email&#160;protected]</a>).  Note: this
 		doesn't work with <A HREF="undo.html#CTRL-R">CTRL-R</A> on the command-line.  It works a bit
 		differently, like <A HREF="insert.html#inserting">inserting</A> the text instead of putting <A HREF="motion.html#it">it</A>
 		('textwidth' and other <A HREF="options.html#options">options</A> affect what is inserted).
@@ -1378,16 +1395,16 @@ and &quot;<A HREF="#:put">:put</A>&quot; commands and with <A HREF="undo.html#CT
 						*<A NAME="quote_:"></A><B>quote_:</B>* *<A NAME="quote:"></A><B>quote:</B>* *<A NAME="E30"></A><B>E30</B>*
 	&quot;:	Contains the most recent executed command-line.  Example: Use
 		&quot;<A HREF="repeat.html#@:">@:</A>&quot; to repeat the previous command-line command.
-		The command-line is only stored in this <A HREF="sponsor.html#register">register</A> when at least
+		The command-line is only stored in this <A HREF="intro.html#register">register</A> when at least
 		one character of <A HREF="motion.html#it">it</A> was typed.  Thus <A HREF="motion.html#it">it</A> remains unchanged if
 		the command was completely from a <A HREF="map.html#mapping">mapping</A>.
 
 
 							*<A NAME="quote_#"></A><B>quote_#</B>* *<A NAME="quote#"></A><B>quote#</B>*
-6. Alternate file <A HREF="sponsor.html#register">register</A> &quot;<A HREF="pattern.html##">#</A>
+6. Alternate file <A HREF="intro.html#register">register</A> &quot;<A HREF="pattern.html##">#</A>
 Contains the name of the alternate file for the current <A HREF="windows.html#window">window</A>.  It will
 change how the |<A HREF="editing.html#CTRL-^">CTRL-^</A>| command works.
-This <A HREF="sponsor.html#register">register</A> is writable, mainly to allow for restoring <A HREF="motion.html#it">it</A> after a <A HREF="usr_05.html#plugin">plugin</A> has
+This <A HREF="intro.html#register">register</A> is writable, mainly to allow for restoring <A HREF="motion.html#it">it</A> after a <A HREF="usr_05.html#plugin">plugin</A> has
 changed <A HREF="motion.html#it">it</A>.  It accepts buffer number:
 <B>    let altbuf = bufnr(@#)</B>
 <B>    ...</B>
@@ -1400,9 +1417,9 @@ Error |<A HREF="windows.html#E93">E93</A>| if there is more than one buffer matc
 if none of <A HREF="windows.html#buffers">buffers</A> matches the given name.
 
 
-7. Expression <A HREF="sponsor.html#register">register</A> &quot;<A HREF="#=">=</A>			*<A NAME="quote_="></A><B>quote_=</B>* *<A NAME="quote="></A><B>quote=</B>* *<A NAME="@="></A><B>@=</B>*
-This is not really a <A HREF="sponsor.html#register">register</A> that stores text, but is a way to use an
-<A HREF="eval.html#expression">expression</A> in commands which use a <A HREF="sponsor.html#register">register</A>.  The <A HREF="eval.html#expression">expression</A> <A HREF="sponsor.html#register">register</A> is
+7. Expression <A HREF="intro.html#register">register</A> &quot;<A HREF="#=">=</A>			*<A NAME="quote_="></A><B>quote_=</B>* *<A NAME="quote="></A><B>quote=</B>* *<A NAME="@="></A><B>@=</B>*
+This is not really a <A HREF="intro.html#register">register</A> that stores text, but is a way to use an
+<A HREF="eval.html#expression">expression</A> in commands which use a <A HREF="intro.html#register">register</A>.  The <A HREF="eval.html#expression">expression</A> <A HREF="intro.html#register">register</A> is
 read-write.
 
 When typing the '<A HREF="#=">=</A>' after &quot; or <A HREF="undo.html#CTRL-R">CTRL-R</A> the cursor moves to the command-line,
@@ -1419,39 +1436,39 @@ converted to a <A HREF="eval.html#String">String</A>.  For the &quot;<A HREF="#p
 turned into a <A HREF="eval.html#String">String</A> and used <A HREF="motion.html#as">as</A> a line.  A <A HREF="eval.html#Dictionary">Dictionary</A> or FuncRef results in
 an error message (use <A HREF="eval.html#string()">string()</A> to convert).
 
-If the &quot;<A HREF="#=">=</A> <A HREF="sponsor.html#register">register</A> is used for the &quot;<A HREF="#p">p</A>&quot; command, the <A HREF="eval.html#String">String</A> is split up at <A HREF="motion.html#&lt;NL&gt;">&lt;NL&gt;</A>
+If the &quot;<A HREF="#=">=</A> <A HREF="intro.html#register">register</A> is used for the &quot;<A HREF="#p">p</A>&quot; command, the <A HREF="eval.html#String">String</A> is split up at <A HREF="motion.html#&lt;NL&gt;">&lt;NL&gt;</A>
 characters.  If the <A HREF="eval.html#String">String</A> ends in a <A HREF="motion.html#&lt;NL&gt;">&lt;NL&gt;</A>, <A HREF="motion.html#it">it</A> is regarded <A HREF="motion.html#as">as</A> a <A HREF="motion.html#linewise">linewise</A>
-<A HREF="sponsor.html#register">register</A>.
+<A HREF="intro.html#register">register</A>.
 
 8. Selection <A HREF="#registers">registers</A> &quot;* and &quot;<A HREF="motion.html#+">+</A>
 Use these <A HREF="#registers">registers</A> for storing and retrieving the selected text for the <A HREF="gui.html#GUI">GUI</A>.
 See |<A HREF="provider.html#quotestar">quotestar</A>| and |<A HREF="provider.html#quoteplus">quoteplus</A>|.  When the <A HREF="provider.html#clipboard">clipboard</A> is not available or not
-working, the unnamed <A HREF="sponsor.html#register">register</A> is used instead.  For Unix systems and Mac OS X,
+working, the unnamed <A HREF="intro.html#register">register</A> is used instead.  For Unix systems and Mac OS X,
 see |<A HREF="provider.html#primary-selection">primary-selection</A>|.
 
 
-9. Black hole <A HREF="sponsor.html#register">register</A> &quot;<A HREF="motion.html#_">_</A>				*<A NAME="quote_"></A><B>quote_</B>*
-When <A HREF="editing.html#writing">writing</A> to this <A HREF="sponsor.html#register">register</A>, nothing happens.  This can be used to delete
-text without affecting the normal <A HREF="#registers">registers</A>.  When reading from this <A HREF="sponsor.html#register">register</A>,
+9. Black hole <A HREF="intro.html#register">register</A> &quot;<A HREF="motion.html#_">_</A>				*<A NAME="quote_"></A><B>quote_</B>*
+When <A HREF="editing.html#writing">writing</A> to this <A HREF="intro.html#register">register</A>, nothing happens.  This can be used to delete
+text without affecting the normal <A HREF="#registers">registers</A>.  When reading from this <A HREF="intro.html#register">register</A>,
 nothing is returned.
 
-10. Last search <A HREF="pattern.html#pattern">pattern</A> <A HREF="sponsor.html#register">register</A>	&quot;<A HREF="pattern.html#/">/</A>		*quote_/* *quote/*
+10. Last search <A HREF="pattern.html#pattern">pattern</A> <A HREF="intro.html#register">register</A>	&quot;<A HREF="pattern.html#/">/</A>		*quote_/* *quote/*
 Contains the most recent <A HREF="pattern.html#search-pattern">search-pattern</A>.  This is used for &quot;<A HREF="pattern.html#n">n</A>&quot; and <A HREF="options.html#'hlsearch'">'hlsearch'</A>.
 It is writable with `:let`, you can change <A HREF="motion.html#it">it</A> to have <A HREF="options.html#'hlsearch'">'hlsearch'</A> highlight
 other matches without actually searching.  You can't <A HREF="#yank">yank</A> or delete into this
-<A HREF="sponsor.html#register">register</A>.  The search direction is available in |<A HREF="eval.html#v:searchforward">v:searchforward</A>|.
+<A HREF="intro.html#register">register</A>.  The search direction is available in |<A HREF="eval.html#v:searchforward">v:searchforward</A>|.
 Note that the value is restored when returning from a function
 |<A HREF="eval.html#function-search-undo">function-search-undo</A>|.
 
 
 							*<A NAME="@/"></A><B>@/</B>*
-You can write to a <A HREF="sponsor.html#register">register</A> with a `:let` command |<A HREF="eval.html#:let-@">:<span class="__cf_email__" data-cfemail="462a23326b06">[email&#160;protected]</span></A>|.  Example:
+You can write to a <A HREF="intro.html#register">register</A> with a `:let` command |<A HREF="eval.html#:let-@">:<span class="__cf_email__" data-cfemail="92fef7e6bfd2">[email&#160;protected]</span></A>|.  Example:
 <B>	:let @/ = "the"</B>
 
-If you use a put command without specifying a <A HREF="sponsor.html#register">register</A>, Vim uses the <A HREF="sponsor.html#register">register</A>
-that was last filled (this is also the contents of the unnamed <A HREF="sponsor.html#register">register</A>).  If
+If you use a put command without specifying a <A HREF="intro.html#register">register</A>, Vim uses the <A HREF="intro.html#register">register</A>
+that was last filled (this is also the contents of the unnamed <A HREF="intro.html#register">register</A>).  If
 you are confused, use the `:dis` command to find out what Vim will put (this
-command displays all named and numbered <A HREF="#registers">registers</A>; the unnamed <A HREF="sponsor.html#register">register</A> is
+command displays all named and numbered <A HREF="#registers">registers</A>; the unnamed <A HREF="intro.html#register">register</A> is
 labelled &#39;&#34;'').
 
 The next three commands always work on whole lines.
@@ -1478,23 +1495,17 @@ The next three commands always work on whole lines.
 :[range]ce[nter] [width]				*<A NAME=":ce"></A><B>:ce</B>* *<A NAME=":center"></A><B>:center</B>*
 			Center lines in <A HREF="cmdline.html#[range]">[range]</A> between [width] columns
 			(default <A HREF="options.html#'textwidth'">'textwidth'</A> or 80 when <A HREF="options.html#'textwidth'">'textwidth'</A> is 0).
-			Not available when |<A HREF="various.html#+ex_extra">+ex_extra</A>| feature was disabled at
-			compile time.
 
 
 :[range]ri[ght] [width]					*<A NAME=":ri"></A><B>:ri</B>* *<A NAME=":right"></A><B>:right</B>*
 			Right-align lines in <A HREF="cmdline.html#[range]">[range]</A> at [width] columns
 			(default <A HREF="options.html#'textwidth'">'textwidth'</A> or 80 when <A HREF="options.html#'textwidth'">'textwidth'</A> is 0).
-			Not available when |<A HREF="various.html#+ex_extra">+ex_extra</A>| feature was disabled at
-			compile time.
 
 
 							*<A NAME=":le"></A><B>:le</B>* *<A NAME=":left"></A><B>:left</B>*
 :[range]le[ft] [indent]
 			Left-align lines in <A HREF="cmdline.html#[range]">[range]</A>.  Sets the indent in the
 			lines to [indent] (default 0).
-			Not available when |<A HREF="various.html#+ex_extra">+ex_extra</A>| feature was disabled at
-			compile time.
 
 
 							*<A NAME="gq"></A><B>gq</B>*
@@ -1750,7 +1761,7 @@ Enabling <A HREF="options.html#'cindent'">'cindent'</A> will override the alignm
 Reindenting using a different method like |<A HREF="#gq">gq</A>| or |<A HREF="#=">=</A>| will not consult
 alignment flags either. The same behaviour can be defined in those other
 <A HREF="#formatting">formatting</A> <A HREF="options.html#options">options</A>. One consideration is that <A HREF="options.html#'cindent'">'cindent'</A> has additional <A HREF="options.html#options">options</A>
-for context based indenting of comments but cannot replicate many three piece
+for <A HREF="repeat.html#context">context</A> based indenting of comments but cannot replicate many three piece
 indent alignments.  However, <A HREF="options.html#'indentexpr'">'indentexpr'</A> has the ability to work better with
 three piece comments.
 
@@ -1835,6 +1846,17 @@ a	Automatic <A HREF="#formatting">formatting</A> of paragraphs.  Every time text
 <B><FONT color="#54A23D">		         // in the list </FONT></B>
 	Becomes:
 <B><FONT color="#54A23D">		int i;   // the index in the list </FONT></B>
+<A HREF="#p">p</A>	Don't break lines at single spaces that follow periods.  This is
+	intended to complement <A HREF="options.html#'joinspaces'">'joinspaces'</A> and |<A HREF="options.html#cpo-J">cpo-J</A>|, for prose with
+	sentences separated by two spaces.  For example, with <A HREF="options.html#'textwidth'">'textwidth'</A> set
+	to 28:
+<B>		Surely you're joking, Mr. Feynman!</B>
+ 	Becomes:
+<B>		Surely you're joking,</B>
+<B>		Mr. Feynman!</B>
+ 	Instead of:
+<B>		Surely you're joking, Mr.</B>
+<B>		Feynman!</B>
 
 
 With '<A HREF="motion.html#t">t</A>' and '<A HREF="#c">c</A>' you can specify when Vim performs auto-wrapping:
@@ -2015,5 +2037,11 @@ library function used.
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
+
+    <footer>
+      <div class="container">
+        Generated Wed Sep 18 20:06:10 UTC 2019 from <a href="https://github.com/neovim/neovim/commit/1070c092c7bf989f261047b861165e61e94c1941"><code>1070c09</code></a>.
+      </div>
+    </footer>
   <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
 </html>

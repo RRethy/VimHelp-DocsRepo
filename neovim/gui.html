@@ -2,10 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Nvim documentation: gui</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.0/normalize.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="/css/main.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
   </head>
   <body>
-                <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
+    <header class="navbar">
+      <div class="container">
+        <nav class="navbar">
+          <div class="container-fluid">
+            <div class="navbar-header">
+
+              <a href="/" class="navbar-brand">
+                <img src="/images/logo@2x.png" id="navbar-logo" alt="Neovim">
+              </a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
 
     <div class="container">
       <h1>Nvim documentation: gui</h1>
@@ -21,7 +45,7 @@
 
 
 
-Vim's Graphical <A HREF="autocmd.html#User">User</A> Interface				*<A NAME="gui"></A><B>gui</B>* *<A NAME="GUI"></A><B>GUI</B>*
+Nvim Graphical <A HREF="autocmd.html#User">User</A> Interface				*<A NAME="gui"></A><B>gui</B>* *<A NAME="GUI"></A><B>GUI</B>*
 
                                       Type |<A HREF="various.html#gO">gO</A>| to see the table of contents.
 
@@ -31,68 +55,19 @@ Starting the <A HREF="#GUI">GUI</A>				*<A NAME="gui-start"></A><B>gui-start</B>
 
 
 				*<A NAME="ginit.vim"></A><B>ginit.vim</B>* *<A NAME="gui-init"></A><B>gui-init</B>* *<A NAME="gvimrc"></A><B>gvimrc</B>* *<A NAME="$MYGVIMRC"></A><B>$MYGVIMRC</B>*
-The <A HREF="#gvimrc">gvimrc</A> file is where GUI-specific <A HREF="starting.html#startup">startup</A> commands should be placed.  It
-is always sourced after the |<A HREF="init.html">init.vim</A>| file.  If you have one then the 
-<A HREF="#$MYGVIMRC">$MYGVIMRC</A> environment variable has its name.
+For GUI-specific configuration Nvim provides the |<A HREF="autocmd.html#UIEnter">UIEnter</A>| event.  This
+happens after other |<A HREF="starting.html#initialization">initialization</A>|<A HREF="change.html#s">s</A>, like reading your <A HREF="starting.html#vimrc">vimrc</A> file.
 
-When the <A HREF="#GUI">GUI</A> starts up initializations are carried out, in this order:
-- If the system menu file exists, <A HREF="motion.html#it">it</A> is sourced.  The name of this file is
-  normally &quot;$VIMRUNTIME/menu.vim&quot;.  You can check this with &quot;<A HREF="various.html#:version">:version</A>&quot;.  Also
-  see |<A HREF="starting.html#$VIMRUNTIME">$VIMRUNTIME</A>|.  To skip loading the system menu include 'M' in
-
-  <A HREF="options.html#'guioptions'">'guioptions'</A>.				*<A NAME="buffers-menu"></A><B>buffers-menu</B>* *<A NAME="no_buffers_menu"></A><B>no_buffers_menu</B>*
-  The system menu file includes a &quot;Buffers&quot; menu.  If you don't want this, set
-  the &quot;<A HREF="#no_buffers_menu">no_buffers_menu</A>&quot; variable in your <A HREF="starting.html#init.vim">init.vim</A> (not ginit.vim!):
-<B>	:let no_buffers_menu = 1</B>
-  NOTE: Switching on <A HREF="syntax.html#syntax">syntax</A> highlighting also loads the menu file, thus
-  disabling the Buffers menu must be done before &quot;<A HREF="syntax.html#:syntax">:syntax</A> on&quot;.
-  The path names are truncated to 35 characters.  You can truncate them at a
-  different length, for example 50, like this:
-<B>	:let bmenu_max_pathlen = 50</B>
-- If the &quot;-U {gvimrc}&quot; command-line option has been used when starting Vim,
-  the {gvimrc} file will be read for initializations.  The following
-  initializations are skipped.  When {gvimrc} is &quot;NONE&quot; no file will be read
-  for initializations.
-- For Unix and MS-Windows, if the system <A HREF="#gvimrc">gvimrc</A> exists, <A HREF="motion.html#it">it</A> is sourced.  The
-  name of this file is normally &quot;$VIM/ginit.vim&quot;.  You can check this with
-  &quot;<A HREF="various.html#:version">:version</A>&quot;.  Also see |<A HREF="starting.html#$VIM">$VIM</A>|.
-- The following are tried, and only the first one that exists is used:
-  - If the GVIMINIT environment variable exists and is not empty, <A HREF="motion.html#it">it</A> is
-    executed <A HREF="motion.html#as">as</A> an <A HREF="intro.html#Ex">Ex</A> command.
-  - If the user <A HREF="#gvimrc">gvimrc</A> file exists, <A HREF="motion.html#it">it</A> is sourced.  The name of this file is
-    normally &quot;$XDG_CONFIG_HOME/nvim/ginit.vim&quot; ($XDG_CONFIG_HOME defaults to 
-    ~/.config).
-  The name of the first file found is stored in <A HREF="#$MYGVIMRC">$MYGVIMRC</A>, unless <A HREF="motion.html#it">it</A> was
-  already set.
-
-NOTE: All but the first one are not carried out if Vim was started with
-&quot;<A HREF="starting.html#-u">-u</A> NONE&quot; or &quot;<A HREF="starting.html#-u">-u</A> DEFAULTS&quot; and no &quot;-U&quot; argument was given, or when started
-with &quot;-U NONE&quot;.
-
-All this happens AFTER the normal Vim initializations, like reading your
-<A HREF="starting.html#vimrc">vimrc</A> file.  See |<A HREF="starting.html#initialization">initialization</A>|.
-But the <A HREF="#GUI">GUI</A> <A HREF="windows.html#window">window</A> is only opened after all the initializations have been
-carried out.  If you want some commands to be executed just after opening the
-GUI <A HREF="windows.html#window">window</A>, use the |<A HREF="autocmd.html#GUIEnter">GUIEnter</A>| <A HREF="autocmd.html#autocommand">autocommand</A> event.  Example:
-<B>	:autocmd GUIEnter * winpos 100 50</B>
-
-You can use the <A HREF="#gvimrc">gvimrc</A> files to set up your own customized <A HREF="#menus">menus</A> (see |<A HREF="#:menu">:menu</A>|)
-and initialize other things that you may want to set up differently from the
-<A HREF="nvim_terminal_emulator.html#terminal">terminal</A> version.
-
-Recommended place for your personal <A HREF="#GUI">GUI</A> initializations:
-	Unix		$XDG_CONFIG_HOME/.config/nvim/ginit.vim
-			(default for <A HREF="starting.html#$XDG_CONFIG_HOME">$XDG_CONFIG_HOME</A> is ~/.config)
-
-The personal <A HREF="starting.html#initialization">initialization</A> files are searched in the order specified above
-and only the first one that is found is read.
+Example: this sets &quot;g:gui&quot; to the value of the UI's &quot;rgb&quot; field:   
+<B>	:autocmd UIEnter * let g:gui = filter(nvim_list_uis(),{k,v-&gt; v.chan==v:event.chan})[0].rgb</B>
+ 
 
 
 						*<A NAME=":winp"></A><B>:winp</B>* *<A NAME=":winpos"></A><B>:winpos</B>* *<A NAME="E188"></A><B>E188</B>*
 :winp[os]
 		Display current position of the top left corner of the <A HREF="#GUI">GUI</A> vim
 		<A HREF="windows.html#window">window</A> in pixels.  Does not work in all versions.
-		Also see |<A HREF="intro.html#getwinpos()">getwinpos()</A>|, |<A HREF="eval.html#getwinposx()">getwinposx()</A>| and |<A HREF="eval.html#getwinposy()">getwinposy()</A>|.
+		Also see |<A HREF="eval.html#getwinpos()">getwinpos()</A>|, |<A HREF="eval.html#getwinposx()">getwinposx()</A>| and |<A HREF="eval.html#getwinposy()">getwinposy()</A>|.
 
 
 :winp[os] {X} {Y}							*<A NAME="E466"></A><B>E466</B>*
@@ -254,7 +229,7 @@ system.  To <A HREF="diff.html#do">do</A> this, put these commands in your <A HR
 <B>	:map &lt;F4&gt; :emenu &lt;C-Z&gt;</B>
 Pressing &lt;F4&gt; will start the menu.  You can now use the cursor keys to select
 a menu entry.  Hit <A HREF="intro.html#&lt;Enter&gt;">&lt;Enter&gt;</A> to execute <A HREF="motion.html#it">it</A>.  Hit <A HREF="intro.html#&lt;Esc&gt;">&lt;Esc&gt;</A> if you want to cancel.
-This does require the |<A HREF="various.html#+menu">+menu</A>| feature enabled at compile time.
+This does require the |<A HREF="intro.html#+menu">+menu</A>| feature enabled at compile time.
 
 
 Creating New Menus					*<A NAME="creating-menus"></A><B>creating-menus</B>*
@@ -340,7 +315,7 @@ is equal to:
 Careful: In <A HREF="insert.html#Insert">Insert</A> mode this only works for a SINGLE <A HREF="intro.html#Normal">Normal</A> mode command,
 because of the <A HREF="motion.html#CTRL-O">CTRL-O</A>.  If you have two or more commands, you will need to use
 the &quot;<A HREF="#:imenu">:imenu</A>&quot; command.  For <A HREF="insert.html#inserting">inserting</A> text in any mode, you can use the
-<A HREF="eval.html#expression">expression</A> <A HREF="sponsor.html#register">register</A>:
+<A HREF="eval.html#expression">expression</A> <A HREF="intro.html#register">register</A>:
 
 <B>   :amenu Insert.foobar   "='foobar'&lt;CR&gt;P</B>
 
@@ -481,7 +456,7 @@ level.  Vim interprets the items in this menu <A HREF="motion.html#as">as</A> fo
 04  Redo		<A HREF="undo.html#redo">redo</A> last undone change
 05  Cut			delete selected text to <A HREF="provider.html#clipboard">clipboard</A>
 06  Copy		copy selected text to <A HREF="provider.html#clipboard">clipboard</A>
-07  Paste		paste text from <A HREF="provider.html#clipboard">clipboard</A>
+07  Paste		<A HREF="provider.html#paste">paste</A> text from <A HREF="provider.html#clipboard">clipboard</A>
 08  Print		print current buffer
 09  Help		open a buffer on Vim's builtin help
 10  Find		start a search command
@@ -624,7 +599,7 @@ name and all existing submenus below <A HREF="motion.html#it">it</A> are affecte
 Examples for Menus					*<A NAME="menu-examples"></A><B>menu-examples</B>*
 
 Here is an example on how to add menu items with menu's!  You can add a menu
-item for the keyword under the cursor.  The <A HREF="sponsor.html#register">register</A> &quot;<A HREF="vimindex.html#z">z</A>&quot; is used.
+item for the keyword under the cursor.  The <A HREF="intro.html#register">register</A> &quot;<A HREF="vimindex.html#z">z</A>&quot; is used.
 
 <B>  :nmenu Words.Add\ Var		wb"zye:menu! Words.&lt;C-R&gt;z &lt;C-R&gt;z&lt;CR&gt;</B>
 <B>  :nmenu Words.Remove\ Var	wb"zye:unmenu! Words.&lt;C-R&gt;z&lt;CR&gt;</B>
@@ -715,5 +690,11 @@ Note that a menu that starts with '<A HREF="vimindex.html#]">]</A>' will not be 
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
+
+    <footer>
+      <div class="container">
+        Generated Wed Sep 18 20:06:11 UTC 2019 from <a href="https://github.com/neovim/neovim/commit/1070c092c7bf989f261047b861165e61e94c1941"><code>1070c09</code></a>.
+      </div>
+    </footer>
   </body>
 </html>

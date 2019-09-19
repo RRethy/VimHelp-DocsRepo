@@ -2,10 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Nvim documentation: usr_07</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.0/normalize.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="/css/main.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
   </head>
   <body>
-                <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
+    <header class="navbar">
+      <div class="container">
+        <nav class="navbar">
+          <div class="container-fluid">
+            <div class="navbar-header">
+
+              <a href="/" class="navbar-brand">
+                <img src="/images/logo@2x.png" id="navbar-logo" alt="Neovim">
+              </a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
 
     <div class="container">
       <h1>Nvim documentation: usr_07</h1>
@@ -369,26 +393,26 @@ USING REGISTERS
 
 When you want to copy several pieces of text from one file to another, having
 to switch between the files and <A HREF="editing.html#writing">writing</A> the target file takes a lot of time.
-To avoid this, copy each piece of text to its own <A HREF="sponsor.html#register">register</A>.
-   A <A HREF="sponsor.html#register">register</A> is a place where Vim stores text.  Here we will use the
+To avoid this, copy each piece of text to its own <A HREF="intro.html#register">register</A>.
+   A <A HREF="intro.html#register">register</A> is a place where Vim stores text.  Here we will use the
 <A HREF="change.html#registers">registers</A> named a to <A HREF="vimindex.html#z">z</A> (later you will find out there are others).  Let's copy
-a <A HREF="motion.html#sentence">sentence</A> to the <A HREF="motion.html#f">f</A> <A HREF="sponsor.html#register">register</A> (f for First):
+a <A HREF="motion.html#sentence">sentence</A> to the <A HREF="motion.html#f">f</A> <A HREF="intro.html#register">register</A> (f for First):
 
 <B>	"fyas</B>
 
 The &quot;yas&quot; command yanks a <A HREF="motion.html#sentence">sentence</A> like before.  It's the &quot;<A HREF="motion.html#f">f</A> that tells Vim
-the text should be placed in the <A HREF="motion.html#f">f</A> <A HREF="sponsor.html#register">register</A>.  This must come just before the
+the text should be placed in the <A HREF="motion.html#f">f</A> <A HREF="intro.html#register">register</A>.  This must come just before the
 <A HREF="change.html#yank">yank</A> command.
-   Now <A HREF="change.html#yank">yank</A> three whole lines to the <A HREF="motion.html#l">l</A> <A HREF="sponsor.html#register">register</A> (l for line):
+   Now <A HREF="change.html#yank">yank</A> three whole lines to the <A HREF="motion.html#l">l</A> <A HREF="intro.html#register">register</A> (l for line):
 
 <B>	"l3Y</B>
 
 The <A HREF="intro.html#count">count</A> could be before the &quot;<A HREF="motion.html#l">l</A> just <A HREF="motion.html#as">as</A> well.  To <A HREF="change.html#yank">yank</A> a block of text to the
-<A HREF="motion.html#b">b</A> (for block) <A HREF="sponsor.html#register">register</A>:
+<A HREF="motion.html#b">b</A> (for block) <A HREF="intro.html#register">register</A>:
 
 <B>	CTRL-Vjjww"by</B>
 
-Notice that the <A HREF="sponsor.html#register">register</A> specification &quot;<A HREF="motion.html#b">b</A> is just before the &quot;<A HREF="change.html#y">y</A>&quot; command.
+Notice that the <A HREF="intro.html#register">register</A> specification &quot;<A HREF="motion.html#b">b</A> is just before the &quot;<A HREF="change.html#y">y</A>&quot; command.
 This is required.  If you would have put <A HREF="motion.html#it">it</A> before the &quot;<A HREF="motion.html#w">w</A>&quot; command, <A HREF="motion.html#it">it</A> would
 not have worked.
    Now you have three pieces of text in the <A HREF="motion.html#f">f</A>, <A HREF="motion.html#l">l</A> and <A HREF="motion.html#b">b</A> <A HREF="change.html#registers">registers</A>.  Edit
@@ -396,18 +420,18 @@ another file, move around and place the text where you want <A HREF="motion.html
 
 <B>	"fp</B>
 
-Again, the <A HREF="sponsor.html#register">register</A> specification &quot;<A HREF="motion.html#f">f</A> comes before the &quot;<A HREF="change.html#p">p</A>&quot; command.
-   You can put the <A HREF="change.html#registers">registers</A> in any order.  And the text stays in the <A HREF="sponsor.html#register">register</A>
+Again, the <A HREF="intro.html#register">register</A> specification &quot;<A HREF="motion.html#f">f</A> comes before the &quot;<A HREF="change.html#p">p</A>&quot; command.
+   You can put the <A HREF="change.html#registers">registers</A> in any order.  And the text stays in the <A HREF="intro.html#register">register</A>
 until you <A HREF="change.html#yank">yank</A> something else into <A HREF="motion.html#it">it</A>.  Thus you can put <A HREF="motion.html#it">it</A> <A HREF="motion.html#as">as</A> many times <A HREF="motion.html#as">as</A>
 you like.
 
-When you delete text, you can also specify a <A HREF="sponsor.html#register">register</A>.  Use this to move
+When you delete text, you can also specify a <A HREF="intro.html#register">register</A>.  Use this to move
 several pieces of text around.  For example, to delete-a-word and write <A HREF="motion.html#it">it</A> in
-the <A HREF="motion.html#w">w</A> <A HREF="sponsor.html#register">register</A>:
+the <A HREF="motion.html#w">w</A> <A HREF="intro.html#register">register</A>:
 
 <B>	"wdaw</B>
 
-Again, the <A HREF="sponsor.html#register">register</A> specification comes before the delete command &quot;<A HREF="change.html#d">d</A>&quot;.
+Again, the <A HREF="intro.html#register">register</A> specification comes before the delete command &quot;<A HREF="change.html#d">d</A>&quot;.
 
 
 APPENDING TO A FILE
@@ -504,5 +528,11 @@ Copyright: see |<A HREF="usr_01.html#manual-copyright">manual-copyright</A>|  vi
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
+
+    <footer>
+      <div class="container">
+        Generated Wed Sep 18 20:06:13 UTC 2019 from <a href="https://github.com/neovim/neovim/commit/1070c092c7bf989f261047b861165e61e94c1941"><code>1070c09</code></a>.
+      </div>
+    </footer>
   </body>
 </html>

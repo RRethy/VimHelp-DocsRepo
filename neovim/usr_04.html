@@ -2,10 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Nvim documentation: usr_04</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.0/normalize.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="/css/main.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
   </head>
   <body>
-                <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
+    <header class="navbar">
+      <div class="container">
+        <nav class="navbar">
+          <div class="container-fluid">
+            <div class="navbar-header">
+
+              <a href="/" class="navbar-brand">
+                <img src="/images/logo@2x.png" id="navbar-logo" alt="Neovim">
+              </a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
 
     <div class="container">
       <h1>Nvim documentation: usr_04</h1>
@@ -291,7 +315,7 @@ where they open a new line below or above the cursor.
 *<A NAME="04.5"></A><B>04.5</B>*	Moving text
 
 When you delete something with the &quot;<A HREF="change.html#d">d</A>&quot;, &quot;<A HREF="change.html#x">x</A>&quot;, or another command, the text is
-saved.  You can paste <A HREF="motion.html#it">it</A> back by using the <A HREF="change.html#p">p</A> command.  (The Vim name for
+saved.  You can <A HREF="provider.html#paste">paste</A> <A HREF="motion.html#it">it</A> back by using the <A HREF="change.html#p">p</A> command.  (The Vim name for
 this is put).
    Take a look at how this works.  First you will delete an entire line, by
 putting the cursor on the line you want to delete and typing &quot;<A HREF="change.html#dd">dd</A>&quot;.  Now you
@@ -336,7 +360,7 @@ Frequently when you are typing, your fingers get ahead of your brain (or the
 other way around?).  The result is a typo such <A HREF="motion.html#as">as</A> &quot;teh&quot; for &quot;the&quot;.  Vim
 makes <A HREF="motion.html#it">it</A> easy to correct such problems.  Just put the cursor on the <A HREF="motion.html#e">e</A> of &quot;teh&quot;
 and execute the command &quot;xp&quot;.  This works <A HREF="motion.html#as">as</A> follows: &quot;<A HREF="change.html#x">x</A>&quot; deletes the
-character <A HREF="motion.html#e">e</A> and places <A HREF="motion.html#it">it</A> in a <A HREF="sponsor.html#register">register</A>.  &quot;<A HREF="change.html#p">p</A>&quot; puts the text after the cursor,
+character <A HREF="motion.html#e">e</A> and places <A HREF="motion.html#it">it</A> in a <A HREF="intro.html#register">register</A>.  &quot;<A HREF="change.html#p">p</A>&quot; puts the text after the cursor,
 which is after the <A HREF="motion.html#h">h</A>.
 
 <B><FONT color="#54A23D">	teh     th     the </FONT></B>
@@ -348,7 +372,7 @@ which is after the <A HREF="motion.html#h">h</A>.
 
 To copy text from one place to another, you could delete <A HREF="motion.html#it">it</A>, use &quot;<A HREF="undo.html#u">u</A>&quot; to <A HREF="undo.html#undo">undo</A>
 the deletion and then &quot;<A HREF="change.html#p">p</A>&quot; to put <A HREF="motion.html#it">it</A> somewhere else.  There is an easier way:
-yanking.  The &quot;<A HREF="change.html#y">y</A>&quot; <A HREF="motion.html#operator">operator</A> copies text into a <A HREF="sponsor.html#register">register</A>.  Then a &quot;<A HREF="change.html#p">p</A>&quot; command
+yanking.  The &quot;<A HREF="change.html#y">y</A>&quot; <A HREF="motion.html#operator">operator</A> copies text into a <A HREF="intro.html#register">register</A>.  Then a &quot;<A HREF="change.html#p">p</A>&quot; command
 can be used to put <A HREF="motion.html#it">it</A>.
    Yanking is just a Vim name for <A HREF="uganda.html#copying">copying</A>.  The &quot;<A HREF="change.html#c">c</A>&quot; <A HREF="print.html#letter">letter</A> was already used
 for the change <A HREF="motion.html#operator">operator</A>, and &quot;<A HREF="change.html#y">y</A>&quot; was still available.  Calling this
@@ -386,9 +410,9 @@ Use &quot;y$&quot; to <A HREF="change.html#yank">yank</A> to the end of the line
 If you are using the <A HREF="gui.html#GUI">GUI</A> version of Vim (gvim), you can find the &quot;Copy&quot; item
 in the &quot;Edit&quot; menu.  First select some text with <A HREF="visual.html#Visual">Visual</A> mode, then use the
 Edit/Copy menu.  The selected text is now copied to the <A HREF="provider.html#clipboard">clipboard</A>.  You can
-paste the text in other programs.  In Vim itself too.
+<A HREF="provider.html#paste">paste</A> the text in other programs.  In Vim itself too.
 
-If you have copied text to the <A HREF="provider.html#clipboard">clipboard</A> in another application, you can paste
+If you have copied text to the <A HREF="provider.html#clipboard">clipboard</A> in another application, you can <A HREF="provider.html#paste">paste</A>
 <A HREF="motion.html#it">it</A> in Vim with the Edit/Paste menu.  This works in <A HREF="intro.html#Normal">Normal</A> mode and <A HREF="insert.html#Insert">Insert</A>
 mode.  In <A HREF="visual.html#Visual">Visual</A> mode the selected text is replaced with the pasted text.
 
@@ -541,5 +565,11 @@ Copyright: see |<A HREF="usr_01.html#manual-copyright">manual-copyright</A>|  vi
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
+
+    <footer>
+      <div class="container">
+        Generated Wed Sep 18 20:06:13 UTC 2019 from <a href="https://github.com/neovim/neovim/commit/1070c092c7bf989f261047b861165e61e94c1941"><code>1070c09</code></a>.
+      </div>
+    </footer>
   </body>
 </html>

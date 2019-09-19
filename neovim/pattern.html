@@ -2,10 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Nvim documentation: pattern</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.0/normalize.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="/css/main.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
   </head>
   <body>
-                <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
+    <header class="navbar">
+      <div class="container">
+        <nav class="navbar">
+          <div class="container-fluid">
+            <div class="navbar-header">
+
+              <a href="/" class="navbar-brand">
+                <img src="/images/logo@2x.png" id="navbar-logo" alt="Neovim">
+              </a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
 
     <div class="container">
       <h1>Nvim documentation: pattern</h1>
@@ -175,6 +199,17 @@ use <A HREF="intro.html#&lt;Esc&gt;">&lt;Esc&gt;</A> to <A HREF="editing.html#ab
 All matches for the last used search <A HREF="#pattern">pattern</A> will be highlighted if you set
 the <A HREF="options.html#'hlsearch'">'hlsearch'</A> option.  This can be suspended with the |<A HREF="#:nohlsearch">:nohlsearch</A>| command.
 
+When <A HREF="options.html#'shortmess'">'shortmess'</A> does not include the &quot;<A HREF="change.html#S">S</A>&quot; flag, Vim will automatically show an
+index, on which the cursor is. This can look like this:
+
+<B>  [1/5]		Cursor is on first of 5 matches.</B>
+<B>  [1/&gt;99]	Cursor is on first of more than 99 matches.</B>
+<B>  [&gt;99/&gt;99]	Cursor is after 99 match of more than 99 matches.</B>
+<B>  [?/??]	Unknown how many matches exists, generating the</B>
+<B>		statistics was aborted because of search timeout.</B>
+
+Note: the <A HREF="intro.html#count">count</A> does not take offset into account.
+
 
 When no match is found you get the error: *<A NAME="E486"></A><B>E486</B>* <A HREF="#Pattern">Pattern</A> not found
 Note that for the |<A HREF="repeat.html#:global">:global</A>| command this behaves like a normal message, for <A HREF="intro.html#Vi">Vi</A>
@@ -324,7 +359,7 @@ the &quot;*&quot; is under your right hand middle finger (search to the right an
 
 								*<A NAME="E956"></A><B>E956</B>*
 In very rare cases a regular <A HREF="eval.html#expression">expression</A> is used recursively.  This can happen
-when executing a <A HREF="#pattern">pattern</A> takes a long time and when checkig for <A HREF="message.html#messages">messages</A> on
+when executing a <A HREF="#pattern">pattern</A> takes a long time and when checking for <A HREF="message.html#messages">messages</A> on
 channels a callback is invoked that also uses a <A HREF="#pattern">pattern</A> or an <A HREF="autocmd.html#autocommand">autocommand</A> is
 triggered.  In most cases this should be fine, but if a <A HREF="#pattern">pattern</A> is in use when
 it's used again <A HREF="motion.html#it">it</A> fails.  Usually this means there is something wrong with
@@ -440,11 +475,11 @@ ignoring the actual value of the <A HREF="options.html#'magic'">'magic'</A> opti
 Use of &quot;\M&quot; makes the <A HREF="#pattern">pattern</A> after <A HREF="motion.html#it">it</A> be interpreted <A HREF="motion.html#as">as</A> if <A HREF="options.html#'nomagic'">'nomagic'</A> is used.
 
 							*<A NAME="/\v"></A><B>/\v</B>* *<A NAME="/\V"></A><B>/\V</B>*
-Use of &quot;\v&quot; means that in the <A HREF="#pattern">pattern</A> after <A HREF="motion.html#it">it</A> all ASCII characters except
-'0'-'9', 'a'-'z', 'A'-'Z' and '<A HREF="motion.html#_">_</A>' have a special meaning.  &quot;very magic&quot;
+Use of &quot;\v&quot; means that after <A HREF="motion.html#it">it</A>, all ASCII characters except '0'-'9', 'a'-'z',
+'A'-'Z' and '<A HREF="motion.html#_">_</A>' have special meaning: &quot;very magic&quot;
 
-Use of &quot;\V&quot; means that in the <A HREF="#pattern">pattern</A> after <A HREF="motion.html#it">it</A> only the <A HREF="intro.html#backslash">backslash</A> and the
-terminating character (/ or ?) has a special meaning.  &quot;very nomagic&quot;
+Use of &quot;\V&quot; means that after <A HREF="motion.html#it">it</A>, only a <A HREF="intro.html#backslash">backslash</A> and terminating character
+(usually / or ?) have special meaning: &quot;very nomagic&quot;
 
 Examples:
 <B><FONT color="#54A23D">after:	  \v	   \m	    \M	     \V		matches </FONT></B>
@@ -1277,7 +1312,7 @@ match ASCII characters, <A HREF="motion.html#as">as</A> indicated by the range.
 	  The &quot;Func&quot; column shows what library function is used.  The
 	  implementation depends on the system.  Otherwise:
 	  (1) Uses islower() for ASCII and Vim builtin rules for other
-	  characters when built with the |<A HREF="various.html#+multi_byte">+multi_byte</A>| feature.
+	  characters.
 	  (2) Uses Vim builtin rules
 	  (3) As with (1) but using isupper()
 
@@ -1345,7 +1380,6 @@ match ASCII characters, <A HREF="motion.html#as">as</A> indicated by the range.
 	To include a &quot;<A HREF="vimindex.html#[">[</A>&quot; use &quot;[[]&quot; and for &quot;<A HREF="vimindex.html#]">]</A>&quot; use []]&quot;, e.g.,:
 <B>		/index\%[[[]0[]]]</B>
  	matches &quot;index&quot; &quot;index[&quot;, &quot;index[0&quot; and &quot;index[0]&quot;.
-	{not available when compiled without the |<A HREF="various.html#+syntax">+syntax</A>| feature}
 
 
 				*<A NAME="/\&#37;d"></A><B>/\&#37;d</B>* *<A NAME="/\&#37;x"></A><B>/\&#37;x</B>* *<A NAME="/\&#37;o"></A><B>/\&#37;o</B>* *<A NAME="/\&#37;u"></A><B>/\&#37;u</B>* *<A NAME="/\&#37;U"></A><B>/\&#37;U</B>* *<A NAME="E678"></A><B>E678</B>*
@@ -1358,7 +1392,7 @@ match ASCII characters, <A HREF="motion.html#as">as</A> indicated by the range.
 \&#37;u20AC	Matches the character specified with up to four hexadecimal
 	characters.
 \&#37;U1234abcd	Matches the character specified with up to eight hexadecimal
-	characters.
+	characters, up to 0x7fffffff
 
 ==============================================================================
 
@@ -1388,7 +1422,7 @@ Examples:
 Technical detail:				*<A NAME="NL-used-for-Nul"></A><B>NL-used-for-Nul</B>*
 <A HREF="intro.html#&lt;Nul&gt;">&lt;Nul&gt;</A> characters in the file are stored <A HREF="motion.html#as">as</A> <A HREF="motion.html#&lt;NL&gt;">&lt;NL&gt;</A> in memory.  In the display
 they are shown <A HREF="motion.html#as">as</A> &quot;^@&quot;.  The translation is done when reading and <A HREF="editing.html#writing">writing</A>
-files.  To match a <A HREF="intro.html#&lt;Nul&gt;">&lt;Nul&gt;</A> with a search <A HREF="#pattern">pattern</A> you can just enter <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="93d0c7c1dfbed3">[email&#160;protected]</a> or
+files.  To match a <A HREF="intro.html#&lt;Nul&gt;">&lt;Nul&gt;</A> with a search <A HREF="#pattern">pattern</A> you can just enter <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="dd9e898f91f09d">[email&#160;protected]</a> or
 &quot;<A HREF="visual.html#CTRL-V">CTRL-V</A> 000&quot;.  This is probably just what you expect.  Internally the
 character is replaced with a <A HREF="motion.html#&lt;NL&gt;">&lt;NL&gt;</A> in the search <A HREF="#pattern">pattern</A>.  What is unusual is
 that typing <A HREF="visual.html#CTRL-V">CTRL-V</A> <A HREF="motion.html#CTRL-J">CTRL-J</A> also inserts a <A HREF="motion.html#&lt;NL&gt;">&lt;NL&gt;</A>, thus also searches for a <A HREF="intro.html#&lt;Nul&gt;">&lt;Nul&gt;</A>
@@ -1582,5 +1616,11 @@ Finally, these constructs are unique to Perl:
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
+
+    <footer>
+      <div class="container">
+        Generated Wed Sep 18 20:06:12 UTC 2019 from <a href="https://github.com/neovim/neovim/commit/1070c092c7bf989f261047b861165e61e94c1941"><code>1070c09</code></a>.
+      </div>
+    </footer>
   <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
 </html>

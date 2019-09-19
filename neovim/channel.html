@@ -2,10 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Nvim documentation: channel</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.0/normalize.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="/css/main.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
   </head>
   <body>
-                <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
+    <header class="navbar">
+      <div class="container">
+        <nav class="navbar">
+          <div class="container-fluid">
+            <div class="navbar-header">
+
+              <a href="/" class="navbar-brand">
+                <img src="/images/logo@2x.png" id="navbar-logo" alt="Neovim">
+              </a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
 
     <div class="container">
       <h1>Nvim documentation: channel</h1>
@@ -44,11 +68,11 @@ There are several ways to open a <A HREF="#channel">channel</A>:
   4. By connecting to a TCP/IP socket or named pipe with |<A HREF="eval.html#sockconnect()">sockconnect()</A>|.
 
   5. By another process connecting to a socket listened to by <A HREF="nvim.html#nvim">nvim</A>. This only
-     supports <A HREF="msgpack_rpc.html#RPC">RPC</A> channels, see |<A HREF="msgpack_rpc.html#rpc-connecting">rpc-connecting</A>|.
+     supports <A HREF="api.html#RPC">RPC</A> channels, see |<A HREF="api.html#rpc-connecting">rpc-connecting</A>|.
 
 Channels support multiple modes or protocols. In the most basic
 mode of operation, raw bytes are read and written to the <A HREF="#channel">channel</A>.
-The |<A HREF="msgpack_rpc.html#rpc">rpc</A>| protocol, based on the <A HREF="msgpack_rpc.html#msgpack-rpc">msgpack-rpc</A> standard, enables <A HREF="nvim.html#nvim">nvim</A> and the
+The |<A HREF="api.html#RPC">RPC</A>| protocol, based on the <A HREF="api.html#msgpack-rpc">msgpack-rpc</A> standard, enables <A HREF="nvim.html#nvim">nvim</A> and the
 process at the other end to send remote calls and events to each other.
 The builtin |<A HREF="nvim_terminal_emulator.html#terminal-emulator">terminal-emulator</A>| is also implemented on top of PTY channels.
 
@@ -63,66 +87,74 @@ current Nvim session. Functions like |<A HREF="eval.html#stdioopen()">stdioopen(
 
 2. Reading and <A HREF="editing.html#writing">writing</A> raw bytes			      *<A NAME="channel-bytes"></A><B>channel-bytes</B>*
 
-By default, channels opened by vimscript <A HREF="eval.html#functions">functions</A> will operate with raw
-bytes. Additionally, for a job <A HREF="#channel">channel</A> using <A HREF="msgpack_rpc.html#rpc">rpc</A>, bytes can still be
-read over its stderr. Similarily, only bytes can be written to nvim's own stderr.
+Channels opened by Vimscript <A HREF="eval.html#functions">functions</A> operate with raw bytes by default. For
+a <A HREF="job_control.html#job">job</A> <A HREF="#channel">channel</A> using <A HREF="api.html#RPC">RPC</A>, bytes can still be read over its stderr. Similarily,
+only bytes can be written to Nvim's own stderr.
 
 
-						    *<A NAME="channel-callback"></A><B>channel-callback</B>* *<A NAME="buffered"></A><B>buffered</B>*
+						*<A NAME="channel-callback"></A><B>channel-callback</B>*
 
-				*<A NAME="E5210"></A><B>E5210</B>* *<A NAME="on_stdout"></A><B>on_stdout</B>* *<A NAME="on_stderr"></A><B>on_stderr</B>* *<A NAME="on_stdin"></A><B>on_stdin</B>* *<A NAME="on_data"></A><B>on_data</B>*
-It is possible to <A HREF="sponsor.html#register">register</A> callback <A HREF="eval.html#functions">functions</A> when a <A HREF="#channel">channel</A> receives data by
-passing the `on_stdout`, `on_stderr`, `on_stdin` <A HREF="options.html#options">options</A> on creation. Sockets
-may specify an `on_data` callback instead. Each callback function will be
-invoked with data read from the <A HREF="#channel">channel</A>. By default, the callback will be
-invoked immediately when data is available, to facilitate interactive
-communication. The same callback will then be invoked with empty data, to
-indicate that the stream reached EOF. Alternatively the `stdout_buffered`,
-`stderr_buffered`, `stdin_buffered`, `data_buffered` <A HREF="options.html#options">options</A> can be set to
-invoke the corresponding callback only when the underlying stream reaches EOF.
-The callback will then be passed complete output. This is helpful when only
-the complete output is useful, and not partial data. Futhermore if the stream
-is set to be <A HREF="#buffered">buffered</A>, but the callback is not set, the data is saved in the
-<A HREF="options.html#options">options</A> <A HREF="eval.html#dict">dict</A>, with the stream name <A HREF="motion.html#as">as</A> key. For this to work a new <A HREF="options.html#options">options</A> <A HREF="eval.html#dict">dict</A>
-must be used for each opened <A HREF="#channel">channel</A>. If a <A HREF="usr_41.html#script">script</A> uses a global `s:job_opts`
-<A HREF="eval.html#dict">dict</A>, <A HREF="motion.html#it">it</A> can be copied with |<A HREF="eval.html#copy()">copy()</A>| before supplying <A HREF="motion.html#it">it</A> to |<A HREF="eval.html#jobstart()">jobstart()</A>|. If a
-<A HREF="eval.html#dict">dict</A> is reused, so that the <A HREF="eval.html#dict">dict</A> key already is occupied, error `E5210` will
-be raised.
+on_stdout({chan-id}, {data}, {name})		*<A NAME="on_stdout"></A><B>on_stdout</B>* 
 
-- The arguments passed to the callback function are:
+on_stderr({chan-id}, {data}, {name})		*<A NAME="on_stderr"></A><B>on_stderr</B>* 
 
-  0: |<A HREF="#channel-id">channel-id</A>|
-  1: Raw data read from the <A HREF="#channel">channel</A>, formatted <A HREF="motion.html#as">as</A> a YXXYreadfile()|-style
-     <A HREF="eval.html#list">list</A>. If EOF occured, a single empty <A HREF="eval.html#string">string</A> `['']` will be passed in.
-     Note that the items in this <A HREF="eval.html#list">list</A> <A HREF="diff.html#do">do</A> not directly correspond to actual
-     lines in the output. See |<A HREF="#channel-lines">channel-lines</A>|
-  2: Stream name <A HREF="motion.html#as">as</A> a <A HREF="eval.html#string">string</A>, like `&quot;stdout&quot;`. This is to allow multiple
-  stream handlers to be implemented by the same function. The available
-  events depend on how the <A HREF="#channel">channel</A> was opened and in what mode/protocol.
+on_stdin({chan-id}, {data}, {name})		*<A NAME="on_stdin"></A><B>on_stdin</B>* 
+
+on_data({chan-id}, {data}, {name})		*<A NAME="on_data"></A><B>on_data</B>*
+    Scripts can react to <A HREF="#channel">channel</A> activity (received data) via callback
+    <A HREF="eval.html#functions">functions</A> assigned to the `on_stdout`, `on_stderr`, `on_stdin`, or
+    `on_data` option keys. Callbacks should be fast: avoid potentially
+    slow/expensive work.
+
+<B><FONT color="#54A23D">    Parameters: </FONT></B>
+      {chan-id}     Channel handle. |<A HREF="#channel-id">channel-id</A>|
+      {data}	    Raw data (|readfile()|-style <A HREF="eval.html#list">list</A> of strings) read from
+		    the <A HREF="#channel">channel</A>. EOF is a single-item <A HREF="eval.html#list">list</A>: `['']`. First and
+		    last items may be partial lines! |<A HREF="#channel-lines">channel-lines</A>|
+      {name}	    Stream name (string) like &quot;stdout&quot;, so the same function
+		    can handle multiple streams. Event names depend on how the
+		    <A HREF="#channel">channel</A> was opened and in what mode/protocol.
+
+
+						*<A NAME="channel-buffered"></A><B>channel-buffered</B>*
+    The callback is invoked immediately <A HREF="motion.html#as">as</A> data is available, where
+    a single-item <A HREF="eval.html#list">list</A> `['']` indicates EOF (stream closed).  Alternatively
+    set the `stdout_buffered`, `stderr_buffered`, `stdin_buffered`, or
+    `data_buffered` option keys to invoke the callback only after all output
+    was gathered and the stream was closed.
+
+						*<A NAME="E5210"></A><B>E5210</B>*
+    If a buffering mode is used without a callback, the data is saved in the
+    stream {name} key of the <A HREF="options.html#options">options</A> <A HREF="eval.html#dict">dict</A>. It is an error if the key exists.
 
 
 							      *<A NAME="channel-lines"></A><B>channel-lines</B>*
-  Note:
-	stream event handlers may receive partial (incomplete) lines. For a given
-	invocation of <A HREF="#on_stdout">on_stdout</A> etc, `a:data` is not guaranteed to end
-	with a newline.
-	  - `abcdefg` may arrive <A HREF="motion.html#as">as</A> `['abc']`, `['defg']`.
-	  - `abc\nefg` may arrive <A HREF="motion.html#as">as</A> `['abc', '']`, `['efg']` or `['abc']`,
-	    `['','efg']`, or even `['ab']`, `['c','efg']`.
-	
-	If you only are interested in complete output when the process exits,
-	use <A HREF="#buffered">buffered</A> mode. Otherwise, an easy way to deal with this:
-	initialize a <A HREF="eval.html#list">list</A> <A HREF="motion.html#as">as</A> `['']`, then append to <A HREF="motion.html#it">it</A> <A HREF="motion.html#as">as</A> follows:
-<B>	  let s:chunks = ['']</B>
-<B>	  func! s:on_event(job_id, data, event) dict</B>
-<B>	    let s:chunks[-1] .= a:data[0]</B>
-<B>	    call extend(s:chunks, a:data[1:])</B>
-<B>	  endf</B>
+    Stream event handlers receive data <A HREF="motion.html#as">as</A> <A HREF="motion.html#it">it</A> becomes available from the OS,
+    thus the first and last items in the {data} <A HREF="eval.html#list">list</A> may be partial lines.
+    Empty <A HREF="eval.html#string">string</A> completes the previous partial line. Examples (not including
+    the final `['']` emitted at EOF):
+      - `foobar` may arrive <A HREF="motion.html#as">as</A> `['fo'], ['obar']` 
+      - `foo\nbar` may arrive <A HREF="motion.html#as">as</A>
+	   `['foo','bar']`
+	or `['foo',''], ['bar']`
+	or `['foo'], ['','bar']`
+	or `['fo'], ['o','bar']`
+    There are two ways to deal with this:
+    1. To wait for the entire output, use |<A HREF="#channel-buffered">channel-buffered</A>| mode.
+    2. To read line-by-line, use the following code:
+<B>	let s:lines = ['']</B>
+<B>	func! s:on_event(job_id, data, event) dict</B>
+<B>	  let eof = (a:data == [''])</B>
+<B>	  " Complete the previous line.</B>
+<B>	  let s:lines[-1] .= a:data[0]</B>
+<B>	  " Append (last item may be a partial line, until EOF).</B>
+<B>	  call extend(s:lines, a:data[1:])</B>
+<B>	endf</B>
  
 
-Additionally, if the callbacks are <A HREF="eval.html#Dictionary">Dictionary</A> <A HREF="eval.html#functions">functions</A>, |<A HREF="eval.html#self">self</A>| can be used to
-refer to the <A HREF="options.html#options">options</A> dictionary containing the callbacks. |<A HREF="eval.html#Partial">Partial</A>|<A HREF="change.html#s">s</A> can also be
-used <A HREF="motion.html#as">as</A> callbacks.
+If the callback <A HREF="eval.html#functions">functions</A> are |<A HREF="eval.html#Dictionary-function">Dictionary-function</A>|s, |<A HREF="eval.html#self">self</A>| refers to the
+<A HREF="options.html#options">options</A> dictionary containing the callbacks. |<A HREF="eval.html#Partial">Partial</A>|<A HREF="change.html#s">s</A> can also be used <A HREF="motion.html#as">as</A>
+callbacks.
 
 Data can be sent to the <A HREF="#channel">channel</A> using the |<A HREF="eval.html#chansend()">chansend()</A>| function. Here is a
 simple example, echoing some data through a cat-process:
@@ -166,11 +198,11 @@ from the host TTY, or if Nvim is |<A HREF="starting.html#--headless">--headless<
 
 ==============================================================================
 
-3. Communicating using <A HREF="msgpack_rpc.html#msgpack-rpc">msgpack-rpc</A>			      *<A NAME="channel-rpc"></A><B>channel-rpc</B>*
+3. Communicating using <A HREF="api.html#msgpack-rpc">msgpack-rpc</A>			      *<A NAME="channel-rpc"></A><B>channel-rpc</B>*
 
 When channels are opened with the `rpc` option set to true, the <A HREF="#channel">channel</A> can be
-used for remote method calls in both directions, see |<A HREF="msgpack_rpc.html#msgpack-rpc">msgpack-rpc</A>|. Note that
-<A HREF="msgpack_rpc.html#rpc">rpc</A> channels are implicitly trusted and the process at the other end can
+used for remote method calls in both directions, see |<A HREF="api.html#msgpack-rpc">msgpack-rpc</A>|. Note that
+<A HREF="api.html#rpc">rpc</A> channels are implicitly trusted and the process at the other end can
 invoke any |<A HREF="api.html#api">api</A>| function!
 
 ==============================================================================
@@ -200,5 +232,11 @@ Put this in `uppercase.vim` and run:
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
+
+    <footer>
+      <div class="container">
+        Generated Wed Sep 18 20:06:10 UTC 2019 from <a href="https://github.com/neovim/neovim/commit/1070c092c7bf989f261047b861165e61e94c1941"><code>1070c09</code></a>.
+      </div>
+    </footer>
   </body>
 </html>

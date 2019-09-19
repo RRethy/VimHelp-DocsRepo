@@ -2,10 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Nvim documentation: tagsrch</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.0/normalize.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="/css/main.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
   </head>
   <body>
-                <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
+    <header class="navbar">
+      <div class="container">
+        <nav class="navbar">
+          <div class="container-fluid">
+            <div class="navbar-header">
+
+              <a href="/" class="navbar-brand">
+                <img src="/images/logo@2x.png" id="navbar-logo" alt="Neovim">
+              </a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
 
     <div class="container">
       <h1>Nvim documentation: tagsrch</h1>
@@ -104,18 +128,21 @@ changed, to avoid confusion when using &quot;<A HREF="#:tnext">:tnext</A>&quot;.
 &quot;<A HREF="#:tag">:tag</A> {name}&quot;.
 
 The ignore-case matches are not found for a &quot;<A HREF="#:tag">:tag</A>&quot; command when:
-- the <A HREF="options.html#'ignorecase'">'ignorecase'</A> option is off and <A HREF="options.html#'tagcase'">'tagcase'</A> is &quot;followic&quot;
+- <A HREF="options.html#'tagcase'">'tagcase'</A> is &quot;followic&quot; and the <A HREF="options.html#'ignorecase'">'ignorecase'</A> option is off
+- <A HREF="options.html#'tagcase'">'tagcase'</A> is &quot;followscs&quot; and the <A HREF="options.html#'ignorecase'">'ignorecase'</A> option is off and the
+  <A HREF="options.html#'smartcase'">'smartcase'</A> option is off or the <A HREF="pattern.html#pattern">pattern</A> contains an upper <A HREF="change.html#case">case</A> character.
 - <A HREF="options.html#'tagcase'">'tagcase'</A> is &quot;match&quot;
 - <A HREF="options.html#'tagcase'">'tagcase'</A> is &quot;smart&quot; and the <A HREF="pattern.html#pattern">pattern</A> contains an upper <A HREF="change.html#case">case</A> character.
-- <A HREF="options.html#'tagcase'">'tagcase'</A> is &quot;followscs&quot; and <A HREF="options.html#'smartcase'">'smartcase'</A> option is on and the <A HREF="pattern.html#pattern">pattern</A>
-  contains an upper <A HREF="change.html#case">case</A> character.
 
 The ignore-case matches are found when:
 - a <A HREF="pattern.html#pattern">pattern</A> is used (starting with a &quot;<A HREF="pattern.html#/">/</A>&quot;)
 - for &quot;<A HREF="#:tselect">:tselect</A>&quot;
-- when <A HREF="options.html#'tagcase'">'tagcase'</A> is &quot;followic&quot; and <A HREF="options.html#'ignorecase'">'ignorecase'</A> is off
-- when <A HREF="options.html#'tagcase'">'tagcase'</A> is &quot;match&quot;
-- when <A HREF="options.html#'tagcase'">'tagcase'</A> is &quot;followscs&quot; and the <A HREF="options.html#'smartcase'">'smartcase'</A> option is off
+- when <A HREF="options.html#'tagcase'">'tagcase'</A> is &quot;followic&quot; and <A HREF="options.html#'ignorecase'">'ignorecase'</A> is on
+- when <A HREF="options.html#'tagcase'">'tagcase'</A> is &quot;followscs&quot; and <A HREF="options.html#'ignorecase'">'ignorecase'</A> is on or the <A HREF="options.html#'smartcase'">'smartcase'</A>
+  option is on and the <A HREF="pattern.html#pattern">pattern</A> does not contain an upper <A HREF="change.html#case">case</A> character
+- when <A HREF="options.html#'tagcase'">'tagcase'</A> is &quot;ignore&quot;
+- when <A HREF="options.html#'tagcase'">'tagcase'</A> is &quot;smart&quot; and the patter does not contain an upper <A HREF="change.html#case">case</A>
+  character
 
 Note that using ignore-case <A HREF="#tag">tag</A> searching disables binary searching in the
 <A HREF="#tags">tags</A> file, which causes a slowdown.  This can be avoided by fold-case <A HREF="change.html#sorting">sorting</A>
@@ -202,6 +229,9 @@ commands explained above the <A HREF="#tag">tag</A> stack will look like this:
    # TO <A HREF="#tag">tag</A>	FROM line  in file/text
    1  1 main		1  harddisk2:text/vim/test
    2  1 FuncB	       59  harddisk2:text/vim/src/main.c
+
+The |<A HREF="eval.html#gettagstack()">gettagstack()</A>| function returns the tag stack of a specified <A HREF="windows.html#window">window</A>. The
+|<A HREF="eval.html#settagstack()">settagstack()</A>| function modifies the tag stack of a <A HREF="windows.html#window">window</A>.
 
 
 							*<A NAME="E73"></A><B>E73</B>*
@@ -346,7 +376,6 @@ message is given.
 							*<A NAME="tag-preview"></A><B>tag-preview</B>*
 The <A HREF="#tag">tag</A> match <A HREF="eval.html#list">list</A> can also be used in the preview <A HREF="windows.html#window">window</A>.  The commands are
 the same <A HREF="motion.html#as">as</A> above, with a &quot;<A HREF="change.html#p">p</A>&quot; prepended.
-{not available when compiled without the |<A HREF="various.html#+quickfix">+quickfix</A>| feature}
 
 
 							*<A NAME=":pts"></A><B>:pts</B>* *<A NAME=":ptselect"></A><B>:ptselect</B>*
@@ -400,7 +429,7 @@ If you really want the old <A HREF="intro.html#Vi">Vi</A> behavior, set the '<A 
 
 							*<A NAME="tag-binary-search"></A><B>tag-binary-search</B>*
 Vim uses binary searching in the <A HREF="#tags">tags</A> file to find the desired <A HREF="#tag">tag</A> quickly
-(when enabled at compile time |<A HREF="various.html#+tag_binary">+tag_binary</A>|).  But this only works if the
+(when enabled at compile time |<A HREF="intro.html#+tag_binary">+tag_binary</A>|).  But this only works if the
 <A HREF="#tags">tags</A> file was sorted on ASCII byte value.  Therefore, if no match was found,
 another try is done with a linear search.  If you only want the linear search,
 reset the <A HREF="options.html#'tagbsearch'">'tagbsearch'</A> option.  Or better: Sort the <A HREF="#tags">tags</A> file!
@@ -552,7 +581,7 @@ Some programs that generate <A HREF="#tags">tags</A> files:
 			does the basic work.
 
 							*<A NAME="Exuberant_ctags"></A><B>Exuberant_ctags</B>*
-exuberant <A HREF="#ctags">ctags</A>		This a very good one.  It works for C, C++, Java,
+exuberant <A HREF="#ctags">ctags</A>		This is a very good one.  It works for C, C++, Java,
 			Fortran, Eiffel and others.  It can generate <A HREF="#tags">tags</A> for
  many items. See	<A HREF="http://ctags.sourceforge.net">http://ctags.sourceforge.net</A>.
 JTags			For Java, in Java.  It can be found at
@@ -565,29 +594,21 @@ ptags			For Perl, in Perl.  It can be found at
 			part of the gnat package.
 
 
-The lines in the <A HREF="#tags">tags</A> file must have one of these three formats:
+The lines in the <A HREF="#tags">tags</A> file must have one of these two formats:
 
 1.  {tagname}		{TAB} {tagfile} {TAB} {tagaddress}
-2.  {tagfile}:{tagname} {TAB} {tagfile} {TAB} {tagaddress}
-3.  {tagname}		{TAB} {tagfile} {TAB} {tagaddress} {term} {field} ..
+2.  {tagname}		{TAB} {tagfile} {TAB} {tagaddress} {term} {field} ..
 
-The first is a normal <A HREF="#tag">tag</A>, which is completely compatible with <A HREF="intro.html#Vi">Vi</A>.  It is the
-only format produced by traditional <A HREF="#ctags">ctags</A> implementations.  This is often used
-for <A HREF="eval.html#functions">functions</A> that are global, also referenced in other files.
+Previously an old format was supported, see |<A HREF="#tag-old-static">tag-old-static</A>|.
+
+The first format is a normal <A HREF="#tag">tag</A>, which is completely compatible with <A HREF="intro.html#Vi">Vi</A>.  It
+is the only format produced by traditional <A HREF="#ctags">ctags</A> implementations.  This is
+often used for <A HREF="eval.html#functions">functions</A> that are global, also referenced in other files.
 
 The lines in the <A HREF="#tags">tags</A> file can end in &lt;LF&gt; or &lt;CR&gt;&lt;LF&gt;.  On the Macintosh <A HREF="motion.html#&lt;CR&gt;">&lt;CR&gt;</A>
 also works.  The <A HREF="motion.html#&lt;CR&gt;">&lt;CR&gt;</A> and <A HREF="motion.html#&lt;NL&gt;">&lt;NL&gt;</A> characters can never appear inside a line.
 
-
-							*<A NAME="tag-old-static"></A><B>tag-old-static</B>*
-The second format is for a static <A HREF="#tag">tag</A> only.  It is obsolete now, replaced by
-the third format.  It is only supported by <A HREF="intro.html#Elvis">Elvis</A> 1.x and Vim and a few
-versions of <A HREF="#ctags">ctags</A>.  A static <A HREF="#tag">tag</A> is often used for <A HREF="eval.html#functions">functions</A> that are local,
-only referenced in the file {tagfile}.  Note that for the static <A HREF="#tag">tag</A>, the two
-occurrences of {tagfile} must be exactly the same.  Also see |<A HREF="#tags-option">tags-option</A>|
-below, for how static <A HREF="#tags">tags</A> are used.
-
-The third format is new.  It includes additional information in optional
+The second format is new.  It includes additional information in optional
 fields at the end of each line.  It is backwards compatible with <A HREF="intro.html#Vi">Vi</A>.  It is
 only supported by new versions of <A HREF="#ctags">ctags</A> (such <A HREF="motion.html#as">as</A> Exuberant <A HREF="#ctags">ctags</A>).
 
@@ -595,9 +616,7 @@ only supported by new versions of <A HREF="#ctags">ctags</A> (such <A HREF="moti
 		be any identifier.  It cannot contain a <A HREF="motion.html#&lt;Tab&gt;">&lt;Tab&gt;</A>.
 {TAB}		One <A HREF="motion.html#&lt;Tab&gt;">&lt;Tab&gt;</A> character.  Note: previous versions allowed any
 		white space here.  This has been abandoned to allow spaces in
-		{tagfile}.  It can be re-enabled by including the
-
-		|<A HREF="various.html#+tag_any_white">+tag_any_white</A>| feature at compile time. *<A NAME="tag-any-white"></A><B>tag-any-white</B>*
+		{tagfile}.
 {tagfile}	The file that contains the definition of {tagname}.  It can
 		have an absolute or relative path.  It may contain environment
 		<A HREF="eval.html#variables">variables</A> and <A HREF="editing.html#wildcards">wildcards</A> (although the use of <A HREF="editing.html#wildcards">wildcards</A> is
@@ -609,7 +628,14 @@ only supported by new versions of <A HREF="#ctags">ctags</A> (such <A HREF="moti
 {term}		;&quot; The two characters semicolon and double <A HREF="change.html#quote.">quote.</A>  This is
 		interpreted by <A HREF="intro.html#Vi">Vi</A> <A HREF="motion.html#as">as</A> the start of a comment, which makes the
 		following be ignored.  This is for backwards compatibility
-		with <A HREF="intro.html#Vi">Vi</A>, <A HREF="motion.html#it">it</A> ignores the following fields.
+		with <A HREF="intro.html#Vi">Vi</A>, <A HREF="motion.html#it">it</A> ignores the following fields. Example:
+			APP	file	/^static int APP;$/;&quot;	<A HREF="visual.html#v">v</A>
+		When {tagaddress} is not a line number or search <A HREF="pattern.html#pattern">pattern</A>, then
+		{term} must be |;&quot;.  Here the <A HREF="motion.html#bar">bar</A> ends the command (excluding
+		the <A HREF="motion.html#bar">bar</A>) and ;&quot; is used to have <A HREF="intro.html#Vi">Vi</A> ignore the rest of the
+		line.  Example:
+			APP	file.c	call cursor(3, 4)|;&quot;	<A HREF="visual.html#v">v</A>
+			
 {field} ..	A <A HREF="eval.html#list">list</A> of optional fields.  Each field has the form:
 
 			&lt;Tab&gt;{fieldname}:{value}
@@ -630,6 +656,7 @@ only supported by new versions of <A HREF="#ctags">ctags</A> (such <A HREF="moti
 		The only other field currently recognized by Vim is &quot;file:&quot;
 		(with an empty value).  It is used for a static <A HREF="#tag">tag</A>.
 
+
 The first lines in the <A HREF="#tags">tags</A> file can contain lines that start with
 	!_TAG_
 These are sorted to the first lines, only rare <A HREF="#tags">tags</A> that start with &quot;<A HREF="change.html#!">!</A>&quot; can
@@ -644,8 +671,7 @@ ignored.  (Case is ignored when <A HREF="options.html#'ignorecase'">'ignorecase'
 The value '2' should be used then:
 <B><FONT color="#54A23D">	!_TAG_FILE_SORTED&lt;Tab&gt;2&lt;Tab&gt;{anything} </FONT></B>
 
-The other <A HREF="#tag">tag</A> that Vim recognizes, but only when compiled with the
-|<A HREF="various.html#+multi_byte">+multi_byte</A>| feature, is the encoding of the <A HREF="#tags">tags</A> file:
+The other <A HREF="#tag">tag</A> that Vim recognizes is the encoding of the <A HREF="#tags">tags</A> file:
 <B><FONT color="#54A23D">	!_TAG_FILE_ENCODING&lt;Tab&gt;utf-8&lt;Tab&gt;{anything} </FONT></B>
 Here &quot;<A HREF="mbyte.html#utf-8">utf-8</A>&quot; is the encoding used for the <A HREF="#tags">tags</A>.  Vim will then convert the <A HREF="#tag">tag</A>
 being searched for from <A HREF="options.html#'encoding'">'encoding'</A> to the encoding of the <A HREF="#tags">tags</A> file.  And when
@@ -684,6 +710,22 @@ If the command is a normal search command (it starts and ends with &quot;<A HREF
   followed by white space and a '<A HREF="motion.html#(">(</A>'.  This will find <A HREF="map.html#macro">macro</A> names and function
   names with a type prepended.
 
+
+
+							*<A NAME="tag-old-static"></A><B>tag-old-static</B>*
+Until March 2019 (patch 8.1.1092) an outdated format was supported:
+    {tagfile}:{tagname} {TAB} {tagfile} {TAB} {tagaddress}
+
+This format is for a static <A HREF="#tag">tag</A> only.  It is obsolete now, replaced by
+the second format.  It is only supported by <A HREF="intro.html#Elvis">Elvis</A> 1.x, older Vim versions and
+a few versions of <A HREF="#ctags">ctags</A>.  A static <A HREF="#tag">tag</A> is often used for <A HREF="eval.html#functions">functions</A> that are
+local, only referenced in the file {tagfile}.  Note that for the static <A HREF="#tag">tag</A>,
+the two occurrences of {tagfile} must be exactly the same.  Also see
+|<A HREF="#tags-option">tags-option</A>| below, for how static tags are used.
+
+The support was removed, since when you can update to the new Vim version you
+should also be able to update <A HREF="#ctags">ctags</A> to one that supports the second format.
+
 ==============================================================================
 
 6. Include file searches		*<A NAME="include-search"></A><B>include-search</B>* *<A NAME="definition-search"></A><B>definition-search</B>*
@@ -695,7 +737,7 @@ included files (recursively).  This can be used to find the definition of a
 variable, function or <A HREF="map.html#macro">macro</A>.  If you only want to search in the current
 buffer, use the commands listed at |<A HREF="pattern.html#pattern-searches">pattern-searches</A>|.
 
-These commands are not available when the |<A HREF="various.html#+find_in_path">+find_in_path</A>| feature was disabled
+These commands are not available when the |<A HREF="intro.html#+find_in_path">+find_in_path</A>| feature was disabled
 at compile time.
 
 When a line is encountered that includes another file, that file is searched
@@ -888,7 +930,7 @@ If you want to <A HREF="eval.html#list">list</A> matches, and then select one to
 			See |<A HREF="#:search-args">:search-args</A>| for [/] and [!].
 
 
-							*<A NAME=":che"></A><B>:che</B>* *<A NAME=":checkpath"></A><B>:checkpath</B>*
+					*<A NAME=":che"></A><B>:che</B>* *<A NAME=":chec"></A><B>:chec</B>* *<A NAME=":check"></A><B>:check</B>* *<A NAME=":checkpath"></A><B>:checkpath</B>*
 :che[ckpath]		<A HREF="eval.html#List">List</A> all the included files that could not be found.
 
 :che[ckpath]!		<A HREF="eval.html#List">List</A> all the included files.
@@ -919,5 +961,11 @@ Common arguments for the commands above:
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
+
+    <footer>
+      <div class="container">
+        Generated Wed Sep 18 20:06:12 UTC 2019 from <a href="https://github.com/neovim/neovim/commit/1070c092c7bf989f261047b861165e61e94c1941"><code>1070c09</code></a>.
+      </div>
+    </footer>
   </body>
 </html>

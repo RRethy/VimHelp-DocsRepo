@@ -2,10 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Nvim documentation: vi_diff</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.0/normalize.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="/css/main.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
   </head>
   <body>
-                <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
+    <header class="navbar">
+      <div class="container">
+        <nav class="navbar">
+          <div class="container-fluid">
+            <div class="navbar-header">
+
+              <a href="/" class="navbar-brand">
+                <img src="/images/logo@2x.png" id="navbar-logo" alt="Neovim">
+              </a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
 
     <div class="container">
       <h1>Nvim documentation: vi_diff</h1>
@@ -144,8 +168,8 @@ Asynchronous communication and <A HREF="eval.html#timers">timers</A>.			|<A HREF
 	work. |<A HREF="eval.html#timer">timer</A>|
 
 Repeat a series of commands.				|<A HREF="repeat.html#q">q</A>|
-	&quot;q{c}&quot; starts <A HREF="repeat.html#recording">recording</A> typed characters into named <A HREF="sponsor.html#register">register</A> {c}.
-	A subsequent &quot;<A HREF="repeat.html#q">q</A>&quot; stops <A HREF="repeat.html#recording">recording</A>.  The <A HREF="sponsor.html#register">register</A> can then be executed
+	&quot;q{c}&quot; starts <A HREF="repeat.html#recording">recording</A> typed characters into named <A HREF="intro.html#register">register</A> {c}.
+	A subsequent &quot;<A HREF="repeat.html#q">q</A>&quot; stops <A HREF="repeat.html#recording">recording</A>.  The <A HREF="intro.html#register">register</A> can then be executed
 	with the &quot;@{c}&quot; command.  This is very useful to repeat a complex
 	action.
 
@@ -200,6 +224,12 @@ Help system.						|<A HREF="helphelp.html#:help">:help</A>|
 	forward/backward one character.  The shifted right/left cursor keys
 	can be used to move forward/backward one <A HREF="motion.html#word">word</A>.  CTRL-B/CTRL-E can be
 	used to go to the begin/end of the command-line.
+	{Vi: can only alter the last character in the line}
+	{Vi: when hitting <A HREF="intro.html#&lt;Esc&gt;">&lt;Esc&gt;</A> the command-line is executed.  This is
+	unexpected for most people; therefore <A HREF="motion.html#it">it</A> was changed in Vim.  But when
+	the <A HREF="intro.html#&lt;Esc&gt;">&lt;Esc&gt;</A> is part of a <A HREF="map.html#mapping">mapping</A>, the command-line is executed.  If you
+	want the <A HREF="intro.html#Vi">Vi</A> behaviour also when typing <A HREF="intro.html#&lt;Esc&gt;">&lt;Esc&gt;</A>, use &quot;<A HREF="map.html#:cmap">:cmap</A> ^V&lt;Esc&gt;
+	^V^M&quot;}
 							|<A HREF="cmdline.html#cmdline-history">cmdline-history</A>|
 	The command-lines are remembered.  The up/down cursor keys can be used
 	to recall previous command-lines.  The <A HREF="options.html#'history'">'history'</A> option can be set to
@@ -358,7 +388,7 @@ Printing.						|<A HREF="print.html#printing">printing</A>|
 Mouse support.						|<A HREF="term.html#mouse-using">mouse-using</A>|
 	The mouse is supported in the <A HREF="gui.html#GUI">GUI</A> version, in an xterm for Unix, for
 	BSDs with sysmouse, for Linux with gpm, and for Win32.  It can be used
-	to position the cursor, select the visual area, paste a <A HREF="sponsor.html#register">register</A>, etc.
+	to position the cursor, select the visual area, <A HREF="provider.html#paste">paste</A> a <A HREF="intro.html#register">register</A>, etc.
 
 Usage of key names.					|<A HREF="intro.html#&lt;&gt;">&lt;&gt;</A>| |<A HREF="intro.html#key-notation">key-notation</A>|
 	Special keys now all have a name like <A HREF="motion.html#&lt;Up&gt;">&lt;Up&gt;</A>, <A HREF="motion.html#&lt;End&gt;">&lt;End&gt;</A>, etc.
@@ -387,5 +417,11 @@ Move cursor beyond lines.
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
+
+    <footer>
+      <div class="container">
+        Generated Wed Sep 18 20:06:13 UTC 2019 from <a href="https://github.com/neovim/neovim/commit/1070c092c7bf989f261047b861165e61e94c1941"><code>1070c09</code></a>.
+      </div>
+    </footer>
   </body>
 </html>

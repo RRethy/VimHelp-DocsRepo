@@ -2,10 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Nvim documentation: remote</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.0/normalize.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="/css/main.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
   </head>
   <body>
-                <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
+    <header class="navbar">
+      <div class="container">
+        <nav class="navbar">
+          <div class="container-fluid">
+            <div class="navbar-header">
+
+              <a href="/" class="navbar-brand">
+                <img src="/images/logo@2x.png" id="navbar-logo" alt="Neovim">
+              </a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
 
     <div class="container">
       <h1>Nvim documentation: remote</h1>
@@ -29,7 +53,7 @@ Vim <A HREF="#client-server">client-server</A> communication				*<A NAME="client
 
 1. Common functionality					*<A NAME="clientserver"></A><B>clientserver</B>*
 
-When compiled with the |<A HREF="various.html#+clientserver">+clientserver</A>| option, Vim can act <A HREF="motion.html#as">as</A> a command
+When compiled with the |<A HREF="intro.html#+clientserver">+clientserver</A>| option, Vim can act <A HREF="motion.html#as">as</A> a command
 server.  It accepts <A HREF="message.html#messages">messages</A> from a client and executes them.  At the same
 time, Vim can function <A HREF="motion.html#as">as</A> a client and send commands to a Vim server.
 
@@ -118,7 +142,7 @@ Tell the remote server &quot;BLA&quot; to write all files and exit:
 
 SERVER NAME						*<A NAME="client-server-name"></A><B>client-server-name</B>*
 
-By default Vim will try to <A HREF="sponsor.html#register">register</A> the name under which <A HREF="motion.html#it">it</A> was invoked (gvim,
+By default Vim will try to <A HREF="intro.html#register">register</A> the name under which <A HREF="motion.html#it">it</A> was invoked (gvim,
 egvim <A HREF="eval.html#...">...</A>).  This can be overridden with the --servername argument.  If the
 specified name is not available, a postfix is applied until a free name is
 encountered, i.e. &quot;gvim1&quot; for the second invocation of gvim on a particular
@@ -192,17 +216,12 @@ server is used, you must be able to open a <A HREF="windows.html#window">window<
 communication to work.  It is possible to communicate between different
 systems.
 
-By default, a <A HREF="gui.html#GUI">GUI</A> Vim will <A HREF="sponsor.html#register">register</A> a name on the X-server by which <A HREF="motion.html#it">it</A> can be
+By default, a <A HREF="gui.html#GUI">GUI</A> Vim will <A HREF="intro.html#register">register</A> a name on the X-server by which <A HREF="motion.html#it">it</A> can be
 addressed for subsequent execution of injected strings.  Vim can also act <A HREF="motion.html#as">as</A>
 a client and send strings to other instances of Vim on the same X11 display.
 
-When an X11 <A HREF="gui.html#GUI">GUI</A> Vim (gvim) is started, <A HREF="motion.html#it">it</A> will try to <A HREF="sponsor.html#register">register</A> a send-server
+When an X11 <A HREF="gui.html#GUI">GUI</A> Vim (gvim) is started, <A HREF="motion.html#it">it</A> will try to <A HREF="intro.html#register">register</A> a send-server
 name on the 'VimRegistry' property on the root <A HREF="windows.html#window">window</A>.
-
-A non <A HREF="gui.html#GUI">GUI</A> Vim with access to the X11 display (|<A HREF="intro.html#xterm-clipboard">xterm-clipboard</A>| enabled), can
-also act <A HREF="motion.html#as">as</A> a command server if a server name is explicitly given with the
---servername argument, or when Vim was build with the |<A HREF="intro.html#+autoservername">+autoservername</A>|
-feature.
 
 An empty --servername argument will cause the command server to be disabled.
 
@@ -227,5 +246,11 @@ When using gvim, the <A HREF="#--remote-wait">--remote-wait</A> only works prope
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
+
+    <footer>
+      <div class="container">
+        Generated Wed Sep 18 20:06:12 UTC 2019 from <a href="https://github.com/neovim/neovim/commit/1070c092c7bf989f261047b861165e61e94c1941"><code>1070c09</code></a>.
+      </div>
+    </footer>
   </body>
 </html>

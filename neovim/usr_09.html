@@ -2,10 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Nvim documentation: usr_09</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.0/normalize.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="/css/main.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
   </head>
   <body>
-                <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
+    <header class="navbar">
+      <div class="container">
+        <nav class="navbar">
+          <div class="container-fluid">
+            <div class="navbar-header">
+
+              <a href="/" class="navbar-brand">
+                <img src="/images/logo@2x.png" id="navbar-logo" alt="Neovim">
+              </a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
 
     <div class="container">
       <h1>Nvim documentation: usr_09</h1>
@@ -163,7 +187,7 @@ XTERM MOUSE BEHAVIOR
 
 Left mouse click		position the cursor
 Left mouse drag			select text in <A HREF="visual.html#Visual">Visual</A> mode
-Middle mouse click		paste text from the <A HREF="provider.html#clipboard">clipboard</A>
+Middle mouse click		<A HREF="provider.html#paste">paste</A> text from the <A HREF="provider.html#clipboard">clipboard</A>
 Right mouse click		extend the selected text until the mouse
 				pointer
 
@@ -174,7 +198,7 @@ Left mouse click		position the cursor
 Left mouse drag			select text in <A HREF="visual.html#Select">Select</A> mode (see |<A HREF="#09.4">09.4</A>|)
 Left mouse click, with Shift	extend the selected text until the mouse
 				pointer
-Middle mouse click		paste text from the <A HREF="provider.html#clipboard">clipboard</A>
+Middle mouse click		<A HREF="provider.html#paste">paste</A> text from the <A HREF="provider.html#clipboard">clipboard</A>
 Right mouse click		display a pop-up menu
 
 
@@ -197,7 +221,7 @@ exchange text between programs.  MS-Windows doesn't have this.
 
 In X-Windows there is the &quot;current selection&quot;.  This is the text that is
 currently highlighted.  In Vim this is the <A HREF="visual.html#Visual">Visual</A> area (this assumes you are
-using the default option settings).  You can paste this selection in another
+using the default option settings).  You can <A HREF="provider.html#paste">paste</A> this selection in another
 application without any further action.
    For example, in this text select a few words with the mouse.  Vim will
 switch to <A HREF="visual.html#Visual">Visual</A> mode and highlight the text.  Now start another gvim, without
@@ -205,7 +229,7 @@ a file name argument, so that <A HREF="motion.html#it">it</A> displays an empty 
 mouse button.  The selected text will be inserted.
 
 The &quot;current selection&quot; will only remain valid until some other text is
-selected.  After doing the paste in the other gvim, now select some characters
+selected.  After doing the <A HREF="provider.html#paste">paste</A> in the other gvim, now select some characters
 in that <A HREF="windows.html#window">window</A>.  You will notice that the words that were previously selected
 in the other gvim <A HREF="windows.html#window">window</A> are displayed differently.  This means that <A HREF="motion.html#it">it</A> no
 longer is the current selection.
@@ -249,7 +273,7 @@ If you use the &quot;current selection&quot; and the &quot;real clipboard&quot; 
 USING THE KEYBOARD
 
 If you don't like using the mouse, you can access the current selection and
-the real <A HREF="provider.html#clipboard">clipboard</A> with two <A HREF="change.html#registers">registers</A>.  The &quot;* <A HREF="sponsor.html#register">register</A> is for the current
+the real <A HREF="provider.html#clipboard">clipboard</A> with two <A HREF="change.html#registers">registers</A>.  The &quot;* <A HREF="intro.html#register">register</A> is for the current
 selection.
    To make text become the current selection, use <A HREF="visual.html#Visual">Visual</A> mode.  For example,
 to select a whole line just press &quot;<A HREF="visual.html#V">V</A>&quot;.
@@ -259,7 +283,7 @@ to select a whole line just press &quot;<A HREF="visual.html#V">V</A>&quot;.
 
 Notice the <A HREF="change.html#uppercase">uppercase</A> &quot;<A HREF="change.html#P">P</A>&quot;.  The <A HREF="change.html#lowercase">lowercase</A> &quot;<A HREF="change.html#p">p</A>&quot; puts the text after the cursor.
 
-The &quot;<A HREF="motion.html#+">+</A> <A HREF="sponsor.html#register">register</A> is used for the real <A HREF="provider.html#clipboard">clipboard</A>.  For example, to copy the text
+The &quot;<A HREF="motion.html#+">+</A> <A HREF="intro.html#register">register</A> is used for the real <A HREF="provider.html#clipboard">clipboard</A>.  For example, to copy the text
 from the cursor position until the end of the line to the <A HREF="provider.html#clipboard">clipboard</A>:
 
 <B>	"+y$</B>
@@ -269,8 +293,8 @@ Remember, &quot;<A HREF="change.html#y">y</A>&quot; is <A HREF="change.html#yank
 
 <B>	"+P</B>
 
-It's the same <A HREF="motion.html#as">as</A> for the current selection, but uses the plus (+) <A HREF="sponsor.html#register">register</A>
-instead of the <A HREF="pattern.html#star">star</A> (*) <A HREF="sponsor.html#register">register</A>.
+It's the same <A HREF="motion.html#as">as</A> for the current selection, but uses the plus (+) <A HREF="intro.html#register">register</A>
+instead of the <A HREF="pattern.html#star">star</A> (*) <A HREF="intro.html#register">register</A>.
 
 ==============================================================================
 
@@ -307,5 +331,11 @@ Copyright: see |<A HREF="usr_01.html#manual-copyright">manual-copyright</A>|  vi
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
+
+    <footer>
+      <div class="container">
+        Generated Wed Sep 18 20:06:13 UTC 2019 from <a href="https://github.com/neovim/neovim/commit/1070c092c7bf989f261047b861165e61e94c1941"><code>1070c09</code></a>.
+      </div>
+    </footer>
   </body>
 </html>

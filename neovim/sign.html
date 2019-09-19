@@ -2,10 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Nvim documentation: sign</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.0/normalize.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="/css/main.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
   </head>
   <body>
-                <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
+    <header class="navbar">
+      <div class="container">
+        <nav class="navbar">
+          <div class="container-fluid">
+            <div class="navbar-header">
+
+              <a href="/" class="navbar-brand">
+                <img src="/images/logo@2x.png" id="navbar-logo" alt="Neovim">
+              </a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
 
     <div class="container">
       <h1>Nvim documentation: sign</h1>
@@ -55,6 +79,8 @@ There are two steps in using <A HREF="#signs">signs</A>:
    displayed.  A defined sign can be placed several times in different lines
    and files.
 
+
+							*<A NAME="sign-column"></A><B>sign-column</B>*
 When <A HREF="#signs">signs</A> are defined for a file, Vim will automatically add a column of two
 characters to display them in.  When the last sign is unplaced the column
 disappears again.  This behavior can be changed with the <A HREF="options.html#'signcolumn'">'signcolumn'</A> option.
@@ -63,6 +89,37 @@ The color of the column is set with the SignColumn group |<A HREF="syntax.html#h
 Example to set the color:
 
 <B>	:highlight SignColumn guibg=darkgrey</B>
+ 
+
+							*<A NAME="sign-identifier"></A><B>sign-identifier</B>*
+Each placed sign is identified by a number called the sign identifier. This
+identifier is used to jump to the sign or to remove the sign. The identifier
+is assigned when placing the sign using the |<A HREF="#:sign-place">:sign-place</A>| command or the
+|<A HREF="eval.html#sign_place()">sign_place()</A>| function. Each sign identifier should be a unique number. If
+multiple placed <A HREF="#signs">signs</A> use the same identifier, then jumping to or removing a
+sign becomes unpredictable. To avoid overlapping identifiers, sign groups can
+be used. The |<A HREF="eval.html#sign_place()">sign_place()</A>| function can be called with a zero sign identifier
+to allocate the next available identifier.
+
+
+							*<A NAME="sign-group"></A><B>sign-group</B>*
+Each placed sign can be assigned to either the global group or a named group.
+When placing a sign, if a group name is not supplied, or an empty <A HREF="eval.html#string">string</A> is
+used, then the sign is placed in the global group. Otherwise the sign is
+placed in the named group. The sign identifier is unique within a group. The
+sign group allows Vim plugins to use unique <A HREF="#signs">signs</A> without interfering with
+other plugins using <A HREF="#signs">signs</A>.
+
+
+							*<A NAME="sign-priority"></A><B>sign-priority</B>*
+Each placed sign is assigned a priority value. When multiple <A HREF="#signs">signs</A> are placed
+on the same line, the attributes of the sign with the highest priority is used
+independent of the sign group. The default priority for a sign is 10. The
+priority is assigned at the time of placing a sign.
+
+When the line on which the sign is placed is deleted, the sign is moved to the
+next line (or the last line of the buffer, if there is no next line).  When
+the delete is undone the sign does not move back.
 
 ==============================================================================
 
@@ -83,10 +140,12 @@ comment.  If you <A HREF="diff.html#do">do</A> need that, use the |<A HREF="eval
 
 DEFINING A SIGN.			*<A NAME=":sign-define"></A><B>:sign-define</B>* *<A NAME="E255"></A><B>E255</B>* *<A NAME="E160"></A><B>E160</B>* *<A NAME="E612"></A><B>E612</B>*
 
+See |<A HREF="eval.html#sign_define()">sign_define()</A>| for the equivalent Vim <A HREF="usr_41.html#script">script</A> function.
+
 <A HREF="#:sign">:sign</A> define {name} {argument}...
 		Define a new sign or set attributes for an existing sign.
 		The {name} can either be a number (all digits) or a name
-		starting with a non-digit.  Leading digits are ignored, thus
+		starting with a non-digit.  Leading zeros are ignored, thus
 		&quot;0012&quot;, &quot;012&quot; and &quot;12&quot; are considered the same name.
 		About 120 different <A HREF="#signs">signs</A> can be defined.
 
@@ -99,7 +158,6 @@ DEFINING A SIGN.			*<A NAME=":sign-define"></A><B>:sign-define</B>* *<A NAME="E2
 		will cause redraw problems.
 <B><FONT color="#54A23D">			toolkit		supports </FONT></B>
 			Win32		.bmp, .ico, .cur
-					pixmap (.xpm) |<A HREF="intro.html#+xpm_w32">+xpm_w32</A>|
 
 	linehl={group}
 		Highlighting group used for the whole line the sign is placed
@@ -122,13 +180,18 @@ DEFINING A SIGN.			*<A NAME=":sign-define"></A><B>:sign-define</B>* *<A NAME="E2
 
 DELETING A SIGN						*<A NAME=":sign-undefine"></A><B>:sign-undefine</B>* *<A NAME="E155"></A><B>E155</B>*
 
+See |<A HREF="eval.html#sign_undefine()">sign_undefine()</A>| for the equivalent Vim <A HREF="usr_41.html#script">script</A> function.
+
 <A HREF="#:sign">:sign</A> undefine {name}
 		Deletes a previously defined sign.  If <A HREF="#signs">signs</A> with this {name}
 		are still placed this will cause trouble.
 
 
 
+
 LISTING SIGNS						*<A NAME=":sign-list"></A><B>:sign-list</B>* *<A NAME="E156"></A><B>E156</B>*
+
+See |<A HREF="eval.html#sign_getdefined()">sign_getdefined()</A>| for the equivalent Vim <A HREF="usr_41.html#script">script</A> function.
 
 <A HREF="#:sign">:sign</A> <A HREF="eval.html#list">list</A>	<A HREF="eval.html#Lists">Lists</A> all defined <A HREF="#signs">signs</A> and their attributes.
 
@@ -138,6 +201,8 @@ LISTING SIGNS						*<A NAME=":sign-list"></A><B>:sign-list</B>* *<A NAME="E156">
 
 
 PLACING SIGNS						*<A NAME=":sign-place"></A><B>:sign-place</B>* *<A NAME="E158"></A><B>E158</B>*
+
+See |<A HREF="eval.html#sign_place()">sign_place()</A>| for the equivalent Vim <A HREF="usr_41.html#script">script</A> function.
 
 <A HREF="#:sign">:sign</A> place {id} line={lnum} name={name} file={fname}
 		Place sign defined <A HREF="motion.html#as">as</A> {name} at line {lnum} in file {fname}.
@@ -155,8 +220,28 @@ PLACING SIGNS						*<A NAME=":sign-place"></A><B>:sign-place</B>* *<A NAME="E158
 		to be done several times and making changes may not work <A HREF="motion.html#as">as</A>
 		expected).
 
-<A HREF="#:sign">:sign</A> place {id} line={lnum} name={name} buffer={nr}
-		Same, but use buffer {nr}.
+		The following optional sign attributes can be specified before
+		&quot;file=&quot;:
+			group={group}	Place sign in sign group {group}
+			priority={prio}	Assign priority {prio} to sign
+
+		By default, the sign is placed in the global sign group.
+
+		By default, the sign is assigned a default priority of 10. To
+		assign a different priority value, use &quot;priority={prio}&quot; to
+		specify a value. The priority is used to determine the
+		highlight group used when multiple <A HREF="#signs">signs</A> are placed on the
+		same line.
+
+		Examples:
+<B>			:sign place 5 line=3 name=sign1 file=a.py</B>
+<B>			:sign place 6 group=g2 line=2 name=sign2 file=x.py</B>
+<B>			:sign place 9 group=g2 priority=50 line=5</B>
+<B>							\ name=sign1 file=a.py</B>
+ 
+<A HREF="#:sign">:sign</A> place {id} line={lnum} name={name} [buffer={nr}]
+		Same, but use buffer {nr}.  If the buffer argument is not
+		given, place the sign in the current buffer.
 
 
 							*<A NAME="E885"></A><B>E885</B>*
@@ -166,52 +251,127 @@ PLACING SIGNS						*<A NAME=":sign-place"></A><B>:sign-place</B>* *<A NAME="E158
 		This can be used to change the displayed sign without moving
 		<A HREF="motion.html#it">it</A> (e.g., when the debugger has stopped at a breakpoint).
 
-<A HREF="#:sign">:sign</A> place {id} name={name} buffer={nr}
-		Same, but use buffer {nr}.
+		The optional &quot;group={group}&quot; attribute can be used before
+		&quot;file=&quot; to select a sign in a particular group.
+
+<A HREF="#:sign">:sign</A> place {id} name={name} [buffer={nr}]
+		Same, but use buffer {nr}.  If the buffer argument is not
+		given, use the current buffer.
 
 
 
 REMOVING SIGNS						*<A NAME=":sign-unplace"></A><B>:sign-unplace</B>* *<A NAME="E159"></A><B>E159</B>*
 
+See |<A HREF="eval.html#sign_unplace()">sign_unplace()</A>| for the equivalent Vim <A HREF="usr_41.html#script">script</A> function.
+
 <A HREF="#:sign">:sign</A> unplace {id} file={fname}
 		Remove the previously placed sign {id} from file {fname}.
 		See remark above about {fname} |<A HREF="#:sign-fname">:sign-fname</A>|.
 
+<A HREF="#:sign">:sign</A> unplace {id} group={group} file={fname}
+		Same but remove the sign {id} in sign group {group}.
+
+<A HREF="#:sign">:sign</A> unplace {id} group=* file={fname}
+		Same but remove the sign {id} from all the sign groups.
+
 <A HREF="#:sign">:sign</A> unplace &#42; file={fname}
 		Remove all placed <A HREF="#signs">signs</A> in file {fname}.
+
+<A HREF="#:sign">:sign</A> unplace &#42; group={group} file={fname}
+		Remove all placed <A HREF="#signs">signs</A> in group {group} from file {fname}.
+
+<A HREF="#:sign">:sign</A> unplace &#42; group=* file={fname}
+		Remove all placed <A HREF="#signs">signs</A> in all the groups from file {fname}.
 
 <A HREF="#:sign">:sign</A> unplace {id} buffer={nr}
 		Remove the previously placed sign {id} from buffer {nr}.
 
+<A HREF="#:sign">:sign</A> unplace {id} group={group} buffer={nr}
+		Remove the previously placed sign {id} in group {group} from
+		buffer {nr}.
+
+<A HREF="#:sign">:sign</A> unplace {id} group=* buffer={nr}
+		Remove the previously placed sign {id} in all the groups from
+		buffer {nr}.
+
 <A HREF="#:sign">:sign</A> unplace &#42; buffer={nr}
 		Remove all placed <A HREF="#signs">signs</A> in buffer {nr}.
+
+<A HREF="#:sign">:sign</A> unplace &#42; group={group} buffer={nr}
+		Remove all placed <A HREF="#signs">signs</A> in group {group} from buffer {nr}.
+
+<A HREF="#:sign">:sign</A> unplace &#42; group=* buffer={nr}
+		Remove all placed <A HREF="#signs">signs</A> in all the groups from buffer {nr}.
 
 <A HREF="#:sign">:sign</A> unplace {id}
 		Remove the previously placed sign {id} from all files <A HREF="motion.html#it">it</A>
 		appears in.
 
+<A HREF="#:sign">:sign</A> unplace {id} group={group}
+		Remove the previously placed sign {id} in group {group} from
+		all files <A HREF="motion.html#it">it</A> appears in.
+
+<A HREF="#:sign">:sign</A> unplace {id} group=*
+		Remove the previously placed sign {id} in all the groups from
+		all the files <A HREF="motion.html#it">it</A> appears in.
+
 <A HREF="#:sign">:sign</A> unplace *
-		Remove all placed <A HREF="#signs">signs</A>.
+		Remove all placed <A HREF="#signs">signs</A> in the global group from all the files.
+
+<A HREF="#:sign">:sign</A> unplace &#42; group={group}
+		Remove all placed <A HREF="#signs">signs</A> in group {group} from all the files.
+
+<A HREF="#:sign">:sign</A> unplace &#42; group=*
+		Remove all placed <A HREF="#signs">signs</A> in all the groups from all the files.
 
 <A HREF="#:sign">:sign</A> unplace
-		Remove the placed sign at the cursor position.
+		Remove a placed sign at the cursor position. If multiple <A HREF="#signs">signs</A>
+		are placed in the line, then only one is removed.
+
+<A HREF="#:sign">:sign</A> unplace group={group}
+		Remove a placed sign in group {group} at the cursor
+		position.
+
+<A HREF="#:sign">:sign</A> unplace group=*
+		Remove a placed sign in any group at the cursor position.
 
 
 
 LISTING PLACED SIGNS					*<A NAME=":sign-place-list"></A><B>:sign-place-list</B>*
 
+See |<A HREF="eval.html#sign_getplaced()">sign_getplaced()</A>| for the equivalent Vim <A HREF="usr_41.html#script">script</A> function.
+
 <A HREF="#:sign">:sign</A> place file={fname}
 		<A HREF="eval.html#List">List</A> <A HREF="#signs">signs</A> placed in file {fname}.
 		See remark above about {fname} |<A HREF="#:sign-fname">:sign-fname</A>|.
 
+<A HREF="#:sign">:sign</A> place group={group} file={fname}
+		<A HREF="eval.html#List">List</A> <A HREF="#signs">signs</A> in group {group} placed in file {fname}.
+
+<A HREF="#:sign">:sign</A> place group=* file={fname}
+		<A HREF="eval.html#List">List</A> <A HREF="#signs">signs</A> in all the groups placed in file {fname}.
+
+
 <A HREF="#:sign">:sign</A> place buffer={nr}
 		<A HREF="eval.html#List">List</A> <A HREF="#signs">signs</A> placed in buffer {nr}.
 
-<A HREF="#:sign">:sign</A> place	<A HREF="eval.html#List">List</A> placed <A HREF="#signs">signs</A> in all files.
+<A HREF="#:sign">:sign</A> place group={group} buffer={nr}
+		<A HREF="eval.html#List">List</A> <A HREF="#signs">signs</A> in group {group} placed in buffer {nr}.
+
+<A HREF="#:sign">:sign</A> place group=* buffer={nr}
+		<A HREF="eval.html#List">List</A> <A HREF="#signs">signs</A> in all the groups placed in buffer {nr}.
+
+<A HREF="#:sign">:sign</A> place group={group}
+		<A HREF="eval.html#List">List</A> placed <A HREF="#signs">signs</A> in all sign groups in all the files.
+
+<A HREF="#:sign">:sign</A> place group=*
+		<A HREF="eval.html#List">List</A> placed <A HREF="#signs">signs</A> in all sign groups in all files.
 
 
 
 JUMPING TO A SIGN					*<A NAME=":sign-jump"></A><B>:sign-jump</B>* *<A NAME="E157"></A><B>E157</B>*
+
+See |<A HREF="eval.html#sign_jump()">sign_jump()</A>| for the equivalent Vim <A HREF="usr_41.html#script">script</A> function.
 
 <A HREF="#:sign">:sign</A> jump {id} file={fname}
 		Open the file {fname} or jump to the <A HREF="windows.html#window">window</A> that contains
@@ -220,14 +380,27 @@ JUMPING TO A SIGN					*<A NAME=":sign-jump"></A><B>:sign-jump</B>* *<A NAME="E15
 		If the file isn't displayed in <A HREF="windows.html#window">window</A> and the current file can
 		not be |abandon|ed this fails.
 
+<A HREF="#:sign">:sign</A> jump {id} group={group} file={fname}
+		Same but jump to the sign in group {group}
 
-<A HREF="#:sign">:sign</A> jump {id} buffer={nr}					*<A NAME="E934"></A><B>E934</B>*
+
+<A HREF="#:sign">:sign</A> jump {id} [buffer={nr}]					*<A NAME="E934"></A><B>E934</B>*
 		Same, but use buffer {nr}.  This fails if buffer {nr} does not
-		have a name.
+		have a name. If the buffer argument is not given, use the
+		current buffer.
+
+<A HREF="#:sign">:sign</A> jump {id} group={group} [buffer={nr}]
+		Same but jump to the sign in group {group}
 
 
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
+
+    <footer>
+      <div class="container">
+        Generated Wed Sep 18 20:06:12 UTC 2019 from <a href="https://github.com/neovim/neovim/commit/1070c092c7bf989f261047b861165e61e94c1941"><code>1070c09</code></a>.
+      </div>
+    </footer>
   </body>
 </html>

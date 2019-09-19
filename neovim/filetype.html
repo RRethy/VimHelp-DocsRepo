@@ -2,10 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Nvim documentation: filetype</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.0/normalize.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="/css/main.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
   </head>
   <body>
-                <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
+    <header class="navbar">
+      <div class="container">
+        <nav class="navbar">
+          <div class="container-fluid">
+            <div class="navbar-header">
+
+              <a href="/" class="navbar-brand">
+                <img src="/images/logo@2x.png" id="navbar-logo" alt="Neovim">
+              </a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
 
     <div class="container">
       <h1>Nvim documentation: filetype</h1>
@@ -435,7 +459,7 @@ g:changelog_username	The name and email address of the user.
 			comma.  then <A HREF="motion.html#it">it</A> checks the $NAME environment variable
 			and finally runs `whoami` and `hostname` to build an
 			email address.  The final form is
-<B>				Full Name  &lt;<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="85f0f6e0f7c5edeaf6f1">[email&#160;protected]</a>&gt;</B>
+<B>				Full Name  &lt;<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="99eceafcebd9f1f6eaed">[email&#160;protected]</a>&gt;</B>
  
 g:changelog_new_date_format
 			The format to use when creating a new date-entry.
@@ -450,7 +474,7 @@ g:changelog_new_date_format
 			something like (| is where cursor will be, unless at
 			the start of the line where <A HREF="motion.html#it">it</A> denotes the beginning
 			of the line)
-<B>				|2003-01-14  Full Name  &lt;<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="fa8f899f88ba9295898e">[email&#160;protected]</a>&gt;</B>
+<B>				|2003-01-14  Full Name  &lt;<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="087d7b6d7a4860677b7c">[email&#160;protected]</a>&gt;</B>
 <B>				|</B>
 <B>				|        * prefix|</B>
  
@@ -471,7 +495,7 @@ g:changelog_date_entry_search
 			g:changelog_new_date_format can be used here <A HREF="motion.html#as">as</A> well.
 			The default is '^\s*&#37;d\_s*&#37;u' which finds lines
 			matching the form
-<B>				|2003-01-14  Full Name  &lt;<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6b1e180e192b0304181f">[email&#160;protected]</a>&gt;</B>
+<B>				|2003-01-14  Full Name  &lt;<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7702041205371f180403">[email&#160;protected]</a>&gt;</B>
  			and some similar formats.
 
 g:changelog_date_end_entry_search
@@ -559,9 +583,6 @@ MAN					*<A NAME="ft-man-plugin"></A><B>ft-man-plugin</B>* *<A NAME=":Man"></A><
 <A HREF="starting.html#View">View</A> manpages in Nvim. Supports highlighting, completion, locales, and
 <A HREF="motion.html#navigation">navigation</A>. Also see |<A HREF="usr_12.html#find-manpage">find-manpage</A>|.
 
-To use Nvim <A HREF="motion.html#as">as</A> a manpager:
-<B>     export MANPAGER='nvim +Man!'</B>
-
 <A HREF="#man.vim">man.vim</A> will always attempt to reuse the closest man <A HREF="windows.html#window">window</A> (above/left) but
 otherwise create a split.
 
@@ -575,15 +596,15 @@ Man {sect} {name}({sect}) Used during completion to show the real section of
                           when the provided section is a prefix, e.g. 1m vs 1.
 Man {path}                Open the manpage at {path}. Prepend &quot;./&quot; if {path}
                           is relative to the current directory.
-Man                       Open the manpage for the &lt;cWORD&gt; (man <A HREF="windows.html#buffers">buffers</A>)
-                          or &lt;cword&gt; (non-man <A HREF="windows.html#buffers">buffers</A>) under the cursor.
+Man                       Open the manpage for the <A HREF="cmdline.html#&lt;cWORD&gt;">&lt;cWORD&gt;</A> (man <A HREF="windows.html#buffers">buffers</A>)
+                          or <A HREF="cmdline.html#&lt;cword&gt;">&lt;cword&gt;</A> (non-man <A HREF="windows.html#buffers">buffers</A>) under the cursor.
 Man!                      Display the current buffer contents <A HREF="motion.html#as">as</A> a manpage.
 
 |<A HREF="#:Man">:Man</A>| accepts command modifiers. For example, to use a vertical split:
 <B>     :vertical Man printf</B>
 
 Local mappings:
-<A HREF="various.html#K">K</A> or <A HREF="tagsrch.html#CTRL-]">CTRL-]</A>               Jump to the manpage for the &lt;cWORD&gt; under the
+<A HREF="various.html#K">K</A> or <A HREF="tagsrch.html#CTRL-]">CTRL-]</A>               Jump to the manpage for the <A HREF="cmdline.html#&lt;cWORD&gt;">&lt;cWORD&gt;</A> under the
                           cursor. Takes a <A HREF="intro.html#count">count</A> for the section.
 <A HREF="tagsrch.html#CTRL-T">CTRL-T</A>                    Jump back to the location that the manpage was
                           opened from.
@@ -599,6 +620,20 @@ Variables:
 *<A NAME="b:man_default_sects"></A><B>b:man_default_sects</B>*       Comma-separated, ordered <A HREF="eval.html#list">list</A> of preferred sections.
                           For example in C one usually wants section 3 or 2:
 <B>                               :let b:man_default_sections = '3,2'</B>
+
+*<A NAME="g:man_hardwrap"></A><B>g:man_hardwrap</B>*            Hard-wrap to $MANWIDTH. May improve layout.
+
+To use Nvim <A HREF="motion.html#as">as</A> a manpager:
+<B>     export MANPAGER='nvim +Man!'</B>
+
+Note that when running `man` from the shell and with that `MANPAGER` in your
+environment, `man` will pre-format the manpage using `groff`. Thus, Neovim
+will inevitably display the manual page <A HREF="motion.html#as">as</A> <A HREF="motion.html#it">it</A> was passed to <A HREF="motion.html#it">it</A> from stdin. One
+of the caveats of this is that the width will _always_ be hard-wrapped and not
+soft wrapped <A HREF="motion.html#as">as</A> with `:Man`. You can set in your environment:
+<B>     export MANWIDTH=999</B>
+
+So `groff`'s pre-formatting output will be the same <A HREF="motion.html#as">as</A> with `:Man` i.e soft-wrapped.
 
 
 PDF							*<A NAME="ft-pdf-plugin"></A><B>ft-pdf-plugin</B>*
@@ -628,6 +663,17 @@ To disable this behavior, set the following variable in your <A HREF="starting.h
 
 
 
+QF QUICKFIX					    *<A NAME="qf.vim"></A><B>qf.vim</B>* *<A NAME="ft-qf-plugin"></A><B>ft-qf-plugin</B>*
+
+The &quot;qf&quot; <A HREF="#filetype">filetype</A> is used for the quickfix window, see |<A HREF="quickfix.html#quickfix-window">quickfix-window</A>|.
+
+The <A HREF="quickfix.html#quickfix">quickfix</A> <A HREF="#filetype">filetype</A> <A HREF="usr_05.html#plugin">plugin</A> includes configuration for displaying the command
+that produced the <A HREF="quickfix.html#quickfix">quickfix</A> <A HREF="eval.html#list">list</A> in the |<A HREF="windows.html#status-line">status-line</A>|. To disable this setting,
+configure <A HREF="motion.html#as">as</A> follows:
+<B>	:let g:qf_disable_statusline = 1</B>
+
+
+
 <A HREF="change.html#R">R</A> MARKDOWN						*<A NAME="ft-rmd-plugin"></A><B>ft-rmd-plugin</B>*
 
 By default ftplugin/html.vim is not sourced. If you want <A HREF="motion.html#it">it</A> sourced, add to
@@ -647,6 +693,16 @@ The <A HREF="options.html#'formatexpr'">'formatexpr'</A> option is set dynamical
 and for ReStructured text. If you prefer that <A HREF="options.html#'formatexpr'">'formatexpr'</A> is not set, add to
 your YXXYvimrc|:
 <B>	let rrst_dynamic_comments = 0</B>
+
+
+
+RESTRUCTUREDTEXT					*<A NAME="ft-rst-plugin"></A><B>ft-rst-plugin</B>*
+
+The following <A HREF="change.html#formatting">formatting</A> setting are optionally available:
+<B>	setlocal expandtab shiftwidth=3 softtabstop=3 tabstop=8</B>
+
+To enable this behavior, set the following variable in your <A HREF="starting.html#vimrc">vimrc</A>:
+<B>	let g:rst_style = 1</B>
 
 
 
@@ -680,10 +736,10 @@ Filetype <A HREF="usr_05.html#plugin">plugin</A> defines all |<A HREF="autocmd.h
 settings:
 
 
-*<A NAME="g:shada#keep_old_header"></A><B>g:shada#keep_old_header</B>*	Boolean, if set to false all header entries 
+*<A NAME="g:shada#keep_old_header"></A><B>g:shada#keep_old_header</B>*	<A HREF="eval.html#Boolean">Boolean</A>, if set to false all header entries 
 				are ignored when <A HREF="editing.html#writing">writing</A>.  Defaults to 1.
 
-*<A NAME="g:shada#add_own_header"></A><B>g:shada#add_own_header</B>*	Boolean, if set to true first written entry 
+*<A NAME="g:shada#add_own_header"></A><B>g:shada#add_own_header</B>*	<A HREF="eval.html#Boolean">Boolean</A>, if set to true first written entry 
 				will always be header entry with two values in 
 				a map with attached data: |<A HREF="eval.html#v:version">v:version</A>| attached 
 				to &quot;version&quot; key and &quot;shada.vim&quot; attached to 
@@ -764,7 +820,7 @@ Format description:
 <B>        Buffer list with timestamp 1970-01-01T00:00:00:</B>
 <B>          = [{="f": "/foo"}, {="f": "/bar"}]</B>
  
-      Note 2: specifically for <A HREF="sponsor.html#register">register</A> entries special <A HREF="syntax.html#syntax">syntax</A> for arrays was 
+      Note 2: specifically for <A HREF="intro.html#register">register</A> entries special <A HREF="syntax.html#syntax">syntax</A> for arrays was 
       designed:
 
 <B>        Register with timestamp 1970-01-01T00:00:00:</B>
@@ -796,9 +852,9 @@ Format description:
 <B>        History entry with timestamp 1970-01-01T00:00:00:</B>
 <B>          = [SEARCH, "foo", '/']</B>
  
-      Note: special array <A HREF="syntax.html#syntax">syntax</A> for <A HREF="sponsor.html#register">register</A> entries is not recognized here.
+      Note: special array <A HREF="syntax.html#syntax">syntax</A> for <A HREF="intro.html#register">register</A> entries is not recognized here.
    3. &quot;  = {msgpack-value}&quot;: raw values.  |<A HREF="pi_msgpack.html#{msgpack-value}">{msgpack-value}</A>| in this <A HREF="change.html#case">case</A> may 
-      have absolutely any type.  Special array <A HREF="syntax.html#syntax">syntax</A> for <A HREF="sponsor.html#register">register</A> entries is 
+      have absolutely any type.  Special array <A HREF="syntax.html#syntax">syntax</A> for <A HREF="intro.html#register">register</A> entries is 
       not recognized here <A HREF="motion.html#as">as</A> well.
 
 
@@ -821,9 +877,9 @@ TEX						*<A NAME="ft-tex-plugin"></A><B>ft-tex-plugin</B>* *<A NAME="g:tex_flav
 
 If the first line of a *.tex file has the form
 <B>	%&amp;&lt;format&gt;</B>
-then this determined the file type:  plaintex (for plain TeX), context (for
+then this determined the file type:  plaintex (for plain TeX), <A HREF="repeat.html#context">context</A> (for
 ConTeXt), or tex (for LaTeX).  Otherwise, the file is searched for keywords to
-choose context or tex.  If no keywords are found, <A HREF="motion.html#it">it</A> defaults to plaintex.
+choose <A HREF="repeat.html#context">context</A> or tex.  If no keywords are found, <A HREF="motion.html#it">it</A> defaults to plaintex.
 You can change the default by defining the variable <A HREF="#g:tex_flavor">g:tex_flavor</A> to the format
 (not the file type) you use most.  Use one of these:
 <B>	let g:tex_flavor = "plain"</B>
@@ -856,5 +912,11 @@ The mappings can be disabled with:
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
+
+    <footer>
+      <div class="container">
+        Generated Wed Sep 18 20:06:11 UTC 2019 from <a href="https://github.com/neovim/neovim/commit/1070c092c7bf989f261047b861165e61e94c1941"><code>1070c09</code></a>.
+      </div>
+    </footer>
   <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
 </html>

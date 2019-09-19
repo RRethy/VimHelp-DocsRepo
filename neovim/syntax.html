@@ -2,10 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Nvim documentation: syntax</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.0/normalize.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="/css/main.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
   </head>
   <body>
-                <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
+    <header class="navbar">
+      <div class="container">
+        <nav class="navbar">
+          <div class="container-fluid">
+            <div class="navbar-header">
+
+              <a href="/" class="navbar-brand">
+                <img src="/images/logo@2x.png" id="navbar-logo" alt="Neovim">
+              </a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
 
     <div class="container">
       <h1>Nvim documentation: syntax</h1>
@@ -232,7 +256,7 @@ you can see the actual color, except for &quot;Ignore&quot;):
 	 <A HREF="eval.html#String">String</A>		a <A HREF="eval.html#string">string</A> constant: &quot;this is a string&quot;
 	 Character	a character constant: '<A HREF="change.html#c">c</A>', '\n'
 	 <A HREF="eval.html#Number">Number</A>		a number constant: 234, 0xff
-	 Boolean	a <A HREF="options.html#boolean">boolean</A> constant: <A HREF="eval.html#TRUE">TRUE</A>, false
+	 <A HREF="eval.html#Boolean">Boolean</A>	a <A HREF="options.html#boolean">boolean</A> constant: <A HREF="eval.html#TRUE">TRUE</A>, false
 	 <A HREF="eval.html#Float">Float</A>		a floating point constant: 2.3e10
 
 	*Identifier	any variable name
@@ -253,7 +277,7 @@ you can see the actual color, except for &quot;Ignore&quot;):
 	 PreCondit	preprocessor #if, #else, #endif, etc.
 
 	*Type		int, long, char, etc.
-	 StorageClass	static, <A HREF="sponsor.html#register">register</A>, volatile, etc.
+	 StorageClass	static, <A HREF="intro.html#register">register</A>, volatile, etc.
 	 Structure	struct, union, enum, etc.
 	 Typedef	A typedef
 
@@ -384,22 +408,9 @@ Upon loading a file, Vim finds the relevant <A HREF="#syntax">syntax</A> file <A
 
 ==============================================================================
 
-4. <A HREF="autocmd.html#Syntax">Syntax</A> file remarks					*<A NAME=":syn-file-remarks"></A><B>:syn-file-remarks</B>*
+4. Conversion to HTML				*<A NAME="2html.vim"></A><B>2html.vim</B>* *<A NAME="convert-to-HTML"></A><B>convert-to-HTML</B>*
 
-
-						*<A NAME="b:current_syntax-variable"></A><B>b:current_syntax-variable</B>*
-Vim stores the name of the <A HREF="#syntax">syntax</A> that has been loaded in the
-&quot;b:current_syntax&quot; variable.  You can use this if you want to load other
-settings, depending on which <A HREF="#syntax">syntax</A> is active.	Example:
-<B>   :au BufReadPost * if b:current_syntax == "csh"</B>
-<B>   :au BufReadPost *   do-some-things</B>
-<B>   :au BufReadPost * endif</B>
-
-
-
-2HTML						*<A NAME="2html.vim"></A><B>2html.vim</B>* *<A NAME="convert-to-HTML"></A><B>convert-to-HTML</B>*
-
-This is not a <A HREF="#syntax">syntax</A> file itself, but a <A HREF="usr_41.html#script">script</A> that converts the current
+2html is not a <A HREF="#syntax">syntax</A> file itself, but a <A HREF="usr_41.html#script">script</A> that converts the current
 <A HREF="windows.html#window">window</A> into HTML. Vim opens a new <A HREF="windows.html#window">window</A> in which <A HREF="motion.html#it">it</A> builds the HTML file.
 
 After you save the resulting file, you can view <A HREF="motion.html#it">it</A> with any browser. The
@@ -624,7 +635,7 @@ Example, to make the fold column and line numbers uncopyable:
 This feature is currently implemented by <A HREF="insert.html#inserting">inserting</A> read-only &lt;input&gt; elements
 into the markup to contain the uncopyable areas. This does not work well in
 all cases. When pasting to some applications which understand HTML, the
-&lt;input&gt; elements also get pasted. But plain-text paste destinations should
+&lt;input&gt; elements also get pasted. But plain-text <A HREF="provider.html#paste">paste</A> destinations should
 always work.
 
 
@@ -632,8 +643,8 @@ always work.
 Default: 0.
 When 0, if |<A HREF="#g:html_prevent_copy">g:html_prevent_copy</A>| is non-empty, an invalid attribute is
 intentionally inserted into the &lt;input&gt; element for the uncopyable areas. This
-increases the number of applications you can paste to without also pasting the
-&lt;input&gt; elements. Specifically, Microsoft Word will not paste the &lt;input&gt;
+increases the number of applications you can <A HREF="provider.html#paste">paste</A> to without also pasting the
+&lt;input&gt; elements. Specifically, Microsoft Word will not <A HREF="provider.html#paste">paste</A> the &lt;input&gt;
 elements if they contain this invalid attribute.
 When 1, no invalid markup is ever intentionally inserted, and the generated
 page should validate. However, be careful pasting into Microsoft Word when
@@ -708,14 +719,14 @@ the rendered page generated by <A HREF="#2html.vim">2html.vim</A>.
  
 
 							  *<A NAME="g:html_expand_tabs"></A><B>g:html_expand_tabs</B>*
-Default: 1 if <A HREF="options.html#'tabstop'">'tabstop'</A> is 8, <A HREF="options.html#'expandtab'">'expandtab'</A> is 0, and no fold column or line
-		numbers occur in the generated HTML;
-	 0 otherwise.
-When 0, <A HREF="motion.html#&lt;Tab&gt;">&lt;Tab&gt;</A> characters in the buffer text are replaced with an appropriate
+Default: 0 if <A HREF="options.html#'tabstop'">'tabstop'</A> is 8, <A HREF="options.html#'expandtab'">'expandtab'</A> is 0, 'vartabstop' is not in use,
+	       and no fold column or line numbers occur in the generated HTML;
+	 1 otherwise.
+When 1, <A HREF="motion.html#&lt;Tab&gt;">&lt;Tab&gt;</A> characters in the buffer text are replaced with an appropriate
 number of space characters, or &amp;nbsp; references if |<A HREF="#g:html_no_pre">g:html_no_pre</A>| is 1.
-When 1, if |<A HREF="#g:html_no_pre">g:html_no_pre</A>| is 0 or unset, <A HREF="motion.html#&lt;Tab&gt;">&lt;Tab&gt;</A> characters in the buffer text
+When 0, if |<A HREF="#g:html_no_pre">g:html_no_pre</A>| is 0 or unset, <A HREF="motion.html#&lt;Tab&gt;">&lt;Tab&gt;</A> characters in the buffer text
 are included as-is in the generated HTML. This is useful for when you want to
-allow copy and paste from a browser without losing the actual <A HREF="pattern.html#whitespace">whitespace</A> in
+allow copy and <A HREF="provider.html#paste">paste</A> from a browser without losing the actual <A HREF="pattern.html#whitespace">whitespace</A> in
 the source document. Note that this can easily break text alignment and
 indentation in the HTML, unless set by default.
 
@@ -739,13 +750,13 @@ Automatic detection works for the encodings mentioned specifically by name in
 |<A HREF="mbyte.html#encoding-names">encoding-names</A>|, but TOhtml will only automatically use those encodings with
 wide browser support. However, you can override this to support specific
 encodings that may not be automatically detected by default (see <A HREF="options.html#options">options</A>
- below. See	<A HREF="http://www.iana.org/assignments/character-sets">http://www.iana.org/assignments/character-sets</A> for the IANA names.
+ below. See	<A HREF="https://www.iana.org/assignments/character-sets">http://www.iana.org/assignments/character-sets</A> for the IANA names.
 
 Note, by default all <A HREF="mbyte.html#Unicode">Unicode</A> encodings are converted to <A HREF="mbyte.html#UTF-8">UTF-8</A> with no BOM in
 the generated HTML, <A HREF="motion.html#as">as</A> recommended by W3C:
 
-	<A HREF="http://www.w3.org/International/questions/qa-choosing-encodings">http://www.w3.org/International/questions/qa-choosing-encodings</A>
-	<A HREF="http://www.w3.org/International/questions/qa-byte-order-mark">http://www.w3.org/International/questions/qa-byte-order-mark</A>
+	<A HREF="https://www.w3.org/International/questions/qa-choosing-encodings">http://www.w3.org/International/questions/qa-choosing-encodings</A>
+	<A HREF="https://www.w3.org/International/questions/qa-byte-order-mark">http://www.w3.org/International/questions/qa-byte-order-mark</A>
 
 
 							 *<A NAME="g:html_use_encoding"></A><B>g:html_use_encoding</B>*
@@ -816,6 +827,20 @@ When 1, generate XHTML 1.0 instead (XML compliant HTML).
 
 <B>    :let g:html_use_xhtml = 1</B>
  
+==============================================================================
+
+5. <A HREF="autocmd.html#Syntax">Syntax</A> file remarks					*<A NAME=":syn-file-remarks"></A><B>:syn-file-remarks</B>*
+
+
+						*<A NAME="b:current_syntax-variable"></A><B>b:current_syntax-variable</B>*
+Vim stores the name of the <A HREF="#syntax">syntax</A> that has been loaded in the
+&quot;b:current_syntax&quot; variable.  You can use this if you want to load other
+settings, depending on which <A HREF="#syntax">syntax</A> is active.	Example:
+<B>   :au BufReadPost * if b:current_syntax == "csh"</B>
+<B>   :au BufReadPost *   do-some-things</B>
+<B>   :au BufReadPost * endif</B>
+
+
 
 
 ABEL						*<A NAME="abel.vim"></A><B>abel.vim</B>* *<A NAME="ft-abel-syntax"></A><B>ft-abel-syntax</B>*
@@ -992,6 +1017,9 @@ to the respective variable.  Example:
 <B>	:let c_comment_strings = 1</B>
 To disable them use &quot;<A HREF="eval.html#:unlet">:unlet</A>&quot;.  Example:
 <B>	:unlet c_comment_strings</B>
+
+An alternative is to switch to the C++ highlighting:
+<B>	:set filetype=cpp</B>
 
 <B><FONT color="#54A23D">Variable		Highlight </FONT></B>
 
@@ -1243,7 +1271,7 @@ DESKTOP					   *<A NAME="desktop.vim"></A><B>desktop.vim</B>* *<A NAME="ft-deskt
 
 Primary goal of this <A HREF="#syntax">syntax</A> file is to highlight .desktop and .directory files
 according to freedesktop.org standard:
-	<A HREF="http://standards.freedesktop.org/desktop-entry-spec/latest/">http://standards.freedesktop.org/desktop-entry-spec/latest/</A>
+	<A HREF="https://standards.freedesktop.org/desktop-entry-spec/latest/">http://standards.freedesktop.org/desktop-entry-spec/latest/</A>
 But actually almost none implements this standard fully.  Thus <A HREF="motion.html#it">it</A> will
 highlight all Unix ini files.  But you can force strict highlighting according
 to standard by placing this in your <A HREF="starting.html#vimrc">vimrc</A> file:
@@ -1911,7 +1939,7 @@ Inform <A HREF="develop.html#development">development</A> environment, you may w
 
 IDL							*<A NAME="idl.vim"></A><B>idl.vim</B>* *<A NAME="idl-syntax"></A><B>idl-syntax</B>*
 
-IDL (Interface Definition Language) files are used to define <A HREF="msgpack_rpc.html#RPC">RPC</A> calls.  In
+IDL (Interface Definition Language) files are used to define <A HREF="api.html#RPC">RPC</A> calls.  In
 Microsoft land, this is also used for defining COM interfaces and calls.
 
 IDL's structure is simple enough to permit a full grammar based approach to
@@ -2483,7 +2511,7 @@ If while <A HREF="scroll.html#scrolling">scrolling</A> all of a sudden the whole
 then you should try and switch off one of those.  Let me know if you can figure
 out the line that causes the mistake.
 
-One triggers on &quot;^\s*sub\s*&quot; and the other on &quot;^[<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="311571">[email&#160;protected]</a>&#37;]&quot; more or <A HREF="various.html#less">less</A>.
+One triggers on &quot;^\s*sub\s*&quot; and the other on &quot;^[<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="624622">[email&#160;protected]</a>&#37;]&quot; more or <A HREF="various.html#less">less</A>.
 
 <B>	:let perl_no_sync_on_sub</B>
 <B>	:let perl_no_sync_on_global_var</B>
@@ -2750,7 +2778,6 @@ Note: only existence of these <A HREF="options.html#options">options</A> matter,
       1 above with anything.
 
 
-
 QUAKE						*<A NAME="quake.vim"></A><B>quake.vim</B>* *<A NAME="ft-quake-syntax"></A><B>ft-quake-syntax</B>*
 
 The Quake <A HREF="#syntax">syntax</A> definition should work for most any FPS (First Person
@@ -2834,9 +2861,29 @@ later, and part earlier) adds.
 
 RESTRUCTURED TEXT			*<A NAME="rst.vim"></A><B>rst.vim</B>* *<A NAME="ft-rst-syntax"></A><B>ft-rst-syntax</B>*
 
-You may set what <A HREF="#syntax">syntax</A> <A HREF="intro.html#definitions">definitions</A> should be used for code blocks via
+<A HREF="autocmd.html#Syntax">Syntax</A> highlighting is enabled for code blocks within the document for a
+select number of file types.  See $VIMRUNTIME/syntax/rst.vim for the default
+<A HREF="#syntax">syntax</A> <A HREF="eval.html#list">list</A>.
+
+To set a user-defined <A HREF="eval.html#list">list</A> of code block <A HREF="#syntax">syntax</A> highlighting:
 <B>	let rst_syntax_code_list = ['vim', 'lisp', ...]</B>
- 
+
+To assign multiple code block types to a single <A HREF="#syntax">syntax</A>, define
+`rst_syntax_code_list` <A HREF="motion.html#as">as</A> a <A HREF="map.html#mapping">mapping</A>:
+<B>	let rst_syntax_code_list = {</B>
+<B>		\ 'cpp' = ['cpp', 'c++'],</B>
+<B>                \ 'bash' = ['bash', 'sh'],</B>
+<B>		...</B>
+<B>	}</B>
+
+To use color highlighting for emphasis text:
+<B>	let rst_use_emphasis_colors = 1</B>
+
+To enable <A HREF="fold.html#folding">folding</A> of sections:
+<B>	let rst_fold_enabled = 1</B>
+
+Note that <A HREF="fold.html#folding">folding</A> can cause performance issues on some platforms.
+
 
 
 REXX						*<A NAME="rexx.vim"></A><B>rexx.vim</B>* *<A NAME="ft-rexx-syntax"></A><B>ft-rexx-syntax</B>*
@@ -3058,7 +3105,7 @@ You can also disable this rendering by adding the following line to your
 <A HREF="starting.html#vimrc">vimrc</A> file:
 <B>   let sgml_no_rendering=1</B>
 
-(Adapted from the html.vim help text by Claudio Fleiner <A HREF="/cdn-cgi/l/email-protection#bdded1dcc8d9d4d2fddbd1d8d4d3d8cf93ded2d0">&lt;<span class="__cf_email__" data-cfemail="ea89868b9f8e8385aa8c868f83848f98c4898587">[email&#160;protected]</span>&gt;</A>) 
+(Adapted from the html.vim help text by Claudio Fleiner <A HREF="/cdn-cgi/l/email-protection#77141b1602131e1837111b121e1912055914181a">&lt;<span class="__cf_email__" data-cfemail="67040b0612030e0827010b020e0902154904080a">[email&#160;protected]</span>&gt;</A>) 
 
 
 
@@ -3156,8 +3203,8 @@ file into $HOME/.config/nvim/after/syntax/sh/awkembed.vim:
 <B>      unlet b:current_syntax</B>
 <B>    endif</B>
 <B>    syn include @AWKScript syntax/awk.vim</B>
-<B>    syn region AWKScriptCode matchgroup=AWKCommand start=+[=\\]\@&lt;!'+ skip=+\\'+ end=+'+ <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="ea8985849e8b838499d7aaabbda1b98998839a9e">[email&#160;protected]</a> contained</B>
-<B>    syn region AWKScriptEmbedded matchgroup=AWKCommand start=+\&lt;awk\&gt;+ skip=+\\$+ end=+[=\\]\@&lt;!'+me=e-1 <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="3754585943565e59440a77445f7e537b5e4443">[email&#160;protected]</a>,@shExprList2 nextgroup=AWKScriptCode</B>
+<B>    syn region AWKScriptCode matchgroup=AWKCommand start=+[=\\]\@&lt;!'+ skip=+\\'+ end=+'+ <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7b1814150f1a121508463b3a2c30281809120b0f">[email&#160;protected]</a> contained</B>
+<B>    syn region AWKScriptEmbedded matchgroup=AWKCommand start=+\&lt;awk\&gt;+ skip=+\\$+ end=+[=\\]\@&lt;!'+me=e-1 <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="8deee2e3f9ece4e3feb0cdfee5c4e9c1e4fef9">[email&#160;protected]</a>,@shExprList2 nextgroup=AWKScriptCode</B>
 <B>    syn cluster shCommandSubList add=AWKScriptEmbedded</B>
 <B>    hi def link AWKCommand Type</B>
  
@@ -3275,7 +3322,7 @@ in your <A HREF="starting.html#vimrc">vimrc</A>, and <A HREF="options.html#:set"
 <A HREF="options.html#modeline">modeline</A> at the end of your LaTeX file:
 <B>	% vim: fdm=syntax</B>
 If your system becomes too slow, then you might wish to look into
-<B>	https://vimhelp.appspot.com/vim_faq.txt.html#faq-29.7</B>
+<B>	https://vimhelp.org/vim_faq.txt.html#faq-29.7</B>
  
 
 						*<A NAME="g:tex_nospell"></A><B>g:tex_nospell</B>*
@@ -3656,7 +3703,7 @@ The <A HREF="#syntax">syntax</A> <A HREF="usr_41.html#script">script</A> for zsh
 
 ==============================================================================
 
-5. Defining a <A HREF="#syntax">syntax</A>					*<A NAME=":syn-define"></A><B>:syn-define</B>* *<A NAME="E410"></A><B>E410</B>*
+6. Defining a <A HREF="#syntax">syntax</A>					*<A NAME=":syn-define"></A><B>:syn-define</B>* *<A NAME="E410"></A><B>E410</B>*
 
 Vim understands three types of <A HREF="#syntax">syntax</A> items:
 
@@ -4030,7 +4077,7 @@ The maximum number of <A HREF="#syntax">syntax</A> groups is 19999.
 
 ==============================================================================
 
-6. <A HREF="#:syntax">:syntax</A> arguments					*<A NAME=":syn-arguments"></A><B>:syn-arguments</B>*
+7. <A HREF="#:syntax">:syntax</A> arguments					*<A NAME=":syn-arguments"></A><B>:syn-arguments</B>*
 
 The <A HREF="#:syntax">:syntax</A> commands that define <A HREF="#syntax">syntax</A> items take a number of arguments.
 The common ones are explained here.  The arguments may be given in any order
@@ -4206,7 +4253,6 @@ This will make each <A HREF="intro.html#{}">{}</A> block form one fold.
 The fold will start on the line where the item starts, and end where the item
 ends.  If the start and end are within the same line, there is no fold.
 The <A HREF="options.html#'foldnestmax'">'foldnestmax'</A> option <A HREF="vi_diff.html#limits">limits</A> the nesting of <A HREF="#syntax">syntax</A> <A HREF="fold.html#folds">folds</A>.
-{not available when Vim was compiled without |<A HREF="various.html#+folding">+folding</A>| feature}
 
 
 
@@ -4369,7 +4415,7 @@ IMPLICIT CONCEAL					*<A NAME=":syn-conceal-implicit"></A><B>:syn-conceal-implic
 
 ==============================================================================
 
-7. <A HREF="autocmd.html#Syntax">Syntax</A> patterns				*<A NAME=":syn-pattern"></A><B>:syn-pattern</B>* *<A NAME="E401"></A><B>E401</B>* *<A NAME="E402"></A><B>E402</B>*
+8. <A HREF="autocmd.html#Syntax">Syntax</A> patterns				*<A NAME=":syn-pattern"></A><B>:syn-pattern</B>* *<A NAME="E401"></A><B>E401</B>* *<A NAME="E402"></A><B>E402</B>*
 
 In the <A HREF="#syntax">syntax</A> commands, a <A HREF="pattern.html#pattern">pattern</A> must be surrounded by two identical
 characters.  This is like <A HREF="motion.html#it">it</A> works for the &quot;<A HREF="change.html#:s">:s</A>&quot; command.  The most common to
@@ -4404,7 +4450,7 @@ hs	Highlight Start	offset for where the highlighting starts
 he	Highlight End	offset for where the highlighting ends
 rs	Region Start	offset for where the body of a region starts
 re	Region End	offset for where the body of a region ends
-lc	Leading Context	offset past &quot;leading context&quot; of <A HREF="pattern.html#pattern">pattern</A>
+lc	Leading <A HREF="repeat.html#Context">Context</A>	offset past &quot;leading context&quot; of <A HREF="pattern.html#pattern">pattern</A>
 
 The <A HREF="pattern.html#{offset}">{offset}</A> can be:
 
@@ -4460,17 +4506,17 @@ A more complicated Example:
 	      sssrrreee	    highlight start/region/end (&quot;Foo&quot;, &quot;Exa&quot; and &quot;Bar&quot;)
 
 
-Leading context			*<A NAME=":syn-lc"></A><B>:syn-lc</B>* *<A NAME=":syn-leading"></A><B>:syn-leading</B>* *<A NAME=":syn-context"></A><B>:syn-context</B>*
+Leading <A HREF="repeat.html#context">context</A>			*<A NAME=":syn-lc"></A><B>:syn-lc</B>* *<A NAME=":syn-leading"></A><B>:syn-leading</B>* *<A NAME=":syn-context"></A><B>:syn-context</B>*
 
 Note: This is an obsolete feature, only included for backwards compatibility
 with previous Vim versions.  It's now recommended to use the |<A HREF="pattern.html#/\@&lt;=">/\@&lt;=</A>| construct
 in the <A HREF="pattern.html#pattern">pattern</A>.
 
-The &quot;lc&quot; offset specifies leading context <A HREF="starting.html#--">--</A> a part of the <A HREF="pattern.html#pattern">pattern</A> that must
+The &quot;lc&quot; offset specifies leading <A HREF="repeat.html#context">context</A> <A HREF="starting.html#--">--</A> a part of the <A HREF="pattern.html#pattern">pattern</A> that must
 be present, but is not considered part of the match.  An offset of &quot;lc=n&quot; will
 cause Vim to step back <A HREF="pattern.html#n">n</A> columns before attempting the <A HREF="pattern.html#pattern">pattern</A> match, allowing
 characters which have already been matched in previous patterns to also be
-used <A HREF="motion.html#as">as</A> leading context for this match.  This can be used, for instance, to
+used <A HREF="motion.html#as">as</A> leading <A HREF="repeat.html#context">context</A> for this match.  This can be used, for instance, to
 specify that an &quot;escaping&quot; character must not precede the match:
 
 <B>  :syn match ZNoBackslash "[^\\]z"ms=s+1</B>
@@ -4555,7 +4601,7 @@ cannot be referred to.
 
 ==============================================================================
 
-8. <A HREF="autocmd.html#Syntax">Syntax</A> clusters					*<A NAME=":syn-cluster"></A><B>:syn-cluster</B>* *<A NAME="E400"></A><B>E400</B>*
+9. <A HREF="autocmd.html#Syntax">Syntax</A> clusters					*<A NAME=":syn-cluster"></A><B>:syn-cluster</B>* *<A NAME="E400"></A><B>E400</B>*
 
 :sy[ntax] cluster {cluster-name} [contains={group-name}..]
 				 [add={group-name}..]
@@ -4576,7 +4622,7 @@ nextgroup=.., add=..  or remove=.. <A HREF="eval.html#list">list</A> with a &quo
 this <A HREF="intro.html#notation">notation</A> to implicitly declare a cluster before specifying its contents.
 
 Example:
-<B>   :syntax match Thing "# [^#]\+ #" <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="22414d4c56434b4c511f62764a4b4c456f474f40475051">[email&#160;protected]</a></B>
+<B>   :syntax match Thing "# [^#]\+ #" <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c9aaa6a7bda8a0a7baf4899da1a0a7ae84aca4abacbbba">[email&#160;protected]</a></B>
 <B>   :syntax cluster ThingMembers contains=ThingMember1,ThingMember2</B>
 
 As the previous example suggests, modifications to a cluster are effectively
@@ -4585,7 +4631,7 @@ to speak:
 <B>   :syntax keyword A aaa</B>
 <B>   :syntax keyword B bbb</B>
 <B>   :syntax cluster AandB contains=A</B>
-<B>   :syntax match Stuff "( aaa bbb )" <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e3808c8d97828a8d90dea3a2828d87a1">[email&#160;protected]</a></B>
+<B>   :syntax match Stuff "( aaa bbb )" <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="fe9d91908a9f97908dc3bebf9f909abc">[email&#160;protected]</a></B>
 <B>   :syntax cluster AandB add=B	  " now both keywords are matched in Stuff</B>
 
 This also has implications for nested clusters:
@@ -4593,7 +4639,7 @@ This also has implications for nested clusters:
 <B>   :syntax keyword B bbb</B>
 <B>   :syntax cluster SmallGroup contains=B</B>
 <B>   :syntax cluster BigGroup contains=A,@SmallGroup</B>
-<B>   :syntax match Stuff "( aaa bbb )" <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="aecdc1c0dacfc7c0dd93eeecc7c9e9dcc1dbde">[email&#160;protected]</a></B>
+<B>   :syntax match Stuff "( aaa bbb )" <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="88ebe7e6fce9e1e6fbb5c8cae1efcffae7fdf8">[email&#160;protected]</a></B>
 <B>   :syntax cluster BigGroup remove=B	" no effect, since B isn't in BigGroup</B>
 <B>   :syntax cluster SmallGroup remove=B	" now bbb isn't matched within Stuff</B>
  
@@ -4603,7 +4649,7 @@ The maximum number of clusters is 9767.
 
 ==============================================================================
 
-9. Including <A HREF="#syntax">syntax</A> files				*<A NAME=":syn-include"></A><B>:syn-include</B>* *<A NAME="E397"></A><B>E397</B>*
+10. Including <A HREF="#syntax">syntax</A> files				*<A NAME=":syn-include"></A><B>:syn-include</B>* *<A NAME="E397"></A><B>E397</B>*
 
 It is often useful for one language's <A HREF="#syntax">syntax</A> file to include a <A HREF="#syntax">syntax</A> file for
 a related language.  Depending on the exact relationship, this can be done in
@@ -4630,7 +4676,7 @@ two different ways:
 
 <B>   " In perl.vim:</B>
 <B>   :syntax include @Pod &lt;sfile&gt;:p:h/pod.vim</B>
-<B>   :syntax region perlPOD start="^=head" end="^=cut" <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4b2824253f2a222538760b1b242f">[email&#160;protected]</a></B>
+<B>   :syntax region perlPOD start="^=head" end="^=cut" <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="284b47465c4941465b156878474c">[email&#160;protected]</a></B>
  
 	  When {file-name} is an absolute path (starts with &quot;<A HREF="pattern.html#/">/</A>&quot;, &quot;c:&quot;, &quot;$VAR&quot;
 	  or &quot;<A HREF="cmdline.html#&lt;sfile&gt;">&lt;sfile&gt;</A>&quot;) that file is sourced.  When <A HREF="motion.html#it">it</A> is a relative path
@@ -4646,7 +4692,7 @@ The maximum number of includes is 999.
 
 ==============================================================================
 
-10. Synchronizing				*<A NAME=":syn-sync"></A><B>:syn-sync</B>* *<A NAME="E403"></A><B>E403</B>* *<A NAME="E404"></A><B>E404</B>*
+11. Synchronizing				*<A NAME=":syn-sync"></A><B>:syn-sync</B>* *<A NAME="E403"></A><B>E403</B>* *<A NAME="E404"></A><B>E404</B>*
 
 Vim wants to be able to start redrawing in any position in the document.  To
 make this possible <A HREF="motion.html#it">it</A> needs to know the <A HREF="#syntax">syntax</A> state at the position where
@@ -4848,7 +4894,7 @@ You can clear specific sync patterns with:
 
 ==============================================================================
 
-11. Listing <A HREF="#syntax">syntax</A> items		*<A NAME=":syntax"></A><B>:syntax</B>* *<A NAME=":sy"></A><B>:sy</B>* *<A NAME=":syn"></A><B>:syn</B>* *<A NAME=":syn-list"></A><B>:syn-list</B>*
+12. Listing <A HREF="#syntax">syntax</A> items		*<A NAME=":syntax"></A><B>:syntax</B>* *<A NAME=":sy"></A><B>:sy</B>* *<A NAME=":syn"></A><B>:syn</B>* *<A NAME=":syn-list"></A><B>:syn-list</B>*
 
 This command lists all the <A HREF="#syntax">syntax</A> items:
 
@@ -4890,7 +4936,7 @@ in their own color.
 			This is basically the same <A HREF="motion.html#as">as</A>
 <B>				:echo g:colors_name</B>
  			In <A HREF="change.html#case">case</A> <A HREF="options.html#g:colors_name">g:colors_name</A> has not been defined <A HREF="#:colo">:colo</A> will
-			output &quot;default&quot;.  When compiled without the |<A HREF="various.html#+eval">+eval</A>|
+			output &quot;default&quot;.  When compiled without the |<A HREF="intro.html#+eval">+eval</A>|
 			feature <A HREF="motion.html#it">it</A> will output &quot;unknown&quot;.
 
 :colo[rscheme] {name}	Load color scheme {name}.  This searches <A HREF="options.html#'runtimepath'">'runtimepath'</A>
@@ -4981,6 +5027,8 @@ the same <A HREF="#syntax">syntax</A> file on all UIs.
 
 					*<A NAME="inverse"></A><B>inverse</B>* *<A NAME="italic"></A><B>italic</B>* *<A NAME="standout"></A><B>standout</B>*
 
+					*<A NAME="strikethrough"></A><B>strikethrough</B>*
+
 cterm={attr-list}			*<A NAME="attr-list"></A><B>attr-list</B>* *<A NAME="highlight-cterm"></A><B>highlight-cterm</B>* *<A NAME="E418"></A><B>E418</B>*
 	<A HREF="#attr-list">attr-list</A> is a comma separated <A HREF="eval.html#list">list</A> (without spaces) of the
 	following items (in any order):
@@ -4991,6 +5039,7 @@ cterm={attr-list}			*<A NAME="attr-list"></A><B>attr-list</B>* *<A NAME="highlig
 		<A HREF="#inverse">inverse</A>		same <A HREF="motion.html#as">as</A> reverse
 		<A HREF="#italic">italic</A>
 		<A HREF="#standout">standout</A>
+		<A HREF="#strikethrough">strikethrough</A>
 		NONE		no attributes used (used to reset <A HREF="motion.html#it">it</A>)
 
 	Note that &quot;<A HREF="#bold">bold</A>&quot; can be used here and by using a <A HREF="#bold">bold</A> font.  They
@@ -5176,6 +5225,12 @@ guisp={color-name}					*<A NAME="highlight-guisp"></A><B>highlight-guisp</B>*
 <B>  :highlight Comment guifg=#11f0c3 guibg=#ff00ff</B>
  
 
+blend={integer}					*<A NAME="highlight-blend"></A><B>highlight-blend</B>*
+	Override the blend level for a highlight group within the popupmenu
+	or floating <A HREF="windows.html#windows">windows</A>. Only takes effect if <A HREF="options.html#'pumblend'">'pumblend'</A> or <A HREF="options.html#'winblend'">'winblend'</A>
+	is set for the menu or <A HREF="windows.html#window">window</A>. See the help at the respective option.
+
+
 					*<A NAME="highlight-groups"></A><B>highlight-groups</B>* *<A NAME="highlight-default"></A><B>highlight-default</B>*
 These are the builtin highlighting groups.  Note that the highlighting depends
 on the value of <A HREF="options.html#'background'">'background'</A>.  You can see the current settings with the
@@ -5192,7 +5247,7 @@ Conceal		placeholder characters substituted for concealed
 Cursor		character under the cursor
 
 							*<A NAME="hl-CursorIM"></A><B>hl-CursorIM</B>*
-CursorIM	like Cursor, but used when in <A HREF="mbyte.html#IME">IME</A> mode |<A HREF="mbyte.html#CursorIM">CursorIM</A>|
+CursorIM	like Cursor, but used when in IME mode |<A HREF="intro.html#CursorIM">CursorIM</A>|
 
 							*<A NAME="hl-CursorColumn"></A><B>hl-CursorColumn</B>*
 CursorColumn	Screen-column at the cursor, when <A HREF="options.html#'cursorcolumn'">'cursorcolumn'</A> is set.
@@ -5216,14 +5271,14 @@ DiffDelete	diff mode: Deleted line |<A HREF="diff.html">diff.txt</A>|
 							*<A NAME="hl-DiffText"></A><B>hl-DiffText</B>*
 DiffText	diff mode: Changed text within a changed line |<A HREF="diff.html">diff.txt</A>|
 
-						 {Nvim} *<A NAME="hl-EndOfBuffer"></A><B>hl-EndOfBuffer</B>*
+							*<A NAME="hl-EndOfBuffer"></A><B>hl-EndOfBuffer</B>*
 EndOfBuffer	filler lines (~) after the end of the buffer.
 		By default, this is highlighted like |<A HREF="#hl-NonText">hl-NonText</A>|.
 
-						 {Nvim} *<A NAME="hl-TermCursor"></A><B>hl-TermCursor</B>*
+							*<A NAME="hl-TermCursor"></A><B>hl-TermCursor</B>*
 TermCursor	cursor in a focused <A HREF="nvim_terminal_emulator.html#terminal">terminal</A>
 
-						 {Nvim} *<A NAME="hl-TermCursorNC"></A><B>hl-TermCursorNC</B>*
+							*<A NAME="hl-TermCursorNC"></A><B>hl-TermCursorNC</B>*
 TermCursorNC	cursor in an unfocused <A HREF="nvim_terminal_emulator.html#terminal">terminal</A>
 
 							*<A NAME="hl-ErrorMsg"></A><B>hl-ErrorMsg</B>*
@@ -5265,6 +5320,9 @@ MatchParen	The character under the cursor or just before <A HREF="motion.html#it
 							*<A NAME="hl-ModeMsg"></A><B>hl-ModeMsg</B>*
 ModeMsg		<A HREF="options.html#'showmode'">'showmode'</A> message (e.g., &quot;<A HREF="starting.html#--">--</A> INSERT --&quot;)
 
+							*<A NAME="hl-MsgArea"></A><B>hl-MsgArea</B>*
+MsgArea		Area for <A HREF="message.html#messages">messages</A> and <A HREF="cmdline.html#cmdline">cmdline</A>
+
 							*<A NAME="hl-MsgSeparator"></A><B>hl-MsgSeparator</B>*
 MsgSeparator	Separator for scrolled <A HREF="message.html#messages">messages</A>, `msgsep` flag of <A HREF="options.html#'display'">'display'</A>
 
@@ -5279,6 +5337,9 @@ NonText		'<A HREF="repeat.html#@">@</A>' at the end of the <A HREF="windows.html
 
 							*<A NAME="hl-Normal"></A><B>hl-Normal</B>*
 <A HREF="intro.html#Normal">Normal</A>		normal text
+
+							*<A NAME="hl-NormalFloat"></A><B>hl-NormalFloat</B>*
+NormalFloat	<A HREF="intro.html#Normal">Normal</A> text in floating <A HREF="windows.html#windows">windows</A>.
 
 							*<A NAME="hl-NormalNC"></A><B>hl-NormalNC</B>*
 NormalNC	normal text in non-current <A HREF="windows.html#windows">windows</A>
@@ -5335,13 +5396,6 @@ StatusLine	status line of current <A HREF="windows.html#window">window</A>
 StatusLineNC	status lines of not-current <A HREF="windows.html#windows">windows</A>
 		Note: if this is equal to &quot;StatusLine&quot; Vim will use &quot;^^^&quot; in
 		the status line of the current <A HREF="windows.html#window">window</A>.
-
-							*<A NAME="hl-StatusLineTerm"></A><B>hl-StatusLineTerm</B>*
-StatusLineTerm	status line of current <A HREF="windows.html#window">window</A>, if <A HREF="motion.html#it">it</A> is a |<A HREF="nvim_terminal_emulator.html#terminal">terminal</A>| <A HREF="windows.html#window">window</A>.
-
-							*<A NAME="hl-StatusLineTermNC"></A><B>hl-StatusLineTermNC</B>*
-StatusLineTermNC   status lines of not-current <A HREF="windows.html#windows">windows</A> that is a |<A HREF="nvim_terminal_emulator.html#terminal">terminal</A>|
-		<A HREF="windows.html#window">window</A>.
 
 							*<A NAME="hl-TabLine"></A><B>hl-TabLine</B>*
 TabLine		<A HREF="intro.html#tab">tab</A> pages line, not active <A HREF="intro.html#tab">tab</A> page label
@@ -5440,7 +5494,7 @@ overruled when the <A HREF="#syntax">syntax</A> file is loaded.
 
 ==============================================================================
 
-14. Cleaning up						*<A NAME=":syn-clear"></A><B>:syn-clear</B>* *<A NAME="E391"></A><B>E391</B>*
+15. Cleaning up						*<A NAME=":syn-clear"></A><B>:syn-clear</B>* *<A NAME="E391"></A><B>E391</B>*
 
 If you want to clear the <A HREF="#syntax">syntax</A> stuff for the current buffer, you can use this
 command:
@@ -5453,6 +5507,16 @@ load the <A HREF="#syntax">syntax</A> file.
 The command also deletes the &quot;b:current_syntax&quot; variable, since no <A HREF="#syntax">syntax</A> is
 loaded after this command.
 
+To clean up specific <A HREF="#syntax">syntax</A> groups for the current buffer:
+<B>  :syntax clear {group-name} ..</B>
+This removes all patterns and keywords for <A HREF="#{group-name}">{group-name}</A>.
+
+To clean up specific <A HREF="#syntax">syntax</A> group lists for the current buffer:
+<B>  :syntax clear @{grouplist-name} ..</B>
+This sets {grouplist-name}'s contents to an empty <A HREF="eval.html#list">list</A>.
+
+
+						*<A NAME=":syntax-off"></A><B>:syntax-off</B>* *<A NAME=":syn-off"></A><B>:syn-off</B>*
 If you want to disable <A HREF="#syntax">syntax</A> highlighting for all <A HREF="windows.html#buffers">buffers</A>, you need to remove
 the autocommands that load the <A HREF="#syntax">syntax</A> files:
 <B>  :syntax off</B>
@@ -5461,14 +5525,6 @@ What this command actually does, is executing the command
 <B>  :source $VIMRUNTIME/syntax/nosyntax.vim</B>
 See the &quot;nosyntax.vim&quot; file for details.  Note that for this to work
 $VIMRUNTIME must be valid.  See |<A HREF="starting.html#$VIMRUNTIME">$VIMRUNTIME</A>|.
-
-To clean up specific <A HREF="#syntax">syntax</A> groups for the current buffer:
-<B>  :syntax clear {group-name} ..</B>
-This removes all patterns and keywords for <A HREF="#{group-name}">{group-name}</A>.
-
-To clean up specific <A HREF="#syntax">syntax</A> group lists for the current buffer:
-<B>  :syntax clear @{grouplist-name} ..</B>
-This sets {grouplist-name}'s contents to an empty <A HREF="eval.html#list">list</A>.
 
 
 						*<A NAME=":syntax-reset"></A><B>:syntax-reset</B>* *<A NAME=":syn-reset"></A><B>:syn-reset</B>*
@@ -5534,7 +5590,7 @@ syntax/syncolor.vim files are loaded:
 
 ==============================================================================
 
-15. Highlighting <A HREF="tagsrch.html#tags">tags</A>					*<A NAME="tag-highlight"></A><B>tag-highlight</B>*
+16. Highlighting <A HREF="tagsrch.html#tags">tags</A>					*<A NAME="tag-highlight"></A><B>tag-highlight</B>*
 
 If you want to highlight all the <A HREF="tagsrch.html#tags">tags</A> in your file, you can use the following
 mappings.
@@ -5558,7 +5614,7 @@ types: types.vim
 types.vim: *.[ch]
 	<A HREF="tagsrch.html#ctags">ctags</A> --c-kinds=gstu -o- *.[ch] YXXY\
 		awk 'BEGIN{printf(&quot;syntax keyword Type\t&quot;)}\
-			{printf(&quot;&#37;s &quot;<A HREF="motion.html#,">,</A> $$1)}END{print &quot;&quot;}' <A HREF="change.html#&gt;">&gt;</A> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="ceea8e">[email&#160;protected]</a>
+			{printf(&quot;&#37;s &quot;<A HREF="motion.html#,">,</A> $$1)}END{print &quot;&quot;}' <A HREF="change.html#&gt;">&gt;</A> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="406400">[email&#160;protected]</a>
 
 And put these lines in your <A HREF="starting.html#vimrc">vimrc</A>:
 
@@ -5570,7 +5626,7 @@ And put these lines in your <A HREF="starting.html#vimrc">vimrc</A>:
 
 ==============================================================================
 
-16. Window-local <A HREF="#syntax">syntax</A>				*<A NAME=":ownsyntax"></A><B>:ownsyntax</B>*
+17. Window-local <A HREF="#syntax">syntax</A>				*<A NAME=":ownsyntax"></A><B>:ownsyntax</B>*
 
 Normally all <A HREF="windows.html#windows">windows</A> on a buffer share the same <A HREF="#syntax">syntax</A> settings. It is
 possible, however, to set a particular <A HREF="windows.html#window">window</A> on a file to have its own
@@ -5622,7 +5678,7 @@ If your <A HREF="#syntax">syntax</A> causes redrawing to be slow, here are a few
 faster.  To see slowness switch on some features that usually interfere, such
 <A HREF="motion.html#as">as</A> <A HREF="options.html#'relativenumber'">'relativenumber'</A> and |<A HREF="fold.html#folding">folding</A>|.
 
-Note: this is only available when compiled with the |<A HREF="various.html#+profile">+profile</A>| feature.
+Note: this is only available when compiled with the |<A HREF="intro.html#+profile">+profile</A>| feature.
 You many need to build Vim with &quot;huge&quot; features.
 
 To find out what patterns are consuming most time, get an overview with this
@@ -5674,5 +5730,11 @@ literal text specify the size of that text (in bytes):
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
+
+    <footer>
+      <div class="container">
+        Generated Wed Sep 18 20:06:12 UTC 2019 from <a href="https://github.com/neovim/neovim/commit/1070c092c7bf989f261047b861165e61e94c1941"><code>1070c09</code></a>.
+      </div>
+    </footer>
   <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
 </html>

@@ -2,10 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Nvim documentation: windows</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.0/normalize.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="/css/main.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
   </head>
   <body>
-                <img src="images/logo@2x.png" id="navbar-logo" alt="Neovim">
+    <header class="navbar">
+      <div class="container">
+        <nav class="navbar">
+          <div class="container-fluid">
+            <div class="navbar-header">
+
+              <a href="/" class="navbar-brand">
+                <img src="/images/logo@2x.png" id="navbar-logo" alt="Neovim">
+              </a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
 
     <div class="container">
       <h1>Nvim documentation: windows</h1>
@@ -86,6 +110,10 @@ will not change within a Vim session. The |<A HREF="eval.html#win_getid()">win_g
 <A HREF="eval.html#functions">functions</A> can be used to convert between the window/tab number and the
 identifier.  There is also the <A HREF="#window">window</A> number, which may change whenever
 <A HREF="#windows">windows</A> are opened or closed, see |<A HREF="eval.html#winnr()">winnr()</A>|.
+The <A HREF="#window">window</A> number is only valid in one specific <A HREF="intro.html#tab">tab</A>.  The <A HREF="#window">window</A> ID is valid
+across tabs.  For most <A HREF="eval.html#functions">functions</A> that take a <A HREF="#window">window</A> ID or a <A HREF="#window">window</A> number, the
+<A HREF="#window">window</A> number only applies to the current <A HREF="intro.html#tab">tab</A>, while the <A HREF="#window">window</A> ID can refer
+to a <A HREF="#window">window</A> in any <A HREF="intro.html#tab">tab</A>.
 
 Each buffer has a unique number and the number will not change within a Vim
 session.  The |<A HREF="eval.html#bufnr()">bufnr()</A>| and |<A HREF="eval.html#bufname()">bufname()</A>| <A HREF="eval.html#functions">functions</A> can be used to convert
@@ -164,6 +192,11 @@ other <A HREF="#windows">windows</A>.  If <A HREF="options.html#'mouse'">'mouse'
 		further input, use CTRL-Q to get going again.
 		Also see |<A HREF="editing.html#++opt">++opt</A>| and |<A HREF="editing.html#+cmd">+cmd</A>|.
 
+							*<A NAME="E242"></A><B>E242</B>*
+		Be careful when splitting a <A HREF="#window">window</A> in an <A HREF="autocmd.html#autocommand">autocommand</A>, <A HREF="motion.html#it">it</A> may
+		mess up the <A HREF="#window">window</A> layout if this happens while making other
+		<A HREF="#window">window</A> layout changes.
+
 
 <A HREF="vimindex.html#CTRL-W">CTRL-W</A> <A HREF="visual.html#CTRL-V">CTRL-V</A>						*<A NAME="CTRL-W_CTRL-V"></A><B>CTRL-W_CTRL-V</B>*
 
@@ -227,7 +260,7 @@ other <A HREF="#windows">windows</A>.  If <A HREF="options.html#'mouse'">'mouse'
 		Same <A HREF="motion.html#as">as</A> &quot;<A HREF="#:split">:split</A>&quot;, but set <A HREF="options.html#'readonly'">'readonly'</A> option for this buffer.
 
 
-:[N]sf[ind] <A HREF="editing.html#[++opt]">[++opt]</A> <A HREF="editing.html#[+cmd]">[+cmd]</A> <A HREF="editing.html#{file}">{file}</A>		*<A NAME=":sf"></A><B>:sf</B>* *<A NAME=":sfind"></A><B>:sfind</B>* *<A NAME="splitfind"></A><B>splitfind</B>*
+:[N]sf[ind] <A HREF="editing.html#[++opt]">[++opt]</A> <A HREF="editing.html#[+cmd]">[+cmd]</A> <A HREF="editing.html#{file}">{file}</A>	     *<A NAME=":sf"></A><B>:sf</B>* *<A NAME=":sfi"></A><B>:sfi</B>* *<A NAME=":sfind"></A><B>:sfind</B>* *<A NAME="splitfind"></A><B>splitfind</B>*
 		Same <A HREF="motion.html#as">as</A> &quot;<A HREF="#:split">:split</A>&quot;, but search for <A HREF="editing.html#{file}">{file}</A> in <A HREF="options.html#'path'">'path'</A> like in
 		|<A HREF="editing.html#:find">:find</A>|.  Doesn't split if <A HREF="editing.html#{file}">{file}</A> is not found.
 
@@ -236,6 +269,11 @@ other <A HREF="#windows">windows</A>.  If <A HREF="options.html#'mouse'">'mouse'
 <A HREF="vimindex.html#CTRL-W">CTRL-W</A> ^	Does &quot;<A HREF="#:split">:split</A> #&quot;, split <A HREF="#window">window</A> in two and edit alternate file.
 		When a <A HREF="intro.html#count">count</A> is given, <A HREF="motion.html#it">it</A> becomes &quot;<A HREF="#:split">:split</A> #N&quot;, split <A HREF="#window">window</A>
 		and edit buffer N.
+
+
+<A HREF="vimindex.html#CTRL-W">CTRL-W</A> <A HREF="motion.html#ge">ge</A>						*<A NAME="CTRL-W_ge"></A><B>CTRL-W_ge</B>*
+		Detach the current <A HREF="#window">window</A> <A HREF="motion.html#as">as</A> an external <A HREF="#window">window</A>.
+		Only available when using an <A HREF="ui.html#UI">UI</A> with |<A HREF="ui.html#ui-multigrid">ui-multigrid</A>| support.
 
 Note that the <A HREF="options.html#'splitbelow'">'splitbelow'</A> and <A HREF="options.html#'splitright'">'splitright'</A> <A HREF="options.html#options">options</A> influence where a new
 <A HREF="#window">window</A> will appear.
@@ -467,7 +505,6 @@ Closing a <A HREF="#window">window</A>
 						*<A NAME="CTRL-W_P"></A><B>CTRL-W_P</B>* *<A NAME="E441"></A><B>E441</B>*
 <A HREF="vimindex.html#CTRL-W">CTRL-W</A> <A HREF="change.html#P">P</A>	Go to preview <A HREF="#window">window</A>.  When there is no preview <A HREF="#window">window</A> this is
 		an error.
-		{not available when compiled without the |<A HREF="various.html#+quickfix">+quickfix</A>| feature}
 
 If <A HREF="visual.html#Visual">Visual</A> mode is active and the new <A HREF="#window">window</A> is not for the same buffer, the
 <A HREF="visual.html#Visual">Visual</A> mode is ended.  If the <A HREF="#window">window</A> is on the same buffer, the cursor
@@ -604,10 +641,6 @@ z{nr}&lt;CR&gt;	Set current <A HREF="#window">window</A> height to {nr}.
 <A HREF="#:vertical">:vertical</A> res[ize] [N]			*<A NAME=":vertical-resize"></A><B>:vertical-resize</B>* *<A NAME="CTRL-W_bar"></A><B>CTRL-W_bar</B>*
 <A HREF="vimindex.html#CTRL-W">CTRL-W</A> &#124;	Set current <A HREF="#window">window</A> width to N (default: widest possible).
 
-
-						*<A NAME=":mod"></A><B>:mod</B>* *<A NAME=":mode"></A><B>:mode</B>*
-:mod[e]		Detects the screen size and redraws the screen.
-
 You can also resize a <A HREF="#window">window</A> by dragging a status line up or down with the
 mouse.  Or by dragging a vertical separator line left or right.  This only
 works if the version of Vim that is being used supports the mouse and the
@@ -720,6 +753,9 @@ can also get to them with the buffer <A HREF="eval.html#list">list</A> commands,
 		|<A HREF="#:vertical">:vertical</A>| was prepended).
 		Buf/Win Enter/Leave autocommands are not executed for the new
 		<A HREF="#windows">windows</A> here, that's only done when they are really entered.
+		If autocommands change the <A HREF="#window">window</A> layout while this command is
+
+		busy an error will be given. *<A NAME="E249"></A><B>E249</B>*
 
 
 :[N]sa[rgument][!] <A HREF="editing.html#[++opt]">[++opt]</A> <A HREF="editing.html#[+cmd]">[+cmd]</A> [N]			*<A NAME=":sa"></A><B>:sa</B>* *<A NAME=":sargument"></A><B>:sargument</B>*
@@ -884,24 +920,18 @@ the buffer.  The result is that all <A HREF="#buffers">buffers</A> will use the 
 		If the name is a hypertext link that looks like
 		&quot;type://machine/path&quot;, only &quot;/path&quot; is used.
 		If a <A HREF="intro.html#count">count</A> is given, the count'th matching file is edited.
-		{not available when the |<A HREF="various.html#+file_in_path">+file_in_path</A>| feature was disabled
-		at compile time}
 
 
 <A HREF="vimindex.html#CTRL-W">CTRL-W</A> <A HREF="motion.html#F">F</A>						*<A NAME="CTRL-W_F"></A><B>CTRL-W_F</B>*
 		Split current <A HREF="#window">window</A> in two.  Edit file name under cursor and
 		jump to the line number following the file name. See |<A HREF="editing.html#gF">gF</A>| for
 		details on how the line number is obtained.
-		{not available when the |<A HREF="various.html#+file_in_path">+file_in_path</A>| feature was disabled
-		at compile time}
 
 
 <A HREF="vimindex.html#CTRL-W">CTRL-W</A> <A HREF="editing.html#gf">gf</A>						*<A NAME="CTRL-W_gf"></A><B>CTRL-W_gf</B>*
 		Open a new <A HREF="intro.html#tab">tab</A> page and edit the file name under the cursor.
 		Like &quot;<A HREF="intro.html#tab">tab</A> split&quot; and &quot;<A HREF="editing.html#gf">gf</A>&quot;, but the new <A HREF="intro.html#tab">tab</A> page isn't created
 		if the file does not exist.
-		{not available when the |<A HREF="various.html#+file_in_path">+file_in_path</A>| feature was disabled
-		at compile time}
 
 
 <A HREF="vimindex.html#CTRL-W">CTRL-W</A> <A HREF="editing.html#gF">gF</A>						*<A NAME="CTRL-W_gF"></A><B>CTRL-W_gF</B>*
@@ -909,8 +939,14 @@ the buffer.  The result is that all <A HREF="#buffers">buffers</A> will use the 
 		and jump to the line number following the file name.  Like
 		&quot;<A HREF="intro.html#tab">tab</A> split&quot; and &quot;<A HREF="editing.html#gF">gF</A>&quot;, but the new <A HREF="intro.html#tab">tab</A> page isn't created if
 		the file does not exist.
-		{not available when the |<A HREF="various.html#+file_in_path">+file_in_path</A>| feature was disabled
-		at compile time}
+
+
+<A HREF="vimindex.html#CTRL-W">CTRL-W</A> <A HREF="tabpage.html#gt">gt</A>						*<A NAME="CTRL-W_gt"></A><B>CTRL-W_gt</B>*
+		Go to next <A HREF="intro.html#tab">tab</A> page, same <A HREF="motion.html#as">as</A> `gt`.
+
+
+<A HREF="vimindex.html#CTRL-W">CTRL-W</A> <A HREF="tabpage.html#gT">gT</A>						*<A NAME="CTRL-W_gT"></A><B>CTRL-W_gT</B>*
+		Go to previous <A HREF="intro.html#tab">tab</A> page, same <A HREF="motion.html#as">as</A> `gT`.
 
 Also see |CTRL-W_CTRL-I|: open <A HREF="#window">window</A> for an included file that includes
 the keyword under the cursor.
@@ -922,7 +958,6 @@ the keyword under the cursor.
 The preview <A HREF="#window">window</A> is a special <A HREF="#window">window</A> to show (preview) another file.  It is
 normally a small <A HREF="#window">window</A> used to show an include file or definition of a
 function.
-{not available when compiled without the |<A HREF="various.html#+quickfix">+quickfix</A>| feature}
 
 There can be only one preview <A HREF="#window">window</A> (per <A HREF="intro.html#tab">tab</A> page).  It is created with one
 of the commands below.  The <A HREF="options.html#'previewheight'">'previewheight'</A> option can be set to specify the
@@ -995,16 +1030,16 @@ option is set to have <A HREF="motion.html#it">it</A> keep the same height when 
 		cursor.  This is <A HREF="various.html#less">less</A> clever than using |<A HREF="#:ptag">:ptag</A>|, but you don't
 		need a <A HREF="tagsrch.html#tags">tags</A> file and <A HREF="motion.html#it">it</A> will also find matches in system
 		include files.  Example:
-<B>  :au! CursorHold *.[ch] nested exe "silent! psearch " . expand("&lt;cword&gt;")</B>
+<B>  :au! CursorHold *.[ch] ++nested exe "silent! psearch " . expand("&lt;cword&gt;")</B>
  		Warning: This can be slow.
 
 
 Example						*<A NAME="CursorHold-example"></A><B>CursorHold-example</B>* 
 
-<B>  :au! CursorHold *.[ch] nested exe "silent! ptag " . expand("&lt;cword&gt;")</B>
+<B>  :au! CursorHold *.[ch] ++nested exe "silent! ptag " . expand("&lt;cword&gt;")</B>
 
 This will cause a &quot;<A HREF="#:ptag">:ptag</A>&quot; to be executed for the keyword under the cursor,
-when the cursor hasn't moved for the time set with <A HREF="options.html#'updatetime'">'updatetime'</A>.  The &quot;nested&quot;
+when the cursor hasn't moved for the time set with <A HREF="options.html#'updatetime'">'updatetime'</A>.  &quot;++nested&quot;
 makes other autocommands be executed, so that <A HREF="syntax.html#syntax">syntax</A> highlighting works in the
 preview <A HREF="#window">window</A>.  The &quot;silent!&quot; avoids an error message when the <A HREF="tagsrch.html#tag">tag</A> could not
 be found.  Also see |<A HREF="autocmd.html#CursorHold">CursorHold</A>|.  To disable this again:
@@ -1014,7 +1049,7 @@ be found.  Also see |<A HREF="autocmd.html#CursorHold">CursorHold</A>|.  To disa
 A nice addition is to highlight the found <A HREF="tagsrch.html#tag">tag</A>, avoid the &quot;<A HREF="#:ptag">:ptag</A>&quot; when there
 is no <A HREF="motion.html#word">word</A> under the cursor, and a few other things:
 
-<B>  :au! CursorHold *.[ch] nested call PreviewWord()</B>
+<B>  :au! CursorHold *.[ch] ++nested call PreviewWord()</B>
 <B>  :func PreviewWord()</B>
 <B>  :  if &amp;previewwindow			" don't do this in the preview window</B>
 <B>  :    return</B>
@@ -1059,7 +1094,6 @@ is no <A HREF="motion.html#word">word</A> under the cursor, and a few other thin
 A hidden buffer is not displayed in a <A HREF="#window">window</A>, but is still loaded into memory.
 This makes <A HREF="motion.html#it">it</A> possible to jump from file to file, without the need to read or
 write the file every time you get another buffer in a <A HREF="#window">window</A>.
-{not available when compiled without the |<A HREF="various.html#+listcmds">+listcmds</A>| feature}
 
 
 							*<A NAME=":buffer-!"></A><B>:buffer-!</B>*
@@ -1121,9 +1155,9 @@ list of <A HREF="#buffers">buffers</A>. |<A HREF="#unlisted-buffer">unlisted-buf
 			   displayed in a <A HREF="#window">window</A> |<A HREF="#hidden-buffer">hidden-buffer</A>|
 		   -	a buffer with <A HREF="options.html#'modifiable'">'modifiable'</A> off
 		   =	a readonly buffer
-		   <A HREF="change.html#R">R</A>	a <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> buffer with a running job
-		   <A HREF="motion.html#F">F</A>	a <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> buffer with a finished job
-		   ?    a <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> buffer without a job: `:terminal NONE`
+		   <A HREF="change.html#R">R</A>	a <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> buffer with a running <A HREF="job_control.html#job">job</A>
+		   <A HREF="motion.html#F">F</A>	a <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> buffer with a finished <A HREF="job_control.html#job">job</A>
+		   ?    a <A HREF="nvim_terminal_emulator.html#terminal">terminal</A> buffer without a <A HREF="job_control.html#job">job</A>: `:terminal NONE`
 		    +	a modified buffer
 		    <A HREF="change.html#x">x</A>   a buffer with read <A HREF="message.html#errors">errors</A>
 
@@ -1278,7 +1312,6 @@ list of <A HREF="#buffers">buffers</A>. |<A HREF="#unlisted-buffer">unlisted-buf
 		commands also work like this.
 
 
-
 							*<A NAME=":sbn"></A><B>:sbn</B>* *<A NAME=":sbnext"></A><B>:sbnext</B>*
 :[N]sbn[ext] <A HREF="editing.html#[+cmd]">[+cmd]</A> [N]
 		Split <A HREF="#window">window</A> and go to [N]th next buffer in buffer <A HREF="eval.html#list">list</A>.
@@ -1302,7 +1335,7 @@ list of <A HREF="#buffers">buffers</A>. |<A HREF="#unlisted-buffer">unlisted-buf
 		Also see |<A HREF="editing.html#+cmd">+cmd</A>|.
 
 
-:br[ewind][!] <A HREF="editing.html#[+cmd]">[+cmd]</A>					*<A NAME=":br"></A><B>:br</B>* *<A NAME=":brewind"></A><B>:brewind</B>*
+:br[ewind][!] <A HREF="editing.html#[+cmd]">[+cmd]</A>					*<A NAME=":br"></A><B>:br</B>* *<A NAME=":bre"></A><B>:bre</B>* *<A NAME=":brewind"></A><B>:brewind</B>*
 		Go to first buffer in buffer <A HREF="eval.html#list">list</A>.  If the buffer <A HREF="eval.html#list">list</A> is
 		empty, go to the first unlisted buffer.
 		See |<A HREF="#:buffer-!">:buffer-!</A>| for [!].
@@ -1394,7 +1427,7 @@ help		Contains a help file.  Will only be created with the |<A HREF="helphelp.ht
 		for a help buffer.
 
 terminal	A terminal <A HREF="#window">window</A> buffer, see |<A HREF="nvim_terminal_emulator.html#terminal">terminal</A>|. The contents cannot
-		be read or changed until the job ends.
+		be read or changed until the <A HREF="job_control.html#job">job</A> ends.
 
 directory	Displays directory contents.  Can be used by a file explorer
 		<A HREF="usr_05.html#plugin">plugin</A>.  The buffer is created with these settings:
@@ -1404,6 +1437,8 @@ directory	Displays directory contents.  Can be used by a file explorer
  		The buffer name is the name of the directory and is adjusted
 		when using the |<A HREF="editing.html#:cd">:cd</A>| command.
 
+
+						*<A NAME="scratch-buffer"></A><B>scratch-buffer</B>*
 scratch		Contains text that can be discarded at any time.  It is kept
 		when closing the <A HREF="#window">window</A>, <A HREF="motion.html#it">it</A> must be deleted explicitly.
 		Settings:
@@ -1425,5 +1460,11 @@ unlisted	The buffer is not in the buffer <A HREF="eval.html#list">list</A>.  It 
 <A HREF="#top">top</A> - <A HREF="index.html">main help file</A>
 </PRE>
     </div>
+
+    <footer>
+      <div class="container">
+        Generated Wed Sep 18 20:06:13 UTC 2019 from <a href="https://github.com/neovim/neovim/commit/1070c092c7bf989f261047b861165e61e94c1941"><code>1070c09</code></a>.
+      </div>
+    </footer>
   </body>
 </html>
